@@ -4,33 +4,18 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISyntacticElement;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -39,28 +24,15 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
+import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-
 import com.google.inject.Inject;
 
 /**
@@ -72,11 +44,12 @@ import com.google.inject.Inject;
  */
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
+	public GamlEditor() {}
+
 	// Copied from SwtGui. See how to factorize this.
 	// public static Image run = GamaIcons.action_run;
 
-	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(
-			SWT.COLOR_BLACK);
+	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private static final int INITIAL_BUTTONS = 20;
 	private static Font labelFont;
 	Composite toolbar, parent, indicator;
@@ -107,7 +80,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	@Override
 	public void dispose() {
-		if (getDocument() != null) {
+		if ( getDocument() != null ) {
 			getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 				@Override
@@ -118,9 +91,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			});
 		}
 
-		if (buttons != null) {
-			for (Button b : buttons) {
-				if (b != null && !b.isDisposed()) {
+		if ( buttons != null ) {
+			for ( Button b : buttons ) {
+				if ( b != null && !b.isDisposed() ) {
 					b.dispose();
 				}
 			}
@@ -131,11 +104,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		// top.dispose();
 		// top = null;
 		// }
-		if (toolbar != null && !toolbar.isDisposed()) {
+		if ( toolbar != null && !toolbar.isDisposed() ) {
 			toolbar.dispose();
 			toolbar = null;
 		}
-		if (status != null && !status.isDisposed()) {
+		if ( status != null && !status.isDisposed() ) {
 			status.dispose();
 			status = null;
 		}
@@ -189,7 +162,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		status.setLayoutData(data);
 		status.setForeground(COLOR_TEXT);
 
-		for (int i = 0; i < INITIAL_BUTTONS; i++) {
+		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
 			buttons[i] = new Button(toolbar, SWT.PUSH);
 			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			buttons[i].setLayoutData(data);
@@ -212,7 +185,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			public void widgetSelected(final SelectionEvent e) {
 				Menu old = menu.getMenu();
 				menu.setMenu(null);
-				if (old != null) {
+				if ( old != null ) {
 					old.dispose();
 				}
 				Menu dropMenu = createExperimentsSubMenu(menu);
@@ -232,7 +205,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				if (state != null) {
+				if ( state != null ) {
 					((GamlResource) state).setListener(GamlEditor.this);
 				}
 
@@ -247,23 +220,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			MenuItem mi = (MenuItem) e.widget;
 			final URI uri = (URI) mi.getData("uri");
 			String exp = (String) mi.getData("exp");
-			if (uri != null && exp != null) {
-				IModel model = getDocument().readOnly(
-						new IUnitOfWork<IModel, XtextResource>() {
+			if ( uri != null && exp != null ) {
+				IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
-							@Override
-							public IModel exec(final XtextResource state)
-									throws Exception {
-								ResourceSet rs = state.getResourceSet();
-								GamlResource resource = (GamlResource) rs
-										.getResource(uri, true);
-								return validator.build(resource);
-							}
+					@Override
+					public IModel exec(final XtextResource state) throws Exception {
+						ResourceSet rs = state.getResourceSet();
+						GamlResource resource = (GamlResource) rs.getResource(uri, true);
+						return validator.build(resource);
+					}
 
-						});
-				if (model == null) {
-					return;
-				}
+				});
+				if ( model == null ) { return; }
 				GuiUtils.openSimulationPerspective();
 				GAMA.controller.newExperiment(exp, model);
 			}
@@ -273,22 +241,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	public Menu createExperimentsSubMenu(final Button button) {
 		Menu parent = new Menu(button);
 		Map<URI, List<String>> map = grabProjectModelsAndExperiments();
-		if (map.isEmpty()) {
+		if ( map.isEmpty() ) {
 			MenuItem nothing = new MenuItem(parent, SWT.PUSH);
 			nothing.setText("No experiments defined");
 			nothing.setEnabled(false);
 			return parent;
 		}
-		for (URI uri : map.keySet()) {
+		for ( URI uri : map.keySet() ) {
 			MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
 
 			modelItem.setText("Model " + URI.decode(uri.lastSegment()));
-			modelItem.setImage(GamaIcons
-					.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
+			modelItem.setImage(GamaIcons.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
 			Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);
 			List<String> expNames = map.get(uri);
-			for (String name : expNames) {
+			for ( String name : expNames ) {
 				MenuItem expItem = new MenuItem(expMenu, SWT.PUSH);
 				expItem.setText(name);
 				expItem.setData("uri", uri);
@@ -310,23 +277,20 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			@Override
 			public void process(final XtextResource resource) throws Exception {
-				String platformString = resource.getURI()
-						.toPlatformString(true);
-				IFile myFile = ResourcesPlugin.getWorkspace().getRoot()
-						.getFile(new Path(platformString));
+				String platformString = resource.getURI().toPlatformString(true);
+				IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 				IProject proj = myFile.getProject();
-				List<URI> resources = getAllGamaFilesInProject(proj,
-						resource.getURI());
+				List<URI> resources = getAllGamaFilesInProject(proj, resource.getURI());
 				ResourceSet rs = resourceSetProvider.get(proj);
-				for (URI uri : resources) {
+				for ( URI uri : resources ) {
 					// GuiUtils.debug("GamlEditor.fillCombo().new Void() {...}.process : "
 					// + uri);
 					GamlResource xr = (GamlResource) rs.getResource(uri, true);
-					if (xr.getErrors().isEmpty()) {
+					if ( xr.getErrors().isEmpty() ) {
 						ISyntacticElement el = xr.getSyntacticContents();
-						for (ISyntacticElement ch : el.getChildren()) {
-							if (ch.isExperiment()) {
-								if (!map.containsKey(uri)) {
+						for ( ISyntacticElement ch : el.getChildren() ) {
+							if ( ch.isExperiment() ) {
+								if ( !map.containsKey(uri) ) {
 									map.put(uri, new ArrayList());
 								}
 								map.get(uri).add(ch.getName());
@@ -343,7 +307,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	private void gotoEditor(final GamaRuntimeException exception) {
 
 		final EObject o = exception.getEditorContext();
-		if (o != null) {
+		if ( o != null ) {
 			GuiUtils.asyncRun(new Runnable() {
 
 				@Override
@@ -355,39 +319,34 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	}
 
-	public static ArrayList<URI> getAllGamaFilesInProject(
-			final IProject project, final URI without) {
+	public static ArrayList<URI> getAllGamaFilesInProject(final IProject project, final URI without) {
 		ArrayList<URI> allGamaFiles = new ArrayList();
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace()
-				.getRoot();
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IPath path = project.getLocation();
 		recursiveFindGamaFiles(allGamaFiles, path, myWorkspaceRoot, without);
 		return allGamaFiles;
 	}
 
-	private static void recursiveFindGamaFiles(
-			final ArrayList<URI> allGamaFiles, final IPath path,
-			final IWorkspaceRoot myWorkspaceRoot, final URI without) {
+	private static void recursiveFindGamaFiles(final ArrayList<URI> allGamaFiles, final IPath path,
+		final IWorkspaceRoot myWorkspaceRoot, final URI without) {
 		IContainer container = myWorkspaceRoot.getContainerForLocation(path);
 
 		try {
 			IResource[] iResources;
 			iResources = container.members();
-			for (IResource iR : iResources) {
+			for ( IResource iR : iResources ) {
 				// for gama files
-				if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
-					URI uri = URI.createPlatformResourceURI(iR.getFullPath()
-							.toString(), true);
+				if ( "gaml".equalsIgnoreCase(iR.getFileExtension()) ) {
+					URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
 					// GuiUtils.debug("GamlEditor.recursiveFindGamaFiles uri:" +
 					// uri + " equals " + without);
-					if (!uri.equals(without)) {
+					if ( !uri.equals(without) ) {
 						allGamaFiles.add(uri);
 					}
 				}
-				if (iR.getType() == IResource.FOLDER) {
+				if ( iR.getType() == IResource.FOLDER ) {
 					IPath tempPath = iR.getLocation();
-					recursiveFindGamaFiles(allGamaFiles, tempPath,
-							myWorkspaceRoot, without);
+					recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
 				}
 			}
 		} catch (CoreException e) {
@@ -402,32 +361,24 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			GamlEditor.this.performSave(true, null);
 			String name = ((Button) evt.widget).getText();
 			int i = abbreviations.indexOf(name);
-			if (i == -1) {
-				return;
-			}
+			if ( i == -1 ) { return; }
 			name = completeNamesOfExperiments.get(i);
 			IModel model = null;
 			try {
-				model = getDocument().readOnly(
-						new IUnitOfWork<IModel, XtextResource>() {
+				model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
-							@Override
-							public IModel exec(final XtextResource state)
-									throws Exception {
-								return validator.build((GamlResource) state);
-							}
+					@Override
+					public IModel exec(final XtextResource state) throws Exception {
+						return validator.build((GamlResource) state);
+					}
 
-						});
+				});
 			} catch (GamaRuntimeException e) {
 				gotoEditor(e);
-				GuiUtils.error("Experiment "
-						+ name
-						+ " cannot be instantiated because of the following error: "
-						+ e.getMessage());
+				GuiUtils.error("Experiment " + name + " cannot be instantiated because of the following error: " +
+					e.getMessage());
 			}
-			if (model == null) {
-				return;
-			}
+			if ( model == null ) { return; }
 
 			GAMA.controller.newExperiment(name, model);
 		}
@@ -435,9 +386,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	};
 
 	private void enableButton(final int index, final String text) {
-		if (text == null) {
-			return;
-		}
+		if ( text == null ) { return; }
 		((GridData) buttons[index].getLayoutData()).exclude = false;
 		buttons[index].setVisible(true);
 		buttons[index].setText(text);
@@ -450,8 +399,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	}
 
 	private void setStatus(final String text, final boolean ok) {
-		Color c = ok ? abbreviations.size() == 0 ? SwtGui.getWarningColor()
-				: SwtGui.getOkColor() : SwtGui.getErrorColor();
+		Color c =
+			ok ? abbreviations.size() == 0 ? SwtGui.getWarningColor() : SwtGui.getOkColor() : SwtGui.getErrorColor();
 		indicator.setBackground(c);
 		status.setText(text);
 	}
@@ -462,32 +411,25 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			@Override
 			public void run() {
-				if (toolbar == null || toolbar.isDisposed()) {
-					return;
-				}
-				for (Button b : buttons) {
-					if (b.isVisible()) {
+				if ( toolbar == null || toolbar.isDisposed() ) { return; }
+				for ( Button b : buttons ) {
+					if ( b.isVisible() ) {
 						hideButton(b);
 					}
 				}
-				if (ok) {
+				if ( ok ) {
 					int size = abbreviations.size();
-					if (size == 0) {
-						setStatus(
-								"Model is functional, but no experiments have been defined.",
-								ok);
+					if ( size == 0 ) {
+						setStatus("Model is functional, but no experiments have been defined.", ok);
 					} else {
-						setStatus(size == 1 ? "Run experiment:"
-								: "Choose an experiment:", ok);
+						setStatus(size == 1 ? "Run experiment:" : "Choose an experiment:", ok);
 					}
 					int i = 0;
-					for (String e : abbreviations) {
+					for ( String e : abbreviations ) {
 						enableButton(i++, e);
 					}
 				} else {
-					setStatus(
-							"Error(s) detected. Impossible to run any experiment",
-							ok);
+					setStatus("Error(s) detected. Impossible to run any experiment", ok);
 				}
 
 				toolbar.layout(true);
@@ -496,15 +438,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	}
 
-	private void updateExperiments(final Set<String> newExperiments,
-			final boolean withErrors) {
-		if (withErrors == true && wasOK == false) {
-			return;
-		}
+	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
+		if ( withErrors == true && wasOK == false ) { return; }
 		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
-		if (inited && wasOK && !withErrors && oldNames.equals(newExperiments)) {
-			return;
-		}
+		if ( inited && wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
 		inited = true;
 		wasOK = !withErrors;
 		completeNamesOfExperiments = new ArrayList(newExperiments);
@@ -516,17 +453,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		// Very simple method used here
 		int size = completeNamesOfExperiments.size();
 		abbreviations.clear();
-		if (size > 6) {
+		if ( size > 6 ) {
 			// We remove "Experiment".
-			for (String s : completeNamesOfExperiments) {
+			for ( String s : completeNamesOfExperiments ) {
 				int i = s.indexOf(' ');
-				if (i != -1) {
+				if ( i != -1 ) {
 					abbreviations.add(s.substring(i));
 				}
 			}
-		} else if (size > 4) {
+		} else if ( size > 4 ) {
 			// We replace "Experiment" by "Exp."
-			for (String s : completeNamesOfExperiments) {
+			for ( String s : completeNamesOfExperiments ) {
 				abbreviations.add(s.replaceFirst("Experiment ", "Exp."));
 			}
 		} else {
@@ -539,17 +476,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	 * @see msi.gama.common.interfaces.IGamlBuilder.Listener#validationEnded(boolean)
 	 */
 	@Override
-	public void validationEnded(final Set<String> newExperiments,
-			final boolean withErrors) {
+	public void validationEnded(final Set<String> newExperiments, final boolean withErrors) {
 		updateExperiments(newExperiments, withErrors);
 	}
 
-	public static class GamaSourceViewerConfiguration extends
-			XtextSourceViewerConfiguration {
+	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
 
 		@Override
-		public ITextHover getTextHover(final ISourceViewer sourceViewer,
-				final String contentType) {
+		public ITextHover getTextHover(final ISourceViewer sourceViewer, final String contentType) {
 			return super.getTextHover(sourceViewer, contentType);
 		}
 
