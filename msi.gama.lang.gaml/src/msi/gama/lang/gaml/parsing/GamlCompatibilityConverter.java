@@ -34,8 +34,8 @@ public class GamlCompatibilityConverter {
 			return null;
 		}
 		Model m = (Model) root;
-//		if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
-//			" appears to be null. Please debug to understand the cause."); }
+		// if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
+		// " appears to be null. Please debug to understand the cause."); }
 		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m));
 		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
@@ -68,18 +68,7 @@ public class GamlCompatibilityConverter {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
 		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
-		/**
-		 * Some syntactic rewritings to remove ambiguities inherent to the grammar of GAML and
-		 * translate the new compact syntax into the legacy facet-based one
-		 * 
-		 * if ( stm instanceof S_Species ) {
-		 * elt.setCategory(ISyntacticElement.IS_SPECIES);
-		 * } else if ( keyword.equals(GLOBAL) ) {
-		 * elt.setCategory(ISyntacticElement.IS_GLOBAL);
-		 * } else if ( stm instanceof S_Experiment ) {
-		 * elt.setCategory(ISyntacticElement.IS_EXPERIMENT);
-		 * } else
-		 */
+
 		if ( keyword.equals(ENVIRONMENT) ) {
 			convertBlock(stm, upper, errors);
 		} else if ( stm instanceof S_Assignment ) {
@@ -338,9 +327,15 @@ public class GamlCompatibilityConverter {
 			addFacet(elt, ITEM, value, errors);
 			keyword = REMOVE;
 		} else if ( keyword.equals(EQUATION_OP) ) {
-			// Translation of equations "diff(x, t) = ax + b" to
-			// "= left: diff(x, t) right: ax+b"
-			addFacet(elt, EQUATION_LEFT, convExpr(expr, errors), errors);
+			// conversion of left member (either a var or a function)
+			IExpressionDescription left = null;
+			if ( expr instanceof VariableRef ) {
+				left = new OperatorExpressionDescription(ZERO, convExpr(expr, errors));
+			} else {
+				left = convExpr(expr, errors);
+			}
+			addFacet(elt, EQUATION_LEFT, left, errors);
+			// Translation of right member
 			addFacet(elt, EQUATION_RIGHT, value, errors);
 		}
 		return keyword;

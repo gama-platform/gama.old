@@ -2137,20 +2137,38 @@ ruleS_Equation returns [EObject current=null]
     @after { leaveRule(); }:
 ((
 (
+(
 		{ 
-	        newCompositeNode(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0()); 
+	        newCompositeNode(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0_0()); 
 	    }
-		lv_expr_0_0=ruleFunction		{
+		lv_expr_0_1=ruleFunction		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_EquationRule());
 	        }
        		set(
        			$current, 
        			"expr",
-        		lv_expr_0_0, 
+        		lv_expr_0_1, 
         		"Function");
 	        afterParserOrEnumRuleCall();
 	    }
+
+    |		{ 
+	        newCompositeNode(grammarAccess.getS_EquationAccess().getExprVariableRefParserRuleCall_0_0_1()); 
+	    }
+		lv_expr_0_2=ruleVariableRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getS_EquationRule());
+	        }
+       		set(
+       			$current, 
+       			"expr",
+        		lv_expr_0_2, 
+        		"VariableRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
 
 )
 )(

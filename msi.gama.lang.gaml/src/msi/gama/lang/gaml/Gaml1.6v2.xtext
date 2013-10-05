@@ -73,7 +73,7 @@ S_Equations:
 	key=_EquationsKey name=Valid_ID (facets+=Facet)* ('{' (equations+=S_Equation ';')* '}' | ';');
 
 S_Equation returns S_Assignment:
-	expr=Function key="=" value=Expression;
+	expr=(Function|VariableRef) key="=" value=Expression;
 
 S_Solve:
 	key=_SolveKey (firstFacet="equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');

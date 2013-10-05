@@ -1146,24 +1146,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "S_Equation");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cExprAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cExprFunctionParserRuleCall_0_0 = (RuleCall)cExprAssignment_0.eContents().get(0);
+		private final Alternatives cExprAlternatives_0_0 = (Alternatives)cExprAssignment_0.eContents().get(0);
+		private final RuleCall cExprFunctionParserRuleCall_0_0_0 = (RuleCall)cExprAlternatives_0_0.eContents().get(0);
+		private final RuleCall cExprVariableRefParserRuleCall_0_0_1 = (RuleCall)cExprAlternatives_0_0.eContents().get(1);
 		private final Assignment cKeyAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final Keyword cKeyEqualsSignKeyword_1_0 = (Keyword)cKeyAssignment_1.eContents().get(0);
 		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cValueExpressionParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//S_Equation returns S_Assignment:
-		//	expr=Function key="=" value=Expression;
+		//	expr=(Function | VariableRef) key="=" value=Expression;
 		public ParserRule getRule() { return rule; }
 
-		//expr=Function key="=" value=Expression
+		//expr=(Function | VariableRef) key="=" value=Expression
 		public Group getGroup() { return cGroup; }
 
-		//expr=Function
+		//expr=(Function | VariableRef)
 		public Assignment getExprAssignment_0() { return cExprAssignment_0; }
 
+		//Function | VariableRef
+		public Alternatives getExprAlternatives_0_0() { return cExprAlternatives_0_0; }
+
 		//Function
-		public RuleCall getExprFunctionParserRuleCall_0_0() { return cExprFunctionParserRuleCall_0_0; }
+		public RuleCall getExprFunctionParserRuleCall_0_0_0() { return cExprFunctionParserRuleCall_0_0_0; }
+
+		//VariableRef
+		public RuleCall getExprVariableRefParserRuleCall_0_0_1() { return cExprVariableRefParserRuleCall_0_0_1; }
 
 		//key="="
 		public Assignment getKeyAssignment_1() { return cKeyAssignment_1; }
@@ -4442,7 +4450,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//S_Equation returns S_Assignment:
-	//	expr=Function key="=" value=Expression;
+	//	expr=(Function | VariableRef) key="=" value=Expression;
 	public S_EquationElements getS_EquationAccess() {
 		return (pS_Equation != null) ? pS_Equation : (pS_Equation = new S_EquationElements());
 	}

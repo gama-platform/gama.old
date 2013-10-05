@@ -1561,7 +1561,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (expr=Function key='=' value=Expression)
+	 *     ((expr=Function | expr=VariableRef) key='=' value=Expression)
 	 */
 	protected void sequence_S_Equation(EObject context, S_Assignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
