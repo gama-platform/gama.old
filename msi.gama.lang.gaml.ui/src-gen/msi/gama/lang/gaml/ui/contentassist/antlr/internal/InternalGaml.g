@@ -3078,6 +3078,28 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__S_Equation__ExprAlternatives_0_0
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0_0()); }
+	ruleFunction
+{ after(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0_0()); }
+)
+
+    |(
+{ before(grammarAccess.getS_EquationAccess().getExprVariableRefParserRuleCall_0_0_1()); }
+	ruleVariableRef
+{ after(grammarAccess.getS_EquationAccess().getExprVariableRefParserRuleCall_0_0_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__S_Solve__Alternatives_4
     @init {
 		int stackSize = keepStackSize();
@@ -15967,8 +15989,9 @@ rule__S_Equation__ExprAssignment_0
     }
 :
 (
-{ before(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0()); }
-	ruleFunction{ after(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0()); }
+{ before(grammarAccess.getS_EquationAccess().getExprAlternatives_0_0()); }
+(rule__S_Equation__ExprAlternatives_0_0)
+{ after(grammarAccess.getS_EquationAccess().getExprAlternatives_0_0()); }
 )
 
 ;
