@@ -223,12 +223,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( fps != null ) {
 			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
 		}
-		
+
 		final IExpression agg = getFacet(IKeyword.AGGREGATED);
 		if ( agg != null ) {
 			setAggregated(Cast.asBool(getScope(), agg.value(getScope())));
 		}
-
 
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
@@ -532,7 +531,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setShowFPS(final boolean fps) {
 		this.showfps = fps;
 	}
-	
+
 	public boolean getAggregated() {
 		return aggregated;
 	}
