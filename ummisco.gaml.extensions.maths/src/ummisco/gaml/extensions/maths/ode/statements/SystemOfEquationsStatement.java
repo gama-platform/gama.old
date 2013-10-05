@@ -1,9 +1,6 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -13,47 +10,32 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.AbstractNAryOperator;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IVarExpression;
-import msi.gaml.expressions.MapExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
-
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIEquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIREquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIRSEquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSISEquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.*;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics.ClassicalLVEquations;
 
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false),
-		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, 
-			values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" }, 
-			doc = @doc(value = "classical models (epidemiology or population dynamic)")),
-		@facet(name = IKeyword.VARS, type = IType.LIST, optional = true), 		
-		@facet(name = IKeyword.PARAMS, type = IType.LIST, optional = true), 		
-		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, 
-		combinations = { 
-			@combination({ IKeyword.NAME }),
-			@combination({ IKeyword.NAME, IKeyword.TYPE, IKeyword.VARS, IKeyword.PARAMS }), 
-			@combination({ IKeyword.NAME, IKeyword.SIMULTANEOUSLY })},
-		omissible = IKeyword.NAME)
+	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false),
+	@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SI", "SIS", "SIR", "SIRS",
+		"SEIR", "LV" }, doc = @doc(value = "classical models (epidemiology or population dynamic)")),
+	@facet(name = IKeyword.VARS, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.PARAMS, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, combinations = {
+	@combination({ IKeyword.NAME }), @combination({ IKeyword.NAME, IKeyword.TYPE, IKeyword.VARS, IKeyword.PARAMS }),
+	@combination({ IKeyword.NAME, IKeyword.SIMULTANEOUSLY }) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 /**
  * The class SystemOfEquationsStatement. 
@@ -64,8 +46,7 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
  * @since 26 janv. 2013
  *
  */
-public class SystemOfEquationsStatement extends AbstractStatementSequence
-		implements FirstOrderDifferentialEquations {
+public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();
 	public final IList<IExpression> variables_diff = new GamaList<IExpression>();
@@ -93,47 +74,53 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 */
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-//		System.out.println("soes " + commands);
-		List<? extends ISymbol> cmd=commands;
-		if (getFacet(IKeyword.TYPE)!=null){ 
-			if(getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
+		List<? extends ISymbol> cmd = commands;
+		if ( getFacet(IKeyword.TYPE) != null ) {
+			if ( getFacet(IKeyword.TYPE).literalValue().equals("SIR") ) {
 				cmd.clear();
-				cmd=new ClassicalSIREquations(getDescription()).SIR(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
-			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SI")) {
+				cmd =
+					new ClassicalSIREquations(getDescription()).SIR(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
+			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SI") ) {
 				cmd.clear();
-				cmd=new ClassicalSIEquations(getDescription()).SI(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
-			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIS")) {
+				cmd = new ClassicalSIEquations(getDescription()).SI(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
+			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SIS") ) {
 				cmd.clear();
-				cmd=new ClassicalSISEquations(getDescription()).SIS(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
-			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIRS")) {
+				cmd =
+					new ClassicalSISEquations(getDescription()).SIS(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
+			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SIRS") ) {
 				cmd.clear();
-				cmd=new ClassicalSIRSEquations(getDescription()).SIRS(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
-			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SEIR")) {
+				cmd =
+					new ClassicalSIRSEquations(getDescription()).SIRS(getFacet(IKeyword.VARS),
+						getFacet(IKeyword.PARAMS));
+			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("SEIR") ) {
 				cmd.clear();
-				cmd=new ClassicalSEIREquations(getDescription()).SEIR(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
-			} else if(getFacet(IKeyword.TYPE).literalValue().equals("LV")) {
+				cmd =
+					new ClassicalSEIREquations(getDescription()).SEIR(getFacet(IKeyword.VARS),
+						getFacet(IKeyword.PARAMS));
+			} else if ( getFacet(IKeyword.TYPE).literalValue().equals("LV") ) {
 				cmd.clear();
-				cmd=new ClassicalLVEquations(getDescription()).LV(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
+				cmd = new ClassicalLVEquations(getDescription()).LV(getFacet(IKeyword.VARS), getFacet(IKeyword.PARAMS));
 			} else {
-				GamaRuntimeException.error( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not a recognized classical equation");
+				GamaRuntimeException.error(getFacet(IKeyword.TYPE).literalValue().equals("SI") +
+					" is not a recognized classical equation");
 			}
 		}
-		
-		
+
 		final List<ISymbol> others = new ArrayList<ISymbol>();
-		for (final ISymbol s : cmd) {
-			if (s instanceof SingleEquationStatement) {
+		for ( final ISymbol s : cmd ) {
+			if ( s instanceof SingleEquationStatement ) {
 				equations.add((SingleEquationStatement) s);
-				for (int i = 0; i < ((SingleEquationStatement) s).getVars()
-						.size(); i++) {
+				for ( int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++ ) {
 					IExpression v = ((SingleEquationStatement) s).getVar(i);
 
-					if (((SingleEquationStatement) s).getOrder() > 0) {
-						if (!variables_diff.contains(v))
+					if ( ((SingleEquationStatement) s).getOrder() > 0 ) {
+						if ( !variables_diff.contains(v) ) {
 							variables_diff.add(v);
+						}
 					} else {
-						if (!variables_nondiff.contains(v))
+						if ( !variables_nondiff.contains(v) ) {
 							variables_nondiff.add(v);
+						}
 					}
 				}
 
@@ -145,67 +132,58 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		super.setChildren(others);
 	}
 
-	
 	@Override
-	public Object privateExecuteIn(final IScope scope)
-			throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
 		equaAgents.clear();
-		for (int i = 0; i < equations.size(); i++) {
+		for ( int i = 0; i < equations.size(); i++ ) {
 			equaAgents.add(scope.getAgentScope());
 		}
-		if (simultan != null) {
+		if ( simultan != null ) {
 			equations_ext.clear();
 			final Object t = simultan.value(scope);
-			if (t != null) {
-				if (t instanceof GamaList) {
+			if ( t != null ) {
+				if ( t instanceof GamaList ) {
 					final GamaList lst = ((GamaList) t).listValue(scope);
-					for (int i = 0; i < lst.size(); i++) {
+					for ( int i = 0; i < lst.size(); i++ ) {
 						final Object o = lst.get(i);
 
-						if (o instanceof IAgent) {
+						if ( o instanceof IAgent ) {
 							final IAgent remoteAgent = (IAgent) o;
-							if (!remoteAgent.dead()
-									&& !equations_ext.contains(remoteAgent)) {
+							if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
 								equations_ext.add(remoteAgent);
 							}
-						} else if (o instanceof GamlSpecies) {
-							final Iterator<IAgent> ia = ((GamlSpecies) o)
-									.iterator();
+						} else if ( o instanceof GamlSpecies ) {
+							final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
 							while (ia.hasNext()) {
 								final IAgent remoteAgent = ia.next();
-								if (!remoteAgent.dead()
-										&& !equations_ext.contains(remoteAgent)) {
+								if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
 									equations_ext.add(remoteAgent);
 								}
 							}
 						}
 					}
 
-
 				} else {
-					if (!equations_ext.contains(t)) {
+					if ( !equations_ext.contains(t) ) {
 						equations_ext.add((IAgent) t);
 					}
 				}
 			}
 		}
 
-
 		return super.privateExecuteIn(scope);
 	}
 
-	private void addEquationsExtern(final IAgent remoteAgent,
-			final String eqName) {
-		final SystemOfEquationsStatement ses = remoteAgent
-				.getSpecies().getStatement(SystemOfEquationsStatement.class,
-						eqName);
-		if (ses != null) {
+	private void addEquationsExtern(final IAgent remoteAgent, final String eqName) {
+		final SystemOfEquationsStatement ses =
+			remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class, eqName);
+		if ( ses != null ) {
 			// final int n = equaAgents.size();
 
-			for (int i = 0; i < ses.equations.size(); i++) {
+			for ( int i = 0; i < ses.equations.size(); i++ ) {
 				equaAgents.add(remoteAgent);
 			}
 
@@ -217,12 +195,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 	}
 
-	private void removeEquationsExtern(final IAgent remoteAgent,
-			final String eqName) {
-		final SystemOfEquationsStatement ses = remoteAgent
-				.getSpecies().getStatement(SystemOfEquationsStatement.class,
-						eqName);
-		if (ses != null) {
+	private void removeEquationsExtern(final IAgent remoteAgent, final String eqName) {
+		final SystemOfEquationsStatement ses =
+			remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class, eqName);
+		if ( ses != null ) {
 
 			equations.removeAll(ses.equations);
 
@@ -232,14 +208,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	}
 
 	public void addExtern(final String eqName) {
-		if (equations_ext.size() > 0) {
+		if ( equations_ext.size() > 0 ) {
 
-			for (int i = 0, n = equations_ext.size(); i < n; i++) {
+			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
 				final IAgent remoteAgent = equations_ext.get(i);
-				if (!remoteAgent.dead()) {
+				if ( !remoteAgent.dead() ) {
 					addEquationsExtern(remoteAgent, eqName);
 				}
-				
+
 			}
 
 		}
@@ -247,19 +223,19 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	}
 
 	public void removeExtern(final String eqName) {
-		if (equations_ext.size() > 0) {
-			for (int i = 0, n = equations_ext.size(); i < n; i++) {
+		if ( equations_ext.size() > 0 ) {
+			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
 				final Object o = equations_ext.get(i);
-				if (o instanceof IAgent) {
+				if ( o instanceof IAgent ) {
 					final IAgent remoteAgent = (IAgent) o;
-					if (!remoteAgent.dead()) {
+					if ( !remoteAgent.dead() ) {
 						removeEquationsExtern(remoteAgent, eqName);
 					}
-				} else if (o instanceof GamlSpecies) {
+				} else if ( o instanceof GamlSpecies ) {
 					final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
 					while (ia.hasNext()) {
 						final IAgent remoteAgent = ia.next();
-						if (!remoteAgent.dead()) {
+						if ( !remoteAgent.dead() ) {
 							removeEquationsExtern(remoteAgent, eqName);
 						}
 					}
@@ -273,63 +249,54 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 * This method is bound to be called by the integrator of the equations
 	 * system (instantiated in SolveStatement).
 	 * 
-	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
-	 *      double[], double[])
+	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double, double[], double[])
 	 */
 
 	public void assignValue(final double time, final double[] y) {
 		// TODO Should be rewritten in a more correct way (by calling
 		// scope.setAgentVarValue(...)
-		for (int i = 0, n = equations.size(); i < n; i++) {
+		for ( int i = 0, n = equations.size(); i < n; i++ ) {
 			final SingleEquationStatement s = equations.get(i);
-			if (s.getOrder() == 0) {
+			if ( s.getOrder() == 0 ) {
 				continue;
 			}
 
 			final IAgent remoteAgent = equaAgents.get(i);
 			boolean pushed = false;
-			if (!remoteAgent.dead()) {
+			if ( !remoteAgent.dead() ) {
 				pushed = currentScope.push(remoteAgent);
 				try {
-					if (s.getVar_t() instanceof IVarExpression) {
-						((IVarExpression) s.getVar_t()).setVal(currentScope,
-								time, false);
+					if ( s.getVar_t() instanceof IVarExpression ) {
+						((IVarExpression) s.getVar_t()).setVal(currentScope, time, false);
 					}
-					if (variables_diff.get(i) instanceof IVarExpression) {
-						((IVarExpression) variables_diff.get(i)).setVal(
-								currentScope, y[i], false);
-					} else if (variables_diff.get(i) instanceof MapExpression) {
-						System.out.println(((MapExpression) variables_diff
-								.get(i))
-								.valuesArray());
+					if ( variables_diff.get(i) instanceof IVarExpression ) {
+						((IVarExpression) variables_diff.get(i)).setVal(currentScope, y[i], false);
+					} else if ( variables_diff.get(i) instanceof MapExpression ) {
+						System.out.println(((MapExpression) variables_diff.get(i)).valuesArray());
 
 					}
 				} catch (final Exception ex1) {
-					GuiUtils.debug(ex1.getMessage());
+					GuiUtils.debug(ex1);
 				} finally {
-					if (pushed) {
+					if ( pushed ) {
 						currentScope.pop(remoteAgent);
 					}
 				}
 			}
-			
+
 		}
 
-		for (int i = 0, n = equations.size(); i < n; i++) {
+		for ( int i = 0, n = equations.size(); i < n; i++ ) {
 			final SingleEquationStatement s = equations.get(i);
-			if (s.getOrder() == 0) {
-				for (int j = 0; j < ((AbstractNAryOperator) s.getFunction())
-						.numArg(); j++) {
-					IExpression tmp = ((AbstractNAryOperator) s.getFunction())
-							.arg(j);
+			if ( s.getOrder() == 0 ) {
+				for ( int j = 0; j < ((AbstractNAryOperator) s.getFunction()).numArg(); j++ ) {
+					IExpression tmp = ((AbstractNAryOperator) s.getFunction()).arg(j);
 					Object v = s.getExpression().value(currentScope);
-					if (tmp instanceof IVarExpression) {
+					if ( tmp instanceof IVarExpression ) {
 						((IVarExpression) tmp).setVal(currentScope, v, false);
-					} else if (tmp instanceof MapExpression) {
-						for (IExpression ee : ((MapExpression) tmp)
-								.getElements().values()) {
-							((IVarExpression) ee)
-									.setVal(currentScope, v, false);
+					} else if ( tmp instanceof MapExpression ) {
+						for ( IExpression ee : ((MapExpression) tmp).getElements().values() ) {
+							((IVarExpression) ee).setVal(currentScope, v, false);
 						}
 					}
 
@@ -342,9 +309,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	}
 
 	@Override
-	public void computeDerivatives(final double time, final double[] y,
-			final double[] ydot) throws MaxCountExceededException,
-			DimensionMismatchException {
+	public void computeDerivatives(final double time, final double[] y, final double[] ydot)
+		throws MaxCountExceededException, DimensionMismatchException {
 		/*
 		 * the y value is calculed automatically inside integrator's algorithm
 		 * just get y, and assign value to Variables in GAMA, which is use by
@@ -361,20 +327,19 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 		// TODO Should be rewritten in a more correct way : scope.execute(s,
 		// agent)...
-		for (int i = 0, n = getDimension(); i < n; i++) {
+		for ( int i = 0, n = getDimension(); i < n; i++ ) {
 
 			boolean pushed = false;
-			if (equaAgents.size() > 0) {
+			if ( equaAgents.size() > 0 ) {
 				pushed = currentScope.push(equaAgents.get(i));
 			}
 			try {
-				ydot[i] = Cast.asFloat(currentScope, equations.get(i)
-						.executeOn(currentScope));
+				ydot[i] = Cast.asFloat(currentScope, equations.get(i).executeOn(currentScope));
 			} catch (final Exception ex1) {
-				ex1.printStackTrace();
+				GuiUtils.debug(ex1);
 			} finally {
-				if (equaAgents.size() > 0) {
-					if (pushed) {
+				if ( equaAgents.size() > 0 ) {
+					if ( pushed ) {
 						currentScope.pop(equaAgents.get(i));
 					}
 				}
@@ -392,8 +357,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	@Override
 	public int getDimension() {
 		int count = 0;
-		for (int i = 0; i < equations.size(); i++) {
-			if (equations.get(i).getOrder() > 0) {
+		for ( int i = 0; i < equations.size(); i++ ) {
+			if ( equations.get(i).getOrder() > 0 ) {
 				count++;
 			}
 		}

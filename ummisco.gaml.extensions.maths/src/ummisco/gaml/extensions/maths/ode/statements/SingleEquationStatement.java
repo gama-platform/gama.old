@@ -1,31 +1,28 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import static msi.gama.common.interfaces.IKeyword.*;
+import java.util.*;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.expressions.AbstractNAryOperator;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IVarExpression;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
-@facets(value = {
-		@facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE, optional = false),
-		@facet(name = IKeyword.EQUATION_RIGHT, type = IType.FLOAT, optional = false) }, omissible = IKeyword.EQUATION_RIGHT)
-@symbol(name = { IKeyword.EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(symbols = IKeyword.EQUATION)
+@facets(value = { @facet(name = EQUATION_LEFT, type = IType.NONE, optional = false),
+	@facet(name = EQUATION_RIGHT, type = IType.FLOAT, optional = false) }, omissible = EQUATION_RIGHT)
+@symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@inside(symbols = EQUATION)
 /**
  * 
  * The class SingleEquationStatement. 
@@ -39,10 +36,17 @@ import msi.gaml.types.Types;
  *
  */
 public class SingleEquationStatement extends AbstractStatement {
+
 	public static final Class VALIDATOR = SingleEquationValidator.class;
 
-	public static class SingleEquationValidator implements
-			IDescriptionValidator {
+	public static final Map<String, Integer> orderNames = new LinkedHashMap();
+	static {
+		orderNames.put(ZERO, 0);
+		orderNames.put(DIFF, 1);
+		orderNames.put(DIF2, 2);
+	}
+
+	public static class SingleEquationValidator implements IDescriptionValidator {
 
 		/**
 		 * Method validate()
@@ -51,20 +55,17 @@ public class SingleEquationStatement extends AbstractStatement {
 		 */
 		@Override
 		public void validate(final IDescription d) {
-			IExpressionDescription func = d.getFacets().get(
-					IKeyword.EQUATION_LEFT);
-			if (!(func.getExpression() instanceof AbstractNAryOperator)) {
-				d.error("Left-side of equation must be a NAryOperator",
-						d.getName());
-				return;
+			GuiUtils.debug("SingleEquationStatement.SingleEquationValidator.validate " +
+				d.getFacets().get(EQUATION_LEFT));
+			IExpressionDescription fDesc = d.getFacets().get(EQUATION_LEFT);
+			IExpression func = fDesc.getExpression();
+			String n = func.getName();
+			boolean isFunction = func instanceof IOperator && orderNames.containsKey(n);
+			if ( !isFunction ) {
+				d.error(
+					"The left-hand member of an equation should be a variable or a call to the diff() or diff2() operators",
+					IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
 			}
-
-			if (!func.getExpression().getType().equals(Types.get(IType.FLOAT))) {
-				d.warning("Parameters of equation must be a float type",
-						d.getName());
-				return;
-			}
-
 
 		}
 	}
@@ -79,7 +80,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		return function;
 	}
 
-	public void setFunction(IExpression function) {
+	public void setFunction(final IExpression function) {
 		this.function = function;
 	}
 
@@ -87,7 +88,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		return expression;
 	}
 
-	public void setExpression(IExpression expression) {
+	public void setExpression(final IExpression expression) {
 		this.expression = expression;
 	}
 
@@ -99,7 +100,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		return var.get(index);
 	}
 
-	public void setVar(final int index, IVarExpression v) {
+	public void setVar(final int index, final IVarExpression v) {
 		this.var.set(index, v);
 	}
 
@@ -107,30 +108,30 @@ public class SingleEquationStatement extends AbstractStatement {
 		return var_t;
 	}
 
-	public void setVar_t(IVarExpression vt) {
+	public void setVar_t(final IVarExpression vt) {
 		this.var_t = vt;
 	}
 
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
-		function = getFacet(IKeyword.EQUATION_LEFT);
-		if (function != null && getOrder() > 0) {
+		function = getFacet(EQUATION_LEFT);
+		if ( getOrder() > 0 ) {
 			etablishVar();
 		}
-		expression = getFacet(IKeyword.EQUATION_RIGHT);
+		expression = getFacet(EQUATION_RIGHT);
 	}
 
 	public void etablishVar() {
-		for (int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++) {
+		for ( int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++ ) {
 			IExpression tmp = ((AbstractNAryOperator) function).arg(i);
-			if (tmp.getName().equals("t")) {
+			if ( tmp.getName().equals("t") ) {
 				var_t = tmp;
 			} else {
 				var.add(i, tmp);
 			}
 		}
-		// var_t = ((AbstractNAryOperator) function).arg(1);
 	}
+
 	/**
 	 * This method is normally called by the system of equations to which this
 	 * equation belongs. It simply computes the expression that represents the
@@ -142,8 +143,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
 	 */
 	@Override
-	protected Double privateExecuteIn(final IScope scope)
-			throws GamaRuntimeException {
+	protected Double privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
 
 		return result;
@@ -155,13 +155,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	public int getOrder() {
-		if (function.getName().equals("diff")) {
-			return 1;
-		}
-		if (function.getName().equals("diff2")) {
-			return 2;
-		}
-		return 0;
+		return orderNames.get(function.getName());
 	}
 
 	// Placeholders operators that are (normally) never called.
@@ -172,15 +166,26 @@ public class SingleEquationStatement extends AbstractStatement {
 	// the var or var_t,
 	// whenever they are called.
 
-	@operator("diff")
-	public static Double diff(final IScope scope, final Double var,
-			final Double time) {
+	@operator(DIFF)
+	public static Double diff(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
 
-	@operator("diff2")
-	public static Double diff2(final IScope scope, final Double var,
-			final Double time) {
+	@operator(DIF2)
+	public static Double diff2(final IScope scope, final Double var, final Double time) {
+		return Double.NaN;
+	}
+
+	/**
+	 * Placeholder for zero-order equations. The expression on the right allows to pass the variable directly (maybe
+	 * useful one day).
+	 * @param scope
+	 * @param var
+	 * @param time
+	 * @return
+	 */
+	@operator(ZERO)
+	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
 	}
 
