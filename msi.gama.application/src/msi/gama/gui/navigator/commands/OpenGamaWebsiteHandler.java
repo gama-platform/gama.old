@@ -11,7 +11,7 @@ public class OpenGamaWebsiteHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openGamaWebPage();
+		ApplicationWorkbenchWindowAdvisor.openGamaWebPage(true);
 		return null;
 	}
 

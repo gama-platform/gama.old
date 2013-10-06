@@ -144,12 +144,12 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
-		openGamaWebPage();
+		openGamaWebPage(false);
 
 	}
 
-	public static void openGamaWebPage() {
-		if ( isInternetReachable() ) {
+	public static void openGamaWebPage(final boolean force) {
+		if ( isInternetReachable(force) ) {
 			try {
 				PlatformUI.getWorkbench().getBrowserSupport().createBrowser("GAMA Web Page")
 					.openURL(new URL("https://code.google.com/p/gama-platform/"));
@@ -161,8 +161,8 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		}
 	}
 
-	public static boolean isInternetReachable() {
-		if ( !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }
+	public static boolean isInternetReachable(final boolean force) {
+		if ( !force && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }
 		try {
 			URL url = new URL("https://code.google.com/p/gama-platform/");
 			// open a connection to that source
