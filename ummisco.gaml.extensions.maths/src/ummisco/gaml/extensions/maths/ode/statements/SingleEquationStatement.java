@@ -67,22 +67,17 @@ public class SingleEquationStatement extends AbstractStatement {
 					IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
 				return;
 			}
-			
-			if(n.equals("internal_zero_order_equation")) {
-				if (!(((UnaryOperator) func).arg(0).getType() instanceof GamaFloatType)
-						&& !(((UnaryOperator) func).arg(0).getType() instanceof GamaIntegerType)) {
-					d.error("The parameter of left-hand member of an equation is expected as float type or int type",
-							IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
-					return;
-				}
+
+			IType type = ((IOperator) func).arg(0).getType();
+			if ( !type.isTranslatableInto(Types.get(IType.FLOAT)) ) {
+				d.error("The variable of the left-hand member of an equation is expected to be of type float",
+					IGamlIssue.WRONG_TYPE, fDesc.getTarget());
+				return;
 			}
 
-
-			if (!(expr.getType() instanceof GamaFloatType)
-					&& !(expr.getType() instanceof GamaIntegerType)) {
-				d.error("The right-hand member of an equation is expected as float or int",
-						IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
-				return;
+			if ( !expr.getType().isTranslatableInto(Types.get(IType.FLOAT)) ) {
+				d.error("The right-hand member of an equation is expected to be of type float", IGamlIssue.WRONG_TYPE,
+					eDesc.getTarget());
 			}
 		}
 	}
