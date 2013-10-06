@@ -319,6 +319,8 @@ public class GamaPreferences {
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
+	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display GAMA website at startup",
+		true, IType.BOOL).in(GENERAL).group("Startup");
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
 		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
 
