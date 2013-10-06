@@ -375,6 +375,16 @@
                   tooltip="Open preferences">
             </command>
             <command
+                  commandId="msi.gama.application.command.web"
+                  icon="icons/view.www.png"
+                  label="GAMA Website"
+                  style="push">
+            </command>
+            <separator
+                  name="msi.gama.application.separator3"
+                  visible="true">
+            </separator>
+            <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
                   icon="icons/view.parameters.png"
                   style="push">
@@ -447,10 +457,6 @@
                   label="Reset Perspective..."
                   style="push">
             </command>
-            <separator
-                  name="msi.gama.application.separator3"
-                  visible="true">
-            </separator>
          </menu>
       </menuContribution>
       <menuContribution
@@ -1350,6 +1356,11 @@
             defaultHandler="msi.gama.gui.navigator.commands.UpdateBuiltInModelsHandler"
             id="msi.gama.application.commands.UpdateBuiltInModelsCommand"
             name="Update Built-In Models">
+      </command>
+      <command
+            defaultHandler="msi.gama.gui.navigator.commands.OpenGamaWebsiteHandler"
+            id="msi.gama.application.command.web"
+            name="Open GAMA web site">
       </command>
    </extension>
  <extension

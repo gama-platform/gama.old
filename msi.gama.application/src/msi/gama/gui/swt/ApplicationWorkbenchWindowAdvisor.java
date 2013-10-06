@@ -18,7 +18,10 @@
  */
 package msi.gama.gui.swt;
 
+import java.io.IOException;
+import java.net.*;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import org.eclipse.jface.action.*;
@@ -141,7 +144,41 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
+		openGamaWebPage();
 
+	}
+
+	public static void openGamaWebPage() {
+		if ( isInternetReachable() ) {
+			try {
+				PlatformUI.getWorkbench().getBrowserSupport().createBrowser("GAMA Web Page")
+					.openURL(new URL("https://code.google.com/p/gama-platform/"));
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static boolean isInternetReachable() {
+		if ( !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }
+		try {
+			URL url = new URL("https://code.google.com/p/gama-platform/");
+			// open a connection to that source
+			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+			// trying to retrieve data from the source. If there
+			// is no connection, this line will fail
+			urlConnect.setConnectTimeout(2000);
+			Object objData = urlConnect.getContent();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	private IWizardDescriptor[] getAllWizards(final IWizardCategory[] categories) {
