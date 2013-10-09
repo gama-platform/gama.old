@@ -1,6 +1,8 @@
 package simtools.gaml.extensions.traffic;
 
 import java.util.Iterator;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -259,25 +261,22 @@ public class DrivingSkill extends MovingSkill {
 			final IPopulation pop = agent.getPopulationFor(species);
 			result.addAll(new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine), tolerance, In.population(pop))));
 		}
-
 		for (IAgent ia: result) {
-			if (ia == agent) continue;
+			if (ia == agent || ia.intersects(currentLocation)) continue;
 			// if(fr2.intersects(ia.getLocation().getInnerGeometry())){
 			//final double distL = basicLine.distance(ia.getInnerGeometry());
-			double currentDistance = currentLocation.euclidianDistanceTo(ia);
-			//if (distL < currentDistance ) {
+			double currentDistance = ia.euclidianDistanceTo(currentLocation);
+			if (currentDistance > tolerance) {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
-				final Iterator<IAgent> ns =
-					scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, In.list(scope, result));
+				final List<IAgent> ns =
+					new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, In.list(scope, result)));
 				int nbAg = 1;
-				while (ns.hasNext()) {
-					final IAgent ag = ns.next();
+				for (IAgent ag : ns) {
 					if ( ag != agent ) {
 						nbAg++;
 					}
-				//}
-
+				}
 				if ( nbAg >= nbLanes && currentDistance < minDist ) {
 					minDist = Math.max(0, currentDistance);
 				}
