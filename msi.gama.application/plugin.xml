@@ -1296,11 +1296,6 @@
             name="Show Agent Inspector">
       </command>
       <command
-            defaultHandler="msi.gama.gui.navigator.commands.AskSvnGamaAccess"
-            id="msi.gama.application.commands.AskSvnGamaAccess"
-            name="Ask an access to Gama Svn">
-      </command>
-      <command
             defaultHandler="msi.gama.gui.navigator.commands.ImportProjectsFromSVNHandler"
             id="msi.gama.application.commands.ImportProjectFromSVN"
             name="Update Library">
