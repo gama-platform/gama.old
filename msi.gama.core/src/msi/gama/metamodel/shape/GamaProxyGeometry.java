@@ -239,7 +239,8 @@ public abstract class GamaProxyGeometry implements IShape {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		return g.euclidianDistanceTo(this);
+		if ( isPoint() && g.isPoint() ) { return g.getLocation().euclidianDistanceTo(getLocation()); }
+		return getInnerGeometry().distance(g.getInnerGeometry());
 	}
 
 	/**
@@ -248,8 +249,11 @@ public abstract class GamaProxyGeometry implements IShape {
 	 */
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		if ( g.isPoint() ) { return GamaShape.Operations.getDistance(getInnerGeometry(), (Coordinate) g); }
-		return g.euclidianDistanceTo(this);
+		if ( isPoint() ) { return g.euclidianDistanceTo(getLocation()); }
+		return getInnerGeometry().distance(g.getInnerGeometry());
+		// GamaShape.ppd.initialize();
+		// DistanceToPoint.computeDistance(getInnerGeometry(), (Coordinate) g, GamaShape.ppd);
+		// return GamaShape.ppd.getDistance();
 	}
 
 	/**

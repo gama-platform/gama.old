@@ -41,6 +41,7 @@ import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.operation.buffer.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
@@ -100,7 +101,7 @@ public abstract class Spatial {
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildSphere(radius, location);
 		}
-		
+
 		@operator("cone3D")
 		@doc(value = "A cone geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone(10,10) --: returns a geometry as a circle of radius 10 but displays a cone." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
@@ -111,7 +112,7 @@ public abstract class Spatial {
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildCone3D(radius, height, location);
 		}
-		
+
 		@operator("teapot")
 		@doc(value = "A teapot geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the teapot is by default the location of the current agent in which has been called this operator.", examples = { "teapot(10) --: returns a geometry as a circle of radius 10 but displays a teapot." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
@@ -213,7 +214,7 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
-		
+
 		@operator("pyramid")
 		@doc(value = "A square geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the pyramid is by default the location of the current agent in which has been called this operator.", examples = { "pyramid(5) --: returns a geometry as a sqaure with side_size = 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square" })
@@ -368,7 +369,11 @@ public abstract class Spatial {
 							GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e) {
 					// AD 12/04/13 : Addition of a third method in case of exception
-					geom = geom1.buffer(0.01).intersection(geom2.buffer(0.01));
+					geom =
+						geom1.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
+							.intersection(
+								geom2.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
+									BufferParameters.CAP_FLAT));
 				}
 			}
 			if ( geom == null || geom.isEmpty() ) { return null; }
@@ -397,7 +402,7 @@ public abstract class Spatial {
 							GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e1) {
 					// AD 12/04/13 : Addition of a third method in case of exception
-					geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
+					geom = geom1.buffer(0.01, 0, BufferOp.CAP_BUTT).union(geom2.buffer(0.01, 0, BufferOp.CAP_BUTT));
 				}
 
 			}
@@ -457,7 +462,7 @@ public abstract class Spatial {
 					return GeometryPrecisionReducer.reducePointwise(g1, pm).difference(
 						GeometryPrecisionReducer.reducePointwise(g2, pm));
 				} catch (final Exception e1) {
-					return g1.difference(g2.buffer(0.01));
+					return g1.difference(g2.buffer(0.01, 0, BufferOp.CAP_BUTT));
 				}
 			}
 		}
@@ -510,7 +515,9 @@ public abstract class Spatial {
 				final Envelope env = visiblePercept.getEnvelopeInternal();
 				final double percep_dist = Math.max(env.getHeight(), env.getWidth());
 				final Geometry locG =
-					GeometryUtils.factory.createPoint(location.toCoordinate()).buffer(0.01).getEnvelope();
+					GeometryUtils.factory.createPoint(location.toCoordinate())
+						.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
+						.getEnvelope();
 
 				final IList<Geometry> geoms = new GamaList<Geometry>();
 				Coordinate prec = new Coordinate(location.getX() + percep_dist, location.getY());
@@ -893,13 +900,16 @@ public abstract class Spatial {
 		@doc(value = "A geometry corresponding to the cleaning of the operand (geometry, agent, point)", comment = "The cleaning corresponds to a buffer with a distance of 0.0", examples = { "cleaning(self) --: returns the geometry resulting from the cleaning of the geometry of the agent applying the operator." })
 		public static IShape clean(final IShape g) {
 			if ( g == null || g.getInnerGeometry() == null ) { return g; }
-			if ( g.getInnerGeometry() instanceof Polygon ) { return new GamaShape(g.getInnerGeometry().buffer(0.0)); }
+			if ( g.getInnerGeometry() instanceof Polygon ) { return new GamaShape(g.getInnerGeometry().buffer(0.0,
+				BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)); }
 			if ( g.getInnerGeometry() instanceof MultiPolygon ) {
 				final MultiPolygon mp = (MultiPolygon) g.getInnerGeometry();
 				final int nb = mp.getNumGeometries();
 				final Polygon[] polys = new Polygon[nb];
 				for ( int i = 0; i < nb; i++ ) {
-					polys[i] = (Polygon) mp.getGeometryN(i).buffer(0.0);
+					polys[i] =
+						(Polygon) mp.getGeometryN(i).buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
+							BufferParameters.CAP_FLAT);
 				}
 				return new GamaShape(GeometryUtils.factory.createMultiPolygon(polys));
 			}
@@ -1375,7 +1385,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-		@doc(value = "A list of agents among the left-operand list, covered by the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] inside(self) --: return the agents among ag1, ag2 and ag3 that are covered by the shape of the agent applying the operator." }, see = {
+		@doc(value = "A list of agents among the left-operand list, covered by the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] inside(self) --: return the agents among ag1, ag2 and ag3 that are covered by the shape of the right-hand argument." }, see = {
 			"neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to" })
 		public static IList<IAgent> inside(final IScope scope, final IContainer<?, IShape> targets,
@@ -1425,7 +1435,7 @@ public abstract class Spatial {
 		public static Object closest_to(final IScope scope, final IContainer<?, IShape> targets, final IShape source)
 			throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
-				return scope.getTopology().getAgentClosestTo(scope, (ILocation) source, In.list(scope, targets));
+				return scope.getTopology().getAgentClosestTo(scope, source, In.list(scope, targets));
 			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(scope, source,
 				In.list(scope, targets)); }
 			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
@@ -1443,7 +1453,7 @@ public abstract class Spatial {
 			final ITopology t = scope.getTopology(); // VERIFY (was pop.getTopology())
 			// ITopology t = scope.getAgentScope().getTopology();
 			if ( source instanceof ILocation ) {
-				return t.getAgentClosestTo(scope, (ILocation) source, In.population(pop));
+				return t.getAgentClosestTo(scope, source, In.population(pop));
 			} else if ( source instanceof IShape ) { return t.getAgentClosestTo(scope, source, In.population(pop)); }
 			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}

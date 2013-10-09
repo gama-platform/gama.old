@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.shape;
 
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
@@ -34,7 +35,6 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaPoint extends Coordinate implements ILocation {
 
-	
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
 		y = yy;
@@ -61,7 +61,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = point.getX();
 		y = point.getY();
 		final double zz = point.getZ();
-		if ( !Double.isNaN(zz)) {
+		if ( !Double.isNaN(zz) ) {
 			z = zz;
 		} else {
 			z = 0.0d;
@@ -163,7 +163,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
 		y = y + loc.getY();
-		
+
 		final double zz = loc.getZ();
 		if ( !Double.isNaN(zz) ) {
 			z = z + zz;
@@ -200,7 +200,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		return getGeometry().getInnerGeometry();
+		return GeometryUtils.factory.createPoint(this);
+		// return getGeometry().getInnerGeometry();
 	}
 
 	/**
@@ -237,7 +238,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		//FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use this.distance(p.toCoordinate());
+		// FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use
+		// this.distance(p.toCoordinate());
 		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
 	}
 

@@ -28,11 +28,9 @@ import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.algorithm.distance.*;
+import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
-import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
@@ -47,10 +45,12 @@ import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 	@var(name = "contour", type = IType.GEOMETRY) })
 public class GamaShape implements IShape /* , IContainer */{
 
+	// private static final boolean USE_PREPARED_OPERATIONS = false;
+
 	protected Geometry geometry;
 	protected volatile ILocation location;
 	private boolean isPoint;
-	private Operations optimizedOperations;
+	// private Operations optimizedOperations;
 	private IAgent agent;
 
 	// Property map to add all kinds of information (e.g to specify if the geometry is a sphere, a
@@ -72,12 +72,6 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape() {
 
 	}
-
-	//
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.GEOMETRY);
-	// }
 
 	@getter("multiple")
 	public boolean isMultiple() {
@@ -109,7 +103,7 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@Override
 	public String toGaml() {
-		if ( isPoint ) { return getLocation().toGaml() + " as geometry"; }
+		if ( isPoint() ) { return getLocation().toGaml() + " as geometry"; }
 		if ( isMultiple() ) { return getGeometries().toGaml() + " as geometry"; }
 		final GamaList<GamaShape> holes = getHoles();
 		String result = "";
@@ -143,8 +137,8 @@ public class GamaShape implements IShape /* , IContainer */{
 		final ILocation previous = location;
 		location = l;
 		if ( previous != null ) {
-			if ( isPoint ) {
-				geometry.apply(modification.with((Coordinate) location));
+			if ( isPoint() ) {
+				geometry.apply(new Modification().with((Coordinate) location));
 			} else {
 				// if ( isPoint ) {
 				final double dx = location.getX() - previous.getX();
@@ -167,23 +161,23 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	public GamaShape rotatedBy(final IScope scope, final double angle) {
-		if ( isPoint ) { return copy(scope); }
+		if ( isPoint() ) { return copy(scope); }
 		final Geometry newGeom = (Geometry) geometry.clone();
-		newGeom.apply(rotation.of(angle, (Coordinate) location));
+		newGeom.apply(new Rotation().of(angle, (Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
 	public GamaShape scaledBy(final IScope scope, final double coeff) {
-		if ( isPoint ) { return copy(scope); }
+		if ( isPoint() ) { return copy(scope); }
 		final Geometry newGeom = (Geometry) geometry.clone();
-		newGeom.apply(scaling.of(coeff, (Coordinate) location));
+		newGeom.apply(new Scaling().of(coeff, (Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
 	// public static Translation translation = new Translation(0, 0, 0);
-	public static Modification modification = new Modification();
-	public static Rotation rotation = new Rotation();
-	public static Scaling scaling = new Scaling();
+	// public static Modification modification = new Modification();
+	// public static Rotation rotation = new Rotation();
+	// /public static Scaling scaling = new Scaling();
 
 	static class Translation implements CoordinateFilter {
 
@@ -247,67 +241,56 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	}
 
-	public static class Operations {
+	public final static PointPairDistance ppd = new PointPairDistance();
+	final static PointLocator pl = new PointLocator();
 
-		final static GamaPoint currentPoint = new GamaPoint(0d, 0d, 0d);
-		final static Point point = GeometryUtils.factory.createPoint(new Coordinate(0, 0, 0));
-		public final static PointPairDistance ppd = new PointPairDistance();
-		final static PointLocator pl = new PointLocator();
-
-		final Geometry cached;
-		IndexedFacetDistance distance;
-		PreparedGeometry prepared;
-
-		public Operations(final GamaShape g1) {
-			cached = g1.getInnerGeometry();
-		}
-
-		private IndexedFacetDistance distanceOp() {
-			if ( distance == null ) {
-				distance = new IndexedFacetDistance(cached);
-			}
-			return distance;
-		}
-
-		private PreparedGeometry preparedOp() {
-			if ( prepared == null ) {
-				prepared = PreparedGeometryFactory.prepare(cached);
-			}
-			return prepared;
-		}
-
-		public static double getDistance(final Geometry source, final Coordinate target) {
-			ppd.initialize();
-			DistanceToPoint.computeDistance(source, target, ppd);
-			return ppd.getDistance();
-		}
-
-		public double getDistance(final IShape g2) {
-			if ( g2.isPoint() ) {
-				// if (isPoint()) {return getLocation().distance(g2.getLocation());
-				ppd.initialize();
-				DistanceToPoint.computeDistance(cached, (Coordinate) g2.getLocation(), ppd);
-				return ppd.getDistance();
-			}
-			return distanceOp().getDistance(g2.getInnerGeometry());
-		}
-
-		public boolean covers(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().covers(
-				g.getInnerGeometry());
-		}
-
-		public boolean intersects(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().intersects(
-				g.getInnerGeometry());
-		}
-
-		public boolean crosses(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().crosses(
-				g.getInnerGeometry());
-		}
-
-	}
+	// public class Operations {
+	//
+	// // final Geometry cached;
+	// IndexedFacetDistance distance;
+	// PreparedGeometry prepared;
+	//
+	// // public Operations(final GamaShape g1) {
+	// // cached = g1.getInnerGeometry();
+	// // }
+	//
+	// private IndexedFacetDistance distanceOp() {
+	// if ( distance == null ) {
+	// distance = new IndexedFacetDistance(geometry);
+	// }
+	// return distance;
+	// }
+	//
+	// private PreparedGeometry preparedOp() {
+	// if ( prepared == null ) {
+	// prepared = PreparedGeometryFactory.prepare(geometry);
+	// }
+	// return prepared;
+	// }
+	//
+	// public double getDistance(final IShape g2) {
+	// if ( g2.isPoint() ) {
+	// // if (isPoint()) {return getLocation().distance(g2.getLocation());
+	// ppd.initialize();
+	// DistanceToPoint.computeDistance(geometry, (Coordinate) g2.getLocation(), ppd);
+	// return ppd.getDistance();
+	// }
+	// return distanceOp().getDistance(g2.getInnerGeometry());
+	// }
+	//
+	// public boolean covers(final IShape g) {
+	// return preparedOp().covers(g.getInnerGeometry());
+	// }
+	//
+	// public boolean intersects(final IShape g) {
+	// return preparedOp().intersects(g.getInnerGeometry());
+	// }
+	//
+	// public boolean crosses(final IShape g) {
+	// return preparedOp().crosses(g.getInnerGeometry());
+	// }
+	//
+	// }
 
 	@Override
 	public IShape getGeometry() {
@@ -412,7 +395,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	protected void setGeometry(final Geometry geom, final boolean computeLoc) {
-		geometry = geom;
+		if ( geom instanceof GeometryCollection && geom.getNumGeometries() == 1 ) {
+			geometry = geom.getGeometryN(0);
+		} else {
+			geometry = geom;
+		}
 		if ( geom == null ) { return; }
 		// if ( !computeLoc ) {
 		// GuiUtils.debug("Agent " + getAgent() + " setGeometry location: " + location +
@@ -422,7 +409,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		if ( computeLoc ) {
 			computeLocation();
 		}
-		optimizedOperations = null;
+		// optimizedOperations = null;
 	}
 
 	private void computeLocation() {
@@ -461,7 +448,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		// }
 		// IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
 		// in topologies, etc.
-		optimizedOperations = null;
+		// optimizedOperations = null;
 		agent = null;
 	}
 
@@ -500,7 +487,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		return operations().covers(g);
+		if ( g.isPoint() ) { return pl.intersects((Coordinate) g.getLocation(), geometry); }
+		// if ( !USE_PREPARED_OPERATIONS ) {
+		return geometry.covers(g.getInnerGeometry());
+		// }
+		// return operations().covers(g);
 	}
 
 	/**
@@ -508,14 +499,22 @@ public class GamaShape implements IShape /* , IContainer */{
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		if ( isPoint() ) { return g.euclidianDistanceTo(this.getLocation()); }
-		return operations().getDistance(g);
+		if ( isPoint() && g.isPoint() ) { return g.getLocation().euclidianDistanceTo(getLocation()); }
+		// if ( g.isPoint() ) { return euclidianDistanceTo(g.getLocation()); }
+		// if ( isPoint ) { return g.euclidianDistanceTo(getLocation()); }
+		// if ( !USE_PREPARED_OPERATIONS ) {
+		return getInnerGeometry().distance(g.getInnerGeometry());
+		// }
+		// return operations().getDistance(g);
 	}
 
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		if ( isPoint ) { return g.euclidianDistanceTo(getLocation()); }
-		return operations().getDistance(g);
+		if ( isPoint() ) { return g.euclidianDistanceTo(getLocation()); }
+		return getInnerGeometry().distance(g.getInnerGeometry());
+		// ppd.initialize();
+		// DistanceToPoint.computeDistance(geometry, (Coordinate) g, ppd);
+		// return ppd.getDistance();
 	}
 
 	/**
@@ -523,20 +522,28 @@ public class GamaShape implements IShape /* , IContainer */{
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		return operations().intersects(g);
+		if ( g.isPoint() ) { return pl.intersects((Coordinate) g.getLocation(), getInnerGeometry()); }
+		// if ( !USE_PREPARED_OPERATIONS ) {
+		return getInnerGeometry().intersects(g.getInnerGeometry());
+		// }
+		// return operations().intersects(g);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		return operations().crosses(g);
+		if ( g.isPoint() ) { return pl.intersects((Coordinate) g.getLocation(), getInnerGeometry()); }
+		// if ( !USE_PREPARED_OPERATIONS ) {
+		return geometry.crosses(g.getInnerGeometry());
+		// }
+		// return operations().crosses(g);
 	}
 
-	private GamaShape.Operations operations() {
-		if ( optimizedOperations == null ) {
-			optimizedOperations = new GamaShape.Operations(this);
-		}
-		return optimizedOperations;
-	}
+	// private GamaShape.Operations operations() {
+	// if ( optimizedOperations == null ) {
+	// optimizedOperations = new Operations();
+	// }
+	// return optimizedOperations;
+	// }
 
 	/**
 	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get'
