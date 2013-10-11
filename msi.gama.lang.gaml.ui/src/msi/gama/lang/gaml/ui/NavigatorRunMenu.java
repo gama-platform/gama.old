@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.VirtualFolder;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
@@ -130,7 +130,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 				expItem.setText(sb.toString());
 				expItem.setData("uri", uri);
 				expItem.setData("exp", expNames.get(0));
-				expItem.setImage(IGamaIcons.PANEL_CONTINUE.image());
+				expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
 				expItem.addSelectionListener(adapter);
 			} else {
 				MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
@@ -143,7 +143,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 					}
 				}
 				modelItem.setText(URI.decode(sb.toString() + uri.lastSegment()));
-				modelItem.setImage(GamaIcons.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
+				modelItem.setImage(IGamaIcons.FILE_ICON.image());
 				Menu expMenu = new Menu(modelItem);
 				modelItem.setMenu(expMenu);
 
@@ -152,7 +152,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 					expItem.setText(name);
 					expItem.setData("uri", uri);
 					expItem.setData("exp", name);
-					expItem.setImage(IGamaIcons.PANEL_CONTINUE.image());
+					expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
 					expItem.addSelectionListener(adapter);
 				}
 			}

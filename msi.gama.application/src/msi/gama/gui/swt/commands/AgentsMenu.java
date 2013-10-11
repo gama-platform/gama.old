@@ -151,6 +151,19 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
+	private static SelectionAdapter killer = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			final MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				a.dispose();
+				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+			}
+		}
+	};
+
 	private static SelectionAdapter runner = new SelectionAdapter() {
 
 		@Override
@@ -225,6 +238,8 @@ public class AgentsMenu extends ContributionItem {
 				actionAgentMenuItem(menu, agent, c, null, "Apply");
 			}
 		}
+		separate(menu);
+		actionAgentMenuItem(menu, agent, killer, IGamaIcons.MENU_KILL.image(), "Kill");
 		if ( agent instanceof IMacroAgent ) {
 			final IMacroAgent macro = (IMacroAgent) agent;
 			if ( macro.hasMembers() ) {

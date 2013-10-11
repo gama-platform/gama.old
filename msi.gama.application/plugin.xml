@@ -585,7 +585,7 @@
             allPopups="true"
             locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
          <menu
-               icon="icons/navigator/menu.new.png"
+               icon="icons/navigator/navigator.new.png"
                id="menu.new"
                label="New...">
             <command
@@ -601,7 +601,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/new.file.png"
+                  icon="icons/navigator/new.model.png"
                   label="Model File…"
                   style="push">
                <parameter
@@ -615,13 +615,13 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/menu.new.png"
+                  icon="icons/navigator/navigator.new.png"
                   label="Other..."
                   style="push">
             </command>
          </menu>
          <menu
-               icon="icons/navigator/menu.import.png"
+               icon="icons/navigator/navigator.import.png"
                id="menu.import"
                label="Import..."
                mnemonic=" ">
@@ -698,7 +698,7 @@
          </command>
          <command
                commandId="msi.gama.application.commands.CopyProjectToWorkspace"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/copy.png"
+               icon="icons/navigator/navigator.copy.png"
                label="Copy to Workspace"
                mnemonic="C"
                style="push">
@@ -720,13 +720,9 @@
                name="msi.gama.gui.gamaNavigator.separator1"
                visible="true">
          </separator>
-         <separator
-               name="msi.gama.gui.gamaNavigator.separator2"
-               visible="true">
-         </separator>
          <command
                commandId="msi.gama.application.commands.UpdateBuiltInModelsCommand"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/update.png"
+               icon="icons/navigator/navigator.update.png"
                label="Update Library"
                style="push">
             <visibleWhen
@@ -745,7 +741,7 @@
          </command>
          <command
                commandId="msi.gama.application.commands.ImportProjectFromSVN"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/update.png"
+               icon="icons/navigator/navigator.update.png"
                label="Update Shared Models"
                style="push">
             <visibleWhen
@@ -768,21 +764,21 @@
          </separator>
          <command
                commandId="org.eclipse.ui.edit.text.openLocalFile"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/open_file.png"
+               icon="icons/navigator/navigator.open.png"
                label="Open File..."
                mnemonic="O"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ui.navigate.openResource"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/search.png"
+               icon="icons/navigator/navigator.search.png"
                label="Search for..."
                mnemonic="S"
                style="push">
          </command>
          <command
                commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/refresh.gif"
+               icon="icons/navigator/navigator.refresh.png"
                label="Refresh"
                style="push">
             <visibleWhen>
@@ -841,7 +837,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/gama_project.png"
+            icon="icons/folder.icon.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -1404,7 +1400,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="icons/navigator/new.file.png"
+            icon="icons/navigator/new.model.png"
             id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
             project="false">

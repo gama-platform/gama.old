@@ -64,6 +64,7 @@ public interface IGamaIcons {
 	public static final GamaIcon MENU_AGENT = GamaIcons.create("menu.agent");
 	public static final GamaIcon MENU_INSPECT = VIEW_INSPECTOR;
 	public static final GamaIcon MENU_HIGHLIGHT = GamaIcons.create("menu.highlight");
+	public static final GamaIcon MENU_KILL = GamaIcons.create("menu.kill");
 	public static final GamaIcon MENU_FOCUS = GamaIcons.create("menu.focus");
 	public static final GamaIcon MENU_FOLLOW = GamaIcons.create("menu.follow");
 	public static final GamaIcon MENU_PREFERENCES = GamaIcons.create("menu.preferences");
@@ -131,11 +132,14 @@ public interface IGamaIcons {
 	public static final GamaIcon PREFS_OTHER = GamaIcons.create("prefs.other");
 	public static final GamaIcon PREFS_LIBS = GamaIcons.create("prefs.libraries");
 
-	// Folders 16x16
+	// Navigator
 
 	public static final GamaIcon FOLDER_SHARED = GamaIcons.create("folder.shared");
 	public static final GamaIcon FOLDER_BUILTIN = GamaIcons.create("folder.builtin");
 	public static final GamaIcon FOLDER_USER = GamaIcons.create("folder.user");
+	public static final GamaIcon FILE_ICON = GamaIcons.create("file.icon");
+	public static final GamaIcon FOLDER_ICON = GamaIcons.create("folder.icon");
+	public static final GamaIcon NAVIGATOR_RUN = GamaIcons.create("navigator/navigator.run");
 
 	// Buttons 16x16
 
