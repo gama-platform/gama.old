@@ -105,7 +105,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			PlatformUI.getWorkbench().getNewWizardRegistry().getRootCategory().getCategories();
 		for ( final IWizardDescriptor wizard : getAllWizards(categories) ) {
 			final String id = wizard.getCategory().getId();
-			System.out.println("Wizard " + wizard.getId());
+			// System.out.println("Wizard " + wizard.getId());
 			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
 				final WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
 				wizardRegistry.removeExtension(wizardElement.getConfigurationElement().getDeclaringExtension(),
@@ -116,7 +116,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		categories = PlatformUI.getWorkbench().getImportWizardRegistry().getRootCategory().getCategories();
 		for ( final IWizardDescriptor wizard : getAllWizards(categories) ) {
 			final String id = wizard.getCategory().getId();
-			System.out.println("Wizard " + wizard.getId());
+			// System.out.println("Wizard " + wizard.getId());
 			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
 				final WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
 				wizardRegistry.removeExtension(wizardElement.getConfigurationElement().getDeclaringExtension(),
