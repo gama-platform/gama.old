@@ -267,12 +267,6 @@
          <hiddenToolBarItem
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation">
          </hiddenToolBarItem>
-         <perspectiveShortcut
-               id="msi.gama.application.perspectives.ModelingPerspective">
-         </perspectiveShortcut>
-         <perspectiveShortcut
-               id="msi.gama.application.perspectives.SimulationPerspective">
-         </perspectiveShortcut>
       </perspectiveExtension>
     </extension>
    <extension
@@ -858,23 +852,11 @@
             description="Disable unwanted eclipse UI"
             id="msi.gama.application.activities"
             name="Disable">
-         <enabledWhen>
-            <with
-                  variable="true">
-               <equals
-                     value="false">
-               </equals>
-            </with>
-         </enabledWhen>
       </activity>
       <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.search/.*">
       </activityPatternBinding>-->
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.xml\.ui/.*">
-      </activityPatternBinding>
       <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org.eclipse.ui.editors/org.eclipse.ui.edit.text.*nnotation">
@@ -891,26 +873,6 @@
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.debug\.ui/.*">
       </activityPatternBinding>-->
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.new\.project">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.ui\.editors/org\.eclipse\.ui\.editors\.wizards\.UntitledTextFileWizard">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.xml\.ui/org\.eclipse\.wst\.xml\.ui\.XMLExampleProjectCreationWizard">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.xml\.ui/org\.eclipse\.wst\.xml\.ui\.internal\.wizards\.NewXMLWizard">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.dtd\.ui/org\.eclipse\.wst\.dtd\.ui\.internal\.wizard\.NewDTDWizard">
-      </activityPatternBinding>
       <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.import\.ZipFile">
@@ -924,22 +886,10 @@
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.import\.Preferences">
       </activityPatternBinding>-->
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.internal\.ui\.importexport\.breakpoints\.WizardImportBreakpoints">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.ui\.import\.launchconfigurations">
-      </activityPatternBinding>
       <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.team\.ui/org\.eclipse\.team\.ui\.ProjectSetImportWizard">
       </activityPatternBinding>-->
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.xml\.ui/org\.eclipse\.wst\.xml\.ui\.internal\.wizards\.ImportXMLCatalogWizard">
-      </activityPatternBinding>
       <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.export\.ZipFile">
@@ -954,42 +904,18 @@
       </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.internal\.ui\.importexport\.breakpoints\.WizardExportBreakpoints">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.ui\.export\.launchconfigurations">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.team\.ui/org\.eclipse\.team\.ui\.ProjectSetExportWizard">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.wst\.xml\.ui/org\.eclipse\.wst\.xml\.ui\.internal\.wizards\.ExportXMLCatalogWizard">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.jdt\.ui/.*">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
-            pattern="org\.eclipse\.jdt\.debug\.ui/.*">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="msi.gama.application.activities"
             isEqualityPattern="true"
             pattern="MarkOccurrences">
       </activityPatternBinding>
       <activityPatternBinding
             activityId="msi.gama.application.activities"
-            isEqualityPattern="false"
-            pattern="org.eclipse.debug.ui.*">
+            isEqualityPattern="true"
+            pattern="msi.gama.application/msi.gama.application.perspectives.ModelingPerspective">
       </activityPatternBinding>
       <activityPatternBinding
             activityId="msi.gama.application.activities"
-            isEqualityPattern="false"
-            pattern="org.eclipse.run.ui.*">
+            isEqualityPattern="true"
+            pattern="msi.gama.application/msi.gama.application.perspectives.SimulationPerspective">
       </activityPatternBinding>
    </extension>
    <extension
@@ -1127,10 +1053,25 @@
       <handler
             class="msi.gama.gui.swt.commands.SwitchToModeling"
             commandId="msi.gama.application.goto.modeling">
+         <activeWhen>
+            <reference
+                  definitionId="isSimulationReady">
+            </reference>
+         </activeWhen>
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.SwitchToSimulation"
             commandId="msi.gama.application.goto.simulation">
+         <enabledWhen>
+            <not>
+               <with
+                     variable="msi.gama.application.commands.SimulationRunningState">
+                  <equals
+                        value="NONE">
+                  </equals>
+               </with>
+            </not>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
