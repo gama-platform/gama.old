@@ -70,6 +70,19 @@ public class Files {
 		return new GamaPreferences.GenericFile(s);
 		// throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
+	
+	@operator(value="file_exists", can_be_const = true)
+	@doc(value = "Test whether the parameter is the path to an existing file.")	
+	public static boolean exist_file(final IScope scope, final String s){
+		if ( s == null ) { return false; }		
+		if ( scope == null ) {return false;}
+		else {
+			String path = scope.getModel().getRelativeFilePath(s, false);
+			File f = new File(path);
+			
+			return (f.exists() && !f.isDirectory());
+		} 	
+	}
 
 	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)
 	@doc(value = "opens a file that is a kind of image.", comment = "The file should have an image extension, cf. file type deifnition for supported file extensions.", special_cases = "If the specified string does not refer to an existing image file, an exception is risen.", examples = { "let fileT type: file value: image(\"../includes/testImage.png\");  // fileT represents the file \"../includes/testShape.png\"" }, see = {
