@@ -29,6 +29,7 @@ Bundle-ClassPath: .,
  svnkit.jar
 Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.displays.layers,
+ msi.gama.gui.navigator,
  msi.gama.gui.parameters,
  msi.gama.gui.swt,
  msi.gama.gui.swt.perspectives,
