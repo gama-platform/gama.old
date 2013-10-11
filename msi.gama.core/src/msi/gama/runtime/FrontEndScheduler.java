@@ -88,6 +88,13 @@ public class FrontEndScheduler implements Runnable {
 		synchronized (toStop) {
 			for ( final IStepable s : toStop ) {
 				final IScope scope = toStep.get(s);
+				
+				//hqnghi 11/Oct/13 in some cases scope of comodel's experiment is null 
+				if (scope == null) {
+					continue;
+				}
+				//end-hqnghi
+				
 				if ( !scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
@@ -169,6 +176,28 @@ public class FrontEndScheduler implements Runnable {
 	public void dispose() {
 		alive = false;
 		wipe();
+	}
+
+	public void removeStepable(final String s) {
+
+		Set<IStepable> beRemoved = new HashSet();
+		for (IStepable ss : toStep.keySet()) {
+			if (ss.toString().contains(s)) {
+
+				final IScope scope = toStep.get(ss);
+				if (!scope.interrupted()) {
+					scope.setInterrupted(true);
+				}
+				beRemoved.add(ss);
+			}
+
+		}
+		for (IStepable ss : beRemoved) {
+			toStep.remove(ss);
+			toStop.remove(ss);
+		}
+		// System.out.println(toStep.keySet());
+		// System.out.println(s.toString());
 	}
 
 	public void unschedule(final IStepable scheduler) {

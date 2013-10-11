@@ -110,6 +110,17 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		parameters.clear();
 		super.dispose();
 	}
+	
+	
+	// hqnghi didnt want to change protected of  createAgent
+	public void createAgentForMultiExp() {
+		// adjust special method to create multi-ExperimentAgent for multi-Experiment purpose
+		final ExperimentPopulation pop = new ExperimentPopulation(this);
+		final IScope scope = getExperimentScope();
+		pop.initializeFor(scope);
+		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false).get(0);
+		addDefaultParameters();
+	}
 
 	protected void createAgent() {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
