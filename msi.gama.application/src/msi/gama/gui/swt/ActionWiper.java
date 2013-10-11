@@ -23,53 +23,20 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
-public class ActionWiper extends PerspectiveAdapter implements IStartup/* , IPartListener */{
+public class ActionWiper extends PerspectiveAdapter implements IStartup {
 
-	// private static final String[] ACTIONS_2_WIPE = new String[] { "org.eclipse.ui.edit.text.actionSet.presentation",
-	// "org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences", "org.eclipse.cdt.ui.text.c.actionSet.presentation",
-	// "org.eclipse.jdt.ui.text.java.actionSet.presentation", "org.eclipse.ui.externaltools.ExternalToolsSet",
-	// "org.eclipse.ui.workbench.navigate", "org.eclipse.ui.edit.text.actionSet.annotationNavigation"
-	// // "org.eclipse.update.ui.softwareUpdates"
-	// };
-
-	// @Override
-	// public void partActivated(final IWorkbenchPart part) {
-	// // if ( !(part instanceof IEditorPart) ) { return; }
-	// // GuiUtils.openModelingPerspective();
-	// }
-	//
 	@Override
 	public void earlyStartup() {
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for ( int i = 0; i < windows.length; i++ ) {
 			IWorkbenchPage page = windows[i].getActivePage();
 			if ( page != null ) {
-				// // wipeActions(page);
-				// // ActionWiper aw = new ActionWiper();
-				// // page.addPartListener(aw);
-				// }
 				// Doing the initial cleanup on the default perspective (modeling)
 				this.perspectiveActivated(page, null);
 			}
 			windows[i].addPerspectiveListener(this);
 		}
 	}
-
-	// private void wipeActions(final IWorkbenchPage page) {
-	// for ( int i = 0; i < ACTIONS_2_WIPE.length; i++ ) {
-	// wipeAction(page, ACTIONS_2_WIPE[i]);
-	// }
-	// }
-	//
-	// private void wipeAction(final IWorkbenchPage page, final String actionsetId) {
-	// }
-
-	// static String[] ItemsToHide = { "org.eclipse.ui.workbench.file", "org.eclipse.debug.ui.launchActionSet",
-	// "org.eclipse.search.searchActionSet", "org.eclipse.ui.edit.text.actionSet.presentation",
-	// "org.eclipse.ui.workbench.navigate", "org.eclipse.ui.workbench.help", "org.eclipse.ui.DefaultTextEditor",
-	// "msi.gama.lang.gaml.Gaml" };
-	//
-	// static String[] MenusToHide = { "org.eclipse.ui.run" };
 
 	@Override
 	public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
@@ -97,31 +64,13 @@ public class ActionWiper extends PerspectiveAdapter implements IStartup/* , IPar
 			}
 
 		});
-
-		// for ( IContributionItem item : w.getMenuManager().getItems() ) {
-		// GuiUtils.debug("ActionWiper.perspectiveActivated + showing item in MENUMANAGER " +
-		// item.getClass().getSimpleName() + " id= " + item.getId());
-		// }
 	}
 
 	@Override
 	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
 		if ( c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE) ) {
-			//GuiUtils.debug("ActionWiper.perspectiveChanged : Complete");
 			perspectiveActivated(p, d);
 		}
 	}
-
-	// @Override
-	// public void partBroughtToTop(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partClosed(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partDeactivated(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partOpened(final IWorkbenchPart part) {}
 
 }
