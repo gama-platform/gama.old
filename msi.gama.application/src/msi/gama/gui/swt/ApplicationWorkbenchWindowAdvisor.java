@@ -24,6 +24,7 @@ import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
@@ -175,6 +176,10 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	public static boolean isInternetReachable(final boolean force) {
 		if ( !force && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }
+		// AD 11/10/13 : see Issue 679
+		// Too many problems with Linux for the moment. Reverse this if a definitive solution is found.
+		if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }
+
 		try {
 			URL url = new URL("https://code.google.com/p/gama-platform/");
 			// open a connection to that source
