@@ -31,8 +31,8 @@ public class ModelingPerspective implements IPerspectiveFactory {
 
 		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, (float) 0.75, layout.getEditorArea());
 
-		layout.addNewWizardShortcut("msi.gama.gui.wizards.NewFileWizard");
-		layout.addNewWizardShortcut("msi.gama.gui.wizards.NewProjectWizard");
+		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewFileWizard");
+		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewProjectWizard");
 
 		// IDEActionFactory.BUILD;
 	}
