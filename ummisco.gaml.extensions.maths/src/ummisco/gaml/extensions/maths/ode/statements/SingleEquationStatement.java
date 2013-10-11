@@ -126,14 +126,14 @@ public class SingleEquationStatement extends AbstractStatement {
 
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
-		function = getFacet(EQUATION_LEFT);
-		if ( getOrder() > 0 ) {
-			etablishVar();
-		}
+		function = getFacet(EQUATION_LEFT);	
 		expression = getFacet(EQUATION_RIGHT);
 	}
 
 	public void etablishVar() {
+		if ( getOrder() == 0 ) {
+			return;
+		}
 		for ( int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++ ) {
 			IExpression tmp = ((AbstractNAryOperator) function).arg(i);
 			if ( tmp.getName().equals("t") ) {

@@ -109,6 +109,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final List<ISymbol> others = new ArrayList<ISymbol>();
 		for ( final ISymbol s : cmd ) {
 			if ( s instanceof SingleEquationStatement ) {
+				((SingleEquationStatement) s).etablishVar();
 				equations.add((SingleEquationStatement) s);
 				for ( int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++ ) {
 					IExpression v = ((SingleEquationStatement) s).getVar(i);
