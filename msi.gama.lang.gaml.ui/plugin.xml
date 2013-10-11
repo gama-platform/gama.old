@@ -118,6 +118,22 @@ default-charset="UTF-8">
             </visibleWhen>
          </command>  
          </menuContribution>
+        <menuContribution
+              allPopups="true"
+              locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
+           <menu
+                 icon="platform:/plugin/msi.gama.application/icons/menu.run.png"
+                 label="Run...">
+              <dynamic
+                    class="msi.gama.lang.gaml.ui.NavigatorRunMenu"
+                    id="msi.gama.application.run.menu">
+              </dynamic>
+           </menu>
+           <separator
+                 name="msi.gama.application.separator1"
+                 visible="true">
+           </separator>
+        </menuContribution>
     </extension>
     <extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
