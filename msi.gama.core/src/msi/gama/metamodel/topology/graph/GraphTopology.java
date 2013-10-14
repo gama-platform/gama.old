@@ -89,6 +89,7 @@ public class GraphTopology extends AbstractTopology {
 		if ( edgeS == null && !sourceNode || edgeT == null && !targetNode ) { return null; }
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
 			targetNode); }
+		
 		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
 
 	}
@@ -100,7 +101,7 @@ public class GraphTopology extends AbstractTopology {
 		 * // return new GamaPath(this, source, target, GamaList.with(edgeS));
 		 * }
 		 */
-
+		
 		IShape nodeS = source;
 		IShape nodeT = target;
 
@@ -123,14 +124,13 @@ public class GraphTopology extends AbstractTopology {
 			s2 = getPlaces().getEdgeTarget(edgeS);
 			if ( s1 == null || s2 == null ) { return null; }
 			nodeS = s1;
-			if ( s1 == nodeT ||
-				s2 != nodeT &&
+			if ( s1.equals(nodeT) ||
+				(! s2.equals(nodeT) &&
 				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation().euclidianDistanceTo(
-					source.getLocation()) ) {
+					source.getLocation()) )) {
 				nodeS = s2;
 			}
 		}
-
 		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
 		if ( !sourceNode ) {
@@ -158,7 +158,7 @@ public class GraphTopology extends AbstractTopology {
 		final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges;
 
-		if ( edgeS == edgeT ) {
+		if ( edgeS.equals(edgeT) ) {
 			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if ( source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS) ) {
 				edges = new GamaList<IShape>();
@@ -169,7 +169,7 @@ public class GraphTopology extends AbstractTopology {
 		IShape nodeS = sourceNode ? source : getPlaces().getEdgeTarget(edgeS);
 		IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
 
-		if ( nodeS == nodeT ) {
+		if ( nodeS.equals(nodeT) ) {
 			edges = new GamaList<IShape>();
 			edges.add(edgeS);
 			edges.add(edgeT);
