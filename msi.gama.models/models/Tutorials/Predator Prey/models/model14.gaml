@@ -21,6 +21,7 @@ global {
 	float predator_speed <- 10.0;
 	int nb_preys -> { length(prey) };
 	int nb_predators -> { length(predator) };
+	geometry shape <- envelope(map_init);
 	init {
 		create vegetation from: map_init with: [food::float(read("FOOD")), foodProd::float(read("FOOD_PROD"))];
 		create prey number: nb_preys_init {
@@ -149,7 +150,6 @@ entities {
 
 }
 
-environment bounds: map_init;
 experiment prey_predator type: gui {
 	parameter "Initial number of preys: " var: nb_preys_init category: "Prey";
 	parameter "Prey max energy: " var: prey_max_energy category: "Prey";

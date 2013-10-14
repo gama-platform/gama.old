@@ -198,39 +198,3 @@ experiment prey_predator type: gui {
 		monitor number_of_predators value: nb_predators refresh_every: 1 ;
 	}
 }
-	
-
-global {
-	file map_init <- file('../includes/data/raster_map.png');
-	int nb_preys_init <- 200 min: 1 max: 1000 ;
-	int nb_predators_init <- 20 min: 0 max: 200;
-	float prey_max_energy <- 1.0;
-	float prey_max_transfert <- 0.1 ;
-	float prey_energy_consum <- 0.05;
-	float predator_max_energy <- 1.0;
-	float predator_energy_transfert <- 0.5;
-	float predator_energy_consum <- 0.02;
-	float prey_proba_reproduce <- 0.01;
-	int prey_nb_max_offsprings <- 5; 
-	float prey_energy_reproduce <- 0.5; 
-	float predator_proba_reproduce <- 0.01;
-	int predator_nb_max_offsprings <- 3;
-	float predator_energy_reproduce <- 0.5;
-	int nb_preys function: {length (prey as list)};
-	int nb_predators function: {length (predator as list)};
-	
-	init {
-		create prey number: nb_preys_init ;
-		create predator number: nb_predators_init ;
-		let init_data type: matrix <- map_init as_matrix {50,50};
-		ask (vegetation_cell as list) {
-			set color <- rgb (init_data at {grid_x,grid_y}) ;
-			set food <- 1 - (((color as list) at 0) / 255) ;
-			set foodProd <- food / 100 ;
-		}
-	}
-	
-	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
-		do halt ;
-	} 
-}
