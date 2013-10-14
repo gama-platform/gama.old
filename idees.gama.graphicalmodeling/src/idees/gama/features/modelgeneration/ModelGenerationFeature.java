@@ -152,7 +152,6 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	    		else 
 	    			model += gt.getNeighbourhoodType().toCharArray()[0];
     		}
-    		model += " torus:" + (species.getTorus() == null ? "false" : species.getTorus()) ;
     	} else 
     		model += "species " + species.getName() ;
     	if (species.getInheritsFrom() != null) {
@@ -165,7 +164,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (EVariable var: species.getVariables()) {
     		model += defineVariable(var,level+1);
     	}
-    	
+    	defineInit(species,level+1);
     	Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
     	 for (EActionLink link : species.getActionLinks()) {
          	model += defineAction(link, level+1);
@@ -230,13 +229,31 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	return result;
     }
     
+    static String defineInit(ESpecies species, int level) {
+    	String result = "";
+    	String code = species.getInit();
+    	if (code != null && ! code.isEmpty()) {
+	   
+    		String sp = "";
+	    	for (int i =0; i < level;i++) {
+	    		sp += "\t";
+	    	}
+	    	result += sp + "init {" + EL;
+	    	 for (String line : code.split(EL)) {
+		    	result += sp+ "\t" + line+ EL;
+	    	}
+	    	result +=sp + "}" + EL;
+    	}
+	    return result;
+    }
+    
     static String defineReflex(EReflexLink link, int level) {
     	String result = "";
     	String sp = "";
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
-    	if (link.getReflex().getCondition() != null && link.getReflex().getCondition().isEmpty()) {
+    	if (link.getReflex().getCondition() != null && !link.getReflex().getCondition().isEmpty()) {
     		result += sp + "reflex " + link.getReflex().getName() + " when: "+ link.getReflex().getCondition() + " {" + EL;
     	} else {
     		result += sp + "reflex " + link.getReflex().getName() + " {" + EL;
@@ -363,12 +380,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	        	 }
 	      
 	       	model += "}";
-	       	model += EL + "entities {";
+	       	model += EL;
             for (ESubSpeciesLink link : worldAgent.getMicroSpeciesLinks()) {
-            	model += defineSpecies((ESpecies) link.getMicro(),1);
+            	model += defineSpecies((ESpecies) link.getMicro(),0);
             }
             
-            model += EL + "}";
+            model += EL;
             
             for (EExperimentLink link : worldAgent.getExperimentLinks()) {
             	 model += defineExperiment(link.getExperiment());

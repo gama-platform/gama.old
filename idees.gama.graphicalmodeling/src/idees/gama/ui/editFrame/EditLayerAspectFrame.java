@@ -264,9 +264,9 @@ public class EditLayerAspectFrame {
 		} else {
 			code += " color: " + elayer.getColor();
 		}
-		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty())
+		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty() && ! elayer.getEmpty().equals("false"))
 			code += " empty: " + elayer.getEmpty();
-		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty())
+		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getEmpty().equals(0.0))
 			code += " rotate: " + elayer.getRotate();
 		elayer.setGamlCode(code);
 	}
