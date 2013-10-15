@@ -1,11 +1,19 @@
 package msi.gama.jogl.utils;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.nio.*;
 import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.jogl.collada.COLLADA;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.shape.IShape;
@@ -260,16 +268,18 @@ public class VertexArrayHandler {
 			}
 		}
 
-		fillPointBuffers();
-		fillPolygonBuffers();
-		fillContoursBuffers();
-		fillFacesBuffers();
-		fillFacesContoursBuffers();
-		fillPlanBuffers();
-		fillLineBuffer();
-		fillSphereVertexArray();
+//		fillPointBuffers();
+//		fillPolygonBuffers();
+//		fillContoursBuffers();
+//		fillFacesBuffers();
+//		fillFacesContoursBuffers();
+//		fillPlanBuffers();
+//		fillLineBuffer();
+//		fillSphereVertexArray();
+		
+		loadCollada("null");
 
-		createVBOs();
+//		createVBOs();
 	}
 
 	public void createVBOs() {
@@ -1611,6 +1621,63 @@ public class VertexArrayHandler {
 		long total = rt.totalMemory();
 		long used = total - free;
 		System.out.println(label + " FREE : " + free + " TOTAL : " + total + " USED : " + used);
+	}
+	
+	/**
+	 * Function that load a COLLADA file
+	 * 
+	 * 
+	 * 
+	 * */
+	public void loadCollada(String filename)
+	{
+		
+		COLLADA handler = new COLLADA();
+		
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+			SAXParser saxParser = factory.newSAXParser();
+			saxParser.parse("c:\\15.dae", handler);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		handler.ColladaIntoVbo();
+		
+		int[] buffer3 = new int[2];
+		myGl.glGenBuffers(2, buffer3, 0);
+		sphereIndicesBufferID = buffer3[1];
+
+		myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[0]);
+		myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getVertexBuffer().capacity() * BufferUtil.SIZEOF_FLOAT,
+				handler.getVertexBuffer(), GL.GL_STATIC_DRAW);
+		myGl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+
+		myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+		myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[1]);
+		myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, handler.getIndicesBuffer().capacity() * BufferUtil.SIZEOF_INT,
+				handler.getIndicesBuffer(), GL.GL_STATIC_DRAW);
+
+		myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+
+		myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, sphereIndicesBufferID);
+		myGl.glDrawElements(GL.GL_TRIANGLES, handler.getIndicesBuffer().capacity(), GL.GL_UNSIGNED_INT, 0);
+
+		myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		myGl.glDeleteBuffers(2, buffer3, 0);
+
+		myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		
 	}
 
 }
