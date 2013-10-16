@@ -43,6 +43,10 @@ public class COLLADA extends DefaultHandler {
 	private ArrayList<Integer> tempVertexIndicesArray = new ArrayList<Integer>();
 	private ArrayList<Integer> tempNormalsIndicesArray = new ArrayList<Integer>();
 	
+	private ArrayList<FloatBuffer> trianglesPositionArray = new ArrayList<FloatBuffer>();
+	private ArrayList<FloatBuffer> trianglesNormalsArray = new ArrayList<FloatBuffer>();
+	private ArrayList<IntBuffer> trianglesIndicesArray = new ArrayList<IntBuffer>();
+	
 	/* Buffer to store data*/
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer normalsBuffer;
@@ -333,6 +337,7 @@ public class COLLADA extends DefaultHandler {
 									this.vertexBuffer.put((float)this.floatArray.getFloats().get(l));
 								}
 								this.vertexBuffer.rewind();
+								this.trianglesPositionArray.add(this.vertexBuffer);
 							}							
 						}		
 					}
@@ -345,9 +350,10 @@ public class COLLADA extends DefaultHandler {
 							{
 								this.floatArray = this.source.getFloatArray();
 								int count = this.floatArray.getCount();
-								this.vertexBuffer = BufferUtil.newFloatBuffer(count);
+								this.normalsBuffer = BufferUtil.newFloatBuffer(count);
 								float[] array = ArrayUtils.toPrimitive(this.floatArray.getFloats().toArray(new Float[0]), 0.0F);
 								this.normalsBuffer.put(array);
+								this.trianglesNormalsArray.add(this.normalsBuffer);
 							}							
 						}		
 					}
@@ -383,6 +389,8 @@ public class COLLADA extends DefaultHandler {
 
 				this.indicesBuffer.put(intArray);
 				
+				this.trianglesIndicesArray.add(this.indicesBuffer);
+				
 				this.indicesBuffer.rewind();
 				
 			} //end if geometry.getMesh
@@ -399,24 +407,24 @@ public class COLLADA extends DefaultHandler {
 		this.m_GeometryLibrary = m_GeometryLibrary;
 	}
 	
-	public FloatBuffer getVertexBuffer() {
-		return vertexBuffer;
+	public ArrayList<FloatBuffer> getVertexBufferArray() {
+		return this.trianglesPositionArray;
 	}
 
 	public void setVertexBuffer(FloatBuffer vertexBuffer) {
 		this.vertexBuffer = vertexBuffer;
 	}
 
-	public FloatBuffer getNormalsBuffer() {
-		return normalsBuffer;
+	public ArrayList<FloatBuffer> getNormalsBufferArray() {
+		return this.trianglesNormalsArray;
 	}
 
 	public void setNormalsBuffer(FloatBuffer normalsBuffer) {
 		this.normalsBuffer = normalsBuffer;
 	}
 
-	public IntBuffer getIndicesBuffer() {
-		return indicesBuffer;
+	public ArrayList<IntBuffer> getIndicesBufferArray() {
+		return this.trianglesIndicesArray;
 	}
 
 	public void setIndicesBuffer(IntBuffer indicesBuffer) {

@@ -142,7 +142,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				vah = new VertexArrayHandler(renderer.gl, renderer.glu, renderer);
 				vah.buildVertexArray((List<GeometryObject>) objects);
 			} else {
-				// vah.loadCollada();
+				 vah.loadCollada(null);
 				// vah.createVBOs();
 			}
 
