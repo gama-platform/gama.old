@@ -15,7 +15,9 @@ import org.apache.commons.lang.ArrayUtils;
 public class COLLADA extends DefaultHandler {
 	
 	private GeometryLibrary m_GeometryLibrary = new GeometryLibrary();
+	private VisualScenesLibrary m_visualScenesLibrary = new VisualScenesLibrary();
 	
+	/* library geometry booleans*/
 	private boolean inlibrary_geometries = false;
 	private boolean inGeometry = false;
 	private boolean inMesh = false;
@@ -27,18 +29,34 @@ public class COLLADA extends DefaultHandler {
 	private boolean inTriangles = false;
 	private boolean inP = false;
 	
+	/*library visual scenes booleans*/
+	private boolean inlibrary_visual_scenes = false;
+	private boolean inVisualScene = false;
+	private boolean inNode = false;
+	private boolean inInstanceGeometry = false;
+	private boolean inbindMaterial = false;
+	private boolean inInstanceMaterial = false;
+	private boolean inbindVertexInput = false;
+	
 	/*temporary variables*/
 	private Geometry geometry;
 	private Mesh mesh;
 	private Source source;
 	private Float_Array floatArray;
-	private TechniqueCommon technique_common;
+	private TechniqueCommon techniqueCommon;
 	private Accessor accessor;
 	private Param param;
 	private Vertices vertices;
 	private Input input;
 	private Triangles triangles;
 	private P p;
+	
+	private VisualScene visualScene;
+	private Node node;	
+	private InstanceGeometry instanceGeometry;
+	private BindMaterial bindMaterial;
+	private InstanceMaterial instanceMaterial;
+	private BindVertexInput bindVertexInput;
 	
 	private ArrayList<Integer> tempVertexIndicesArray = new ArrayList<Integer>();
 	private ArrayList<Integer> tempNormalsIndicesArray = new ArrayList<Integer>();
@@ -98,7 +116,9 @@ public class COLLADA extends DefaultHandler {
 			throws SAXException 
 	{
 		super.endElement(uri, localName, qName);
-		
+		/*
+		 * Library Geometry and children
+		 */
 		if(qName.equalsIgnoreCase("library_geometries"))
 		{
 			inlibrary_geometries = false;
@@ -126,13 +146,13 @@ public class COLLADA extends DefaultHandler {
 		}
 		if(qName.equalsIgnoreCase("technique_common") && inSource)
 		{
-			source.setTechniqueCommon(technique_common);
+			source.setTechniqueCommon(techniqueCommon);
 			
 			inTechniqueCommon = false;
 		}
 		if(qName.equalsIgnoreCase("accessor") && inTechniqueCommon)
 		{	
-			technique_common.setAccessor(accessor);
+			techniqueCommon.setAccessor(accessor);
 			
 			inAccessor = false;
 		}
@@ -152,9 +172,56 @@ public class COLLADA extends DefaultHandler {
 			inP = false;
 		}
 		
-		
-		
-		
+		/*
+		 * Library Visual Scene and children
+		 */
+		if(qName.equalsIgnoreCase("library_visual_scenes"))
+		{
+			inlibrary_visual_scenes = false;
+		}
+		if(qName.equalsIgnoreCase("visual_scene") && inlibrary_visual_scenes)
+		{
+			m_visualScenesLibrary.getVisualScenes().add(visualScene);
+			inVisualScene  = false;
+		}
+		if(qName.equalsIgnoreCase("node") && inVisualScene)
+		{
+			visualScene.setNode(node);
+			
+			inNode = false;			
+		}
+		if(qName.equalsIgnoreCase("instance_geometry") && inNode)
+		{			
+			node.getInstanceGeometry().add(instanceGeometry);
+			
+			inInstanceGeometry = false;			
+		}
+		if(qName.equalsIgnoreCase("bind_material") && inInstanceGeometry)
+		{			
+			instanceGeometry.setBinMaterial(bindMaterial);
+			
+			inbindMaterial = false;			
+		}
+		if(qName.equalsIgnoreCase("technique_common") && inbindMaterial)
+		{	
+			bindMaterial.setTechniqueCommon(techniqueCommon);
+			
+			inTechniqueCommon = false;			
+		}
+		if(qName.equalsIgnoreCase("instance_material") && inTechniqueCommon)
+		{
+
+			techniqueCommon.getInstanceMaterial().add(instanceMaterial);
+			
+			inInstanceMaterial = false;			
+		}
+		if(qName.equalsIgnoreCase("bind_vertex_input") && inInstanceMaterial)
+		{
+			instanceMaterial.getBindVertexInput().add(bindVertexInput);
+			
+			inbindVertexInput = false;			
+		}
+			
 	}
 
 	@Override
@@ -162,6 +229,9 @@ public class COLLADA extends DefaultHandler {
 			Attributes attributes) throws SAXException 
 	{
 		super.startElement(uri, localName, qName, attributes);
+		/*
+		 * Library Geometry and children
+		 */
 		if(qName.equalsIgnoreCase("library_geometries"))
 		{
 			inlibrary_geometries = true;
@@ -206,7 +276,7 @@ public class COLLADA extends DefaultHandler {
 		}
 		if(qName.equalsIgnoreCase("technique_common") && inSource)
 		{
-			technique_common = new TechniqueCommon();
+			techniqueCommon = new TechniqueCommon();
 			
 			inTechniqueCommon = true;
 		}
@@ -295,7 +365,81 @@ public class COLLADA extends DefaultHandler {
 			p = new P();
 			
 			inP = true;
-		}	
+		}
+		/*
+		 * library visual scene and its children
+		 */
+		if(qName.equalsIgnoreCase("library_visual_scenes"))
+		{
+			inlibrary_visual_scenes  = true;
+		}
+		if(qName.equalsIgnoreCase("visual_scene") && inlibrary_visual_scenes)
+		{
+			visualScene = new VisualScene();
+
+			String ID  = attributes.getValue("id");
+			visualScene.setID(ID);
+			
+			inVisualScene = true;			
+		}
+		if(qName.equalsIgnoreCase("node") && inVisualScene)
+		{
+			node = new Node();
+
+			String name  = attributes.getValue("name");
+			node.setName(name);
+			
+			inNode = true;			
+		}
+		if(qName.equalsIgnoreCase("instance_geometry") && inNode)
+		{
+			instanceGeometry = new InstanceGeometry();
+
+			String url  = attributes.getValue("url");
+			node.setName(url);
+			
+			inInstanceGeometry = true;			
+		}
+		if(qName.equalsIgnoreCase("bind_material") && inInstanceGeometry)
+		{
+			bindMaterial = new BindMaterial();
+			
+			inbindMaterial = true;			
+		}
+		if(qName.equalsIgnoreCase("technique_common") && inbindMaterial)
+		{
+			techniqueCommon = new TechniqueCommon();
+			
+			inTechniqueCommon = true;			
+		}
+		if(qName.equalsIgnoreCase("instance_material") && inTechniqueCommon)
+		{
+			instanceMaterial = new InstanceMaterial();
+
+			String symbol  = attributes.getValue("symbol");
+			instanceMaterial.setSymbol(symbol);
+			
+			String target  = attributes.getValue("target");
+			instanceMaterial.setTarget(target);
+			
+			inInstanceMaterial = true;			
+		}
+		if(qName.equalsIgnoreCase("bind_vertex_input") && inInstanceMaterial)
+		{
+			bindVertexInput = new BindVertexInput();
+
+			String semantic  = attributes.getValue("semantic");
+			bindVertexInput.setSemantic(semantic);
+			
+			String inputSemantic  = attributes.getValue("input_semantic");
+			bindVertexInput.setInput_semantic(inputSemantic);
+			
+			String inputSet  = attributes.getValue("input_set");
+			bindVertexInput.setInput_set(inputSet);
+			
+			inbindVertexInput = true;			
+		}
+		
 	}
 
 	public void ColladaIntoVbo()
@@ -439,6 +583,48 @@ public class COLLADA extends DefaultHandler {
 	 */
 	public void printCollada()
 	{
+		System.out.println("<library_visual_scenes>");
+		for(int i = 0; i <this.m_visualScenesLibrary.getVisualScenes().size();i++)
+		{
+			VisualScene tempVisualScene = this.m_visualScenesLibrary.getVisualScenes().get(i);
+			System.out.println("	<visual_scene id = "+tempVisualScene.getID()+">");
+			System.out.println("		<node id = "+tempVisualScene.getNode().getName()+">");
+			for(int j = 0; j <tempVisualScene.getNode().getInstanceGeometry().size();j++)
+			{
+				InstanceGeometry tempInstanceGeometry = tempVisualScene.getNode().getInstanceGeometry().get(j);
+				System.out.println("			<instance_geometry id = "+tempInstanceGeometry.getUrl()+">");
+				if(tempInstanceGeometry.getBinMaterial()!=null)
+				{
+					System.out.println("				<bind_material>");
+					System.out.println("					<technique_common>");
+					for(int k = 0; k <tempInstanceGeometry.getBinMaterial().getTechniqueCommon().getInstanceMaterial().size();k++)
+					{
+						InstanceMaterial tempInstanceMaterial = tempInstanceGeometry.getBinMaterial().
+								getTechniqueCommon().getInstanceMaterial().get(k);
+						System.out.println("						<instance_material symbol = "+tempInstanceMaterial.getSymbol()
+								+" target = "+tempInstanceMaterial.getTarget()+">");
+						for(int l = 0; l <tempInstanceMaterial.getBindVertexInput().size();l++)
+						{
+							BindVertexInput tempBindVertexInput = tempInstanceMaterial.getBindVertexInput().get(l);
+							System.out.println("							<bind_vertex_input semantic = "+tempBindVertexInput.getSemantic()
+									+" input_semantic = "+tempBindVertexInput.getInput_semantic()
+									+" input_set = "+tempBindVertexInput.getInput_set()+"/>");
+						}
+						System.out.println("						</instance_material>");
+					}
+					System.out.println("					</technique_common>");
+					System.out.println("				</bind_material>");
+				}
+				System.out.println("			</instance_geometry>");
+
+			}
+			
+			System.out.println("		</node>");
+			System.out.println("	</visual_scene>");
+
+		}
+		System.out.println("</library_visual_scenes>");
+
 		System.out.println("<library_geometries>");
 		for(int i = 0; i <this.m_GeometryLibrary.getGeometries().size();i++)
 		{
