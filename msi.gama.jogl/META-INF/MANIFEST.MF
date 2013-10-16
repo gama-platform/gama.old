@@ -11,6 +11,7 @@ Require-Bundle: msi.gama.ext,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.vividsolutions.jts.geom,
+ org.apache.commons.lang;version="2.6.0",
  org.jfree.chart
 Export-Package: 
  msi.gama.jogl,
