@@ -58,6 +58,7 @@ public class PopulationInspectView extends GamaViewPart {
 
 	protected static String exportFolder = "exports";
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
+	public static final String ID_ATTRIBUTE = "#";
 	public static final String CUSTOM = "custom";
 	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
 		IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
@@ -148,8 +149,8 @@ public class PopulationInspectView extends GamaViewPart {
 				selectedColumns.get(name).removeAll(DONT_INSPECT_BY_DEFAULT);
 			}
 			Collections.sort(selectedColumns.get(name));
-			selectedColumns.get(name).remove("id");
-			selectedColumns.get(name).add(0, "id");
+			selectedColumns.get(name).remove(ID_ATTRIBUTE);
+			selectedColumns.get(name).add(0, ID_ATTRIBUTE);
 
 		}
 		changePartName(name);
@@ -491,8 +492,8 @@ public class PopulationInspectView extends GamaViewPart {
 
 	private void createColumns() {
 		final List<String> selection = new GamaList(attributesMenu.getSelection());
-		selection.remove("id");
-		selection.add(0, "id");
+		selection.remove(ID_ATTRIBUTE);
+		selection.add(0, ID_ATTRIBUTE);
 		for ( final String title : selection ) {
 			createTableViewerColumn(title, 100, 0);
 		}
@@ -504,8 +505,8 @@ public class PopulationInspectView extends GamaViewPart {
 			@Override
 			public String getText(final Object element) {
 				final IAgent agent = (IAgent) element;
-				if ( agent.dead() && !title.equals("id") ) { return "N/A"; }
-				if ( title.equals("id") ) { return String.valueOf(agent.getIndex()); }
+				if ( agent.dead() && !title.equals(ID_ATTRIBUTE) ) { return "N/A"; }
+				if ( title.equals(ID_ATTRIBUTE) ) { return String.valueOf(agent.getIndex()); }
 				return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
 			}
 		};
@@ -588,7 +589,7 @@ public class PopulationInspectView extends GamaViewPart {
 			final IAgent p2 = (IAgent) e2;
 			final IScope scope = getOutput().getScope();
 			int rc = 0;
-			if ( attribute == null || attribute.equals("id") ) {
+			if ( attribute == null || attribute.equals(ID_ATTRIBUTE) ) {
 				rc = p1.compareTo(p2);
 			} else {
 				try {
