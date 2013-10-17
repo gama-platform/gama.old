@@ -1,14 +1,16 @@
 package msi.gama.jogl.collada;
 
+import java.util.ArrayList;
+
 
 public class Color {
-	private java.awt.Color m_color = new java.awt.Color(1.0f,0.0f,0.0f,1.0f);
+	private ArrayList<Float> m_color = new ArrayList<Float>();
 
-	public java.awt.Color getColor() {
+	public ArrayList<Float> getColor() {
 		return m_color;
 	}
 
-	public void setColor(java.awt.Color m_color) {
+	public void setColor(ArrayList<Float> m_color) {
 		this.m_color = m_color;
 	}
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class EffectsLibrary {
 
-	private ArrayList<Effect> m_effects = null;
+	private ArrayList<Effect> m_effects = new ArrayList<Effect>();
 
 	public ArrayList<Effect> getEffects() {
 		return m_effects;

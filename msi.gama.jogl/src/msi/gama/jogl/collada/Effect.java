@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Effect {
 	
 	private String m_ID = null;
-	private ArrayList<ProfileCommon> m_profiles = null;
+	private ArrayList<ProfileCommon> m_profiles = new ArrayList<ProfileCommon>();
 	
 	
 	public ArrayList<ProfileCommon> getProfiles() {

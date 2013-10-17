@@ -3,7 +3,7 @@ package msi.gama.jogl.collada;
 import java.util.ArrayList;
 
 public class MaterialsLibrary {
-	private ArrayList<Material> m_materials =null;
+	private ArrayList<Material> m_materials = new ArrayList<Material>();
 
 	public ArrayList<Material> getMaterials() {
 		return m_materials;

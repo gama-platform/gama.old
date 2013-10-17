@@ -16,8 +16,10 @@ public class COLLADA extends DefaultHandler {
 	
 	private GeometryLibrary m_GeometryLibrary = new GeometryLibrary();
 	private VisualScenesLibrary m_visualScenesLibrary = new VisualScenesLibrary();
+	private MaterialsLibrary m_materialsLibrary = new MaterialsLibrary();
+	private EffectsLibrary m_effectsLibrary = new EffectsLibrary();
 	
-	/* library geometry booleans*/
+	/* library geometry*/
 	private boolean inlibrary_geometries = false;
 	private boolean inGeometry = false;
 	private boolean inMesh = false;
@@ -29,7 +31,7 @@ public class COLLADA extends DefaultHandler {
 	private boolean inTriangles = false;
 	private boolean inP = false;
 	
-	/*library visual scenes booleans*/
+	/*library visual scenes*/
 	private boolean inlibrary_visual_scenes = false;
 	private boolean inVisualScene = false;
 	private boolean inNode = false;
@@ -37,6 +39,10 @@ public class COLLADA extends DefaultHandler {
 	private boolean inbindMaterial = false;
 	private boolean inInstanceMaterial = false;
 	private boolean inbindVertexInput = false;
+	/*library materials*/
+	private boolean inLibrary_materials = false;
+	private boolean inMaterial = false;
+	private boolean inInstanceEffect = false;
 	
 	/*temporary variables*/
 	private Geometry geometry;
@@ -58,17 +64,39 @@ public class COLLADA extends DefaultHandler {
 	private InstanceMaterial instanceMaterial;
 	private BindVertexInput bindVertexInput;
 	
+	private Material material;
+	private InstanceEffect instanceEffect;
+	
+	
 	private ArrayList<Integer> tempVertexIndicesArray = new ArrayList<Integer>();
 	private ArrayList<Integer> tempNormalsIndicesArray = new ArrayList<Integer>();
+	private ArrayList<Float> tempColorArray = new ArrayList<Float>();
 	
 	private ArrayList<FloatBuffer> trianglesPositionArray = new ArrayList<FloatBuffer>();
 	private ArrayList<FloatBuffer> trianglesNormalsArray = new ArrayList<FloatBuffer>();
+	private ArrayList<FloatBuffer> trianglesColorsArray = new ArrayList<FloatBuffer>();
 	private ArrayList<IntBuffer> trianglesIndicesArray = new ArrayList<IntBuffer>();
 	
 	/* Buffer to store data*/
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer normalsBuffer;
+	private FloatBuffer colorBuffer;
 	private IntBuffer indicesBuffer;
+	
+	
+	private boolean inLibrary_effects;
+	private Effect effect;
+	private boolean inEffect;
+	private ProfileCommon profileCommon;
+	private boolean inProfileCommon;
+	private Technique technique;
+	private boolean inTechnique;
+	private Lambert lambert;
+	private boolean inLambert;
+	private Diffuse diffuse;
+	private boolean inDiffuse;
+	private Color color;
+	private boolean inColor;
 
 	@Override
 	public void startDocument() throws SAXException {
@@ -107,7 +135,20 @@ public class COLLADA extends DefaultHandler {
 
         	
         	triangles.setP(p);
-		}		
+		}
+		if (inColor) {		
+			
+			String[] temp = tempText.split(" ");
+        	for (int i=0; i< temp.length; i++)
+        	{
+        		if(!temp[i].isEmpty())
+        			color.getColor().add(Float.parseFloat(temp[i]));
+
+        	}
+        	
+			diffuse.setColor(color);
+
+		}
 		
 	}
 
@@ -220,6 +261,61 @@ public class COLLADA extends DefaultHandler {
 			instanceMaterial.getBindVertexInput().add(bindVertexInput);
 			
 			inbindVertexInput = false;			
+		}
+		
+		/*
+		 * library materials and its children
+		 */
+		if(qName.equalsIgnoreCase("library_materials"))
+		{
+			inLibrary_materials  = false;
+		}
+		if(qName.equalsIgnoreCase("material") && inLibrary_materials)
+		{
+			this.m_materialsLibrary.getMaterials().add(material);
+			inMaterial = false;			
+		}
+		if(qName.equalsIgnoreCase("instance_effect") && inMaterial)
+		{
+			material.setInstanceEffect(instanceEffect);
+			inInstanceEffect = false;			
+		}
+		
+		/*
+		 * library effects and its children
+		 */
+		if(qName.equalsIgnoreCase("library_effects"))
+		{
+			inLibrary_effects  = false;
+		}
+		if(qName.equalsIgnoreCase("effect") && inLibrary_effects)
+		{
+			this.m_effectsLibrary.getEffects().add(effect);
+			inEffect = false;			
+		}
+		if(qName.equalsIgnoreCase("profile_COMMON") && inEffect)
+		{
+			effect.getProfiles().add(profileCommon);
+			inProfileCommon = false;			
+		}
+		if(qName.equalsIgnoreCase("technique") && inProfileCommon)
+		{
+			profileCommon.setTechnique(technique);
+			inTechnique = false;			
+		}
+		if(qName.equalsIgnoreCase("lambert") && inTechnique)
+		{
+			technique.setLambert(lambert);
+			inLambert = false;			
+		}
+		if(qName.equalsIgnoreCase("diffuse") && inLambert)
+		{
+			lambert.setDiffuse(diffuse);
+			inDiffuse = false;			
+		}
+		if(qName.equalsIgnoreCase("color") && inDiffuse)
+		{
+			inColor = false;			
 		}
 			
 	}
@@ -396,7 +492,7 @@ public class COLLADA extends DefaultHandler {
 			instanceGeometry = new InstanceGeometry();
 
 			String url  = attributes.getValue("url");
-			node.setName(url);
+			instanceGeometry.setUrl(url);
 			
 			inInstanceGeometry = true;			
 		}
@@ -440,15 +536,96 @@ public class COLLADA extends DefaultHandler {
 			inbindVertexInput = true;			
 		}
 		
+		/*
+		 * library materials and its children
+		 */
+		if(qName.equalsIgnoreCase("library_materials"))
+		{
+			inLibrary_materials  = true;
+		}
+		if(qName.equalsIgnoreCase("material") && inLibrary_materials)
+		{
+			material = new Material();
+
+			String ID  = attributes.getValue("id");
+			material.setID(ID);
+			
+			String name  = attributes.getValue("name");
+			material.setName(name);
+			
+			inMaterial = true;			
+		}
+		if(qName.equalsIgnoreCase("instance_effect") && inMaterial)
+		{
+			instanceEffect = new InstanceEffect();
+
+			String url  = attributes.getValue("url");
+			instanceEffect.setUrl(url);
+			
+			inInstanceEffect = true;			
+		}
+		
+		/*
+		 * library effects and its children
+		 */
+		if(qName.equalsIgnoreCase("library_effects"))
+		{
+			inLibrary_effects  = true;
+		}
+		if(qName.equalsIgnoreCase("effect") && inLibrary_effects)
+		{
+			effect = new Effect();
+
+			String ID  = attributes.getValue("id");
+			effect.setID(ID);
+			
+			inEffect = true;			
+		}
+		if(qName.equalsIgnoreCase("profile_COMMON") && inEffect)
+		{
+			profileCommon = new ProfileCommon();
+			
+			inProfileCommon = true;			
+		}
+		if(qName.equalsIgnoreCase("technique") && inProfileCommon)
+		{
+			technique = new Technique();
+
+			String SID  = attributes.getValue("sid");
+			technique.setSid(SID);
+			
+			inTechnique = true;			
+		}
+		if(qName.equalsIgnoreCase("lambert") && inTechnique)
+		{
+			lambert = new Lambert();
+			
+			inLambert = true;			
+		}
+		if(qName.equalsIgnoreCase("diffuse") && inLambert)
+		{
+			diffuse = new Diffuse();
+			
+			inDiffuse = true;			
+		}
+		if(qName.equalsIgnoreCase("color") && inDiffuse)
+		{
+			color = new Color();
+			
+			inColor = true;			
+		}
+		
 	}
 
 	public void ColladaIntoVbo()
 	{
 		int nbGeometry = this.m_GeometryLibrary.getGeometries().size(); // count number of geometry elements in COLLADA file
-		
+		String geometryID = null;
 		for(int i =0; i<nbGeometry;i++)
 		{
 			this.geometry = this.m_GeometryLibrary.getGeometries().get(i);
+			
+			geometryID = this.geometry.getID();
 			
 			if(this.geometry.getMesh()!=null)
 			{
@@ -538,6 +715,63 @@ public class COLLADA extends DefaultHandler {
 				this.indicesBuffer.rewind();
 				
 			} //end if geometry.getMesh
+			
+			for(int j=0; j<this.m_visualScenesLibrary.getVisualScenes().size();j++)
+			{
+				visualScene = this.m_visualScenesLibrary.getVisualScenes().get(j);
+				for(int k=0; k<visualScene.getNode().getInstanceGeometry().size();k++)
+				{
+					instanceGeometry = visualScene.getNode().getInstanceGeometry().get(k);
+
+					if(instanceGeometry.getUrl().contains(geometryID))
+					{
+						for(int l=0;l<instanceGeometry.getBinMaterial().getTechniqueCommon().getInstanceMaterial().size();l++)
+						{
+							instanceMaterial = instanceGeometry.getBinMaterial().getTechniqueCommon().getInstanceMaterial().get(l);
+							for(int m=0;m<this.m_materialsLibrary.getMaterials().size();m++)
+							{
+								material = this.m_materialsLibrary.getMaterials().get(m);
+								if(instanceMaterial.getTarget().contains(material.getID()))
+								{
+									for(int n=0;n<this.m_effectsLibrary.getEffects().size();n++)
+									{
+										effect = this.m_effectsLibrary.getEffects().get(n);
+										if(material.getInstanceEffect().getUrl().contains(effect.getID()))
+										{
+											for(int p = 0;p<effect.getProfiles().size();p++)
+											{
+												profileCommon = effect.getProfiles().get(p);
+												if(profileCommon.getTechnique().getLambert().getDiffuse().getColor()!=null)
+												{
+													tempColorArray = profileCommon.getTechnique().getLambert().getDiffuse().getColor().getColor();
+													this.colorBuffer = BufferUtil.newFloatBuffer(this.vertexBuffer.capacity()/3*4);
+													for(int q=0;q<this.colorBuffer.capacity();q+=4)
+													{
+														colorBuffer.put(tempColorArray.get(0));
+														colorBuffer.put(tempColorArray.get(1));
+														colorBuffer.put(tempColorArray.get(2));
+														colorBuffer.put(tempColorArray.get(3));
+														
+													}
+													colorBuffer.rewind();
+													this.trianglesColorsArray.add(colorBuffer);
+												}
+												
+											}	
+										}
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+			}
+			
+			
 		}
 	} //end function ColladaIntoVbo
 	
@@ -565,6 +799,10 @@ public class COLLADA extends DefaultHandler {
 
 	public void setNormalsBuffer(FloatBuffer normalsBuffer) {
 		this.normalsBuffer = normalsBuffer;
+	}
+	
+	public ArrayList<FloatBuffer> getColorsBufferArray() {
+		return this.trianglesColorsArray;
 	}
 
 	public ArrayList<IntBuffer> getIndicesBufferArray() {
@@ -697,7 +935,51 @@ public class COLLADA extends DefaultHandler {
 			System.out.println("	</geometry>");
 		}
 		System.out.println("</library_geometries>");
+		
+		System.out.println("<library_materials>");
+		for(int i = 0; i <this.m_materialsLibrary.getMaterials().size();i++)
+		{
+			Material tempMaterial = this.m_materialsLibrary.getMaterials().get(i);
+			System.out.println("	<material id = "+tempMaterial.getID()+" name = "+tempMaterial.getName()+">");
+			
+			InstanceEffect tempInstanceEffect = tempMaterial.getInstanceEffect();
+			System.out.println("		<instance_effect url = "+tempInstanceEffect.getUrl()+"/>");	
+			
+			System.out.println("	</material>");	
+		}
+		System.out.println("</library_materials>");
+		
+		System.out.println("<library_effects>");
+		for(int i = 0; i <this.m_effectsLibrary.getEffects().size();i++)
+		{
+			Effect tempEffect = this.m_effectsLibrary.getEffects().get(i);
+			System.out.println("	<effect id = "+tempEffect.getID()+">");
+			for(int j = 0; j<tempEffect.getProfiles().size();j++)
+			{
+				ProfileCommon tempProfile  = tempEffect.getProfiles().get(j);
+				System.out.println("		<profile_COMMON>");
+					System.out.println("		<technique sid = "+tempProfile.getTechnique().getSid()+">");
+					System.out.println("			<lambert>");
+					if(tempProfile.getTechnique().getLambert().getDiffuse()!=null)
+					{
+						System.out.println("			<diffuse>");
+						Color color = tempProfile.getTechnique().getLambert().getDiffuse().getColor();
+						System.out.println("				<color>"+color.getColor().toString()+"</color>");
+						
+						System.out.println("			</diffuse>");
+					}
+					
+					System.out.println("			</lambert>");			
+					System.out.println("		</technique>");			
+				System.out.println("		</profile_COMMON>");
 				
+
+				
+			}
+			System.out.println("	</effect>");
+		}
+		System.out.println("</library_effects>");
+
 	}
 	
 }

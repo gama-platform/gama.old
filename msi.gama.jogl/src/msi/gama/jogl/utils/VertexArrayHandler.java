@@ -1637,7 +1637,7 @@ public class VertexArrayHandler {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse("c:\\test_01.dae", handler);
+			saxParser.parse("c:\\test2.dae", handler);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1649,12 +1649,13 @@ public class VertexArrayHandler {
 			e.printStackTrace();
 		}
 		handler.ColladaIntoVbo();
+//		handler.printCollada();
 		
 		for(int i = 0; i < handler.getVertexBufferArray().size();i++)
 		{
-			int[] buffer3 = new int[2];
-			myGl.glGenBuffers(2, buffer3, 0);
-			sphereIndicesBufferID = buffer3[1];
+			int[] buffer3 = new int[3];
+			myGl.glGenBuffers(3, buffer3, 0);
+			sphereIndicesBufferID = buffer3[2];
 	
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[0]);
 			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getVertexBufferArray().get(i).capacity() * BufferUtil.SIZEOF_FLOAT,
@@ -1662,23 +1663,32 @@ public class VertexArrayHandler {
 			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
 	
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+			
+			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[1]);
+			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getColorsBufferArray().get(i).capacity()* BufferUtil.SIZEOF_FLOAT,
+					handler.getColorsBufferArray().get(i), GL.GL_STATIC_DRAW);
+			myGl.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+
+			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 	
-			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[1]);
+			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[2]);
 			myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, handler.getIndicesBufferArray().get(i).capacity() * BufferUtil.SIZEOF_INT,
 					handler.getIndicesBufferArray().get(i), GL.GL_STATIC_DRAW);
 	
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 	
 			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+			myGl.glEnableClientState(GL.GL_COLOR_ARRAY);
 	
 			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, sphereIndicesBufferID);
 			myGl.glDrawElements(GL.GL_TRIANGLES, handler.getIndicesBufferArray().get(i).capacity(), GL.GL_UNSIGNED_INT, 0);
 	
 			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			myGl.glDeleteBuffers(2, buffer3, 0);
+			myGl.glDeleteBuffers(3, buffer3, 0);
 	
 			myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+			myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
 		}
 		
 	}
