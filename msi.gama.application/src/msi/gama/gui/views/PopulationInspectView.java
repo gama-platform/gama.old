@@ -28,6 +28,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -613,8 +614,11 @@ public class PopulationInspectView extends GamaViewPart {
 								case IType.STRING:
 									rc = stringComparator.compare(v1, v2);
 									break;
+								case IType.POINT:
+									rc = ((GamaPoint) v1).compareTo(v2);
+									break;
 								default:
-									rc = Cast.asFloat(scope, v1).compareTo(Cast.asFloat(scope, v2));
+									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
 							}
 						}
 					}
@@ -629,7 +633,6 @@ public class PopulationInspectView extends GamaViewPart {
 			}
 			return rc;
 		}
-
 	}
 
 	public class NaturalOrderComparator implements Comparator {
