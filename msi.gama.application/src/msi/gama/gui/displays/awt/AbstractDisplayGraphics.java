@@ -17,12 +17,17 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected Integer yOffsetInPixels;
 	protected Double xRatioBetweenPixelsAndModelUnits;
 	protected Double yRatioBetweenPixelsAndModelUnits;
-	protected final Integer widthOfDisplayInPixels;
-	protected final Integer heightOfDisplayInPixels;
-	protected final Integer widthOfEnvironmentInModelUnits;
-	protected final Integer heightOfEnvironmentInModelUnits;
+	protected Integer widthOfDisplayInPixels;
+	protected Integer heightOfDisplayInPixels;
+	protected Integer widthOfEnvironmentInModelUnits;
+	protected Integer heightOfEnvironmentInModelUnits;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
+		initFor(surface);
+	}
+
+	@Override
+	public void initFor(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = (int) surface.getEnvWidth();
 		heightOfEnvironmentInModelUnits = (int) surface.getEnvHeight();
 		widthOfDisplayInPixels = surface.getDisplayWidth();

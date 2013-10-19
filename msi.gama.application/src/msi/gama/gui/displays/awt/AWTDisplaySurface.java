@@ -25,14 +25,11 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
-import msi.gaml.compilation.ISymbol;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
@@ -159,20 +156,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
-		setEnvWidth(env_width);
-		setEnvHeight(env_height);
+		super.outputChanged(env_width, env_height, output);
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
-		widthHeightConstraint = env_height / env_width;
-		if ( manager == null ) {
-			manager = new LayerManager(this);
-			final List<? extends ISymbol> layers = output.getChildren();
-			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
-			}
-		} else {
-			manager.outputChanged();
-		}
 		repaint();
 	}
 

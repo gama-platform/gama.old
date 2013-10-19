@@ -5,15 +5,19 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
+import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.outputs.*;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -56,6 +60,27 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		setDoubleBuffered(false);
 		this.setLayout(new BorderLayout());
 		outputChanged(env_width, env_height, output);
+
+	}
+
+	@Override
+	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+		setEnvWidth(env_width);
+		setEnvHeight(env_height);
+		widthHeightConstraint = env_height / env_width;
+		if ( iGraphics != null ) {
+			iGraphics.initFor(this);
+		}
+		if ( manager == null ) {
+			manager = new LayerManager(this);
+			final List<? extends ISymbol> layers = output.getChildren();
+			for ( final ISymbol layer : layers ) {
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer));
+			}
+
+		} else {
+			manager.outputChanged();
+		}
 	}
 
 	// FIXME Ugly code. The hack must be better written

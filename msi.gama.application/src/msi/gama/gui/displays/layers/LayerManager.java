@@ -128,7 +128,6 @@ public class LayerManager implements ILayerManager {
 		final IScope scope = GAMA.obtainNewScope();
 		// If the experiment is already closed
 		if ( scope == null || scope.interrupted() ) { return; }
-		// GuiUtils.debug("LayerManager.drawLayersOn");
 		scope.setGraphics(g);
 		try {
 			g.beginDrawingLayers();
@@ -136,28 +135,9 @@ public class LayerManager implements ILayerManager {
 				final ILayer dis = enabledLayers.get(i);
 				dis.drawDisplay(scope, g);
 			}
-			// if ( surface.isPaused() ) {
-			// double max_z = 0d;
-			// for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
-			// final ILayer dis = enabledLayers.get(i);
-			// final double z = dis.getZPosition();
-			// if ( z > max_z ) {
-			// max_z = z;
-			// }
-			// }
-			// // pd.setElevation(max_z);
-			// // pd.drawDisplay(scope, g);
-			// }
 		} catch (final Exception e) {
 			GuiUtils.debug(e);
-		}
-		// catch (final Exception e) {
-		// // e.addContext("in drawing layer " + dis.getMenuName());
-		// // throw e;
-		// // Temporarily disabled so that it does not appear on the interface.
-		// e.printStackTrace();
-		// }
-		finally {
+		} finally {
 			g.endDrawingLayers();
 			GAMA.releaseScope(scope);
 		}
@@ -205,8 +185,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void updateItemValues() {}
 
-	public static ILayer createLayer(final ILayerStatement layer, final double env_width, final double env_height,
-		final IGraphics dg) {
+	public static ILayer createLayer(final ILayerStatement layer) {
 		switch (layer.getType()) {
 
 			case ILayerStatement.GRID: {
