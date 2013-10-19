@@ -22,21 +22,16 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.*;
-import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
-import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.util.GamaList;
-import msi.gaml.compilation.ISymbol;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -193,24 +188,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+		super.outputChanged(env_width, env_height, output);
 		setBackgroundColor(output.getBackgroundColor());
 		this.setBackground(getBackgroundColor());
-		setEnvWidth(env_width);
-		setEnvHeight(env_height);
-		widthHeightConstraint = env_height / env_width;
-
-		if ( manager == null ) {
-			manager = new LayerManager(this);
-			final List<? extends ISymbol> layers = output.getChildren();
-			for ( final ISymbol layer : layers ) {
-				// IDisplay d =
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
-			}
-
-		} else {
-			manager.outputChanged();
-		}
-		// paintingNeeded.release();
 	}
 
 	@Override
@@ -227,9 +207,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	}
 
-	public void selectSeveralAgents(final Iterator<IAgent> agents, final int layerId) {
-		menuManager.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y,
-			new GamaList(agents));
+	public void selectSeveralAgents(final Set<IAgent> agents, final int layerId) {
+		menuManager
+			.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agents);
 	}
 
 	@Override
