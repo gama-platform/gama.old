@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.util.Iterator;
+import java.util.Set;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -65,7 +65,7 @@ public interface ITopology extends IValue {
 	// public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
 	// final ILocation previousLoc, final Envelope previousEnv);
 
-	void updateAgent(IShape previous, IShape agent);
+	void updateAgent(IShape previous, IAgent agent);
 
 	public abstract void removeAgent(final IAgent agent);
 
@@ -75,15 +75,14 @@ public interface ITopology extends IValue {
 
 	// public abstract IAgent getAgentClosestTo(IScope scope, final ILocation source, IAgentFilter filter);
 
-	public abstract Iterator<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
+	public abstract Set<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
 		IAgentFilter filter) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter
 	// filter)
 	// throws GamaRuntimeException;
 
-	public abstract Iterator<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f,
-		boolean covered);
+	public abstract Set<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, boolean covered);
 
 	public abstract boolean isTorus();
 
@@ -177,9 +176,9 @@ public interface ITopology extends IValue {
 
 	public abstract void dispose();
 
-	public abstract boolean isValidLocation(ILocation p);
+	public abstract boolean isValidLocation(IScope scope, ILocation p);
 
-	public abstract boolean isValidGeometry(IShape g);
+	public abstract boolean isValidGeometry(IScope scope, IShape g);
 
 	/**
 	 * @param scope TODO

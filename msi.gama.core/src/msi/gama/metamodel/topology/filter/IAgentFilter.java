@@ -18,101 +18,13 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import java.util.Set;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
 import msi.gaml.species.ISpecies;
 
 public interface IAgentFilter {
-
-	public static class Not implements IAgentFilter {
-
-		IAgentFilter filter;
-
-		public Not(final IAgentFilter other) {
-			filter = other;
-		}
-
-		@Override
-		public boolean accept(final IScope scope, final IShape source, final IShape a) {
-			return !filter.accept(scope, source, a);
-		}
-
-		@Override
-		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-			return !filter.accept(scope, source, a);
-		}
-
-		@Override
-		public ISpecies speciesFiltered() {
-			return null;
-		}
-
-		@Override
-		public boolean filterSpecies(final ISpecies species) {
-			return !filter.filterSpecies(species);
-		}
-
-		@Override
-		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
-			IList<IAgent> agents = scope.getSimulationScope().getAgents();
-			for ( IShape s : filter.getShapes(scope) ) {
-				agents.remove(s);
-			}
-			// agents.removeAll((Collection<?>) filter.getShapes(scope).iterable(scope));
-			return agents;
-		}
-
-	}
-
-	public static class And implements IAgentFilter {
-
-		IAgentFilter a, b;
-
-		public And(final IAgentFilter a, final IAgentFilter b) {
-			this.a = a;
-			this.b = b;
-		}
-
-		@Override
-		public boolean accept(final IScope scope, final IShape source, final IShape agent) {
-			return a.accept(scope, source, agent) && b.accept(scope, source, agent);
-		}
-
-		@Override
-		public boolean accept(final IScope scope, final ILocation source, final IShape agent) {
-			return a.accept(scope, source, agent) && b.accept(scope, source, agent);
-		}
-
-		@Override
-		public boolean filterSpecies(final ISpecies s) {
-			return a.filterSpecies(s) && b.filterSpecies(s);
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
-		 */
-		@Override
-		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
-			IList<IShape> result = new GamaList();
-			for ( IShape s : a.getShapes(scope) ) {
-				result.add(s);
-			}
-			for ( IShape s : b.getShapes(scope) ) {
-				result.add(s);
-			}
-			return result;
-		}
-
-		@Override
-		public ISpecies speciesFiltered() {
-			ISpecies s1 = a.speciesFiltered();
-			ISpecies s2 = b.speciesFiltered();
-			if ( s1 == s2 ) { return s1; }
-			return null;
-		}
-	}
 
 	public ISpecies speciesFiltered();
 
@@ -134,6 +46,11 @@ public interface IAgentFilter {
 	 * @param a
 	 * @return
 	 */
-	boolean accept(IScope scope, ILocation source, IShape a);
+	// boolean accept(IScope scope, ILocation source, IShape a);
+
+	/**
+	 * @param internal_results
+	 */
+	public void filter(IScope scope, IShape source, Set<? extends IShape> results);
 
 }

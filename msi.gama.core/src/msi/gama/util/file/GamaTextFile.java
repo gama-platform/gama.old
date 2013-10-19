@@ -84,7 +84,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		StringBuilder sb = new StringBuilder(buffer.length(scope) * 200);
-		for ( String s : buffer ) {
+		for ( String s : buffer.iterable(scope) ) {
 			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
 		}
 		sb.setLength(sb.length() - 1);

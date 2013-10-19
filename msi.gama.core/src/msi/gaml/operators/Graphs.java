@@ -478,7 +478,7 @@ public class Graphs {
 	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 		throws GamaRuntimeException {
-		java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		//java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);

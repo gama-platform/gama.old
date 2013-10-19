@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -46,20 +46,17 @@ import msi.gaml.types.IType;
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected final Map<String, FsmStateStatement> states = new HashMap();
-	protected GamaList<String> stateNames;
 	protected FsmStateStatement initialState;
 
 	@Override
 	protected void clearBehaviors() {
 		super.clearBehaviors();
 		states.clear();
-		stateNames = null;
 	}
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {
 		super.verifyBehaviors(context);
-		// hasBehavior = hasBehavior || states.size() > 0;
 		for ( final FsmStateStatement s : states.values() ) {
 			if ( s.isInitial() ) {
 				initialState = s;
@@ -68,18 +65,15 @@ public class FsmArchitecture extends ReflexArchitecture {
 		if ( initialState != null ) {
 			context.getVar(IKeyword.STATE).setValue(initialState.getName());
 		}
-		stateNames = new GamaList(states.keySet());
 	}
 
 	@getter(value = IKeyword.STATES, initializer = true)
 	public IList getStateNames(final IAgent agent) {
-		return stateNames;
+		return new GamaList(states.keySet());
 	}
 
 	@setter(IKeyword.STATES)
-	public void setStateNames(final IAgent agent, final IList list) {
-
-	}
+	public void setStateNames(final IAgent agent, final IList list) {}
 
 	@getter(IKeyword.STATE)
 	public String getStateName(final IAgent agent) {

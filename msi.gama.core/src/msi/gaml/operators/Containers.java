@@ -89,7 +89,7 @@ public class Containers {
 		"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]", "remove_duplicates([1::3,2::4,3::3,5::7]) --: [3,4,7]" })
 	// TODO finish doc for other kinds of Container
 	public static IList remove_duplicates(final IScope scope, final IContainer l) {
-		return new GamaList(Sets.newLinkedHashSet(nullCheck(l)));
+		return new GamaList(Sets.newLinkedHashSet(nullCheck(l).iterable(scope)));
 	}
 
 	@operator(value = "contains_all", can_be_const = true)
@@ -130,8 +130,8 @@ public class Containers {
 
 	@operator(value = { "first" }, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
-	public static IList first(final Integer number, final IContainer l1) {
-		return new GamaList(Iterables.limit(l1, number < 0 ? 0 : number));
+	public static IList first(final IScope scope, final Integer number, final IContainer l1) {
+		return new GamaList(Iterables.limit(l1.iterable(scope), number < 0 ? 0 : number));
 	}
 
 	@operator(value = { "last" }, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
@@ -362,7 +362,7 @@ public class Containers {
 		if ( original == null ) { return new GamaMap(); }
 
 		final GamaMap result = new GamaMap();
-		for ( final Object each : original ) {
+		for ( final Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final Object key = filter.value(scope);
 			if ( !result.containsKey(key) ) {
@@ -545,7 +545,7 @@ public class Containers {
 		"interleave([1,2,4,3,5,7,6,8]) 	--: 	[1,2,3,4,5,7,6,8]",
 		"interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]" })
 	public static IList interleave(final IScope scope, final IContainer cc) {
-		final Iterator it = new InterleavingIterator(toArray(nullCheck(cc), Object.class));
+		final Iterator it = new InterleavingIterator(toArray(nullCheck(cc).iterable(scope), Object.class));
 		return new GamaList(Iterators.toArray(it, Object.class));
 	}
 

@@ -21,8 +21,6 @@
 package msi.gaml.operators;
 
 import java.io.*;
-import java.util.prefs.Preferences;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
@@ -76,7 +74,7 @@ public class Stats {
 	public static Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
 		ILocation maxPoint = null;
-		for ( Object o : l ) {
+		for ( Object o : l.iterable(scope) ) {
 			if ( o instanceof ILocation && maxNum == null &&
 				(maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) ) {
 				maxPoint = (ILocation) o;
@@ -108,7 +106,7 @@ public class Stats {
 	public static Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
 		ILocation minPoint = null;
-		for ( Object o : l ) {
+		for ( Object o : l.iterable(scope) ) {
 			if ( o instanceof ILocation && minNum == null &&
 				(minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) ) {
 				minPoint = (ILocation) o;
@@ -140,7 +138,7 @@ public class Stats {
 	public static Object product(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
-		for ( Object o : l ) {
+		for ( Object o : l.iterable(scope) ) {
 			if ( o instanceof ILocation ) {
 				if ( y == null ) {
 					y = new DataSet();
@@ -178,7 +176,7 @@ public class Stats {
 	public static Object sum(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
-		for ( Object o : l ) {
+		for ( Object o : l.iterable(scope) ) {
 			if ( o instanceof ILocation ) {
 				if ( y == null ) {
 					y = new DataSet();
@@ -297,7 +295,7 @@ public class Stats {
 
 		RCaller caller = new RCaller();
 
-		String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
+		String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -308,12 +306,12 @@ public class Stats {
 		double[] vectorY = new double[l2.length(scope)];
 
 		int i = 0;
-		for ( Object o : l1 ) {
+		for ( Object o : l1.iterable(scope) ) {
 			vectorX[i++] = Double.parseDouble(o.toString());
 		}
 
 		i = 0;
-		for ( Object o : l2 ) {
+		for ( Object o : l2.iterable(scope) ) {
 			vectorY[i++] = Double.parseDouble(o.toString());
 		}
 
@@ -345,7 +343,7 @@ public class Stats {
 		double[] results;
 		RCaller caller = new RCaller();
 
-		String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
+		String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -354,7 +352,7 @@ public class Stats {
 
 		double[] data = new double[l.length(scope)];
 		int i = 0;
-		for ( Object o : l ) {
+		for ( Object o : l.iterable(scope) ) {
 			data[i++] = Double.parseDouble(o.toString());
 		}
 
@@ -376,7 +374,7 @@ public class Stats {
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
+			String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
@@ -454,7 +452,7 @@ public class Stats {
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
+			String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
@@ -465,7 +463,7 @@ public class Stats {
 			double[] vectorParam = new double[param.length(scope)];
 
 			int k = 0;
-			for ( Object o : param ) {
+			for ( Object o : param.iterable(scope) ) {
 				vectorParam[k++] = Double.parseDouble(o.toString());
 			}
 

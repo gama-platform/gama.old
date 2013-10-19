@@ -307,7 +307,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	@Override
 	public boolean _removeAll(final IScope scope, final IContainer<?, Double> list) {
 		// TODO Exception if o == null
-		for ( final Double o : list ) {
+		for ( final Double o : list.iterable(scope) ) {
 			removeAll(o.doubleValue());
 		}
 		// TODO Make a test to verify the return

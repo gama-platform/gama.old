@@ -75,14 +75,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 		GamaPoint pt0 = firstLine == null ? null : new GamaPoint(firstLine.getCoordinates()[0]);
 		GamaPoint pt1 =
 			firstLine == null ? null : new GamaPoint(firstLine.getCoordinates()[firstLine.getNumPoints() - 1]);
-		if ( firstLine != null ) {
+		if ( firstLine != null && _edges != null ) {
 			if ( _edges.size() > 1 ) {
 				IShape secondLine = _edges.get(1).getGeometry();
 				pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
 			} else {
-				final IShape lineEnd = edges.get(edges.size()-1);
-				GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(((IShape) getEndVertex()).getLocation(), lineEnd);
-				
+				final IShape lineEnd = edges.get(edges.size() - 1);
+				GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(getEndVertex().getLocation(), lineEnd);
+
 				pt = start.euclidianDistanceTo(pt0) < falseTarget.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
 			GamaSpatialGraph graph = this.getGraph();
@@ -105,11 +105,13 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						edge2 = edge;
 						pt = c1;
 					}
-					if (cpt == 0 && ! source.equals(pt)) {
+					if ( cpt == 0 && !source.equals(pt) ) {
 						GamaPoint falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
 						edge2 = GeometryUtils.split_at(edge2, falseSource).get(1);
 					}
-					if ((cpt == _edges.size() - 1) && ! target.equals(edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
+					if ( cpt == _edges.size() - 1 &&
+						!target.equals(edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry()
+							.getNumPoints() - 1]) ) {
 						GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
 					}
@@ -119,7 +121,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						realObjects.put(edge2.getGeometry(), edge);
 					}
 					segments.add((GamaShape) edge2.getGeometry());
-					
+
 				} else {
 					segments.add((GamaShape) edge.getGeometry());
 				}
@@ -143,7 +145,8 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 		graph = g;
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
-			segments.add((GamaShape) GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation()));
+			segments.add((GamaShape) GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
+				.getLocation()));
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
 				// MODIF: put?
@@ -351,9 +354,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 
 	@Override
 	public ITopology getTopology() {
-		if (graph == null) {
-			return null;
-		}
+		if ( graph == null ) { return null; }
 		return ((GamaSpatialGraph) graph).getTopology();
 	}
 
@@ -366,10 +367,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 	public IShape getRealObject(final Object obj) {
 		return realObjects.get(obj);
 	}
-	
+
 	@Override
 	public IShape getGeometry() {
-		if (shape == null && segments.size() > 0) {
+		if ( shape == null && segments.size() > 0 ) {
 			final Geometry geoms[] = new Geometry[segments.size()];
 			int cpt = 0;
 			for ( final IShape ent : segments ) {

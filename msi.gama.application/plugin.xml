@@ -590,7 +590,7 @@
                label="New...">
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  disabledIcon=" "
+                  disabledIcon=""
                   icon="icons/navigator/new.project.png"
                   label="GAMA Project..."
                   style="push">
@@ -627,8 +627,8 @@
                mnemonic=" ">
             <command
                   commandId="org.eclipse.ui.file.import"
-                  hoverIcon=" "
-                  icon="icons/navigator/import.project.png"
+                  hoverIcon=""
+                  icon="icons/navigator/navigator.import.png"
                   label="GAMA Project…"
                   style="push">
                <parameter
@@ -638,7 +638,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/import.svn.png"
+                  icon="icons/navigator/navigator.import.png"
                   label="From SVN..."
                   style="push">
                <parameter
@@ -648,7 +648,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/import.filesystem.png"
+                  icon="icons/navigator/navigator.import.png"
                   label="From Disk..."
                   style="push">
                <parameter
@@ -658,7 +658,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/import.archive.png"
+                  icon="icons/navigator/navigator.import.png"
                   label="From Archive..."
                   style="push">
                <parameter
@@ -672,7 +672,7 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/menu.import.png"
+                  icon="icons/navigator/navigator.import.png"
                   label="Other..."
                   style="push">
             </command>

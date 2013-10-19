@@ -261,7 +261,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		final IList<IAgent> list = new GamaList(number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
-		for ( final IShape geom : geometries ) {
+		for ( final IShape geom : geometries.iterable(scope) ) {
 			// WARNING Should be redefined somehow
 			final IAgent a = constr.createOneAgent(this);
 			final int ind = currentAgentIndex++;
@@ -501,7 +501,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean all,
 		final boolean add) {
 		if ( all && add && value instanceof IContainer ) {
-			for ( final Object o : (IContainer) value ) {
+			for ( final Object o : ((IContainer) value).iterable(scope) ) {
 				add(scope, null, o, null, false, true);
 			}
 		} else if ( value instanceof IAgent ) {
@@ -519,7 +519,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			GuiUtils.debug("GamaPopulation.remove " + value);
 		}
 		if ( all && value instanceof IContainer ) {
-			for ( final Object o : (IContainer) value ) {
+			for ( final Object o : ((IContainer) value).iterable(scope) ) {
 				remove(scope, null, o, false);
 			}
 		} else if ( value instanceof IAgent && super.remove(value) ) {

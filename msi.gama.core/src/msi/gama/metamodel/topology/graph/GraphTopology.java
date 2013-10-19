@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.topology.graph;
 
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -27,8 +28,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 
 /**
  * The class GraphTopology.
@@ -77,19 +76,19 @@ public class GraphTopology extends AbstractTopology {
 
 		if ( !sourceNode ) {
 			edgeS =
-				source instanceof ILocation ? getAgentClosestTo(scope, (ILocation) source, filter) : getAgentClosestTo(
-					scope, source, filter);
+				source instanceof ILocation ? getAgentClosestTo(scope, source, filter) : getAgentClosestTo(scope,
+					source, filter);
 		}
 		if ( !targetNode ) {
 			edgeT =
-				target instanceof ILocation ? getAgentClosestTo(scope, (ILocation) target, filter) : getAgentClosestTo(
-					scope, target, filter);
+				target instanceof ILocation ? getAgentClosestTo(scope, target, filter) : getAgentClosestTo(scope,
+					target, filter);
 		}
 
 		if ( edgeS == null && !sourceNode || edgeT == null && !targetNode ) { return null; }
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
 			targetNode); }
-		
+
 		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
 
 	}
@@ -101,7 +100,7 @@ public class GraphTopology extends AbstractTopology {
 		 * // return new GamaPath(this, source, target, GamaList.with(edgeS));
 		 * }
 		 */
-		
+
 		IShape nodeS = source;
 		IShape nodeT = target;
 
@@ -125,25 +124,25 @@ public class GraphTopology extends AbstractTopology {
 			if ( s1 == null || s2 == null ) { return null; }
 			nodeS = s1;
 			if ( s1.equals(nodeT) ||
-				(! s2.equals(nodeT) &&
+				!s2.equals(nodeT) &&
 				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation().euclidianDistanceTo(
-					source.getLocation()) )) {
+					source.getLocation()) ) {
 				nodeS = s2;
 			}
 		}
 		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
 		if ( !sourceNode ) {
-			final HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
-			final HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+			final Set edgesSetInit = new THashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+			final Set edgesSetS = new THashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 			if ( !edgesSetS.equals(edgesSetInit) ) {
 				edges.add(0, edgeS);
 			}
 		}
 		if ( !targetNode ) {
-			final HashSet edgesSetEnd =
-				new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
-			final HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+			final Set edgesSetEnd =
+				new THashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
+			final Set edgesSetT = new THashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
 			if ( !edgesSetT.equals(edgesSetEnd) ) {
 				edges.add(edgeT);
@@ -271,17 +270,17 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final ILocation p) {
-		return isValidGeometry(p.getGeometry());
+	public boolean isValidLocation(final IScope scope, final ILocation p) {
+		return isValidGeometry(scope, p.getGeometry());
 	}
 
 	/**
 	 * @see msi.gama.environment.ITopology#isValidGeometry(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public boolean isValidGeometry(final IShape g) {
+	public boolean isValidGeometry(final IScope scope, final IShape g) {
 		// Geometry g2 = g.getInnerGeometry();
-		for ( final IShape g1 : places ) {
+		for ( final IShape g1 : places.iterable(scope) ) {
 			if ( g1.intersects(g) ) { return true; }
 			// TODO covers or intersects ?
 		}
@@ -332,15 +331,16 @@ public class GraphTopology extends AbstractTopology {
 	 *      boolean)
 	 */
 	@Override
-	public Iterator<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-		final boolean covered) {
-		return Iterators.filter(super.getAgentsIn(scope, source, f, covered), new Predicate<IAgent>() {
-
-			@Override
-			public boolean apply(final IAgent ag) {
-				return !ag.dead() && isValidGeometry(ag);
+	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
+		Set<IAgent> result = super.getAgentsIn(scope, source, f, covered);
+		Iterator<IAgent> it = result.iterator();
+		while (it.hasNext()) {
+			IAgent ag = it.next();
+			if ( ag.dead() || !isValidGeometry(scope, ag) ) {
+				it.remove();
 			}
-		});
+		}
+		return result;
 	}
 
 	@Override

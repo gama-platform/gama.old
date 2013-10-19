@@ -37,7 +37,7 @@ public class GisLayer extends AbstractLayer {
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) {
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
-		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
+		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects().iterable(scope) ) {
 			if ( geom != null ) {
 				g.drawGamaShape(scope, geom, color, true, Color.black, null, false);
 			}

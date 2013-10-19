@@ -159,7 +159,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaTextFile file) {
 		final boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
 		final GamaList<String[]> rows = new GamaList(file.length(scope));
-		for ( final String str : file ) {
+		for ( final String str : file.iterable(scope) ) {
 			rows.add(GamaMatrixType.csvPattern.split(str, -1));
 		}
 		final int num = max == null ? rows.size() : Math.min(rows.size(), max);

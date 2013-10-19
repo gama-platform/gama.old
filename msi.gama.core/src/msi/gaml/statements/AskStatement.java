@@ -33,7 +33,6 @@ import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 // A group of commands that can be executed on remote agents.
@@ -68,10 +67,12 @@ public class AskStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
-		final Iterator<IAgent> runners;
-		runners =
-			t instanceof ISpecies ? ((ISpecies) t).iterator() : t instanceof IContainer ? ((IContainer) t).iterable(
-				scope).iterator() : t instanceof IAgent ? singletonIterator(t) : emptyIterator();
+		final Iterator<IAgent> runners =
+			t instanceof IContainer ? ((IContainer) t).iterable(scope).iterator() : t instanceof IAgent
+				? singletonIterator(t) : emptyIterator();
+		// runners =
+		// t instanceof ISpecies ? ((ISpecies) t).iterator() : t instanceof IContainer ? ((IContainer) t).iterable(
+		// scope).iterator() : t instanceof IAgent ? singletonIterator(t) : emptyIterator();
 		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
 		Object[] result = new Object[1];
 		while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {}

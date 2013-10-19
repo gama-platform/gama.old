@@ -18,20 +18,24 @@
  */
 package msi.gama.metamodel.topology.filter;
 
+import gnu.trove.set.hash.TCustomHashSet;
+import gnu.trove.strategy.IdentityHashingStrategy;
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import com.google.common.collect.Sets;
 
 public abstract class In implements IAgentFilter {
 
 	public static In list(final IScope scope, final IContainer<?, ? extends IShape> targets)
 		throws GamaRuntimeException {
-		return new InList(targets);
+		return list(scope, targets.listValue(scope));
 	}
 
 	public static In list(final IScope scope, final IList<? extends IShape> targets) {
@@ -53,26 +57,26 @@ public abstract class In implements IAgentFilter {
 	@Override
 	public abstract boolean accept(IScope scope, IShape source, IShape a);
 
-	@Override
-	public abstract boolean accept(IScope scope, ILocation source, IShape a);
+	// @Override
+	// public abstract boolean accept(IScope scope, ILocation source, IShape a);
 
 	private static class InList extends In {
 
-		final IContainer<?, ? extends IShape> agents;
+		final Set<IShape> agents;
 
-		InList(final IContainer<?, ? extends IShape> list) {
-			agents = list;
+		InList(final IList<? extends IShape> list) {
+			agents = new TCustomHashSet<IShape>(IdentityHashingStrategy.INSTANCE, list);
 		}
 
 		@Override
 		public boolean accept(final IScope scope, final IShape source, final IShape a) {
-			return a.getGeometry() != source.getGeometry() && agents.contains(scope, a);
+			return a.getGeometry() != source.getGeometry() && agents.contains(a);
 		}
 
-		@Override
-		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-			return agents.contains(scope, a);
-		}
+		// @Override
+		// public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+		// return agents.contains(scope, a);
+		// }
 
 		@Override
 		public boolean filterSpecies(final ISpecies s) {
@@ -84,12 +88,26 @@ public abstract class In implements IAgentFilter {
 		 */
 		@Override
 		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
-			return agents;
+			return new GamaList(agents);
 		}
 
 		@Override
 		public ISpecies speciesFiltered() {
 			return null;
+		}
+
+		/**
+		 * Method accept()
+		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
+		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+		 */
+		@Override
+		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+			// GuiUtils.debug("GamaQuadTree.findIntersects : size of filter " + agents.length(scope) +
+			// " ; size of results : " + results.size());
+			// Set<? extends IShape> agents = Sets.newHashSet(this.agents.iterable(scope));
+			agents.remove(source);
+			results.retainAll(agents);
 		}
 
 	}
@@ -110,10 +128,10 @@ public abstract class In implements IAgentFilter {
 
 		}
 
-		@Override
-		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-			return byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
-		}
+		// @Override
+		// public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+		// return byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
+		// }
 
 		@Override
 		public boolean filterSpecies(final ISpecies s) {
@@ -131,6 +149,17 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public ISpecies speciesFiltered() {
 			return null; // See if we can identify the species of edges / vertices
+		}
+
+		/**
+		 * Method accept()
+		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
+		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+		 */
+		@Override
+		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+			Set<IShape> agents = Sets.newHashSet(byEdges ? graph.getEdges() : graph.getVertices());
+			results.retainAll(agents);
 		}
 	}
 
@@ -163,10 +192,10 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.In#accept(msi.gama.metamodel.shape.GamaPoint,
 		 *      msi.gama.metamodel.shape.IShape)
 		 */
-		@Override
-		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-			return a.getAgent() != null && a.getAgent().getPopulation() == pop;
-		}
+		// @Override
+		// public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+		// return a.getAgent() != null && a.getAgent().getPopulation() == pop;
+		// }
 
 		/**
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
@@ -179,6 +208,24 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public ISpecies speciesFiltered() {
 			return pop.getSpecies();
+		}
+
+		/**
+		 * Method accept()
+		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
+		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+		 */
+		@Override
+		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+			Iterator<? extends IShape> it = results.iterator();
+			while (it.hasNext()) {
+				IShape s = it.next();
+				IAgent a = s.getAgent();
+				if ( a == null || a.getSpecies() != pop.getSpecies() ) {
+					it.remove();
+				}
+
+			}
 		}
 	}
 

@@ -310,7 +310,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public boolean _removeAll(final IScope scope, final IContainer<?, Integer> list) {
-		for ( final Integer o : list ) {
+		for ( final Integer o : list.iterable(scope) ) {
 			removeAll(o.intValue());
 		}
 		// TODO Make a test to verify the return

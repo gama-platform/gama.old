@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology.continuous;
 
 import java.awt.Graphics2D;
-import java.util.Iterator;
+import java.util.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -32,7 +32,6 @@ import msi.gama.util.*;
 import msi.gama.util.path.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.GamaGeometryType;
-import com.google.common.collect.Iterators;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -98,7 +97,7 @@ public class AmorphousTopology implements ITopology {
 	// }
 	//
 	@Override
-	public void updateAgent(final IShape previous, final IShape agent) {
+	public void updateAgent(final IShape previous, final IAgent agent) {
 		final IShape ng = Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
 	}
@@ -123,9 +122,9 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.environment.IAgentFilter)
 	 */
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Set<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		return Iterators.emptyIterator();
+		return Collections.EMPTY_SET;
 	}
 
 	/**
@@ -133,9 +132,8 @@ public class AmorphousTopology implements ITopology {
 	 *      boolean)
 	 */
 	@Override
-	public Iterator<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-		final boolean covered) {
-		return Iterators.emptyIterator();
+	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
+		return Collections.EMPTY_SET;
 	}
 
 	/**
@@ -237,7 +235,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final ILocation p) {
+	public boolean isValidLocation(final IScope scope, final ILocation p) {
 		return true;
 	}
 
@@ -245,7 +243,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#isValidGeometry(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public boolean isValidGeometry(final IShape g) {
+	public boolean isValidGeometry(final IScope scope, final IShape g) {
 		return true;
 	}
 

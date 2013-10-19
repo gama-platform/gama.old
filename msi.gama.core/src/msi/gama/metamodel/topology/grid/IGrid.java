@@ -46,7 +46,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	// distance,
 	// IAgentFilter filter);
 
-	public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape shape, final Double distance,
+	public abstract Set<IAgent> getNeighboursOf(final IScope scope, final IShape shape, final Double distance,
 		IAgentFilter filter);
 
 	public abstract int manhattanDistanceBetween(final IShape g1, final IShape g2);

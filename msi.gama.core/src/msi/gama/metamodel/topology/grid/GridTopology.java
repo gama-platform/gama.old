@@ -18,7 +18,7 @@
  */
 package msi.gama.metamodel.topology.grid;
 
-import java.util.Iterator;
+import java.util.Set;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -40,7 +40,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void updateAgent(final IShape previous, final IShape agent) {
+	public void updateAgent(final IShape previous, final IAgent agent) {
 
 	}
 
@@ -162,7 +162,7 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final ILocation p) {
+	public boolean isValidLocation(final IScope scope, final ILocation p) {
 		return getPlaces().getPlaceAt(p) != null;
 
 	}
@@ -171,8 +171,8 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidGeometry(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public boolean isValidGeometry(final IShape g) {
-		return isValidLocation(g.getLocation());
+	public boolean isValidGeometry(final IScope scope, final IShape g) {
+		return isValidLocation(scope, g.getLocation());
 	}
 
 	/**
@@ -181,14 +181,14 @@ public class GridTopology extends AbstractTopology {
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
-		if ( !isValidGeometry(source) || !isValidGeometry(target) ) { return Double.MAX_VALUE; }
+		if ( !isValidGeometry(scope, source) || !isValidGeometry(scope, target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
 	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
-		if ( !isValidLocation(source) || !isValidLocation(target) ) { return Double.MAX_VALUE; }
+		if ( !isValidLocation(scope, source) || !isValidLocation(scope, target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
@@ -204,10 +204,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Set<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		// We compute the neighbouring cells of the "source" shape
-		Iterator<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
+		Set<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
 		// If we only accept cells from this topology, no need to look for other agents
 		if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the

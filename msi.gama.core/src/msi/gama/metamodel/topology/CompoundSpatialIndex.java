@@ -1,5 +1,6 @@
 package msi.gama.metamodel.topology;
 
+import gnu.trove.set.hash.THashSet;
 import java.awt.Graphics2D;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -7,10 +8,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import com.google.common.base.Function;
-import com.google.common.collect.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
@@ -23,7 +21,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public CompoundSpatialIndex(final Envelope bounds) {
 		quadtree = new GamaQuadTree(bounds);
 		indexes = new HashMap();
-		all = new HashSet();
+		all = new THashSet();
 		all.add(quadtree);
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest };
@@ -44,16 +42,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return si;
 	}
 
-	private Iterator<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
+	private Collection<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
 		final ISpatialIndex si = indexes.get(f.speciesFiltered());
-		return si == null ? all.iterator() : Iterators.singletonIterator(si);
+		return si == null ? all : Collections.singleton(si);
 	}
 
-	private IShape findClosest(final IShape source, final List<IShape> shapes) {
-		if ( shapes.size() == 1 ) { return shapes.get(0); }
+	private IAgent findClosest(final IShape source, final Set<IAgent> shapes) {
+		if ( shapes.size() == 1 ) { return shapes.iterator().next(); }
 		double min_dist = Double.MAX_VALUE;
-		IShape min_agent = null;
-		for ( final IShape s : shapes ) {
+		IAgent min_agent = null;
+		for ( final IAgent s : shapes ) {
 			final double dd = source.euclidianDistanceTo(s);
 			if ( dd < min_dist ) {
 				min_dist = dd;
@@ -64,17 +62,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public void insert(final IShape o) {
-		final IAgent a = o.getAgent();
+	public void insert(final IAgent a) {
 		if ( a == null ) { return; }
 		final ISpatialIndex si = findSpatialIndex(a);
 		if ( si != null ) {
-			si.insert(o);
+			si.insert(a);
 		}
 	}
 
 	@Override
-	public void remove(final IShape previous, final IShape o) {
+	public void remove(final IShape previous, final IAgent o) {
 		final IAgent a = o.getAgent();
 		if ( a == null ) { return; }
 		final ISpatialIndex si = findSpatialIndex(a);
@@ -84,28 +81,23 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public Iterator<IShape> allAtDistance(final IScope scope, final IShape source, final double dist,
-		final IAgentFilter f) {
+	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
+		Set<IAgent> agents = new THashSet();
+		for ( ISpatialIndex si : findSpatialIndexes(f) ) {
+			agents.addAll(si.allAtDistance(scope, source, dist, f));
+		}
 
-		return Iterators.concat(Iterators.transform(findSpatialIndexes(f),
-			new Function<ISpatialIndex, Iterator<IShape>>() {
-
-				@Override
-				public Iterator<IShape> apply(final ISpatialIndex input) {
-					return input.allAtDistance(scope, source, dist, f);
-				}
-			}));
+		return agents;
 	}
 
 	@Override
-	public IShape firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
+	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
-		final Iterator<ISpatialIndex> sis = findSpatialIndexes(f);
-		final List<ISpatialIndex> list = ImmutableList.copyOf(sis);
-		final IList<IShape> shapes = new GamaList();
+		final Collection<ISpatialIndex> list = findSpatialIndexes(f);
+		final Set<IAgent> shapes = new THashSet();
 		for ( int i = 0; i < steps.length; i++ ) {
 			for ( final ISpatialIndex si : list ) {
-				final IShape first = si.firstAtDistance(scope, source, steps[i], f);
+				final IAgent first = si.firstAtDistance(scope, source, steps[i], f);
 				if ( first != null ) {
 					shapes.add(first);
 				}
@@ -118,17 +110,13 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public Iterator<IShape> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
+	public Set<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
 		final IAgentFilter f, final boolean contained) {
-		return Iterators.concat(Iterators.transform(findSpatialIndexes(f),
-			new Function<ISpatialIndex, Iterator<IShape>>() {
-
-				@Override
-				public Iterator<IShape> apply(final ISpatialIndex input) {
-					return input.allInEnvelope(scope, source, envelope, f, contained);
-				}
-			}));
-
+		Set<IAgent> result = new THashSet();
+		for ( ISpatialIndex si : findSpatialIndexes(f) ) {
+			result.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
+		}
+		return result;
 	}
 
 	@Override

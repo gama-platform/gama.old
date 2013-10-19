@@ -4,6 +4,7 @@
  */
 package msi.gama.runtime;
 
+import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
@@ -32,7 +33,7 @@ public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
 	private final Deque<IAgent> agents = new ArrayDeque();
-	private final Deque<Record> statements = new ArrayDeque();
+	private final Deque<IRecord> statements = new ArrayDeque();
 	private IGraphics graphics;
 	private ITopology topology;
 	private volatile boolean _action_halted, _loop_halted, _agent_halted;
@@ -49,67 +50,137 @@ public abstract class AbstractScope implements IScope {
 		statements.push(new NullRecord());
 	}
 
-	class NullRecord extends Record {
-
-		public NullRecord() {
-			super(null);
-			variables = new HashMap();
-		}
+	final class NullRecord implements IRecord {
 
 		@Override
-		void setVar(final String name, final Object value) {}
+		public void setVar(final String name, final Object value) {}
 
 		@Override
-		Object getVar(final String name) {
+		public Object getVar(final String name) {
 			return null;
 		}
 
 		@Override
-		boolean hasVar(final String name) {
+		public boolean hasVar(final String name) {
 			return false;
+		}
+
+		@Override
+		public Object put(final String name, final Object value) {
+			return null;
+		}
+
+		@Override
+		public Object get(final Object name) {
+			return null;
+		}
+
+		@Override
+		public boolean contains(final Object name) {
+			return false;
+		}
+
+		@Override
+		public void clear() {}
+
+		@Override
+		public Map<? extends String, ? extends Object> getMap() {
+			return Collections.EMPTY_MAP;
 		}
 
 	}
 
-	private class Record {
+	private static interface IRecord {
 
-		Map<String, Object> variables;
-		Record previous;
+		/**
+		 * Adds this variable to the record
+		 * @param name
+		 * @param value
+		 * @return
+		 */
+		Object put(final String name, final Object value);
 
-		public Record(final Record previous) {
+		/**
+		 * Allows to set either a local variable or a variable belonging to the previous record
+		 * @param name
+		 * @param value
+		 */
+		void setVar(final String name, final Object value);
+
+		/**
+		 * Allows to get the value of a local variable or a variable belonging to the previous record
+		 * @param name
+		 * @return
+		 */
+		Object getVar(final String name);
+
+		/**
+		 * Gets the value of a local var. Null if not found.
+		 * @param name
+		 * @return
+		 */
+		Object get(final Object name);
+
+		/**
+		 * Checks if this record or a previous record has a variable of this name
+		 * @param name
+		 * @return
+		 */
+		boolean hasVar(final String name);
+
+		/**
+		 * Checks if this record has a variable of this name
+		 * @param name
+		 * @return
+		 */
+		public boolean contains(final Object name);
+
+		/**
+		 * Removes all variables from the record
+		 */
+		void clear();
+
+		/**
+		 * Returns the backing map
+		 * @return
+		 */
+		Map<? extends String, ? extends Object> getMap();
+	}
+
+	private final static class Record extends THashMap<String, Object> implements IRecord {
+
+		IRecord previous;
+
+		public Record(final IRecord previous) {
+			super(5);
 			this.previous = previous;
 		}
 
-		void addVar(final String name, final Object value) {
-			if ( variables == null ) {
-				variables = new LinkedHashMap();
-			}
-			variables.put(name, value);
-		}
-
-		void setVar(final String name, final Object value) {
-			if ( !hasLocalVar(name) ) {
+		@Override
+		public void setVar(final String name, final Object value) {
+			int i = index(name);
+			if ( i == -1 ) {
 				previous.setVar(name, value);
 			} else {
-				variables.put(name, value);
+				_values[i] = value;
 			}
 		}
 
-		Object getVar(final String name) {
-			if ( !hasLocalVar(name) ) { return previous.getVar(name); }
-			return variables.get(name);
+		@Override
+		public Object getVar(final String name) {
+			int i = index(name);
+			if ( i < 0 ) { return previous.getVar(name); }
+			return _values[i];
 		}
 
-		Object getLocalVar(final String name) {
-			return hasLocalVar(name) ? variables.get(name) : null;
+		@Override
+		public boolean hasVar(final String name) {
+			return index(name) >= 0 || previous.hasVar(name);
 		}
 
-		boolean hasLocalVar(final String name) {
-			return variables != null && variables.containsKey(name);
-		}
-
-		boolean hasVar(final String name) {
-			return hasLocalVar(name) || previous.hasVar(name);
+		@Override
+		public Map<? extends String, ? extends Object> getMap() {
+			return this;
 		}
 
 	}
@@ -395,9 +466,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		final Record r = statements.peek();
-		if ( r.variables == null ) { return; }
-		varsToSave.putAll(statements.peek().variables);
+		final IRecord r = statements.peek();
+		varsToSave.putAll(statements.peek().getMap());
 	}
 
 	/**
@@ -406,9 +476,9 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void removeAllVars() {
-		final Record r = statements.peek();
-		if ( r.variables == null ) { return; }
-		r.variables.clear();
+		final IRecord r = statements.peek();
+		r.clear();
+
 	}
 
 	/**
@@ -417,7 +487,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
-		statements.peek().addVar(varName, val);
+		statements.peek().put(varName, val);
 	}
 
 	/**
@@ -444,7 +514,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, statements.peek().getLocalVar(string), null);
+		return Types.get(type).cast(this, statements.peek().get(string), null);
 	}
 
 	@Override
@@ -478,7 +548,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public boolean hasArg(final String name) {
-		return statements.peek().hasLocalVar(name);
+		return statements.peek().contains(name);
 	}
 
 	/**

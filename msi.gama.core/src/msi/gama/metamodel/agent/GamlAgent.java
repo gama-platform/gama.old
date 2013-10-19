@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.agent;
 
+import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.*;
@@ -30,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.variables.IVariable;
 import com.google.common.collect.*;
@@ -97,7 +99,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	@Override
 	public boolean init(final IScope scope) {
-		executeCallbackAction(scope, "_init_");
+		if ( !getSpecies().isInitOverriden() ) {
+			_init_(scope);
+		} else {
+			executeCallbackAction(scope, getSpecies().getAction("_init_"));
+		}
 		return !scope.interrupted();
 	}
 
@@ -111,7 +117,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	@Override
 	public boolean step(final IScope scope) {
-		executeCallbackAction(scope, "_step_");
+		if ( !getSpecies().isStepOverriden() ) {
+			_step_(scope);
+		} else {
+			executeCallbackAction(scope, getSpecies().getAction("_step_"));
+		}
 		return !scope.interrupted();
 	}
 
@@ -119,11 +129,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * Callback Actions
 	 * 
 	 */
+	static Object[] callbackResult = new Object[1];
 
-	protected Object executeCallbackAction(final IScope scope, final String name) {
-		Object[] result = new Object[1];
-		scope.execute(getSpecies().getAction(name), this, null, result);
-		return result[0];
+	protected Object executeCallbackAction(final IScope scope, final IStatement action) {
+		scope.execute(action, this, null, callbackResult);
+		return callbackResult[0];
 	}
 
 	@action(name = "_init_")
@@ -291,7 +301,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		 * @throws GamaRuntimeException
 		 */
 		private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-			variables = new HashMap<String, Object>();
+			variables = new THashMap<String, Object>(11, 0.9f);
 			final ISpecies species = agent.getSpecies();
 			for ( final String specVar : species.getVarNames() ) {
 				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
@@ -472,9 +482,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		// update micro-agents' locations accordingly
 
-		for ( final IPopulation pop : getMicroPopulations() ) {
-			pop.hostChangesShape();
-		}
+		// TODO DOES NOT WORK FOR THE MOMENT
+		// for ( final IPopulation pop : getMicroPopulations() ) {
+		// pop.hostChangesShape();
+		// }
 	}
 
 	@Override
@@ -501,10 +512,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
-			for ( final IPopulation pop : getMicroPopulations() ) {
-				// FIXME DOES NOT WORK FOR THE MOMENT
-				pop.hostChangesShape();
-			}
+			// for ( final IPopulation pop : getMicroPopulations() ) {
+			// // FIXME DOES NOT WORK FOR THE MOMENT
+			// pop.hostChangesShape();
+			// }
 		}
 		final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
 		if ( graph != null ) {
@@ -543,8 +554,14 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public Iterable<IPopulation> getMicroPopulations() {
-		return Iterables.filter(attributes.values(), IPopulation.class);
+	public IPopulation[] getMicroPopulations() {
+		IPopulation[] pops = (IPopulation[]) getAttribute("populations");
+		if ( pops == null ) {
+			Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
+			pops = Iterables.toArray(it, IPopulation.class);
+			setAttribute("populations", pops);
+		}
+		return pops;
 		// return new GamaList<IPopulation>(microPopulations.values());
 	}
 

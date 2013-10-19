@@ -18,7 +18,8 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import msi.gama.metamodel.shape.*;
+import java.util.Set;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
@@ -41,10 +42,10 @@ public class Different implements IAgentFilter {
 		return false;
 	}
 
-	@Override
-	public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-		return !a.getLocation().equals(source);
-	}
+	// @Override
+	// public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+	// return !a.getLocation().equals(source);
+	// }
 
 	/**
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
@@ -57,6 +58,15 @@ public class Different implements IAgentFilter {
 	@Override
 	public ISpecies speciesFiltered() {
 		return null;
+	}
+
+	/**
+	 * Method filter()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(java.util.Collection)
+	 */
+	@Override
+	public void filter(final IScope scope, final IShape source, final Set<? extends IShape> internal_results) {
+		internal_results.remove(source);
 	}
 
 }

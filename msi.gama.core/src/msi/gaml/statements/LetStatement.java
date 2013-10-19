@@ -25,6 +25,8 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -54,8 +56,10 @@ public class LetStatement extends SetStatement {
 	}
 
 	@Override
-	protected boolean isLet() {
-		return true;
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final Object val = value.value(scope);
+		varExpr.setVal(scope, val, true);
+		return val;
 	}
 
 }

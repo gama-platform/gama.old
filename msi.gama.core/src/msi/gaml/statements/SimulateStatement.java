@@ -18,12 +18,9 @@
  */
 package msi.gaml.statements;
 
-import java.util.Iterator;
 import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.ExperimentSpecies;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IOutput;
@@ -32,27 +29,26 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gama.util.GAML;
-import msi.gama.util.GamaMap;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.*;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.GamlExpressionFactory;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 @symbol(name = "simulate", kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = { @facet(name = "comodel", type = { IType.STRING }, optional = false),
-		@facet(name = "with_experiment", type = { IType.STRING }, optional = true), @facet(name = "with_input", type = { IType.MAP }, optional = true),
-		@facet(name = "with_output", type = { IType.MAP }, optional = true), @facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
-		@facet(name = IKeyword.REPEAT, type = { IType.INT }, optional = true) }, omissible = "model")
+	@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
+	@facet(name = "with_input", type = { IType.MAP }, optional = true),
+	@facet(name = "with_output", type = { IType.MAP }, optional = true),
+	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.REPEAT, type = { IType.INT }, optional = true) }, omissible = "model")
 @inside(kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @doc(value = "Allows an agent, the sender agent (that can be the [Sections151#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
-		+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = { "ask receiver_agent(s) {",
-		"     [statements]", "}" })
+	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
+	"ask receiver_agent(s) {", "     [statements]", "}" })
 public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
@@ -69,9 +65,7 @@ public class SimulateStatement extends AbstractStatementSequence {
 	public SimulateStatement(final IDescription desc) {
 		super(desc);
 		comodel = getFacet("comodel");
-		if (comodel == null) {
-			return;
-		}
+		if ( comodel == null ) { return; }
 		setName("simulate " + comodel.toGaml());
 
 		mm = ((GamlExpressionFactory) GAML.getExpressionFactory()).getParser().createModelFromFile(comodel.getName());
@@ -81,7 +75,7 @@ public class SimulateStatement extends AbstractStatementSequence {
 		IExpression with_exp = getFacet("with_experiment");
 		exp = null;// = mm.getExperiment("Experiment default");
 
-		if (with_exp != null) {
+		if ( with_exp != null ) {
 			exp = mm.getExperiment("Experiment " + with_exp.getName());
 		}
 		param_input = getFacet("with_input");
@@ -110,24 +104,27 @@ public class SimulateStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 
-		if (param_input != null) {
+		if ( param_input != null ) {
 			in = (GamaMap) param_input.value(scope);
-			for (int i = 0; i < in.getKeys().size(); i++) {
-				((ExperimentSpecies) exp).getExperimentScope().setGlobalVarValue(in.getKeys().get(i).toString(), in.getValues().get(i));
+			for ( int i = 0; i < in.getKeys().size(); i++ ) {
+				((ExperimentSpecies) exp).getExperimentScope().setGlobalVarValue(in.getKeys().get(i).toString(),
+					in.getValues().get(i));
 			}
 		}
 
 		// GuiUtils.debug(">>>>>> call model init "
 		// + in.getKeys().get(0).toString() + " " + in.getValues().get(0));
 
-
 		((ExperimentSpecies) exp).createAgentForMultiExp();
 		GAMA.controller.getScheduler().removeStepable(exp.getAgent().toString());
 
-		Iterator<IPopulation> pops = exp.getAgent().getMicroPopulations().iterator();
-		while (pops.hasNext()) {
-			GAMA.controller.getScheduler().removeStepable(pops.next().toString());
+		for ( IPopulation pop : exp.getAgent().getMicroPopulations() ) {
+			GAMA.controller.getScheduler().removeStepable(pop.toString());
 		}
+		// Iterator<IPopulation> pops = exp.getAgent().getMicroPopulations().iterator();
+		// while (pops.hasNext()) {
+		// GAMA.controller.getScheduler().removeStepable(pops.next().toString());
+		// }
 
 		GAMA.controller.getScheduler().schedule(exp.getAgent(), exp.getAgent().getScope());
 
@@ -145,22 +142,21 @@ public class SimulateStatement extends AbstractStatementSequence {
 		IExpression stopCondition = getFacet(IKeyword.UNTIL);
 		int n = 1;
 		int i = 0;
-		if (repeat != null) {
+		if ( repeat != null ) {
 			n = (Integer) repeat.value(scope);
 		}
 		boolean mustStop = false;
 		while (i < n && !mustStop) {
 			exp.getAgent().getSimulation().step(exp.getExperimentScope());
 
-			if (param_output != null) {
+			if ( param_output != null ) {
 				out = (GamaMap) param_output.value(scope);
-				for (int j = 0; j < out.getKeys().size(); j++) {
-					scope.setGlobalVarValue(out.getValues().get(j).toString(),
-							((ExperimentSpecies) exp).getExperimentScope()
-							.getGlobalVarValue(out.getKeys().get(j).toString()));
+				for ( int j = 0; j < out.getKeys().size(); j++ ) {
+					scope.setGlobalVarValue(out.getValues().get(j).toString(), ((ExperimentSpecies) exp)
+						.getExperimentScope().getGlobalVarValue(out.getKeys().get(j).toString()));
 				}
 			}
-			if (stopCondition != null) {
+			if ( stopCondition != null ) {
 				mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, scope.getAgentScope()));
 			}
 			i++;

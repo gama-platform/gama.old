@@ -59,20 +59,11 @@ public class SetStatement extends AbstractStatement {
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final Object val = value.value(scope);
-		// if ( varExpr.literalValue().equals("location") ) {
-		// GuiUtils.debug("SetStatement.privateExecuteIn");
-		// }
-		varExpr.setVal(scope, val, isLet());
-		// stack.setStatus(ExecutionStatus.success);
+		varExpr.setVal(scope, val, false);
 		return val;
 	}
 
-	protected boolean isLet() {
-		return false;
-	}
-
 	public String getVarName() {
-		if ( varExpr == null ) { return "unknown variable"; }
 		return varExpr.literalValue();
 	}
 

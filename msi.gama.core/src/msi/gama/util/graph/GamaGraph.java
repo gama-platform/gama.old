@@ -32,10 +32,11 @@ import msi.gama.util.*;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.*;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
 
@@ -80,7 +81,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
 		this.scope = scope;
-		init(edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
 
 	public GamaGraph(final IScope scope) {
@@ -89,8 +90,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		this.scope = scope;
 	}
 
-	protected void init(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
-		final VertexRelationship rel, final ISpecies edgesSpecies) {
+	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
+		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
@@ -98,9 +99,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		agentEdge =
 			edgesSpecies != null || byEdge && edgesOrVertices != null && edgesOrVertices.first(scope) instanceof IAgent;
 		if ( byEdge ) {
-			buildByEdge(edgesOrVertices);
+			buildByEdge(scope, edgesOrVertices);
 		} else {
-			buildByVertices(edgesOrVertices);
+			buildByVertices(scope, edgesOrVertices);
 		}
 		version = 1;
 	}
@@ -146,16 +147,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		// return "(" + renderedVertices + ", " + renderedEdges + ")";
 	}
 
-	protected void buildByVertices(final IContainer<?, E> vertices) {
-		for ( final E p : vertices ) {
+	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices) {
+		for ( final E p : vertices.iterable(scope) ) {
 			addVertex(p);
 		}
 	}
 
-	protected void buildByEdge(final IContainer vertices) {
-		for ( final Object p : vertices ) {
+	protected void buildByEdge(final IScope scope, final IContainer vertices) {
+		for ( final Object p : vertices.iterable(scope) ) {
 			addEdge(p);
-			if (p instanceof IShape) {
+			if ( p instanceof IShape ) {
 				getEdge(p).setWeight(((IShape) p).getPerimeter());
 			}
 		}
@@ -515,9 +516,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			case 3:
 				// FIXME : ToCheck.....
 				try {
-				final DijkstraShortestPath<GamaShape, GamaShape> p2 =
-					new DijkstraShortestPath(getProxyGraph(), source, target);
-				return new GamaList<E>(p2.getPathEdgeList());
+					final DijkstraShortestPath<GamaShape, GamaShape> p2 =
+						new DijkstraShortestPath(getProxyGraph(), source, target);
+					return new GamaList<E>(p2.getPathEdgeList());
 				} catch (IllegalArgumentException e) {
 					return new GamaList<E>();
 				}
@@ -584,7 +585,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 						addEdge(o);
 					}
 				} else if ( value instanceof IContainer ) {
-					for ( final Object o : (IContainer) value ) {
+					for ( final Object o : ((IContainer) value).iterable(scope) ) {
 						this.add(scope, null, o, param, false, true);
 					}
 				} else { // value != container
@@ -654,7 +655,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof IContainer ) {
-					for ( final Object obj : (IContainer) value ) {
+					for ( final Object obj : ((IContainer) value).iterable(scope) ) {
 						remove(scope, null, obj, true);
 					}
 				} else if ( value != null ) {
@@ -827,7 +828,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public double computeTotalWeight() {
 		double result = 0;

@@ -80,7 +80,7 @@ public interface IMacroAgent extends IAgent {
 	 * 
 	 * @return
 	 */
-	public abstract Iterable<IPopulation> getMicroPopulations();
+	public abstract IPopulation[] getMicroPopulations();
 
 	/**
 	 * Verifies if this agent contains micro-agents or not.

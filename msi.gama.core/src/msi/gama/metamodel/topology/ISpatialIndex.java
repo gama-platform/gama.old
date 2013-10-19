@@ -19,7 +19,8 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.util.Iterator;
+import java.util.Set;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
@@ -36,13 +37,13 @@ public interface ISpatialIndex {
 
 	public final static Envelope ENVELOPE = new Envelope();
 
-	public abstract void insert(IShape agent);
+	public abstract void insert(IAgent agent);
 
-	public abstract void remove(final IShape previous, final IShape agent);
+	public abstract void remove(final IShape previous, final IAgent agent);
 
-	public abstract IShape firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
+	public abstract IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 
-	public abstract Iterator<IShape> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
+	public abstract Set<IAgent> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
 		final IAgentFilter f, boolean contained);
 
 	public abstract void drawOn(Graphics2D g2, int width, int height);
@@ -54,13 +55,6 @@ public interface ISpatialIndex {
 		public abstract void dispose();
 	}
 
-	/**
-	 * @param scope
-	 * @param source
-	 * @param dist
-	 * @param f
-	 * @return
-	 */
-	Iterator<IShape> allAtDistance(IScope scope, IShape source, double dist, IAgentFilter f);
+	Set<IAgent> allAtDistance(IScope scope, IShape source, double dist, IAgentFilter f);
 
 }

@@ -22,7 +22,7 @@ Visit http://code.google.com/p/gama-platform/
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean</programArgs>
       <vmArgs>-server
--Xms256m -Xmx2048m
+-Xms4048m -Xmx4048m
 -Xmn128m
 -Xss2m
 -XX:PermSize=128m
@@ -66,7 +66,7 @@ Visit http://code.google.com/p/gama-platform/
    <plugins>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
-      <plugin id="com.ibm.icu.base"/>
+      <plugin id="com.ibm.icu"/>
       <plugin id="com.jogamp.jogl"/>
       <plugin id="com.jogamp.jogl-linux-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-linux-i586" fragment="true"/>

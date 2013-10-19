@@ -355,6 +355,7 @@ public final class AwtEnvironment {
 		 */
 		if ( runnable == null ) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+			return;
 		}
 		if ( !display.equals(Display.getCurrent()) ) {
 			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
@@ -444,6 +445,7 @@ public final class AwtEnvironment {
 	public Frame createDialogParentFrame(final Shell parent) {
 		if ( parent == null ) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+			return null;
 		}
 		if ( !display.equals(Display.getCurrent()) ) {
 			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);

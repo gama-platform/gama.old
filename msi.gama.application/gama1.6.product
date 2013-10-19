@@ -67,7 +67,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="com.ibm.icu.base" fragment=""/>
       <plugin id="com.jogamp.jogl"/>
       <plugin id="com.jogamp.jogl-linux-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-linux-i586" fragment="true"/>

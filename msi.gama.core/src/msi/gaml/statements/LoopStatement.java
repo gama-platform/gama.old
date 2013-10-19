@@ -56,6 +56,7 @@ public class LoopStatement extends AbstractStatementSequence {
 
 	private final LoopExecuter executer;
 	private final String varName;
+	private final Object[] result = new Object[1];
 
 	public LoopStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -89,7 +90,7 @@ public class LoopStatement extends AbstractStatementSequence {
 		return executer.runIn(scope);
 	}
 
-	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
+	protected boolean loopBody(final IScope scope, final Object var) {
 		scope.push(this);
 		if ( varName != null ) {
 			scope.setVarValue(varName, var);
@@ -133,7 +134,7 @@ public class LoopStatement extends AbstractStatementSequence {
 			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
 			final int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
 			Object[] result = new Object[1];
-			for ( int i = f, n = t + 1; i < n && loopBody(scope, i, result); i += s ) {}
+			for ( int i = f, n = t + 1; i < n && loopBody(scope, i); i += s ) {}
 			return result[0];
 		}
 	}
@@ -164,8 +165,7 @@ public class LoopStatement extends AbstractStatementSequence {
 			if ( first > last ) { return null; }
 			final int step_ = constantStep == null ? Cast.asInt(scope, step.value(scope)) : 1;
 			if ( step_ <= 0 || step_ > last - first ) { return null; }
-			Object result[] = new Object[1];
-			for ( int i = first; i < last && loopBody(scope, i, result); i += step_ ) {}
+			for ( int i = first; i < last && loopBody(scope, i); i += step_ ) {}
 			return result[0];
 		}
 
@@ -178,10 +178,10 @@ public class LoopStatement extends AbstractStatementSequence {
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object obj = over.value(scope);
-			final IContainer list_ = !(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
-			Object[] result = new Object[1];
-			for ( final Object each : list_.iterable(scope) ) {
-				if ( !loopBody(scope, each, result) ) {
+			final Iterable list_ =
+				!(obj instanceof IContainer) ? Cast.asList(scope, obj) : ((IContainer) obj).iterable(scope);
+			for ( final Object each : list_ ) {
+				if ( !loopBody(scope, each) ) {
 					break;
 				}
 			}
@@ -203,8 +203,7 @@ public class LoopStatement extends AbstractStatementSequence {
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
-			Object[] result = new Object[1];
-			for ( int i = 0; i < max && loopBody(scope, null, result); i++ ) {}
+			for ( int i = 0; i < max && loopBody(scope, null); i++ ) {}
 			return result[0];
 		}
 
@@ -216,8 +215,7 @@ public class LoopStatement extends AbstractStatementSequence {
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			Object[] result = new Object[1];
-			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null, result)) {}
+			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {}
 			return result[0];
 		}
 	}

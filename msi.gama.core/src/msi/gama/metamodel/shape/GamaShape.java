@@ -244,54 +244,6 @@ public class GamaShape implements IShape /* , IContainer */{
 	public final static PointPairDistance ppd = new PointPairDistance();
 	final static PointLocator pl = new PointLocator();
 
-	// public class Operations {
-	//
-	// // final Geometry cached;
-	// IndexedFacetDistance distance;
-	// PreparedGeometry prepared;
-	//
-	// // public Operations(final GamaShape g1) {
-	// // cached = g1.getInnerGeometry();
-	// // }
-	//
-	// private IndexedFacetDistance distanceOp() {
-	// if ( distance == null ) {
-	// distance = new IndexedFacetDistance(geometry);
-	// }
-	// return distance;
-	// }
-	//
-	// private PreparedGeometry preparedOp() {
-	// if ( prepared == null ) {
-	// prepared = PreparedGeometryFactory.prepare(geometry);
-	// }
-	// return prepared;
-	// }
-	//
-	// public double getDistance(final IShape g2) {
-	// if ( g2.isPoint() ) {
-	// // if (isPoint()) {return getLocation().distance(g2.getLocation());
-	// ppd.initialize();
-	// DistanceToPoint.computeDistance(geometry, (Coordinate) g2.getLocation(), ppd);
-	// return ppd.getDistance();
-	// }
-	// return distanceOp().getDistance(g2.getInnerGeometry());
-	// }
-	//
-	// public boolean covers(final IShape g) {
-	// return preparedOp().covers(g.getInnerGeometry());
-	// }
-	//
-	// public boolean intersects(final IShape g) {
-	// return preparedOp().intersects(g.getInnerGeometry());
-	// }
-	//
-	// public boolean crosses(final IShape g) {
-	// return preparedOp().crosses(g.getInnerGeometry());
-	// }
-	//
-	// }
-
 	@Override
 	public IShape getGeometry() {
 		return this;

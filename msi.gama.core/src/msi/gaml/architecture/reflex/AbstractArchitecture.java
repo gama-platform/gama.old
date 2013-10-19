@@ -6,6 +6,7 @@ import msi.gaml.architecture.IArchitecture;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.Skill;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 public abstract class AbstractArchitecture extends Skill implements IArchitecture {
@@ -77,5 +78,11 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	public IExpression getPertinence() {
 		return null;
 	}
+
+	@Override
+	public void verifyBehaviors(final ISpecies context) {}
+
+	@Override
+	public void dispose() {}
 
 }

@@ -68,8 +68,7 @@ public abstract class MinimalAgent implements IAgent {
 	 * 
 	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
 	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
-	 *       not
-	 *       to be nil, this method can be safely overriden with a direct call to getPopulation()
+	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
 	 */
 	protected IPopulation checkedPopulation() {
 		return nullCheck(getPopulation(), "The agent's population is nil");
@@ -530,9 +529,6 @@ public abstract class MinimalAgent implements IAgent {
 
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		// if ( getSpecies().getName().equals("flock") ) {
-		// GuiUtils.debug("Flock destroyed : " + this);
-		// }
 		scope.interruptAgent();
 		dispose();
 		return null;

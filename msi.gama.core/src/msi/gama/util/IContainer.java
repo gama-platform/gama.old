@@ -27,7 +27,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 
-
 /**
  * Written by drogoul Modified on 3 juin 2010
  * 

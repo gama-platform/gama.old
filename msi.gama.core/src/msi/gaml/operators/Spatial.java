@@ -18,6 +18,7 @@
  */
 package msi.gaml.operators;
 
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -39,6 +40,7 @@ import msi.gama.util.path.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
+import com.vividsolutions.jts.algorithm.distance.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.operation.buffer.*;
@@ -434,7 +436,7 @@ public abstract class Spatial {
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
 			if ( g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.factory.createGeometry(g1.getInnerGeometry());
-			for ( final IShape ag : agents ) {
+			for ( final IShape ag : agents.iterable(scope) ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
 					geom1 = difference(geom1, ag.getInnerGeometry());
 					if ( geom1 == null || geom1.isEmpty() ) { return null; }
@@ -544,7 +546,7 @@ public abstract class Spatial {
 				final IList<Geometry> geomsVisible = new GamaList<Geometry>();
 				final Geometry geomObsts[] = new Geometry[obstacles.length(scope)];
 				int i = 0;
-				for ( final IShape shape : obstacles ) {
+				for ( final IShape shape : obstacles.iterable(scope) ) {
 					geomObsts[i++] = shape.getInnerGeometry();
 				}
 
@@ -868,7 +870,7 @@ public abstract class Spatial {
 			if ( geoms.isEmpty(scope) ) { return new GamaList<IShape>(); }
 			Geometry nodedLineStrings = geoms.first(scope).getInnerGeometry();
 
-			for ( final Object obj : geoms ) {
+			for ( final Object obj : geoms.iterable(scope) ) {
 				final Geometry g = ((IShape) obj).getInnerGeometry();
 				if ( g instanceof LineString ) {
 					nodedLineStrings = nodedLineStrings.union(g);
@@ -952,7 +954,7 @@ public abstract class Spatial {
 			if ( size == 0 || size == 1 ) { return 0d; }
 			IShape previous = null;
 			Double distance = 0d;
-			for ( final IShape obj : geometries ) {
+			for ( final IShape obj : geometries.iterable(scope) ) {
 				if ( previous != null ) {
 					final Double d = t.distanceBetween(scope, previous, obj);
 					if ( d == null ) { return null; }
@@ -993,7 +995,7 @@ public abstract class Spatial {
 			if ( n == 2 ) { return graph.pathBetween(scope, source, target); }
 			final GamaList<IShape> edges = new GamaList<IShape>();
 			IShape previous = null;
-			for ( final IShape gg : nodes ) {
+			for ( final IShape gg : nodes.iterable(scope) ) {
 				if ( previous != null ) {
 					// TODO Take the case of ILocation
 					edges.addAll(graph.pathBetween(scope, previous, gg).getEdgeList());
@@ -1273,8 +1275,17 @@ public abstract class Spatial {
 		public static ILocation _closest_point_to(final IShape pt, final IShape geom) {
 			if ( pt == null ) { return null; }
 			if ( geom == null ) { return pt.getLocation(); }
+			//if ( pt.isPoint() ) { return _closest_point_to(pt.getLocation(), geom); }
 			final Coordinate[] cp = new DistanceOp(geom.getInnerGeometry(), pt.getInnerGeometry()).nearestPoints();
 			return new GamaPoint(cp[0]);
+		}
+
+		public static ILocation _closest_point_to(final ILocation pt, final IShape geom) {
+			if ( pt == null ) { return null; }
+			if ( geom == null ) { return pt; }
+			PointPairDistance ppd = new PointPairDistance();
+			DistanceToPoint.computeDistance(geom.getInnerGeometry(), pt.toCoordinate(), ppd);
+			return new GamaPoint(ppd.getCoordinate(0));
 		}
 
 		@operator("angle_between")
@@ -1497,7 +1508,7 @@ public abstract class Spatial {
 			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			final IAgent agent = scope.getAgentScope();
-			Iterator<IAgent> result;
+			Set<IAgent> result;
 			// if ( agent.isPoint() ) {
 			// result = scope.getTopology().getNeighboursOf(agent.getLocation(), distance, Different.with());
 			// } else {
@@ -1519,8 +1530,8 @@ public abstract class Spatial {
 			final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
 			In filter = In.list(scope, agents);
-			Set<IAgent> clusteredCells = new HashSet<IAgent>();
-			for ( final IAgent ag : agents ) {
+			Set<IAgent> clusteredCells = new THashSet<IAgent>();
+			for ( final IAgent ag : agents.iterable(scope) ) {
 				if ( !clusteredCells.contains(ag) ) {
 					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
 				}
@@ -1571,7 +1582,7 @@ public abstract class Spatial {
 				final IList g1 = groups.get(i);
 				for ( int j = i + 1; j < nb; j++ ) {
 					final IList g2 = groups.get(j);
-					final Set<IList> distGp = new HashSet<IList>();
+					final Set<IList> distGp = new THashSet<IList>();
 					distGp.add(g1);
 					distGp.add(g2);
 					final IAgent a = (IAgent) g1.get(0);
@@ -1606,7 +1617,7 @@ public abstract class Spatial {
 					groupeF.add(g1);
 				}
 				for ( final IList groupe : groups ) {
-					final Set<IList> newDistGp = new HashSet<IList>();
+					final Set<IList> newDistGp = new THashSet<IList>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;

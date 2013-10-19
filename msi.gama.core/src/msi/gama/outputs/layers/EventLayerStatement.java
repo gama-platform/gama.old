@@ -48,7 +48,7 @@ public class EventLayerStatement extends AgentLayerStatement {
 	public static int MOUSE_PRESSED = 0;
 	public static int MOUSE_RELEASED = 1;
 
-	private final int actionType = -1;
+	// private final int actionType = -1;
 
 	public EventLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);

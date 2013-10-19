@@ -145,7 +145,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 				if ( value instanceof GamaMap ) {
 					putAll((GamaMap) value);
 				} else if ( value instanceof IContainer ) {
-					for ( final Object o : (IContainer) value ) {
+					for ( final Object o : ((IContainer) value).iterable(scope) ) {
 						add(scope, null, o, null, false, false);
 					}
 				} else {
@@ -176,7 +176,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof IContainer ) {
-					for ( final Object obj : (IContainer) value ) {
+					for ( final Object obj : ((IContainer) value).iterable(scope) ) {
 						remove(scope, null, obj, true);
 					}
 				} else if ( value != null ) {

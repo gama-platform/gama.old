@@ -179,4 +179,8 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	 */
 	public abstract Collection<String> getMicroSpeciesNames();
 
+	public abstract boolean isInitOverriden();
+
+	public abstract boolean isStepOverriden();
+
 }

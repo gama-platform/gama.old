@@ -66,7 +66,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
 		this(scope);
-		init(edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
 
 	public GamaSpatialGraph(final IScope scope) {
@@ -89,13 +89,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	protected void buildByVertices(final IContainer<?, IShape> list) {
-		super.buildByVertices(list);
-		for ( IShape o1 : list ) { // Try to create automatic edges
+	protected void buildByVertices(final IScope scope, final IContainer<?, IShape> list) {
+		super.buildByVertices(scope, list);
+		for ( IShape o1 : list.iterable(scope) ) { // Try to create automatic edges
 			if ( o1.getAgent() != null ) {
 				o1.getAgent().setAttribute("attached_graph", this);
 			}
-			for ( IShape o2 : list ) {
+			for ( IShape o2 : list.iterable(scope) ) {
 				if ( vertexRelation.equivalent(scope, o1, o2) ) {
 					continue;
 				}

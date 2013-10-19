@@ -52,7 +52,7 @@ public class HeadLessExperiment  implements IHeadLessExperiment {
 	private ExperimentSpecies myExperiment;
 	
 	public HeadLessExperiment(ExperimentSpecies exp) {
-		myExperiment = exp;
+		myExperiment = exp; 
 	}
 
 	@Override

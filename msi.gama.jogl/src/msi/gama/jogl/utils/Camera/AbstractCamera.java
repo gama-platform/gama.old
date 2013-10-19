@@ -4,14 +4,13 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.Point;
 import java.awt.event.*;
 import java.nio.IntBuffer;
-import java.util.Iterator;
+import java.util.Set;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -162,10 +161,10 @@ public abstract class AbstractCamera implements ICamera {
 		if ( canSelectOnRelease(arg0) && isViewIn2DPlan() && isEnableROIDrawing() ) {
 			if ( arg0.isAltDown() ) {
 
-				Iterator<IShape> shapes = GAMA.run(new InScope<Iterator<IShape>>() {
+				Set<IAgent> shapes = GAMA.run(new InScope<Set<IAgent>>() {
 
 					@Override
-					public Iterator<IShape> run(final IScope scope) {
+					public Set<IAgent> run(final IScope scope) {
 						return scope
 							.getTopology()
 							.getSpatialIndex()
@@ -174,8 +173,7 @@ public abstract class AbstractCamera implements ICamera {
 					}
 				});
 
-				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-				getRenderer().displaySurface.selectSeveralAgents(agents, 0);
+				getRenderer().displaySurface.selectSeveralAgents(shapes, 0);
 			}
 			if ( arg0.isShiftDown() ) {
 				zoomRoi();

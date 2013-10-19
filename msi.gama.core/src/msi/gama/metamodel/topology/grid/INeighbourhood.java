@@ -4,7 +4,7 @@
  */
 package msi.gama.metamodel.topology.grid;
 
-import java.util.Iterator;
+import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 
 /**
@@ -16,7 +16,7 @@ import msi.gama.metamodel.agent.IAgent;
  */
 public interface INeighbourhood {
 
-	public abstract Iterator<IAgent> getNeighboursIn(final int placeIndex, final int radius);
+	public abstract Set<IAgent> getNeighboursIn(final int placeIndex, final int radius);
 
 	public abstract boolean isVN();
 
