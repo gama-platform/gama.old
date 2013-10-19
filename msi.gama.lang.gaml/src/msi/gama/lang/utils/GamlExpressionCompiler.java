@@ -41,8 +41,7 @@ import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.resource.*;
@@ -588,6 +587,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		public IExpression caseExpressionList(final ExpressionList object) {
 			List<Expression> list = EGaml.getExprsOf(object);
 			if ( list.isEmpty() ) { return null; }
+			if ( list.size() > 1 ) {
+				context.warning(
+					"A sequence of expressions is not expected here. Only the first expression will be evaluated",
+					IGamlIssue.UNKNOWN_ARGUMENT, object);
+			}
 			IExpression expr = compile(list.get(0));
 			return expr;
 		}
@@ -837,11 +841,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public IModel createModelFromFile(final String fileName) {
 		System.out.println(fileName + " model is loading...");
 
-		GamlResource resource = (GamlResource) getContext()
-				.getModelDescription().getUnderlyingElement(null).eResource();
+		GamlResource resource =
+			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
 
-		URI iu = URI.createURI(fileName)
-				.resolve(resource.getURI());
+		URI iu = URI.createURI(fileName).resolve(resource.getURI());
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		// GamlResource r = (GamlResource) rs.getResource(iu, true);
@@ -851,17 +854,16 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		try {
 			GamlJavaValidator validator = new GamlJavaValidator();
 			// = (GamlJavaValidator) injector
-//					.getInstance(EValidator.class);
+			// .getInstance(EValidator.class);
 
 			lastModel = validator.build(r);
-			if (!r.getErrors().isEmpty()) {
+			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
 				// System.out.println("End compilation of " + m.getName());
 			}
 
 		} catch (GamaRuntimeException e1) {
-			System.out.println("Exception during compilation:"
-					+ e1.getMessage());
+			System.out.println("Exception during compilation:" + e1.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -878,16 +880,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
 		System.out.println(fileName + " model is loading...");
 
-		GamlResource resource = (GamlResource) getContext()
-				.getModelDescription().getUnderlyingElement(null).eResource();
+		GamlResource resource =
+			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
 
-		URI iu = URI.createURI("file:///" + fileName)
-				.resolve(resource.getURI());
+		URI iu = URI.createURI("file:///" + fileName).resolve(resource.getURI());
 		ModelDescription lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		// GamlResource r = (GamlResource) rs.getResource(iu, true);
-		GamlResource r = (GamlResource) rs.getResource(
-iu, true);
+		GamlResource r = (GamlResource) rs.getResource(iu, true);
 		// URI.createURI("file:///" + fileName), true);
 
 		try {
@@ -896,14 +896,13 @@ iu, true);
 			// .getInstance(EValidator.class);
 
 			// lastModel = validator.validate((Model) r);
-			if (!r.getErrors().isEmpty()) {
+			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
 				// System.out.println("End compilation of " + m.getName());
 			}
 
 		} catch (GamaRuntimeException e1) {
-			System.out.println("Exception during compilation:"
-					+ e1.getMessage());
+			System.out.println("Exception during compilation:" + e1.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -915,8 +914,8 @@ iu, true);
 		System.out.println("Experiment created ");
 		return lastModel;
 	}
-	
+
 	//
-	//end-hqnghi
+	// end-hqnghi
 	//
 }
