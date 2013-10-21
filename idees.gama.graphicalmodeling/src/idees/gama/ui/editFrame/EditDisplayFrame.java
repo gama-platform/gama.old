@@ -4,6 +4,7 @@ import gama.EDisplay;
 import gama.EGamaObject;
 import gama.EGridTopology; 
 import gama.ELayer;
+import gama.ELayerAspect;
 import gama.ESpecies;
 import idees.gama.features.edit.EditFeature;
 
@@ -29,11 +30,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -117,48 +122,64 @@ public class EditDisplayFrame extends EditFrame {
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
+		
 		Composite container = new Composite(parent, SWT.NONE);
-		// ****** CANVAS NAME *********
-		Canvas canvasName = canvasName(container);
-		canvasName.setBounds(10, 10, 720, 30);
-
-		// ****** CANVAS LAYERS *********
-		Canvas canvasLayers = canvasLayers(container);
-		canvasLayers.setBounds(10, 50, 720, 275);
-
-		// ****** CANVAS PARAMETERS *********
-		Canvas canvasParam = buildCanvasParam(container);
-		canvasParam.setBounds(10, 335, 720, 100);
-
+		container.setLayout(new GridLayout(1, false));
+		//****** CANVAS NAME *********
+		groupName(container);
+		
+		//****** CANVAS LAYERS *********
+		groupLayers(container);
+		
+		buildCanvasParam(container);
+				
 		//****** CANVAS OK/CANCEL *********
-		Canvas canvasOkCancel = canvasOkCancel(container);
-		canvasOkCancel.setBounds(10, 445, 720, 30);
-
+		groupOkCancel(container);
 		loadData();
+		
 		return container;
 	}
 
-	protected Canvas canvasLayers(Composite container) {
+	protected void groupLayers(Composite container) {
 
 		//****** CANVAS LAYERS *********
-				Canvas canvasLayers = new Canvas(container, SWT.BORDER);
-				canvasLayers.setBounds(10, 515, 720, 275);
-						
-				layerViewer = new org.eclipse.swt.widgets.List(canvasLayers, SWT.BORDER | SWT.V_SCROLL);
+		//****** CANVAS LAYERS *********
+				Group group = new Group(container, SWT.NONE);
 				
+				group.setLayout( new FillLayout(SWT.VERTICAL));
+			    group.setText("Display layers");
+			    
+			   GridData gridData = new GridData();
+			   gridData.horizontalAlignment = SWT.FILL;
+			   gridData.verticalAlignment = SWT.FILL;
+			   gridData.grabExcessHorizontalSpace = true;
+			   gridData.grabExcessVerticalSpace= true;
+			   group.setLayoutData(gridData);
+			   group.setLayout(new GridLayout(1, false));
+			   
+			   GridData gridData2 = new GridData();
+			   gridData2.horizontalAlignment = SWT.FILL;
+			   gridData2.verticalAlignment = SWT.FILL;
+			   gridData2.grabExcessHorizontalSpace = true;
+			   gridData2.grabExcessVerticalSpace= true;
+			 		
+				layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+				layerViewer.setLayoutData(gridData2);
 				for (ELayer lay : layers) {
 					layerViewer.add(lay.getName());
 				}
 				
-				layerViewer.setBounds(5, 30, 700, 200);
-				CLabel lblReflexOrder = new CLabel(canvasLayers, SWT.NONE);
-				lblReflexOrder.setBounds(5, 5, 100, 20);
-				lblReflexOrder.setText("Layers");
 				
-				Button addLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-				addLayerBtn.setBounds(80, 245, 105, 20);
+				Composite containerButtons = new Composite(group, SWT.NONE);
+				containerButtons.setLayout(new FillLayout(SWT.HORIZONTAL));
+				 GridData gridData3 = new GridData();
+				 gridData3.horizontalAlignment = SWT.FILL;
+				 gridData3.grabExcessHorizontalSpace = true;
+				 containerButtons.setLayoutData(gridData3);
+				 
+		
+				Button addLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 				addLayerBtn.setText("Add");
-				addLayerBtn.setSelection(true);
 				addLayerBtn.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -169,10 +190,8 @@ public class EditDisplayFrame extends EditFrame {
 						} 
 				});
 				
-				Button editLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-				editLayerBtn.setBounds(200, 245, 105, 20);
+				Button editLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 				editLayerBtn.setText("Edit");
-				editLayerBtn.setSelection(true);
 				editLayerBtn.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -183,10 +202,8 @@ public class EditDisplayFrame extends EditFrame {
 					}
 				});
 				
-				Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-				removeLayerBtn.setBounds(320, 245, 105, 20);
+				Button removeLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 				removeLayerBtn.setText("Remove");
-				removeLayerBtn.setSelection(true);
 				removeLayerBtn.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -198,10 +215,7 @@ public class EditDisplayFrame extends EditFrame {
 						}
 					}
 				});
-				Button btnUp = new Button(canvasLayers, SWT.ARROW | SWT.UP);
-				btnUp.setBounds(440, 245, 105, 20);
-				//btnUp.setText("Up");
-				btnUp.setSelection(true);
+				Button btnUp = new Button(containerButtons, SWT.ARROW | SWT.UP);
 				btnUp.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -219,10 +233,7 @@ public class EditDisplayFrame extends EditFrame {
 						}
 					}
 				});
-				Button btnDown = new Button(canvasLayers, SWT.ARROW | SWT.DOWN);
-				btnDown.setBounds(560, 245, 105, 20);
-				//btnDown.setText("Down");
-				btnDown.setSelection(true);
+				Button btnDown = new Button(containerButtons, SWT.ARROW | SWT.DOWN);
 				btnDown.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -240,23 +251,39 @@ public class EditDisplayFrame extends EditFrame {
 						}
 					}
 				});
-				return canvasLayers;
 			}
 
-	public Canvas buildCanvasParam(Composite container) {
+	public void buildCanvasParam(Composite container) {
 		// ****** CANVAS PARAMETERS *********
-
-		Canvas canvasParam = new Canvas(container, SWT.BORDER);
-		canvasParam.setBounds(10, 50, 720, 100);
+		Group group = new Group(container, SWT.NONE);
+		
+		group.setLayout( new GridLayout(1, false));
+	    group.setText("Display properties");
+	    GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		group.setLayoutData(gridData);
+	   
+	    Composite containerColor = new Composite(group, SWT.NONE);
+	    containerColor.setLayout(new GridLayout(6, false));
+		 GridData gridData3 = new GridData();
+		 gridData3.horizontalAlignment = SWT.FILL;
+		 gridData3.grabExcessHorizontalSpace = true;
+		 containerColor.setLayoutData(gridData3);
 
 		// COLOR
-		CLabel lblColor = new CLabel(canvasParam, SWT.NONE);
-		lblColor.setBounds(10, 10, 100, 20);
-		lblColor.setText("Background color");
+		CLabel lblColor = new CLabel(containerColor, SWT.NONE);
+		lblColor.setText("Background color:");
 
-		textColor = new Text(canvasParam, SWT.BORDER);
-		textColor.setBounds(465, 10, 200, 18);
-
+		btnCstCol = new Button(containerColor, SWT.RADIO);
+		btnCstCol.setText("Constant");
+		btnCstCol.setSelection(true);
+		btnCstCol.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				textColor.setEnabled(false);
+			}
+		});
+ 
 		// Start with white
 
 		rgb[0] = 255;
@@ -266,14 +293,12 @@ public class EditDisplayFrame extends EditFrame {
 		color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1], rgb[2]));
 
 		// Use a label full of spaces to show the color
-		colorLabel = new Label(canvasParam, SWT.NONE);
-		colorLabel.setText("    ");
+		colorLabel = new Label(containerColor, SWT.NONE);
+		colorLabel.setText("                  ");
 		colorLabel.setBackground(color);
-		colorLabel.setBounds(190, 10, 50, 18);
 
-		Button button = new Button(canvasParam, SWT.PUSH);
+		Button button = new Button(containerColor, SWT.PUSH);
 		button.setText("Color...");
-		button.setBounds(250, 10, 80, 20);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				// Create the color-change dialog
@@ -301,21 +326,9 @@ public class EditDisplayFrame extends EditFrame {
 				}
 			}
 		});
-		Composite cColor = new Composite(canvasParam, SWT.NONE);
-		cColor.setBounds(110, 10, 400, 18);
-
-		btnCstCol = new Button(cColor, SWT.RADIO);
-		btnCstCol.setBounds(0, 0, 85, 18);
-		btnCstCol.setText("Constant");
-		btnCstCol.setSelection(true);
-		btnCstCol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				textColor.setEnabled(false);
-			}
-		});
-
-		Button btnExpressionCol = new Button(cColor, SWT.RADIO);
-		btnExpressionCol.setBounds(260, 0, 85, 18);
+		
+		
+		Button btnExpressionCol = new Button(containerColor, SWT.RADIO);
 		btnExpressionCol.setText("Expression:");
 		btnExpressionCol.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -324,14 +337,30 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		});
 
+		textColor = new Text(containerColor, SWT.BORDER);
+		GridData gridDataTC = new GridData();
+		gridDataTC.horizontalAlignment = SWT.FILL;
+		gridDataTC.grabExcessHorizontalSpace = true;
+		textColor.setLayoutData(gridDataTC);
+	
 		// REFRESH
-		CLabel lblRefresh = new CLabel(canvasParam, SWT.NONE);
-		lblRefresh.setBounds(10, 40, 60, 18);
-		lblRefresh.setText("Refresh");
+		Composite containerRefresh = new Composite(group, SWT.NONE);
+		GridData gridDataRR = new GridData();
+		gridDataRR.horizontalAlignment = SWT.FILL;
+		gridDataRR.grabExcessHorizontalSpace = true;
+		containerRefresh.setLayoutData(gridDataRR);
+		containerRefresh.setLayout(new GridLayout(2, false));
+		
+		CLabel lblRefresh = new CLabel(containerRefresh, SWT.NONE);
+		lblRefresh.setText("Refresh:");
 
-		textRefresh = new Text(canvasParam, SWT.BORDER);
+		textRefresh = new Text(containerRefresh, SWT.BORDER);
 		textRefresh.setText("1");
-		textRefresh.setBounds(80, 40, 250, 18);
+		 GridData gridDataR = new GridData();
+		 gridDataR.horizontalAlignment = SWT.FILL;
+		 gridDataR.grabExcessHorizontalSpace = true;
+		 textRefresh.setLayoutData(gridDataR);
+			
 		textRefresh.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
 				TransactionalEditingDomain domain = TransactionUtil
@@ -349,17 +378,25 @@ public class EditDisplayFrame extends EditFrame {
 		});
 
 		// OPENGL
-		CLabel lblType = new CLabel(canvasParam, SWT.NONE);
-		lblType.setBounds(10, 70, 60, 18);
-		lblType.setText("Type");
+		Composite containerType = new Composite(group, SWT.NONE);
+		GridData gridDataT = new GridData();
+		gridDataT.horizontalAlignment = SWT.FILL;
+		gridDataT.grabExcessHorizontalSpace = true;
+		containerType.setLayoutData(gridDataT);
+		containerType.setLayout(new GridLayout(3, false));
+		
+		CLabel lblType = new CLabel(containerType, SWT.NONE);
+		lblType.setText("Type:");
 
-		Composite cOpenGl = new Composite(canvasParam, SWT.NONE);
-		cOpenGl.setBounds(80, 70, 400, 18);
-
+		Composite cOpenGl = new Composite(containerType, SWT.NONE);
+		 GridData gridDataOp = new GridData();
+		 gridDataOp.horizontalAlignment = SWT.FILL;
+		 gridDataOp.grabExcessHorizontalSpace = true;
+		 cOpenGl.setLayoutData(gridDataOp);
+		 cOpenGl.setLayout(new GridLayout(2, false));
+		
 		Button btnJava2D = new Button(cOpenGl, SWT.RADIO);
-		btnJava2D.setBounds(0, 0, 85, 18);
 		btnJava2D.setText("Java 2D");
-		btnJava2D.setSelection(true);
 		btnJava2D.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 
@@ -378,7 +415,6 @@ public class EditDisplayFrame extends EditFrame {
 		});
 
 		btnOpenGL = new Button(cOpenGl, SWT.RADIO);
-		btnOpenGL.setBounds(120, 0, 85, 18);
 		btnOpenGL.setText("Open GL");
 		btnOpenGL.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -396,7 +432,6 @@ public class EditDisplayFrame extends EditFrame {
 				ef.hasDoneChanges = true;
 			}
 		});
-		return canvasParam;
 
 	}
 

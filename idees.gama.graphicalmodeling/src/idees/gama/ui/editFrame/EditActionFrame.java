@@ -10,12 +10,14 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 
 public class EditActionFrame extends EditFrame {
 	
@@ -34,37 +36,47 @@ public class EditActionFrame extends EditFrame {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		
+		container.setLayout(new GridLayout(1, false));
 		//****** CANVAS NAME *********
-		Canvas canvasName = canvasName(container);
-		canvasName.setBounds(10, 10, 720, 30);
-		
+		groupName(container);
 		//****** CANVAS GAMLCODE *********
-		Canvas canvasGamlCode = canvasGamlCode(container);
-		canvasGamlCode.setBounds(10, 50, 720, 305);
-
+		groupGamlCode(container);
+		
 		//****** CANVAS OK/CANCEL *********
-		Canvas canvasOkCancel = canvasOkCancel(container);
-		canvasOkCancel.setBounds(10, 365, 720, 30);
+		groupOkCancel(container);
+		
 		return container;
 	}
 	
-	protected Canvas canvasGamlCode(Composite container) {
+	protected void groupGamlCode(Composite container) {
 		
 		//****** CANVAS GAMLCODE *********
-		Canvas canvasGamlCode = new Canvas(container, SWT.BORDER);
-		canvasGamlCode.setBounds(10, 515, 720, 305);
+		Group group = new Group(container, SWT.NONE);
 		
-		gamlCode = new StyledText(canvasGamlCode, SWT.BORDER);
-		gamlCode.setBounds(5, 30, 700, 265);
+		group.setLayout( new FillLayout(SWT.HORIZONTAL));
+	    group.setText("Gaml code");
+	    
+	   GridData gridData = new GridData();
+	   gridData.horizontalAlignment = SWT.FILL;
+	   gridData.verticalAlignment = SWT.FILL;
+	   gridData.grabExcessHorizontalSpace = true;
+	   gridData.grabExcessVerticalSpace= true;
+	   group.setLayoutData(gridData);
+	   group.setLayout(new GridLayout(1, false));
+	   
+	   GridData gridData2 = new GridData();
+	   gridData2.horizontalAlignment = SWT.FILL;
+	   gridData2.verticalAlignment = SWT.FILL;
+	   gridData2.grabExcessHorizontalSpace = true;
+	   gridData2.grabExcessVerticalSpace= true;
+	 
+	   gamlCode = new StyledText(group, SWT.BORDER);
+	   gamlCode.setLayoutData(gridData2);
+		
+		//gamlCode.setBounds(5, 30, 700, 265);
 		if (((EAction) eobject).getGamlCode() != null)
 			gamlCode.setText(((EAction) eobject).getGamlCode());
 		gamlCode.setEditable(true);
-				
-		CLabel lblCompilation = new CLabel(canvasGamlCode, SWT.NONE);
-		lblCompilation.setText("gaml code");
-		lblCompilation.setBounds(5, 5, 70, 20);
-		return canvasGamlCode;
 	}
 	
 	

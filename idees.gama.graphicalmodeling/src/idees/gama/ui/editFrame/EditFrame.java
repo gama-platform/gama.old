@@ -1,6 +1,7 @@
 package idees.gama.ui.editFrame;
 
 import gama.EGamaObject;
+import gama.EWorldAgent;
 import idees.gama.features.edit.EditFeature;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -10,13 +11,17 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -58,12 +63,28 @@ public abstract class EditFrame extends ApplicationWindow {
 		return canvasValidation;
 	}
 	
-	protected Canvas canvasName(Composite container) {
-		Canvas canvasName = new Canvas(container, SWT.BORDER);
-		textName = new Text(canvasName, SWT.BORDER);
-		UtilEditFrame.buildCanvasName(container, canvasName, textName, eobject, ef);
-		canvasName.setBounds(10, 10, 720, 30);
-		return canvasName;
+	protected void groupName(Composite container) {
+		Group group = new Group(container, SWT.NONE);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		group.setLayoutData(gridData);
+		
+		group.setLayout(new GridLayout(2, false));
+	   
+	    CLabel lblName = new CLabel(group, SWT.NONE);
+		lblName.setText("Name:");
+		
+	    textName = new Text(group, SWT.BORDER);
+	    GridData gridData2 = new GridData();
+		gridData2.horizontalAlignment = SWT.FILL;
+		gridData2.grabExcessHorizontalSpace = true;
+		textName.setLayoutData(gridData2);
+		textName.setText(eobject.getName());
+		if (eobject instanceof EWorldAgent) {
+			textName.setEditable(false);
+		}
+		
 	}
 	
 
@@ -147,6 +168,46 @@ public abstract class EditFrame extends ApplicationWindow {
 		return canvasOKCancel;
 	}
 	
+	protected Group groupOkCancel(Composite container) {
+		//****** CANVAS OK CANCEL BUTTONS *********
+		
+		Group groupOkCancel = new Group(container, SWT.NONE);
+		groupOkCancel.setText("Validation");
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		groupOkCancel.setLayoutData(gridData);
+		
+		groupOkCancel.setLayout(new GridLayout(2, true));
+	   
+		final Button buttonOK = new Button(groupOkCancel, SWT.PUSH);
+		GridData gridData2 = new GridData();
+		gridData2.horizontalAlignment = GridData.CENTER;
+		buttonOK.setLayoutData(gridData2);
+		buttonOK.setText("Ok");
+		buttonOK.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				frame.save();
+				frame.close();
+			} 
+		});
+
+		Button buttonCancel = new Button(groupOkCancel, SWT.PUSH);
+		GridData gridData3 = new GridData();
+		gridData3.horizontalAlignment = GridData.CENTER;
+		buttonOK.setLayoutData(gridData3);
+		buttonCancel.setText("Cancel");
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				frame.clean();
+				frame.close();
+			}
+		});
+		return groupOkCancel;
+	}
 	protected abstract void save();
 	
 	protected void handleShellCloseEvent() {
@@ -167,7 +228,7 @@ public abstract class EditFrame extends ApplicationWindow {
 
 	@Override
 	public void create() {
-	    setShellStyle(SWT.DIALOG_TRIM);
+	    setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE );
 	    super.create();
 	    shell = getShell();
 	    

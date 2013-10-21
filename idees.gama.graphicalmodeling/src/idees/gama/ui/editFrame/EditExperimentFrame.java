@@ -70,8 +70,7 @@ public class EditExperimentFrame extends EditFrame {
 				
 		
 		//****** CANVAS NAME *********
-		Canvas canvasName = canvasName(container);
-		canvasName.setBounds(10, 10, 720, 30);
+		groupName(container);
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = canvasParameter(container);

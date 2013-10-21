@@ -175,33 +175,33 @@ public class EditSpeciesFrame extends EditFrame {
 		sc.setContent(container);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-		int siezHeader = 160;
+		int sizeHeader = 160;
 			//CANVAS SIZE : NAME:30, VAR:200, TORUS:30, LOC:130, REFLEX:110, SHAPE:220, SKILLS: 110 BOUNDS: 80 GRID: 80
 		if (eobject instanceof EWorldAgent) {	
 			Canvas canvasTor = canvasTorus(container);
-			canvasTor.setLocation(10, 160+siezHeader);
+			canvasTor.setLocation(10, 160+sizeHeader);
 			Canvas canvasBounds = canvasBounds(container);
-			canvasBounds.setLocation(10, 200+siezHeader);	
+			canvasBounds.setLocation(10, 200+sizeHeader);	
 			Composite comp = commonCompositeEnd(container);
-			comp.setLocation(0, 290+siezHeader);
-			container.setSize(730, 680+siezHeader);
-			sc.setMinSize(container.computeSize(730, 680+siezHeader));
+			comp.setLocation(0, 290+sizeHeader);
+			container.setSize(730, 680+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 680+sizeHeader));
 		} else if (species.getTopology() instanceof EGridTopology){
 			gridTopo(container);
-			container.setSize(730, 670+siezHeader);
-			sc.setMinSize(container.computeSize(730, 670+siezHeader));
+			container.setSize(730, 670+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 670+sizeHeader));
 		} else if (species.getTopology() instanceof EGraphTopologyNode){
 			graphNodeTopo(container);
-			container.setSize(730, 920+siezHeader);
-			sc.setMinSize(container.computeSize(730, 920+siezHeader));
+			container.setSize(730, 920+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 920+sizeHeader));
 		} else if (species.getTopology() instanceof EGraphTopologyEdge){
 			graphEdgeTopo(container);
-			container.setSize(730, 920+siezHeader);
-			sc.setMinSize(container.computeSize(730, 920+siezHeader));
+			container.setSize(730, 920+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 920+sizeHeader));
 		} else {
 			graphNodeContinuous(container);
-			container.setSize(730, 920+siezHeader);
-			sc.setMinSize(container.computeSize(730, 920+siezHeader));
+			container.setSize(730, 920+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 920+sizeHeader));
 		}	
 		return container;
 	}
@@ -210,8 +210,7 @@ public class EditSpeciesFrame extends EditFrame {
 		//CANVAS SIZE : NAME:30, SKILLS: 110 //INIT : 150
 		Composite comp = new Composite(container, SWT.NONE);
 		comp.setBounds(0, 0, 730, 310);
-		Canvas canvasName = canvasName(comp);
-		canvasName.setLocation(10, 10);
+		groupName(container);
 		Canvas canvasSkills = canvasSkills(comp);
 		canvasSkills.setLocation(10, 50);
 		Canvas canvasInit = canvasInit(comp);

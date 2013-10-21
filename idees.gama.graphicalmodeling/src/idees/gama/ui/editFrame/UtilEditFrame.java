@@ -22,6 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 public class UtilEditFrame {
@@ -84,6 +85,18 @@ public class UtilEditFrame {
 			
 		CLabel lblName = new CLabel(canvasName, SWT.NONE);
 		lblName.setBounds(10, 5, 60, 20);
+		lblName.setText("Name");
+	}
+	
+	public static void buildGroupName(Composite container, Group groupName, Text textName, final EGamaObject eobject, final EditFeature ef)  {
+		//****** GROUP NAME *********
+		textName = new Text(groupName, SWT.BORDER);
+		textName.setText(eobject.getName());
+		if (eobject instanceof EWorldAgent) {
+			textName.setEditable(false);
+		}
+			
+		CLabel lblName = new CLabel(groupName, SWT.NONE);
 		lblName.setText("Name");
 	}
 }

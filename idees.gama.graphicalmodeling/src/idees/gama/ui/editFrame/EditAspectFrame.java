@@ -16,15 +16,17 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 
 public class EditAspectFrame extends EditFrame {
 	
@@ -49,43 +51,57 @@ public class EditAspectFrame extends EditFrame {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout(1, false));
 		//****** CANVAS NAME *********
-		Canvas canvasName = canvasName(container);
-		canvasName.setBounds(10, 10, 720, 30);
+		groupName(container);
 		
 		//****** CANVAS LAYERS *********
-		Canvas canvasLayers = canvasLayers(container);
-		canvasLayers.setBounds(10, 50, 720, 275);
+		groupLayers(container);
 				
-
 		//****** CANVAS OK/CANCEL *********
-		Canvas canvasOkCancel = canvasOkCancel(container);
-		canvasOkCancel.setBounds(10, 335, 720, 30);
+		groupOkCancel(container);
 		
 		return container;
 	}
 	
-	protected Canvas canvasLayers(Composite container) {
+	protected void groupLayers(Composite container) {
 		
 		//****** CANVAS LAYERS *********
-		Canvas canvasLayers = new Canvas(container, SWT.BORDER);
-		canvasLayers.setBounds(10, 515, 720, 275);
-				
-		layerViewer = new org.eclipse.swt.widgets.List(canvasLayers, SWT.BORDER | SWT.V_SCROLL);
+		Group group = new Group(container, SWT.NONE);
 		
+		group.setLayout( new FillLayout(SWT.VERTICAL));
+	    group.setText("Aspect layers");
+	    
+	   GridData gridData = new GridData();
+	   gridData.horizontalAlignment = SWT.FILL;
+	   gridData.verticalAlignment = SWT.FILL;
+	   gridData.grabExcessHorizontalSpace = true;
+	   gridData.grabExcessVerticalSpace= true;
+	   group.setLayoutData(gridData);
+	   group.setLayout(new GridLayout(1, false));
+	   
+	   GridData gridData2 = new GridData();
+	   gridData2.horizontalAlignment = SWT.FILL;
+	   gridData2.verticalAlignment = SWT.FILL;
+	   gridData2.grabExcessHorizontalSpace = true;
+	   gridData2.grabExcessVerticalSpace= true;
+	 		
+		layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+		layerViewer.setLayoutData(gridData2);
 		for (ELayerAspect lay : layers) {
 			layerViewer.add(lay.getName());
 		}
 		
-		layerViewer.setBounds(5, 30, 700, 200);
-		CLabel lblReflexOrder = new CLabel(canvasLayers, SWT.NONE);
-		lblReflexOrder.setBounds(5, 5, 100, 20);
-		lblReflexOrder.setText("Layers");
-		
-		Button addLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		addLayerBtn.setBounds(80, 245, 105, 20);
+		Composite containerButtons = new Composite(group, SWT.NONE);
+		containerButtons.setLayout(new FillLayout(SWT.HORIZONTAL));
+		 GridData gridData3 = new GridData();
+		 gridData3.horizontalAlignment = SWT.FILL;
+		 gridData3.grabExcessHorizontalSpace = true;
+		 containerButtons.setLayoutData(gridData3);
+		 
+		Button addLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 		addLayerBtn.setText("Add");
-		addLayerBtn.setSelection(true);
+		addLayerBtn.setSelection(false);
 		addLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -96,10 +112,9 @@ public class EditAspectFrame extends EditFrame {
 				} 
 		});
 		
-		Button editLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		editLayerBtn.setBounds(200, 245, 105, 20);
+		Button editLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 		editLayerBtn.setText("Edit");
-		editLayerBtn.setSelection(true);
+		editLayerBtn.setSelection(false);
 		editLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -110,10 +125,9 @@ public class EditAspectFrame extends EditFrame {
 			}
 		});
 		
-		Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		removeLayerBtn.setBounds(320, 245, 105, 20);
+		Button removeLayerBtn = new Button(containerButtons, SWT.BUTTON1);
 		removeLayerBtn.setText("Remove");
-		removeLayerBtn.setSelection(true);
+		removeLayerBtn.setSelection(false);
 		removeLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -125,10 +139,9 @@ public class EditAspectFrame extends EditFrame {
 				}
 			}
 		});
-		Button btnUp = new Button(canvasLayers, SWT.ARROW | SWT.UP);
-		btnUp.setBounds(440, 245, 105, 20);
+		Button btnUp = new Button(containerButtons, SWT.ARROW | SWT.UP);
 		//btnUp.setText("Up");
-		btnUp.setSelection(true);
+		btnUp.setSelection(false);
 		btnUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -146,10 +159,9 @@ public class EditAspectFrame extends EditFrame {
 				}
 			}
 		});
-		Button btnDown = new Button(canvasLayers, SWT.ARROW | SWT.DOWN);
-		btnDown.setBounds(560, 245, 105, 20);
+		Button btnDown = new Button(containerButtons, SWT.ARROW | SWT.DOWN);
 		//btnDown.setText("Down");
-		btnDown.setSelection(true);
+		btnDown.setSelection(false);
 		btnDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -167,7 +179,6 @@ public class EditAspectFrame extends EditFrame {
 				}
 			}
 		});
-		return canvasLayers;
 	}
 	
 	
