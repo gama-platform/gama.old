@@ -3,7 +3,6 @@ package idees.gama.features.layout;
 import java.util.List;
 
 import gama.EGamaObject;
-import gama.ESpecies;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;

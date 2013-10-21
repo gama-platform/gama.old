@@ -167,7 +167,7 @@ public class EditSpeciesFrame extends EditFrame {
 		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
 	    final Composite container= new Composite(sc, SWT.BORDER);
 	    //Composite container = new Composite(parent, SWT.SCROLL_PAGE);
-		titleFont = new Font(getShell().getDisplay(),"Arial",14,SWT.BOLD); 
+		titleFont = new Font(getShell().getDisplay(),"Arial",10,SWT.BOLD); 
 		
 		ESpecies species = (ESpecies) eobject;
 		commonCompositeHeader(container);
@@ -308,10 +308,10 @@ public class EditSpeciesFrame extends EditFrame {
 			var.setName(item.getText(0));
 			var.setType(item.getText(1));
 			var.setInit(item.getText(2));
-			    				var.setUpdate(item.getText(3));
-			    				var.setFunction(item.getText(4));
-			    				var.setMin(item.getText(5));
-			    				var.setMax(item.getText(6));
+			var.setUpdate(item.getText(3));
+			var.setFunction(item.getText(4));
+			var.setMin(item.getText(5));
+			var.setMax(item.getText(6));
 			species.getVariables().add(var);  	  
 		}
 	}

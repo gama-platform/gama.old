@@ -3,7 +3,6 @@ package idees.gama.features.layout;
 import java.util.List;
 
 import gama.EGamaObject;
-import gama.ESpecies;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -43,6 +42,7 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
     }
  
     public boolean layout(ILayoutContext context) {
+    	System.out.println("ici LayoutESpeciesEExperimentFeature");
         boolean anythingChanged = false;
        IGaService gaService = Graphiti.getGaService();
         ContainerShape containerShape =

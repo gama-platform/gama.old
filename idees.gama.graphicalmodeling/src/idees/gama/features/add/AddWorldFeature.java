@@ -38,7 +38,7 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
     private static final IColorConstant SPECIES_FOREGROUND =
     		 new ColorConstant(0,0,0);
 
-    private static final List<Integer> CLASS_BACKGROUND =GamaList.with(255,255,210);
+    private static final List<Integer> CLASS_BACKGROUND = GamaList.with(255,255,210);
     
     public AddWorldFeature(IFeatureProvider fp) {
         super(fp);
@@ -119,7 +119,7 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
             text.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, true));
+            text.setFont(gaService.manageFont(getDiagram(), "Arial", 12, false, true));
            
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
@@ -129,8 +129,7 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
         {
             // create shape for text
             Shape shape2 = peCreateService.createShape(containerShape, false);
- 
-            // create and set text graphics algorithm
+             // create and set text graphics algorithm
             String variables = "";
             for (EVariable var:addedClass.getVariables() ) {
             	if (var.getName().equals("shape") || var.getName().equals("location"))
@@ -141,10 +140,10 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
             		variables);
             text2.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
             text2.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
-           // text2.setVerticalAlignment(Orientation.);
-            text2.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, false));
-            gaService.setLocationAndSize(text2, 5, 25, width, 1 + addedClass.getVariables().size() * 20);
- 
+            text2.setVerticalAlignment(Orientation.ALIGNMENT_TOP);
+            text2.setFont(gaService.manageFont(getDiagram(), "Arial", 12, false, false));
+            gaService.setLocationAndSize(text2, 5, 25, text2.getWidth(), 18 + addedClass.getVariables().size() * 18);
+            
             // create link and wire it
             link(shape2, addedClass);
         }

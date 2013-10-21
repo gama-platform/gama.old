@@ -99,7 +99,7 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
                         addedClass.getName());
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, false));
+            text.setFont(gaService.manageFont(getDiagram(), "Arial", 12, false, false));
            // text.getFont().setBold(true);
             gaService.setLocationAndSize(text, 0, 0, width, height);
  

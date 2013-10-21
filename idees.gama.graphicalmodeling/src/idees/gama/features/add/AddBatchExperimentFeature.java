@@ -119,7 +119,7 @@ public class AddBatchExperimentFeature extends AbstractAddShapeFeature {
             text.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, true));
+            text.setFont(gaService.manageFont(getDiagram(), "Arial", 12, false, true));
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
             // create link and wire it

@@ -108,7 +108,7 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
                     	text.setValue(businessName);
                     else  {
                     	text.setValue(varNames);
-                    	Graphiti.getGaService().setLocationAndSize(text, 5, 25, text.getWidth(), 1 + cpt * 20);
+                    	Graphiti.getGaService().setLocationAndSize(text, 5, 25, text.getWidth(), 18 + cpt * 18);
                     }
                     
                     update = true;
