@@ -108,6 +108,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
+		if ( type.equals(IKeyword.AGENT) && getValue() != null ) {
+			lastValue = getValue().value(scope);
+		}
 		if ( attributes != null ) {
 			listOfAttributes = Cast.asList(scope, attributes.value(scope));
 		}
@@ -196,7 +199,6 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public String getViewId() {
-
 		if ( IKeyword.TABLE.equals(type) ) { return GuiUtils.TABLE_VIEW_ID; }
 		return GuiUtils.AGENT_VIEW_ID;
 

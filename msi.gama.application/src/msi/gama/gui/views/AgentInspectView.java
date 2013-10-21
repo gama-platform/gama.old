@@ -52,6 +52,17 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 	}
 
 	@Override
+	public void ownCreatePartControl(final Composite parent) {
+		super.ownCreatePartControl(parent);
+		List<IAgent> init = ((InspectDisplayOutput) output).getLastValue();
+		if ( init != null ) {
+			for ( IAgent a : init ) {
+				inspectAgent(a);
+			}
+		}
+	}
+
+	@Override
 	public boolean areItemsClosable() {
 		return true;
 	}
