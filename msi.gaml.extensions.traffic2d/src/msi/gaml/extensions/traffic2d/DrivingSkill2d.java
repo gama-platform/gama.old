@@ -2,6 +2,8 @@ package msi.gaml.extensions.traffic2d;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -201,11 +203,10 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Iterator<IAgent> neighbours =
+		final Set<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
-		while (neighbours.hasNext()) {
-			final IAgent ia = neighbours.next();
+		for ( IAgent ia : neighbours) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}
@@ -408,11 +409,10 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Iterator<IAgent> neighbours =
+		final Set<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
-		while (neighbours.hasNext()) {
-			final IAgent ia = neighbours.next();
+		for (IAgent ia : neighbours) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}
