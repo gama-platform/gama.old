@@ -102,5 +102,14 @@ public class Colors {
 	public static GamaColor rgb(int r, int g, int b) {
 	      return new GamaColor(r, g, b);
 	}
+	
+	@operator(value="grayscale")
+	@doc(value = "Converts rgb color to grayscale value", comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 * red + 0.587 * green + 0.114 * blue (Photoshop value)", 
+	examples = "set grayscale_color <- grayscale (color);"
+			, see = "rgb,hsb")
+	public static GamaColor grayscale(final GamaColor c) {
+        int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
+		return new GamaColor(grayValue, grayValue, grayValue);
+	}
 
 }
