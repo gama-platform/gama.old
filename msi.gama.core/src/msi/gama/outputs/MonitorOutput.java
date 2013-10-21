@@ -66,8 +66,8 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	private String expressionText = "";
-	private IExpression value;
+	protected String expressionText = "";
+	protected IExpression value;
 	protected Object lastValue = "";
 
 	public Object getLastValue() {

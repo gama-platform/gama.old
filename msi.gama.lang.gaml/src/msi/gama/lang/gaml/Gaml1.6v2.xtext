@@ -107,9 +107,8 @@ _SpeciesKey:
 	"species" | "grid";
 
 _1Expr_Facets_BlockOrEnd_Key:
-	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" |
-	"match" | "match_between" | "match_one";
+	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
+	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one";
 
 _LayerKey:
 	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" 

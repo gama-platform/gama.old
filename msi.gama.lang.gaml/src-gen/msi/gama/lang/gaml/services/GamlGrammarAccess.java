@@ -1470,23 +1470,26 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cExceptionKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
 		private final Keyword cSaveKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
 		private final Keyword cAssertKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cDrawKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cUsingKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cSwitchKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
-		private final Keyword cPutKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
-		private final Keyword cAddKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
-		private final Keyword cRemoveKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
-		private final Keyword cMatchKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
-		private final Keyword cMatch_betweenKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
-		private final Keyword cMatch_oneKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cInspectKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cBrowseKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cDrawKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cUsingKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cSwitchKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cPutKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cAddKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cRemoveKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cMatchKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cMatch_betweenKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
+		private final Keyword cMatch_oneKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
 		//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
-		//	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one";
+		//	"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
+		//	"match_one";
 		public ParserRule getRule() { return rule; }
 
 		//_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
-		//"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one"
+		//"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//_LayerKey
@@ -1522,32 +1525,38 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"assert"
 		public Keyword getAssertKeyword_10() { return cAssertKeyword_10; }
 
+		//"inspect"
+		public Keyword getInspectKeyword_11() { return cInspectKeyword_11; }
+
+		//"browse"
+		public Keyword getBrowseKeyword_12() { return cBrowseKeyword_12; }
+
 		//"draw"
-		public Keyword getDrawKeyword_11() { return cDrawKeyword_11; }
+		public Keyword getDrawKeyword_13() { return cDrawKeyword_13; }
 
 		//"using"
-		public Keyword getUsingKeyword_12() { return cUsingKeyword_12; }
+		public Keyword getUsingKeyword_14() { return cUsingKeyword_14; }
 
 		//"switch"
-		public Keyword getSwitchKeyword_13() { return cSwitchKeyword_13; }
+		public Keyword getSwitchKeyword_15() { return cSwitchKeyword_15; }
 
 		//"put"
-		public Keyword getPutKeyword_14() { return cPutKeyword_14; }
+		public Keyword getPutKeyword_16() { return cPutKeyword_16; }
 
 		//"add"
-		public Keyword getAddKeyword_15() { return cAddKeyword_15; }
+		public Keyword getAddKeyword_17() { return cAddKeyword_17; }
 
 		//"remove"
-		public Keyword getRemoveKeyword_16() { return cRemoveKeyword_16; }
+		public Keyword getRemoveKeyword_18() { return cRemoveKeyword_18; }
 
 		//"match"
-		public Keyword getMatchKeyword_17() { return cMatchKeyword_17; }
+		public Keyword getMatchKeyword_19() { return cMatchKeyword_19; }
 
 		//"match_between"
-		public Keyword getMatch_betweenKeyword_18() { return cMatch_betweenKeyword_18; }
+		public Keyword getMatch_betweenKeyword_20() { return cMatch_betweenKeyword_20; }
 
 		//"match_one"
-		public Keyword getMatch_oneKeyword_19() { return cMatch_oneKeyword_19; }
+		public Keyword getMatch_oneKeyword_21() { return cMatch_oneKeyword_21; }
 	}
 
 	public class _LayerKeyElements extends AbstractParserRuleElementFinder {
@@ -4543,7 +4552,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//_1Expr_Facets_BlockOrEnd_Key:
 	//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
-	//	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one";
+	//	"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
+	//	"match_one";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {
 		return (p_1Expr_Facets_BlockOrEnd_Key != null) ? p_1Expr_Facets_BlockOrEnd_Key : (p_1Expr_Facets_BlockOrEnd_Key = new _1Expr_Facets_BlockOrEnd_KeyElements());
 	}

@@ -45,15 +45,15 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @SuppressWarnings("unchecked")
-@symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT, with_sequence = false)
+@symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.POPULATION,
-		IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
+		IKeyword.TABLE }, optional = true) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
@@ -101,7 +101,18 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
+		if ( getValue() == null ) {
+			value = getFacet(IKeyword.NAME);
+			expressionText = getValue() == null ? "" : getValue().toGaml();
+		}
 		type = getLiteral(IKeyword.TYPE);
+		if ( type == null ) {
+			if ( getLiteral(IKeyword.KEYWORD).equals(IKeyword.BROWSE) ) {
+				type = IKeyword.TABLE;
+			} else {
+				type = IKeyword.AGENT;
+			}
+		}
 		attributes = getFacet(IKeyword.ATTRIBUTES);
 	}
 
