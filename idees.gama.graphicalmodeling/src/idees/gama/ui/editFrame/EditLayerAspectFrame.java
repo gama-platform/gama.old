@@ -46,6 +46,7 @@ public class EditLayerAspectFrame {
 	private Text textText;
 	
 	Button btnCstCol;
+	Button btnExpressionCol;
 	
 	Composite sizeComp;
 	Composite radiusComp;
@@ -90,7 +91,7 @@ public class EditLayerAspectFrame {
 			textPoints.setText(elayer.getPoints());
 		if (elayer.getShape() != null)
 			textShape.setText(elayer.getShape());
-		if (elayer.getShape() != null)
+		if (elayer.getColor() != null)
 			textColor.setText(elayer.getColor());
 		if (elayer.getEmpty() != null)
 			textEmpty.setText(elayer.getEmpty());
@@ -104,8 +105,10 @@ public class EditLayerAspectFrame {
 			textPath.setText(elayer.getPath());
 		if (elayer.getText()!= null)
 			textText.setText(elayer.getText());
-		if (elayer.getIsColorCst()!= null)
+		if (elayer.getIsColorCst()!= null) {
 			btnCstCol.setSelection(elayer.getIsColorCst());
+			btnExpressionCol.setSelection(! elayer.getIsColorCst());
+		}
 		if (elayer.getName()!= null)
 			textName.setText(elayer.getName());
 		if (! elayer.getColorRBG().isEmpty()) {
@@ -114,7 +117,7 @@ public class EditLayerAspectFrame {
 	         color = new Color(frame.getShell().getDisplay(), rgb);
 	         colorLabel.setBackground(color);
 		}
-			
+		
 		
 	}
 
@@ -266,7 +269,7 @@ public class EditLayerAspectFrame {
 		}
 		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty() && ! elayer.getEmpty().equals("false"))
 			code += " empty: " + elayer.getEmpty();
-		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getEmpty().equals(0.0))
+		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getRotate().equals(0.0))
 			code += " rotate: " + elayer.getRotate();
 		elayer.setGamlCode(code);
 	}
@@ -586,7 +589,7 @@ public class EditLayerAspectFrame {
 		});
 		
 					
-		Button btnExpressionCol = new Button(cColor, SWT.RADIO);
+		btnExpressionCol = new Button(cColor, SWT.RADIO);
 		btnExpressionCol.setBounds(260,2, 85, 18);
 		btnExpressionCol.setText("Expression:");
 		btnExpressionCol.addSelectionListener(new SelectionAdapter() {
