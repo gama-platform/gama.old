@@ -5,14 +5,20 @@ import gama.EChartLayer;
 import gama.ELayer;
 import gama.ESpecies;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.GamaList;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -93,9 +99,6 @@ public class EditLayerFrame {
 	boolean edit;
 	
 	private Table table_chart_layers;
-	private List<EChartLayer> chartLayers;
-
-	private List<EChartLayer> chartLayersTot;
 	
 	ELayer elayer;
 	EditDisplayFrame frame;
@@ -116,8 +119,12 @@ public class EditLayerFrame {
 	Button btnCstColChart;
 	Label colorLabelChart;
 	
-	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids, boolean edit) {
+
+	Diagram diagram;
+	
+	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids, boolean edit, Diagram diagram) {
 		init(elayer, asp, species, grids);
+		this.diagram = diagram;
 		this.edit = edit;
 		quitWithoutSaving = true;
 		if (edit) {
@@ -127,8 +134,7 @@ public class EditLayerFrame {
 	}
 
 	private void loadData() {
-		chartLayersTot.addAll(elayer.getChartlayers());
-		chartLayers.addAll(elayer.getChartlayers());
+		System.out.println("elayer.getType() : " + elayer.getType());
 		if (elayer.getType() != null) 
 			comboType.setText(elayer.getType());
 		if (elayer.getName() != null)
@@ -161,6 +167,22 @@ public class EditLayerFrame {
 			comboAspectsSpecies.setText(elayer.getAspect());
 			comboAspectsAgents.setText(elayer.getAspect());
 		}
+		if (elayer.getColor() != null) {
+			this.textColorChart.setText(elayer.getColor());
+			this.textColorGrid.setText(elayer.getColor());
+			this.textColorText.setText(elayer.getColor());
+			this.textColorImage.setText(elayer.getColor());
+		}
+		if (elayer.getIsColorCst() != null) {
+			boolean selected = elayer.getIsColorCst();
+			this.btnCstColChart.setSelection(selected);
+			this.btnCstColImage.setSelection(selected);
+			this.btnCstColText.setSelection(selected);
+			this.btnCstColGrid.setSelection(selected);
+		}
+		if (elayer.getColorRBG() != null && elayer.getColorRBG().size() == 3) {
+			rgb = new RGB(elayer.getColorRBG().get(0),elayer.getColorRBG().get(1),elayer.getColorRBG().get(2));	 
+		}
 		initTable();
 	}
 	
@@ -176,7 +198,7 @@ public class EditLayerFrame {
 
 				// Start with white
 
-				rgb = new RGB(0, 0, 0);		
+				rgb = new RGB(255, 255, 255);		
 				color = new Color(frame.getShell().getDisplay(), rgb);
 
 				// Use a label full of spaces to show the color
@@ -235,23 +257,29 @@ public class EditLayerFrame {
 				});
 
 	}
+	
+	private Set<String> aspectSpecies (List<String> aspectsL, ESpecies sp) {
+		Set<String> aspL = new HashSet<String>();
+		for (EAspectLink al : sp.getAspectLinks()) {
+			String apN = al.getTarget().getName();
+			aspL.add(apN);
+			if (!aspectsL.contains(apN)) aspectsL.add(apN);
+		}
+		if (sp.getInheritsFrom() != null) {
+			aspL.addAll(aspectSpecies(aspectsL, sp.getInheritsFrom()));
+		}
+		return aspL;
+	}
 
 	public void init(final ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
 		frame = asp;
 		layerFrame = this;
 		aspectsSpecies = new Hashtable<String, String[]>();
 		species_list = new String[species.size()];
-		chartLayers = new GamaList<EChartLayer>();
-		chartLayersTot = new GamaList<EChartLayer>();
 		List<String> aspectsL = new GamaList<String>();
 		for (int i = 0; i < species_list.length; i++) {
 			ESpecies sp = species.get(i);
-			List<String> aspL = new GamaList<String>();
-			for (EAspectLink al : sp.getAspectLinks()) {
-				String apN = al.getTarget().getName();
-				aspL.add(apN);
-				if (!aspectsL.contains(apN)) aspectsL.add(apN);
-			}
+			List<String> aspL = new GamaList<String>(aspectSpecies(aspectsL, sp));
 			if (aspL.isEmpty()) 
 				aspL.add("default");
 			aspectsSpecies.put(sp.getName(), (String[]) aspL.toArray(new String[aspL.size()]));
@@ -332,8 +360,16 @@ public class EditLayerFrame {
 					index = frame.getLayers().indexOf(elayer);
 					frame.layerViewer.remove(index);
 				}
+				TransactionalEditingDomain domain = TransactionUtil
+						.getEditingDomain(elayer);
+				if (domain != null) {
+					domain.getCommandStack().execute(new RecordingCommand(domain) {
+						public void doExecute() {
+							layerFrame.saveLayer();
+						}
+					});
+				}
 				
-				layerFrame.saveLayer();
 				if (!layerFrame.edit) {
 					frame.layerViewer.add(elayer.getName());
 				} else {
@@ -348,25 +384,24 @@ public class EditLayerFrame {
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (EChartLayer cl : chartLayersTot) {
-					if (! elayer.getChartlayers().contains(cl)) {
-						EcoreUtil.delete(cl);
-					}
-				}
-
 				quitWithoutSaving = false;
-				EcoreUtil.delete(elayer);
+				
+				TransactionalEditingDomain domain = TransactionUtil
+						.getEditingDomain(elayer);
+				if (domain != null) {
+					domain.getCommandStack().execute(new RecordingCommand(domain) {
+						public void doExecute() {
+							EcoreUtil.delete(elayer);
+						}
+					});
+				}
 				dialog.close();
 			}
 		});
 	}
 	
 	protected void saveLayer() {
-		for (EChartLayer cl : chartLayersTot) {
-			if (! chartLayers.contains(cl)) {
-				EcoreUtil.delete(cl);
-			}
-		}
+		modifyChartLayers();
 		elayer.setType(comboType.getText());
 		elayer.setName(textName.getText());
 		elayer.setSize_x(textX.getText());
@@ -382,11 +417,60 @@ public class EditLayerFrame {
 		elayer.setSpecies(comboSpecies.getText());
 		elayer.setGrid(comboGrid.getText());
 		elayer.setAspect(comboType.getText().equals("species") ? comboAspectsSpecies.getText() : comboAspectsAgents.getText());
+		elayer.setChart_type(comboTypeChart.getText());
+		if (elayer.getType().equals("")) {
+			
+		}
+		elayer.getColorRBG().clear();
+		elayer.getColorRBG().add(rgb.red);
+		elayer.getColorRBG().add(rgb.green);
+		elayer.getColorRBG().add(rgb.blue);
+		if (elayer.getType().equals("image")) {
+			elayer.setIsColorCst(btnCstColImage.getSelection());
+			if (this.btnCstColImage.getSelection())
+				elayer.setColor("rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue +")");
+			else
+				elayer.setColor(this.textColorImage.getText());
+		} else if (elayer.getType().equals("text")) {
+			elayer.setIsColorCst(btnCstColText.getSelection());
+			if (this.btnCstColText.getSelection())
+				elayer.setColor("rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue +")");
+			else
+				elayer.setColor(this.textColorText.getText());
+		}else if (elayer.getType().equals("chart")) {
+			elayer.setIsColorCst(btnCstColChart.getSelection());
+			if (this.btnCstColChart.getSelection())
+				elayer.setColor("rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue +")");
+			else
+				elayer.setColor(this.textColorChart.getText());
+		}else if (elayer.getType().equals("grid")) {
+			elayer.setIsColorCst(btnCstColGrid.getSelection());
+			if (this.btnCstColGrid.getSelection())
+				elayer.setColor("rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue +")");
+			else
+				elayer.setColor(this.textColorGrid.getText());
+		}
 		
+		
+		
+	}
+	
+	private void modifyChartLayers() {
+		for (EChartLayer cl : elayer.getChartlayers()) {
+			diagram.eResource().getContents().remove(cl);
+			EcoreUtil.delete(cl);
+		}
 		elayer.getChartlayers().clear();
-		elayer.getChartlayers().addAll(chartLayers);
 		
-		
+		for (final TableItem item : table_chart_layers.getItems()) {
+			final EChartLayer var = gama.GamaFactory.eINSTANCE.createEChartLayer();
+			diagram.eResource().getContents().remove(var);
+			var.setName(item.getText(0));
+			var.setStyle(item.getText(1));
+			var.setColor(item.getText(2));
+			var.setValue(item.getText(3));
+			elayer.getChartlayers().add(var);	  
+		}
 	}
 
 	public Canvas canvasProperties(Composite container) {
@@ -738,12 +822,7 @@ public class EditLayerFrame {
 					public void widgetSelected(SelectionEvent e) {
 						TableItem ti =  new TableItem(table_chart_layers, SWT.NONE);
 						final String name = "layer_name" ;
-						ti.setText(new String[] {name,styles_layer[0] ,"",""});
-						EChartLayer clayer = gama.GamaFactory.eINSTANCE.createEChartLayer();
-						clayer.setName(name);
-						clayer.setStyle(styles_layer[0]);
-						chartLayers.add(clayer);
-						chartLayersTot.add(clayer);
+						ti.setText(new String[] {name,styles_layer[0] ,"",""});					
 					}
 				});
 			btnAddChartLayer.setBounds(62, 90, 94, 20);
@@ -756,7 +835,6 @@ public class EditLayerFrame {
 					public void widgetSelected(SelectionEvent e) {
 						int[] indices = table_chart_layers.getSelectionIndices();
 						table_chart_layers.remove( indices);
-						chartLayers.remove(indices);
 						table_chart_layers.redraw();
 					}
 				});
@@ -888,7 +966,9 @@ public class EditLayerFrame {
 	  }
 	  
 	 void initTable() {
-		 for (EChartLayer var: chartLayers) {
+		 if (elayer.getChartlayers() == null)
+			 return;
+		 for (EChartLayer var: elayer.getChartlayers()) {
 			TableItem ti =  new TableItem(table_chart_layers, SWT.NONE);
 			ti.setText(new String[] {var.getName(),var.getStyle(),var.getColor(), var.getValue()});
 		 }

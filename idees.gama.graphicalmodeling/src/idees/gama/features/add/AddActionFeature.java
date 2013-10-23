@@ -28,7 +28,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddActionFeature extends AbstractAddShapeFeature {
  
-	public static final int INIT_WIDTH = 120;
+	public static final int INIT_WIDTH = 150;
 	public static final int INIT_HEIGHT = 50;
 	
     private static final IColorConstant CLASS_TEXT_FOREGROUND =

@@ -1328,6 +1328,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getELayer_Chart_type() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(20);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getELayer_Type() {
 		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(2);
 	}
@@ -2068,6 +2077,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eLayerEClass, ELAYER__GRID);
 		createEAttribute(eLayerEClass, ELAYER__REFRESH);
 		createEReference(eLayerEClass, ELAYER__CHARTLAYERS);
+		createEAttribute(eLayerEClass, ELAYER__CHART_TYPE);
 
 		eGraphTopologyNodeEClass = createEClass(EGRAPH_TOPOLOGY_NODE);
 
@@ -2330,6 +2340,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayer_Grid(), ecorePackage.getEString(), "grid", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_Refresh(), ecorePackage.getEString(), "refresh", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getELayer_Chartlayers(), this.getEChartLayer(), null, "chartlayers", null, 0, -1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Chart_type(), ecorePackage.getEString(), "chart_type", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGraphTopologyNodeEClass, EGraphTopologyNode.class, "EGraphTopologyNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

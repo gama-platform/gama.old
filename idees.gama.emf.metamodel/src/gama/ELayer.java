@@ -37,6 +37,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ELayer#getGrid <em>Grid</em>}</li>
  *   <li>{@link gama.ELayer#getRefresh <em>Refresh</em>}</li>
  *   <li>{@link gama.ELayer#getChartlayers <em>Chartlayers</em>}</li>
+ *   <li>{@link gama.ELayer#getChart_type <em>Chart type</em>}</li>
  * </ul>
  * </p>
  *
@@ -232,6 +233,32 @@ public interface ELayer extends EGamaObject {
 	 * @generated
 	 */
 	EList<EChartLayer> getChartlayers();
+
+	/**
+	 * Returns the value of the '<em><b>Chart type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Chart type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Chart type</em>' attribute.
+	 * @see #setChart_type(String)
+	 * @see gama.GamaPackage#getELayer_Chart_type()
+	 * @model
+	 * @generated
+	 */
+	String getChart_type();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayer#getChart_type <em>Chart type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Chart type</em>' attribute.
+	 * @see #getChart_type()
+	 * @generated
+	 */
+	void setChart_type(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.

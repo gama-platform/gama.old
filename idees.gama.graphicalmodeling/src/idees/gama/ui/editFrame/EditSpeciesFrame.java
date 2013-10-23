@@ -27,6 +27,8 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -109,6 +111,8 @@ public class EditSpeciesFrame extends EditFrame {
 	private Text textBoundsFile;
 	Font titleFont;
 	
+	private int CONST_WIDTH = 763;
+	
 	//topology
 //	private String[] type_topo = {"continuous", "grid", "graph_node", "graph_edge"};
 //	private CCombo comboTopo;
@@ -171,7 +175,6 @@ public class EditSpeciesFrame extends EditFrame {
 		
 		ESpecies species = (ESpecies) eobject;
 		commonCompositeHeader(container);
-
 		sc.setContent(container);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
@@ -210,7 +213,8 @@ public class EditSpeciesFrame extends EditFrame {
 		//CANVAS SIZE : NAME:30, SKILLS: 110 //INIT : 150
 		Composite comp = new Composite(container, SWT.NONE);
 		comp.setBounds(0, 0, 730, 310);
-		groupName(container);
+		Canvas canvasName = canvasName(comp);
+		canvasName.setLocation(10, 10);
 		Canvas canvasSkills = canvasSkills(comp);
 		canvasSkills.setLocation(10, 50);
 		Canvas canvasInit = canvasInit(comp);
@@ -235,13 +239,13 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite gridTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 160, 730, 670);
-		Canvas canvasTor = canvasTorus(comp);
-		canvasTor.setLocation(10, 160);
+		comp.setBounds(0, 160, 730, 630);
+		//Canvas canvasTor = canvasTorus(comp);
+		//canvasTor.setLocation(10, 160);
 		Canvas canvasGrid = canvasGrid(comp);
-		canvasGrid.setLocation(10, 200);
+		canvasGrid.setLocation(10, 160);
 		Composite compEnd = commonCompositeEnd(comp);
-		compEnd.setLocation(0, 290);
+		compEnd.setLocation(0, 250);
 		return comp;
 	}
 	private Composite graphNodeTopo(Composite container) {
@@ -1432,7 +1436,7 @@ public class EditSpeciesFrame extends EditFrame {
 			    	 			modifyIsTorus();
 			    	 			modifyBounds();
 			    	 		} else if (species.getTopology() instanceof EGridTopology){
-			    	 			modifyIsTorus();
+			    	 			//modifyIsTorus();
 			    	 			modifyGridProperties();
 			    	 		} else if (species.getTopology() instanceof EGraphTopologyNode){
 			    	 			modifyLocation();
@@ -1453,8 +1457,26 @@ public class EditSpeciesFrame extends EditFrame {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 600);
+		return new Point(CONST_WIDTH, 600);
 	}
 	 
+	@Override
+	public void create() {
+	    setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE );
+	    super.create();
+	    shell = getShell();
+	    shell.addControlListener(new ControlAdapter() {
+
+            @Override
+            public void controlResized(ControlEvent e) {
+                Rectangle rect = shell.getBounds();
+                if(rect.width != CONST_WIDTH) {
+                    shell.setBounds(rect.x, rect.y, CONST_WIDTH, rect.height);
+                }
+            }
+        });
+	    
+	   
+	}
 	 
 }

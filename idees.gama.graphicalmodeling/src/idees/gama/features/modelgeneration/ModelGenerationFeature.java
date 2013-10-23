@@ -4,6 +4,7 @@ import gama.EActionLink;
 import gama.EAspect;
 import gama.EAspectLink;
 import gama.EBatchExperiment;
+import gama.EChartLayer;
 import gama.EDisplay;
 import gama.EDisplayLink;
 import gama.EExperiment;
@@ -164,7 +165,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (EVariable var: species.getVariables()) {
     		model += defineVariable(var,level+1);
     	}
-    	defineInit(species,level+1);
+    	model += defineInit(species,level+1);
     	Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
     	 for (EActionLink link : species.getActionLinks()) {
          	model += defineAction(link, level+1);
@@ -175,7 +176,8 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
      	 }
     	 for (String reflex : species.getReflexList()) {
-    		 model += defineReflex(reflexMap.get(reflex),level+1);
+    		 if (reflexMap.containsKey(reflex))
+    			 	model += defineReflex(reflexMap.get(reflex),level+1);
      	 }
     	 for (EAspectLink link : species.getAspectLinks()) {
     		 model += defineAspect(link,level+1);
@@ -213,6 +215,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineAction(EActionLink link, int level) {
+    	if (link == null || link.getAction() == null) return "";
     	String result = "";
     	String sp = "";
     	for (int i =0; i < level;i++) {
@@ -248,6 +251,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineReflex(EReflexLink link, int level) {
+    	if (link == null || link.getReflex() == null) return "";
     	String result = "";
     	String sp = "";
     	for (int i =0; i < level;i++) {
@@ -269,6 +273,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineAspect(EAspectLink link, int level) {
+    	if (link == null || link.getAspect() == null) return "";
     	String result = "";
     	EAspect asp = link.getAspect();
     	String sp = "";
@@ -299,6 +304,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineDisplay(EDisplayLink link) {
+    	if (link == null || link.getDisplay() == null) return "";
     	EDisplay disp = link.getDisplay();
     	String model = EL + "\t\t";
     	if (disp.getGamlCode() == null || disp.getGamlCode().isEmpty()) {
@@ -313,28 +319,44 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
        	 }
     	for (String layStr : disp.getLayerList()) {
     		ELayer lay = layerMap.get(layStr);
-    		model += "\t\t\t" + "\tdraw "; 
+    		model += "\t\t\t" ; 
     	//	"species", "grid", "agents","image", "text"
     		if (lay.getType().equals("species") ) {
     			model += lay.getType() + " " + lay.getSpecies() + " aspect: " + lay.getAspect();
     		} else if (lay.getType().equals("grid")) {
-    			model += lay.getType() + " " + lay.getSpecies();
+    			model += lay.getType() + " " + lay.getGrid();
     		} else if (lay.getType().equals("agents")) {
     			model += lay.getType() + " " + lay.getAgents() + " aspect: " + lay.getAspect();
     		} else if (lay.getType().equals("image")) {
     			model +=  lay.getType() + lay.getFile() + " size: " + lay.getSize();
     		} else if (lay.getType().equals("text")) {
     			model += lay.getType() + lay.getText() + " size: " + lay.getSize() ;
+    		} else if (lay.getType().equals("chart")) {
+    			String background = "";
+    			if (lay.getColor() != null && lay.getColor().equals("rgb(255,255,255)"))
+    				background = " background:" + lay.getColor();
+    			model += lay.getType() +" \"" +lay.getName() + "\" type:" + lay.getChart_type() + background;
     		}
+    		
     		String size = "";
-    		if (lay.getSize_x() != null && lay.getSize_y() != null && lay.getSize_x().equals("1.0") && lay.getSize_y().equals("1.0") ) {
+    		if (lay.getSize_x() != null && lay.getSize_y() != null && (! lay.getSize_x().equals("1.0") || ! lay.getSize_y().equals("1.0")) ) {
     			size= " size:{" + lay.getSize_x() + "," + lay.getSize_y()+ "}";
     		}
     		String position = "";
-    		if (lay.getPosition_x() != null && lay.getPosition_y() != null && lay.getPosition_x().equals("1.0") && lay.getPosition_y().equals("1.0") ) {
+    		if (lay.getPosition_x() != null && lay.getPosition_y() != null && (!lay.getPosition_x().equals("0.0") && !lay.getPosition_y().equals("0.0")) ) {
     			position= " position:{" + lay.getPosition_x() + "," + lay.getPosition_y()+ "}";
     		}
-    		model += size + position + ";" + EL;
+    		if (lay.getType().equals("chart")) {
+    			model += size + position + "{" + EL;
+    			if (lay.getChartlayers() != null && ! lay.getChartlayers().isEmpty()) {
+    				for (EChartLayer cl : lay.getChartlayers()) {
+    					model += "\t\t\t\tdata \"" + cl.getName() + "\" style:" + cl.getStyle() + " value:" + cl.getValue() + " color:" + cl.getColor() + ";"+EL;
+    				}
+    			}
+    			model += "\t\t\t}" + EL;
+    		}else {
+    			model += size + position + ";" + EL;
+    		}
     	}
     	
     	model+= "\t\t}";
@@ -360,7 +382,14 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	                
 	            }
             }
-            model = "model " + diagram.getName() + EL + EL + "global {" + EL;
+            model = "model " + diagram.getName() + EL + EL + "global" ;
+            if (worldAgent.getTorus() != null && !worldAgent.getTorus().isEmpty() && !worldAgent.getTorus().equals("false")) {
+            	model += " torus:" + worldAgent.getTorus();
+            }
+            if (worldAgent.getSkills() != null && !worldAgent.getSkills().isEmpty()) {
+        		model += " skills:" + worldAgent.getSkills();
+        	}
+            model += " {" + EL;
             int level = 1;
             for (EVariable var: worldAgent.getVariables()) {
             	model += defineVariable(var,level);
@@ -378,7 +407,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	       	 for (EAspectLink link : worldAgent.getAspectLinks()) {
 	       		 model += defineAspect(link,level+1);
 	        	 }
-	      
+	       	model += defineInit(worldAgent, 1);
 	       	model += "}";
 	       	model += EL;
             for (ESubSpeciesLink link : worldAgent.getMicroSpeciesLinks()) {

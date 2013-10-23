@@ -70,7 +70,7 @@ public class EditExperimentFrame extends EditFrame {
 				
 		
 		//****** CANVAS NAME *********
-		groupName(container);
+		canvasName(container);
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = canvasParameter(container);
@@ -284,7 +284,7 @@ public class EditExperimentFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 450);
+		return new Point(763, 470);
 	}
 
 	@Override
@@ -319,6 +319,15 @@ public class EditExperimentFrame extends EditFrame {
 		
        	 ef.hasDoneChanges = true;
 		
+	}
+	
+	@Override
+	public void create() {
+	    setShellStyle(SWT.DIALOG_TRIM  );
+	    super.create();
+	    shell = getShell();
+	    
+	   
 	}
 	
 	

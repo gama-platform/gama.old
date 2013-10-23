@@ -87,6 +87,13 @@ public abstract class EditFrame extends ApplicationWindow {
 		
 	}
 	
+	protected Canvas canvasName(Composite container) {	
+		Canvas canvasName = new Canvas(container, SWT.BORDER);
+		textName = new Text(canvasName, SWT.BORDER);
+		UtilEditFrame.buildCanvasName(container, canvasName, textName, eobject, ef);
+		canvasName.setBounds(10, 10, 720, 30);
+		return canvasName;
+	}
 
 	/**
 	 * Create the menu manager.

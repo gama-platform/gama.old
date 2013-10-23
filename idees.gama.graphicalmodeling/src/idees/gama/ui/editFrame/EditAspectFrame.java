@@ -34,6 +34,7 @@ public class EditAspectFrame extends EditFrame {
 	org.eclipse.swt.widgets.List layerViewer;
 	EditAspectFrame frame;
 	List<ELayerAspect> layers;
+	Diagram diagram;
 	/**
 	 * Create the application window.
 	 */
@@ -42,6 +43,7 @@ public class EditAspectFrame extends EditFrame {
 		frame = this;
 		layers = new GamaList<ELayerAspect>();
 		layers.addAll(aspect.getLayers());
+		this.diagram = diagram;
 	}
 
 	/**
@@ -105,9 +107,17 @@ public class EditAspectFrame extends EditFrame {
 		addLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-					ELayerAspect elayer = gama.GamaFactory.eINSTANCE.createELayerAspect();
-					elayer.setName("Layer");
-					
+				final ELayerAspect elayer = gama.GamaFactory.eINSTANCE.createELayerAspect();
+				TransactionalEditingDomain domain = TransactionUtil
+						.getEditingDomain(eobject);
+				if (domain != null) {
+					domain.getCommandStack().execute(new RecordingCommand(domain) {
+						public void doExecute() {
+							diagram.eResource().getContents().add(elayer);
+							elayer.setName("Layer");
+						}
+					});
+				}
 					new EditLayerAspectFrame(elayer, frame, false); 
 				} 
 		});
@@ -134,7 +144,16 @@ public class EditAspectFrame extends EditFrame {
 				if (layerViewer.getSelectionCount() == 1) {
 					final int index = layerViewer.getSelectionIndex();
 					layerViewer.remove(index);
-					ELayerAspect lay =layers.remove(index);
+					final ELayerAspect lay =layers.remove(index);
+					TransactionalEditingDomain domain = TransactionUtil
+							.getEditingDomain(eobject);
+					if (domain != null) {
+						domain.getCommandStack().execute(new RecordingCommand(domain) {
+							public void doExecute() {
+								diagram.eResource().getContents().remove(lay);
+							}
+						});
+					}
 					EcoreUtil.delete(lay);
 				}
 			}

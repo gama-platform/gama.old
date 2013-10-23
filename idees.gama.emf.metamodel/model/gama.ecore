@@ -176,6 +176,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="refresh" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="chartlayers" upperBound="-1"
         eType="#//EChartLayer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="chart_type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGraphTopologyNode" eSuperTypes="#//ETopology"/>
   <eClassifiers xsi:type="ecore:EClass" name="EExperimentLink" eSuperTypes="#//EGamaLink">

@@ -2095,13 +2095,22 @@ public interface GamaPackage extends EPackage {
 	int ELAYER__CHARTLAYERS = EGAMA_OBJECT_FEATURE_COUNT + 19;
 
 	/**
+	 * The feature id for the '<em><b>Chart type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__CHART_TYPE = EGAMA_OBJECT_FEATURE_COUNT + 20;
+
+	/**
 	 * The number of structural features of the '<em>ELayer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 20;
+	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 21;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ETopologyImpl <em>ETopology</em>}' class.
@@ -4220,6 +4229,17 @@ public interface GamaPackage extends EPackage {
 	EReference getELayer_Chartlayers();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getChart_type <em>Chart type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Chart type</em>'.
+	 * @see gama.ELayer#getChart_type()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_Chart_type();
+
+	/**
 	 * Returns the meta object for the attribute '{@link gama.ELayer#getType <em>Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5859,6 +5879,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference ELAYER__CHARTLAYERS = eINSTANCE.getELayer_Chartlayers();
+
+		/**
+		 * The meta object literal for the '<em><b>Chart type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__CHART_TYPE = eINSTANCE.getELayer_Chart_type();
 
 		/**
 		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.

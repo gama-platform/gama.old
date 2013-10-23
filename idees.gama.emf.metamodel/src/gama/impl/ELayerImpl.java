@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link gama.impl.ELayerImpl#getGrid <em>Grid</em>}</li>
  *   <li>{@link gama.impl.ELayerImpl#getRefresh <em>Refresh</em>}</li>
  *   <li>{@link gama.impl.ELayerImpl#getChartlayers <em>Chartlayers</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getChart_type <em>Chart type</em>}</li>
  * </ul>
  * </p>
  *
@@ -426,6 +427,26 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 	protected EList<EChartLayer> chartlayers;
 
 	/**
+	 * The default value of the '{@link #getChart_type() <em>Chart type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChart_type()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CHART_TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getChart_type() <em>Chart type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChart_type()
+	 * @generated
+	 * @ordered
+	 */
+	protected String chart_type = CHART_TYPE_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -609,6 +630,27 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 			chartlayers = new EObjectResolvingEList<EChartLayer>(EChartLayer.class, this, GamaPackage.ELAYER__CHARTLAYERS);
 		}
 		return chartlayers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getChart_type() {
+		return chart_type;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setChart_type(String newChart_type) {
+		String oldChart_type = chart_type;
+		chart_type = newChart_type;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__CHART_TYPE, oldChart_type, chart_type));
 	}
 
 	/**
@@ -912,6 +954,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 				return getRefresh();
 			case GamaPackage.ELAYER__CHARTLAYERS:
 				return getChartlayers();
+			case GamaPackage.ELAYER__CHART_TYPE:
+				return getChart_type();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -987,6 +1031,9 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 				getChartlayers().clear();
 				getChartlayers().addAll((Collection<? extends EChartLayer>)newValue);
 				return;
+			case GamaPackage.ELAYER__CHART_TYPE:
+				setChart_type((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1059,6 +1106,9 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 			case GamaPackage.ELAYER__CHARTLAYERS:
 				getChartlayers().clear();
 				return;
+			case GamaPackage.ELAYER__CHART_TYPE:
+				setChart_type(CHART_TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1111,6 +1161,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 				return REFRESH_EDEFAULT == null ? refresh != null : !REFRESH_EDEFAULT.equals(refresh);
 			case GamaPackage.ELAYER__CHARTLAYERS:
 				return chartlayers != null && !chartlayers.isEmpty();
+			case GamaPackage.ELAYER__CHART_TYPE:
+				return CHART_TYPE_EDEFAULT == null ? chart_type != null : !CHART_TYPE_EDEFAULT.equals(chart_type);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1161,6 +1213,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 		result.append(grid);
 		result.append(", refresh: ");
 		result.append(refresh);
+		result.append(", chart_type: ");
+		result.append(chart_type);
 		result.append(')');
 		return result.toString();
 	}
