@@ -138,10 +138,10 @@ public class BatchAgent extends ExperimentAgent {
 		for ( repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, false);
-			// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
 			GuiUtils.prepareForSimulation(simulation);
 			IScope scope = simulation.getScope();
 			simulation.getScheduler().insertAgentToInit(simulation, scope);
+			// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
 			simulation.getScheduler().init(scope);
 
 			// This inner while loop runs the simulation and controls its execution
@@ -285,6 +285,14 @@ public class BatchAgent extends ExperimentAgent {
 
 	public void setSeeds(final Double[] seeds) {
 		this.seeds = seeds;
+	}
+
+	@Override
+	public void closeSimulation() {
+		// We interrupt the simulation scope directly (as it cannot be interrupted by the global scheduler)
+		if ( getSimulation() != null ) {
+			getSimulation().getScope().setInterrupted(true);
+		}
 	}
 
 }
