@@ -59,8 +59,8 @@ public class EditLayerFrame {
 	private final String[] styles_layer = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 			IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, 
 			IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED };
-	private final String[] types_chart =  {IKeyword.XY, IKeyword.HISTOGRAM,
-			IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER};
+	private final String[] types_chart =  {IKeyword.SERIES, IKeyword.HISTOGRAM,
+			IKeyword.PIE, IKeyword.BOX_WHISKER,IKeyword.XY};
 	
 
 	private String[] aspects;
@@ -182,6 +182,9 @@ public class EditLayerFrame {
 		}
 		if (elayer.getColorRBG() != null && elayer.getColorRBG().size() == 3) {
 			rgb = new RGB(elayer.getColorRBG().get(0),elayer.getColorRBG().get(1),elayer.getColorRBG().get(2));	 
+		}
+		if (elayer.getChart_type() != null) {
+			comboTypeChart.setText(elayer.getChart_type());
 		}
 		initTable();
 	}
@@ -464,7 +467,7 @@ public class EditLayerFrame {
 		
 		for (final TableItem item : table_chart_layers.getItems()) {
 			final EChartLayer var = gama.GamaFactory.eINSTANCE.createEChartLayer();
-			diagram.eResource().getContents().remove(var);
+			diagram.eResource().getContents().add(var);
 			var.setName(item.getText(0));
 			var.setStyle(item.getText(1));
 			var.setColor(item.getText(2));
@@ -821,12 +824,12 @@ public class EditLayerFrame {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						TableItem ti =  new TableItem(table_chart_layers, SWT.NONE);
-						final String name = "layer_name" ;
+						final String name = "data_name" ;
 						ti.setText(new String[] {name,styles_layer[0] ,"",""});					
 					}
 				});
 			btnAddChartLayer.setBounds(62, 90, 94, 20);
-			btnAddChartLayer.setText("Add layer");
+			btnAddChartLayer.setText("Add data");
 				
 				Button btnDeleteChartLayer = new Button(canvasChartLayer, SWT.NONE);
 				btnDeleteChartLayer.addSelectionListener(new SelectionAdapter() {
@@ -839,7 +842,7 @@ public class EditLayerFrame {
 					}
 				});
 				btnDeleteChartLayer.setBounds(163, 90, 112, 20);
-				btnDeleteChartLayer.setText("Delete layer");
+				btnDeleteChartLayer.setText("Delete data");
 				return canvasChartLayer;
 		 }
 	 

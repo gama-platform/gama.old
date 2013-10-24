@@ -46,12 +46,14 @@ public class EditExperimentFrame extends EditFrame {
 	Table table_params;
 	List<String> variables;
 	List<String> types_parameter_tot = GamaList.with("int", "float", "string", "file", "list", "matrix", "map");
+	Diagram diagram;
 	/**
 	 * Create the application window.
 	 */
 	public EditExperimentFrame(Diagram diagram, IFeatureProvider fp, EditFeature eaf, EExperiment experiment, String name) {	
 		super(diagram, fp, eaf,  experiment, name == null ? "Experiment definition" : name );
 		this.species = experiment.getExperimentLink().getSpecies();
+		this.diagram = diagram;
 	}
 
 	/**
@@ -242,7 +244,7 @@ public class EditExperimentFrame extends EditFrame {
 		                combo.dispose();
 		              }
 		            });
-		          } else if (column != 1) {
+		          } else {
 		            // Create the Text object for our editor
 		            final Text text = new Text(tableVars, SWT.NONE);
 		            text.setForeground(item.getForeground());
@@ -299,10 +301,12 @@ public class EditExperimentFrame extends EditFrame {
 	    	 		params.addAll(xp.getParameters());
 	    	 		xp.getParameters().clear();
 	    	 		for (EParameter par : params) {
+	    	 			diagram.eResource().getContents().remove(par);
 	    	 			EcoreUtil.delete((EObject) par, true);
 	    	 		}
 	    	 		for (final TableItem item : table_params.getItems()) {
 	    	 			final EParameter par = gama.GamaFactory.eINSTANCE.createEParameter();
+	    	 			diagram.eResource().getContents().add(par);
 	    	 			par.setVariable(item.getText(0));
 	    	 			par.setName(item.getText(1));
 	    	 			par.setCategory(item.getText(2));

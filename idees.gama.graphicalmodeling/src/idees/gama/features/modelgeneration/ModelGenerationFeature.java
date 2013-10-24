@@ -12,6 +12,7 @@ import gama.EExperimentLink;
 import gama.EGridTopology;
 import gama.ELayer;
 import gama.ELayerAspect;
+import gama.EParameter;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
@@ -293,7 +294,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	if (exp instanceof EBatchExperiment) {
     		model += EL + EL + "experiment " + exp.getName() + " type:batch {}";
     	} else {
-    		model += EL + EL + "experiment " + exp.getName() + " type:gui {"+ EL+"\toutput{";
+    		model += EL + EL + "experiment " + exp.getName() + " type:gui {" + EL;
+    		for (EParameter link : exp.getParameters()) {
+    	    	model += defineParameter(link);
+    	    }	
+    				
+    		model +="\toutput{";
     		for (EDisplayLink link : exp.getDisplayLinks()) {
     			model += defineDisplay(link);
     		}
@@ -302,6 +308,27 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	return model;
     	
     }
+    
+    static String defineParameter(EParameter par) {
+    	String parStr = "\tparameter";
+    	parStr += "\""+par.getName() +"\"";
+    	parStr += " var:"+par.getVariable();
+    	if (par.getCategory() != null && ! par.getCategory().isEmpty())
+    		parStr += " category: \""+par.getCategory() +"\"";
+    	if (par.getAmong() != null && ! par.getAmong().isEmpty())
+    		parStr += " among:"+par.getCategory();
+    	if (par.getInit() != null && ! par.getInit().isEmpty())
+    		parStr += " init:"+par.getInit();
+    	if (par.getMin() != null && ! par.getMin().isEmpty())
+    		parStr += " min:"+par.getMin();
+    	if (par.getMax() != null && ! par.getMax().isEmpty())
+    		parStr += " max:"+par.getMax();
+    	if (par.getStep() != null && ! par.getStep().isEmpty())
+    		parStr += " step:"+par.getStep();
+    	parStr += ";" + EL;
+		return parStr;
+    }
+    
     
     static String defineDisplay(EDisplayLink link) {
     	if (link == null || link.getDisplay() == null) return "";
