@@ -21,13 +21,13 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
-public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
+public class LayoutESpeciesFeature extends AbstractLayoutFeature {
  
     private static final int MIN_HEIGHT = 50;
  
     private static final int MIN_WIDTH = 150;
  
-    public LayoutESpeciesEExperimentFeature(IFeatureProvider fp) {
+    public LayoutESpeciesFeature(IFeatureProvider fp) {
         super(fp);
     }
  
@@ -42,8 +42,7 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
     }
  
     public boolean layout(ILayoutContext context) {
-    	System.out.println("ici LayoutESpeciesEExperimentFeature");
-        boolean anythingChanged = false;
+    	  boolean anythingChanged = false;
        IGaService gaService = Graphiti.getGaService();
         ContainerShape containerShape =
             (ContainerShape) context.getPictogramElement();

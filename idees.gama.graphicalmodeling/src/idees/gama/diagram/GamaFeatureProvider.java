@@ -51,7 +51,7 @@ import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.layout.LayoutCommonFeature;
 import idees.gama.features.layout.LayoutDiagramFeature;
 import idees.gama.features.layout.LayoutEExperimentFeature;
-import idees.gama.features.layout.LayoutESpeciesEExperimentFeature;
+import idees.gama.features.layout.LayoutESpeciesFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
 import idees.gama.features.others.ChangeColorEGamaObjectFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
@@ -70,6 +70,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.skills.ISkill;
+import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.AspectStatement;
@@ -113,9 +114,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
  
 	private String typeOfModel;
 	private IModel gamaModel;
-	private List<String> built_in_species =  GamaList.with("graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge");
+	private List<String> built_in_species =  GamaList.with("osm_node", "osm_building", "osm_road", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge");
 	private List<String> built_in_variables =  GamaList.with("fatal", "duration", "machine_time", "step", "model_path", "total_duration", "seed", "average_duration", "warnings", "cycle", "time", "rng", "project_path", "workspace_path", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge", "shape", "location", "agents", "peers", "members","name", "population", "host");
-	private List<String> built_in_actions =  GamaList.with("error", "pause", "die", "write", "tell", "debug", "percieved_area", "halt", "neighbourhood_exclusive");
+	private List<String> built_in_actions =  GamaList.with("goto", "move", "wander", "follow", "wander_3D", "_init_", "_step_","error", "pause", "die", "write", "tell", "debug", "percieved_area", "halt", "neighbourhood_exclusive");
 	
 	
 	public GamaFeatureProvider(IDiagramTypeProvider dtp) {
@@ -236,8 +237,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			addIfPossible(contDisp);
     }
     
-    public void addVariable(IVariable var, ESpecies target) {
-    	if (built_in_variables.contains(var.getName()))
+    public void addVariable(IVariable var, ESpecies target, List<String> listSpecies) {
+    	if (built_in_variables.contains(var.getName()) || built_in_species.contains(var.getName()) || listSpecies.contains(var.getName()) )
 			 return;
 		 EVariable eVar =  gama.GamaFactory.eINSTANCE.createEVariable();
 		 eVar.setType(var.getType().toString());
@@ -257,12 +258,15 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		 target.getVariables().add(eVar);
     }
     
-    public  ESpecies createMicroSpecies(ESpecies source, PictogramElement sourceE, ISpecies species, Diagram diagram) {
+    public  ESpecies createMicroSpecies(ESpecies source, PictogramElement sourceE, ISpecies species, Diagram diagram, List<String> listSpecies) {
 		 ESpecies target = gama.GamaFactory.eINSTANCE.createESpecies();
 		 diagram.eResource().getContents().add(target);
-		 Collection<ISkill> skills =  ((SpeciesDescription) species.getDescription()).getSkills().values();
-		 
-		
+		/* Collection<ISkill> skills =  ((SpeciesDescription) species.getDescription()).getSkills().values();
+		 for (ISkill sk : skills) {
+			 target.getSkills().add(sk.toString());
+			 
+		 }
+		*/
 		 target.setName(species.getName());
 		 
 		 ETopology newTopo = null;
@@ -279,7 +283,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		
 		 for (IVariable var : species.getVars()) {
 			 if (((Variable) var).getgSkill() == null)
-				 addVariable(var, target);
+				 addVariable(var, target,listSpecies);
 		 }
 		
 		 CreateContext ac = new CreateContext();
@@ -464,7 +468,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 
 		 if (reflex.getCommands() != null) {
 			 for (IStatement st : reflex.getCommands()) {
-				 gmlCode += st.toGaml() + System.getProperty("line.separator" );
+				 if (st == null ) continue;
+				 gmlCode += st + System.getProperty("line.separator" );
 			 }
 		 }
 		 if (reflex.hasFacet(IKeyword.WHEN))
@@ -508,31 +513,33 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 	
     
    	public void initCustom(EWorldAgent eWorld,  PictogramElement worldPE, Diagram diagram) {
+   		List<String> listSpecies = new GamaList<String>();
+   		listSpecies.addAll(gamaModel.getMicroSpeciesNames());
    		for (IVariable var : gamaModel.getVars()) {
-   			addVariable(var, eWorld);
+   			addVariable(var, eWorld,listSpecies);
    		} 
 	   	 for (ActionStatement action : gamaModel.getActions()) {
 			 if (! built_in_actions.contains(action.getName()))
 				 createAction( eWorld,  worldPE,  action,  diagram);
 		 }
 	   	for (IStatement stat : gamaModel.getBehaviors()) {
-			 if (stat instanceof ReflexStatement && stat.getName() != null && !stat.getName().isEmpty())
+			 if (stat instanceof ReflexStatement && stat.getName() != null && !stat.getName().isEmpty() && ! stat.getName().startsWith("internal_init"))
 				 createReflex( eWorld,  worldPE,  (ReflexStatement) stat,  diagram);
 		 }
-   		buildAgent(gamaModel, eWorld, worldPE, diagram);
+   		buildAgent(gamaModel, eWorld, worldPE, diagram,listSpecies);
        	
    		   
    		LayoutDiagramFeature.execute(diagram);
     }
    	
-   	public void buildAgent(ISpecies gamaSpecies, ESpecies species, PictogramElement speciesE, Diagram diagram) {
+   	public void buildAgent(ISpecies gamaSpecies, ESpecies species, PictogramElement speciesE, Diagram diagram,List<String> listSpecies) {
    		for (ISpecies sp : gamaSpecies.getMicroSpecies()) {
    			if (built_in_species.contains(sp.getName()))
    				continue;
    			if (sp instanceof IExperimentSpecies) { 
    				createXP(species, speciesE, (IExperimentSpecies) sp, diagram);
    			} else {
-   				createMicroSpecies(species, speciesE, sp, diagram);
+   				createMicroSpecies(species, speciesE, sp, diagram,listSpecies);
    			}
    			
    		}
@@ -544,7 +551,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
         if (bo instanceof ESpecies) {
-            return new LayoutESpeciesEExperimentFeature(this);
+            return new LayoutESpeciesFeature(this);
         } else if ( bo instanceof EExperiment) {
              return new LayoutEExperimentFeature(this);  
         } else  if (bo instanceof EGamaObject) {
