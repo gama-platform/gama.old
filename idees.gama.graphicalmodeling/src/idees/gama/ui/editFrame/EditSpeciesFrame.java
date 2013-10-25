@@ -174,11 +174,12 @@ public class EditSpeciesFrame extends EditFrame {
 		titleFont = new Font(getShell().getDisplay(),"Arial",10,SWT.BOLD); 
 		
 		ESpecies species = (ESpecies) eobject;
-		commonCompositeHeader(container);
+		boolean init = !(species.getTopology() instanceof EGridTopology);
+		commonCompositeHeader(container, init);
 		sc.setContent(container);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-		int sizeHeader = 160;
+		int sizeHeader = init ? 160 : 0;
 			//CANVAS SIZE : NAME:30, VAR:200, TORUS:30, LOC:130, REFLEX:110, SHAPE:220, SKILLS: 110 BOUNDS: 80 GRID: 80
 		if (eobject instanceof EWorldAgent) {	
 			Canvas canvasTor = canvasTorus(container);
@@ -191,8 +192,8 @@ public class EditSpeciesFrame extends EditFrame {
 			sc.setMinSize(container.computeSize(730, 680+sizeHeader));
 		} else if (species.getTopology() instanceof EGridTopology){
 			gridTopo(container);
-			container.setSize(730, 670+sizeHeader);
-			sc.setMinSize(container.computeSize(730, 670+sizeHeader));
+			container.setSize(730, 630+sizeHeader);
+			sc.setMinSize(container.computeSize(730, 630+sizeHeader));
 		} else if (species.getTopology() instanceof EGraphTopologyNode){
 			graphNodeTopo(container);
 			container.setSize(730, 920+sizeHeader);
@@ -209,17 +210,18 @@ public class EditSpeciesFrame extends EditFrame {
 		return container;
 	}
 	
-	private Composite commonCompositeHeader(Composite container) {
+	private Composite commonCompositeHeader(Composite container, boolean init) {
 		//CANVAS SIZE : NAME:30, SKILLS: 110 //INIT : 150
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 310);
+		comp.setBounds(0, 0, 730, init ? 310 : 160);
 		Canvas canvasName = canvasName(comp);
 		canvasName.setLocation(10, 10);
 		Canvas canvasSkills = canvasSkills(comp);
 		canvasSkills.setLocation(10, 50);
-		Canvas canvasInit = canvasInit(comp);
-		canvasInit.setLocation(10, 160);
-		
+		if (init) {
+			Canvas canvasInit = canvasInit(comp);
+			canvasInit.setLocation(10, 160);
+		}
 		return comp;
 	}
 	
@@ -239,13 +241,13 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite gridTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 160, 730, 630);
+		comp.setBounds(0, 160, 730, 500);
 		//Canvas canvasTor = canvasTorus(comp);
 		//canvasTor.setLocation(10, 160);
 		Canvas canvasGrid = canvasGrid(comp);
-		canvasGrid.setLocation(10, 160);
+		canvasGrid.setLocation(10, 0);
 		Composite compEnd = commonCompositeEnd(comp);
-		compEnd.setLocation(0, 250);
+		compEnd.setLocation(0, 90);
 		return comp;
 	}
 	private Composite graphNodeTopo(Composite container) {
@@ -822,7 +824,7 @@ public class EditSpeciesFrame extends EditFrame {
 		});
 		
 		btnShapeFct = new Button(canvasShape, SWT.RADIO);
-		btnShapeFct.setBounds(150, 30, 100, 20);
+		btnShapeFct.setBounds(150, 30, 80, 20);
 		btnShapeFct.setText("Function");
 		btnShapeFct.setSelection(false);
 		btnShapeFct.addSelectionListener(new SelectionAdapter() {
@@ -969,7 +971,7 @@ public class EditSpeciesFrame extends EditFrame {
 	 
 	 public Composite initValueLocComp(Composite container) {
 		 Composite cLoc = new Composite (container, SWT.BORDER);
-		 cLoc.setBounds(5, 60, 500, 30);
+		 cLoc.setBounds(5, 60, 600, 30);
 		 CLabel lblLocation = new CLabel(cLoc, SWT.NONE);
 			lblLocation.setBounds(5, 5, 80, 20);
 			lblLocation.setText("Init value");
@@ -997,7 +999,7 @@ public class EditSpeciesFrame extends EditFrame {
 			});
 			 
 			textLoc = new Text(cLoc, SWT.BORDER);
-			textLoc.setBounds(300, 5, 300, 20);
+			textLoc.setBounds(300, 5, 270, 20);
 			textLoc.setEnabled(false);
 			
 		 
@@ -1224,7 +1226,7 @@ public class EditSpeciesFrame extends EditFrame {
 			});
 			
 			btnLocFct = new Button(canvasLocation, SWT.RADIO);
-			btnLocFct.setBounds(150, 30, 100, 20);
+			btnLocFct.setBounds(150, 30, 80, 20);
 			btnLocFct.setText("Function");
 			btnLocFct.setSelection(false);
 			btnLocFct.addSelectionListener(new SelectionAdapter() {
