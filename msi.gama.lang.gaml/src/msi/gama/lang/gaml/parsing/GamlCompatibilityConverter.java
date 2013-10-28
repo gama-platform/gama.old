@@ -2,7 +2,6 @@ package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.ISymbolKind;
@@ -30,7 +29,7 @@ public class GamlCompatibilityConverter {
 
 	public static ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if ( !(root instanceof Model) ) {
-			GuiUtils.debug("GamlCompatibilityConverter.buildSyntacticContents : root is not a Model");
+			// GuiUtils.debug("GamlCompatibilityConverter.buildSyntacticContents : root is not a Model");
 			return null;
 		}
 		Model m = (Model) root;
