@@ -5,7 +5,7 @@ import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
 import msi.gaml.descriptions.*;
@@ -242,9 +242,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			e.printStackTrace();
 		}
 
-		if ( validator != null ) {
-			GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
-		}
+		// if ( validator != null ) {
+		// GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
+		// }
 
 		SymbolProto md =
 			new SymbolProto(sequence, args, sKind, !scope, facets, omissible, combinations, contextKeywords,
