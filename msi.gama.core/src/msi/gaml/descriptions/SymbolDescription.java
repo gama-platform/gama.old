@@ -43,7 +43,8 @@ public class SymbolDescription implements IDescription {
 	protected String originName;
 	protected final List<IDescription> children;
 	protected final String keyword;
-	protected boolean isDisposed = false;
+
+	// protected boolean isDisposed = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
 		final EObject source, final Facets facets) {
