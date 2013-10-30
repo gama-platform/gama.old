@@ -4,18 +4,18 @@ model ville
 global {
 	file shape_file_batiments <- file("../includes/batiments.shp");
 	file shape_file_routes <- file("../includes/routes.shp");
-	file grid_file <- file("../includes/mnt.asc");
-	file map_texture <- file('../includes/Texture.png');
-	geometry shape <- envelope(grid_file);
+	file mnt <- file("../includes/mnt.asc");
+	file texture <- file('../includes/Texture.png');
+	geometry shape <- envelope(mnt);
 	graph<point, route> reseau_route;
 	
 	init {
 		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))] {
-			float z <- (cell(location)).grid_value;   
+			float z <- (mnt_cell(location)).grid_value;   
 			location <- {location.x,location.y,z};
 		}
 		create route from: shape_file_routes {
-			float z <- (cell(location)).grid_value;   
+			float z <- (mnt_cell(location)).grid_value;   
 			location <- {location.x,location.y,z};
 		}
 		create foyer number: 500;
@@ -23,7 +23,7 @@ global {
 	}
 }
 
-grid cell file: grid_file;
+grid mnt_cell file: mnt;
 
 species foyer {
 	float revenu <- gauss(1500, 500);
@@ -87,7 +87,7 @@ species route {
 experiment ville type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
-			grid cell triangulation: true texture:map_texture draw_as_dem:true transparency: 0.3;
+			grid mnt_cell triangulation: true texture:texture draw_as_dem:true transparency: 0.3;
 			species batiment aspect: geometrie;
 			species route aspect: geometrie;
 			species foyer aspect: revenu;
