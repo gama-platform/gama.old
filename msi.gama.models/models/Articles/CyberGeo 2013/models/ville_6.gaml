@@ -5,22 +5,25 @@ global {
 	file shape_file_batiments <- file("../includes/batiments.shp");
 	file shape_file_routes <- file("../includes/routes.shp");
 	file grid_file <- file("../includes/mnt.asc");
+	file map_texture <- file('../includes/Texture.png');
 	geometry shape <- envelope(grid_file);
 	graph<point, route> reseau_route;
 	
 	init {
-		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))]{
+		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))] {
 			float z <- (cell(location)).grid_value;   
-			shape <- shape add_z (z);
+			location <- {location.x,location.y,z};
 		}
-		create route from: shape_file_routes;
+		create route from: shape_file_routes {
+			float z <- (cell(location)).grid_value;   
+			location <- {location.x,location.y,z};
+		}
 		create foyer number: 500;
 		reseau_route <- as_edge_graph(route);
 	}
 }
 
-grid cell file: grid_file {
-}
+grid cell file: grid_file;
 
 species foyer {
 	float revenu <- gauss(1500, 500);
@@ -39,7 +42,7 @@ species foyer {
 	}
 	action emmenager {
 		habitation.capacite <- habitation.capacite - 1;
-		location <- any_location_in(habitation.shape) add_z habitation.hauteur;
+		location <- any_location_in(habitation.shape) add_z (habitation.hauteur + habitation.location.z);
 	}
 	action demenager {
 		habitation.capacite <- habitation.capacite + 1;
@@ -84,9 +87,9 @@ species route {
 experiment ville type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
-			grid cell triangulation: true texture:false;
+			grid cell triangulation: true texture:map_texture draw_as_dem:true transparency: 0.3;
 			species batiment aspect: geometrie;
-			species route aspect: geometrie; 
+			species route aspect: geometrie;
 			species foyer aspect: revenu;
 		}
 		display carte_batiment type: opengl ambient_light: 100{
