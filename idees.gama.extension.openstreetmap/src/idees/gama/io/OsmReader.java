@@ -336,7 +336,6 @@ public class OsmReader {
 		 boolAtt.add("motorroad");
 		 boolAtt.add("wall");
 		 boolAtt.add("bridge");
-		 System.out.println("buildAgents");
 		 for (Node node : nodes) {
 			Map values = new GamaMap();
 			for (Tag tg : node.getTags()) {
