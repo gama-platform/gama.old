@@ -62,7 +62,7 @@ public class OsmReader {
 			 Set<Long> usedNodes = new HashSet<Long>();
 			 
 			 public void process(EntityContainer entityContainer) {
-			        Entity entity = entityContainer.getEntity();
+				 	Entity entity = entityContainer.getEntity();
 			    	
 			        if (entity instanceof Node) {
 			        	Node node = (Node) entity;
@@ -159,8 +159,9 @@ public class OsmReader {
 		for (WayNode node : way.getWayNodes()) {
 			 points.add(nodesPt.get(node.getNodeId()));
 		}
+		if (points.size() < 3) return new GamaList();
 		IShape geom = GamaGeometryType.buildPolygon(points);
-		if (geom != null) {
+		if (geom != null && geom.getInnerGeometry().isValid() &&  geom.getInnerGeometry().getCoordinates().length >2 && geom.getInnerGeometry().getArea() > 0) {
 			values.put("shape", new GamaShape(gisUtils.transform(geom.getInnerGeometry())));
 				 initialValues.add(values);
 				 return buildingPop.createAgents(scope, 1, initialValues, false);
@@ -179,7 +180,7 @@ public class OsmReader {
 		if (oneWay != null && oneWay) {
 			List<Map> initialValues = new GamaList<Map>();
 			IShape geom = GamaGeometryType.buildPolyline(points);
-			if (geom != null) {
+			if (geom != null && geom.getInnerGeometry().isValid() &&  geom.getInnerGeometry().getCoordinates().length > 1 && geom.getInnerGeometry().getArea()==0) {
 				GamaShape shape = new GamaShape(gisUtils.transform(geom.getInnerGeometry()));
 				values.put("shape", shape);
 				initialValues.add(values);
@@ -193,7 +194,7 @@ public class OsmReader {
 			GamaList<IShape> points2 = new GamaList<IShape>(points);
 			Collections.reverse(points2);
 			IShape geom2 = GamaGeometryType.buildPolyline(points2);
-			if (geom1 != null) {
+			if (geom1 != null && geom1.getInnerGeometry().isValid() &&  geom1.getInnerGeometry().getCoordinates().length > 1 && geom1.getInnerGeometry().getArea() == 0) {
 				List<Map> initialValues = new GamaList<Map>();
 				Map valuesAg = new GamaMap();
 				for (Object val : values.keySet()) {
@@ -208,7 +209,7 @@ public class OsmReader {
 					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(agents.size() -1));
 				
 			}
-			if (geom2 != null) {
+			if (geom2 != null&& geom2.getInnerGeometry().isValid() &&  geom2.getInnerGeometry().getCoordinates().length > 1 && geom2.getInnerGeometry().getArea() == 0) {
 				List<Map> initialValues = new GamaList<Map>();
 				Map valuesAg = new GamaMap();
 				for (Object val : values.keySet()) {
@@ -335,6 +336,7 @@ public class OsmReader {
 		 boolAtt.add("motorroad");
 		 boolAtt.add("wall");
 		 boolAtt.add("bridge");
+		 System.out.println("buildAgents");
 		 for (Node node : nodes) {
 			Map values = new GamaMap();
 			for (Tag tg : node.getTags()) {
@@ -346,8 +348,7 @@ public class OsmReader {
 			    createSignal(scope, gisUtils, node,values);
 			 }
 		 }
-		 
-		 for (Way way : ways) {
+		for (Way way : ways) {
 			 Map values = new GamaMap();
 			 
 			for (Tag tg : way.getTags()) {
@@ -375,7 +376,7 @@ public class OsmReader {
 			}
 			
 		 }
-		 
+		
 		 return createdAgents;
 	 }
 
