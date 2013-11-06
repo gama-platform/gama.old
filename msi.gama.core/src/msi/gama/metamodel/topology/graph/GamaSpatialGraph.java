@@ -90,7 +90,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected void buildByVertices(final IScope scope, final IContainer<?, IShape> list) {
-		super.buildByVertices(scope, list);
+		for ( final IShape p : list ) {
+			super.addVertex(p);
+		}
 		for ( IShape o1 : list.iterable(scope) ) { // Try to create automatic edges
 			if ( o1.getAgent() != null ) {
 				o1.getAgent().setAttribute("attached_graph", this);
