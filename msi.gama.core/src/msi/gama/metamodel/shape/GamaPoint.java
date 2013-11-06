@@ -98,6 +98,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
+	public boolean isLine() {
+		return false;
+	}
+
+	
+	@Override
 	public void setLocation(final double xx, final double yy) {
 		x = xx;
 		y = yy;

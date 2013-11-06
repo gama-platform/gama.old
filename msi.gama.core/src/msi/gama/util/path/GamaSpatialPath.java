@@ -26,6 +26,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
@@ -59,6 +60,16 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 		super(null, start, target, edges, false);
 		this.init(null, start, target, edges, false);
 	}
+	
+	public GamaSpatialPath(final IList<IShape> nodes) {
+		super(nodes);
+		this.init(null, nodes.get(0), nodes.get(nodes.size() - 1), edges, false);
+	}
+	
+	protected IShape createEdge(IShape v, IShape v2) {
+		return GamaGeometryType.buildLine(v.getLocation(), v2.getLocation());
+	}
+
 
 	public void init(final GamaSpatialGraph g, final IShape start, final IShape target, final IList<IShape> _edges,
 		final boolean modify_edges) {
@@ -115,7 +126,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
 					}
-					if ( ag != null && graph != null && graph.isAgentEdge() ) {
+					if ( ag != null ) {
 						realObjects.put(edge2.getGeometry(), ag);
 					} else {
 						realObjects.put(edge2.getGeometry(), edge);
@@ -381,5 +392,20 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 			shape = new GamaShape(geom.union());
 		}
 		return shape;
+	}
+	
+	public void setGraph(IGraph<IShape, IShape> graph) {
+		this.graph = graph;
+		graphVersion = graph.getVersion();
+		
+		for ( IShape edge : edges ) {
+			IAgent ag = edge.getAgent();
+			if ( ag != null ) {
+				realObjects.put(edge.getGeometry(), ag);
+			} else {
+				realObjects.put(edge.getGeometry(), edge);
+			}
+		}
+		
 	}
 }

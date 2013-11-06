@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -141,11 +141,16 @@ public class GamaPathType extends GamaType<IPath> {
 		if ( obj instanceof List ) {
 			// List<ILocation> list = new GamaList();
 			List<IShape> list = new GamaList<IShape>();
+			boolean isEdges = true;
+					
 			for ( Object p : (List) obj ) {
 				list.add(Cast.asPoint(scope, p));
+				if (isEdges && !((p instanceof IShape) && ((IShape) p).isLine())){
+					isEdges = false;
+				}
 			}
 			// return new GamaPath(scope.getTopology(), list);
-			return PathFactory.newInstance(scope.getTopology(), (IList<IShape>)list);
+			return PathFactory.newInstance(isEdges ? (IList<IShape>)obj : (IList<IShape>)list, isEdges);
 		}
 		return null;
 	}

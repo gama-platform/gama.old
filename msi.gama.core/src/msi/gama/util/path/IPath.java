@@ -118,4 +118,6 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 
 	public int getGraphVersion();
 
+	public abstract void setGraph(IGraph<V, E> graph);
+
 }

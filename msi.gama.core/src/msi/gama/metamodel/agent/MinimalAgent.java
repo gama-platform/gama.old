@@ -101,6 +101,11 @@ public abstract class MinimalAgent implements IAgent {
 	public boolean isPoint() {
 		return checkedGeometry().isPoint();
 	}
+	
+	@Override
+	public boolean isLine() {
+		return checkedGeometry().isLine();
+	}
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getInnerGeometry()

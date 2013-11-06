@@ -185,6 +185,11 @@ public abstract class GamaProxyGeometry implements IShape {
 	public boolean isPoint() {
 		return getReferenceGeometry().isPoint();
 	}
+	
+	@Override
+	public boolean isLine() {
+		return getReferenceGeometry().isLine();
+	}
 
 	/**
 	 * Method getInnerGeometry()

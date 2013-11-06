@@ -34,6 +34,7 @@ import msi.gama.util.graph.*;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 
@@ -480,6 +481,19 @@ public class Graphs {
 		throws GamaRuntimeException {
 		//java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
+
+		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+
+	}
+	
+	@operator(value = "as_path", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "create a graph path from the list of shape", examples = { "[road1,road2,road3] as_path my_graph --: A path road1->road2->road3 of my_graph" })
+	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
+		throws GamaRuntimeException {
+		//java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		IPath path = GamaPathType.staticCast(scope, edgesNodes, null); 
+		path.setGraph(graph);
+		return path;
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 

@@ -51,6 +51,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public abstract boolean isPoint();
 
+	public abstract boolean isLine();
+	
 	public abstract Geometry getInnerGeometry();
 
 	public abstract Envelope getEnvelope();

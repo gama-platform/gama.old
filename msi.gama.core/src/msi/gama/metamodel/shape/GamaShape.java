@@ -97,6 +97,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
+	public boolean isLine() {
+		return getInnerGeometry() instanceof LineString || getInnerGeometry() instanceof MultiLineString;
+	}
+	
+	@Override
 	public String stringValue(final IScope scope) {
 		return getInnerGeometry().getGeometryType();
 	}

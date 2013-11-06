@@ -1,13 +1,19 @@
 package msi.gama.util.path;
 
+import java.util.List;
+
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.IList;
+import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
+import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaPathType;
 
 public class PathFactory {
 
@@ -74,6 +80,15 @@ public class PathFactory {
 		} else {
 			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");
 		}
+	}
+
+	public static IPath newInstance(IList<IShape> edgesNodes, boolean isEdges) {
+		if (isEdges) {
+			GamaShape shapeS = (GamaShape) edgesNodes.get(0).getGeometry();
+			GamaShape shapeT = (GamaShape) edgesNodes.get(edgesNodes.size()-1).getGeometry();
+			return new GamaSpatialPath(null, shapeS.getPoints().get(0),shapeT.getPoints().get(shapeT.getPoints().size()-1),edgesNodes,false);
+		}
+		return new GamaSpatialPath(edgesNodes);
 	}
 
 }

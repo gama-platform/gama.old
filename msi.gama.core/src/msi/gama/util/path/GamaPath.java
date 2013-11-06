@@ -56,6 +56,21 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
+	
+	public GamaPath(final IList<V> nodes) {
+		final IList<E> _edges = new GamaList<E>();
+		for(int i = 0; i < (nodes.size() - 1);i++) {
+			E edge = createEdge(nodes.get(i),nodes.get(i+1));
+			if (edge != null) _edges.add(edge);
+		}
+		init(null, nodes.get(0), nodes.get(nodes.size() - 1), _edges, false);
+		this.graph = null;
+	}
+
+	protected E createEdge(V v, V v2) {
+		// TODO to define !
+		return null;
+	}
 
 	public void init(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges,
 		final boolean modify_edges) {
@@ -275,5 +290,12 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	@Override
 	public IShape getGeometry() {
 		return null;
+	}
+
+	@Override
+	public void setGraph(IGraph<V, E> graph) {
+		this.graph = graph;
+		graphVersion = graph.getVersion();
+		
 	}
 }
