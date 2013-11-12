@@ -235,7 +235,7 @@ public class EditLayerAspectFrame {
 		elayer.setWidth(textWidth.getText());
 		elayer.setSize(textSize.getText());
 		elayer.setRotate(textRotate.getText());
-		elayer.setText(textSizeText.getText());
+		elayer.setText(textText.getText());
 		elayer.setPath(textPath.getText());
 		elayer.setShapeType(comboShape.getText());
 		elayer.setIsColorCst(btnCstCol.getSelection());
@@ -264,13 +264,13 @@ public class EditLayerAspectFrame {
 			code +=  textText.getText() + " size:" + textSizeText.getText();
 		}
 		if (elayer.getIsColorCst()) {
-			code += " color: rgb(" + elayer.getColorRBG() + ")" ;
+			code += " color: rgb(" + (elayer.getColorRBG()).toString().replace("[", "").replace("]", "") + ")" ;
 		} else {
 			code += " color: " + elayer.getColor();
 		}
 		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty() && ! elayer.getEmpty().equals("false"))
 			code += " empty: " + elayer.getEmpty();
-		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getRotate().equals(0.0))
+		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getRotate().equals("0.0"))
 			code += " rotate: " + elayer.getRotate();
 		elayer.setGamlCode(code);
 	}
