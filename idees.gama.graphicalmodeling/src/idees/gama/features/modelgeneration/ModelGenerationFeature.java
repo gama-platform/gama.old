@@ -421,6 +421,16 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
             for (EVariable var: worldAgent.getVariables()) {
             	model += defineVariable(var,level);
         	}
+            if (worldAgent.getBoundsType() != null) {
+            	  if(worldAgent.getBoundsType().equals("expression")) {
+            		model += "\tgeometry shape <-"+ worldAgent.getBoundsExpression() + ";" + EL;
+                  } else if(worldAgent.getBoundsType().equals("width-height")){
+                  	model += "\tgeometry shape <- rectangle("+ worldAgent.getBoundsWidth() + "," + worldAgent.getBoundsHeigth() + ");" +EL;
+                  } else if(worldAgent.getBoundsType().equals("file")){
+                  	model += "\tgeometry shape <- envelope(file(\""+ worldAgent.getBoundsPath() + "\"));" +EL;
+                  } 
+            }
+          
             Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
 	       	 for (EActionLink link : worldAgent.getActionLinks()) {
 	            	model += defineAction(link, level+1);

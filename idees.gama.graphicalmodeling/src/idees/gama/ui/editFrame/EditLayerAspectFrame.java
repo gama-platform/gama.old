@@ -242,6 +242,7 @@ public class EditLayerAspectFrame {
 		elayer.setColor(textColor.getText());
 		elayer.setTextSize(textSizeText.getText());
 		elayer.setImageSize(textSizeImage.getText());
+		elayer.getColorRBG().clear();
 		elayer.getColorRBG().add(rgb.red > 0 ? rgb.red : 0);
 		elayer.getColorRBG().add(rgb.green > 0 ? rgb.green : 0);
 		elayer.getColorRBG().add(rgb.blue > 0 ? rgb.blue : 0);

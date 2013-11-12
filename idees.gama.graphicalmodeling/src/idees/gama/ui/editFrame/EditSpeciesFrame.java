@@ -424,6 +424,7 @@ public class EditSpeciesFrame extends EditFrame {
 	
 	private void modifyBounds() {
 		EWorldAgent world = (EWorldAgent) eobject;
+		world.setBoundsType(comboBounds.getText());
 		world.setBoundsExpression(textBoundsExpression.getText());
 		world.setBoundsHeigth(textBoundsHeight.getText());
 		world.setBoundsWidth(textBoundsWidth.getText());
