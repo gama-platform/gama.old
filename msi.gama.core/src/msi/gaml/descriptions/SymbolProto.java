@@ -18,15 +18,12 @@
  */
 package msi.gaml.descriptions;
 
-import static msi.gama.common.interfaces.IKeyword.DO;
+import gnu.trove.set.hash.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.*;
-import msi.gaml.statements.*;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 
 /**
@@ -38,28 +35,28 @@ import msi.gaml.types.*;
 public class SymbolProto {
 
 	public static Set<String> nonTypeStatements = new HashSet();
+	final ISymbolConstructor constructor;
+	final IDescriptionValidator validator;
+	final int kind;
+	final boolean hasSequence;
+	final boolean hasArgs;
+	final boolean hasScope;
+	final boolean isRemoteContext;
+	final boolean isUniqueInContext;
+	// private final boolean nameUniqueInContext;
+	final Set<String> contextKeywords;
+	final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
+	final Map<String, FacetProto> possibleFacets;
+	// private final String[][] possibleCombinations;
+	// private final String bestSuitable = "";
+	final Set<String> mandatoryFacets = new THashSet<String>();
+	final String omissibleFacet;
+	final SymbolFactory factory;
 
-	private final ISymbolConstructor constructor;
-	private final IDescriptionValidator validator;
-	private final int kind;
-	private final boolean hasSequence;
-	private final boolean hasArgs;
-	private final boolean hasScope;
-	private final boolean isRemoteContext;
-	private final boolean isUniqueInContext;
-	private final boolean nameUniqueInContext;
-	private final Set<String> contextKeywords;
-	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
-	private final Map<String, FacetProto> possibleFacets;
-	private final String[][] possibleCombinations;
-	private String bestSuitable = "";
-	private final List<String> mandatoryFacets = new ArrayList();
-	private final String omissibleFacet;
-	private final SymbolFactory factory;
-
-	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID,
-		IType.TYPE_ID);
-	static final List<Integer> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID);
+	static final TIntHashSet ids = new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
+		IType.NEW_VAR_ID, IType.TYPE_ID });
+	// static final TIntHashSet definitions = new TIntHashSet(new int[] { IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID
+	// });
 
 	static {
 		nonTypeStatements.add(IKeyword.EXPERIMENT);
@@ -79,7 +76,7 @@ public class SymbolProto {
 		this.hasArgs = hasArgs;
 		this.omissibleFacet = omissible;
 		this.isUniqueInContext = isUniqueInContext;
-		this.nameUniqueInContext = nameUniqueInContext;
+		// this.nameUniqueInContext = nameUniqueInContext;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
@@ -93,7 +90,7 @@ public class SymbolProto {
 				mandatoryFacets.add(f.name);
 			}
 		}
-		this.possibleCombinations = possibleCombinations;
+		// this.possibleCombinations = possibleCombinations;
 		this.contextKeywords = contextKeywords;
 		Arrays.fill(this.contextKinds, false);
 		for ( Integer i : contextKinds ) {
@@ -101,11 +98,62 @@ public class SymbolProto {
 		}
 	}
 
-	public void validate(final IDescription desc) {
-		if ( validator != null ) {
-			validator.validate(desc);
-		}
-	}
+	// public final ISymbol compile(final IDescription desc) {
+	// validateFacets(desc);
+	// ISymbol cs = getConstructor().create(desc);
+	// if ( cs == null ) { return null; }
+	// if ( hasArgs() ) {
+	// ((IStatement.WithArgs) cs).setFormalArgs(((StatementDescription) desc).validateArgs());
+	// }
+	// if ( hasSequence && !desc.getKeyword().equals(PRIMITIVE) ) {
+	// if ( isRemoteContext ) {
+	// desc.copyTempsAbove();
+	// }
+	// cs.setChildren(desc.compileChildren());
+	// }
+	// return cs;
+	//
+	// }
+	//
+	// public final void validate(final IDescription desc) {
+	// if ( desc == null || desc.isBuiltIn() ) { return; }
+	// final IDescription sd = desc.getEnclosingDescription();
+	// if ( sd != null ) {
+	// // We first verify that the description is at the right place
+	// if ( !contextKinds[sd.getKind()] && !contextKeywords.contains(sd.getKeyword()) ) {
+	// desc.error(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT,
+	// desc.getName());
+	// return;
+	// }
+	// // If it is supposed to be unique, we verify this
+	// if ( isUniqueInContext ) {
+	// final String keyword = desc.getKeyword();
+	// for ( final IDescription child : sd.getChildren() ) {
+	// if ( child.getKeyword().equals(keyword) && child != desc ) {
+	// final String error =
+	// keyword + " is defined twice. Only one definition is allowed in " + sd.getKeyword();
+	// child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null), keyword);
+	// desc.error(error, IGamlIssue.DUPLICATE_KEYWORD, desc.getUnderlyingElement(null), keyword);
+	// return;
+	// }
+	// }
+	// }
+	// }
+	// // We then validate its facets
+	// validateFacets(desc);
+	//
+	// if ( hasSequence && !PRIMITIVE.equals(desc.getKeyword()) ) {
+	// if ( isRemoteContext ) {
+	// desc.copyTempsAbove();
+	// }
+	// desc.validateChildren();
+	// }
+	//
+	// // If a custom validator has been defined, run it
+	// if ( validator != null ) {
+	// validator.validate(desc);
+	// }
+	// }
 
 	public SymbolFactory getFactory() {
 		return factory;
@@ -115,11 +163,11 @@ public class SymbolProto {
 		return isRemoteContext;
 	}
 
-	public boolean isFacetDeclaringANewTemp(final String s) {
-		FacetProto f = getPossibleFacets().get(s);
-		if ( f == null ) { return false; }
-		return f.types[0] == IType.NEW_TEMP_ID;
-	}
+	// public boolean isFacetDeclaringANewTemp(final String s) {
+	// FacetProto f = getPossibleFacets().get(s);
+	// if ( f == null ) { return false; }
+	// return f.types[0] == IType.NEW_TEMP_ID;
+	// }
 
 	public boolean isLabel(final String s) {
 		FacetProto f = getPossibleFacets().get(s);
@@ -139,141 +187,139 @@ public class SymbolProto {
 		return hasScope;
 	}
 
-	public boolean isUnique() {
-		return isUniqueInContext;
-	}
-
-	public boolean nameIsUnique() {
-		return nameUniqueInContext;
-	}
-
 	public Map<String, FacetProto> getPossibleFacets() {
 		return possibleFacets;
 	}
 
-	public String[][] getPossibleCombinations() {
-		return possibleCombinations;
-	}
+	// static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX);
+	//
+	// public IExpression createVarWithTypes(final String tag, final IDescription sd) {
+	// final Facets ff = sd.getFacets();
+	// final TypesManager types = sd.getModelDescription().getTypesManager();
+	// for ( String s : typeProviderFacets ) {
+	// IExpressionDescription expr = ff.get(s);
+	// if ( expr != null ) {
+	// expr.compile(sd);
+	// }
+	// }
+	// IExpression value = ff.getExpr(VALUE);
+	// IType t = Types.NO_TYPE;
+	// IType ct = Types.NO_TYPE;
+	// IType kt = Types.NO_TYPE;
+	//
+	// // Definition of the type
+	//
+	// if ( !ff.contains(TYPE) ) {
+	// final String kw = sd.getKeyword();
+	// if ( kw.equals(CREATE) || kw.equals(CAPTURE) || kw.equals(RELEASE) ) {
+	// t = Types.get(IType.LIST);
+	// } else if ( value != null ) {
+	// t = value.getType();
+	// } else if ( ff.contains(OVER) ) {
+	// t = ff.getExpr(OVER).getContentType();
+	// } else if ( ff.contains(FROM) ) {
+	// t = ff.getExpr(FROM).getType();
+	// }
+	// } else {
+	// t = types.get(ff.getLabel(TYPE));
+	// }
+	//
+	// // Definition of the content type and key type
+	// if ( t.hasContents() ) {
+	// ct = t.defaultContentType();
+	// kt = t.defaultKeyType();
+	// if ( ff.contains(AS) ) {
+	// ct = types.get(ff.getLabel(AS));
+	// } else if ( ff.contains(SPECIES) ) {
+	// ct = ff.getExpr(SPECIES).getContentType();
+	// } else if ( ff.contains(OF) ) {
+	// ct = types.get(ff.getLabel(OF));
+	// } else if ( value != null ) {
+	// ct = value.getContentType();
+	// kt = value.getKeyType();
+	// }
+	// }
+	//
+	// return ((StatementDescription) sd).addNewTempIfNecessary(tag, t, ct, kt);
+	//
+	// }
 
-	public List<String> getMandatoryFacets() {
-		return mandatoryFacets;
-	}
-
-	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
-		for ( String s : mandatoryFacets ) {
-			if ( !facets.containsKey(s) ) {
-				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e.getElement(), s);
-			}
-		}
-	}
-
-	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets, final IDescription context) {
-		if ( context == null ) { return; }
-		// Special case for "do", which can accept (at parsing time) any facet
-		if ( e.getKeyword().equals(DO) ) { return; }
-		for ( Facet s : facets.entrySet() ) {
-
-			if ( s != null && !possibleFacets.containsKey(s.getKey()) ) {
-				context.error("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET, e.getElement(), s.getKey());
-			}
-		}
-	}
-
-	public String getSuitable() {
-		return bestSuitable;
-	}
-
-	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets, final IDescription context) {
-		if ( getPossibleCombinations().length > 0 ) {
-			// System.out.println("before\n");
-			// String needFacets="";
-			int maxMatch = 0;
-			for ( String[] c : getPossibleCombinations() ) {
-				boolean allPresent = true;
-				if ( c == null ) { return; }
-				// String comb="\n\n"+"{ ";
-				String missing = "";
-				int nbMatch = 0;
-				for ( String s : c ) {
-					allPresent = allPresent && facets.containsKey(s);
-					if ( facets.containsKey(s) ) {
-						nbMatch++;
-					} else {
-						missing += s + ": ";
-					}
-					// comb+="["+s+"] ";
-				}
-				// comb+="}";
-				if ( allPresent ) {
-					// bestSuitable="";
-					return;
-				}
-				if ( nbMatch > maxMatch ) {
-					bestSuitable = missing;
-					maxMatch = nbMatch;
-				}
-				// needFacets+=comb;
-			}
-
-			// context.flagWarning("Missing some facets:"
-			// +bestSuitable,
-			// IGamlIssue.GENERAL, e);
-
-		}
-	}
-
-	public boolean verifyContext(final IDescription upper) {
-		if ( upper == null ) { return true; }
-		return contextKinds[upper.getKind()] || contextKeywords.contains(upper.getKeyword());
-	}
-
-	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets, final IDescription context) {
-		for ( Facet facet : facets.entrySet() ) {
-			if ( facet == null ) {
-				continue;
-			}
-			String facetName = facet.getKey();
-			FacetProto f = possibleFacets.get(facetName);
-			if ( f == null ) {
-				continue;
-			}
-			if ( f.isLabel && facet.getValue() != null ) {
-				facets.put(facetName, facet.getValue().compileAsLabel());
-				if ( f.types[0] == IType.LABEL ) {
-					if ( f.values != null && f.values.length != 0 ) {
-						boolean found = false;
-						for ( String possibleValue : f.values ) {
-							if ( facets.equals(facetName, possibleValue) ) {
-								found = true;
-								break;
-							}
-						}
-						if ( !found ) {
-							context
-								.error(
-									"The value of facet " + facet.getKey() + " must be one of " +
-										Arrays.toString(f.values), IGamlIssue.NOT_AMONG, e.getElement());
-
-						}
-					}
-				} else {
-					String facetValue = facets.getLabel(facetName).trim();
-					if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
-						context.error(facetValue + " is a reserved keyword. It cannot be used as an identifier",
-							IGamlIssue.IS_RESERVED, e.getElement(), facetValue);
-					}
-
-				}
-			}
-		}
-	}
-
-	public void verifyFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
-		verifyMandatoryFacets(e, facets, context);
-		verifyFacetsValidity(e, facets, context);
-		verifyFacetsCombinations(e, facets, context);
-		verifyFacetsIds(e, facets, context);
-	}
+	// public void validateFacets(final IDescription context) {
+	// final Facets facets = context.getFacets();
+	// // Special case for "do", which can accept (at parsing time) any facet
+	// final boolean isDo = context.getKeyword().equals(DO);
+	// final boolean isBuiltIn = context.isBuiltIn();
+	// final Set<String> mandatories = new THashSet(mandatoryFacets);
+	// boolean ok = !isDo && facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+	//
+	// @Override
+	// public boolean execute(final String facet, final IExpressionDescription expr) {
+	// mandatories.remove(facet);
+	// FacetProto fp = possibleFacets.get(facet);
+	// if ( fp == null ) {
+	// context.error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
+	// return false;
+	// }
+	//
+	// if ( fp.values.size() > 0 ) {
+	// final String val = expr.getExpression().literalValue();
+	// // We have a multi-valued facet
+	// if ( !fp.values.contains(val) ) {
+	// context.error("Facet '" + facet + "' is expecting a value among " + fp.values + " instead of " +
+	// val, facet);
+	// return false;
+	// }
+	// } else if ( fp.isType ) {
+	// final String val = expr.getExpression().literalValue();
+	// // The facet is supposed to be a type (IType.TYPE_ID)
+	// final IType type = context.getTypeNamed(val);
+	// if ( type == Types.NO_TYPE && !UNKNOWN.equals(val) && !IKeyword.SIGNAL.equals(val) ) {
+	// context.error("Facet '" + facet + "' is expecting a type name. " + val + " is not a type name",
+	// IGamlIssue.NOT_A_TYPE, facet, val);
+	// return false;
+	// }
+	// } else {
+	// IExpression exp;
+	// if ( fp.types[0] == IType.NEW_TEMP_ID ) {
+	// exp = createVarWithTypes(facet, context);
+	// expr.setExpression(exp);
+	// } else if ( !fp.isLabel && !facet.equals(WITH) ) {
+	// exp = expr.compile(context);
+	// } else {
+	// exp = expr.getExpression();
+	// }
+	//
+	// if ( exp != null && !isBuiltIn ) {
+	// // Some expresssions might not be compiled (like "depends_on", for instance)
+	// boolean compatible = false;
+	// final IType actualType = exp.getType();
+	// TypesManager tm = context.getModelDescription().getTypesManager();
+	// for ( final int type : fp.types ) {
+	// compatible = compatible || actualType.isTranslatableInto(tm.get(type));
+	// if ( compatible ) {
+	// break;
+	// }
+	// }
+	// if ( !compatible ) {
+	// final String[] strings = new String[fp.types.length];
+	// for ( int i = 0; i < fp.types.length; i++ ) {
+	// strings[i] = tm.get(fp.types[i]).toString();
+	// }
+	// context.warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) +
+	// " instead of " + actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(fp.types[0])
+	// .toString());
+	// return false;
+	// }
+	// }
+	// }
+	// return true;
+	// }
+	// });
+	// if ( ok && !mandatories.isEmpty() ) {
+	// context.error("Missing facets " + mandatories, IGamlIssue.MISSING_FACET);
+	// return;
+	// }
+	// }
 
 	public boolean isTopLevel() {
 		return kind == ISymbolKind.BEHAVIOR;
@@ -305,8 +351,8 @@ public class SymbolProto {
 		for ( FacetProto f : this.getPossibleFacets().values() ) {
 			sb.append("<li><b>").append(f.name).append("</b> type: ").append(Types.get(f.types[0])).append(" <i>[")
 				.append(f.optional ? "optional" : "required").append("]</i>");
-			if ( f.values != null && f.values.length != 0 ) {
-				sb.append(" among: ").append(Arrays.toString(f.values));
+			if ( f.values.size() > 0 ) {
+				sb.append(" among: ").append(f.values);
 			}
 			if ( f.doc != null && f.doc.length() > 0 ) {
 				sb.append(" - ").append(f.doc);

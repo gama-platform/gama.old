@@ -18,14 +18,16 @@
  */
 package msi.gaml.descriptions;
 
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
-import msi.gaml.statements.Facets;
+import msi.gaml.statements.*;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -46,7 +48,7 @@ public class SymbolDescription implements IDescription {
 
 	// protected boolean isDisposed = false;
 
-	public SymbolDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+	public SymbolDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
 		this.facets = facets;
 		facets.putAsLabel(KEYWORD, keyword);
@@ -103,7 +105,7 @@ public class SymbolDescription implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ) { throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
-		IErrorCollector c = getErrorCollector();
+		ErrorCollector c = getErrorCollector();
 		if ( c == null ) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
 			return;
@@ -327,41 +329,6 @@ public class SymbolDescription implements IDescription {
 		return null;
 	}
 
-	// /**
-	// * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-	// */
-	// @Override
-	// public void notifyChanged(final Notification notification) {
-	// // Nothing to do yet
-	// }
-	//
-	// /**
-	// * @see org.eclipse.emf.common.notify.Adapter#getTarget()
-	// */
-	// @Override
-	// public Notifier getTarget() {
-	// return element;
-	// }
-	//
-	// /**
-	// * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
-	// */
-	// @Override
-	// public void setTarget(final Notifier newTarget) {}
-	//
-	// /**
-	// * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
-	// */
-	// @Override
-	// public boolean isAdapterForType(final Object type) {
-	// return false;
-	// }
-	//
-	// @Override
-	// public void unsetTarget(final Notifier object) {
-	//
-	// }
-
 	@Override
 	public String getTitle() {
 		return "statement " + getKeyword();
@@ -374,34 +341,20 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean hasErrors() {
-		IErrorCollector c = getErrorCollector();
+		ErrorCollector c = getErrorCollector();
 		if ( c == null ) { return false; }
 		return c.hasErrors();
 	}
 
 	@Override
 	public List<GamlCompilationError> getErrors() {
-		IErrorCollector c = getErrorCollector();
+		ErrorCollector c = getErrorCollector();
 		if ( c == null ) { return Collections.EMPTY_LIST; }
 		return c.get();
 	}
 
-	//
-	// @Override
-	// public List<GamlCompilationError> getWarnings() {
-	// IErrorCollector c = getErrorCollector();
-	// if ( c == null ) { return Collections.EMPTY_LIST; }
-	// return c.getWarnings();
-	// }
-	//
-	// public List<GamlCompilationError> getInfos() {
-	// IErrorCollector c = getErrorCollector();
-	// if ( c == null ) { return Collections.EMPTY_LIST; }
-	// return c.getInfos();
-	// }
-
 	@Override
-	public IErrorCollector getErrorCollector() {
+	public ErrorCollector getErrorCollector() {
 		ModelDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getErrorCollector();
@@ -422,6 +375,183 @@ public class SymbolDescription implements IDescription {
 		if ( originName == null ) {
 			originName = name;
 		}
+	}
+
+	@Override
+	public final IDescription validate() {
+		if ( isBuiltIn() ) {
+			// We simply make sure that the facets are correctly compiled
+			validateFacets();
+			return this;
+		}
+		final IDescription sd = getEnclosingDescription();
+		final SymbolProto proto = getMeta();
+		if ( sd != null ) {
+			// We first verify that the description is at the right place
+			if ( !proto.contextKinds[sd.getKind()] && !proto.contextKeywords.contains(sd.getKeyword()) ) {
+				error(keyword + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT, getName());
+				return this;
+			}
+			// If it is supposed to be unique, we verify this
+			if ( proto.isUniqueInContext ) {
+				for ( final IDescription child : sd.getChildren() ) {
+					if ( child.getKeyword().equals(keyword) && child != this ) {
+						final String error =
+							keyword + " is defined twice. Only one definition is allowed in " + sd.getKeyword();
+						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null), keyword);
+						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), keyword);
+						return this;
+					}
+				}
+			}
+		}
+		// We then validate its facets
+		validateFacets();
+
+		if ( proto.hasSequence && !PRIMITIVE.equals(keyword) ) {
+			if ( proto.isRemoteContext ) {
+				copyTempsAbove();
+			}
+			validateChildren();
+		}
+
+		// If a custom validator has been defined, run it
+		if ( proto.validator != null ) {
+			proto.validator.validate(this);
+		}
+
+		// getMeta().validate(this);
+		return this;
+	}
+
+	private final boolean validateFacets() {
+
+		// final Facets facets = getFacets();
+		// Special case for "do", which can accept (at parsing time) any facet
+		final boolean isDo = keyword.equals(DO);
+		final boolean isBuiltIn = isBuiltIn();
+		final SymbolProto proto = getMeta();
+		final Set<String> mandatories = new THashSet(proto.mandatoryFacets);
+		boolean ok = facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+
+			@Override
+			public boolean execute(final String facet, final IExpressionDescription expr) {
+				mandatories.remove(facet);
+				FacetProto fp = proto.possibleFacets.get(facet);
+				if ( fp == null ) {
+					if ( !isDo ) {
+						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
+						return false;
+					}
+				} else if ( fp.values.size() > 0 ) {
+					final String val = expr.getExpression().literalValue();
+					// We have a multi-valued facet
+					if ( !fp.values.contains(val) ) {
+						error("Facet '" + facet + "' is expecting a value among " + fp.values + " instead of " + val,
+							facet);
+						return false;
+					}
+				} else if ( fp.isType ) {
+					final String val = expr.getExpression().literalValue();
+					// The facet is supposed to be a type (IType.TYPE_ID)
+					final IType type = getTypeNamed(val);
+					if ( type == Types.NO_TYPE && !UNKNOWN.equals(val) && !IKeyword.SIGNAL.equals(val) ) {
+						error("Facet '" + facet + "' is expecting a type name. " + val + " is not a type name",
+							IGamlIssue.NOT_A_TYPE, facet, val);
+						return false;
+					}
+				} else {
+					IExpression exp;
+					if ( fp.types[0] == IType.NEW_TEMP_ID ) {
+						exp = createVarWithTypes(facet);
+						expr.setExpression(exp);
+					} else if ( !fp.isLabel && !facet.equals(WITH) ) {
+						exp = expr.compile(SymbolDescription.this);
+					} else {
+						exp = expr.getExpression();
+					}
+
+					if ( exp != null && !isBuiltIn ) {
+						// Some expresssions might not be compiled (like "depends_on", for instance)
+						boolean compatible = false;
+						final IType actualType = exp.getType();
+						TypesManager tm = getModelDescription().getTypesManager();
+						for ( final int type : fp.types ) {
+							compatible = compatible || actualType.isTranslatableInto(tm.get(type));
+							if ( compatible ) {
+								break;
+							}
+						}
+						if ( !compatible ) {
+							final String[] strings = new String[fp.types.length];
+							for ( int i = 0; i < fp.types.length; i++ ) {
+								strings[i] = tm.get(fp.types[i]).toString();
+							}
+							warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of " +
+								actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(fp.types[0]).toString());
+							// return false;
+						}
+					}
+				}
+				return true;
+			}
+		});
+		if ( ok && !mandatories.isEmpty() ) {
+			error("Missing facets " + mandatories, IGamlIssue.MISSING_FACET);
+			return false;
+		}
+		return ok;
+
+	}
+
+	// Nothing to do here
+	protected IExpression createVarWithTypes(final String tag) {
+		return null;
+	}
+
+	protected void validateChildren() {
+		if ( children != null ) {
+			for ( final IDescription child : children ) {
+				child.validate();
+			}
+		}
+	}
+
+	@Override
+	public final ISymbol compile() {
+		final SymbolProto proto = getMeta();
+		validate();
+		ISymbol cs = proto.constructor.create(this);
+		if ( cs == null ) { return null; }
+		if ( proto.hasArgs ) {
+			((IStatement.WithArgs) cs).setFormalArgs(((StatementDescription) this).validateArgs());
+		}
+		if ( proto.hasSequence && !keyword.equals(PRIMITIVE) ) {
+			if ( proto.isRemoteContext ) {
+				copyTempsAbove();
+			}
+			cs.setChildren(compileChildren());
+		}
+		return cs;
+
+	}
+
+	/**
+	 * Method compileChildren()
+	 * @see msi.gaml.descriptions.IDescription#compileChildren()
+	 */
+	protected List<? extends ISymbol> compileChildren() {
+		final List<ISymbol> lce = new ArrayList();
+		if ( children != null ) {
+			for ( final IDescription sd : children ) {
+				final ISymbol s = sd.compile();
+				if ( s != null ) {
+					lce.add(s);
+				}
+			}
+		}
+		return lce;
+
 	}
 
 }

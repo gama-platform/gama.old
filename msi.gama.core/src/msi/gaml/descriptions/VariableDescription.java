@@ -20,8 +20,8 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.expressions.IVarExpression;
-import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
@@ -41,12 +41,14 @@ public class VariableDescription extends SymbolDescription {
 
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
-	private IType type = null, contentType = null, keyType = null;
+	private IType type = null;
+	// private IType contentType = null;
+	// private final IType keyType = null;
 	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter;
 	private boolean _isUpdatable;
 	private GamaHelper get, init, set;
 
-	public VariableDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
@@ -56,8 +58,7 @@ public class VariableDescription extends SymbolDescription {
 		_isGlobal = superDesc instanceof ModelDescription;
 		// _isFunction = facets.containsKey(FUNCTION);
 		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
-		_isNotModifiable =
-		/* _isFunction */facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
+		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
 		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
 
 	}
@@ -178,32 +179,51 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public IType getContentType() {
 		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		if ( contentType == null ) {
-			String of = facets.getLabel(OF);
-			if ( of != null ) {
-				contentType = getTypeNamed(of);
-			}
-			if ( contentType == null || contentType == Types.NO_TYPE ) {
-				contentType = getType().defaultContentType();
-			}
-		}
-		return contentType;
+		String of = facets.getLabel(OF);
+		if ( of != null ) { return getTypeNamed(of); }
+		IExpression expr =
+			facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE, facets.getExpr(FUNCTION))));
+		if ( expr != null ) { return expr.getContentType(); }
+		return getType().defaultContentType();
+
+		// if ( contentType == null ) {
+		// String of = facets.getLabel(OF);
+		// if ( of != null ) {
+		// contentType = getTypeNamed(of);
+		// } else {
+		// IExpression expr = facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE,
+		// facets.getExpr(FUNCTION))));
+		// contentType = expr != null getType().defaultContentType();
+		// }
+		// }
+		// return contentType;
 	}
 
 	@Override
 	public IType getKeyType() {
 		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		if ( keyType == null ) {
-			String index = facets.getLabel(INDEX);
-			if ( index != null ) {
-				keyType = getTypeNamed(index);
-			}
-			if ( keyType == null || keyType == Types.NO_TYPE ) {
-				keyType = getType().defaultKeyType();
-			}
-		}
-		return keyType;
+		String index = facets.getLabel(INDEX);
+		if ( index != null ) { return getTypeNamed(index); }
+		IExpression expr =
+			facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE, facets.getExpr(FUNCTION))));
+		if ( expr != null ) { return expr.getKeyType(); }
+		return getType().defaultKeyType();
 	}
+
+	// @Override
+	// public IType getKeyType() {
+	// if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+	// if ( keyType == null ) {
+	// String index = facets.getLabel(INDEX);
+	// if ( index != null ) {
+	// keyType = getTypeNamed(index);
+	// }
+	// if ( keyType == null || keyType == Types.NO_TYPE ) {
+	// keyType = getType().defaultKeyType();
+	// }
+	// }
+	// return keyType;
+	// }
 
 	public IVarExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
@@ -215,11 +235,11 @@ public class VariableDescription extends SymbolDescription {
 		return varExpr;
 	}
 
-	public void setContentType(final IType type) {
-		// sent by the variable once its value and init are compiled
-		if ( contentType != null && contentType != Types.NO_TYPE ) { return; }
-		contentType = type;
-	}
+	// public void setContentType(final IType type) {
+	// // sent by the variable once its value and init are compiled
+	// if ( contentType != null && contentType != Types.NO_TYPE ) { return; }
+	// contentType = type;
+	// }
 
 	public void setDefinitionOrder(final int i) {
 		definitionOrder = i;

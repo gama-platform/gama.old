@@ -18,17 +18,19 @@
  */
 package msi.gaml.architecture.finite_state_machine;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.TransitionValidator;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
@@ -37,9 +39,30 @@ import msi.gaml.types.IType;
 @inside(symbols = { FsmStateStatement.STATE })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = FsmTransitionStatement.TO, type = IType.ID, optional = false) }, omissible = IKeyword.WHEN)
+@validator(TransitionValidator.class)
 public class FsmTransitionStatement extends AbstractStatementSequence {
 
 	// TODO En faire une sous classe de if ?
+
+	
+
+	public static class TransitionValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription desc) {
+			final String behavior = desc.getFacets().getLabel(TO);
+			final SpeciesDescription sd = desc.getSpeciesContext();
+			if ( !sd.hasBehavior(behavior) ) {
+				desc.error("Behavior " + behavior + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_BEHAVIOR,
+					TO, behavior, sd.getName());
+			}
+		}
+
+	}
 
 	final IExpression when;
 
@@ -52,7 +75,7 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		super(desc);
 		String stateName = getLiteral(TO);
 		setName(stateName);
-		if(getFacet(IKeyword.WHEN) != null) {
+		if ( getFacet(IKeyword.WHEN) != null ) {
 			when = getFacet(IKeyword.WHEN);
 		} else {
 			when = new ConstantExpression(true);

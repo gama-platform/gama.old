@@ -9,11 +9,12 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
+import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
-	Set<ISpatialIndex> all;
+	List<ISpatialIndex> all;
 	ISpatialIndex quadtree;
 	Map<ISpecies, ISpatialIndex> indexes;
 	protected double[] steps;
@@ -21,7 +22,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public CompoundSpatialIndex(final Envelope bounds) {
 		quadtree = new GamaQuadTree(bounds);
 		indexes = new HashMap();
-		all = new THashSet();
+		all = new ArrayList();
 		all.add(quadtree);
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest };
@@ -42,23 +43,9 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return si;
 	}
 
-	private Collection<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
+	private List<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
 		final ISpatialIndex si = indexes.get(f.speciesFiltered());
-		return si == null ? all : Collections.singleton(si);
-	}
-
-	private IAgent findClosest(final IShape source, final Set<IAgent> shapes) {
-		if ( shapes.size() == 1 ) { return shapes.iterator().next(); }
-		double min_dist = Double.MAX_VALUE;
-		IAgent min_agent = null;
-		for ( final IAgent s : shapes ) {
-			final double dd = source.euclidianDistanceTo(s);
-			if ( dd < min_dist ) {
-				min_dist = dd;
-				min_agent = s;
-			}
-		}
-		return min_agent;
+		return si == null ? all : ImmutableList.of(si);
 	}
 
 	@Override
@@ -90,14 +77,21 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return agents;
 	}
 
-	@Override
-	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// TODO -- Verify : dist not taken into account here. Normal ?
-		final Collection<ISpatialIndex> list = findSpatialIndexes(f);
+	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
+		final ISpatialIndex index) {
+		for ( int i = 0; i < steps.length; i++ ) {
+			IAgent first = index.firstAtDistance(scope, source, steps[i], filter);
+			if ( first != null ) { return first; }
+		}
+		return null;
+	}
+
+	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
+		final List<ISpatialIndex> indexes) {
 		final Set<IAgent> shapes = new THashSet();
 		for ( int i = 0; i < steps.length; i++ ) {
-			for ( final ISpatialIndex si : list ) {
-				final IAgent first = si.firstAtDistance(scope, source, steps[i], f);
+			for ( final ISpatialIndex si : indexes ) {
+				final IAgent first = si.firstAtDistance(scope, source, steps[i], filter);
 				if ( first != null ) {
 					shapes.add(first);
 				}
@@ -106,7 +100,30 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 				break;
 			}
 		}
-		return findClosest(source, shapes);
+		if ( shapes.size() == 1 ) { return shapes.iterator().next(); }
+		double min_dist = Double.MAX_VALUE;
+		IAgent min_agent = null;
+		for ( final IAgent s : shapes ) {
+			final double dd = source.euclidianDistanceTo(s);
+			if ( dd < min_dist ) {
+				min_dist = dd;
+				min_agent = s;
+			}
+		}
+		return min_agent;
+
+	}
+
+	@Override
+	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
+		// TODO -- Verify : dist not taken into account here. Normal ?
+		final List<ISpatialIndex> list = findSpatialIndexes(f);
+		ISpatialIndex oneIndex = null;
+		if ( list.size() == 1 ) {
+			return firstAtDistance(scope, source, f, list.get(0));
+		} else {
+			return firstAtDistance(scope, source, f, list);
+		}
 	}
 
 	@Override

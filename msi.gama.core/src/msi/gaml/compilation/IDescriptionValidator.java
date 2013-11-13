@@ -4,7 +4,10 @@
  */
 package msi.gaml.compilation;
 
-import msi.gaml.descriptions.IDescription;
+import msi.gama.common.interfaces.*;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.types.*;
 
 /**
  * Class IDescriptionValidator. This interface is intended to be used for individual validation of symbols. An instance
@@ -14,7 +17,7 @@ import msi.gaml.descriptions.IDescription;
  * @since 13 sept. 2013
  * 
  */
-public interface IDescriptionValidator {
+public interface IDescriptionValidator<T extends IDescription> extends IKeyword {
 
 	/**
 	 * Called at the end of the validation process. The enclosing description, the children and the facets of the
@@ -24,5 +27,57 @@ public interface IDescriptionValidator {
 	 * description instead.
 	 * @param description
 	 */
-	public void validate(IDescription description);
+	public void validate(T description);
+
+	public static class Assert {
+
+		public static boolean nameIsValid(final IDescription cd) {
+			String name = cd.getName();
+			if ( name == null ) {
+				cd.error("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
+				return false;
+			} else if ( IExpressionCompiler.RESERVED.contains(name) ) {
+				String type =
+					"It cannot be used as a " + (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) +
+						" name.";
+				cd.error(name + " is a reserved keyword. " + type + " Reserved keywords are: " +
+					IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
+				return false;
+			} else {
+				IType t = cd.getTypeNamed(name);
+				if ( t != Types.NO_TYPE ) {
+					String type =
+						"It cannot be used as a " + (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) +
+							" name.";
+					String species = t.isSpeciesType() ? "species" : "type";
+					cd.error(name + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE, NAME, name);
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	public static class ValidNameValidator implements IDescriptionValidator {
+
+		/**
+		 * Verifies that the name is valid (non reserved, non type and non species)
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {
+			Assert.nameIsValid(cd);
+		}
+	}
+
+	public static class NullValidator implements IDescriptionValidator {
+
+		/**
+		 * Verifies that the name is valid (non reserved, non type and non species)
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {}
+	}
+
 }

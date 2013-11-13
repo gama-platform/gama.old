@@ -21,9 +21,9 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
@@ -56,7 +56,7 @@ public class ModelDescription extends SpeciesDescription {
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
 		final ErrorCollector collector) {
-		super(MODEL, clazz, macro, parent, IChildrenProvider.NONE, source, facets);
+		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
 		types =
 			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
 				: Types.builtInTypes);
@@ -135,12 +135,13 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		// GuiUtils.debug("Adding " + child + " to " + this + "...");
+
 		if ( child instanceof ExperimentDescription ) {
 			String s = child.getName();
 			experiments.put(s, (ExperimentDescription) child);
 			s = child.getFacets().getLabel(TITLE);
 			titledExperiments.put(s, (ExperimentDescription) child);
+			// GuiUtils.debug("Adding experiment" + s + " to " + this + "...");
 			addSpeciesType((TypeDescription) child);
 			// return child;
 			// FIXME: Experiments are not disposed ?
@@ -204,7 +205,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public IErrorCollector getErrorCollector() {
+	public ErrorCollector getErrorCollector() {
 		return collect;
 	}
 

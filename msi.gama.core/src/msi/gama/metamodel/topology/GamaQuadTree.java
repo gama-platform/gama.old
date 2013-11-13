@@ -24,6 +24,7 @@ import gnu.trove.strategy.IdentityHashingStrategy;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -112,6 +113,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		ENVELOPE.init(source.getEnvelope());
 		ENVELOPE.expandBy(exp);
 		final Set<IAgent> in_square = findIntersects(scope, source, ENVELOPE, f);
+		GuiUtils.debug("GamaQuadTree.firstAtDistance : internal_results " + in_square);
 		double min_distance = dist;
 		IAgent min_agent = null;
 		for ( final IAgent a : in_square ) {

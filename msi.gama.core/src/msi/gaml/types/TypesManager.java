@@ -86,7 +86,9 @@ public class TypesManager {
 			Class clazz = entry.getValue().getJavaBase();
 			type.setSupport(clazz);
 			TypeDescription parent = entry.getValue().getParent();
-			type.setParent(parent == null ? get(IKeyword.AGENT) : get(parent.getName()));
+			// Takes care of invalid species (see Issue 711)
+			// TODO Verify this test
+			type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));
 		}
 		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
 	}

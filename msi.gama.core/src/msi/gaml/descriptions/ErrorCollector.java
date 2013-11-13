@@ -1,10 +1,9 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.common.util.IErrorCollector;
 import msi.gaml.compilation.GamlCompilationError;
 
-public class ErrorCollector implements IErrorCollector {
+public class ErrorCollector {
 
 	private final int SIZE = 200;
 	private boolean hasError = false;
@@ -14,7 +13,6 @@ public class ErrorCollector implements IErrorCollector {
 	// final List<GamlCompilationError> warnings = new ArrayList();
 	// final List<GamlCompilationError> infos = new ArrayList();
 
-	@Override
 	public void add(final GamlCompilationError error) {
 		if ( !error.isInfo() && !error.isWarning() ) {
 			hasError = true;
@@ -35,12 +33,10 @@ public class ErrorCollector implements IErrorCollector {
 		}
 	}
 
-	@Override
 	public boolean hasErrors() {
 		return hasError;
 	}
 
-	@Override
 	public List<GamlCompilationError> get() {
 		return all;
 	}

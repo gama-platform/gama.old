@@ -218,10 +218,11 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
 			Iterator<? extends IShape> it = results.iterator();
+			IAgent sourceAgent = source == null ? null : source.getAgent();
 			while (it.hasNext()) {
 				IShape s = it.next();
 				IAgent a = s.getAgent();
-				if ( a == null || a.getSpecies() != pop.getSpecies() ) {
+				if ( a == null || a == sourceAgent || a.getSpecies() != pop.getSpecies() ) {
 					it.remove();
 				}
 

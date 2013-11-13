@@ -4,7 +4,7 @@
  */
 package msi.gaml.compilation;
 
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 import org.eclipse.emf.ecore.EObject;
 
@@ -29,7 +29,9 @@ public interface ISyntacticElement {
 
 	public abstract IExpressionDescription getExpressionAt(final String name);
 
-	public abstract Facets copyFacets();
+	// Copy the facets found in the element. The prototype of the symbol is passed so that additional operations can be
+	// made on the facets (transforming labels, etc.). This prototype can be null.
+	public abstract Facets copyFacets(SymbolProto sp);
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
 

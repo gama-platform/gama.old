@@ -20,8 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.IErrorCollector;
-import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -88,13 +87,21 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract StatementDescription getAction(String name);
 
-	public abstract IErrorCollector getErrorCollector();
+	public abstract ErrorCollector getErrorCollector();
 
 	// public abstract List<GamlCompilationError> getWarnings();
 
 	public abstract List<GamlCompilationError> getErrors();
 
 	public abstract IDescription copy(IDescription into);
+
+	public abstract IDescription validate();
+
+	// public abstract void validateChildren();
+
+	// public List<? extends ISymbol> compileChildren();
+
+	public abstract ISymbol compile();
 
 	public int getKind();
 

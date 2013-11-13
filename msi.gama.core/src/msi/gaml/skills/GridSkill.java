@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.GRID_X, type = IType.INT, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT, constant = true) })
 @skill(name = GridSkill.SKILL_NAME)
-public class GridSkill extends GeometricSkill {
+public class GridSkill extends Skill {
 
 	public static interface IGridAgent {
 

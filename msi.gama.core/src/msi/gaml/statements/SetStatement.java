@@ -18,18 +18,21 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.types.IType;
+import msi.gaml.statements.SetStatement.AssignmentValidator;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -44,7 +47,51 @@ import msi.gaml.types.IType;
 /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
+@validator(AssignmentValidator.class)
 public class SetStatement extends AbstractStatement {
+
+	
+
+	public static class AssignmentValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {
+
+			final IExpression expr = cd.getFacets().getExpr(NAME);
+			if ( !(expr instanceof IVarExpression) ) {
+				cd.error("The expression " + cd.getFacets().getLabel(NAME) + " is not a reference to a variable ", NAME);
+				return;
+			}
+			final IExpression value = cd.getFacets().getExpr(VALUE);
+			if ( value != null ) {
+				IType tv = value.getType();
+				if ( tv != Types.NO_TYPE ) {
+					IType te = expr.getType();
+					if ( !tv.isTranslatableInto(te) ) {
+						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
+							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
+							.getType().toString());
+					} else if ( Types.intFloatCase(tv, te) ) {
+						// AD: 6/9/13 special case for int and float (see Issue 590)
+						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
+							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
+							.getType().toString());
+					}
+				}
+			}
+
+			// AD 19/1/13: test of the constants
+			if ( ((IVarExpression) expr).isNotModifiable() ) {
+				cd.error("The variable " + expr.toGaml() +
+					" is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
+			}
+
+		}
+	}
 
 	protected final IVarExpression varExpr;
 	protected final IExpression value;

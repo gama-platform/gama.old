@@ -24,10 +24,12 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.statements.LetStatement.LetValidator;
 import msi.gaml.types.IType;
 
 /**
@@ -48,7 +50,24 @@ combinations = { /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */
 @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.LET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@validator(LetValidator.class)
 public class LetStatement extends SetStatement {
+
+	
+
+	public static class LetValidator extends AssignmentValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {
+			if ( Assert.nameIsValid(cd) ) {
+				super.validate(cd);
+			}
+		}
+	}
 
 	public LetStatement(final IDescription desc) {
 		super(desc);

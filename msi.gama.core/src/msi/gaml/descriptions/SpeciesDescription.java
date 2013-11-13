@@ -45,13 +45,13 @@ public class SpeciesDescription extends TypeDescription {
 
 	// private final boolean isGlobal = false;
 
-	public SpeciesDescription(final String keyword, final IDescription macroDesc, final IChildrenProvider cp,
+	public SpeciesDescription(final String keyword, final IDescription macroDesc, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
 		this(keyword, null, macroDesc, null, cp, source, facets);
 	}
 
 	public SpeciesDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-		final IDescription parent, final IChildrenProvider cp, final EObject source, final Facets facets) {
+		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
 		super(keyword, clazz, macroDesc, parent, cp, source, facets);
 		setSkills(facets.get(SKILLS), Collections.EMPTY_SET);
 	}
@@ -62,7 +62,7 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
 		final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
-		super(SPECIES, clazz, superDesc, null, IChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES, NAME, name));
+		super(SPECIES, clazz, superDesc, null, ChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES, NAME, name));
 		if ( ff.containsKey(CONTROL) ) {
 			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
@@ -136,7 +136,8 @@ public class SpeciesDescription extends TypeDescription {
 	public String getControlName() {
 		String controlName = facets.getLabel(CONTROL);
 		// if the "control" is not explicitly declared then inherit it from the parent species.
-		if ( controlName == null && parent != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( controlName == null && parent != null && parent != this ) {
 			controlName = getParent().getControlName();
 		}
 		if ( controlName == null ) {
@@ -296,7 +297,8 @@ public class SpeciesDescription extends TypeDescription {
 		if ( hasMicroSpecies() ) {
 			retVal.addAll(getMicroSpecies().values());
 		}
-		if ( parent != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this ) {
 			retVal.addAll(getParent().getSelfAndParentMicroSpecies());
 		}
 
@@ -308,7 +310,8 @@ public class SpeciesDescription extends TypeDescription {
 			final SpeciesDescription retVal = microSpecies.get(name);
 			if ( retVal != null ) { return retVal; }
 		}
-		if ( parent != null ) { return getParent().getMicroSpecies(name); }
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this ) { return getParent().getMicroSpecies(name); }
 		return null;
 	}
 
@@ -354,7 +357,8 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public void inheritFromParent() {
 		final SpeciesDescription parent = getParent();
-		if ( parent != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this ) {
 			if ( !parent.getJavaBase().isAssignableFrom(getJavaBase()) ) {
 				error("Species " + getName() + " Java base class (" + getJavaBase().getSimpleName() +
 					") is not a subclass of its parent species " + parent.getName() + " base class (" +
@@ -374,6 +378,8 @@ public class SpeciesDescription extends TypeDescription {
 
 	// FIXME HACK !
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent == null || parent == this ) { return; }
 		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {
 			if ( !getMicroSpecies().containsKey(entry.getKey()) ) {
 				getMicroSpecies().put(entry.getKey(), entry.getValue());
@@ -383,7 +389,8 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	private void inheritAspects(final SpeciesDescription parent) {
-		if ( parent.aspects != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this && parent.aspects != null ) {
 			for ( final String aName : parent.aspects.keySet() ) {
 				if ( !hasAspect(aName) ) {
 					addChild(parent.getAspect(aName).copy(this));
@@ -393,7 +400,8 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	private void inheritInits(final SpeciesDescription parent) {
-		if ( parent.inits != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this && parent.inits != null ) {
 			for ( final StatementDescription init : parent.inits ) {
 				addChild(init.copy(this));
 			}
@@ -429,7 +437,13 @@ public class SpeciesDescription extends TypeDescription {
 		SpeciesDescription currentSpeciesDesc = this;
 		while (currentSpeciesDesc != null) {
 			result.add(0, currentSpeciesDesc);
-			currentSpeciesDesc = currentSpeciesDesc.getParent();
+			SpeciesDescription parent = currentSpeciesDesc.getParent();
+			// Takes care of invalid species (see Issue 711)
+			if ( parent == currentSpeciesDesc ) {
+				break;
+			} else {
+				currentSpeciesDesc = parent;
+			}
 		}
 		return result;
 	}
@@ -464,7 +478,8 @@ public class SpeciesDescription extends TypeDescription {
 				names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
 			}
 		}
-		if ( getParent() != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( getParent() != null && getParent() != this ) {
 			names.addAll(getParent().getSkillsNames());
 		}
 		return names;
@@ -643,7 +658,7 @@ public class SpeciesDescription extends TypeDescription {
 					(VariableDescription) DescriptionFactory.create(IKeyword.CONTAINER, this, NAME,
 						microSpec.getName(), OF, microSpec.getName()); // CONST = TRUE ?
 				// FIXME : OF, microSpec.getName() ??
-				var.setContentType(microSpec.getType());
+				// var.setContentType(microSpec.getType());
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
 				final IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);
@@ -733,7 +748,8 @@ public class SpeciesDescription extends TypeDescription {
 			javaBase = MinimalAgent.class;
 			return javaBase;
 		}
-		if ( javaBase == null && parent != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( javaBase == null && parent != null && parent != this ) {
 			javaBase = getParent().getJavaBase();
 		}
 		if ( javaBase == MinimalAgent.class ) {
@@ -759,7 +775,8 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public boolean hasParent(final SpeciesDescription p) {
 		SpeciesDescription sd = getParent();
-		if ( sd == null ) { return false; }
+		// Takes care of invalid species (see Issue 711)
+		if ( sd == null || sd == this ) { return false; }
 		if ( sd.equals(p) ) { return true; }
 		return sd.hasMacroSpecies(p);
 	}

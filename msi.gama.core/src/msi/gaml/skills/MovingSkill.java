@@ -60,7 +60,7 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 	@var(name = IKeyword.DESTINATION, type = IType.POINT, depends_on = { IKeyword.SPEED, IKeyword.HEADING,
 		IKeyword.LOCATION }, doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
 @skill(name = IKeyword.MOVING_SKILL)
-public class MovingSkill extends GeometricSkill {
+public class MovingSkill extends Skill {
 
 	/**
 	 * @throws GamaRuntimeException

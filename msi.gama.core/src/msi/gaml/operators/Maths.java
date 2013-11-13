@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
-
 import org.apache.commons.math3.util.FastMath;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -137,7 +136,7 @@ public class Maths {
 	 * The Class Units.
 	 */
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^" }, can_be_const = true)
 	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", special_cases = {
 		"if the right-hand operand is equal to 0, returns 1", "if it is equal to 1, returns the left-hand operand." }, examples = "", see = {
 		"*", "sqrt" })
@@ -145,19 +144,19 @@ public class Maths {
 		return pow(a.doubleValue(), b.doubleValue()).intValue();
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^" }, can_be_const = true)
 	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^" }, can_be_const = true)
 	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^" }, can_be_const = true)
 	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
@@ -416,7 +415,6 @@ public class Maths {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a.doubleValue() / b.doubleValue();
 	}
-	
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "Returns the product of the two operands", special_cases = "if both operands are int, returns the product as an int", examples = "", see = "/")
@@ -441,7 +439,7 @@ public class Maths {
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
-	
+
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static IMatrix opTimes(final Integer a, final IMatrix b) {
@@ -453,7 +451,7 @@ public class Maths {
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
-	
+
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(value = "the sum, union or concatenation of the two operands.", special_cases = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.", examples = "1 + 1 	--:	 2", see = "-")
 	public static Integer opPlus(final Integer a, final Integer b) {
@@ -477,7 +475,7 @@ public class Maths {
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
-	
+
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(value = "Returns the sum of the two operands", examples = "", see = "/")
 	public static IMatrix opPlus(final Integer a, final IMatrix b) {

@@ -18,6 +18,9 @@
  */
 package msi.gaml.statements;
 
+import gnu.trove.function.TObjectFunction;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.*;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.descriptions.*;
@@ -30,131 +33,37 @@ import msi.gaml.expressions.IExpression;
  * retrieved.
  * 
  */
-public class Facets {
-
-	public static class Facet implements Map.Entry<String, IExpressionDescription> {
-
-		String key;
-		IExpressionDescription value;
-
-		Facet(final String s, final IExpressionDescription e) {
-			key = s;
-			value = e;
-		}
-
-		@Override
-		public String toString() {
-			return key + " : " + value;
-		}
-
-		@Override
-		public String getKey() {
-			return key;
-		}
-
-		@Override
-		public IExpressionDescription getValue() {
-			return value;
-		}
-
-		@Override
-		public IExpressionDescription setValue(final IExpressionDescription value) {
-			IExpressionDescription old = this.value;
-			this.value = value;
-			return old;
-		}
-
-		/**
-		 * @return
-		 */
-		public Facet cleanCopy() {
-			return new Facet(key, value.cleanCopy());
-		}
-	}
-
-	Facet[] facets;
-
-	public Facets() {
-		facets = new Facet[0];
-	}
+public class Facets extends THashMap<String, IExpressionDescription> {
 
 	public Facets(final String ... strings) {
-		facets = new Facet[strings.length / 2];
+		setUp(strings.length / 2);
 		int index = 0;
 		if ( !(strings.length % 2 == 0) ) {
 			index = 1;
 		}
-		int i = 0;
 		for ( ; index < strings.length; index += 2 ) {
-			Facet f = new Facet(strings[index], StringBasedExpressionDescription.create(strings[index + 1]));
-			facets[i++] = f;
+			put(strings[index], StringBasedExpressionDescription.create(strings[index + 1]));
 		}
 	}
 
-	@Override
-	public String toString() {
-		return Arrays.toString(facets);
-	}
-
-	public boolean containsKey(final String key) {
-		return indexOf(key) != -1;
-	}
-
-	public Facet[] entrySet() {
-		return facets;
-	}
-
-	/**
-	 * Adds all the facets passed in parameter, replacing the existing ones if any
-	 * @param newFacets
-	 */
-	public void putAll(final Facets newFacets) {
-		if ( facets.length == 0 ) {
-			facets = new Facet[newFacets.facets.length];
-			System.arraycopy(newFacets.facets, 0, facets, 0, newFacets.facets.length);
-		} else {
-			for ( Facet f : newFacets.entrySet() ) {
-				if ( f != null ) {
-					put(f.key, f.value);
-				}
-			}
-		}
+	public Facets(final Facets facets) {
+		super(facets);
 	}
 
 	/*
 	 * Same as putAll(), but without replacing the existing values
 	 */
+	private class Complement implements TObjectObjectProcedure<String, IExpressionDescription> {
+
+		@Override
+		public boolean execute(final String s, final IExpressionDescription e) {
+			putIfAbsent(s, e);
+			return true;
+		}
+	};
+
 	public void complementWith(final Facets newFacets) {
-		for ( Facet f : newFacets.entrySet() ) {
-			if ( f != null ) {
-				if ( indexOf(f.key) == -1 ) {
-					add(f.key, f.value);
-				}
-			}
-		}
-	}
-
-	public IExpressionDescription remove(final String key) {
-		int i = indexOf(key);
-		if ( i == -1 ) { return null; }
-		IExpressionDescription expr = facets[i].value;
-		facets[i] = null;
-		return expr;
-	}
-
-	public IExpressionDescription get(final String key) {
-		if ( key == null ) { return null; }
-		for ( int i = 0; i < facets.length; i++ ) {
-			Facet f = facets[i];
-			if ( f != null && f.key.equals(key) ) { return f.value; }
-		}
-		return null;
-	}
-
-	public IExpressionDescription get(final Object key) {
-		if ( key instanceof String ) { return get((String) key); }
-		return null;
-
+		newFacets.forEachEntry(new Complement());
 	}
 
 	public String getLabel(final String key) {
@@ -172,10 +81,6 @@ public class Facets {
 		if ( f == null ) { return ifAbsent; }
 		return f.getExpression();
 	}
-
-	// public IExpressionDescription put(final String key, final String desc) {
-	// return put(key, StringBasedExpressionDescription.create(desc));
-	// }
 
 	public IExpressionDescription putAsLabel(final String key, final String desc) {
 		return put(key, LabelExpressionDescription.create(desc));
@@ -197,34 +102,19 @@ public class Facets {
 	 * @return
 	 */
 	private IExpressionDescription add(final String key, final IExpressionDescription expr) {
-		Facet f = new Facet(key, expr);
-		Facet[] ff = new Facet[facets.length + 1];
-		System.arraycopy(facets, 0, ff, 0, facets.length);
-		facets = ff;
-		facets[facets.length - 1] = f;
+		put(key, expr);
 		return expr;
 	}
 
+	@Override
 	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		int i = indexOf(key);
-		if ( i > -1 ) {
-			IExpressionDescription previous = facets[i].value;
-			facets[i].value = expr;
-			if ( previous != null && previous.getTarget() != null && expr.getTarget() == null ) {
+		IExpressionDescription previous = get(key);
+		if ( previous != null ) {
+			if ( previous.getTarget() != null && expr.getTarget() == null ) {
 				expr.setTarget(previous.getTarget());
 			}
-			return expr;
 		}
-		return add(key, expr);
-
-	}
-
-	private int indexOf(final String key) {
-		if ( key == null ) { return -1; }
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null && facets[i].key.equals(key) ) { return i; }
-		}
-		return -1;
+		return super.put(key, expr);
 	}
 
 	public boolean equals(final String key, final String o) {
@@ -232,44 +122,37 @@ public class Facets {
 		return f == null ? o == null : f.equalsString(o);
 	}
 
-	//
-	// public void dispose() {
-	// for ( int i = 0; i < facets.length; i++ ) {
-	// if ( facets[i] != null && facets[i].value != null ) {
-	// facets[i].value.dispose();
-	// }
-	// }
-	// clear();
-	// }
+	static TObjectFunction<IExpressionDescription, IExpressionDescription> cleanCopy =
+		new TObjectFunction<IExpressionDescription, IExpressionDescription>() {
 
-	public void clear() {
-		facets = new Facet[0];
-	}
-
-	/**
-	 * @return
-	 */
-	public Facets cleanCopy() {
-		Facets result = new Facets();
-		result.facets = new Facet[facets.length];
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null ) {
-				result.facets[i] = facets[i].cleanCopy();
+			@Override
+			public IExpressionDescription execute(final IExpressionDescription value) {
+				return value.cleanCopy();
 			}
-		}
+		};
+
+	public Facets cleanCopy() {
+		Facets result = new Facets(this);
+		result.transformValues(cleanCopy);
 		return result;
 	}
 
-	/**
-	 * 
-	 */
-	public void dispose() {
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null ) {
-				facets[i].value.dispose();
-			}
+	static TObjectProcedure<IExpressionDescription> dispose = new TObjectProcedure<IExpressionDescription>() {
+
+		@Override
+		public boolean execute(final IExpressionDescription object) {
+			object.dispose();
+			return true;
 		}
+	};
+
+	public void dispose() {
+		forEachValue(dispose);
 		clear();
+	}
+
+	public Set<Map.Entry<String, IExpressionDescription>> entrySet() {
+		return super.entrySet();
 	}
 
 }

@@ -33,11 +33,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -159,10 +158,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			ISpecies species = ((IPopulation) agents).getSpecies();
 			for ( final String e : attributes.keySet() ) {
 				String var = attributes.get(e);
-				specs.append(',').append(e).append(':').append(type(species.getVar(var).getType()));	
+				specs.append(',').append(e).append(':').append(type(species.getVar(var).getType()));
 			}
-			final String featureTypeName =  species.toString();
-			
+			final String featureTypeName = species.toString();
+
 			saveShapeFile(scope, path, agents, featureTypeName, specs.toString(), attributes);
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -209,10 +208,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return "String";
 	}
 
-	
 	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		for ( final Facet f : init.entrySet() ) {
+		for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
 			if ( f != null ) {
 				values.put(f.getValue().toString(), f.getKey());
 			}
@@ -222,7 +220,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IAgent> agents,
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
-		
+
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
 
@@ -248,7 +246,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			final SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
-			
+
 		}
 
 		featureStore.addFeatures(collection);

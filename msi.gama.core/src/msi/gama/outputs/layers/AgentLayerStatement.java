@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - BenoÔøΩt Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,19 +19,22 @@
 package msi.gama.outputs.layers;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -50,7 +53,55 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
+@validator(AgentLayerValidator.class)
 public class AgentLayerStatement extends AbstractLayerStatement {
+
+	
+
+	public static class AgentLayerValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			// Should be broken down in subclasses
+			IExpressionDescription ed = description.getFacets().get(SPECIES);
+			if ( ed != null ) {
+				String s = ed.compileAsLabel().getExpression().literalValue();
+				SpeciesDescription target = description.getSpeciesDescription(s);
+				if ( target == null ) {
+					description.error(s + " is not the name of a species", IGamlIssue.WRONG_TYPE, ed.getTarget());
+					return;
+				} else {
+					if ( description.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
+						description.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
+						return;
+					} else {
+						IExpression expr =
+							msi.gama.util.GAML.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
+						description.getFacets().put(SPECIES, expr);
+					}
+				}
+			}
+			ed = description.getFacets().get(ASPECT);
+			if ( ed != null ) {
+				String s = description.getFacets().getLabel(SPECIES);
+				String a = description.getFacets().getLabel(ASPECT);
+				SpeciesDescription species = description.getSpeciesDescription(s);
+				if ( species != null ) {
+					if ( species.getAspect(a) != null ) {
+						ed.compileAsLabel();
+					} else {
+						description.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL, description
+							.getFacets().get(ASPECT).getTarget());
+					}
+				}
+			}
+		}
+
+	}
 
 	private IExpression setOfAgents;
 	// final HashSet<IAgent> agents;
@@ -76,7 +127,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	public List<? extends IAgent> computeAgents(final IScope sim) throws GamaRuntimeException {
 		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
-		// composants qui vont être affichés.
+		// composants qui vont ÔøΩtre affichÔøΩs.
 		return Cast.asList(sim, getAgentsExpr().value(sim));
 	}
 

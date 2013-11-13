@@ -23,7 +23,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
+import msi.gaml.compilation.IDescriptionValidator.ValidNameValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -36,7 +38,10 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.DEFAULT, type = { IType.NONE }, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true)
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
+@validator(ValidNameValidator.class)
 public class ArgStatement extends AbstractPlaceHolderStatement {
+
+	
 
 	// A placeholder for arguments of actions
 	public ArgStatement(final IDescription desc) {

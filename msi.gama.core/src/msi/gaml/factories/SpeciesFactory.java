@@ -18,15 +18,14 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.TORUS;
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * SpeciesFactory.
@@ -42,11 +41,11 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected TypeDescription buildDescription(final ISyntacticElement source, final Facets facets,
-		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
+	protected TypeDescription buildDescription(final String keyword, final Facets facets, final EObject element,
+		final ChildrenProvider children, final IDescription sd, final SymbolProto proto) {
 		String name = facets.getLabel(IKeyword.NAME);
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(source.getKeyword(), sd, cp, source.getElement(), facets);
+		return new SpeciesDescription(keyword, sd, children, element, facets);
 	}
 
 	public SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
@@ -54,34 +53,6 @@ public class SpeciesFactory extends SymbolFactory {
 		final Set<String> skills, final Facets userSkills) {
 		DescriptionFactory.addSpeciesNameAsType(name);
 		return new SpeciesDescription(name, clazz, superDesc, parent, helper, skills, userSkills);
-	}
-
-	@Override
-	protected void privateValidateChildren(final IDescription sd) {
-		TypeDescription desc = sd.getSpeciesContext();
-		// we first validate the variables in the right order
-		// Necessary to make content assist work correctly
-		for ( String s : desc.getVarNames() ) {
-			validate(desc.getVariable(s));
-		}
-		// then the rest
-		for ( IDescription s : sd.getChildren() ) {
-			if ( !(s instanceof VariableDescription) ) {
-				validate(s);
-			}
-		}
-	}
-
-	@Override
-	protected IDescription privateValidate(final IDescription desc) {
-		super.privateValidate(desc);
-		IExpression torus = desc.getFacets().getExpr(TORUS);
-		if ( torus == null ) { return desc; }
-		if ( desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID) ) {
-			desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
-				IGamlIssue.WRONG_CONTEXT, TORUS);
-		}
-		return desc;
 	}
 
 }

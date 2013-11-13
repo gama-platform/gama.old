@@ -6,7 +6,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.*;
+import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
@@ -30,7 +30,7 @@ public class TypeDescription extends SymbolDescription {
 	private IList<String> updatableVariableNames;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-		final IDescription parent, final IChildrenProvider cp, final EObject source, final Facets facets) {
+		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
 		super(keyword, macroDesc, cp, source, facets);
 		// parent can be null
 		setJavaBase(clazz);
@@ -76,7 +76,7 @@ public class TypeDescription extends SymbolDescription {
 						primitive.getOriginName() + ". If it was not your intention, consider renaming it.",
 					IGamlIssue.GENERAL);
 			}
-			DescriptionValidator.assertActionsAreCompatible(existing, primitive, primitive.getOriginName());
+			TypeDescription.assertActionsAreCompatible(existing, primitive, primitive.getOriginName());
 			children.remove(existing);
 		}
 		if ( actions == null ) {
@@ -98,8 +98,8 @@ public class TypeDescription extends SymbolDescription {
 			// existingAction.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
 			// return;
 			// }
-			DescriptionValidator.assertActionsAreCompatible(redeclaredAction, existingAction,
-				existingAction.getOriginName());
+			TypeDescription
+				.assertActionsAreCompatible(redeclaredAction, existingAction, existingAction.getOriginName());
 			if ( !existingAction.isAbstract() ) {
 				duplicateError(redeclaredAction, existingAction);
 			}
@@ -124,7 +124,7 @@ public class TypeDescription extends SymbolDescription {
 				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
 			return;
 		}
-		DescriptionValidator.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
+		TypeDescription.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
 		if ( existingAction.isBuiltIn() ) {
 			addChild(parentAction);
 			return;
@@ -353,7 +353,8 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritFromParent() {
-		if ( parent != null ) {
+		// Takes care of invalid species (see Issue 711)
+		if ( parent != null && parent != this ) {
 			inheritActions();
 			inheritVariables();
 		}
@@ -453,6 +454,31 @@ public class TypeDescription extends SymbolDescription {
 			variables = new LinkedHashMap<String, VariableDescription>();
 		}
 		variables.put(vName, v);
+	}
+
+	public static void assertActionsAreCompatible(final StatementDescription myAction,
+		final StatementDescription parentAction, final String parentName) {
+		final String actionName = parentAction.getName();
+		IType myType = myAction.getType();
+		IType parentType = parentAction.getType();
+		if ( parentType != myType ) {
+			myAction.error("Return type (" + myType + ") differs from that (" + parentType +
+				") of the implementation of  " + actionName + " in " + parentName);
+		} else if ( myType.hasContents() ) {
+			myType = myAction.getContentType();
+			parentType = parentAction.getContentType();
+			if ( parentType != myType ) {
+				myAction.error("Content type (" + myType + ") differs from that (" + parentType +
+					") of the implementation of  " + actionName + " in " + parentName);
+			}
+		}
+		if ( !new HashSet(parentAction.getArgNames()).equals(new HashSet(myAction.getArgNames())) ) {
+			final String error =
+				"The list of arguments " + myAction.getArgNames() + " differs from that of the implementation of " +
+					actionName + " in " + parentName + " " + parentAction.getArgNames() + "";
+			myAction.warning(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+		}
+
 	}
 
 	// public void finalizeDescription() {

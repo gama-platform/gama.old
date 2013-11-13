@@ -41,7 +41,6 @@ public class StringUtils {
 	public final static String ponctuation = "\\p{Punct}";
 	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
 	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
-	final static Pattern p = Pattern.compile(regex);
 
 	static public String toGamlString(final String s) {
 		if ( s == null ) { return null; }
@@ -62,6 +61,7 @@ public class StringUtils {
 
 	public static List<String> tokenize(final String expression) {
 		if ( expression == null ) { return Collections.EMPTY_LIST; }
+		final Pattern p = Pattern.compile(regex);
 		final List<String> tokens = new ArrayList<String>();
 		final Matcher m = p.matcher(expression);
 		while (m.find()) {

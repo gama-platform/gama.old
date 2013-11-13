@@ -5,6 +5,7 @@
 package msi.gama.runtime;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
@@ -16,7 +17,6 @@ import msi.gama.util.IList;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 
 /**
@@ -360,16 +360,25 @@ public abstract class AbstractScope implements IScope {
 			callerPushed = push(caller);
 		}
 		try {
-			for ( final Facet entry : actualArgs.entrySet() ) {
-				if ( entry == null ) {
-					continue;
+			actualArgs.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+
+				@Override
+				public boolean execute(final String a, final IExpressionDescription b) {
+					final IExpression e = b.getExpression();
+					if ( e != null ) {
+						addVarWithValue(a, e.value(AbstractScope.this));
+					}
+					return true;
 				}
-				final IExpressionDescription o = entry.getValue();
-				final IExpression e = o.getExpression();
-				if ( e != null ) {
-					addVarWithValue(entry.getKey(), e.value(this));
-				}
-			}
+			});
+
+			// for ( final Map.Entry<String, IExpressionDescription> entry : actualArgs.entrySet() ) {
+			// final IExpressionDescription o = entry.getValue();
+			// final IExpression e = o.getExpression();
+			// if ( e != null ) {
+			// addVarWithValue(entry.getKey(), e.value(this));
+			// }
+			// }
 		} finally {
 			if ( callerPushed ) {
 				pop(caller);

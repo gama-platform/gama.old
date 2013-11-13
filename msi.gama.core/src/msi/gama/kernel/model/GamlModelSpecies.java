@@ -37,7 +37,15 @@ import msi.gaml.types.IType;
 @inside(kinds = ISymbolKind.SPECIES)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
-	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),
+	@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
+	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
+	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	protected final Map<String, IExperimentSpecies> experiments = new LinkedHashMap<String, IExperimentSpecies>();
@@ -118,15 +126,15 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public ISpecies getSpecies(final String speciesName) {
 		if ( speciesName == null ) { return null; }
 		if ( speciesName.equals(getName()) ) { return this; }
-		/* the original is:
+		/*
+		 * the original is:
 		 * return getAllSpecies().get(speciesName);
 		 */
-		
-		
-		// hqnghi 11/Oct/13 
+
+		// hqnghi 11/Oct/13
 		// get experiementSpecies in any model
 		ISpecies sp = getAllSpecies().get(speciesName);
-		if (sp == null) {
+		if ( sp == null ) {
 			sp = getExperiment(speciesName);
 		}
 		return sp;

@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gama.util.GAML;
@@ -46,7 +45,8 @@ public class ModelFactory extends SymbolFactory {
 
 	private void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro) {
 		// Create the species description without any children
-		final SpeciesDescription mDesc = (SpeciesDescription) create(micro, macro, IChildrenProvider.NONE);
+		final SpeciesDescription mDesc =
+			(SpeciesDescription) DescriptionFactory.create(micro, macro, ChildrenProvider.NONE);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added micro-species
@@ -59,9 +59,9 @@ public class ModelFactory extends SymbolFactory {
 
 	private void addExperiment(final ModelDescription model, final ISyntacticElement experiment) {
 		// Create the experiment description
-		IDescription desc = create(experiment, model, IChildrenProvider.NONE);
+		IDescription desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
 		if ( !(desc instanceof ExperimentDescription) ) {
-			desc = create(experiment, model, IChildrenProvider.NONE);
+			desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
 		}
 		final ExperimentDescription eDesc = (ExperimentDescription) desc;
 		model.addChild(eDesc);
@@ -81,7 +81,7 @@ public class ModelFactory extends SymbolFactory {
 		final List<ISyntacticElement> subspecies = new ArrayList();
 		for ( final ISyntacticElement child : node.getChildren() ) {
 			if ( !child.isExperiment() && !child.isSpecies() ) {
-				final IDescription childDesc = create(child, species);
+				final IDescription childDesc = DescriptionFactory.create(child, species, null);
 				if ( childDesc != null ) {
 					species.addChild(childDesc);
 				}
@@ -164,7 +164,7 @@ public class ModelFactory extends SymbolFactory {
 				for ( final ISyntacticElement se : e.getChildren() ) {
 					if ( se.isGlobal() ) {
 						// We build the facets resulting from the different arguments
-						globalFacets.putAll(se.copyFacets());
+						globalFacets.putAll(se.copyFacets(null));
 						for ( final ISyntacticElement ge : se.getChildren() ) {
 							if ( ge.isSpecies() ) {
 								addSpeciesNode(ge, speciesNodes, collector);
@@ -259,14 +259,6 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		// The same for experiments
-		// FIXME Needs to be done hierarchically
-		// for ( String s : model.getExperimentNames() ) {
-		// ExperimentDescription ed = model.getExperiment(s);
-		// ed.inheritFromParent();
-		// ed.finalizeDescription();
-		//
-		// }
 		model.finalizeDescription();
 
 		// We now can safely put the model inside "experiment"
@@ -280,7 +272,7 @@ public class ModelFactory extends SymbolFactory {
 				environmentDefined = translateEnvironment(model, e);
 			} else {
 				//
-				final IDescription dd = create(e, model);
+				final IDescription dd = DescriptionFactory.create(e, model, null);
 				if ( dd != null ) {
 					model.addChild(dd);
 				}
@@ -292,19 +284,12 @@ public class ModelFactory extends SymbolFactory {
 				final Facets f = new Facets(NAME, SHAPE);
 				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
 				final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
-				vd = (VariableDescription) create(shape, model);
+				vd = (VariableDescription) DescriptionFactory.create(shape, model, null);
 				model.addChild(vd);
 				model.resortVarName(vd);
 			}
 		}
-		// Gather the species created to see if some describe experiments, in which case they are
-		// added to the experiments of the model
-		// TODO Verify this selfAndParentMicroSpecies() !
-		// for ( IDescription desc : world.getSelfAndParentMicroSpecies() ) {
-		// if ( desc instanceof ExperimentDescription ) {
-		// model.addChild(desc);
-		// }
-		// }
+
 		DescriptionFactory.document(model);
 		return model;
 
@@ -329,7 +314,7 @@ public class ModelFactory extends SymbolFactory {
 		if ( depends != null ) {
 			shape.setFacet(DEPENDS_ON, depends);
 		}
-		final VariableDescription vd = (VariableDescription) create(shape, world);
+		final VariableDescription vd = (VariableDescription) DescriptionFactory.create(shape, world, null);
 		world.addChild(vd);
 		world.resortVarName(vd);
 		final IExpressionDescription ed = e.getExpressionAt(TORUS);
@@ -338,15 +323,6 @@ public class ModelFactory extends SymbolFactory {
 			world.getFacets().put(TORUS, ed.compile(world));
 		}
 		return environmentDefined;
-	}
-
-	public IModel compile(final ModelDescription description) {
-		return (IModel) super.compile(description);
-	}
-
-	public ModelDescription validate(final ModelDescription description) {
-		super.validate(description);
-		return description;
 	}
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,

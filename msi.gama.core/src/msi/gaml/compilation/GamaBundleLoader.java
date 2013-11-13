@@ -4,7 +4,8 @@
  */
 package msi.gaml.compilation;
 
-import java.util.*;
+import gnu.trove.set.hash.THashSet;
+import java.util.Set;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.types.Types;
 import org.eclipse.core.runtime.*;
@@ -21,40 +22,46 @@ public class GamaBundleLoader {
 	public static String CORE_PLUGIN = "msi.gama.core";
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
 	public static String EXTENSION = "gaml.grammar.addition";
+	private static Set<String> plugins = new THashSet();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
-		Set<String> plugins = new LinkedHashSet();
 		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION) ) {
-			String plugin = e.getContributor().getName();
-			if ( !CORE_PLUGIN.equals(plugin) ) {
-				plugins.add(plugin);
-			}
+			plugins.add(e.getContributor().getName());
 		}
+		plugins.remove(CORE_PLUGIN);
 		preBuild(CORE_PLUGIN);
 		for ( String addition : plugins ) {
 			preBuild(addition);
 		}
-
 		// CRUCIAL INITIALIZATIONS
 		AbstractGamlAdditions.buildMetaModel();
 		Types.init();
-
-		long end = System.currentTimeMillis();
-		GuiUtils.debug(">> GAMA total load time " + (end - start) + " ms.");
+		GuiUtils.debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	public static void preBuild(final String s) {
 		final long start = System.currentTimeMillis();
+		Class<IGamlAdditions> gamlAdditions = null;
 		try {
-			IGamlAdditions add = (IGamlAdditions) Platform.getBundle(s).loadClass(ADDITIONS).newInstance();
-			add.initialize();
-			long end = System.currentTimeMillis();
-			GuiUtils.debug(">> GAMA bundle loaded in " + (end - start) + "ms: \t" + s);
-		} catch (Exception e1) {
-			System.err.println(">> GAMA bundle " + s + " could not be loaded: " + e1.getMessage());
-			e1.printStackTrace();
+			gamlAdditions = (Class<IGamlAdditions>) Platform.getBundle(s).loadClass(ADDITIONS);
+		} catch (ClassNotFoundException e1) {
+			GuiUtils.debug(">> Impossible to load additions from " + s);
+			return;
 		}
+		IGamlAdditions add = null;
+		try {
+			add = gamlAdditions.newInstance();
+		} catch (InstantiationException e) {
+			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			return;
+		} catch (IllegalAccessException e) {
+			GuiUtils.debug(">> Impossible to access additions from " + s);
+			return;
+		}
+		add.initialize();
+		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: \t" + s);
+
 	}
 
 }

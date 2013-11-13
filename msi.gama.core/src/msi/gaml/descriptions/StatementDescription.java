@@ -18,13 +18,14 @@
  */
 package msi.gaml.descriptions;
 
+import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.GamaList;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -44,7 +45,7 @@ public class StatementDescription extends SymbolDescription {
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 	private IDescription previousDescription;
 
-	public StatementDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 		final boolean hasScope, final boolean hasArgs, final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		temps = hasScope ? new LinkedHashMap() : null;
@@ -92,21 +93,22 @@ public class StatementDescription extends SymbolDescription {
 
 	private void exploreArgs() {
 		if ( !getKeyword().equals(DO) ) { return; }
-		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
-			if ( entry == null ) {
-				continue;
+		facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+
+			@Override
+			public boolean execute(final String facet, final IExpressionDescription b) {
+				if ( !doFacets.contains(facet) ) {
+					args.put(facet, createArg(facet, b));
+				}
+				return true;
 			}
-			String facet = entry.getKey();
-			if ( !doFacets.contains(facet) ) {
-				args.put(facet, createArg(facet, entry.getValue()));
-			}
-		}
+		});
 	}
 
 	private IDescription createArg(final String n, final IExpressionDescription v) {
 		Facets f = new Facets(NAME, n);
 		f.put(VALUE, v);
-		IDescription a = DescriptionFactory.create(ARG, this, IChildrenProvider.NONE, f);
+		IDescription a = DescriptionFactory.create(ARG, this, ChildrenProvider.NONE, f);
 		return a;
 	}
 
@@ -136,7 +138,7 @@ public class StatementDescription extends SymbolDescription {
 		final IType keyType) {
 		String varName = facets.getLabel(facetName);
 		if ( getKeyword().equals(LOOP) && facetName.equals(NAME) ) {
-			// Case of loops
+			// Case of loops: the variable is inside the loop (not outside)
 			return (IVarExpression) addTemp(varName, type, contentType, keyType);
 		}
 
@@ -236,7 +238,7 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		// }
-		for ( Facet arg : names.entrySet() ) {
+		for ( Map.Entry<String, IExpressionDescription> arg : names.entrySet() ) {
 			// A null value indicates a previous compilation error in the arguments
 			if ( arg != null ) {
 				String name = arg.getKey();
@@ -411,4 +413,223 @@ public class StatementDescription extends SymbolDescription {
 		}
 		return result;
 	}
+
+	@Override
+	public void validateChildren() {
+		if ( hasArgs() ) {
+			validateArgs();
+		}
+		IDescription previousEnclosingDescription = null;
+		if ( getMeta().isRemoteContext() ) {
+			final SpeciesDescription actualSpecies = computeSpecies();
+			if ( actualSpecies != null ) {
+				final SpeciesDescription s = getSpeciesContext();
+				if ( s != null ) {
+					final IType t = s.getType();
+					addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
+					previousEnclosingDescription = getEnclosingDescription();
+					setEnclosingDescription(actualSpecies);
+
+					// FIXME ===> Model Description is lost if we are dealing with a built-in species !
+				}
+			}
+		}
+		super.validateChildren();
+		if ( previousEnclosingDescription != null ) {
+			setEnclosingDescription(previousEnclosingDescription);
+		}
+	}
+
+	@Override
+	public List<? extends ISymbol> compileChildren() {
+		if ( getMeta().isRemoteContext() ) {
+			final SpeciesDescription actualSpecies = computeSpecies();
+			if ( actualSpecies != null ) {
+				final IType t = getSpeciesContext().getType();
+				addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
+				setEnclosingDescription(actualSpecies);
+			}
+		}
+		return super.compileChildren();
+	}
+
+	public SpeciesDescription computeSpecies() {
+
+		// TODO is there a way to extract the species from a constant expression (like
+		// species("ant")) ? cf. Issue 145
+		final IExpression facet = facets.getExpr(SPECIES, facets.getExpr(AS, facets.getExpr(TARGET)));
+		if ( facet == null ) { return null; }
+		IType t = facet.getType();
+		SpeciesDescription result = null;
+		if ( t.id() == IType.SPECIES && facet instanceof SpeciesConstantExpression ) {
+			result = getSpeciesDescription(facet.literalValue());
+		} else if ( t.id() == IType.STRING && facet.isConst() ) {
+			result = getSpeciesDescription(facet.literalValue());
+		} else if ( t.isSpeciesType() ) {
+			result = t.getSpecies();
+		} else {
+			result = facet.getContentType().getSpecies();
+		}
+		return result;
+
+	}
+
+	public Arguments validateArgs() {
+		final Arguments ca = new Arguments();
+		final boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
+		Facets argFacets;
+		for ( final IDescription sd : getArgs() ) {
+			argFacets = sd.getFacets();
+			final String name = sd.getName();
+			IExpression e = null;
+			final IDescription superDesc = getEnclosingDescription();
+			IExpressionDescription ed = argFacets.get(VALUE);
+			if ( ed != null ) {
+				e = ed.compile(superDesc);
+			} else {
+				ed = argFacets.get(DEFAULT);
+				if ( ed != null ) {
+					e = ed.compile(superDesc);
+				}
+			}
+			ca.put(name, e);
+			if ( !isCalling ) {
+				List<String> typeNames = getModelDescription().getTypesManager().getTypeNames();
+				// Special case for the calls (create, do, but also primitives) as the "arguments"
+				// passed should not be part of the context
+				String typeName = argFacets.getLabel(TYPE);
+				// FIXME Should not be necessary anymore as it should be eliminated by the parser
+				if ( !isCalling && !typeNames.contains(typeName) ) {
+					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+				}
+				IType type = sd.getTypeNamed(typeName);
+				if ( type == Types.NO_TYPE && e != null ) {
+					type = e.getType();
+				}
+				typeName = argFacets.getLabel(OF);
+				// FIXME Should not be necessary anymore as it should be eliminated by the parser
+				if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
+					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
+				}
+				IType contents = sd.getTypeNamed(typeName);
+				if ( contents == Types.NO_TYPE && e != null ) {
+					contents = e.getContentType();
+				}
+				typeName = argFacets.getLabel(INDEX);
+				if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
+					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
+				}
+
+				IType index = sd.getTypeNamed(typeName);
+				if ( index == Types.NO_TYPE && e != null ) {
+					index = e.getKeyType();
+				}
+
+				addTemp(name, type, contents, index);
+			}
+
+		}
+		if ( keyword.equals(IKeyword.DO) ) {
+			verifyArgs(getFacets().getLabel(IKeyword.ACTION), ca);
+		} else if ( keyword.equals(IKeyword.CREATE) ) {
+			verifyInits(ca);
+		}
+		return ca;
+
+	}
+
+	private void verifyInits(final Arguments ca) {
+		final SpeciesDescription sd = computeSpecies();
+		final Collection<IDescription> args = getArgs();
+		if ( sd == null && !args.isEmpty() ) {
+			warning(
+				"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
+				IGamlIssue.UNKNOWN_ARGUMENT);
+			return;
+		}
+		for ( final IDescription arg : args ) {
+			final String name = arg.getName();
+			if ( !sd.hasVar(name) ) {
+				error("Attribute " + name + " does not exist in species " + sd.getName(), IGamlIssue.UNKNOWN_ARGUMENT,
+					arg.getFacets().get(VALUE).getTarget(), (String[]) null);
+			} else {
+				IType varType = sd.getVariable(name).getType();
+				IType initType = ca.get(name).getExpression().getType();
+				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+					warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST, arg
+						.getFacets().get(VALUE).getTarget(), varType.toString());
+				} else {
+					varType = sd.getVariable(name).getContentType();
+					initType = ca.get(name).getExpression().getContentType();
+					if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+						warning("The content type of attribute " + name + " should be " + varType,
+							IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
+					}
+				}
+			}
+
+		}
+	}
+
+	static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX);
+
+	@Override
+	protected IExpression createVarWithTypes(final String tag) {
+		final TypesManager types = getModelDescription().getTypesManager();
+		for ( String s : typeProviderFacets ) {
+			IExpressionDescription expr = facets.get(s);
+			if ( expr != null ) {
+				expr.compile(this);
+			}
+		}
+		IExpression value = facets.getExpr(VALUE);
+		IType t = Types.NO_TYPE;
+		IType ct = Types.NO_TYPE;
+		IType kt = Types.NO_TYPE;
+
+		// Definition of the type
+
+		if ( !facets.contains(TYPE) ) {
+			if ( keyword.equals(CREATE) || keyword.equals(CAPTURE) || keyword.equals(RELEASE) ) {
+				t = Types.get(IType.LIST);
+			} else if ( value != null ) {
+				t = value.getType();
+			} else if ( facets.contains(OVER) ) {
+				IExpression expr = facets.getExpr(OVER);
+				if ( expr != null ) {
+					t = expr.getContentType();
+				}
+			} else if ( facets.contains(FROM) && facets.contains(TO) ) {
+				IExpression expr = facets.getExpr(FROM);
+				if ( expr != null ) {
+					t = expr.getType();
+				}
+			}
+		} else {
+			t = types.get(facets.getLabel(TYPE));
+		}
+
+		// Definition of the content type and key type
+		if ( t.hasContents() ) {
+			ct = t.defaultContentType();
+			kt = t.defaultKeyType();
+			if ( facets.contains(AS) ) {
+				ct = types.get(facets.getLabel(AS));
+			} else if ( facets.contains(SPECIES) ) {
+				IExpression expr = facets.getExpr(SPECIES);
+				if ( expr != null ) {
+					ct = expr.getContentType();
+				}
+			} else if ( facets.contains(OF) ) {
+				ct = types.get(facets.getLabel(OF));
+			} else if ( value != null ) {
+				ct = value.getContentType();
+				kt = value.getKeyType();
+			}
+		}
+
+		return addNewTempIfNecessary(tag, t, ct, kt);
+
+	}
+
 }

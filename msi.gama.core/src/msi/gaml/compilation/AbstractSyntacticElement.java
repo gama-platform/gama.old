@@ -4,12 +4,12 @@
  */
 package msi.gaml.compilation;
 
-import java.util.*;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import java.util.Arrays;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.descriptions.*;
-import msi.gaml.statements.*;
-import msi.gaml.statements.Facets.Facet;
+import msi.gaml.statements.Facets;
 
 /**
  * Class AbstractSyntacticElement.
@@ -25,18 +25,21 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	AbstractSyntacticElement(final String keyword, final Facets facets) {
 		if ( facets != null ) {
-			Facet[] tab = facets.entrySet();
-			List<String> tempKeys = new ArrayList(tab.length);
-			List<IExpressionDescription> tempValues = new ArrayList(tab.length);
-			for ( Facet f : tab ) {
-				if ( f != null ) {
-					tempKeys.add(f.getKey());
-					tempValues.add(f.getValue());
-				}
-			}
+			int n = facets.size();
+			keys = new String[n];
+			values = new IExpressionDescription[n];
+			final int[] i = new int[] { 0 };
+			facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
 
-			keys = tempKeys.toArray(new String[tempKeys.size()]);
-			values = tempValues.toArray(new IExpressionDescription[tempKeys.size()]);
+				@Override
+				public boolean execute(final String facet, final IExpressionDescription expr) {
+					keys[i[0]] = facet;
+					values[i[0]++] = expr;
+					return true;
+				}
+
+			});
+
 		}
 		setKeyword(keyword);
 	}
@@ -62,22 +65,24 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public boolean hasFacet(final String name) {
+	public final boolean hasFacet(final String name) {
 		return lookupFacet(name) != -1;
 	}
 
 	@Override
-	public IExpressionDescription getExpressionAt(final String name) {
+	public final IExpressionDescription getExpressionAt(final String name) {
 		int pos = lookupFacet(name);
 		if ( pos == -1 ) { return null; }
 		return values[pos];
 	}
 
 	@Override
-	public Facets copyFacets() {
+	public final Facets copyFacets(final SymbolProto sp) {
 		Facets ff = new Facets();
 		for ( int i = 0; i < keys.length; i++ ) {
-			ff.put(keys[i], values[i].cleanCopy());
+			String name = keys[i];
+			IExpressionDescription expr = values[i].cleanCopy();
+			ff.put(keys[i], sp != null && sp.isLabel(name) ? expr.compileAsLabel() : expr);
 		}
 		return ff;
 	}

@@ -19,8 +19,9 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
@@ -76,11 +77,11 @@ public class DescriptionFactory {
 
 	}
 
-	static Map<Integer, SymbolFactory> FACTORIES = new HashMap();
+	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
 	static Map<String, SymbolProto> KEYWORDS_PROTOS = new HashMap();
 
-	static Map<Integer, SymbolProto> KINDS_PROTOS = new HashMap();
+	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
 	public static void addFactory(final SymbolFactory factory) {
 		for ( final int i : factory.getHandles() ) {
@@ -172,40 +173,30 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
-		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
+		final IDescription superDesc, final ChildrenProvider children, final Facets facets) {
 		// TODO Verify this
 		final IDescription result =
-			factory.create(SyntacticFactory.create(keyword, facets, !children.getChildren().isEmpty()), superDesc,
-				children);
-		// factory.validate(result);
+			create(SyntacticFactory.create(keyword, facets, !children.getChildren().isEmpty()), superDesc, children);
 		return result;
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-		final IChildrenProvider children, final Facets facets) {
+		final ChildrenProvider children, final Facets facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-		final IChildrenProvider children, final String ... facets) {
+		final ChildrenProvider children, final String ... facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDescription,
 		final String ... facets) {
-		return create(keyword, superDescription, IChildrenProvider.NONE, facets);
+		return create(keyword, superDescription, ChildrenProvider.NONE, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final String ... facets) {
 		return create(keyword, GAML.getModelContext(), facets);
-	}
-
-	public synchronized static ISymbol compile(final IDescription desc) {
-		return getFactory(desc.getKeyword()).compile(desc);
-	}
-
-	public synchronized static IDescription validate(final IDescription desc) {
-		return getFactory(desc.getKeyword()).validate(desc);
 	}
 
 	public static ModelFactory getModelFactory() {
@@ -228,6 +219,30 @@ public class DescriptionFactory {
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
 		final SpeciesDescription macro, final SpeciesDescription parent) {
 		return ((ModelFactory) getFactory(ISymbolKind.MODEL)).createRootModel(name, clazz, macro, parent);
+	}
+
+	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
+		final ChildrenProvider cp) {
+		if ( source == null ) { return null; }
+		String keyword = source.getKeyword();
+		final SymbolProto md = DescriptionFactory.getProto(keyword);
+		if ( md == null ) {
+			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(), keyword);
+			return null;
+		}
+		ChildrenProvider children = cp;
+		if ( children == null ) {
+			final List<IDescription> children_list = new ArrayList();
+			for ( final ISyntacticElement e : source.getChildren() ) {
+				children_list.add(create(e, superDesc, null));
+			}
+			children = new ChildrenProvider(children_list);
+		}
+		Facets facets = source.copyFacets(md);
+		EObject element = source.getElement();
+		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
+		return desc;
+
 	}
 
 }

@@ -99,9 +99,9 @@ public class BinaryOperator extends AbstractNAryOperator {
 		// TODO : Complete the check for the other operators expecting a list
 	}
 
-	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "**", "<", ">", "<=", ">=", "?", ":", ".",
-		"where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside",
-		"with_max_of", "with_min_of", "of_species", "of_generic_species", "sort_by", "or", "and");
+	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "<", ">", "<=", ">=", "?", ":", ".", "where",
+		"select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside", "with_max_of",
+		"with_min_of", "of_species", "of_generic_species", "sort_by", "or", "and");
 
 	@Override
 	public String toGaml() {

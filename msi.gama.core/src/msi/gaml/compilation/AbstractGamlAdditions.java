@@ -2,7 +2,6 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
-import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
@@ -188,10 +187,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// combinations and doc missing
-	protected void _symbol(final Class c, final int sKind, final boolean remote, final boolean args,
-		final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
-		final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd, final String omissible,
-		final String[][] combinations, final ISymbolConstructor sc, final String ... names) {
+	protected void _symbol(final Class c, final IDescriptionValidator validator, final int sKind, final boolean remote,
+		final boolean args, final boolean scope, final boolean sequence, final boolean unique,
+		final boolean name_unique, final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd,
+		final String omissible, final String[][] combinations, final ISymbolConstructor sc, final String ... names) {
 
 		Set<String> contextKeywords = new HashSet();
 		Set<Integer> contextKinds = new HashSet();
@@ -223,24 +222,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			keywords.remove(EXPERIMENT);
 		}
 
-		IDescriptionValidator validator = null;
-		try {
-			Field field = c.getField("VALIDATOR");
-			if ( field != null ) {
-				Class<IDescriptionValidator> clazz = (Class<IDescriptionValidator>) field.get(null);
-				validator = clazz.newInstance();
-			}
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			// e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
+		//
 
 		// if ( validator != null ) {
 		// GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
@@ -343,7 +325,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	// return descs;
 	// }
 
-	protected IDescription desc(final String keyword, final IDescription superDesc, final IChildrenProvider children,
+	protected IDescription desc(final String keyword, final IDescription superDesc, final ChildrenProvider children,
 		final String ... facets) {
 		return DescriptionFactory.create(keyword, superDesc, children, facets);
 	}

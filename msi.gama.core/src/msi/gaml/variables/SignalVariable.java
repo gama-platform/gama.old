@@ -18,7 +18,6 @@
  */
 package msi.gaml.variables;
 
-import static msi.gama.common.interfaces.IKeyword.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
@@ -26,6 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,6 +37,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
+import msi.gaml.variables.SignalVariable.SignalValidator;
 
 /**
  * Special variables that hold signals that can be propagated in the environment. Signals have a
@@ -105,9 +106,10 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
+@validator(SignalValidator.class)
 public class SignalVariable extends NumberVariable {
 
-	public static final Class VALIDATOR = SignalValidator.class;
+	
 
 	public static class SignalValidator implements IDescriptionValidator {
 
@@ -148,9 +150,8 @@ public class SignalVariable extends NumberVariable {
 			}
 
 			final VariableDescription vd =
-				(VariableDescription) DescriptionFactory.getFactory(SIGNAL).create(
-					SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, d.getName(), TYPE, IKeyword.FLOAT, MIN,
-						"0.0"), false), s, null);
+				(VariableDescription) DescriptionFactory.create(SyntacticFactory.create(IKeyword.FLOAT, new Facets(
+					NAME, d.getName(), TYPE, IKeyword.FLOAT, MIN, "0.0"), false), s, null);
 			s.addChild(vd);
 			IExpressionFactory f = GAML.getExpressionFactory();
 			IExpression v = s.getVarExpr(d.getName());

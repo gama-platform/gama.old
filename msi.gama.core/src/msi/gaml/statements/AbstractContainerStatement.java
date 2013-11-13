@@ -18,16 +18,19 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 24 ao�t 2010
@@ -35,7 +38,68 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
+@validator(ContainerValidator.class)
 public abstract class AbstractContainerStatement extends AbstractStatement {
+
+	
+
+	public static class ContainerValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {
+
+			final Facets f = cd.getFacets();
+			final IExpression item = f.getExpr(ITEM, f.getExpr(EDGE, f.getExpr(VERTEX)));
+			final IExpression list = f.getExpr(TO, f.getExpr(FROM, f.getExpr(IN)));
+			final IExpression index = f.getExpr(AT);
+			final IExpression whole = f.getExpr(ALL);
+			final String keyword = cd.getKeyword();
+			final boolean all = whole == null ? false : !whole.literalValue().equals(FALSE);
+			if ( item == null && !all && !keyword.equals(REMOVE) || list == null ) {
+				cd.error("The assignment appears uncomplete", IGamlIssue.GENERAL);
+				return;
+			}
+			if ( keyword.equals(ADD) || keyword.equals(REMOVE) ) {
+				final IType containerType = list.getType();
+				if ( containerType.isFixedLength() ) {
+					cd.error("Impossible to add/remove to/from " + list.toGaml(), IGamlIssue.WRONG_TYPE);
+					return;
+				}
+			}
+			final IType contentType = list.getContentType();
+			IType valueType = Types.NO_TYPE;
+			if ( item == null ) {
+				if ( whole != null && !whole.literalValue().equals(TRUE) ) {
+					valueType = whole.getContentType();
+				} else {
+					valueType = contentType;
+				}
+			} else {
+				if ( all && item.getType().isTranslatableInto(Types.get(IType.CONTAINER)) ) {
+					valueType = item.getContentType();
+				} else {
+					valueType = item.getType();
+				}
+			}
+
+			if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
+				cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
+					") does not match with " + valueType, IGamlIssue.SHOULD_CAST, item == null ? IKeyword.ALL
+					: IKeyword.ITEM, contentType.toString());
+			}
+			final IType keyType = list.getKeyType();
+			if ( index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType()) ) {
+				cd.warning("The type of the index of " + list.toGaml() + " (" + keyType +
+					") does not match with the type of " + index.toGaml() + " (" + index.getType() + ")",
+					IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
+			}
+
+		}
+	}
 
 	protected final IExpression item, index, list, all;
 	boolean asAll = false;

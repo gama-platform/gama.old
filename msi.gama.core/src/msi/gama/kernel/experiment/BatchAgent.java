@@ -56,17 +56,33 @@ public class BatchAgent extends ExperimentAgent {
 			innerLoopRepeat = Cast.asInt(scope, expr.value(scope));
 		}
 		setSeeds(new Double[innerLoopRepeat]);
-		expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
+		// expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
+		// if ( expr != null && expr.isConst() ) {
+		// boolean keepSeed = Cast.asBool(scope, expr.value(scope));
+		// if ( keepSeed ) {
+		// for ( int i = 0; i < innerLoopRepeat; i++ ) {
+		// getSeeds()[i] = GAMA.getRandom().between(0d, Long.MAX_VALUE);
+		// }
+		// }
+		// }
+
+		stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
+	}
+
+	@Override
+	public void schedule() {
+		super.schedule();
+		// Necessary to run it here, as if the seed has been fixed in the experiment, it is now defined and initialized
+		IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
-			boolean keepSeed = Cast.asBool(scope, expr.value(scope));
+			boolean keepSeed = Cast.asBool(getScope(), expr.value(getScope()));
 			if ( keepSeed ) {
-				for ( int i = 0; i < innerLoopRepeat; i++ ) {
+				for ( int i = 0; i < seeds.length; i++ ) {
 					getSeeds()[i] = GAMA.getRandom().between(0d, Long.MAX_VALUE);
 				}
 			}
 		}
 
-		stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
 	}
 
 	@Override

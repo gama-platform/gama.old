@@ -18,23 +18,25 @@
  */
 package msi.gaml.variables;
 
-import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
+import java.util.*;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
-import msi.gaml.types.IType;
+import msi.gaml.statements.Facets;
+import msi.gaml.types.*;
 
 /**
  * The Class Var.
@@ -57,7 +59,152 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@validator(msi.gaml.variables.Variable.VarValidator.class)
 public class Variable extends Symbol implements IVariable {
+
+	
+
+	public static class VarValidator implements IDescriptionValidator {
+
+		public static List<String> valueFacetsList = Arrays.asList(VALUE, INIT, FUNCTION, UPDATE, MIN, MAX);
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription vd) {
+			VariableDescription cd = (VariableDescription) vd;
+			String name = cd.getName();
+			// Verifying that the name is not null
+			if ( name == null ) {
+				cd.error("The variable name is missing", IGamlIssue.MISSING_NAME);
+				return;
+			}
+			// Verifying that the name is not a type
+			IType t = cd.getTypeNamed(name);
+			if ( t != Types.NO_TYPE && !t.isSpeciesType() ) {
+				cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
+					name);
+				return;
+			}
+			// Verifying that the name is not reserved
+			if ( IExpressionCompiler.RESERVED.contains(name) ) {
+				cd.error(name + " is a reserved keyword. It cannot be used as a variable name", IGamlIssue.IS_RESERVED,
+					NAME, name);
+				return;
+			}
+			// The name is ok. Now verifying the logic of facets
+			Facets ff = cd.getFacets();
+			// Verifying that 'function' is not used in conjunction with other "value" facets
+			if ( ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
+				cd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE, FUNCTION);
+				return;
+			}
+			// Verifying that a constant has not 'update' or 'function' facet and is not a parameter
+			if ( ff.equals(CONST, TRUE) ) {
+				if ( ff.containsKey(VALUE) | ff.containsKey(UPDATE) ) {
+					cd.warning("A constant variable cannot have an update value (use init or <- instead)",
+						IGamlIssue.REMOVE_CONST, UPDATE);
+				} else if ( ff.containsKey(FUNCTION) ) {
+					cd.error("A function cannot be constant (use init or <- instead)", IGamlIssue.REMOVE_CONST,
+						FUNCTION);
+					return;
+				} else if ( cd.isParameter() ) {
+					cd.error("Parameter '" + cd.getParameterName() + "'  cannot be declared as constant ",
+						IGamlIssue.REMOVE_CONST);
+					return;
+				}
+			}
+			if ( cd.isParameter() ) {
+				assertCanBeParameter(cd);
+			} else {
+				assertValueFacetsTypes(cd, ff, cd.getType());
+			}
+		}
+
+		public void assertValueFacetsTypes(final VariableDescription vd, final Facets facets, final IType vType) {
+			IType type = null;
+			String firstValueFacet = null;
+			IExpression amongExpression = facets.getExpr(AMONG);
+			if ( amongExpression != null && vType != amongExpression.getContentType() ) {
+				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among " +
+					amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
+				return;
+			}
+			for ( String s : valueFacetsList ) {
+				IExpression expr = facets.getExpr(s);
+				if ( expr == null ) {
+					continue;
+				}
+				if ( type == null ) {
+					type = expr.getType();
+					firstValueFacet = s;
+				} else {
+					if ( type != expr.getType() ) {
+						vd.warning("The types of  facets '" + s + "' and '" + firstValueFacet + "' are different",
+							IGamlIssue.SHOULD_CAST, s, type.toString());
+					}
+				}
+				if ( type != vType && type != Types.NO_TYPE && vType != Types.NO_TYPE ) {
+					vd.warning("Facet " + s + " of type " + type + " should be of type " + vType.toString(),
+						IGamlIssue.SHOULD_CAST, s, vType.toString());
+				}
+			}
+		}
+
+		public void assertCanBeParameter(final VariableDescription cd) {
+			Facets facets = cd.getFacets();
+			if ( facets.equals(KEYWORD, PARAMETER) ) {
+				String varName = facets.getLabel(VAR);
+				VariableDescription targetedVar = cd.getModelDescription().getVariable(varName);
+				if ( targetedVar == null ) {
+					String p = "Parameter '" + cd.getParameterName() + "' ";
+					cd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR,
+						IKeyword.VAR);
+					return;
+				}
+				if ( !cd.getType().equals(Types.NO_TYPE) && cd.getType().id() != targetedVar.getType().id() ) {
+					String p = "Parameter '" + cd.getParameterName() + "' ";
+					cd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES,
+						IKeyword.TYPE);
+					return;
+				}
+				assertValueFacetsTypes(cd, facets, targetedVar.getType());
+			}
+			assertValueFacetsTypes(cd, facets, cd.getType());
+			IExpression min = facets.getExpr(MIN);
+			if ( min != null && !min.isConst() ) {
+				String p = "Parameter '" + cd.getParameterName() + "' ";
+				cd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
+				return;
+			}
+			IExpression max = facets.getExpr(MAX);
+			if ( max != null && !max.isConst() ) {
+				String p = "Parameter '" + cd.getParameterName() + "' ";
+				cd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
+				return;
+			}
+			IExpression init = facets.getExpr(INIT);
+
+			if ( init == null ) {
+				String p = "Parameter '" + cd.getParameterName() + "' ";
+				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(null), cd
+					.getType().toString());
+				return;
+			}
+			if ( !init.isConst() ) {
+				String p = "Parameter '" + cd.getParameterName() + "' ";
+				cd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
+				return;
+			}
+			if ( facets.containsKey(UPDATE) || facets.containsKey(VALUE) || facets.containsKey(FUNCTION) ) {
+				String p = "Parameter '" + cd.getParameterName() + "' ";
+				cd.error(p + "cannot have an 'update', 'value' or 'function' facet", IGamlIssue.REMOVE_VALUE);
+			}
+		}
+
+	}
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
 	protected IType type, contentType;

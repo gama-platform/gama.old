@@ -1,19 +1,21 @@
 package msi.gaml.statements;
 
 import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.MigrateStatement.MigrateValidator;
 import msi.gaml.types.IType;
 
 /**
@@ -34,7 +36,31 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SOURCE, type = IType.ID, optional = false), // workaround
 	@facet(name = IKeyword.TARGET, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.SOURCE)
+@validator(MigrateValidator.class)
 public class MigrateStatement extends AbstractStatementSequence {
+
+	
+
+	public static class MigrateValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription cd) {
+			final String microSpeciesName = cd.getFacets().getLabel(TARGET);
+			if ( microSpeciesName != null ) {
+				final SpeciesDescription macroSpecies = cd.getSpeciesContext();
+				final TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
+				if ( microSpecies == null ) {
+					cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
+						" as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, TARGET, microSpeciesName);
+				}
+			}
+
+		}
+	}
 
 	// private IExpression source;
 	private final String source;

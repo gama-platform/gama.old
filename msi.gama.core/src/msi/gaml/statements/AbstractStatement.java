@@ -18,15 +18,14 @@
  */
 package msi.gaml.statements;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 
 /**
@@ -92,7 +91,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		final String k = getLiteral(IKeyword.KEYWORD);
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append(k).append(' ');
-		for ( final Facet e : description.getFacets().entrySet() ) {
+		for ( final Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
 			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml()).append(" ");
 			}

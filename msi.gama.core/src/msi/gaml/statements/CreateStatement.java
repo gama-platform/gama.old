@@ -19,7 +19,7 @@
 package msi.gaml.statements;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -27,17 +27,18 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.Facets.Facet;
+import msi.gaml.statements.CreateStatement.CreateValidator;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -72,7 +73,48 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.SIZE, type = { IType.FLOAT }, optional = true),
 	@facet(name = IKeyword.HEADER, type = { IType.BOOL }, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.STRING }, optional = true) }, omissible = IKeyword.SPECIES)
+@validator(CreateValidator.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+
+	
+
+	public static class CreateValidator implements IDescriptionValidator<StatementDescription> {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final StatementDescription cd) {
+
+			final SpeciesDescription species = cd.computeSpecies();
+			if ( species != null ) {
+				if ( species.isAbstract() ) {
+					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated",
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					return;
+				} else if ( species.isMirror() ) {
+					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated",
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					return;
+				}
+				SpeciesDescription callerSpecies = cd.getSpeciesContext();
+				SpeciesDescription macro = species.getMacroSpecies();
+				if ( macro == null ) {
+					cd.error("The macro-species of " + species + " cannot be determined");
+				} else if ( callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro) &&
+					!callerSpecies.hasParent(macro) ) {
+					cd.error("No instance of " + macro.getName() + " available for creating instances of " +
+						species.getName());
+				}
+
+			} else {
+				cd.error("Species cannot be determined");
+			}
+
+		}
+
+	}
 
 	private Arguments init;
 	private final IExpression from, number, species, header;
@@ -261,7 +303,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if ( init == null ) { return; }
 		Files.tempAttributes.push(values);
 		try {
-			for ( final Facet f : init.entrySet() ) {
+			for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
 				if ( f != null ) {
 					values.put(f.getKey(), f.getValue().getExpression().value(scope));
 				}
@@ -296,7 +338,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void computeInits(final IScope scope, final Map values, final GamaList<Object> rowList,
 		final GamaList<Object> colTypes, final GamaList<Object> colNames) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		for ( final Facet f : init.entrySet() ) {
+		for ( final Map.Entry<String, IExpressionDescription> f : init.entrySet() ) {
 			if ( f != null ) {
 				final IExpression valueExpr = f.getValue().getExpression();
 				// get parameter

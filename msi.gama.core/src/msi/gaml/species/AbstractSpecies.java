@@ -196,7 +196,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public ISpecies getParentSpecies() {
 		final TypeDescription parentSpecDesc = getDescription().getParent();
-		if ( parentSpecDesc == null ) { return null; }
+		// Takes care of invalid species (see Issue 711)
+		if ( parentSpecDesc == null || parentSpecDesc == getDescription() ) { return null; }
 
 		ISpecies currentMacroSpec = this.getMacroSpecies();
 		ISpecies potentialParent;

@@ -1,5 +1,7 @@
 package msi.gaml.descriptions;
 
+import gnu.trove.set.hash.THashSet;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.JavaWriter;
 import msi.gaml.types.IType;
@@ -10,7 +12,8 @@ public class FacetProto {
 	public final int[] types;
 	public final boolean optional;
 	public final boolean isLabel;
-	public final String[] values;
+	public final boolean isType;
+	public final Set<String> values;
 	public String doc = "No documentation yet";
 	static FacetProto KEYWORD = KEYWORD();
 	static FacetProto DEPENDS_ON = DEPENDS_ON();
@@ -22,7 +25,8 @@ public class FacetProto {
 		this.types = types;
 		this.optional = optional;
 		isLabel = SymbolProto.ids.contains(types[0]);
-		this.values = values;
+		isType = types[0] == IType.TYPE_ID;
+		this.values = new THashSet(Arrays.asList(values));
 		if ( doc != null ) {
 			int index = doc.indexOf(JavaWriter.DOC_SEP);
 			if ( index == -1 ) {

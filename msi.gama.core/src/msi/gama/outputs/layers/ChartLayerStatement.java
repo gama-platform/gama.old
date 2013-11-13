@@ -146,8 +146,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			if ( timeSeriesXData == null ) {
 
 				timeSeriesXData =
-					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(IKeyword.DATA,
-						description, IKeyword.LEGEND, xAxisName, IKeyword.VALUE, IKeyword.TIME));
+					(ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
+						xAxisName, IKeyword.VALUE, IKeyword.TIME).compile();
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));

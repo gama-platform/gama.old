@@ -20,7 +20,7 @@ package msi.gama.outputs;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -134,32 +134,33 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
-		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name + (type != INSPECT_TABLE ? count++ : ""),
-			IKeyword.TYPE, types.get(type)));
+		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME,
+			StringUtils.toGamlString(name + (type != INSPECT_TABLE ? count++ : "")), IKeyword.TYPE, types.get(type))
+			.validate());
 	}
 
 	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
-		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
-			IKeyword.NAME, species == null ? "custom" + count++ : species.getName(), IKeyword.VALUE, species == null
-				? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE))));
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
+			species == null ? "custom" + count++ : species.getName(), IKeyword.VALUE,
+			species == null ? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE)).validate());
 		this.rootAgent = rootAgent;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
 		// Opens a table inspector on the agents of this container
-		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
-			IKeyword.NAME, "custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
-			types.get(INSPECT_TABLE))));
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
+			"custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE, types.get(INSPECT_TABLE))
+			.validate());
 		lastValue = agents;
 		this.rootAgent = agent;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
 		// Opens a table inspector on the agents of this container
-		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
-			IKeyword.NAME, "custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
-			types.get(INSPECT_TABLE))));
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
+			"custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE, types.get(INSPECT_TABLE))
+			.validate());
 		// lastValue = agents;
 		this.rootAgent = agent;
 	}

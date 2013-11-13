@@ -19,7 +19,7 @@
 package msi.gaml.species;
 
 import java.util.Iterator;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,13 +27,16 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.IType;
 
 /**
@@ -63,9 +66,30 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
+@validator(SpeciesValidator.class)
 // @vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
 // TODO Build a list of control architectures dynamically at startup and populate the values attribute
 public class GamlSpecies extends AbstractSpecies {
+
+	
+
+	public static class SpeciesValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription desc) {
+			// If torus is declared on a species other than "global", emit a warning
+			IExpression torus = desc.getFacets().getExpr(TORUS);
+			if ( torus == null ) { return; }
+			if ( desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID) ) {
+				desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
+					IGamlIssue.WRONG_CONTEXT, TORUS);
+			}
+		}
+	}
 
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
