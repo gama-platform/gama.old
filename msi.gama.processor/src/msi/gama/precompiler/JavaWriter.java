@@ -38,16 +38,16 @@ public class JavaWriter {
 	final static String INTEGER = "Integer";
 	final static String DOUBLE = "Double";
 	final static String BOOLEAN = "Boolean";
-	final static String[] IMPORTS = new String[] { "msi.gama.outputs", "msi.gama.kernel.batch",
-		"msi.gaml.architecture.weighted_tasks", "msi.gama.outputs.layers", "msi.gaml.architecture.user",
+	final static String[] IMPORTS = new String[] { "msi.gama.outputs.layers", "msi.gama.outputs",
+		"msi.gama.kernel.batch", "msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
 		"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
 		"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
 		"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util", " msi.gama.metamodel.shape",
 		"msi.gama.common.interfaces", "msi.gama.runtime", "java.lang", "msi.gama.metamodel.agent", "msi.gaml.types",
-		"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util", "msi.gama.util.file",
-		"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.runtime.exceptions",
-		"msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables",
-		"msi.gama.kernel.experiment", "msi.gaml.operators" };
+		"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.file",
+		"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
+		"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
+		"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators" };
 	final static String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 		"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -250,23 +250,29 @@ public class JavaWriter {
 	protected void writeSymbolAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
 		final String doc) {
 		String[] segments = s.split("\\$");
-		String kind = segments[0];
-		String clazz = segments[1];
-		String remote = toBoolean(segments[2]);
-		String args = toBoolean(segments[3]);
-		String scope = toBoolean(segments[4]);
-		String sequence = toBoolean(segments[5]);
-		String unique = toBoolean(segments[6]);
-		String name_unique = toBoolean(segments[7]);
-		String parentSymbols = toArrayOfStrings(segments[8]);
-		String parentKinds = segments[9];
+		String validator = segments[0];
+		if ( validator.isEmpty() ) {
+			validator = "null";
+		} else {
+			validator = "new " + validator + "()";
+		}
+		String kind = segments[1];
+		String clazz = segments[2];
+		String remote = toBoolean(segments[3]);
+		String args = toBoolean(segments[4]);
+		String scope = toBoolean(segments[5]);
+		String sequence = toBoolean(segments[6]);
+		String unique = toBoolean(segments[7]);
+		String name_unique = toBoolean(segments[8]);
+		String parentSymbols = toArrayOfStrings(segments[9]);
+		String parentKinds = segments[10];
 		if ( parentKinds.equals("") ) {
 			parentKinds = "AI";
 		} else {
 			parentKinds = "I(" + parentKinds + ")";
 		}
-		int nbFacets = Integer.decode(segments[10]);
-		int pointer = 11;
+		int nbFacets = Integer.decode(segments[11]);
+		int pointer = 12;
 		String facets;
 		String constants = "";
 		if ( nbFacets == 0 ) {
@@ -320,11 +326,11 @@ public class JavaWriter {
 		String sc =
 			concat("new ISymbolConstructor() {", OVERRIDE, "public ISymbol create(" + IDESC + " d) {return new ",
 				clazz, "(d);}}");
-		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",").append(kind).append(',')
-			.append(remote).append(',').append(args).append(',').append(scope).append(',').append(sequence).append(',')
-			.append(unique).append(',').append(name_unique).append(',').append(parentSymbols).append(",")
-			.append(parentKinds).append(',').append(facets).append(',').append(toJavaString(omissible)).append(',')
-			.append("new String[][]{").append(combinations).append("},")
+		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",").append(validator).append(",")
+			.append(kind).append(',').append(remote).append(',').append(args).append(',').append(scope).append(',')
+			.append(sequence).append(',').append(unique).append(',').append(name_unique).append(',')
+			.append(parentSymbols).append(",").append(parentKinds).append(',').append(facets).append(',')
+			.append(toJavaString(omissible)).append(',').append("new String[][]{").append(combinations).append("},")
 			// .append("new String[][]{}").append(",")
 			// .append("Collections.<String[]> emptyList()").append(",")
 			.append(sc);

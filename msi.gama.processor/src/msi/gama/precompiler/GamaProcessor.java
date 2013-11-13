@@ -46,6 +46,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
@@ -175,17 +176,22 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	String rawNameOf(final TypeMirror t) {
-		String string = processingEnv.getTypeUtils().erasure(t).toString();
-		int i = string.indexOf('<');
-		string = i > -1 ? string.substring(0, i) : string;
+		String init = processingEnv.getTypeUtils().erasure(t).toString();
+		int i = init.indexOf('<');
+		int j = init.lastIndexOf('>');
+		String string = i > -1 ? init.substring(0, i) + init.substring(j + 1) : init;
+		// processingEnv.getMessager().printMessage(Kind.NOTE, "Init : " + init + " / String : " + string);
 		return check(string.replace('$', '.'));
 	}
 
 	protected String check(final String clazz) {
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
-			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz.substring(clazz.lastIndexOf('.') + 1); }
+			if ( clazz.startsWith(IMPORTS[i]) ) {
+				String result = clazz.replace(IMPORTS[i] + ".", "");
+				return result;
+			}
+			// return clazz.substring(clazz.lastIndexOf('.') + 1); }
 		}
-
 		return clazz;
 	}
 
@@ -325,8 +331,31 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : symbols ) {
 			StringBuilder sb = new StringBuilder();
 			symbol symbol = e.getAnnotation(symbol.class);
+			validator validator = e.getAnnotation(validator.class);
+			TypeMirror sup = ((TypeElement) e).getSuperclass();
+			// Workaround for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=419944
+			while (validator == null && sup != null) {
+
+				if ( sup.getKind().equals(TypeKind.NONE) ) {
+					sup = null;
+					continue;
+				}
+				TypeElement te = (TypeElement) processingEnv.getTypeUtils().asElement(sup);
+				validator = te.getAnnotation(validator.class);
+				sup = te.getSuperclass();
+			}
+			TypeMirror type = null;
+			try {
+				if ( validator != null ) {
+					validator.value();
+				}
+			} catch (MirroredTypeException e1) {
+				type = e1.getTypeMirror();
+			}
 			// prefix
 			sb.append(SYMBOL_PREFIX);
+			// validator
+			sb.append(type == null ? "" : rawNameOf(type)).append(SEP);
 			// kind
 			sb.append(symbol.kind()).append(SEP);
 			// class

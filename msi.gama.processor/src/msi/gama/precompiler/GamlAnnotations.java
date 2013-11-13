@@ -46,6 +46,14 @@ public final class GamlAnnotations {
 		String value();
 	}
 
+	@Retention(RetentionPolicy.SOURCE)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface validator {
+
+		Class value();
+	}
+
 	/**
 	 * 
 	 * The class facets. Describes a list of facet used by a symbol (a statement, a declaration) in
@@ -835,7 +843,7 @@ public final class GamlAnnotations {
 		 * @return An array of String representing cross-references to other elements in GAML
 		 */
 		String[] see() default {};
-		
+
 		/**
 		 * usages.
 		 * 
@@ -846,7 +854,7 @@ public final class GamlAnnotations {
 
 	/**
 	 * 
-	 * The class usages. This should replace special_cases and examples, to unify the doc for 
+	 * The class usages. This should replace special_cases and examples, to unify the doc for
 	 * operators, statements and others.
 	 * 
 	 * @author Benoit Gaudou
@@ -862,7 +870,7 @@ public final class GamlAnnotations {
 		/**
 		 * Value.
 		 * 
-		 * @return a String representing one usage of the keyword 
+		 * @return a String representing one usage of the keyword
 		 */
 		String value() default "";
 
@@ -874,6 +882,6 @@ public final class GamlAnnotations {
 		 */
 		String[] examples() default {};
 
-		}
+	}
 
 }
