@@ -257,11 +257,11 @@ Binary returns Expression:
 	// NEW: Units are now expressed using the "°" symbol
 Unit returns Expression:
 	Unary
-	(({Unit.left=current} op=('°')) right=UnitRef)?;
+	(({Unit.left=current} op=('°'|"#")) right=UnitRef)?;
 
 Unary returns Expression:
 	Access |
-	{Unary} ((op='°' right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	{Unary} ((op=('°'|'#') right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
 
 Access returns Expression:

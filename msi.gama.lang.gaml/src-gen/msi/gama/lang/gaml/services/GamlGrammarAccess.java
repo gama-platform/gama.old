@@ -2897,35 +2897,43 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
 		private final Action cUnitLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
 		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final Keyword cOpDegreeSignKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
+		private final Alternatives cOpAlternatives_1_0_1_0 = (Alternatives)cOpAssignment_1_0_1.eContents().get(0);
+		private final Keyword cOpDegreeSignKeyword_1_0_1_0_0 = (Keyword)cOpAlternatives_1_0_1_0.eContents().get(0);
+		private final Keyword cOpNumberSignKeyword_1_0_1_0_1 = (Keyword)cOpAlternatives_1_0_1_0.eContents().get(1);
 		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cRightUnitRefParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
 		
 		//// NEW: Units are now expressed using the "°" symbol
 		//Unit returns Expression:
-		//	Unary (({Unit.left=current} op="°") right=UnitRef)?;
+		//	Unary (({Unit.left=current} op=("°" | "#")) right=UnitRef)?;
 		public ParserRule getRule() { return rule; }
 
-		//Unary (({Unit.left=current} op="°") right=UnitRef)?
+		//Unary (({Unit.left=current} op=("°" | "#")) right=UnitRef)?
 		public Group getGroup() { return cGroup; }
 
 		//Unary
 		public RuleCall getUnaryParserRuleCall_0() { return cUnaryParserRuleCall_0; }
 
-		//(({Unit.left=current} op="°") right=UnitRef)?
+		//(({Unit.left=current} op=("°" | "#")) right=UnitRef)?
 		public Group getGroup_1() { return cGroup_1; }
 
-		//{Unit.left=current} op="°"
+		//{Unit.left=current} op=("°" | "#")
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
 		//{Unit.left=current}
 		public Action getUnitLeftAction_1_0_0() { return cUnitLeftAction_1_0_0; }
 
-		//op="°"
+		//op=("°" | "#")
 		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
 
+		//"°" | "#"
+		public Alternatives getOpAlternatives_1_0_1_0() { return cOpAlternatives_1_0_1_0; }
+
 		//"°"
-		public Keyword getOpDegreeSignKeyword_1_0_1_0() { return cOpDegreeSignKeyword_1_0_1_0; }
+		public Keyword getOpDegreeSignKeyword_1_0_1_0_0() { return cOpDegreeSignKeyword_1_0_1_0_0; }
+
+		//"#"
+		public Keyword getOpNumberSignKeyword_1_0_1_0_1() { return cOpNumberSignKeyword_1_0_1_0_1; }
 
 		//right=UnitRef
 		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
@@ -2943,7 +2951,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
 		private final Group cGroup_1_1_0 = (Group)cAlternatives_1_1.eContents().get(0);
 		private final Assignment cOpAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
-		private final Keyword cOpDegreeSignKeyword_1_1_0_0_0 = (Keyword)cOpAssignment_1_1_0_0.eContents().get(0);
+		private final Alternatives cOpAlternatives_1_1_0_0_0 = (Alternatives)cOpAssignment_1_1_0_0.eContents().get(0);
+		private final Keyword cOpDegreeSignKeyword_1_1_0_0_0_0 = (Keyword)cOpAlternatives_1_1_0_0_0.eContents().get(0);
+		private final Keyword cOpNumberSignKeyword_1_1_0_0_0_1 = (Keyword)cOpAlternatives_1_1_0_0_0.eContents().get(1);
 		private final Assignment cRightAssignment_1_1_0_1 = (Assignment)cGroup_1_1_0.eContents().get(1);
 		private final RuleCall cRightUnitRefParserRuleCall_1_1_0_1_0 = (RuleCall)cRightAssignment_1_1_0_1.eContents().get(0);
 		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
@@ -2958,32 +2968,38 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRightUnaryParserRuleCall_1_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1_1.eContents().get(0);
 		
 		//Unary returns Expression:
-		//	Access | {Unary} (op="°" right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary);
+		//	Access | {Unary} (op=("°" | "#") right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary);
 		public ParserRule getRule() { return rule; }
 
-		//Access | {Unary} (op="°" right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary)
+		//Access | {Unary} (op=("°" | "#") right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary)
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//Access
 		public RuleCall getAccessParserRuleCall_0() { return cAccessParserRuleCall_0; }
 
-		//{Unary} (op="°" right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary)
+		//{Unary} (op=("°" | "#") right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary)
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{Unary}
 		public Action getUnaryAction_1_0() { return cUnaryAction_1_0; }
 
-		//op="°" right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary
+		//op=("°" | "#") right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary
 		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
 
-		//op="°" right=UnitRef
+		//op=("°" | "#") right=UnitRef
 		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 
-		//op="°"
+		//op=("°" | "#")
 		public Assignment getOpAssignment_1_1_0_0() { return cOpAssignment_1_1_0_0; }
 
+		//"°" | "#"
+		public Alternatives getOpAlternatives_1_1_0_0_0() { return cOpAlternatives_1_1_0_0_0; }
+
 		//"°"
-		public Keyword getOpDegreeSignKeyword_1_1_0_0_0() { return cOpDegreeSignKeyword_1_1_0_0_0; }
+		public Keyword getOpDegreeSignKeyword_1_1_0_0_0_0() { return cOpDegreeSignKeyword_1_1_0_0_0_0; }
+
+		//"#"
+		public Keyword getOpNumberSignKeyword_1_1_0_0_0_1() { return cOpNumberSignKeyword_1_1_0_0_0_1; }
 
 		//right=UnitRef
 		public Assignment getRightAssignment_1_1_0_1() { return cRightAssignment_1_1_0_1; }
@@ -4915,7 +4931,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//// NEW: Units are now expressed using the "°" symbol
 	//Unit returns Expression:
-	//	Unary (({Unit.left=current} op="°") right=UnitRef)?;
+	//	Unary (({Unit.left=current} op=("°" | "#")) right=UnitRef)?;
 	public UnitElements getUnitAccess() {
 		return (pUnit != null) ? pUnit : (pUnit = new UnitElements());
 	}
@@ -4925,7 +4941,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Unary returns Expression:
-	//	Access | {Unary} (op="°" right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary);
+	//	Access | {Unary} (op=("°" | "#") right=UnitRef | op=("-" | "!" | "my" | "the" | "not") right=Unary);
 	public UnaryElements getUnaryAccess() {
 		return (pUnary != null) ? pUnary : (pUnary = new UnaryElements());
 	}

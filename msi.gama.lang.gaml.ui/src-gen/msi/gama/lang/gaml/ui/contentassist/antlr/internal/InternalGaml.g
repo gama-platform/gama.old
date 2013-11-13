@@ -4192,6 +4192,32 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__Unit__OpAlternatives_1_0_1_0
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0()); }
+
+	'\u00B0' 
+
+{ after(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0()); }
+)
+
+    |(
+{ before(grammarAccess.getUnitAccess().getOpNumberSignKeyword_1_0_1_0_1()); }
+
+	'#' 
+
+{ after(grammarAccess.getUnitAccess().getOpNumberSignKeyword_1_0_1_0_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Unary__Alternatives
     @init {
 		int stackSize = keepStackSize();
@@ -4229,6 +4255,32 @@ rule__Unary__Alternatives_1_1
 { before(grammarAccess.getUnaryAccess().getGroup_1_1_1()); }
 (rule__Unary__Group_1_1_1__0)
 { after(grammarAccess.getUnaryAccess().getGroup_1_1_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Unary__OpAlternatives_1_1_0_0_0
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0()); }
+
+	'\u00B0' 
+
+{ after(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0()); }
+)
+
+    |(
+{ before(grammarAccess.getUnaryAccess().getOpNumberSignKeyword_1_1_0_0_0_1()); }
+
+	'#' 
+
+{ after(grammarAccess.getUnaryAccess().getOpNumberSignKeyword_1_1_0_0_0_1()); }
 )
 
 ;
@@ -17068,16 +17120,9 @@ rule__Unit__OpAssignment_1_0_1
     }
 :
 (
-{ before(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0()); }
-(
-{ before(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0()); }
-
-	'\u00B0' 
-
-{ after(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0()); }
-)
-
-{ after(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0()); }
+{ before(grammarAccess.getUnitAccess().getOpAlternatives_1_0_1_0()); }
+(rule__Unit__OpAlternatives_1_0_1_0)
+{ after(grammarAccess.getUnitAccess().getOpAlternatives_1_0_1_0()); }
 )
 
 ;
@@ -17106,16 +17151,9 @@ rule__Unary__OpAssignment_1_1_0_0
     }
 :
 (
-{ before(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0()); }
-(
-{ before(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0()); }
-
-	'\u00B0' 
-
-{ after(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0()); }
-)
-
-{ after(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0()); }
+{ before(grammarAccess.getUnaryAccess().getOpAlternatives_1_1_0_0_0()); }
+(rule__Unary__OpAlternatives_1_1_0_0_0)
+{ after(grammarAccess.getUnaryAccess().getOpAlternatives_1_1_0_0_0()); }
 )
 
 ;

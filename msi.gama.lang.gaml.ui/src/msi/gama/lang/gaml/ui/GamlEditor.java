@@ -456,15 +456,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		if ( size > 6 ) {
 			// We remove "Experiment".
 			for ( String s : completeNamesOfExperiments ) {
-				int i = s.indexOf(' ');
-				if ( i != -1 ) {
-					abbreviations.add(s.substring(i));
-				}
+				abbreviations.add(s.replaceFirst("Experiment ", ""));
 			}
 		} else if ( size > 4 ) {
 			// We replace "Experiment" by "Exp."
 			for ( String s : completeNamesOfExperiments ) {
-				abbreviations.add(s.replaceFirst("Experiment ", "Exp."));
+				abbreviations.add(s.replaceFirst("Experiment", "Exp."));
 			}
 		} else {
 			// We copy the names as it is

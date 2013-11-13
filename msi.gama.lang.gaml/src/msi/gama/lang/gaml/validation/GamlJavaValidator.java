@@ -74,7 +74,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
 				result = parse(r, resourceSet);
 				if ( r.getErrors().isEmpty() ) {
-					result = getModelFactory().validate(result);
+					result.validate();
 				}
 				GuiUtils.debug("=> " + result + " in " + (System.nanoTime() - begin) / 1000000d + " ms.");
 			}
@@ -83,7 +83,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				for ( final GamlCompilationError error : result.getErrors() ) {
 					add(error);
 				}
-				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentNames());
+				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
 				// AD 7/9/2013: Addition of a force disposal to get rid of the description
 				result.dispose();
 			} else {
@@ -101,7 +101,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public IModel build(final GamlResource resource) {
 		final ModelDescription description = parse(resource, buildResourceSet);
 		if ( resource.getErrors().isEmpty() ) {
-			final IModel model = getModelFactory().compile(description);
+			final IModel model = (IModel) description.compile();
 			cleanResourceSet(buildResourceSet, true);
 			return model;
 		}

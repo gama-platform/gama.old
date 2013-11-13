@@ -135,7 +135,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return expr;
 		}
 		// The unary "unit" operator should let the value of its child pass through
-		if ( op.equals("°") ) { return expr; }
+		if ( op.equals("°") || op.equals("#") ) { return expr; }
 		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, expr, species(op)); }
 		if ( isSkillName(op) ) { return factory.createOperator(AS, context, expr, skill(op)); }
 		return factory.createOperator(op, context, expr);

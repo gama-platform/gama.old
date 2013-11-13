@@ -15,10 +15,12 @@ import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.diagnostics.*;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.scoping.*;
 import org.eclipse.xtext.scoping.impl.*;
+import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
@@ -257,6 +259,17 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		if ( descriptions == null ) {
 			descriptions = Collections.EMPTY_MAP;
 		}
-		return new MapBasedScope(uriScopeProvider.getScope(context, reference, filter), descriptions);
+		IScope parent;
+		try {
+			parent = uriScopeProvider.getScope(context, reference, filter);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			Diagnostic d =
+				new EObjectDiagnosticImpl(Severity.ERROR, "", "The imports of this model are not valid", context
+					.getContents().get(0), null, 0, null);
+			context.getErrors().add(d);
+			return IScope.NULLSCOPE;
+		}
+		return new MapBasedScope(parent, descriptions);
 	}
 }
