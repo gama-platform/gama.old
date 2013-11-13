@@ -1376,7 +1376,7 @@
             name="Update Built-In Models">
       </command>
       <command
-            defaultHandler="msi.gama.gui.navigator.commands.OpenGamaWebsiteHandler"
+            defaultHandler="msi.gama.gui.swt.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
             name="Open GAMA web site">
       </command>
@@ -1600,5 +1600,11 @@
                   class="msi.gama.gui.navigator.BuiltInProjectNature">
             </run>
          </runtime>
+      </extension>
+      <extension
+            point="org.eclipse.team.svn.core.svnconnector">
+         <svnconnector
+               class="org.polarion.team.svn.connector.svnkit.SVNKitConnectorFactory">
+         </svnconnector>
       </extension>
 </plugin>

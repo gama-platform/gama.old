@@ -1028,7 +1028,7 @@ public class SwtGui implements IGui {
 				if ( r == null ) {
 					if ( a == null ) { return; }
 					try {
-						new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
+						new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
 					} catch (final GamaRuntimeException g) {
 						g.addContext("In opening the agent inspector");
 						GAMA.reportError(g, false);

@@ -240,8 +240,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
 		layerMenu.setText(layerName);
 		layerMenu.setImage(image);
-
-		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, actions);
+		Menu submenu = new Menu(layerMenu);
+		layerMenu.setMenu(submenu);
+		AgentsMenu.fillPopulationSubMenu(submenu, pop, actions);
 
 	}
 

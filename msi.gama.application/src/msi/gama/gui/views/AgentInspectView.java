@@ -97,15 +97,11 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 
 			@Override
 			public Boolean value(final IScope iScope) throws GamaRuntimeException {
-				// GuiUtils.debug("Asking the value of highlight for " + agent.getName());
 				return value();
 			}
 
 		});
 		editors.getCategories().get(agent).put("highlight", ed);
-		// ed.getEditor().setBackground(
-		// SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-		// ed.getEditor().moveAbove(null);
 		final ISpecies species = agent.getSpecies();
 		final Collection<UserCommandStatement> userCommands = species.getUserCommands();
 		if ( userCommands.isEmpty() ) { return attributes; }

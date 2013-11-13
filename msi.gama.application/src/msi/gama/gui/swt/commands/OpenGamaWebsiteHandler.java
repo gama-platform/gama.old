@@ -1,4 +1,4 @@
-package msi.gama.gui.navigator.commands;
+package msi.gama.gui.swt.commands;
 
 import msi.gama.gui.swt.ApplicationWorkbenchWindowAdvisor;
 import org.eclipse.core.commands.*;

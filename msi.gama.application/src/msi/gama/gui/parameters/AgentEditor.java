@@ -107,21 +107,23 @@ public class AgentEditor extends AbstractEditor {
 			old.dispose();
 		}
 		// FIXME Not adapted to multiple scales !
-		Menu dropMenu =
-			AgentsMenu.createSpeciesSubMenu(agentChooser, GAMA.getSimulation().getMicroPopulation(species),
-				new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						MenuItem mi = (MenuItem) e.widget;
-						IAgent a = (IAgent) mi.getData("agent");
-						if ( a != null && !a.dead() ) {
-							modifyAndDisplayValue(a);
-						}
-					}
+		AgentsMenu.MenuAction action = new AgentsMenu.MenuAction(new SelectionAdapter() {
 
-				});
-		// agentChooser.setMenu(dropMenu);
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				MenuItem mi = (MenuItem) e.widget;
+				IAgent a = (IAgent) mi.getData("agent");
+				if ( a != null && !a.dead() ) {
+					modifyAndDisplayValue(a);
+				}
+			}
+
+		}, IGamaIcons.MENU_AGENT.image(), "Choose");
+
+		Menu dropMenu = new Menu(agentChooser);
+		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), action);
+		agentChooser.setMenu(dropMenu);
 		dropMenu.setVisible(true);
 
 	}

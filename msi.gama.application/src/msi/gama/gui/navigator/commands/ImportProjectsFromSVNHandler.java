@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.*;
 
 public class ImportProjectsFromSVNHandler extends AbstractHandler {
 
@@ -118,6 +118,8 @@ public class ImportProjectsFromSVNHandler extends AbstractHandler {
 					}
 
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (SVNException e) {
 					e.printStackTrace();
 				}
 
