@@ -8,6 +8,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -17,6 +18,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.*;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.SingleEquationValidator;
 
 @facets(value = { @facet(name = EQUATION_LEFT, type = IType.NONE, optional = false),
 	@facet(name = EQUATION_RIGHT, type = IType.FLOAT, optional = false) }, omissible = EQUATION_RIGHT)
@@ -34,9 +36,10 @@ import msi.gaml.types.*;
  * @since 26 janv. 2013
  *
  */
+@validator(SingleEquationValidator.class)
 public class SingleEquationStatement extends AbstractStatement {
 
-	public static final Class VALIDATOR = SingleEquationValidator.class;
+	
 
 	public static final Map<String, Integer> orderNames = new LinkedHashMap();
 	static {
@@ -126,14 +129,12 @@ public class SingleEquationStatement extends AbstractStatement {
 
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
-		function = getFacet(EQUATION_LEFT);	
+		function = getFacet(EQUATION_LEFT);
 		expression = getFacet(EQUATION_RIGHT);
 	}
 
 	public void etablishVar() {
-		if ( getOrder() == 0 ) {
-			return;
-		}
+		if ( getOrder() == 0 ) { return; }
 		for ( int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++ ) {
 			IExpression tmp = ((AbstractNAryOperator) function).arg(i);
 			if ( tmp.getName().equals("t") ) {
