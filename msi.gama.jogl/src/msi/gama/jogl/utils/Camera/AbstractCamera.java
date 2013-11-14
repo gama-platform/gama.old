@@ -4,7 +4,7 @@ import static java.awt.event.KeyEvent.*;
 import java.awt.Point;
 import java.awt.event.*;
 import java.nio.IntBuffer;
-import java.util.Set;
+import java.util.Collection;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -161,10 +161,10 @@ public abstract class AbstractCamera implements ICamera {
 		if ( canSelectOnRelease(arg0) && isViewIn2DPlan() && isEnableROIDrawing() ) {
 			if ( arg0.isAltDown() ) {
 
-				Set<IAgent> shapes = GAMA.run(new InScope<Set<IAgent>>() {
+				Collection<IAgent> shapes = GAMA.run(new InScope<Collection<IAgent>>() {
 
 					@Override
-					public Set<IAgent> run(final IScope scope) {
+					public Collection<IAgent> run(final IScope scope) {
 						return scope
 							.getTopology()
 							.getSpatialIndex()

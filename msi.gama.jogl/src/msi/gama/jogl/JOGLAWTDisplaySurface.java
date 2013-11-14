@@ -207,7 +207,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	}
 
-	public void selectSeveralAgents(final Set<IAgent> agents, final int layerId) {
+	public void selectSeveralAgents(final Collection<IAgent> agents, final int layerId) {
 		menuManager
 			.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agents);
 	}
