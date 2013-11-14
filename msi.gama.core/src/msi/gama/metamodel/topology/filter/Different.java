@@ -18,7 +18,7 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import java.util.Set;
+import java.util.Collection;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
@@ -65,7 +65,7 @@ public class Different implements IAgentFilter {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(java.util.Collection)
 	 */
 	@Override
-	public void filter(final IScope scope, final IShape source, final Set<? extends IShape> internal_results) {
+	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> internal_results) {
 		internal_results.remove(source);
 	}
 

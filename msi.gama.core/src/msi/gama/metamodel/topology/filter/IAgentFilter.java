@@ -18,7 +18,7 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import java.util.Set;
+import java.util.Collection;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -51,6 +51,6 @@ public interface IAgentFilter {
 	/**
 	 * @param internal_results
 	 */
-	public void filter(IScope scope, IShape source, Set<? extends IShape> results);
+	public void filter(IScope scope, IShape source, Collection<? extends IShape> results);
 
 }

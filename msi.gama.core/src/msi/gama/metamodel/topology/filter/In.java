@@ -102,7 +102,7 @@ public abstract class In implements IAgentFilter {
 		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 		 */
 		@Override
-		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 			// GuiUtils.debug("GamaQuadTree.findIntersects : size of filter " + agents.length(scope) +
 			// " ; size of results : " + results.size());
 			// Set<? extends IShape> agents = Sets.newHashSet(this.agents.iterable(scope));
@@ -157,7 +157,7 @@ public abstract class In implements IAgentFilter {
 		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 		 */
 		@Override
-		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 			Set<IShape> agents = Sets.newHashSet(byEdges ? graph.getEdges() : graph.getVertices());
 			results.retainAll(agents);
 		}
@@ -216,7 +216,7 @@ public abstract class In implements IAgentFilter {
 		 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 		 */
 		@Override
-		public void filter(final IScope scope, final IShape source, final Set<? extends IShape> results) {
+		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 			Iterator<? extends IShape> it = results.iterator();
 			IAgent sourceAgent = source == null ? null : source.getAgent();
 			while (it.hasNext()) {
