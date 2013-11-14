@@ -316,6 +316,34 @@ public class RandomUtils implements SeedGenerator {
 		return generator;
 	}
 
+	public void shuffle(final Set list) {
+		final Object[] copy = list.toArray(new Object[list.size()]);
+		list.clear();
+		for ( int i = copy.length; i > 1; i-- ) {
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final Object tmp = copy[i1];
+			copy[i1] = copy[j];
+			copy[j] = tmp;
+		}
+		list.addAll(Arrays.asList(copy));
+
+	}
+
+	public void shuffle2(final Set list) {
+		int size = list.size();
+		if ( size < 2 ) { return; }
+		final Object[] a = list.toArray(new Object[size]);
+		list.clear();
+		for ( int i = 0; i < size; i++ ) {
+			int change = between(i, size - 1);
+			Object helper = a[i];
+			a[i] = a[change];
+			a[change] = helper;
+			list.add(a[i]);
+		}
+	}
+
 	public List shuffle(final List list) {
 		for ( int i = list.size(); i > 1; i-- ) {
 			final int i1 = i - 1;
