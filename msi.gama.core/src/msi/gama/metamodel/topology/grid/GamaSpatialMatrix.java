@@ -745,9 +745,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.allAtDistance");
 		final double exp = dist * Maths.SQRT2;
-		ENVELOPE.init(source.getEnvelope());
-		ENVELOPE.expandBy(exp);
-		Set<IAgent> result = allInEnvelope(scope, source, ENVELOPE, f, false);
+		Envelope env = new Envelope(source.getEnvelope());
+		env.expandBy(exp);
+		Set<IAgent> result = allInEnvelope(scope, source, env, f, false);
 		Iterator<IAgent> it = result.iterator();
 		while (it.hasNext()) {
 			if ( source.euclidianDistanceTo(it.next()) >= dist ) {
@@ -769,8 +769,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.firstAtDistance");
 		final double exp = dist * Maths.SQRT2;
-		ENVELOPE.init(source.getEnvelope());
-		ENVELOPE.expandBy(exp);
+		Envelope env = new Envelope(source.getEnvelope());
+		env.expandBy(exp);
 		// final Iterator<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
 		Ordering<IShape> ordering = Ordering.natural().onResultOf(new Function<IShape, Double>() {
 
@@ -780,7 +780,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return source.euclidianDistanceTo(input);
 			}
 		});
-		Set<IAgent> shapes = allInEnvelope(scope, source, ENVELOPE, f, false);
+		Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
 		if ( shapes.isEmpty() ) { return null; }
 		return ordering.min(shapes);
 		// let this throw NoSuchElementException as necessary

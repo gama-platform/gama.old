@@ -1275,7 +1275,7 @@ public abstract class Spatial {
 		public static ILocation _closest_point_to(final IShape pt, final IShape geom) {
 			if ( pt == null ) { return null; }
 			if ( geom == null ) { return pt.getLocation(); }
-			//if ( pt.isPoint() ) { return _closest_point_to(pt.getLocation(), geom); }
+			// if ( pt.isPoint() ) { return _closest_point_to(pt.getLocation(), geom); }
 			final Coordinate[] cp = new DistanceOp(geom.getInnerGeometry(), pt.getInnerGeometry()).nearestPoints();
 			return new GamaPoint(cp[0]);
 		}
@@ -1508,16 +1508,16 @@ public abstract class Spatial {
 			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			final IAgent agent = scope.getAgentScope();
-			Set<IAgent> result;
+			// Set<IAgent> result;
 			// if ( agent.isPoint() ) {
 			// result = scope.getTopology().getNeighboursOf(agent.getLocation(), distance, Different.with());
 			// } else {
-			result = scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with());
+			// result = scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with());
 			// result =
 			// scope.getTopology().getAgentsIn(Transformations.enlarged_by(agent, distance), Different.with(),
 			// false);
 			// }
-			return new GamaList(result);
+			return new GamaList(scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with()));
 		}
 
 	}

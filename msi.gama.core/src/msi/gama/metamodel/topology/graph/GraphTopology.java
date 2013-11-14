@@ -331,8 +331,9 @@ public class GraphTopology extends AbstractTopology {
 	 *      boolean)
 	 */
 	@Override
-	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
-		Set<IAgent> result = super.getAgentsIn(scope, source, f, covered);
+	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
+		final boolean covered) {
+		Collection<IAgent> result = super.getAgentsIn(scope, source, f, covered);
 		Iterator<IAgent> it = result.iterator();
 		while (it.hasNext()) {
 			IAgent ag = it.next();

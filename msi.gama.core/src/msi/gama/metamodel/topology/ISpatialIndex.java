@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.util.Set;
+import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -35,7 +35,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public interface ISpatialIndex {
 
-	public final static Envelope ENVELOPE = new Envelope();
+	// public final static Envelope ENVELOPE = new Envelope();
 
 	public abstract void insert(IAgent agent);
 
@@ -43,10 +43,12 @@ public interface ISpatialIndex {
 
 	public abstract IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 
-	public abstract Set<IAgent> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
+	public abstract Collection<IAgent> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
 		final IAgentFilter f, boolean contained);
 
 	public abstract void drawOn(Graphics2D g2, int width, int height);
+
+	Collection<IAgent> allAtDistance(IScope scope, IShape source, double dist, IAgentFilter f);
 
 	public interface Compound extends ISpatialIndex {
 
@@ -54,7 +56,5 @@ public interface ISpatialIndex {
 
 		public abstract void dispose();
 	}
-
-	Set<IAgent> allAtDistance(IScope scope, IShape source, double dist, IAgentFilter f);
 
 }

@@ -18,7 +18,7 @@
  */
 package msi.gama.metamodel.topology.grid;
 
-import java.util.Set;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -204,7 +204,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Set<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		// We compute the neighbouring cells of the "source" shape
 		Set<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);

@@ -365,29 +365,22 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
+		if ( !isTorus() ) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter); }
 		IAgent result = null;
-		if ( !isTorus() ) {
-			final IAgent min_neighbour = getSpatialIndex().firstAtDistance(scope, source, 0, filter);
-			if ( min_neighbour != null ) {
-				result = min_neighbour;
+		final Geometry g0 = returnToroidalGeom(source.getGeometry());
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		double distMin = Double.MAX_VALUE;
+		for ( final Geometry g1 : agents.keySet() ) {
+			final IAgent ag = agents.get(g1);
+			if ( source.getAgent() != null && ag == source.getAgent() ) {
+				continue;
 			}
-		} else {
-			final Geometry g0 = returnToroidalGeom(source.getGeometry());
-			final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
-			double distMin = Double.MAX_VALUE;
-			for ( final Geometry g1 : agents.keySet() ) {
-				final IAgent ag = agents.get(g1);
-				if ( source.getAgent() != null && ag == source.getAgent() ) {
-					continue;
-				}
-				final double dist = g0.distance(g1);
-				if ( dist < distMin ) {
-					distMin = dist;
-					result = ag;
-				}
+			final double dist = g0.distance(g1);
+			if ( dist < distMin ) {
+				distMin = dist;
+				result = ag;
 			}
 		}
-
 		return result;
 	}
 
@@ -429,7 +422,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public Set<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		// if ( source.isPoint() ) { return getNeighboursOf(scope, source.getLocation(), distance, filter); }
 		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
@@ -508,13 +501,14 @@ public abstract class AbstractTopology implements ITopology {
 	private final PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
 
 	@Override
-	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
+	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
+		final boolean covered) {
 		// GuiUtils.debug("AbstractTopology.getAgentsIn");
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if ( source == null ) { return Collections.EMPTY_SET; }
 		if ( !isTorus() ) {
 			final Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
-			final Set<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
+			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
 			Iterator<IAgent> it = shapes.iterator();
 			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			while (it.hasNext()) {

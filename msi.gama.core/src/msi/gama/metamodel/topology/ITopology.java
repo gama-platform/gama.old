@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.util.Set;
+import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -75,14 +75,15 @@ public interface ITopology extends IValue {
 
 	// public abstract IAgent getAgentClosestTo(IScope scope, final ILocation source, IAgentFilter filter);
 
-	public abstract Set<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
+	public abstract Collection<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
 		IAgentFilter filter) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter
 	// filter)
 	// throws GamaRuntimeException;
 
-	public abstract Set<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, boolean covered);
+	public abstract Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f,
+		boolean covered);
 
 	public abstract boolean isTorus();
 
