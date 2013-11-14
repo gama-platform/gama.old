@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama 1.6" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.0" useFeatures="false" includeLaunchers="true">
+<product name="Gama 1.6.1" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
@@ -22,7 +22,7 @@ Visit http://code.google.com/p/gama-platform/
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean</programArgs>
       <vmArgs>-server
--Xms4048m -Xmx4048m
+-Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
 -XX:PermSize=128m
@@ -226,7 +226,7 @@ Visit http://code.google.com/p/gama-platform/
    </plugins>
 
    <configurations>
-      <property name="version" value="1.6" />
+      <property name="version" value="1.6.1" />
    </configurations>
 
 </product>

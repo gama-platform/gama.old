@@ -129,10 +129,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="msi.gama.application.GamaApplication"
-            name="Gama 1.6">
+            name="Gama 1.6.1">
          <property
                name="appName"
-               value="Gama 1.6">
+               value="Gama 1.6.1">
          </property>
          <property
                name="preferenceCustomization"
