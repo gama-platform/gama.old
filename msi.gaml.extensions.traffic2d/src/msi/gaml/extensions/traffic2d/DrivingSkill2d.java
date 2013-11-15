@@ -1,13 +1,21 @@
 package msi.gaml.extensions.traffic2d;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Collection;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -21,13 +29,18 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.path.*;
-import msi.gaml.operators.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
+import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.IPath;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 @vars({ @var(name = "considering_range", type = IType.INT, init = "30"),
@@ -203,7 +216,7 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Set<IAgent> neighbours =
+		final Collection<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
 		for ( IAgent ia : neighbours) {
@@ -409,7 +422,7 @@ public class DrivingSkill2d extends MovingSkill {
 		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		final Set<IAgent> neighbours =
+		final Collection<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
 		for (IAgent ia : neighbours) {
