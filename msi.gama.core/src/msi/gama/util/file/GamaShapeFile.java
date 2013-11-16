@@ -21,7 +21,7 @@ package msi.gama.util.file;
 import java.io.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Files;
@@ -98,9 +98,14 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 		while (features.hasNext()) {
 			final SimpleFeature feature = features.next();
 			Geometry g = (Geometry) feature.getDefaultGeometry();
-			if ( g != null ) {
-				// See Issue 677
+			if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
+				// Fix for Issue 677
 				((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
+			} else {
+				// See Issue 725
+				GAMA.reportError(
+					GamaRuntimeException.warning("GamaShapeFile.fillBuffer; geometry could not be added : " +
+						feature.getID()), false);
 			}
 		}
 		features.close();

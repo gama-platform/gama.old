@@ -100,7 +100,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	public boolean isLine() {
 		return getInnerGeometry() instanceof LineString || getInnerGeometry() instanceof MultiLineString;
 	}
-	
+
 	@Override
 	public String stringValue(final IScope scope) {
 		return getInnerGeometry().getGeometryType();
@@ -352,21 +352,21 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	protected void setGeometry(final Geometry geom, final boolean computeLoc) {
+		// See Issue 725
+		if (geom == null) {
+			geometry = null;
+			return;
+		}
+		if ( geom.isEmpty() ) { return; }
 		if ( geom instanceof GeometryCollection && geom.getNumGeometries() == 1 ) {
 			geometry = geom.getGeometryN(0);
 		} else {
 			geometry = geom;
 		}
-		if ( geom == null ) { return; }
-		// if ( !computeLoc ) {
-		// GuiUtils.debug("Agent " + getAgent() + " setGeometry location: " + location +
-		// " centroid:" + geometry.getCentroid().getCoordinate());
-		// }
 		isPoint = geom.getNumPoints() == 1;
 		if ( computeLoc ) {
 			computeLocation();
 		}
-		// optimizedOperations = null;
 	}
 
 	private void computeLocation() {
