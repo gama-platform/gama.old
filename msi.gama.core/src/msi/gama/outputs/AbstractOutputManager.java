@@ -58,6 +58,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	}
 
 	@Override
+	//hqnghi
+	//for instant, multi-simulation cannot have their owns outputs display at same time.
+	public void removeAllOutput() {
+		outputs.clear();
+	}
+
+	@Override
 	public void removeOutput(final IOutput o) {
 		if ( o == null ) { return; }
 		if ( o.isUserCreated() ) {

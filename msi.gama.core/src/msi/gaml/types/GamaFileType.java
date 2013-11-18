@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -30,7 +30,7 @@ import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 
 /**
- * Written by drogoul Modified on 1 aožt 2010
+ * Written by drogoul Modified on 1 aoï¿½t 2010
  * 
  * @todo Description
  * 
@@ -41,6 +41,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
 		".text", ".tsv", "xml");
 	private static final String shpSuffix = ".shp";
+	private static final String gamlSuffix = ".gaml";
 	private static final String osmSuffix = ".osm";
 	private static final List<String> gridSuffixes = Arrays.asList(".asc");
 
@@ -113,6 +114,17 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		return f.toLowerCase().endsWith(shpSuffix);
 	}
 	
+	@operator(value = "is_GAML")
+	@doc(value = "the operator tests whether the operand represents the name of a supported gamlfile", comment = "cf. file type definition for supported (espacially model) file extensions.", examples = {
+			"is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
+			"is_shape(\"../includes/test.png\")            --:  false;",
+			"is_shape(\"../includes/test.properties\")     --:  false;",
+			"is_shape(\"../includes/test.gaml\")            --:  true;" }, see = {
+			"image", "is_text", "is_properties", "is_image" })
+	public static Boolean isGAML(final String f) {
+		return f.toLowerCase().endsWith(gamlSuffix);
+	}
+
 	@operator(value = "is_osm")
 	@doc(value = "the operator tests whether the operand represents the name of a supported osm file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
 		"is_osm(\"../includes/Stupid_Cell.Data\")    --:  false;",

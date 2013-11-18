@@ -46,6 +46,7 @@ public class Files {
 	public static final String PROPERTIES = "properties";
 	public static final String FOLDER = "folder";
 	public static final String SHAPE = "shapefile";
+	public static final String GAML = "gamlfile";
 	public static final String OSM = "osmfile";
 	public static final String GRID = "gridfile";
 	public static final String READ = "read";
@@ -64,6 +65,7 @@ public class Files {
 		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
+		if (GamaFileType.isGAML(s)) { return gamlFile(scope, s); }
 		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
 		if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
@@ -126,6 +128,16 @@ public class Files {
 		"properties", "image", "text" })
 	public static IGamaFile shapeFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s);
+	}
+
+	@operator(value = GAML, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+			"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
+			"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = {
+			"file", "properties", "image", "text" })
+	public static IGamaFile gamlFile(final IScope scope, final String s)
+			throws GamaRuntimeException {
+		return new GAMLFile(scope, s);
 	}
 
 	@operator(value = GRID, can_be_const = true, index_type = IType.INT)

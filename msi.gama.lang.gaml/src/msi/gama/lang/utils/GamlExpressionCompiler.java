@@ -839,7 +839,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	//
 	@Override
 	public IModel createModelFromFile(final String fileName) {
-		System.out.println(fileName + " model is loading...");
+		// System.out.println(fileName + " model is loading...");
 
 		GamlResource resource =
 			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
