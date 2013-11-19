@@ -28,9 +28,9 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 	}
 
     private EReflex createEReflex(ICreateConnectionContext context) {
-		String newReflexName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		String newReflexName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_reflex");
 	    if (newReflexName == null || newReflexName.trim().length() == 0) {
-	    	newReflexName = "my_reflex";
+	    	return null;
 	    }  
 	    EReflex newReflex = gama.GamaFactory.eINSTANCE.createEReflex();
 		this.getDiagram().eResource().getContents().add(newReflex);
@@ -55,8 +55,8 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ESpecies source = getESpecies(context.getSourceAnchor());
 		
 		EReflex target = createEReflex(context);
-		PictogramElement targetpe = addEReflex(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEReflex(context, target);
 			// create new business object
 			EReflexLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

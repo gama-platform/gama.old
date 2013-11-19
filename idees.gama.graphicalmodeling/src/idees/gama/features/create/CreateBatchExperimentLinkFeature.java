@@ -33,9 +33,9 @@ public class CreateBatchExperimentLinkFeature  extends AbstractCreateConnectionF
 	}
 
 	private EBatchExperiment createEBatchExperiment(ICreateConnectionContext context) {
-		String newBatchName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		String newBatchName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_batch_xp");
 	    if (newBatchName == null || newBatchName.length() == 0) {
-	    	newBatchName = "my_batch_xp";
+	    	return null;
 	    }  
 	    EBatchExperiment newBatchExp= gama.GamaFactory.eINSTANCE.createEBatchExperiment();
 	    newBatchExp.setName(newBatchName);
@@ -59,8 +59,8 @@ public class CreateBatchExperimentLinkFeature  extends AbstractCreateConnectionF
 		Connection newConnection = null;
 		EWorldAgent source = getEWorldAgent(context.getSourceAnchor());
 		EBatchExperiment target = createEBatchExperiment(context);
-		PictogramElement targetpe = addEBatchExperiment(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEBatchExperiment(context, target);
 			// create new business object
 			EExperimentLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

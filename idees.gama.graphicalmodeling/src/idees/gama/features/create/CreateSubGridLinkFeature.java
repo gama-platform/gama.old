@@ -28,9 +28,9 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 	}
 
 	private ESpecies createEGrid(ICreateConnectionContext context) {
-		String newSpeciesName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		String newSpeciesName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_cell");
 	    if (newSpeciesName == null || newSpeciesName.trim().length() == 0) {
-	    	newSpeciesName = "my_cell";
+	    	return null;
 	    }  
 	    ESpecies newSpecies = gama.GamaFactory.eINSTANCE.createESpecies();
 		this.getDiagram().eResource().getContents().add(newSpecies);
@@ -58,8 +58,8 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 		Connection newConnection = null;
 		ESpecies source = getESpecies(context.getSourceAnchor());
 		ESpecies target = createEGrid(context);
-		PictogramElement targetpe = addEGrid(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEGrid(context, target);
 			// create new business object
 			ESubSpeciesLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

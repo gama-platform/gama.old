@@ -28,9 +28,9 @@ public class CreateAspectLinkFeature extends AbstractCreateSpeciesComponentLinkF
 	}
 	
 	private EAspect createEAspect(ICreateConnectionContext context) {
-		String newAspectName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		String newAspectName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_aspect");
 	    if (newAspectName == null || newAspectName.trim().length() == 0) {
-	    	newAspectName = "my_aspect";
+	    	return null;
 	    }  
 	    EAspect newAspect = gama.GamaFactory.eINSTANCE.createEAspect();
 		this.getDiagram().eResource().getContents().add(newAspect);
@@ -55,8 +55,8 @@ public class CreateAspectLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ESpecies source = getESpecies(context.getSourceAnchor());
 		
 		EAspect target = createEAspect(context);
-		PictogramElement targetpe = addEAspect(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEAspect(context, target);
 			// create new business object
 			EAspectLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

@@ -34,9 +34,9 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 	private EGUIExperiment createEGUIExperiment(ICreateConnectionContext context, boolean askName) {
 		String newGUIName = "my_GUI_xp";
 		if (askName) {
-			newGUIName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+			newGUIName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_GUI_xp");
 		    if (newGUIName == null || newGUIName.length() == 0) {
-		    	newGUIName = "my_GUI_xp";
+		    	return null;
 		    }  
 		}  
 	    EGUIExperiment newGUIExp= gama.GamaFactory.eINSTANCE.createEGUIExperiment();
@@ -65,8 +65,8 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 		Connection newConnection = null;
 		EWorldAgent source = getEWorldAgent(context.getSourceAnchor());
 		EGUIExperiment target = createEGUIExperiment(context, askName);
-		PictogramElement targetpe = addEGUIExperiment(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEGUIExperiment(context, target);
 			// create new business object
 			EExperimentLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

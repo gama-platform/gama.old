@@ -29,9 +29,9 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 
 	
 	private EAction createEAction(ICreateConnectionContext context) {
-		String newActionName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		String newActionName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_action");
 	    if (newActionName == null || newActionName.trim().length() == 0) {
-	    	newActionName = "my_action";
+	    	return null;
 	    }  
 		EAction newAction = gama.GamaFactory.eINSTANCE.createEAction();
 		this.getDiagram().eResource().getContents().add(newAction);
@@ -56,8 +56,8 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ESpecies source = getESpecies(context.getSourceAnchor());
 		
 		EAction target = createEAction(context);
-		PictogramElement targetpe = addEAction(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEAction(context, target);
 			// create new business object
 			EActionLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

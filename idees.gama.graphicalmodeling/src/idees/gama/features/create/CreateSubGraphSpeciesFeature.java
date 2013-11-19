@@ -31,9 +31,9 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 	}
 
 	private ESpecies createNode(ICreateConnectionContext context) {
-		String newNodeName = ExampleUtil.askString(TITLE, USER_QUESTION_NODE, "");
+		String newNodeName = ExampleUtil.askString(TITLE, USER_QUESTION_NODE, "my_node");
 	    if (newNodeName == null || newNodeName.trim().length() == 0) {
-	    	newNodeName = "my_node";
+	    	return null;
 	    }  
 	    ESpecies newNode = gama.GamaFactory.eINSTANCE.createESpecies();
 		this.getDiagram().eResource().getContents().add(newNode);
@@ -51,9 +51,9 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 	
 	private ESpecies createEdge(ICreateConnectionContext context) {
 	
-		String newEdgeName = ExampleUtil.askString(TITLE, USER_QUESTION_EDGE, "");
+		String newEdgeName = ExampleUtil.askString(TITLE, USER_QUESTION_EDGE, "my_edge");
 	    if (newEdgeName == null || newEdgeName.trim().length() == 0) {
-	    	newEdgeName = "my_edge";
+	    	return null;
 	    }  
 	    ESpecies newEdge = gama.GamaFactory.eINSTANCE.createESpecies();
 		this.getDiagram().eResource().getContents().add(newEdge);
@@ -87,10 +87,10 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 		ESpecies targetNode = createNode(context);
 		ESpecies targetEdge = createEdge(context);
 		
-		PictogramElement targetNpe = addESpecies(context, targetNode);
-		PictogramElement targetEpe = addESpecies(context, targetEdge);
-		
-		if (source != null && targetNode != null) {
+		if (source != null && targetNode != null  && targetEdge != null) {
+			PictogramElement targetNpe = addESpecies(context, targetNode);
+			PictogramElement targetEpe = addESpecies(context, targetEdge);
+			
 			// create new business object
 			ESubSpeciesLink eReference = createEReference(source, targetNode);
 			//eReference.setModel(source.getModel());
@@ -105,40 +105,39 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 			eReference.setMicro(targetNode);
 			source.getMicroSpeciesLinks().add(eReference);
 			targetNode.getMacroSpeciesLinks().add(eReference);
+	
+			if (source != null && targetEdge != null) {
+				// create new business object
+				ESubSpeciesLink eReference2 = createEReference(source, targetEdge);
+				//eReference.setModel(source.getModel());
+				getDiagram().eResource().getContents().add(eReference2);
+				// add connection for business object
+				AddConnectionContext addContext2 = new AddConnectionContext(
+						context.getSourceAnchor(), getAnchor(targetEpe));
+				addContext.setNewObject(eReference2);
+				getFeatureProvider().addIfPossible(
+						addContext2);
+				eReference2.setMacro(source);
+				eReference2.setMicro(targetEdge);
+				source.getMicroSpeciesLinks().add(eReference2);
+				targetEdge.getMacroSpeciesLinks().add(eReference2);
+			}
+			if (targetNode != null && targetEdge != null) {
+				// create new business object
+				EGraphLink eReference3 = gama.GamaFactory.eINSTANCE.createEGraphLink();
+				//eReference.setModel(source.getModel());
+				getDiagram().eResource().getContents().add(eReference3);
+				// add connection for business object
+				AddConnectionContext addContext3 = new AddConnectionContext(
+						 getAnchor(targetNpe), getAnchor(targetEpe));
+				addContext.setNewObject(eReference3);
+				getFeatureProvider().addIfPossible(
+						addContext3);
+				eReference3.setNode(targetNode);
+				eReference3.setEdge(targetEdge);
+				
+			}
 		}
-
-		if (source != null && targetEdge != null) {
-			// create new business object
-			ESubSpeciesLink eReference = createEReference(source, targetEdge);
-			//eReference.setModel(source.getModel());
-			getDiagram().eResource().getContents().add(eReference);
-			// add connection for business object
-			AddConnectionContext addContext = new AddConnectionContext(
-					context.getSourceAnchor(), getAnchor(targetEpe));
-			addContext.setNewObject(eReference);
-			getFeatureProvider().addIfPossible(
-					addContext);
-			eReference.setMacro(source);
-			eReference.setMicro(targetEdge);
-			source.getMicroSpeciesLinks().add(eReference);
-			targetEdge.getMacroSpeciesLinks().add(eReference);
-		}
-		if (targetNode != null && targetEdge != null) {
-			// create new business object
-			EGraphLink eReference = gama.GamaFactory.eINSTANCE.createEGraphLink();
-			//eReference.setModel(source.getModel());
-			getDiagram().eResource().getContents().add(eReference);
-			// add connection for business object
-			AddConnectionContext addContext = new AddConnectionContext(
-					 getAnchor(targetNpe), getAnchor(targetEpe));
-			addContext.setNewObject(eReference);
-			getFeatureProvider().addIfPossible(
-					addContext);
-			eReference.setNode(targetNode);
-			eReference.setEdge(targetEdge);
-			
-		}
-		
 		return newConnectionNode;
 	}
 

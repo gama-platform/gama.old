@@ -48,9 +48,9 @@ public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
 	private EDisplay createEDisplay(ICreateConnectionContext context, boolean askName) {
 		String newDisplayName = "my_display";
 		if (askName) {
-			newDisplayName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+			newDisplayName = ExampleUtil.askString(TITLE, USER_QUESTION, "my_display");
 		    if (newDisplayName == null || newDisplayName.trim().length() == 0) {
-		    	newDisplayName = "my_display";
+		    	return null;
 		    } 
 		}
 	    EDisplay newDisplay = gama.GamaFactory.eINSTANCE.createEDisplay();
@@ -80,8 +80,8 @@ public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
 		EGUIExperiment source = getEExperiment(context.getSourceAnchor());
 		
 		EDisplay target = createEDisplay(context, askName);
-		PictogramElement targetpe = addEDisplay(context, target);
 		if (source != null && target != null) {
+			PictogramElement targetpe = addEDisplay(context, target);
 			// create new business object
 			EDisplayLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());

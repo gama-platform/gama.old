@@ -136,6 +136,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
        
     static String defineSpecies(ESpecies species, int level) {
+    	if (species == null) return "";
     	String model = EL;
     	String sp = "";
     	for (int i =0; i < level;i++) {
@@ -193,6 +194,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineVariable(EVariable var, int level) {
+    	if (var == null) return "";
     	String varStr = "";
 		for (int i =0; i < level;i++) {
 			varStr += "\t";
@@ -234,6 +236,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineInit(ESpecies species, int level) {
+    	if (species == null) return "";
     	String result = "";
     	String code = species.getInit();
     	if (code != null && ! code.isEmpty()) {
@@ -291,6 +294,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
       
     static String defineExperiment(EExperiment exp) {
     	String model = "";
+    	if (exp == null) return model;
     	if (exp instanceof EBatchExperiment) {
     		model += EL + EL + "experiment " + exp.getName() + " type:batch {}";
     	} else {
@@ -310,6 +314,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineParameter(EParameter par) {
+    	if (par == null) return "";
     	String parStr = "\tparameter";
     	parStr += "\""+par.getName() +"\"";
     	parStr += " var:"+par.getVariable();
