@@ -49,6 +49,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/locationFunction"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/locationUpdate"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/init"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ESpecies/inheritingLinks"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EAction/gamlCode"/>

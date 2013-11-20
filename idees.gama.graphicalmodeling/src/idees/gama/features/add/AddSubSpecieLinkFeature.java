@@ -37,8 +37,8 @@ public class AddSubSpecieLinkFeature extends AbstractAddFeature {
  
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(connection);
-        polyline.setLineWidth(2);
-        polyline.setForeground(manageColor(IColorConstant.BLACK));
+        polyline.setLineWidth(4);
+        polyline.setForeground(manageColor(IColorConstant.ORANGE));
  
         // create link and wire it
         link(connection, addedEReference);
@@ -78,8 +78,8 @@ public class AddSubSpecieLinkFeature extends AbstractAddFeature {
         Polyline polyline =
             gaService.createPolyline(gaContainer, new int[] { -15, 10, 0, 0, -15,
                 -10 });
-        polyline.setForeground(manageColor(IColorConstant.BLACK));
-        polyline.setLineWidth(2);
+        polyline.setForeground(manageColor(IColorConstant.ORANGE));
+        polyline.setLineWidth(4);
         return polyline;
     }
 }

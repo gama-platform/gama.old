@@ -57,7 +57,6 @@ import idees.gama.features.others.ChangeColorEGamaObjectFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
 import idees.gama.features.others.UpdateEGamaObjectFeature;
 
-import java.util.Collection;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -68,9 +67,6 @@ import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.skills.ISkill;
-import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.AspectStatement;

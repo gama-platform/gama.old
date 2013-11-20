@@ -10,6 +10,7 @@ import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
 import gama.EGridTopology;
+import gama.EInheritLink;
 import gama.ELayer;
 import gama.ELayerAspect;
 import gama.EParameter;
@@ -188,7 +189,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		 model += defineSpecies(link.getMicro(),level+1); 
      	 }
     	 
+    	 
     	 model += sp+ "}" +EL;
+    	 
+    	 for (EInheritLink link : species.getInheritingLinks()) {
+    		 model += defineSpecies(link.getChild(),level); 
+     	 }
     	 
     	 return model;
     }
