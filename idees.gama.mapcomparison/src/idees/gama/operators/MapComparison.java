@@ -26,7 +26,7 @@ import msi.gaml.types.IType;
 public class MapComparison {
 
 	@operator(value = { "fuzzy_kappa"}, content_type = IType.FLOAT)
-	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, similarity_per_agents,fuzzy_categories_matrix, fuzzy_distance)", examples = { "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5], [1,3,2,8,2],[10,2,3,8,2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)" })
+	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_categories_matrix, fuzzy_distance)", examples = { "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5], [1,3,2,8,2],[10,2,3,8,2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)" })
 	public static double fuzzyKappa(final IScope scope,
 		final IContainer<Integer, IAgent> agents, final IList<Double> vals1, final IList<Double> vals2, final IList<Double> similarities,final List<Object> categories, final GamaMatrix<Double> fuzzycategories, final Double distance) {
 		if (agents == null)
@@ -213,6 +213,28 @@ public class MapComparison {
 	
 	}
 	
+	
+	@operator(value = { "percent_absolute_deviation"}, content_type = IType.FLOAT)
+	@doc(value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)", examples = { "percent_absolute_deviation([200,300,150,150,200],[250,250,100,200,200])" })
+	public static double percentAbsoluteDeviation(final IScope scope,final IList<Double> vals1, final IList<Double> vals2) {
+		if (vals1 == null ||vals2 == null)
+			return 1;
+		int nb = vals1.size();
+		if (nb  != vals2.size())
+			return 0;
+		double sum = 0;
+		double coeff = 0;
+		for (int i = 0; i < nb ; i++) {
+			double val1 = Cast.asFloat(scope, vals1.get(i));
+			double val2 = Cast.asFloat(scope, vals2.get(i));
+			coeff += val1;
+			sum += Math.abs(val1 - val2) * 100.0;
+		}
+		if (coeff == 0) return 0;
+		return sum / coeff;
+	
+	}
+
 	
 
 }
