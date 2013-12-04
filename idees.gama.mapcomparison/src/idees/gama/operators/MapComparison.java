@@ -2,11 +2,14 @@ package idees.gama.operators;
 
 
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.In;
-import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
@@ -15,6 +18,9 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Stats;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 public class MapComparison {
@@ -29,45 +35,71 @@ public class MapComparison {
 		if (nb  < 1)
 			return 1;
 		int nbCat = categories.size();
-		GamaMap<Object, Integer> categoriesId = new GamaMap<Object, Integer>();
-		for (int i = 0; i < nbCat; i++) {
-			categoriesId.put(categories.get(i), i);
-		}
-		In filter = In.list(scope, agents);
+		
 		boolean[] sim = new boolean[nb]; 
 		double[][] crispVector1 = new double[nb][nbCat];
 		double[][] crispVector2 = new double[nb][nbCat];
 		double[][] fuzzyVector1 = new double[nb][nbCat];
 		double[][] fuzzyVector2 = new double[nb][nbCat];
-		int[] X = new int[nbCat];
-		int[] Y = new int[nbCat];
-		for (int j = 0; j < nbCat; j++) {
-			X[j] = 0;
-			Y[j] = 0;
-		}
-		for (int i = 0; i < nb; i++) {
-			Object val1 = vals1.get(i);
-			Object val2 = vals2.get(i);
+		double[] X = new double[nbCat];
+		double[] Y = new double[nbCat];
+		
+		computeXYCrispVector(scope, categories, vals1, vals2, fuzzycategories, nbCat, nb, crispVector1 ,crispVector2, X, Y, sim);
+		double meanSimilarity = computeSimilarity(scope, distance, vals1, vals2, agents, nbCat, nb, crispVector1 ,crispVector2,sim,fuzzyVector1, fuzzyVector2,similarities);
 			
-			int indexVal1 = categoriesId.get(val1);
-			int indexVal2 = categoriesId.get(val2);
-			X[indexVal1] += 1;
-			Y[indexVal2] += 1;
-			for (int j = 0; j < nbCat; j++) {
-				crispVector1[i][j] = fuzzycategories.get(scope,indexVal1, j);
-				crispVector2[i][j] = fuzzycategories.get(scope,indexVal2, j);
-			}
-			if (val1.equals(val2)) {
-				sim[i] = true;
-			} else {
-				sim[i] = false;
-			}
+		GamaList<Double> rings = new GamaList<Double>();
+		Map<Double,Integer> ringsPn = new GamaMap<Double, Integer>();
+		int nbRings = buildRings(scope,rings, ringsPn, agents);
+		double similarityExpected = computeExpectedSim(nbCat, X, Y, nbRings, rings,ringsPn);
+		return (meanSimilarity - similarityExpected) / (1 - similarityExpected);
+	}
+	
+	private static double p(double dist, int a, int b,double[] X,double[] Y,Map<Double,Integer> ringsPn) {
+		int n = 0;
+		if (dist > 0.0) {
+			n = ringsPn.get(dist);
 		}
+		return (1 - (1 - Math.pow(X[a],n))) * (1 - (1 - Math.pow(Y[b],n)));
+	}
+	
+	private static double computeExpectedSim(int nbCat, double[] X, double[] Y,int nbRings, GamaList<Double> rings,Map<Double,Integer> ringsPn) {
+		double similarityExpected = 0;
 		for (int j = 0; j < nbCat; j++) {
-			X[j] /= nb;
-			Y[j] /= nb;
+			similarityExpected += X[j] * Y[j];
 		}
-			
+		
+		double dist = 0;
+		for (int p = 0; p < nbRings; p++) {
+			double dist1 = dist;
+			dist = rings.get(p);
+			double Mdi = Math.pow(2, (dist / (-2)));
+			double Ei = 0;
+			for(int a = 0; a < nbCat; a++) {
+				double Ya = Y[a];
+				for(int b = 0; b < nbCat; b++) {
+					double Xb = X[b];
+					int kro_delta = a == b ? 1 : 0;
+					Ei = Ei + ((1 - kro_delta) * Ya * Xb * (p(dist, a,b,X,Y,ringsPn) - p(dist1, a,b,X,Y,ringsPn)));
+				}
+			} 
+			similarityExpected = similarityExpected + (Mdi * Ei);
+		}
+		return similarityExpected;
+	}
+	
+	private static double computeSimilarity(final IScope scope, final Double distance, final IList<Double> vals1, final IList<Double> vals2, final IContainer<Integer, IAgent> agents, int nbCat, int nb, double[][] crispVector1 ,double[][] crispVector2, boolean[] sim,double[][] fuzzyVector1, double[][] fuzzyVector2,final IList<Double> similarities){
+		In filter = null;
+		if (agents instanceof ISpecies) {
+			final IPopulation pop = agents.first(scope).getPopulationFor((ISpecies) agents);
+			filter = In.population(pop);
+		}
+		else 
+			filter = In.list(scope, agents);
+		GamaMap<IAgent, Integer> agsId = new GamaMap<IAgent, Integer>();
+		for (int i = 0; i < agents.length(scope); i++) {
+			agsId.put(agents.get(scope, i), i);
+		}
+		
 		for (int i = 0; i < nb; i++) {
 			if (sim[i]) {
 				similarities.add(1.0);
@@ -75,6 +107,8 @@ public class MapComparison {
 				IAgent agent = agents.get(scope, i);
 				double sizeNorm = agent.getPerimeter() / 4.0;
 				GamaList<IAgent> neighbours = new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, agent, distance, filter));
+				
+				
 				GamaMap<IAgent, Double> distancesCoeff = new GamaMap<IAgent, Double>();
 				distancesCoeff.put(agent, 1.0);
 				for (IAgent ag : neighbours) {
@@ -85,14 +119,15 @@ public class MapComparison {
 					double max1 = 0.0;
 					double max2 = 0.0;
 					for (IAgent ag : neighbours)  {
-						double val1 = crispVector1[i][j] * distancesCoeff.get(ag);
-						double val2 = crispVector2[i][j] * distancesCoeff.get(ag);
+						int id = agsId.get(ag);
+						double val1 = crispVector1[id][j] * distancesCoeff.get(ag);
+						double val2 = crispVector2[id][j] * distancesCoeff.get(ag);
 						
 						if (val1 > max1) max1 = val1; 
 						if (val2 > max2) max2 = val2; 
 					}
 					fuzzyVector1[i][j] = max1;
-					fuzzyVector1[i][j] = max2;
+					fuzzyVector2[i][j] = max2;
 				}
 				double s1Max = -1 * Double.MAX_VALUE;
 				double s2Max = -1 * Double.MAX_VALUE;
@@ -107,19 +142,75 @@ public class MapComparison {
 			}
 		}
 		float meanSimilarity = 0;
-		
-		
 		for (Double val : similarities) {
 			meanSimilarity += val;
 		}
 		meanSimilarity /= similarities.size();
-		int nbRings = 0;
-		GamaMap<double, V>
-		float similarityExpected = 0;
-		for (int j = 0; j < nbCat; j++) {
-			similarityExpected += X[j] * Y[j];
+		return meanSimilarity;
+	}
+		
+	
+	private static void computeXYCrispVector(final IScope scope, final List<Object> categories,final IList<Double> vals1, final IList<Double> vals2, final GamaMatrix<Double> fuzzycategories, int nbCat, int nb, double[][] crispVector1 ,double[][] crispVector2, double[] X, double[] Y, boolean[] sim){
+		GamaMap<Object, Integer> categoriesId = new GamaMap<Object, Integer>();
+		for (int i = 0; i < nbCat; i++) {
+			categoriesId.put(categories.get(i), i);
 		}
-		return (meanSimilarity - similarityExpected) / (1 - similarityExpected);
+		for (int j = 0; j < nbCat; j++) {
+			X[j] = 0;
+			Y[j] = 0;
+		}
+		for (int i = 0; i < nb; i++) {
+			Object val1 = vals1.get(i);
+			Object val2 = vals2.get(i);
+			int indexVal1 = categoriesId.get(val1);
+			int indexVal2 = categoriesId.get(val2);
+			X[indexVal1] += 1;
+			Y[indexVal2] += 1;
+			for (int j = 0; j < nbCat; j++) {
+				crispVector1[i][j] = Cast.asFloat(scope, fuzzycategories.get(scope,indexVal1, j));
+				crispVector2[i][j] = Cast.asFloat(scope,fuzzycategories.get(scope,indexVal2, j));
+			}
+			if (val1.equals(val2)) {
+				sim[i] = true;
+			} else {
+				sim[i] = false;
+			}
+		}
+		for (int j = 0; j < nbCat; j++) {
+			X[j] /= nb;
+			Y[j] /= nb;
+		}
+			
+	}
+	
+	private static int buildRings(IScope scope, GamaList<Double> rings, Map<Double,Integer> ringsPn, IContainer<Integer, IAgent> agents) {
+		
+		GamaList<ILocation> locs = new GamaList<ILocation>();
+		for (IAgent ag : agents) {
+			locs.add(ag.getLocation());
+		}
+		ILocation centralLoc = (ILocation) Stats.getMean(scope,locs);
+		
+		for (IAgent ag : agents) {
+			double dist = centralLoc.euclidianDistanceTo(ag.getLocation());
+			if (dist == 0) continue;
+			if (! rings.contains(dist)) {
+				rings.add(dist);
+				ringsPn.put(dist, 1);
+			} else {
+				ringsPn.put(dist, 1 + ringsPn.get(dist));
+			}
+		}
+		Collections.sort(rings);
+		
+		for (int i = 1; i < rings.size(); i++) {
+			double dist = rings.get(i);
+			double dist1 = rings.get(i - 1);
+			ringsPn.put(dist,ringsPn.get(dist) + ringsPn.get(dist1));
+		}
+		
+		return rings.size();
+	
 	}
 	
 	
