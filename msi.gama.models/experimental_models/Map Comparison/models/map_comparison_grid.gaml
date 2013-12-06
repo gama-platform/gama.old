@@ -10,6 +10,7 @@ global {
 	list<string> categories <- ["type 1", "type 2", "type 3", "type 4"];
 	map<string,rgb> color_cat <- ["type 1"::rgb("blue"), "type 2"::rgb("green"), "type 3"::rgb("yellow"), "type 4"::rgb("red")];
 	matrix<float> fuzzy_categories;
+	matrix<float> fuzzy_transitions;
 	list<float> nb_per_cat_obs;
 	list<float> nb_per_cat_sim;
 	
@@ -27,11 +28,16 @@ global {
 		loop i from: 0 to: length(categories) - 1 {
 			fuzzy_categories[i,i] <- 1.0;
 		}
+		fuzzy_transitions <- 0.0 as_matrix {length(categories)*length(categories),length(categories)*length(categories)};
+		loop i from: 0 to: (length(categories) * length(categories)) - 1 {
+			fuzzy_transitions[i,i] <- 1.0;	
+		}
 		list<float> similarity_per_agents <- [];
 		write "kappa(map observed, map simulation): " + kappa( cell collect (each.cat_observed),cell collect (each.cat),categories);
 		write "kappa simulation(map init, map observed, map simulation): " + kappa_sim( cell collect (each.cat_init), cell collect (each.cat_observed),cell collect (each.cat),categories);
 		using topology(cell) {
 			write "fuzzy kappa(map observed, map simulation): " + fuzzy_kappa(cell, cell collect (each.cat_observed),cell collect (each.cat), similarity_per_agents,categories,fuzzy_categories, 3);
+			write "fuzzy kappa sim(map init, map observed, map simulation): " + fuzzy_kappa_sim(cell, cell collect (each.cat_init), cell collect (each.cat_observed),cell collect (each.cat), similarity_per_agents,categories,fuzzy_transitions, 3);
 		}
 		loop i from: 0 to: length(cell) - 1 {
 			int val <- int(255 * similarity_per_agents[i]);
@@ -85,3 +91,4 @@ experiment mapcomparison type: gui {
 		}
 	}
 }
+
