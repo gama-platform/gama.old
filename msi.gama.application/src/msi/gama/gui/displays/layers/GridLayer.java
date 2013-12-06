@@ -82,7 +82,10 @@ public class GridLayer extends ImageLayer {
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IGrid m = g.getEnvironment();
 		final ILocation p = m.getDimensions();
-		cellSize = (double) m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+		// in case the agents have been killed
+		if ( m.getAgents().size() > 0 ) {
+			cellSize = m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+		}
 
 		if ( image == null ) {
 			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
@@ -142,10 +145,10 @@ public class GridLayer extends ImageLayer {
 					e.printStackTrace();
 				}
 				dg.drawGrid(scope, texture, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, true, cellSize,this.getName());
+					lineColor, null, 0.0, true, cellSize, this.getName());
 			} else {
 				dg.drawGrid(scope, image, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, true, cellSize,this.getName());
+					lineColor, null, 0.0, true, cellSize, this.getName());
 			}
 
 		} else {

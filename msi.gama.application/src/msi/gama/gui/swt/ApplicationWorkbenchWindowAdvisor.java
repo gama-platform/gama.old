@@ -68,29 +68,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setMaximized(true);
 	}
 
-	// @Override
-	// public boolean preWindowShellClose() {
-	// final IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID);
-	// final boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT, false);
-	//
-	// if ( !promptOnExit ) {
-	// final MessageDialogWithToggle dlg =
-	// MessageDialogWithToggle.openOkCancelConfirm(Display.getDefault().getActiveShell(), "Confirm Exit",
-	// "Exit " + Platform.getProduct().getName() + " ?", "Always exit without prompt", false, null, null);
-	//
-	// if ( dlg.getReturnCode() != IDialogConstants.OK_ID ) { return false; }
-	//
-	// InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT, dlg.getToggleState());
-	// try {
-	// InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).flush();
-	// } catch (final BackingStoreException e) {
-	// System.out.println("Preferences can not be saved");
-	// e.printStackTrace();
-	// }
-	// }
-	// return super.preWindowShellClose();
-	// }
-
 	private static List<String> CATEGORIES_TO_REMOVE = new GamaList(new String[] { "org.eclipse.jdt.debug.ui.java",
 		"org.eclipse.jdt.junit", "org.eclipse.pde.PDE", /* "org.eclipse.ui.Basic", */
 		"org.eclipse.emf.codegen.ecore.ui.wizardCategory", "org.eclipse.jdt.ui.java" });
@@ -160,6 +137,10 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		openGamaWebPage(false);
 
 	}
+
+	/**
+	 * 
+	 */
 
 	public static void openGamaWebPage(final boolean force) {
 		if ( isInternetReachable(force) ) {

@@ -20,7 +20,7 @@ package msi.gama.gui.navigator;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
+import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -40,7 +40,7 @@ public class ModelsLibraryFolder extends VirtualFolder {
 				if ( project.isAccessible() && project.isOpen() ) {
 					IProjectDescription desc = project.getDescription();
 					for ( String s : desc.getNatureIds() ) {
-						if ( s.equals(ApplicationWorkbenchAdvisor.builtInNature) ) {
+						if ( s.equals(WorkspaceModelsManager.builtInNature) ) {
 							resultList.add(project);
 							break;
 						}

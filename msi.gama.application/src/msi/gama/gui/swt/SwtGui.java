@@ -38,7 +38,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
@@ -48,6 +50,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -883,7 +886,25 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void openEditorAndSelect(final Object eObject) {}
+	public void editModel(final Object eObject) {
+		if ( eObject instanceof String ) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IFile file = workspace.getRoot().getFile(new Path((String) eObject));
+			editModel(file);
+		} else if ( eObject instanceof IFile ) {
+			IFile file = (IFile) eObject;
+			if ( !file.exists() ) {
+				GuiUtils.debug("File " + file.getFullPath().toString() + " does not exist in the workspace");
+				return;
+			}
+			try {
+				IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+				getPage().openEditor(new FileEditorInput(file), desc.getId());
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	public void updateParameterView(final IExperimentSpecies exp) {
@@ -1104,5 +1125,10 @@ public class SwtGui implements IGui {
 	public void waitForViewsToBeInitialized() {
 		OutputSynchronizer.waitForViewsToBeInitialized();
 	}
+
+	@Override
+	public void runModel(final Object object, final String exp) throws CoreException {
+		error("Impossible to run the model. The XText environment has not been launched");
+	};
 
 }

@@ -312,7 +312,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 				@Override
 				public void run() {
-					GuiUtils.openEditorAndSelect(o);
+					GuiUtils.editModel(o);
 				}
 			});
 		}

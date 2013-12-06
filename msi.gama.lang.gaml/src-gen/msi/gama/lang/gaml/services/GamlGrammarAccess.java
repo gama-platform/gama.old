@@ -1369,14 +1369,14 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFacetsFacetParserRuleCall_2_0 = (RuleCall)cFacetsAssignment_2.eContents().get(0);
 		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
 		private final Assignment cBlockAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cBlockBlockParserRuleCall_3_0_0 = (RuleCall)cBlockAssignment_3_0.eContents().get(0);
+		private final RuleCall cBlockDisplayBlockParserRuleCall_3_0_0 = (RuleCall)cBlockAssignment_3_0.eContents().get(0);
 		private final Keyword cSemicolonKeyword_3_1 = (Keyword)cAlternatives_3.eContents().get(1);
 		
 		//speciesOrGridDisplayStatement:
-		//	key=_SpeciesKey expr=TypeRef facets+=Facet* (block=Block | ";");
+		//	key=_SpeciesKey expr=TypeRef facets+=Facet* (block=displayBlock | ";");
 		public ParserRule getRule() { return rule; }
 
-		//key=_SpeciesKey expr=TypeRef facets+=Facet* (block=Block | ";")
+		//key=_SpeciesKey expr=TypeRef facets+=Facet* (block=displayBlock | ";")
 		public Group getGroup() { return cGroup; }
 
 		//key=_SpeciesKey
@@ -1397,14 +1397,14 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//Facet
 		public RuleCall getFacetsFacetParserRuleCall_2_0() { return cFacetsFacetParserRuleCall_2_0; }
 
-		//block=Block | ";"
+		//block=displayBlock | ";"
 		public Alternatives getAlternatives_3() { return cAlternatives_3; }
 
-		//block=Block
+		//block=displayBlock
 		public Assignment getBlockAssignment_3_0() { return cBlockAssignment_3_0; }
 
-		//Block
-		public RuleCall getBlockBlockParserRuleCall_3_0_0() { return cBlockBlockParserRuleCall_3_0_0; }
+		//displayBlock
+		public RuleCall getBlockDisplayBlockParserRuleCall_3_0_0() { return cBlockDisplayBlockParserRuleCall_3_0_0; }
 
 		//";"
 		public Keyword getSemicolonKeyword_3_1() { return cSemicolonKeyword_3_1; }
@@ -2792,7 +2792,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class MultiplicationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Multiplication");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cBinaryParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final RuleCall cExponentiationParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
 		private final Action cExpressionLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
@@ -2800,33 +2800,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cOpAlternatives_1_0_1_0 = (Alternatives)cOpAssignment_1_0_1.eContents().get(0);
 		private final Keyword cOpAsteriskKeyword_1_0_1_0_0 = (Keyword)cOpAlternatives_1_0_1_0.eContents().get(0);
 		private final Keyword cOpSolidusKeyword_1_0_1_0_1 = (Keyword)cOpAlternatives_1_0_1_0.eContents().get(1);
-		private final Keyword cOpCircumflexAccentKeyword_1_0_1_0_2 = (Keyword)cOpAlternatives_1_0_1_0.eContents().get(2);
 		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRightBinaryParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
+		private final RuleCall cRightExponentiationParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
 		
 		//Multiplication returns Expression:
-		//	Binary (({Expression.left=current} op=("*" | "/" | "^")) right=Binary)*;
+		//	Exponentiation (({Expression.left=current} op=("*" | "/")) right=Exponentiation)*;
 		public ParserRule getRule() { return rule; }
 
-		//Binary (({Expression.left=current} op=("*" | "/" | "^")) right=Binary)*
+		//Exponentiation (({Expression.left=current} op=("*" | "/")) right=Exponentiation)*
 		public Group getGroup() { return cGroup; }
 
-		//Binary
-		public RuleCall getBinaryParserRuleCall_0() { return cBinaryParserRuleCall_0; }
+		//Exponentiation
+		public RuleCall getExponentiationParserRuleCall_0() { return cExponentiationParserRuleCall_0; }
 
-		//(({Expression.left=current} op=("*" | "/" | "^")) right=Binary)*
+		//(({Expression.left=current} op=("*" | "/")) right=Exponentiation)*
 		public Group getGroup_1() { return cGroup_1; }
 
-		//{Expression.left=current} op=("*" | "/" | "^")
+		//{Expression.left=current} op=("*" | "/")
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
 		//{Expression.left=current}
 		public Action getExpressionLeftAction_1_0_0() { return cExpressionLeftAction_1_0_0; }
 
-		//op=("*" | "/" | "^")
+		//op=("*" | "/")
 		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
 
-		//"*" | "/" | "^"
+		//"*" | "/"
 		public Alternatives getOpAlternatives_1_0_1_0() { return cOpAlternatives_1_0_1_0; }
 
 		//"*"
@@ -2835,8 +2834,49 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"/"
 		public Keyword getOpSolidusKeyword_1_0_1_0_1() { return cOpSolidusKeyword_1_0_1_0_1; }
 
+		//right=Exponentiation
+		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
+
+		//Exponentiation
+		public RuleCall getRightExponentiationParserRuleCall_1_1_0() { return cRightExponentiationParserRuleCall_1_1_0; }
+	}
+
+	public class ExponentiationElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Exponentiation");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cBinaryParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Action cExpressionLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
+		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
+		private final Keyword cOpCircumflexAccentKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
+		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cRightBinaryParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
+		
+		//Exponentiation returns Expression:
+		//	Binary (({Expression.left=current} op="^") right=Binary)*;
+		public ParserRule getRule() { return rule; }
+
+		//Binary (({Expression.left=current} op="^") right=Binary)*
+		public Group getGroup() { return cGroup; }
+
+		//Binary
+		public RuleCall getBinaryParserRuleCall_0() { return cBinaryParserRuleCall_0; }
+
+		//(({Expression.left=current} op="^") right=Binary)*
+		public Group getGroup_1() { return cGroup_1; }
+
+		//{Expression.left=current} op="^"
+		public Group getGroup_1_0() { return cGroup_1_0; }
+
+		//{Expression.left=current}
+		public Action getExpressionLeftAction_1_0_0() { return cExpressionLeftAction_1_0_0; }
+
+		//op="^"
+		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
+
 		//"^"
-		public Keyword getOpCircumflexAccentKeyword_1_0_1_0_2() { return cOpCircumflexAccentKeyword_1_0_1_0_2; }
+		public Keyword getOpCircumflexAccentKeyword_1_0_1_0() { return cOpCircumflexAccentKeyword_1_0_1_0; }
 
 		//right=Binary
 		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
@@ -4192,6 +4232,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private ComparisonElements pComparison;
 	private AdditionElements pAddition;
 	private MultiplicationElements pMultiplication;
+	private ExponentiationElements pExponentiation;
 	private BinaryElements pBinary;
 	private UnitElements pUnit;
 	private UnaryElements pUnary;
@@ -4525,7 +4566,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//speciesOrGridDisplayStatement:
-	//	key=_SpeciesKey expr=TypeRef facets+=Facet* (block=Block | ";");
+	//	key=_SpeciesKey expr=TypeRef facets+=Facet* (block=displayBlock | ";");
 	public SpeciesOrGridDisplayStatementElements getSpeciesOrGridDisplayStatementAccess() {
 		return (pSpeciesOrGridDisplayStatement != null) ? pSpeciesOrGridDisplayStatement : (pSpeciesOrGridDisplayStatement = new SpeciesOrGridDisplayStatementElements());
 	}
@@ -4910,13 +4951,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Multiplication returns Expression:
-	//	Binary (({Expression.left=current} op=("*" | "/" | "^")) right=Binary)*;
+	//	Exponentiation (({Expression.left=current} op=("*" | "/")) right=Exponentiation)*;
 	public MultiplicationElements getMultiplicationAccess() {
 		return (pMultiplication != null) ? pMultiplication : (pMultiplication = new MultiplicationElements());
 	}
 	
 	public ParserRule getMultiplicationRule() {
 		return getMultiplicationAccess().getRule();
+	}
+
+	//Exponentiation returns Expression:
+	//	Binary (({Expression.left=current} op="^") right=Binary)*;
+	public ExponentiationElements getExponentiationAccess() {
+		return (pExponentiation != null) ? pExponentiation : (pExponentiation = new ExponentiationElements());
+	}
+	
+	public ParserRule getExponentiationRule() {
+		return getExponentiationAccess().getRule();
 	}
 
 	//Binary returns Expression:

@@ -18,29 +18,23 @@
  */
 package msi.gama.gui.swt;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import msi.gama.gui.navigator.FileBean;
+import java.util.Arrays;
 import msi.gama.gui.swt.perspectives.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.application.*;
+import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
-	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
-	private static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
-
-	public ApplicationWorkbenchAdvisor(final DelayedEventsProcessor processor) {
-		super(processor);
-		System.out.println("Welcome to GAMA version " + BUILTIN_VERSION);
+	public ApplicationWorkbenchAdvisor() {
+		super(WorkspaceModelsManager.processor);
+		System.out.println("Welcome to GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION);
+		// openDocProcessor = openProcessor;
 	}
 
 	@Override
@@ -48,8 +42,15 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return new ApplicationWorkbenchWindowAdvisor(this, configurer);
 	}
 
+	// @Override
+	// public void eventLoopIdle(final Display display) {
+	// openDocProcessor.openFiles();
+	// super.eventLoopIdle(display);
+	// }
+
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
+		ResourcesPlugin.getPlugin().getStateLocation();
 		super.initialize(configurer);
 		IDE.registerAdapters();
 		configurer.setSaveAndRestore(true);
@@ -72,9 +73,18 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		GamaBundleLoader.preBuildContributions();
 		/* Linking the stock models with the workspace if they are not already */
 		if ( checkCopyOfBuiltInModels() ) {
-			linkSampleModelsToWorkspace();
+			WorkspaceModelsManager.linkSampleModelsToWorkspace();
 		}
+	}
 
+	@Override
+	public void postStartup() {
+		super.postStartup();
+		String[] args = Platform.getApplicationArgs();
+		System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+		if ( args.length >= 1 ) {
+			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
+		}
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {
@@ -145,29 +155,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// return true;
 	}
 
-	private static String getCurrentGamaStampString() {
-		String gamaStamp = null;
-		try {
-			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
-			File modelsRep = new File(urlRep.getPath());
-			long time = modelsRep.lastModified();
-			gamaStamp = ".built_in_models_" + time;
-			System.out.println("Version of the models in GAMA = " + gamaStamp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return gamaStamp;
-	}
-
-	protected static void stampWorkspaceFromModels() {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		try {
-			workspace.getRoot().setPersistentProperty(BUILTIN_PROPERTY, getCurrentGamaStampString());
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public String getInitialWindowPerspectiveId() {
 		return ModelingPerspective.ID;
@@ -200,112 +187,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			e.printStackTrace();
 		}
 		return super.preShutdown();
-	}
-
-	@Override
-	public IAdaptable getDefaultPageInput() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-
-	}
-
-	public static void linkSampleModelsToWorkspace() {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		URL urlRep = null;
-		try {
-			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		File modelsRep = new File(urlRep.getPath());
-		FileBean gFile = new FileBean(modelsRep);
-		FileBean[] projects = gFile.getChildren();
-		for ( final FileBean project : projects ) {
-			File dotFile = null;
-			/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
-			FileBean[] children = project.getChildrenWithHiddenFiles();
-			for ( int i = 0; i < children.length; i++ ) {
-				if ( children[i].toString().equals(".project") ) {
-					dotFile = new File(children[i].getPath());
-					break;
-				}
-			}
-			IProjectDescription tempDescription = null;
-			/* If the '.project' doesn't exists we create one */
-			if ( dotFile == null ) {
-				/* Initialize file content */
-				tempDescription = setProjectDescription(project);
-			} else {
-				final IPath location = new Path(dotFile.getAbsolutePath());
-				try {
-					tempDescription = workspace.loadProjectDescription(location);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-			final IProjectDescription description = tempDescription;
-
-			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-
-				@Override
-				protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
-					InterruptedException {
-					IProject proj = workspace.getRoot().getProject(project.toString());
-					if ( !proj.exists() ) {
-						proj.create(description, monitor);
-					} else {
-						// project exists but is not accessible
-						if ( !proj.isAccessible() ) {
-							proj.delete(true, null);
-							proj = workspace.getRoot().getProject(project.toString());
-							proj.create(description, monitor);
-						}
-					}
-					proj.open(IResource.BACKGROUND_REFRESH, monitor);
-					setValuesProjectDescription(proj);
-				}
-			};
-			try {
-				operation.run(null);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-
-	static private IProjectDescription setProjectDescription(final FileBean project) {
-		final IProjectDescription description =
-			ResourcesPlugin.getWorkspace().newProjectDescription(project.toString());
-		final IPath location = new Path(project.getPath());
-		description.setLocation(location);
-		return description;
-	}
-
-	public final static String builtInNature = "msi.gama.builtin.model";
-
-	static private void setValuesProjectDescription(final IProject proj) {
-		/* Modify the project description */
-		IProjectDescription desc = null;
-		try {
-			desc = proj.getDescription();
-			/* Automatically associate GamaNature and Xtext nature to the project */
-			// String[] ids = desc.getNatureIds();
-			String[] newIds = new String[3];
-			// System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[1] = "msi.gama.application.gamaNature";
-			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
-			// Addition of a special nature to the project.
-			newIds[2] = "msi.gama.builtin.model";
-			desc.setNatureIds(newIds);
-			proj.setDescription(desc, IResource.FORCE, null);
-			// Addition of a special persistent property to indicate that the project is built-in
-			proj.setPersistentProperty(BUILTIN_PROPERTY, BUILTIN_VERSION);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static void closeSimulationViews() {

@@ -40,9 +40,12 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		}
 		if ( ex instanceof NoViableAltException ) {
 			// no viable alternative at input 'xxx'
+			Token t = ((NoViableAltException) ex).token;
+			String s = t == null ? " this symbol " : t.getText();
 			msg =
-				msg.replaceFirst("no viable alternative at input", "Not allowed: ") +
-					". Earlier keyword may be out of place.";
+				msg.replaceFirst("no viable alternative at input", "Error at: ") +
+					". Previous keyword may be out of place or the block introduced by '" + s +
+					"' may not be correctly terminated.";
 		}
 		if ( contextobj == null ) {
 			msg = "Incomplete model or species";

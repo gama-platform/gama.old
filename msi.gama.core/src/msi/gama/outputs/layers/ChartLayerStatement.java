@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -34,7 +35,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
 import msi.gaml.statements.AbstractStatementSequence;
@@ -147,25 +148,26 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 				timeSeriesXData =
 					(ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
-						xAxisName, IKeyword.VALUE, IKeyword.TIME).compile();
+						xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));
-				} else {
-					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-						.setExpression(new ConstantExpression(null) {
-
-							@Override
-							public Double value(final IScope scope) {
-								return scope.getClock().getTime();
-							}
-
-							@Override
-							public boolean isConst() {
-								return false;
-							}
-						});
 				}
+				// else {
+				// timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
+				// .setExpression(new ConstantExpression(null) {
+				//
+				// @Override
+				// public Integer value(final IScope scope) {
+				// return scope.getClock().getCycle();
+				// }
+				//
+				// @Override
+				// public boolean isConst() {
+				// return false;
+				// }
+				// });
+				// }
 
 			}
 

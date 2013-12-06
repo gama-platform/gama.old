@@ -32,6 +32,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.*;
 import msi.gaml.types.IType;
+import org.apache.commons.lang.StringUtils;
 
 @symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true)
 @inside(kinds = ISymbolKind.SPECIES)
@@ -96,18 +97,24 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public IExperimentSpecies getExperiment(final String s) {
-		// if ( s == null ) { return getExperiment(IKeyword.DEFAULT_EXP); }
+		// First we try to get it using its "internal" name
 		IExperimentSpecies e = experiments.get(s);
 		if ( e == null ) {
+			// Otherwise with its title
 			e = titledExperiments.get(s);
+			if ( e == null ) {
+				// Finally, if the string is an int, we try to get the n-th experiment
+				if ( StringUtils.isNumeric(s) ) {
+					int i = Integer.parseInt(s);
+					List<String> names = new ArrayList(experiments.keySet());
+					if ( names.size() > 0 ) {
+						e = getExperiment(names.get(i));
+					}
+				}
+			}
 		}
 		return e;
 	}
-
-	// @Override
-	// public Collection<IExperimentSpecies> getExperiments() {
-	// return experiments.values();
-	// }
 
 	@Override
 	public void dispose() {

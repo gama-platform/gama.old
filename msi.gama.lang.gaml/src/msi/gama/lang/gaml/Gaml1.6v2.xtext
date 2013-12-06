@@ -91,7 +91,7 @@ displayStatement returns Statement:
 ;
 
 speciesOrGridDisplayStatement:
-	key=_SpeciesKey expr=TypeRef (facets+=Facet)* (block=Block | ";")
+	key=_SpeciesKey expr=TypeRef (facets+=Facet)* (block=displayBlock | ";")
 ;
 
 	/**
@@ -247,8 +247,13 @@ Addition returns Expression:
 	right=Multiplication)*;
 
 Multiplication returns Expression:
+	Exponentiation
+	(({Expression.left=current} op=('*' | '/' )) right=Exponentiation)*;
+	
+Exponentiation returns Expression:
 	Binary
-	(({Expression.left=current} op=('*' | '/' | '^')) right=Binary)*;
+	(({Expression.left=current} op=('^')) right=Binary)*
+;
 
 Binary returns Expression:
 	Unit

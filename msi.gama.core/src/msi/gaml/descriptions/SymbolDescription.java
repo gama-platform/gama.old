@@ -489,7 +489,6 @@ public class SymbolDescription implements IDescription {
 							}
 							warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of " +
 								actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(fp.types[0]).toString());
-							// return false;
 						}
 					}
 				}

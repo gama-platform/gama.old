@@ -15,6 +15,7 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.operators.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
@@ -64,6 +65,10 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public abstract IShape getGeometry();
 
+	public void setDuplicator(final ISkillConstructor duplicator) {
+		// Nothing to do here
+	}
+
 	/**
 	 * 
 	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
@@ -101,7 +106,7 @@ public abstract class MinimalAgent implements IAgent {
 	public boolean isPoint() {
 		return checkedGeometry().isPoint();
 	}
-	
+
 	@Override
 	public boolean isLine() {
 		return checkedGeometry().isLine();

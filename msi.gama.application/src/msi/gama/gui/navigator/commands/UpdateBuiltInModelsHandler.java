@@ -18,9 +18,7 @@
  */
 package msi.gama.gui.navigator.commands;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.navigator.GamaNavigator;
-import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
+import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -38,7 +36,7 @@ public class UpdateBuiltInModelsHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				// Nothing to do really. Maybe a later version will remove this command. See Issue 669
-				ApplicationWorkbenchAdvisor.linkSampleModelsToWorkspace();
+				WorkspaceModelsManager.linkSampleModelsToWorkspace();
 				return Status.OK_STATUS;
 			}
 
@@ -50,23 +48,12 @@ public class UpdateBuiltInModelsHandler extends AbstractHandler {
 
 			@Override
 			public void done(final IJobChangeEvent event) {
-				handleJobFinished();
+				RefreshHandler.run();
 			}
 
 		});
 
 		return null;
-	}
-
-	protected void handleJobFinished() {
-		final IViewPart view = page.findView("msi.gama.gui.view.GamaNavigator");
-		GuiUtils.run(new Runnable() {
-
-			@Override
-			public void run() {
-				((GamaNavigator) view).getCommonViewer().refresh();
-			}
-		});
 	}
 
 }

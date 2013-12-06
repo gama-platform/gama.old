@@ -109,7 +109,18 @@ public class SpeciesDescription extends TypeDescription {
 		final Set<String> skillNames = new LinkedHashSet();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(CONTROL) ) {
-			skillNames.add(facets.getLabel(CONTROL));
+			String control = facets.getLabel(CONTROL);
+			if ( control == null ) {
+				warning("This control  does not belong to the list of known agent controls (" +
+					AbstractGamlAdditions.ARCHITECTURES + ")", IGamlIssue.WRONG_CONTEXT, CONTROL);
+			} else {
+				ISkill skill = AbstractGamlAdditions.getSkillInstanceFor(control);
+				if ( skill == null ) {
+					warning("The control " + control + " does not belong to the list of known agent controls (" +
+						AbstractGamlAdditions.ARCHITECTURES + ")", IGamlIssue.WRONG_CONTEXT, CONTROL);
+				}
+			}
+			skillNames.add(control);
 		}
 		/* We add the keyword as a possible skill (used for 'grid' species) */
 		skillNames.add(getKeyword());
@@ -137,12 +148,12 @@ public class SpeciesDescription extends TypeDescription {
 		String controlName = facets.getLabel(CONTROL);
 		// if the "control" is not explicitly declared then inherit it from the parent species.
 		// Takes care of invalid species (see Issue 711)
-		if ( controlName == null && parent != null && parent != this ) {
-			controlName = getParent().getControlName();
-		}
 		if ( controlName == null ) {
-			// Default value
-			controlName = REFLEX;
+			if ( parent != null && parent != this ) {
+				controlName = getParent().getControlName();
+			} else {
+				controlName = REFLEX;
+			}
 		}
 		return controlName;
 	}

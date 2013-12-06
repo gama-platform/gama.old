@@ -173,6 +173,9 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMultiplicationAccess().getGroup(), "rule__Multiplication__Group__0");
 					put(grammarAccess.getMultiplicationAccess().getGroup_1(), "rule__Multiplication__Group_1__0");
 					put(grammarAccess.getMultiplicationAccess().getGroup_1_0(), "rule__Multiplication__Group_1_0__0");
+					put(grammarAccess.getExponentiationAccess().getGroup(), "rule__Exponentiation__Group__0");
+					put(grammarAccess.getExponentiationAccess().getGroup_1(), "rule__Exponentiation__Group_1__0");
+					put(grammarAccess.getExponentiationAccess().getGroup_1_0(), "rule__Exponentiation__Group_1_0__0");
 					put(grammarAccess.getBinaryAccess().getGroup(), "rule__Binary__Group__0");
 					put(grammarAccess.getBinaryAccess().getGroup_1(), "rule__Binary__Group_1__0");
 					put(grammarAccess.getBinaryAccess().getGroup_1_0(), "rule__Binary__Group_1_0__0");
@@ -355,6 +358,8 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAdditionAccess().getRightAssignment_1_1(), "rule__Addition__RightAssignment_1_1");
 					put(grammarAccess.getMultiplicationAccess().getOpAssignment_1_0_1(), "rule__Multiplication__OpAssignment_1_0_1");
 					put(grammarAccess.getMultiplicationAccess().getRightAssignment_1_1(), "rule__Multiplication__RightAssignment_1_1");
+					put(grammarAccess.getExponentiationAccess().getOpAssignment_1_0_1(), "rule__Exponentiation__OpAssignment_1_0_1");
+					put(grammarAccess.getExponentiationAccess().getRightAssignment_1_1(), "rule__Exponentiation__RightAssignment_1_1");
 					put(grammarAccess.getBinaryAccess().getOpAssignment_1_0_1(), "rule__Binary__OpAssignment_1_0_1");
 					put(grammarAccess.getBinaryAccess().getRightAssignment_1_1(), "rule__Binary__RightAssignment_1_1");
 					put(grammarAccess.getUnitAccess().getOpAssignment_1_0_1(), "rule__Unit__OpAssignment_1_0_1");

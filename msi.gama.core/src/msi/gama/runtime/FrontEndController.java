@@ -77,7 +77,6 @@ public class FrontEndController implements Runnable {
 				}
 				break;
 			case _START:
-				// GuiUtils.debug("FrontEndController.processUserCommand _START");
 				try {
 					scheduler.start();
 				} catch (final GamaRuntimeException e) {
@@ -87,17 +86,14 @@ public class FrontEndController implements Runnable {
 				}
 				break;
 			case _PAUSE:
-				// GuiUtils.debug("FrontEndController.processUserCommand _PAUSE");
 				updateSimulationState(PAUSED);
 				scheduler.pause();
 				break;
 			case _STEP:
-				// GuiUtils.debug("FrontEndController.processUserCommand _STEP");
 				updateSimulationState(PAUSED);
 				scheduler.stepByStep();
 				break;
 			case _RELOAD:
-				// GuiUtils.debug("FrontEndController.processUserCommand _RELOAD");
 				updateSimulationState(NOTREADY);
 				try {
 					final boolean wasRunning = !scheduler.paused;
@@ -196,11 +192,7 @@ public class FrontEndController implements Runnable {
 	public String getFrontmostSimulationState() {
 		if ( experiment == null ) {
 			return NONE;
-		}
-		// else if ( experiment.isLoading() ) {
-		// return NOTREADY;
-		// }
-		else if ( scheduler.paused ) { return PAUSED; }
+		} else if ( scheduler.paused ) { return PAUSED; }
 		return RUNNING;
 	}
 

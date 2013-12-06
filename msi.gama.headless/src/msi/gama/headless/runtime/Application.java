@@ -50,6 +50,7 @@ public class Application implements IApplication {
 				si.loadAndBuild();
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.exit(-1);
 			}
 			si.play();
 		}

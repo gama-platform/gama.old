@@ -32,7 +32,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.finite_state_machine.FsmStateStatement.StateValidator;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
@@ -54,7 +54,8 @@ import msi.gaml.types.IType;
 @validator(StateValidator.class)
 public class FsmStateStatement extends AbstractStatementSequence {
 
-	
+	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,
+		IKeyword.USER_INIT, IKeyword.USER_LAST, IKeyword.USER_ONLY);
 
 	public static class StateValidator implements IDescriptionValidator {
 
@@ -64,6 +65,22 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final IDescription description) {
+			// Verify that the state is inside a species with fsm control
+			SpeciesDescription species = description.getSpeciesContext();
+			String keyword = description.getKeyword();
+			String control = species.getControlName();
+			if ( keyword.equals(STATE) ) {
+				if ( !control.equals(IKeyword.FSM) && !AllowedArchitectures.contains(control) ) {
+					description.error("A state can only be defined in an fsm-controlled or user-controlled species",
+						IGamlIssue.WRONG_CONTEXT);
+					return;
+				}
+			} else if ( !AllowedArchitectures.contains(control) ) {
+				description.error("A " + description.getKeyword() +
+					" can only be defined in a user-controlled species (one of" + AllowedArchitectures + ")",
+					IGamlIssue.WRONG_CONTEXT);
+				return;
+			}
 			if ( !Assert.nameIsValid(description) ) { return; }
 			Facets ff = description.getFacets();
 			IExpression expr = ff.getExpr(INITIAL);

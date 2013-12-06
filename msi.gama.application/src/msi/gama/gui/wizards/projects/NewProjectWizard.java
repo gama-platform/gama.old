@@ -21,6 +21,7 @@ package msi.gama.gui.wizards.projects;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import msi.gama.gui.navigator.commands.RefreshHandler;
+import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -111,18 +112,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
-			/* Associate GamaNature et xtext nature to the project */
-			// String[] ids = description.getNatureIds();
-			String[] newIds = new String[2];
-			// System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[1] = "msi.gama.application.gamaNature";
-			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
-			description.setNatureIds(newIds);
-			try {
-				proj.setDescription(description, IResource.FORCE, null);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
+			WorkspaceModelsManager.setValuesProjectDescription(proj, false);
 
 			/*
 			 * We now have the project and we can do more things with it before updating

@@ -22,7 +22,7 @@ public class GamaDecorator extends SVNLightweightDecorator {
 		if ( !p.isAccessible() || !p.isOpen() ) { return; }
 		// We dont decorate built-in projects.
 		try {
-			if ( p.getNature(ApplicationWorkbenchAdvisor.builtInNature) != null ) {
+			if ( p.getNature(WorkspaceModelsManager.builtInNature) != null ) {
 				if ( r.getType() == IResource.FILE ) {
 					decoration.addOverlay(IGamaIcons.SMALL_PIN.descriptor(), IDecoration.TOP_LEFT);
 				}

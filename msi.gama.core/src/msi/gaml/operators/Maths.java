@@ -34,8 +34,71 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class Maths {
 
+	public static class LUT {
+
+		/**
+		 * Lookup table for degree cosine/sine, has a fixed precision 1.0 degrees
+		 */
+		public static double[] sinLUT = new double[91];
+
+		/**
+		 * Initialise sin table with values (first quadrant only)
+		 */
+		static {
+			for ( int i = 0; i <= 90; i++ ) {
+				sinLUT[i] = Math.sin(Math.toRadians(i));
+				// java.lang.System.out.println("sin(" + i + ")=" + sinLUT[i]);
+			}
+		}
+
+		/**
+		 * Look up sine for the passed angle in degrees.
+		 * 
+		 * @param thet degree int
+		 * @return sine value for theta
+		 */
+		public static double sin(int thet) {
+			while (thet < 0) {
+				thet += 360; // Needed because negative modulus plays badly in java
+			}
+			int theta = thet % 360;
+			int y = theta % 90;
+			double result =
+				theta < 90 ? sinLUT[y] : theta < 180 ? sinLUT[90 - y] : theta < 270 ? -sinLUT[y] : -sinLUT[90 - y];
+			return result;
+		}
+
+		/**
+		 * Look up cos for the passed angle in degrees.
+		 * 
+		 * @param thet degree int
+		 * @return sine value for theta
+		 */
+		public static double cos(int thet) {
+			while (thet < 0) {
+				thet += 360; // Needed because negative modulus plays badly in java
+			}
+			int theta = thet % 360;
+			int y = theta % 90;
+			double result =
+				theta < 90 ? sinLUT[90 - y] : theta < 180 ? -sinLUT[y] : theta < 270 ? -sinLUT[90 - y] : sinLUT[y];
+			return result;
+		}
+
+	}
+
 	public static void main(final String[] args) {
 		java.lang.System.out.println("Various arithmetic tests");
+		java.lang.System.out.println("sin(360) = " + sin(360));
+		java.lang.System.out.println("sin(-720) = " + sin(-720));
+		java.lang.System.out.println("sin(360.0) = " + sin(360.0));
+		java.lang.System.out.println("sin(-720.0) = " + sin(-720.0));
+		java.lang.System.out.println("sin(90) = " + sin(90));
+		java.lang.System.out.println("sin(45) = " + sin(45));
+		java.lang.System.out.println("sin(0) = " + sin(0));
+		java.lang.System.out.println("sin(135) = " + sin(135));
+
+		java.lang.System.out.println("Math.sin(360.0) = " + Math.sin(2 * Math.PI));
 		// java.lang.System.out.println("3.0 = 3" + (3d == 3));
 		// java.lang.System.out.println("3.0 != 3" + (3d != 3));
 		java.lang.System.out.println("floor and ceil 2.7 " + floor(2.7) + " and " + ceil(2.7));
@@ -49,24 +112,24 @@ public class Maths {
 		long t1 = 0;
 		long t2 = 0;
 		long t3 = 0;
-		for ( int i = 0; i < 10000000; i++ ) {
-			double x = rand.nextDouble();
-			double y = rand.nextDouble();
-			s1 = java.lang.System.currentTimeMillis();
-			double a1 = Math.atan2(x, y);
-			t1 += java.lang.System.currentTimeMillis() - s1;
-			s1 = java.lang.System.currentTimeMillis();
-			double a2 = FastMath.atan2(x, y);
-			t2 += java.lang.System.currentTimeMillis() - s1;
-			s1 = java.lang.System.currentTimeMillis();
-			double a3 = Maths.atan2Opt2(x, y);
-			t3 += java.lang.System.currentTimeMillis() - s1;
-
-			atan2diff += Math.abs(a1 - a2);
-			atan2diff2 += Math.abs(a1 - a3);
-		}
-		java.lang.System.out.println("atan2diff : " + atan2diff + "  atan2diff2 : " + atan2diff2 + " t1 : " + t1 +
-			" t2 : " + t2 + " t3 : " + t3);
+		// for ( int i = 0; i < 10000000; i++ ) {
+		// double x = rand.nextDouble();
+		// double y = rand.nextDouble();
+		// s1 = java.lang.System.currentTimeMillis();
+		// double a1 = Math.atan2(x, y);
+		// t1 += java.lang.System.currentTimeMillis() - s1;
+		// s1 = java.lang.System.currentTimeMillis();
+		// double a2 = FastMath.atan2(x, y);
+		// t2 += java.lang.System.currentTimeMillis() - s1;
+		// s1 = java.lang.System.currentTimeMillis();
+		// double a3 = Maths.atan2Opt2(x, y);
+		// t3 += java.lang.System.currentTimeMillis() - s1;
+		//
+		// atan2diff += Math.abs(a1 - a2);
+		// atan2diff2 += Math.abs(a1 - a3);
+		// }
+		// java.lang.System.out.println("atan2diff : " + atan2diff + "  atan2diff2 : " + atan2diff2 + " t1 : " + t1 +
+		// " t2 : " + t2 + " t3 : " + t3);
 
 		long t4 = 0;
 		long t5 = 0;
@@ -137,27 +200,27 @@ public class Maths {
 	 */
 
 	@operator(value = { "^" }, can_be_const = true)
-	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", special_cases = {
+	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.", special_cases = {
 		"if the right-hand operand is equal to 0, returns 1", "if it is equal to 1, returns the left-hand operand." }, examples = "", see = {
 		"*", "sqrt" })
-	public static Integer pow(final Integer a, final Integer b) {
-		return pow(a.doubleValue(), b.doubleValue()).intValue();
+	public static Double pow(final Integer a, final Integer b) {
+		return pow(a.doubleValue(), b.doubleValue());
 	}
 
 	@operator(value = { "^" }, can_be_const = true)
-	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value  (always a float) of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
 	@operator(value = { "^" }, can_be_const = true)
-	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value  (always a float) of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
 	@operator(value = { "^" }, can_be_const = true)
-	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value  (always a float) of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
 	}
@@ -233,6 +296,8 @@ public class Maths {
 	@doc(value = "the cosinus of the operand (in decimal degrees).", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 1", see = {
 		"sin", "tan" })
 	public static Double cos(final Double rv) {
+		int i = rv.intValue();
+		if ( i == rv ) { return cos(i); }
 		double rad = toRad * rv;
 		return Math.cos(rad);
 	}
@@ -241,14 +306,17 @@ public class Maths {
 	@doc(value = "the cosinus of the operand.", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 1", see = {
 		"sin", "tan" })
 	public static Double cos(final Integer rv) {
-		double rad = toRad * rv;
-		return Math.cos(rad);
+		return LUT.cos(rv);
+		// double rad = toRad * rv;
+		// return Math.cos(rad);
 	}
 
 	@operator(value = "sin", can_be_const = true)
 	@doc(value = "the sinus of the operand (in decimal degrees).", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 0", see = {
 		"cos", "tan" })
 	public static Double sin(final Double rv) {
+		int i = rv.intValue();
+		if ( i == rv ) { return sin(i); }
 		double rad = toRad * rv;
 		return Math.sin(rad);
 	}
@@ -257,12 +325,14 @@ public class Maths {
 	@doc(value = "the sinus of the operand (in decimal degrees).", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 0", see = {
 		"cos", "tan" })
 	public static Double sin(final Integer rv) {
-		double rad = toRad * rv;
-		return Math.sin(rad);
+		// double rad = toRad * rv;
+		return LUT.sin(rv);
+		// double rad = rv / 180 * Math.PI;
+		// return Math.sin(rad);
 	}
 
 	@operator(value = "even", can_be_const = true)
-	@doc(value = "true if the operand is even and false if it is odd.", special_cases = "if the operand is equal to 0, it returns true.", examples = {
+	@doc(value = "true if the operand is even and false if it is odd.", special_cases = "if the operand is equal to 0, it returns true. If the operand is a float, it is truncated before", examples = {
 		"even (3) 	--:   false", "even (-12)   --:  true" })
 	public static Boolean even(final Integer rv) {
 		return rv.intValue() % 2 == 0;

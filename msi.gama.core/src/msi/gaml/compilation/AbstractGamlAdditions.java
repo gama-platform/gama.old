@@ -7,6 +7,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
+import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
@@ -24,6 +25,7 @@ import msi.gaml.types.*;
  */
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
+	public final static List<String> ARCHITECTURES = new ArrayList();
 	private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS = new HashMap();
 	private final static Map<String, Class> SKILL_CLASSES = new HashMap();
 	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
@@ -167,7 +169,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
 		final String ... species) {
-		SKILL_INSTANCES.put(clazz, helper.newInstance());
+		ISkill skill = helper.newInstance();
+		if ( skill instanceof AbstractArchitecture ) {
+			ARCHITECTURES.add(name);
+		}
+		skill.setName(name);
+		skill.setDuplicator(helper);
+		SKILL_INSTANCES.put(clazz, skill);
 		for ( String spec : species ) {
 			SPECIES_SKILLS.put(spec, name);
 		}

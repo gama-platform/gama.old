@@ -251,7 +251,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<ActionStatement> getActions() {
-		return new GamaList<ActionStatement>((Iterable) actions.values());
+		return new GamaList<ActionStatement>(actions.values());
 	}
 
 	@Override
@@ -266,12 +266,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<IExecutable> getAspects() {
-		return new GamaList<IExecutable>((Iterable) aspects.values());
+		return new GamaList<IExecutable>(aspects.values());
 	}
 
 	@Override
 	public IList<String> getAspectNames() {
-		return new GamaList<String>((Iterable) aspects.keySet());
+		return new GamaList<String>(aspects.keySet());
 	}
 
 	@Override

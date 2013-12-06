@@ -61,7 +61,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.EDGE_SPECIES, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
 	@facet(name = "mirrors", type = IType.LIST, optional = true),
-	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
+	@facet(name = IKeyword.CONTROL, type = IType.LABEL, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = "compile", type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
@@ -70,8 +70,6 @@ import msi.gaml.types.IType;
 // @vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
 // TODO Build a list of control architectures dynamically at startup and populate the values attribute
 public class GamlSpecies extends AbstractSpecies {
-
-	
 
 	public static class SpeciesValidator implements IDescriptionValidator {
 

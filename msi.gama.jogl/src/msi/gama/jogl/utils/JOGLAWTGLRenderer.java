@@ -491,7 +491,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getShowFPS() {
 		return showFPS;
 	}
-	
+
 	public void setAggregated(final boolean agg) {
 		this.aggregated = agg;
 	}
@@ -558,7 +558,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void dispose() {
-		scene.dispose();
+		if ( scene != null ) {
+			scene.dispose();
+		}
 	}
 
 	public void CalculateFrameRate() {

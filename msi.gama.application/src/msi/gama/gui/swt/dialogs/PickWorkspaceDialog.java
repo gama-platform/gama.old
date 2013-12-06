@@ -20,13 +20,11 @@ package msi.gama.gui.swt.dialogs;
 
 // import java.awt.GridLayout;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import java.util.prefs.Preferences;
-import msi.gama.gui.swt.IGamaIcons;
-import org.eclipse.core.runtime.*;
+import msi.gama.gui.swt.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -46,7 +44,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	private static final String WS_IDENTIFIER = ".gama_application_workspace";
 	private static final String VERSION_IDENTIFIER = ".gama_version_" +
 		Platform.getProduct().getDefiningBundle().getVersion().toString();
-	private static final String MODEL_IDENTIFIER = ".models_version_" + getCurrentGamaStampString();
+	private static final String MODEL_IDENTIFIER = WorkspaceModelsManager.getCurrentGamaStampString();
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
 	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
@@ -85,20 +83,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
 		setTitleImage(IGamaIcons.GAMA_ICON.image());
-	}
-
-	protected static String getCurrentGamaStampString() {
-		String gamaStamp = null;
-		try {
-			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
-			File modelsRep = new File(urlRep.getPath());
-			long time = modelsRep.lastModified();
-			gamaStamp = ".built_in_models_" + time;
-			System.out.println("Version of the models in GAMA = " + gamaStamp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return gamaStamp;
 	}
 
 	@Override

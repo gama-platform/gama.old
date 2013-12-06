@@ -71,36 +71,26 @@ public class GamaPreferences {
 
 		public GenericFile(final String pathName) throws GamaRuntimeException {
 			super(null, pathName);
-			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public Envelope computeEnvelope(final IScope scope) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-			// TODO Auto-generated method stub
-
-		}
+		protected void fillBuffer(final IScope scope) throws GamaRuntimeException {}
 
 		@Override
-		protected void flushBuffer() throws GamaRuntimeException {
-			// TODO Auto-generated method stub
-
-		}
+		protected void flushBuffer() throws GamaRuntimeException {}
 
 		@Override
 		protected IGamaFile _copy(final IScope scope) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public String getKeyword() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -267,11 +257,6 @@ public class GamaPreferences {
 			return true;
 		}
 
-		// @Override
-		// public boolean isLabel() {
-		// return false;
-		// }
-
 		@Override
 		public Number getStepValue() {
 			return null;
@@ -323,6 +308,8 @@ public class GamaPreferences {
 		true, IType.BOOL).in(GENERAL).group("Startup");
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
 		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
+	public static final Entry<Boolean> CORE_AUTO_RUN = create("core.auto_run",
+		"Auto-run experiments when they are launched", false, IType.BOOL).in(GENERAL).group("Runtime");
 
 	// DISPLAY
 	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",

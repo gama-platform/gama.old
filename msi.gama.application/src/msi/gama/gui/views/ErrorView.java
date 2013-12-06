@@ -150,7 +150,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 				@Override
 				public void run() {
-					GuiUtils.openEditorAndSelect(o);
+					GuiUtils.editModel(o);
 				}
 			});
 		}

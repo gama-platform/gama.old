@@ -55,8 +55,10 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 		String k = EGaml.getKey.caseStatement(s);
 		if ( k.equals(IKeyword.SPECIES) || k.equals(IKeyword.GRID) ) {
 			for ( EObject tmp = s.eContainer(); tmp != null; tmp = tmp.eContainer() ) {
-				if ( tmp instanceof Statement && IKeyword.DISPLAY.equals(EGaml.getKeyOf(tmp)) ) { return QualifiedName
-					.create(EGaml.getNameOf(s) + "_display"); }
+				if ( tmp instanceof Statement && IKeyword.DISPLAY.equals(EGaml.getKeyOf(tmp)) ) {
+					QualifiedName nn = QualifiedName.create(EGaml.getNameOf(s) + "_display");
+					return nn;
+				}
 			}
 		}
 

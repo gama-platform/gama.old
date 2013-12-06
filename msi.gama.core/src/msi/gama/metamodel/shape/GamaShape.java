@@ -352,12 +352,14 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	protected void setGeometry(final Geometry geom, final boolean computeLoc) {
-		// See Issue 725
-		if (geom == null) {
+		if ( geom == null ) {
 			geometry = null;
 			return;
 		}
-		if ( geom.isEmpty() ) { return; }
+		if ( geom.isEmpty() ) {
+			// See Issue 725
+			return;
+		}
 		if ( geom instanceof GeometryCollection && geom.getNumGeometries() == 1 ) {
 			geometry = geom.getGeometryN(0);
 		} else {

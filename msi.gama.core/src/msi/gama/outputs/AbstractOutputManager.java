@@ -5,8 +5,9 @@
 package msi.gama.outputs;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import com.google.common.collect.*;
@@ -103,7 +104,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean init(final IScope scope) {
-		// GuiUtils.debug("AbstractOutputManager.init");
 		List<IOutput> list = new ArrayList(outputs.values());
 
 		for ( final IOutput output : list ) {
@@ -131,9 +131,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			}
 		}
 		GuiUtils.waitForViewsToBeInitialized();
-		GuiUtils.informStatus("Simulation ready");
-		return true;
 
+		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
+			GAMA.controller.userStart();
+		} else {
+			GuiUtils.informStatus("Simulation ready");
+		}
+		return true;
 	}
 
 	@Override

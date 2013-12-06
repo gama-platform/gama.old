@@ -249,7 +249,8 @@ public abstract class Spatial {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square", "triangle" })
 		public static IShape polygon(final IScope scope, final IContainer<?, IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-			final IList<IShape> shapes = points.listValue(scope);
+			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
+			final IList<IShape> shapes = new GamaList(scope, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.first(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -268,7 +269,8 @@ public abstract class Spatial {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square", "triangle" })
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-			final IList<IShape> shapes = points.listValue(scope);
+			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
+			final IList<IShape> shapes = new GamaList(scope, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.first(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -1508,15 +1510,6 @@ public abstract class Spatial {
 			"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			final IAgent agent = scope.getAgentScope();
-			// Set<IAgent> result;
-			// if ( agent.isPoint() ) {
-			// result = scope.getTopology().getNeighboursOf(agent.getLocation(), distance, Different.with());
-			// } else {
-			// result = scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with());
-			// result =
-			// scope.getTopology().getAgentsIn(Transformations.enlarged_by(agent, distance), Different.with(),
-			// false);
-			// }
 			return new GamaList(scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with()));
 		}
 

@@ -2611,9 +2611,9 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
 )*((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getBlockBlockParserRuleCall_3_0_0()); 
+	        newCompositeNode(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getBlockDisplayBlockParserRuleCall_3_0_0()); 
 	    }
-		lv_block_3_0=ruleBlock		{
+		lv_block_3_0=ruledisplayBlock		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getSpeciesOrGridDisplayStatementRule());
 	        }
@@ -2621,7 +2621,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"block",
         		lv_block_3_0, 
-        		"Block");
+        		"displayBlock");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -5146,11 +5146,11 @@ ruleMultiplication returns [EObject current=null]
     @after { leaveRule(); }:
 (
     { 
-        newCompositeNode(grammarAccess.getMultiplicationAccess().getBinaryParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getMultiplicationAccess().getExponentiationParserRuleCall_0()); 
     }
-    this_Binary_0=ruleBinary
+    this_Exponentiation_0=ruleExponentiation
     { 
-        $current = $this_Binary_0.current; 
+        $current = $this_Exponentiation_0.current; 
         afterParserOrEnumRuleCall();
     }
 (((
@@ -5186,29 +5186,86 @@ ruleMultiplication returns [EObject current=null]
        		setWithLastConsumed($current, "op", lv_op_2_2, null);
 	    }
 
-    |		lv_op_2_3=	'^' 
-    {
-        newLeafNode(lv_op_2_3, grammarAccess.getMultiplicationAccess().getOpCircumflexAccentKeyword_1_0_1_0_2());
-    }
- 
-	    {
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getMultiplicationRule());
-	        }
-       		setWithLastConsumed($current, "op", lv_op_2_3, null);
-	    }
-
 )
 
 )
 ))(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getMultiplicationAccess().getRightBinaryParserRuleCall_1_1_0()); 
+	        newCompositeNode(grammarAccess.getMultiplicationAccess().getRightExponentiationParserRuleCall_1_1_0()); 
+	    }
+		lv_right_3_0=ruleExponentiation		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getMultiplicationRule());
+	        }
+       		set(
+       			$current, 
+       			"right",
+        		lv_right_3_0, 
+        		"Exponentiation");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))*)
+;
+
+
+
+
+
+// Entry rule entryRuleExponentiation
+entryRuleExponentiation returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getExponentiationRule()); }
+	 iv_ruleExponentiation=ruleExponentiation 
+	 { $current=$iv_ruleExponentiation.current; } 
+	 EOF 
+;
+
+// Rule Exponentiation
+ruleExponentiation returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(
+    { 
+        newCompositeNode(grammarAccess.getExponentiationAccess().getBinaryParserRuleCall_0()); 
+    }
+    this_Binary_0=ruleBinary
+    { 
+        $current = $this_Binary_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+(((
+    {
+        $current = forceCreateModelElementAndSet(
+            grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0(),
+            $current);
+    }
+)(
+(
+		lv_op_2_0=	'^' 
+    {
+        newLeafNode(lv_op_2_0, grammarAccess.getExponentiationAccess().getOpCircumflexAccentKeyword_1_0_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getExponentiationRule());
+	        }
+       		setWithLastConsumed($current, "op", lv_op_2_0, "^");
+	    }
+
+)
+))(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getExponentiationAccess().getRightBinaryParserRuleCall_1_1_0()); 
 	    }
 		lv_right_3_0=ruleBinary		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getMultiplicationRule());
+	            $current = createModelElementForParent(grammarAccess.getExponentiationRule());
 	        }
        		set(
        			$current, 

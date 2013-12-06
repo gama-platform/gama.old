@@ -97,6 +97,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getCastAccess().getCastLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonRule() ||
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -163,6 +165,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -191,6 +195,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getCastAccess().getCastLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonRule() ||
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -229,6 +235,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -277,6 +285,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -310,6 +320,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -341,6 +353,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -376,7 +390,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.EXPRESSION:
 				if(context == grammarAccess.getAndRule() ||
 				   context == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()) {
-					sequence_Addition_And_Comparison_Multiplication(context, (Expression) semanticObject); 
+					sequence_Addition_And_Comparison_Exponentiation_Multiplication(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getExpressionRule() ||
@@ -386,24 +400,29 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getOrAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairRule() ||
 				   context == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()) {
-					sequence_Addition_And_Comparison_Multiplication_Or(context, (Expression) semanticObject); 
+					sequence_Addition_And_Comparison_Exponentiation_Multiplication_Or(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getCastRule() ||
 				   context == grammarAccess.getCastAccess().getCastLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonRule()) {
-					sequence_Addition_Comparison_Multiplication(context, (Expression) semanticObject); 
+					sequence_Addition_Comparison_Exponentiation_Multiplication(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Addition_Multiplication(context, (Expression) semanticObject); 
+					sequence_Addition_Exponentiation_Multiplication(context, (Expression) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0()) {
+					sequence_Exponentiation(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Multiplication(context, (Expression) semanticObject); 
+					sequence_Exponentiation_Multiplication(context, (Expression) semanticObject); 
 					return; 
 				}
 				else break;
@@ -422,6 +441,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getExpressionListRule() ||
 				   context == grammarAccess.getIfRule() ||
@@ -492,6 +513,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getFunctionRule() ||
 				   context == grammarAccess.getIfRule() ||
@@ -540,6 +563,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -598,6 +623,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -630,6 +657,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -662,6 +691,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -871,6 +902,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -915,6 +948,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getCastAccess().getCastLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonRule() ||
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -942,6 +977,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getCastAccess().getCastLeftAction_1_0_0() ||
 				   context == grammarAccess.getComparisonRule() ||
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -993,6 +1030,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getDotRule() ||
 				   context == grammarAccess.getDotAccess().getDotLeftAction_1_0() ||
+				   context == grammarAccess.getExponentiationRule() ||
+				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
@@ -1093,8 +1132,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Constraint:
 	 *     (
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary) | 
 	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary) | 
 	 *         (
 	 *             left=Comparison_Expression_1_0_0 
 	 *             (
@@ -1110,7 +1150,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=And_Expression_1_0 op='and' right=Cast)
 	 *     )
 	 */
-	protected void sequence_Addition_And_Comparison_Multiplication(EObject context, Expression semanticObject) {
+	protected void sequence_Addition_And_Comparison_Exponentiation_Multiplication(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1118,8 +1158,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Constraint:
 	 *     (
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary) | 
 	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary) | 
 	 *         (
 	 *             left=Comparison_Expression_1_0_0 
 	 *             (
@@ -1136,7 +1177,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Or_Expression_1_0 op='or' right=And)
 	 *     )
 	 */
-	protected void sequence_Addition_And_Comparison_Multiplication_Or(EObject context, Expression semanticObject) {
+	protected void sequence_Addition_And_Comparison_Exponentiation_Multiplication_Or(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1144,8 +1185,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Constraint:
 	 *     (
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary) | 
 	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary) | 
 	 *         (
 	 *             left=Comparison_Expression_1_0_0 
 	 *             (
@@ -1160,7 +1202,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         )
 	 *     )
 	 */
-	protected void sequence_Addition_Comparison_Multiplication(EObject context, Expression semanticObject) {
+	protected void sequence_Addition_Comparison_Exponentiation_Multiplication(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1168,11 +1210,12 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Constraint:
 	 *     (
-	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary)
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary) | 
+	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication)
 	 *     )
 	 */
-	protected void sequence_Addition_Multiplication(EObject context, Expression semanticObject) {
+	protected void sequence_Addition_Exponentiation_Multiplication(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1312,6 +1355,37 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
+	 *     (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
+	 */
+	protected void sequence_Exponentiation(EObject context, Expression semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getExponentiationAccess().getOpCircumflexAccentKeyword_1_0_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getExponentiationAccess().getRightBinaryParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     ((left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | (left=Exponentiation_Expression_1_0_0 op='^' right=Binary))
+	 */
+	protected void sequence_Exponentiation_Multiplication(EObject context, Expression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (exprs+=Expression exprs+=Expression*)
 	 */
 	protected void sequence_ExpressionList(EObject context, ExpressionList semanticObject) {
@@ -1392,15 +1466,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (toto=ID expr=Expression)
 	 */
 	protected void sequence_Model(EObject context, StringEvaluator semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary)
-	 */
-	protected void sequence_Multiplication(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1868,7 +1933,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_SpeciesKey expr=TypeRef facets+=Facet* block=Block?)
+	 *     (key=_SpeciesKey expr=TypeRef facets+=Facet* block=displayBlock?)
 	 */
 	protected void sequence_speciesOrGridDisplayStatement(EObject context, speciesOrGridDisplayStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -106,6 +106,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		super();
 	}
 
+	public GamaList(final IScope scope, final IContainer<?, E> container) {
+		this(container.iterable(scope));
+	}
+
 	public GamaList(final Iterable i) {
 		super(i instanceof Collection ? (Collection) i : ImmutableList.copyOf(i));
 	}

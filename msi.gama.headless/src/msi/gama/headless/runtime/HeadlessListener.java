@@ -260,7 +260,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void openEditorAndSelect(final Object eObject) {
+	public void editModel(final Object eObject) {
 		// NOTHING TO DO OBVIOUSLY !
 	}
 
@@ -313,4 +313,10 @@ public class HeadlessListener implements IGui {
 	public void debug(final Exception e) {
 		e.printStackTrace();
 	}
+
+	/**
+	 * Method runModel()
+	 * @see msi.gama.common.interfaces.IGui#runModel(java.lang.Object, java.lang.String)
+	 */
+	public void runModel(final Object object, final String exp) throws CoreException {}
 }

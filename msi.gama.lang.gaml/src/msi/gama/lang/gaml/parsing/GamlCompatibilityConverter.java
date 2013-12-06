@@ -345,6 +345,7 @@ public class GamlCompatibilityConverter {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		for ( Facet f : EGaml.getFacetsOf(stm) ) {
 			String fname = EGaml.getKey.caseFacet(f);
+
 			// We change the "<-" and "->" symbols into full names
 			if ( fname.equals("<-") ) {
 				fname = keyword.equals(LET) || keyword.equals(SET) ? VALUE : INIT;

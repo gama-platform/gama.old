@@ -46,7 +46,7 @@ public class SimulationPopulation extends GamaPopulation {
 		if ( toBeScheduled ) {
 			world.schedule();
 		}
-		GuiUtils.informStatus("Simulation Ready");
+		// GuiUtils.informStatus("Simulation Ready");
 		return this;
 	}
 

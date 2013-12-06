@@ -122,7 +122,8 @@ public class EGaml {
 		@Override
 		public String doSwitch(final EObject f) {
 			if ( f == null ) { return null; }
-			return super.doSwitch(f);
+			String result = super.doSwitch(f);
+			return result;
 		}
 
 	};

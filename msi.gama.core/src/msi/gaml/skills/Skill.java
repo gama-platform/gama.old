@@ -21,8 +21,21 @@ package msi.gaml.skills;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gaml.compilation.ISkillConstructor;
 
 public abstract class Skill implements ISkill {
+
+	String name;
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(final String newName) {
+		name = newName;
+	}
 
 	protected IAgent getCurrentAgent(final IScope scope) {
 		return scope.getAgentScope();
@@ -39,6 +52,11 @@ public abstract class Skill implements ISkill {
 	@Override
 	public ISkill duplicate() {
 		return this;
+	}
+
+	@Override
+	public void setDuplicator(final ISkillConstructor duplicator) {
+		// Nothing to do here
 	}
 
 }

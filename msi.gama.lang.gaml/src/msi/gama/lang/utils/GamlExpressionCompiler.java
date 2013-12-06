@@ -519,6 +519,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseAccess(final Access object) {
 			IExpression container = compile(object.getLeft());
+			// If no container is defined, return a null expression
+			if ( container == null ) { return null; }
 			IType contType = container.getType();
 			boolean isMatrix = contType.id() == IType.MATRIX;
 			IType keyType = container.getKeyType();

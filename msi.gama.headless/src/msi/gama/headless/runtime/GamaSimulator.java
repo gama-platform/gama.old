@@ -4,15 +4,14 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 import msi.gama.headless.common.*;
-import msi.gama.headless.core.*;
-import msi.gama.kernel.experiment.ExperimentSpecies;
-import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.kernel.experiment.*;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
-	
+
 	private int experimentID;
 
 	private int currentStep;
@@ -30,12 +29,12 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
-		//experiment.getSchedule().
+		// experiment.getSchedule().
 		GAMA.controller.getScheduler().step();
-		//System.out.println(" Step " + currentStep);
-		
-		//		GAMA.controller.getScheduler().step();
-		//experiment.getAgent().get //currentStep.//.controller.userStep();
+		// System.out.println(" Step " + currentStep);
+
+		// GAMA.controller.getScheduler().step();
+		// experiment.getAgent().get //currentStep.//.controller.userStep();
 	}
 
 	@Override
@@ -127,10 +126,14 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.experimentName,this.params);
+			experiment =
+				HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.experimentName, this.params);
 		} catch (GamaRuntimeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			experiment = null;
+		}
+		if ( experiment == null ) {
+			System.exit(-1);
 		}
 	}
 }

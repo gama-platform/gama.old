@@ -19,26 +19,30 @@
 package msi.gama.gui.swt;
 
 import java.net.URL;
+import java.util.Arrays;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.*;
+import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-
+		System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
 		Display display = PlatformUI.createDisplay();
-		DelayedEventsProcessor processor = new DelayedEventsProcessor(display);
+		WorkspaceModelsManager.createProcessor(display);
+		// OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor(display);
+		// display.addListener(SWT.OpenDocument, openDocProcessor);
+		// DelayedEventsProcessor delayedProcessor = new DelayedEventsProcessor(display);
 		/* Fetch the Location that we will be modifying */
 		Location instanceLoc = Platform.getInstanceLocation();
 		if ( instanceLoc == null ) {
@@ -120,7 +124,7 @@ public class Application implements IApplication {
 		}
 
 		try {
-			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(processor));
+			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
 			return IApplication.EXIT_OK;
 		} finally {

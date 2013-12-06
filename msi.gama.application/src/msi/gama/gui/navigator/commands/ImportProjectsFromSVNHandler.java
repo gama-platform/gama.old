@@ -21,8 +21,6 @@ package msi.gama.gui.navigator.commands;
 import java.io.*;
 import java.net.*;
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.navigator.GamaNavigator;
 import msi.gama.gui.svn.SVNAccess;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.*;
@@ -138,23 +136,12 @@ public class ImportProjectsFromSVNHandler extends AbstractHandler {
 
 			@Override
 			public void done(final IJobChangeEvent event) {
-				handleJobFinished();
+				RefreshHandler.run();
 			}
 
 		});
 
 		return null;
-	}
-
-	protected void handleJobFinished() {
-		final IViewPart view = page.findView("msi.gama.gui.view.GamaNavigator");
-		GuiUtils.run(new Runnable() {
-
-			@Override
-			public void run() {
-				((GamaNavigator) view).getCommonViewer().refresh();
-			}
-		});
 	}
 
 }

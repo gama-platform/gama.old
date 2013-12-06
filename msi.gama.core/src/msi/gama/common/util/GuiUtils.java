@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -385,9 +386,18 @@ public class GuiUtils {
 		gui.setSelectedAgent(a);
 	}
 
-	public static void openEditorAndSelect(final Object eObject) {
+	public static void editModel(final Object eObject) {
 		if ( gui == null ) { return; }
-		gui.openEditorAndSelect(eObject);
+		gui.editModel(eObject);
+	}
+
+	public static void runModel(final Object object, final String exp) {
+		if ( gui == null ) { return; }
+		try {
+			gui.runModel(object, exp);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void updateParameterView(final IExperimentSpecies exp) {

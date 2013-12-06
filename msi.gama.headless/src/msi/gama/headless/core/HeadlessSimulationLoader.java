@@ -35,7 +35,15 @@ public class HeadlessSimulationLoader {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		IModel model = loadModel(fileName);
+		if ( model == null ) {
+			System.out.println("GAMA cannot load model " + fileName);
+			return null;
+		}
 		ExperimentSpecies exp1 = (ExperimentSpecies) model.getExperiment(expName);
+		if ( exp1 == null ) {
+			System.out.println("Experiment " + expName + " cannot be created");
+			return null;
+		}
 		waitLoading(exp1);
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			exp1.setParameterValue(entry.getKey(), entry.getValue());
@@ -47,13 +55,11 @@ public class HeadlessSimulationLoader {
 
 	private static void waitLoading(final ExperimentSpecies exp) {
 		System.out.println("Simulation loading...");
-		do {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} while (exp.getCurrentSimulation() != null && false);
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void configureHeadLessSimulation() {
@@ -67,8 +73,9 @@ public class HeadlessSimulationLoader {
 		try {
 			GamaBundleLoader.preBuildContributions();
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			System.out.println("Impossible to load GAMA");
+			System.exit(-1);
 		}
 		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		System.out.println("GAMA loading complete");
@@ -76,13 +83,11 @@ public class HeadlessSimulationLoader {
 
 	private static IModel loadModel(final String fileName) {
 		System.out.println(fileName + " model is loading...");
-
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		if ( r != null && r.getErrors().isEmpty() ) {
 			try {
-
 				GamlJavaValidator validator = injector.getInstance(GamlJavaValidator.class);
 				lastModel = validator.build(r);
 				if ( !r.getErrors().isEmpty() ) {
@@ -95,14 +100,11 @@ public class HeadlessSimulationLoader {
 
 			} catch (GamaRuntimeException e1) {
 				System.out.println("Exception during compilation:" + e1.getMessage());
+				return null;
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				// collectErrors(collect);
-				// fireBuildEnded(m, lastModel);
+				return null;
 			}
-			// FIXME Experiment default no longer exists. Needs to specify one name
-			// GAMA.controller.newExperiment("preyPred", lastModel);
 			System.out.println("Experiment created ");
 		} else {
 			System.out.println("Xtext cannot parse model " + fileName);

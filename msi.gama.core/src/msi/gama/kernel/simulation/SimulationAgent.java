@@ -51,7 +51,7 @@ import com.vividsolutions.jts.geom.Envelope;
 @species(name = IKeyword.MODEL)
 @vars({
 	@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
-	@var(name = IKeyword.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
+	@var(name = SimulationAgent.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
 	@var(name = SimulationAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 	@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
@@ -64,6 +64,7 @@ public class SimulationAgent extends GamlAgent {
 	public static final String TOTAL_DURATION = "total_duration";
 	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String CYCLE = "cycle";
+	public static final String TIME = "time";
 
 	final SimulationClock clock;
 	AgentScheduler scheduler;
@@ -221,14 +222,14 @@ public class SimulationAgent extends GamlAgent {
 		}
 	}
 
-	@getter(IKeyword.TIME)
+	@getter(TIME)
 	public double getTime(final IScope scope, final IAgent agent) {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getTime(); }
 		return 0d;
 	}
 
-	@setter(IKeyword.TIME)
+	@setter(TIME)
 	public void setTime(final IScope scope, final IAgent agent, final double t) throws GamaRuntimeException {
 		final SimulationClock clock = getClock();
 		if ( clock != null ) {

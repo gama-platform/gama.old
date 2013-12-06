@@ -1,29 +1,40 @@
 package msi.gaml.architecture.reflex;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.IArchitecture;
+import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.skills.Skill;
+import msi.gaml.expressions.*;
+import msi.gaml.skills.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 public abstract class AbstractArchitecture extends Skill implements IArchitecture {
+
+	ISkillConstructor duplicator;
 
 	public AbstractArchitecture() {
 		super();
 	}
 
 	@Override
+	public void setDuplicator(final ISkillConstructor duplicator) {
+		this.duplicator = duplicator;
+	}
+
+	@Override
 	public IArchitecture duplicate() {
-		try {
-			return this.getClass().newInstance();
-		} catch (InstantiationException e) {
-			return new ReflexArchitecture();
-		} catch (IllegalAccessException e) {
-			return new ReflexArchitecture();
+		ISkill duplicate = null;
+		if ( duplicator == null ) {
+			duplicate = new ReflexArchitecture();
+			duplicate.setName(IKeyword.REFLEX);
+		} else {
+			duplicate = duplicator.newInstance();
+			duplicate.setName(getName());
 		}
+		return (IArchitecture) duplicate;
 	}
 
 	@Override
@@ -43,7 +54,7 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 
 	@Override
 	public String toGaml() {
-		return null;
+		return "'" + getName() + " architecture'";
 	}
 
 	@Override
@@ -62,21 +73,13 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
-	public void setName(final String newName) {}
-
-	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
 		return 1.0;
 	}
 
 	@Override
 	public IExpression getPertinence() {
-		return null;
+		return new ConstantExpression(1.0);
 	}
 
 	@Override

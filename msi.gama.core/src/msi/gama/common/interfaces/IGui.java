@@ -27,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * The class IGui.
@@ -117,8 +118,6 @@ public interface IGui {
 
 	void setSelectedAgent(IAgent a);
 
-	void openEditorAndSelect(Object eObject);
-
 	void updateParameterView(IExperimentSpecies exp);
 
 	void cycleDisplayViews(Set<String> names);
@@ -134,5 +133,9 @@ public interface IGui {
 	void waitForViewsToBeInitialized();
 
 	void debug(Exception e);
+
+	void editModel(Object eObject);
+
+	public abstract void runModel(final Object object, final String exp) throws CoreException;
 
 }

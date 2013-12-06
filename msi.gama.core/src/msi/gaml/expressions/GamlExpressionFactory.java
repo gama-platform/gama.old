@@ -166,6 +166,11 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				for ( int i = 0; i < coercingTypes.length; i++ ) {
 					IType t = coercingTypes[i];
 					if ( t != null ) {
+						// Emits a warning when a float is truncated. See Issue 735.
+						if ( t.id() == IType.INT ) {
+							context.warning(t.toString() + " expected. '" + args[i].toGaml() +
+								"' will be automatically truncated.", IGamlIssue.UNMATCHED_OPERANDS);
+						}
 						args[i] = createOperator(t.toString(), context, args[i]);
 					}
 				}
