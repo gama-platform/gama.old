@@ -73,6 +73,7 @@ public class MapComparison {
 			po += contigency[i][i];
 			pe += X[i] * Y[i];
 		}
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 	
@@ -116,8 +117,10 @@ public class MapComparison {
 		for (int j = 0; j < nbCat; j++) {
 			for (int k = 0; k < nbCat; k++) {
 				contigency[j][k] /= nb;
-				contigencyOA[j][k] /= O[j];
-				contigencyOS[j][k] /= O[j];
+				if (O[j] > 0) {
+					contigencyOA[j][k] /= O[j];
+					contigencyOS[j][k] /= O[j];
+				}
 			}
 			O[j] /= nb;
 		}
@@ -131,6 +134,7 @@ public class MapComparison {
 			}
 			pe += (O[j] * sum);
 		}
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 	
@@ -144,7 +148,7 @@ public class MapComparison {
 		if (nb  < 1)
 			return 1;
 		int nbCat = categories.size();
-		
+		similarities.clear();
 		boolean[] sim = new boolean[nb]; 
 		double[][] crispVector1 = new double[nb][nbCat];
 		double[][] crispVector2 = new double[nb][nbCat];
@@ -172,6 +176,7 @@ public class MapComparison {
 		Map<Double,Integer> ringsPn = new GamaMap<Double, Integer>();
 		int nbRings = buildRings(scope,filter,distance,rings, ringsPn, agents);
 		double similarityExpected = computeExpectedSim(nbCat, X, Y, nbRings, rings,ringsPn);
+		if (similarityExpected == 1) return 1;
 		return (meanSimilarity - similarityExpected) / (1 - similarityExpected);
 	}
 	
@@ -184,6 +189,7 @@ public class MapComparison {
 		int nb = agents.length(scope);
 		if (nb  < 1)
 			return 1;
+		similarities.clear();
 		int nbCat = categories.size();
 		double[] nbObs = new double[nbCat];
 		double[] nbSim = new double[nbCat];
@@ -192,8 +198,8 @@ public class MapComparison {
 		double[][] nbInitSim = new double[nbCat][nbCat];
 		GamaMap<Object, Integer> categoriesId = new GamaMap<Object, Integer>();
 
-		GamaMap<List<Integer>, GamaMap<Double, Integer>> XaPerTransition = new GamaMap<List<Integer>, GamaMap<Double,Integer>>();
-		GamaMap<List<Integer>, GamaMap<Double, Integer>> XsPerTransition = new GamaMap<List<Integer>, GamaMap<Double,Integer>>();
+		GamaMap<List<Integer>, GamaMap<Double, Double>> XaPerTransition = new GamaMap<List<Integer>, GamaMap<Double,Double>>();
+		GamaMap<List<Integer>, GamaMap<Double, Double>> XsPerTransition = new GamaMap<List<Integer>, GamaMap<Double,Double>>();
 		Set<Double> Xvals= new HashSet<Double>();
 		for (int i = 0; i < nbCat; i++) {
 			categoriesId.put(categories.get(i), i);
@@ -226,7 +232,7 @@ public class MapComparison {
 			nbInitObs[idCatInit][idCatObs] += 1;
 			nbInitSim[idCatInit][idCatSim] += 1;
 		}		
-		double po = computePo(scope, filter, categoriesId,fuzzytransitions,distance, valsInit,valsObs, valsSim, agents, nbCat, nb, similarities,XaPerTransition, XsPerTransition, Xvals);
+		double po = computePo(scope, filter, categoriesId,fuzzytransitions,distance, valsInit,valsObs, valsSim, agents, nbCat, nb, similarities);
 		double pe = 0;
 		computeXaXsTransitions(scope, filter,fuzzytransitions,distance,agents, nbCat, XaPerTransition, XsPerTransition, Xvals);
 		for (int i = 0 ; i < nbCat; i++ ) {
@@ -234,8 +240,8 @@ public class MapComparison {
 				for (int k = 0 ; k < nbCat; k++ ) {
 					List<Integer> ca = new GamaList<Integer>();
 					ca.add(i); ca.add(j);ca.add(k);
-					GamaMap<Double, Integer> pmuXa = XaPerTransition.get(ca);
-					GamaMap<Double, Integer> pmuXs = XsPerTransition.get(ca);
+					GamaMap<Double, Double> pmuXa = XaPerTransition.get(ca);
+					GamaMap<Double, Double> pmuXs = XsPerTransition.get(ca);
 					double emu = 0;
 					for (Double xval : Xvals) {
 						double XaVal = pmuXa == null || ! pmuXa.containsKey(xval) ? 0:pmuXa.get(xval);
@@ -243,16 +249,18 @@ public class MapComparison {
 						double proba = xval*XaVal*XsVal;
 						emu += proba;
 					}
-					double poas = nbInitObs[i][j]/nbInit[i]  * nbInitSim[i][k]/nbInit[i] * nbInit[i]/nb;
+					
+					double poas = nbInit[i] == 0 ? 0 : (nbInitObs[i][j]/nbInit[i]  * nbInitSim[i][k]/nb);
 					pe += emu * poas;
 				}
 			}
 		}
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 	
 	private static double computePo(final IScope scope, In filter, GamaMap<Object, Integer> categoriesId, final GamaMatrix<Double> fuzzytransitions,final Double distance, final IList<Object> valsInit,final IList<Object> valsObs, final IList<Object> valsSim, 
-			final IContainer<Integer, IAgent> agents, int nbCat, int nb, final IList<Double> similarities,GamaMap<List<Integer>, GamaMap<Double, Integer>> XaPerTransition,GamaMap<List<Integer>, GamaMap<Double, Integer>> XsPerTransition, Set<Double> Xvals){
+			final IContainer<Integer, IAgent> agents, int nbCat, int nb, final IList<Double> similarities){
 		GamaMap<IAgent, Integer> agsId = new GamaMap<IAgent, Integer>();
 		for (int i = 0; i < agents.length(scope); i++) {
 			agsId.put(agents.get(scope, i), i);
@@ -316,7 +324,7 @@ public class MapComparison {
 	}
 	
 	private static void computeXaXsTransitions(final IScope scope, In filter, final GamaMatrix<Double> fuzzytransitions,final Double distance,
-			 final IContainer<Integer, IAgent> agents, int nbCat, GamaMap<List<Integer>, GamaMap<Double, Integer>> XaPerTransition, GamaMap<List<Integer>, GamaMap<Double, Integer>> XsPerTransition, Set<Double> Xvals) {
+			 final IContainer<Integer, IAgent> agents, int nbCat, GamaMap<List<Integer>, GamaMap<Double, Double>> XaPerTransition, GamaMap<List<Integer>, GamaMap<Double, Double>> XsPerTransition, Set<Double> Xvals) {
 		
 		GamaList<ILocation> locs = new GamaList<ILocation>();
 		for (IAgent ag : agents) {
@@ -331,7 +339,8 @@ public class MapComparison {
 		distancesCoeff.put(centralAg, 1.0);
 		for (IAgent ag : neighbours) {
 			double euclidDist = centralAg.getLocation().euclidianDistanceTo(ag.getLocation());
-			distancesCoeff.put(ag, 1 /(1.0 + (euclidDist/sizeNorm))); 
+			double dist = 1 /(1.0 + (euclidDist/sizeNorm));
+			distancesCoeff.put(ag, dist); 
 		}
 		
 		for (int i = 0; i < nbCat; i++) {
@@ -343,46 +352,46 @@ public class MapComparison {
 					double xs = 0;
 					for (IAgent ag : distancesCoeff.getKeys())  {
 						double dist = distancesCoeff.get(ag);
-						double valxatmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i,k,i,j) *dist ;
-						double valxstmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i,j,i,k) *dist ;
-						if (valxatmp > xa) xa = valxatmp; 
-						if (valxstmp > xs) xs = valxstmp; 	
+						double xatmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i,k,i,j) *dist ;
+						double xstmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i,j,i,k) *dist ;
+						if (xatmp > xa) xa = xatmp;
+						if (xstmp > xs) xs = xstmp;
 					}
-					if (xa > 0) {
-						GamaMap<Double, Integer> mapxa = XaPerTransition.get(ca);
-						if (mapxa == null) {
-							mapxa = new GamaMap<Double, Integer>();
-							mapxa.put(xa, 1);
-							XaPerTransition.put(ca, mapxa);
-						} else {
-							if (mapxa.containsKey(xa)) {
-								mapxa.put(xa, mapxa.get(xa) + 1);
+						if (xa > 0) {
+							
+							GamaMap<Double, Double> mapxa = XaPerTransition.get(ca);
+							if (mapxa == null) {
+								mapxa = new GamaMap<Double, Double>();
+								mapxa.put(xa, 1.0);
+								XaPerTransition.put(ca, mapxa);
 							} else {
-								mapxa.put(xa, 1);
+								if (mapxa.containsKey(xa)) {
+									mapxa.put(xa, mapxa.get(xa) + 1.0);
+								} else {
+									mapxa.put(xa, 1.0);
+								}
 							}
+							Xvals.add(xa);
 						}
-						Xvals.add(xa);
-					}
-					if (xs > 0) {
-						GamaMap<Double, Integer> mapxs = XsPerTransition.get(ca);
-						if (mapxs == null) {
-							mapxs = new GamaMap<Double, Integer>();
-							mapxs.put(xs, 1);
-							XsPerTransition.put(ca, mapxs);
-						} else {
-							if (mapxs.containsKey(xa)) {
-								mapxs.put(xs, mapxs.get(xs) + 1);
+						if (xs > 0) {
+							GamaMap<Double, Double> mapxs = XsPerTransition.get(ca);
+							if (mapxs == null) {
+								mapxs = new GamaMap<Double, Double>();
+								mapxs.put(xs, 1.0);
+								XsPerTransition.put(ca, mapxs);
 							} else {
-								mapxs.put(xs, 1);
+								if (mapxs.containsKey(xa)) {
+									mapxs.put(xs, mapxs.get(xs) + 1.0);
+								} else {
+									mapxs.put(xs, 1.0);
+								}
 							}
+							Xvals.add(xs);
 						}
-						Xvals.add(xs);
-					}
-						
-				}
 				}
 			}
 		}
+	}
 
 		
 	
