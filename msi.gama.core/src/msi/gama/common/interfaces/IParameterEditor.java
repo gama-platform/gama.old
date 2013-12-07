@@ -40,4 +40,6 @@ public interface IParameterEditor {
 
 	public abstract void updateValue();
 
+	public abstract void setActive(Boolean value);
+
 }

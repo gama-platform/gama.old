@@ -62,7 +62,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	Shell parentShell, shell;
 	CTabFolder tabFolder;
-	final List<IParameterEditor> editors = new ArrayList();
+	final Map<String, IParameterEditor> editors = new LinkedHashMap();
 	final Map<String, Object> modelValues = new LinkedHashMap();
 
 	private GamaPreferencesView(final Shell parent) {
@@ -163,6 +163,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
+		final Map<String, Boolean> activations = new HashMap();
 		for ( final Entry e : list ) {
 			modelValues.put(e.getKey(), e.getValue());
 			IParameter p = new ParameterWrapper(e) {
@@ -171,20 +172,45 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				public void setValue(final Object value) {
 					if ( e.acceptChange(value) ) {
 						modelValues.put(e.getKey(), value);
+						checkActivables(value);
 					}
-
 				}
 
 				@Override
 				public Object value(final IScope scope) {
-					return modelValues.get(e.getKey());
+					Object value = modelValues.get(e.getKey());
+					checkActivables(value);
+					return value;
+				}
+
+				private void checkActivables(final Object value) {
+					if ( e.getActivable() != null && value instanceof Boolean ) {
+						for ( String activable : e.getActivable() ) {
+							IParameterEditor ed = editors.get(activable);
+							if ( ed == null ) {
+								activations.put(activable, (Boolean) value);
+							} else {
+								ed.setActive((Boolean) value);
+							}
+						}
+					}
 				}
 
 			};
+
 			AbstractEditor ed = EditorFactory.create(compo, p);
 			ed.acceptPopup(false);
-			editors.add(ed);
+			editors.put(e.getKey(), ed);
 		}
+
+		// Initial activations of editors
+		for ( String s : activations.keySet() ) {
+			IParameterEditor ed = editors.get(s);
+			if ( ed != null ) {
+				ed.setActive(activations.get(s));
+			}
+		}
+		activations.clear();
 		compo.layout();
 		compo.pack(true);
 	}
@@ -244,7 +270,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				GamaPreferences.revertToDefaultValues(modelValues);
-				for ( IParameterEditor ed : editors ) {
+				for ( IParameterEditor ed : editors.values() ) {
 					ed.updateValue();
 				}
 			}

@@ -84,6 +84,18 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		listener = l;
 	}
 
+	@Override
+	public void setActive(final Boolean active) {
+		if ( titleLabel != null ) {
+			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK) : SwtGui.getDisplay()
+				.getSystemColor(SWT.COLOR_GRAY));
+		}
+		if ( unitLabel != null ) {
+			unitLabel.setEnabled(active);
+		}
+		this.getEditor().setEnabled(active);
+	}
+
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {

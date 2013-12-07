@@ -103,7 +103,7 @@ public class GamaPreferences {
 		IType type;
 		List<T> values;
 		Number min, max;
-		String activates;
+		String[] activates;
 		IPreferenceChange<T> onChange;
 
 		private Entry(final String key) {
@@ -157,7 +157,7 @@ public class GamaPreferences {
 			return this;
 		}
 
-		public Entry activates(final String link) {
+		public Entry activates(final String ... link) {
 			activates = link;
 			return this;
 		}
@@ -271,6 +271,10 @@ public class GamaPreferences {
 			return true;
 		}
 
+		public String[] getActivable() {
+			return this.activates;
+		}
+
 	}
 
 	/**
@@ -294,22 +298,20 @@ public class GamaPreferences {
 	/**
 	 * User Interface
 	 */
-	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
-		"Automatically switch to modeling perspective", false, IType.BOOL).in(GENERAL).group("User interface");
 	public static final Entry<Integer> CORE_MENU_SIZE = create("core.menu_size", "Break down agents in menus every",
 		50, IType.INT).between(10, 100).in(GENERAL).group("User interface");
 	/**
 	 * Simulation Errors
 	 */
-	public static final Entry<Boolean> CORE_REVEAL_AND_STOP = create("core.stop", "Stop simulation at first error",
-		true, IType.BOOL).in(GENERAL).group("Simulation errors");
-	public static final Entry<Boolean> CORE_WARNINGS = create("core.warnings", "Treat warnings as errors", false,
-		IType.BOOL).in(GENERAL).group("Simulation errors");
+	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
+		IType.BOOL).in(GENERAL).activates("core.errors_number", "core.recent").group("Simulation errors");
 	public static final Entry<Integer> CORE_ERRORS_NUMBER = create("core.errors_number", "Number of errors to display",
 		10, IType.INT).in(GENERAL).group("Simulation errors").between(1, null);
 	public static final Entry<Boolean> CORE_RECENT = create("core.recent", "Display most recent first", true,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
-	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
+	public static final Entry<Boolean> CORE_REVEAL_AND_STOP = create("core.stop", "Stop simulation at first error",
+		true, IType.BOOL).in(GENERAL).group("Simulation errors");
+	public static final Entry<Boolean> CORE_WARNINGS = create("core.warnings", "Treat warnings as errors", false,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	/**
 	 * Startup
@@ -328,12 +330,13 @@ public class GamaPreferences {
 	/**
 	 * Properties
 	 */
-	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
-		IType.STRING).among("Java2D", "OpenGL").in(DISPLAY).group("Properties");
+	public static final Entry<String> CORE_DISPLAY = create("core.display",
+		"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL").in(DISPLAY)
+		.group("Properties");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
 		"Synchronize displays with simulations by default", false, IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay by default", false,
-		IType.BOOL).in(DISPLAY).group("Properties");
+		IType.BOOL).in(DISPLAY).activates("core.scale").group("Properties");
 	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay by default", false,
 		IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing by default",
@@ -364,6 +367,11 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
 
+	// EDITOR PAGE
+	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
+		"Automatically switch to modeling perspective when editing a model", false, IType.BOOL).in(EDITOR).group(
+		"Options");
+
 	// LIBRARIES PAGE
 	/**
 	 * Spatialite
@@ -379,6 +387,10 @@ public class GamaPreferences {
 	/**
 	 * GeoTools
 	 */
+	public static final Entry<Boolean> LIB_PROJECTED =
+		create("core.lib_projected",
+			"When no '.prj' file is supplied, consider shape files to contain projected data by default", false,
+			IType.BOOL).activates("core.lib_projection").in(LIBRARIES).group("GeoTools");;
 	public static final Entry<String> LIB_PROJECTION = create("core.lib_projection",
 		"Default projection to use when no '.prj' file is found", "WGS84", IType.STRING).in(LIBRARIES)
 		.group("GeoTools");

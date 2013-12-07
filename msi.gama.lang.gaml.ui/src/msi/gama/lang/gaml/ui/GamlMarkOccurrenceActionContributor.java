@@ -28,8 +28,8 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 
 	// Preference here is an instance variable, but only one will be created as this class is a singleton.
 	public final Entry<Boolean> EDITOR_MARK_OCCURENCES = GamaPreferences
-		.create("editor.mark.occurences", "Mark occurences", true, IType.BOOL).in(GamaPreferences.EDITOR)
-		.group("Options").onChange(new IPreferenceChange<Boolean>() {
+		.create("editor.mark.occurences", "Mark occurences of symbols in models", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options").onChange(new IPreferenceChange<Boolean>() {
 
 			@Override
 			public boolean valueChange(final Boolean newValue) {
