@@ -18,7 +18,7 @@ import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 /**
- * Class GAML.
+ * Class GAML. Static support for various GAML constructs and functions
  * 
  * @author drogoul
  * @since 16 mai 2013

@@ -36,7 +36,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	// Returns the index of the spatial index to use. Return -1 if all spatial indexes are concerned
 	private int findSpatialIndexes(final IAgentFilter f) {
-		final Integer si = indexes.get(f.speciesFiltered());
+		final Integer si = indexes.get(f.getSpecies());
 		return si == null ? -1 : si;
 	}
 

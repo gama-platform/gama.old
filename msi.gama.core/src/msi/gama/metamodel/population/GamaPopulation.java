@@ -624,4 +624,53 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		}
 	}
 
+	// Filter methods
+
+	/**
+	 * Method getAgents()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
+	 */
+	@Override
+	public IContainer<?, ? extends IShape> getAgents() {
+		return this;
+	}
+
+	/**
+	 * Method accept()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
+	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 */
+	@Override
+	public boolean accept(final IScope scope, final IShape source, final IShape a) {
+		final IAgent agent = a.getAgent();
+		if ( agent == null ) { return false; }
+		if ( agent.getPopulation() != this ) { return false; }
+		final IAgent as = source.getAgent();
+		// if ( as != null && as.getPopulation() != pop ) {
+		if ( agent == as ) { return false; }
+		// }
+		return true;
+	}
+
+	/**
+	 * Method filter()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
+	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 */
+	@Override
+	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+		IAgent sourceAgent = source == null ? null : source.getAgent();
+		results.remove(sourceAgent);
+		Iterator<? extends IShape> it = results.iterator();
+		while (it.hasNext()) {
+			IShape s = it.next();
+			IAgent a = s.getAgent();
+			if ( a == null || a.getPopulation() != this ) {
+				it.remove();
+			}
+
+		}
+
+	}
+
 }

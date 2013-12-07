@@ -1,6 +1,7 @@
 package msi.gama.runtime;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.model.IModel;
@@ -96,7 +97,7 @@ public class FrontEndController implements Runnable {
 			case _RELOAD:
 				updateSimulationState(NOTREADY);
 				try {
-					final boolean wasRunning = !scheduler.paused;
+					final boolean wasRunning = !scheduler.paused && !GamaPreferences.CORE_AUTO_RUN.getValue();
 					scheduler.pause();
 					GuiUtils.waitStatus("Reloading...");
 					experiment.reload();

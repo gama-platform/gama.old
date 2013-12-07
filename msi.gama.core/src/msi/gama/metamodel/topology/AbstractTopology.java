@@ -414,7 +414,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if ( filter != null ) {
-			shps = filter.getShapes(scope);
+			shps = filter.getAgents();
 		} else {
 			shps = scope.getSimulationScope().getAgents();
 		}

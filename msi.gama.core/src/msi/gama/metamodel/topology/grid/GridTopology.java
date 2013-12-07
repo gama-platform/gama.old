@@ -209,7 +209,7 @@ public class GridTopology extends AbstractTopology {
 		// We compute the neighbouring cells of the "source" shape
 		Set<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
 		// If we only accept cells from this topology, no need to look for other agents
-		if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
+		if ( filter.getSpecies() == getPlaces().getCellSpecies() ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
 		// cells themselves) and that are accepted by the filter
 		return getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter,

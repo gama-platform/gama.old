@@ -584,7 +584,7 @@ public class Containers {
 	@operator(value = { "collect" }, content_type = ITypeProvider.SECOND_TYPE, iterator = true)
 	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.", comment = "collect is very similar to accumulate except. Nevertheless if the evaluation of the right-hand operand produces a list,"
 		+ "the returned list is a list of list of elements. In contrarily, the list produces by accumulate is only a list of elements "
-		+ "(all the lists) produced are concaneted. In addition, collect can be applied to any container.", special_cases = { "if the left-hand operand is nil, accumulate returns an empty list" }, examples = {
+		+ "(all the lists) produced are concaneted. In addition, collect can be applied to any container.", special_cases = { "if the left-hand operand is nil, collect throws an error" }, examples = {
 		"[1,2,4] collect (each *2)  	--: 	[2,4,8]", "[1,2,4] collect ([2,4])  		--: 	[[2,4],[2,4],[2,4]]",
 		"[1::2, 3::4, 5::6] collect (each + 2) --: [8,4,6]",
 		"(list(node) collect (node(each).location.x * 2)    --:  [25.65, 158.99, 140.80, 80.11, 125.47, 37.830, 4.62,...]" }, see = { "accumulate" })

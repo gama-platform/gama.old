@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -38,7 +39,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable {
+public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IAgentFilter {
 
 	public interface Listener {
 

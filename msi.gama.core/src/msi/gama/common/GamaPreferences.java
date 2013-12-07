@@ -274,14 +274,15 @@ public class GamaPreferences {
 	}
 
 	/**
-	 * Core preferences
+	 * Definition of the preferences contributed by msi.gama.core
 	 */
 
-	// GENERAL
-
+	// GENERAL PAGE
 	public static final List<String> GENERATOR_NAMES = Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA,
 		IKeyword.MERSENNE);
-
+	/**
+	 * Random Number Generation
+	 */
 	public static final Entry<String> CORE_RNG = create("core.rng", "Random number generator", IKeyword.MERSENNE,
 		IType.STRING).among(GENERATOR_NAMES).in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED = create("core.seed_defined", "Define a default seed", false,
@@ -290,10 +291,16 @@ public class GamaPreferences {
 		.in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_RND_EDITABLE = create("core.define_rng",
 		"Include in the parameters of models", true, IType.BOOL).in(GENERAL).group("Random Number Generation");
+	/**
+	 * User Interface
+	 */
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
 		"Automatically switch to modeling perspective", false, IType.BOOL).in(GENERAL).group("User interface");
 	public static final Entry<Integer> CORE_MENU_SIZE = create("core.menu_size", "Break down agents in menus every",
 		50, IType.INT).between(10, 100).in(GENERAL).group("User interface");
+	/**
+	 * Simulation Errors
+	 */
 	public static final Entry<Boolean> CORE_REVEAL_AND_STOP = create("core.stop", "Stop simulation at first error",
 		true, IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Boolean> CORE_WARNINGS = create("core.warnings", "Treat warnings as errors", false,
@@ -304,14 +311,23 @@ public class GamaPreferences {
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
+	/**
+	 * Startup
+	 */
 	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display GAMA website at startup",
 		true, IType.BOOL).in(GENERAL).group("Startup");
+	/**
+	 * Runtime
+	 */
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
 		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
 	public static final Entry<Boolean> CORE_AUTO_RUN = create("core.auto_run",
 		"Auto-run experiments when they are launched", false, IType.BOOL).in(GENERAL).group("Runtime");
 
-	// DISPLAY
+	// DISPLAY PAGE
+	/**
+	 * Properties
+	 */
 	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
 		IType.STRING).among("Java2D", "OpenGL").in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
@@ -326,6 +342,11 @@ public class GamaPreferences {
 		Color.white, IType.COLOR).in(DISPLAY).group("Properties");
 	public static final Entry<Color> CORE_HIGHLIGHT = create("core.highlight", "Default highlight color",
 		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group("Properties");
+	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
+		"Stack displays on screen in the order of their definition", true, IType.BOOL).in(DISPLAY).group("Properties");
+	/**
+	 * Default Aspect
+	 */
 	public static final Entry<String> CORE_SHAPE = create("core.shape", "Defaut shape to use for agents", "shape",
 		IType.STRING).among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
 		.group("Default aspect");
@@ -333,22 +354,34 @@ public class GamaPreferences {
 		IType.FLOAT).between(0.01, null).in(DISPLAY).group("Default aspect");
 	public static final Entry<Color> CORE_COLOR = create("core.color", "Default color to use for agents", Color.yellow,
 		IType.COLOR).in(DISPLAY).group("Default aspect");
+	/**
+	 * OpenGL
+	 */
 	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting by default", true,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env",
 		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
-		"Stack displays on screen in the order of their definition", true, IType.BOOL).in(DISPLAY).group("Properties");;
 
-	// LIBRARIES
-
+	// LIBRARIES PAGE
+	/**
+	 * Spatialite
+	 */
 	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite", "Path to the Spatialite library",
 		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group(
 		"Spatialite (http://www.gaia-gis.it/gaia-sins/)");
+	/**
+	 * R
+	 */
 	public static final Entry<String> LIB_R = create("core.lib_r", "Path to the RScript library",
 		new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("R (http://www.r-project.org)");
+	/**
+	 * GeoTools
+	 */
+	public static final Entry<String> LIB_PROJECTION = create("core.lib_projection",
+		"Default projection to use when no '.prj' file is found", "WGS84", IType.STRING).in(LIBRARIES)
+		.group("GeoTools");
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");

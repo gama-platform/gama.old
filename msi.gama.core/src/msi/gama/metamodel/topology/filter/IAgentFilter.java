@@ -26,31 +26,12 @@ import msi.gaml.species.ISpecies;
 
 public interface IAgentFilter {
 
-	public ISpecies speciesFiltered();
+	public ISpecies getSpecies();
 
-	public boolean filterSpecies(ISpecies species);
+	public IContainer<?, ? extends IShape> getAgents();
 
-	public IContainer<?, ? extends IShape> getShapes(IScope scope);
-
-	/**
-	 * @param scope
-	 * @param source
-	 * @param a
-	 * @return
-	 */
 	boolean accept(IScope scope, IShape source, IShape a);
 
-	/**
-	 * @param scope
-	 * @param source
-	 * @param a
-	 * @return
-	 */
-	// boolean accept(IScope scope, ILocation source, IShape a);
-
-	/**
-	 * @param internal_results
-	 */
 	public void filter(IScope scope, IShape source, Collection<? extends IShape> results);
 
 }

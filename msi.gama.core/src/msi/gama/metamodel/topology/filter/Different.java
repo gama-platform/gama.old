@@ -37,26 +37,16 @@ public class Different implements IAgentFilter {
 		return a.getGeometry() != source.getGeometry();
 	}
 
-	@Override
-	public boolean filterSpecies(final ISpecies s) {
-		return false;
-	}
-
-	// @Override
-	// public boolean accept(final IScope scope, final ILocation source, final IShape a) {
-	// return !a.getLocation().equals(source);
-	// }
-
 	/**
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
+	public IContainer<?, ? extends IShape> getAgents() {
 		return GamaList.EMPTY_LIST;
 	}
 
 	@Override
-	public ISpecies speciesFiltered() {
+	public ISpecies getSpecies() {
 		return null;
 	}
 
