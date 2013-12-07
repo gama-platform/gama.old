@@ -14,14 +14,11 @@ package msi.gama.gui.swt.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
@@ -149,33 +146,33 @@ public final class AwtEnvironment {
 		 * before any (potential deadlocking) activity occurs on the
 		 * AWT thread.
 		 */
-		final Font[] initialFont = new Font[1];
-		display.syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				initialFont[0] = display.getSystemFont();
-			}
-		});
-		final Font swtFont = initialFont[0];
-		final FontData[] swtFontData = swtFont.getFontData();
-		try {
-			EventQueue.invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					setLookAndFeel();
-					LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
-					if ( FocusHandler.verboseKFHEvents ) {
-						FocusDebugging.enableKeyboardFocusManagerLogging();
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			SWT.error(SWT.ERROR_FAILED_EXEC, e);
-		} catch (InvocationTargetException e) {
-			SWT.error(SWT.ERROR_FAILED_EXEC, e.getTargetException());
-		}
+		// final Font[] initialFont = new Font[1];
+		// display.syncExec(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// initialFont[0] = display.getSystemFont();
+		// }
+		// });
+		// final Font swtFont = initialFont[0];
+		// final FontData[] swtFontData = swtFont.getFontData();
+		// try {
+		// EventQueue.invokeAndWait(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// setLookAndFeel();
+		// LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
+		// if ( FocusHandler.verboseKFHEvents ) {
+		// FocusDebugging.enableKeyboardFocusManagerLogging();
+		// }
+		// }
+		// });
+		// } catch (InterruptedException e) {
+		// SWT.error(SWT.ERROR_FAILED_EXEC, e);
+		// } catch (InvocationTargetException e) {
+		// SWT.error(SWT.ERROR_FAILED_EXEC, e.getTargetException());
+		// }
 
 		// Listen for AWT modal dialogs to make them modal application-wide
 		dialogListener = new AwtDialogListener(display);
