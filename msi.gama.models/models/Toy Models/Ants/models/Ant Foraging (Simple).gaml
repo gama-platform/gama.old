@@ -5,7 +5,7 @@ global {
 	float evaporation_rate <- 0.1 min: 0.01 max: float(1) ;
 	const diffusion_rate type: float <- 0.7 min: 0.0 max: float(1) ;
 	const gridsize type: int <- 75; 
-	const ants_number type: int <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
+	const ants_number type: int <- 50 min: 1 max: 200 ;
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
 	const types type: matrix of: int <- matrix (image ( '../images/environment75x75_scarce.pgm' )); 
