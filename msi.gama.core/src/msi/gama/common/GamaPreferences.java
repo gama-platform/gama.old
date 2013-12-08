@@ -392,8 +392,7 @@ public class GamaPreferences {
 			"When no '.prj' file is supplied, consider shape files to contain projected data by default", false,
 			IType.BOOL).activates("core.lib_projection").in(LIBRARIES).group("GeoTools");;
 	public static final Entry<String> LIB_PROJECTION = create("core.lib_projection",
-		"Default projection to use when no '.prj' file is found", "WGS84", IType.STRING).in(LIBRARIES)
-		.group("GeoTools");
+		"Default projection to use when no '.prj' file is found", "UTM", IType.STRING).in(LIBRARIES).group("GeoTools");
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");
