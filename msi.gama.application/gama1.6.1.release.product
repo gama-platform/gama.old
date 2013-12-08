@@ -60,7 +60,6 @@ openFile</programArgs>
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -78,6 +77,7 @@ openFile</programArgs>
       <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
+      <plugin id="idees.gama.mapcomparison"/>
       <plugin id="irit.gaml.extensions.database"/>
       <plugin id="irit.gaml.extensions.test"/>
       <plugin id="irit.maelia.gaml.additions"/>

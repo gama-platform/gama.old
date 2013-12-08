@@ -26,6 +26,7 @@ import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public class ColorEditor extends AbstractEditor implements DisposeListener {
@@ -66,14 +67,15 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 
 	@Override
 	public void widgetDisposed(final DisposeEvent event) {
-		if ( edit.getImage() != null ) {
-			edit.getImage().dispose();
-			edit.setImage(null);
-		}
+		// if ( edit.getImage() != null ) {
+		// edit.getImage().dispose();
+		// edit.setImage(null);
+		// }
 	}
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
+		compo.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		// Composite comp = new Composite(compo, SWT.None);
 		// comp.setLayoutData(getParameterGridData());
 		// final GridLayout layout = new GridLayout(2, false);
@@ -82,17 +84,40 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 		// layout.marginWidth = 1;
 		// comp.setLayout(layout);
 		// expression = new ExpressionControl(comp, this);
-		edit = new Button(compo, SWT.FLAT);
+
+		edit = new Button(compo, SWT.PUSH);
+		GridData d = new GridData(SWT.LEFT, SWT.FILL, false, true);
+		d.widthHint = 48;
+		edit.setLayoutData(d);
 		// edit.setText("Edit");
-		// edit.setAlignment(SWT.CENTER);
+		edit.setAlignment(SWT.LEFT);
 
 		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		// edit.setLayoutData(d);
 		edit.addDisposeListener(this);
 		edit.addSelectionListener(this);
+		// edit.setImage(getImage());
+		edit.addPaintListener(new PaintListener() {
+
+			@Override
+			public void paintControl(final PaintEvent e) {
+				displayParameterValue();
+			}
+
+		});
+
 		return edit;
 		// return expression.getControl();
 	}
+
+	// private static Image dumbImage;
+	//
+	// static Image getImage() {
+	// if ( dumbImage == null ) {
+	// dumbImage = new Image(Display.getDefault(), 32, 1);
+	// }
+	// return dumbImage;
+	// }
 
 	@Override
 	protected void displayParameterValue() {
@@ -100,19 +125,24 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 		// expression.getControl().setText(StringUtils.toGaml(currentValue));
 		java.awt.Color c = currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue;
 		Color color = new Color(Display.getDefault(), c.getRed(), c.getGreen(), c.getBlue());
-		Image oldImage = edit.getImage();
-		Image image = new Image(Display.getDefault(), 32, 16);
-		GC gc = new GC(image);
+		// Image oldImage = edit.getImage();
+		int height = edit.getSize().y;
+		int width = edit.getSize().x;
+		if ( height <= 0 || width <= 0 ) { return; }
+		// Image image = new Image(Display.getDefault(), width, height);
+		GC gc = new GC(edit);
+		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		gc.fillRoundRectangle(6, 6, width - 16, height - 16, 5, 5);
 		gc.setBackground(color);
-		gc.fillRectangle(0, 2, 32, 14);
-		gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-		gc.drawRectangle(0, 2, 31, 13);
+		gc.fillRoundRectangle(7, 7, width - 18, height - 18, 5, 5);
+		gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		gc.drawRoundRectangle(7, 7, width - 18, height - 18, 5, 5);
 		gc.dispose();
-		edit.setText("(r:" + c.getRed() + ",g:" + c.getGreen() + ",b:" + c.getBlue() + ")");
-		edit.setImage(image);
-		if ( oldImage != null && !oldImage.isDisposed() ) {
-			oldImage.dispose();
-		}
+		edit.setText("                " + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + " ");
+		// edit.setImage(image);
+		// if ( oldImage != null && !oldImage.isDisposed() ) {
+		// oldImage.dispose();
+		// }
 		color.dispose();
 		internalModification = false;
 	}

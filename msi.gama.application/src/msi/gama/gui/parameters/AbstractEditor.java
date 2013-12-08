@@ -165,7 +165,9 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			return;
 		}
 
-		paramControl.setLayoutData(getParameterGridData());
+		if ( !isCombo ) {
+			paramControl.setLayoutData(getParameterGridData());
+		}
 		paramControl.setBackground(normal_bg);
 		if ( isEditable && !isCombo ) {
 			displayParameterValue();
@@ -251,6 +253,11 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 				modifyValue(possibleValues.get(combo.getSelectionIndex()));
 			}
 		});
+		final GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, true);
+		d.minimumWidth = 48;
+		// d.widthHint = 100; // SWT.DEFAULT
+		combo.setLayoutData(d);
+		combo.pack();
 		return combo;
 	}
 
