@@ -27,7 +27,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
@@ -56,47 +55,49 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	private double[] matrix;
 
 	/**
-	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
+	 * right side of the first matrix
 	 * 
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
 	@operator(value = { "opAppendVertically" })
 	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", examples = { "opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3;4,5,6;7,8,9;10,11,12]" })
-	public /*static*/ IMatrix opAppendVertically(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
-		double[] ma=((GamaFloatMatrix)a).getMatrix();
-		double[] mb=((GamaFloatMatrix)b).getMatrix();
-		double[] mab=ArrayUtils.addAll(ma, mb);
+	public/* static */IMatrix opAppendVertically(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
+		double[] ma = a.getMatrix();
+		double[] mb = b.getMatrix();
+		double[] mab = ArrayUtils.addAll(ma, mb);
 
-		GamaFloatMatrix fl=new GamaFloatMatrix(a.getCols(scope), a.getRows(scope)+b.getRows(scope),mab);
+		GamaFloatMatrix fl = new GamaFloatMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
 
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 		return fl;
-		}	
-	
+	}
+
 	/**
-	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
+	 * side of the first matrix
 	 * 
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
 	@operator(value = { "opAppendHorizontally" })
 	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", examples = { "opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3,7,8,9;4,5,6,10,11,12]" })
-	public /*static*/ IMatrix opAppendHorizontally(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
-		
+	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
+
 		IMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);
-		//System.out.println("aprime = " + aprime);
-		IMatrix bprime = new GamaFloatMatrix(b.getRows(scope), b.getCols(scope)); 
+		// System.out.println("aprime = " + aprime);
+		IMatrix bprime = new GamaFloatMatrix(b.getRows(scope), b.getCols(scope));
 		bprime = b._reverse(scope);
-		//System.out.println("bprime = " + bprime);
-		IMatrix c = opAppendVertically(scope, (GamaFloatMatrix)aprime, (GamaFloatMatrix)bprime);
-		//System.out.println("c = " + c);
+		// System.out.println("bprime = " + bprime);
+		IMatrix c = opAppendVertically(scope, (GamaFloatMatrix) aprime, (GamaFloatMatrix) bprime);
+		// System.out.println("c = " + c);
 		IMatrix cprime = ((GamaFloatMatrix) c)._reverse(scope);
-		//System.out.println("cprime = " + cprime);
+		// System.out.println("cprime = " + cprime);
 		return cprime;
-		}
-	
+	}
+
 	public GamaFloatMatrix(final RealMatrix rm) {
 		super(rm.getColumnDimension(), rm.getRowDimension());
 		matrix = new double[rm.getColumnDimension() * rm.getRowDimension()];
@@ -393,9 +394,14 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * Method iterator()
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
+	// @Override
+	// public Iterator<Double> iterator() {
+	// return Doubles.asList(getMatrix()).iterator();
+	// }
+
 	@Override
-	public Iterator<Double> iterator() {
-		return Doubles.asList(getMatrix()).iterator();
+	public Iterable<Double> iterable(final IScope scope) {
+		return Doubles.asList(getMatrix());
 	}
 
 	public double[] getMatrix() {

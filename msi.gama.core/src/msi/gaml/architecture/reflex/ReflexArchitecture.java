@@ -58,7 +58,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	public void addBehavior(final IStatement c) {
 		if ( IKeyword.INIT.equals(c.getFacet(IKeyword.KEYWORD).literalValue()) ) {
 			_inits.add(0, c);
-			_inits_number = _inits.size();
+			_inits_number++;
 			return;
 		}
 		_reflexes.add(c);

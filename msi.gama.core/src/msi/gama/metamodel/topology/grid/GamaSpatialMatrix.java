@@ -426,10 +426,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return result;
 	}
 
+	// @Override
+	// public Iterator<IShape> iterator() {
+	// return JavaUtils.iterator(matrix);
+	// // TODO return Iterators.<IShape> filter(JavaUtils.<IShape> iterator(matrix), Predicates.notNull());
+	// }
+
 	@Override
-	public Iterator<IShape> iterator() {
-		return JavaUtils.iterator(matrix);
-		// TODO return Iterators.<IShape> filter(JavaUtils.<IShape> iterator(matrix), Predicates.notNull());
+	public Iterable<IShape> iterable(final IScope scope) {
+		return Arrays.asList(matrix);
 	}
 
 	@Override

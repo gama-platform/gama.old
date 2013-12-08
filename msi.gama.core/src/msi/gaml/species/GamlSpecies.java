@@ -18,10 +18,7 @@
  */
 package msi.gaml.species;
 
-import java.util.Iterator;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -29,10 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -40,11 +33,10 @@ import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.IType;
 
 /**
- * The Class Species.
+ * The Class GamlSpecies. A species specified by GAML attributes
  * 
  * @author drogoul
  */
-// TODO Reorganize species with a dedicated GridSpecies
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES })
 @facets(value = {
@@ -67,8 +59,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
 @validator(SpeciesValidator.class)
-// @vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
-// TODO Build a list of control architectures dynamically at startup and populate the values attribute
 public class GamlSpecies extends AbstractSpecies {
 
 	public static class SpeciesValidator implements IDescriptionValidator {
@@ -94,24 +84,8 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public String getParentName() {
-		return getDescription().getParentName();
-	}
-
-	@Override
 	public String getArchitectureName() {
 		return getLiteral(IKeyword.CONTROL);
-	}
-
-	// @Override
-	// @getter("name")
-	// public String getName() {
-	// return super.getName();
-	// }
-
-	@Override
-	public boolean extendsSpecies(final ISpecies s) {
-		return s.getDescription().getType().isAssignableFrom(getDescription().getType());
 	}
 
 	@Override
@@ -122,93 +96,6 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public IExpression getSchedule() {
 		return this.getFacet(IKeyword.SCHEDULES);
-	}
-
-	@Override
-	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
-		return getPopulation(scope).get(scope, index);
-	}
-
-	@Override
-	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-		return getPopulation(scope).contains(scope, o);
-	}
-
-	@Override
-	public IAgent first(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).first(scope);
-	}
-
-	@Override
-	public IAgent last(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).last(scope);
-	}
-
-	@Override
-	public int length(final IScope scope) {
-		return getPopulation(scope).length(scope);
-	}
-
-	@Override
-	public boolean isEmpty(final IScope scope) {
-		return getPopulation(scope).isEmpty(scope);
-	}
-
-	@Override
-	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).reverse(scope);
-	}
-
-	@Override
-	public IAgent any(final IScope scope) {
-		return getPopulation(scope).any(scope);
-	}
-
-	@Override
-	public boolean checkBounds(final Integer index, final boolean forAdding) {
-		return false;
-	}
-
-	@Override
-	public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean all,
-		final boolean add) throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void remove(final IScope scope, final Object index, final Object value, final boolean all)
-		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope);
-	}
-
-	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, preferredSize);
-	}
-
-	@Override
-	public Iterator<IAgent> iterator() {
-		final IScope scope = GAMA.obtainNewScope();
-		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
-		// WARNING: using this scope-less iterator prevents micro-species from computing their agents...
-		final Iterator<IAgent> result = scope.getSimulationScope().getPopulationFor(this).iterator();
-		GAMA.releaseScope(scope);
-		return result;
-	}
-
-	@Override
-	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
-	}
-
-	@Override
-	public boolean isMirror() {
-		return getDescription().isMirror();
 	}
 
 }

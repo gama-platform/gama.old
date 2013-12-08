@@ -91,9 +91,10 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	public abstract IList<String> getAspectNames();
 
+	@Override
 	public abstract ISpecies getSpecies();
 
-	public abstract boolean manages(ISpecies s, boolean direct);
+	// public abstract boolean manages(ISpecies s, boolean direct);
 
 	public abstract IVariable getVar(final IAgent a, final String s);
 

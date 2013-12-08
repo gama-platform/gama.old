@@ -353,10 +353,10 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	 * Returns an iterator that iterates on the list of VALUES (not GamaPairs anymore)
 	 * @see java.lang.Iterable#iterator()
 	 */
-	@Override
-	public Iterator<V> iterator() {
-		return values().iterator();
-	}
+	// @Override
+	// public Iterator<V> iterator() {
+	// return values().iterator();
+	// }
 
 	/*
 	 * (non-Javadoc)

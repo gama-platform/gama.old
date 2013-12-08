@@ -33,7 +33,7 @@ import msi.gama.util.matrix.IMatrix;
  * @todo Description
  * 
  */
-public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueType> {
+public interface IContainer<KeyType, ValueType> extends IValue {
 
 	// Operators available in GAML
 
@@ -203,8 +203,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	/**
 	 * 
 	 * @param scope
-	 * @return a Iterable that can be dependent on the scope (usually "this", but species return
-	 *         their population)
+	 * @return a Iterable that can be dependent on the scope (species return their population)
 	 */
 	public Iterable<? extends ValueType> iterable(final IScope scope);
 

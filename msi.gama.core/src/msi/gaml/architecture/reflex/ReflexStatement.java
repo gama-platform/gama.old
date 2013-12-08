@@ -41,7 +41,6 @@ import msi.gaml.types.IType;
 @validator(ValidNameValidator.class)
 public class ReflexStatement extends AbstractStatementSequence {
 
-	
 	private final IExpression when;
 
 	public ReflexStatement(final IDescription desc) {
@@ -54,8 +53,7 @@ public class ReflexStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( when == null || Cast.asBool(scope, when.value(scope)) ) { return super.privateExecuteIn(scope); }
-		return null;
+		return when == null || Cast.asBool(scope, when.value(scope)) ? super.privateExecuteIn(scope) : null;
 	}
 
 }

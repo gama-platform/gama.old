@@ -65,6 +65,7 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public abstract IShape getGeometry();
 
+	@Override
 	public void setDuplicator(final ISkillConstructor duplicator) {
 		// Nothing to do here
 	}
@@ -363,7 +364,10 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		return checkedPopulation().manages(s, direct);
+		ISpecies species = getSpecies();
+		if ( species == s ) { return true; }
+		if ( !direct ) { return species.extendsSpecies(s); }
+		return false;
 	}
 
 	@Override

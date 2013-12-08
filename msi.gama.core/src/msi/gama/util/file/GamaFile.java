@@ -19,7 +19,6 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import java.util.Iterator;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -216,11 +215,12 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return getFile().canWrite();
 	}
 
-	@Override
-	public Iterator iterator() {
-		getContents(null);
-		return buffer.iterator();
-	}
+	//
+	// @Override
+	// public Iterator iterator() {
+	// getContents(null);
+	// return buffer.iterator();
+	// }
 
 	@Override
 	public Iterable<V> iterable(final IScope scope) {

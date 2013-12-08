@@ -550,7 +550,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		if ( s.getName().equals(IKeyword.AGENT) ) { return true; }
-		return getPopulation().manages(s, direct);
+		return super.isInstanceOf(s, direct);
 	}
 
 	@Override

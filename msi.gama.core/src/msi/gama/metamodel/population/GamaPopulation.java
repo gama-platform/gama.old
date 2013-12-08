@@ -369,10 +369,12 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		return species.getVar(s);
 	}
 
-	@Override
-	public boolean manages(final ISpecies s, final boolean direct) {
-		return direct ? species == s : species.extendsSpecies(s);
-	}
+	// @Override
+	// public boolean manages(final ISpecies s, final boolean direct) {
+	// if ( species == s ) { return true; }
+	// if ( !direct ) { return species.extendsSpecies(s); }
+	// return false;
+	// }
 
 	@Override
 	public boolean hasUpdatableVariables() {
@@ -565,7 +567,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		}
 	}
 
-	protected void fireAgentsAdded(final IContainer container) {
+	protected void fireAgentsAdded(final IList container) {
 		if ( !hasListeners() ) { return; }
 		// create list
 		final Collection agents = new LinkedList();
@@ -594,23 +596,23 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		}
 	}
 
-	protected void fireAgentsRemoved(final IContainer container) {
-		if ( !hasListeners() ) { return; }
-		// create list
-		final Collection agents = new LinkedList();
-		final Iterator it = container.iterator();
-		while (it.hasNext()) {
-			agents.add(it.next());
-		}
-		// send event
-		try {
-			for ( final IPopulation.Listener l : listeners ) {
-				l.notifyAgentsRemoved(this, agents);
-			}
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
-	}
+	// protected void fireAgentsRemoved(final IContainer container) {
+	// if ( !hasListeners() ) { return; }
+	// // create list
+	// final Collection agents = new LinkedList();
+	// final Iterator it = container.iterator();
+	// while (it.hasNext()) {
+	// agents.add(it.next());
+	// }
+	// // send event
+	// try {
+	// for ( final IPopulation.Listener l : listeners ) {
+	// l.notifyAgentsRemoved(this, agents);
+	// }
+	// } catch (final RuntimeException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	protected void firePopulationCleared() {
 		if ( !hasListeners() ) { return; }
@@ -665,7 +667,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			IAgent a = s.getAgent();
-			if ( a == null || a.getPopulation() != this ) {
+			if ( a == null || /* a.getPopulation() != this */!a.isInstanceOf(species, true) ) {
 				it.remove();
 			}
 

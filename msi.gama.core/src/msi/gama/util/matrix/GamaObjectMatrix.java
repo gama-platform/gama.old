@@ -19,9 +19,6 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
-
-import org.apache.commons.lang.ArrayUtils;
-
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,7 +27,8 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import com.google.common.collect.Iterators;
+import org.apache.commons.lang.ArrayUtils;
+import com.google.common.collect.ImmutableList;
 
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
@@ -90,48 +88,50 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	/**
-	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
+	 * right side of the first matrix
 	 * 
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
 	@operator(value = { "opAppendVertically" })
 	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", examples = { "opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3;4,5,6;7,8,9;10,11,12]" })
-	public /*static*/ IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
-		Object[] ma=((GamaObjectMatrix)a).getMatrix();
-		Object[] mb=((GamaObjectMatrix)b).getMatrix();
-		Object[] mab=ArrayUtils.addAll(ma, mb);
+	public/* static */IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
+		Object[] ma = ((GamaObjectMatrix) a).getMatrix();
+		Object[] mb = ((GamaObjectMatrix) b).getMatrix();
+		Object[] mab = ArrayUtils.addAll(ma, mb);
 
-		GamaObjectMatrix fl=new GamaObjectMatrix(a.getCols(scope), a.getRows(scope)+b.getRows(scope),mab);
+		GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
 
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 		return fl;
-		}
+	}
 
-	
 	/**
-	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
+	 * side of the first matrix
 	 * 
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
+	@Override
 	@operator(value = { "opAppendHorizontally" })
 	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", examples = { "opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3,7,8,9;4,5,6,10,11,12]" })
-	public /*static*/ IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
-		
+	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
+
 		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);
-		//System.out.println("aprime = " + aprime);
-		IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope)); 
+		// System.out.println("aprime = " + aprime);
+		IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
 		bprime = b._reverse(scope);
-		//System.out.println("bprime = " + bprime);
-		IMatrix c = opAppendVertically(scope, (GamaObjectMatrix)aprime, (GamaObjectMatrix)bprime);
-		//System.out.println("c = " + c);
+		// System.out.println("bprime = " + bprime);
+		IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
+		// System.out.println("c = " + c);
 		IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
-		//System.out.println("cprime = " + cprime);
+		// System.out.println("cprime = " + cprime);
 		return cprime;
-		}
-	
+	}
+
 	public GamaObjectMatrix(final IScope scope, final Object[] mat) {
 		super(1, mat.length);
 		setMatrix(mat);
@@ -355,8 +355,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
 	@Override
-	public Iterator<Object> iterator() {
-		return Iterators.forArray(getMatrix());
+	public Iterable<Object> iterable(final IScope scope) {
+		return ImmutableList.copyOf(getMatrix());
 	}
 
 	protected Object[] getMatrix() {

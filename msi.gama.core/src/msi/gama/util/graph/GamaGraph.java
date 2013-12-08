@@ -569,10 +569,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return m;
 	}
 
-	@Override
-	public Iterator<E> iterator() {
-		return listValue(null).iterator();
-	}
+	// @Override
+	// public Iterator<E> iterator() {
+	// return listValue(null).iterator();
+	// }
 
 	@Override
 	public void add(final IScope scope, final Object index, final Object value, final Object param, final boolean all,
@@ -629,7 +629,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public E first(final IScope scope) {
-		final Iterator it = this.iterator();
+		final Iterator it = iterable(scope).iterator();
 		if ( it.hasNext() ) { return (E) it.next(); }
 		return null;
 	}
