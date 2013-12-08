@@ -108,7 +108,7 @@ public class SolveStatement extends AbstractStatementSequence {
 
 		equations.addExtern(equationName);
 		solver.solve(scope, equations, timeInit, timeFinal, cycle_length);
-		equations.removeExtern(equationName);
+		equations.removeExtern(scope, equationName);
 
 		decreaseDiscretTime(integrate_time, integrate_val, discret);
 

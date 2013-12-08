@@ -157,7 +157,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 								equations_ext.add(remoteAgent);
 							}
 						} else if ( o instanceof GamlSpecies ) {
-							final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
+							final Iterator<IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
 							while (ia.hasNext()) {
 								final IAgent remoteAgent = ia.next();
 								if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
@@ -223,7 +223,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-	public void removeExtern(final String eqName) {
+	public void removeExtern(final IScope scope, final String eqName) {
 		if ( equations_ext.size() > 0 ) {
 			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
 				final Object o = equations_ext.get(i);
@@ -233,7 +233,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 						removeEquationsExtern(remoteAgent, eqName);
 					}
 				} else if ( o instanceof GamlSpecies ) {
-					final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
+					final Iterator<IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
 					while (ia.hasNext()) {
 						final IAgent remoteAgent = ia.next();
 						if ( !remoteAgent.dead() ) {
@@ -289,12 +289,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 		for ( int i = 0, n = equations.size(); i < n; i++ ) {
 			final SingleEquationStatement s = equations.get(i);
-			if (s.getOrder() == 0) {
+			if ( s.getOrder() == 0 ) {
 				IExpression tmp = ((UnaryOperator) s.getFunction()).arg(0);
-					Object v = s.getExpression().value(currentScope);
-				if (tmp instanceof AgentVariableExpression) {
-					((AgentVariableExpression) tmp).setVal(currentScope, v,
-							false);
+				Object v = s.getExpression().value(currentScope);
+				if ( tmp instanceof AgentVariableExpression ) {
+					((AgentVariableExpression) tmp).setVal(currentScope, v, false);
 				}
 			}
 
