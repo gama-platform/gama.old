@@ -101,8 +101,8 @@ public class MessageBroker {
 	 * 
 	 * @param m the m
 	 */
-	public void scheduleForDelivery(final Message m) {
-		for ( IAgent a : m.getReceivers() ) {
+	public void scheduleForDelivery(final IScope scope, final Message m) {
+		for ( IAgent a : m.getReceivers().iterable(scope) ) {
 			scheduleForDelivery(m.clone(), a);
 		}
 	}
@@ -126,11 +126,11 @@ public class MessageBroker {
 	 * @throws ProtocolErrorException the protocol error exception
 	 * @throws GamlException the gaml exception
 	 */
-	public void scheduleForDelivery(final Message m, final Integer protocol) {
+	public void scheduleForDelivery(final IScope scope, final Message m, final Integer protocol) {
 		Conversation conv;
 		conv = new Conversation(protocol, m);
 		m.setConversation(conv);
-		scheduleForDelivery(m);
+		scheduleForDelivery(scope, m);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class MessageBroker {
 			s.insertEndAction(new GamaHelper() {
 
 				@Override
-				public Object run(IScope scope) throws GamaRuntimeException {
+				public Object run(final IScope scope) throws GamaRuntimeException {
 					instance.manageConversationsAndMessages();
 					return null;
 				}
@@ -156,7 +156,7 @@ public class MessageBroker {
 			s.insertDisposeAction(new GamaHelper() {
 
 				@Override
-				public Object run(IScope scope) throws GamaRuntimeException {
+				public Object run(final IScope scope) throws GamaRuntimeException {
 					instance.schedulerDisposed();
 					return null;
 				}
@@ -170,7 +170,7 @@ public class MessageBroker {
 		messagesToDeliver.clear();
 	}
 
-	public IList<Message> getMessagesFor(IAgent agent) {
+	public IList<Message> getMessagesFor(final IAgent agent) {
 		if ( !conversationsMessages.containsKey(agent) ) {
 			ConversationsMessages cm = new ConversationsMessages();
 			conversationsMessages.put(agent, cm);
@@ -180,7 +180,7 @@ public class MessageBroker {
 		return conversationsMessages.get(agent).messages;
 	}
 
-	public List<Conversation> getConversationsFor(IAgent agent) {
+	public List<Conversation> getConversationsFor(final IAgent agent) {
 		if ( !conversationsMessages.containsKey(agent) ) {
 			ConversationsMessages cm = new ConversationsMessages();
 			conversationsMessages.put(agent, cm);
@@ -190,7 +190,7 @@ public class MessageBroker {
 		return conversationsMessages.get(agent).conversations;
 	}
 
-	public void addConversation(Conversation c) {
+	public void addConversation(final Conversation c) {
 		List<IAgent> members = new GamaList<IAgent>();
 		members.add(c.getIntitiator());
 		for ( IAgent m : (GamaList<IAgent>) c.getParticipants() ) {
@@ -202,7 +202,7 @@ public class MessageBroker {
 		}
 	}
 
-	private void addConversation(IAgent a, Conversation c) {
+	private void addConversation(final IAgent a, final Conversation c) {
 		ConversationsMessages cm = new ConversationsMessages();
 		cm.conversations.add(c);
 		conversationsMessages.put(a, cm);

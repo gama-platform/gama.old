@@ -101,7 +101,7 @@ public class CommunicatingSkill extends Skill {
 		Message message;
 		message = m == null ? new Message() : m;
 
-		final List receivers = Cast.asList(scope, scope.getArg("receivers", IType.LIST));
+		final IList receivers = Cast.asList(scope, scope.getArg("receivers", IType.LIST));
 		if ( receivers == null || receivers.isEmpty() || receivers.contains(null) ) {
 			// scope.setStatus(CommandStatus.failure);
 		}
@@ -109,7 +109,7 @@ public class CommunicatingSkill extends Skill {
 
 		message.setSender(getCurrentAgent(scope));
 
-		final List content = Cast.asList(scope, scope.getArg("content", IType.LIST));
+		final IList content = Cast.asList(scope, scope.getArg("content", IType.LIST));
 		if ( content != null ) {
 			message.setContent(new GamaList(content));
 		}
@@ -127,14 +127,14 @@ public class CommunicatingSkill extends Skill {
 		final Conversation conv = message.getConversation();
 		if ( conv != null ) { // The message belongs to a conversation
 			message.setConversation(conv);
-			MessageBroker.getInstance().scheduleForDelivery(message);
+			MessageBroker.getInstance().scheduleForDelivery(scope, message);
 		} else { // This is the start of a new conversation
 			final String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
 			if ( protocol == null ) {
 				// scope.setStatus(ExecutionStatus.failure);
 				return message;
 			}
-			MessageBroker.getInstance().scheduleForDelivery(message, protocolIndexes.get(protocol));
+			MessageBroker.getInstance().scheduleForDelivery(scope, message, protocolIndexes.get(protocol));
 		}
 		// scope.setStatus(ExecutionStatus.success);
 		return message;
@@ -171,7 +171,7 @@ public class CommunicatingSkill extends Skill {
 			Message message;
 
 			message = new Message(getCurrentAgent(scope), receivers, content, performative, conv);
-			MessageBroker.getInstance().scheduleForDelivery(message);
+			MessageBroker.getInstance().scheduleForDelivery(scope, message);
 
 		}
 		return originals;
@@ -676,7 +676,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the gama list< i message>
 	 */
 	private IList<Message> filter(final IAgent agent, final int performative) {
-		final List<Message> inBox = getMessages(agent);
+		final IList<Message> inBox = getMessages(agent);
 		if ( inBox.isEmpty() ) { return GamaList.EMPTY_LIST; }
 		final GamaList<Message> result = new GamaList();
 		for ( final Message m : inBox ) {
