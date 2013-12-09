@@ -148,7 +148,7 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract IList<String> getAspectNames();
 
-	// public abstract IList<IStatement> getBehaviors();
+	public abstract IList<IStatement> getBehaviors();
 
 	public abstract IArchitecture getArchitecture();
 
