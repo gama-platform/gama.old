@@ -24,6 +24,7 @@ import static msi.gama.util.GAML.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
@@ -147,7 +148,8 @@ public class Containers {
 		"2 in [1,2,3,4,5,6] : true", "7 in [1,2,3,4,5,6] : false", "3 in [1::2, 3::4, 5::6] : true",
 		"6 in [1::2, 3::4, 5::6] : false" }, see = { "contains" })
 	public static Boolean in(final IScope scope, final Object o, final IContainer source) throws GamaRuntimeException {
-		return contains(nullCheck(source).iterable(scope), o);
+		return source.contains(scope, o);
+		// return contains(nullCheck(source).iterable(scope), o);
 	}
 
 	@operator(value = "index_of", can_be_const = true)
@@ -311,8 +313,11 @@ public class Containers {
 	@doc(value = "returns a new list containing all the elements of both operands", special_cases = { "if one of the operands is nil, " +
 		IKeyword.PLUS + " throws an error" }, examples = { "[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
-	public static IList plus(final IScope scope, final IContainer source, final IContainer l) {
-		return new GamaList(Iterables.concat(nullCheck(source).iterable(scope), nullCheck(l).iterable(scope)));
+	public static IList plus(final IScope scope, final IContainer c1, final IContainer c2) {
+		// special case for the addition of two populations or meta-populations
+		if ( c1 instanceof IPopulationSet && c2 instanceof IPopulationSet ) { return new MetaPopulation(
+			(IPopulationSet) c1, (IPopulationSet) c2); }
+		return new GamaList(Iterables.concat(nullCheck(c1).iterable(scope), nullCheck(c2).iterable(scope)));
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)

@@ -57,7 +57,7 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	@getter(IKeyword.MEMBERS)
-	public abstract IList<IAgent> getMembers();
+	public abstract IList<IAgent> getMembers(IScope scope);
 
 	/**
 	 * Returns the population of the specified (direct) micro-species.
@@ -141,7 +141,7 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	@getter(IKeyword.AGENTS)
-	public abstract IList<IAgent> getAgents();
+	public abstract IList<IAgent> getAgents(IScope scope);
 
 	public abstract void releaseScope(IScope scope);
 

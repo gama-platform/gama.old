@@ -20,6 +20,8 @@ package msi.gaml.species;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
@@ -33,7 +35,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
+public interface ISpecies extends ISymbol, IContainer<Integer, IAgent>, IPopulationSet {
 
 	public abstract IExpression getFrequency();
 
@@ -182,5 +184,11 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	public abstract boolean isInitOverriden();
 
 	public abstract boolean isStepOverriden();
+
+	/**
+	 * @param scope
+	 * @return
+	 */
+	public abstract IPopulation getPopulation(IScope scope);
 
 }

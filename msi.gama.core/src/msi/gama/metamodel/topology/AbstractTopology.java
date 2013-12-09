@@ -416,7 +416,7 @@ public abstract class AbstractTopology implements ITopology {
 		if ( filter != null ) {
 			shps = filter.getAgents();
 		} else {
-			shps = scope.getSimulationScope().getAgents();
+			shps = scope.getSimulationScope().getAgents(scope);
 		}
 		return toroidalGeoms(scope, shps);
 	}

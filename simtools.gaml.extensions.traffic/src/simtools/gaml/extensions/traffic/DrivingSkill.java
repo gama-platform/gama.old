@@ -1,15 +1,11 @@
 package simtools.gaml.extensions.traffic;
 
-import java.util.Iterator;
 import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -241,15 +237,15 @@ public class DrivingSkill extends MovingSkill {
 		final double livingSpace, final double tolerance, final GamaPoint currentLocation, final GamaPoint target,
 		final int nbLanes, final GamaList<ISpecies> obsSpecies) {
 		// Collision avoiding
-		
+
 		// 2. Selects the agents before the agent on the segment
 		final double newX = currentLocation.x + 2 * tolerance * (target.x - currentLocation.x);
 		final double newY = currentLocation.y + 2 * tolerance * (target.y - currentLocation.y);
 		GamaPoint target_pt = null;
-		if (target.distance(currentLocation) < distance) {
+		if ( target.distance(currentLocation) < distance ) {
 			target_pt = target;
 		} else {
-			final double targetX = currentLocation.x + (distance - tolerance)* (target.x - currentLocation.x);
+			final double targetX = currentLocation.x + (distance - tolerance) * (target.x - currentLocation.x);
 			final double targetY = currentLocation.y + (distance - tolerance) * (target.y - currentLocation.y);
 			target_pt = new GamaPoint(targetX, targetY);
 		}
@@ -257,22 +253,26 @@ public class DrivingSkill extends MovingSkill {
 		double minDist = distance;
 		final Geometry basicLine = GeometryUtils.factory.createLineString(segment2);
 		GamaList<IAgent> result = new GamaList<IAgent>();
-		for (ISpecies species: obsSpecies) {
-			final IPopulation pop = agent.getPopulationFor(species);
-			result.addAll(new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine), tolerance, In.population(pop))));
+		for ( ISpecies species : obsSpecies ) {
+			// final IPopulation pop = agent.getPopulationFor(species);
+			result.addAll(new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine),
+				tolerance, species)));
 		}
-		for (IAgent ia: result) {
-			if (ia == agent || ia.intersects(currentLocation)) continue;
+		for ( IAgent ia : result ) {
+			if ( ia == agent || ia.intersects(currentLocation) ) {
+				continue;
+			}
 			// if(fr2.intersects(ia.getLocation().getInnerGeometry())){
-			//final double distL = basicLine.distance(ia.getInnerGeometry());
+			// final double distL = basicLine.distance(ia.getInnerGeometry());
 			double currentDistance = ia.euclidianDistanceTo(currentLocation);
-			if (currentDistance > tolerance) {
+			if ( currentDistance > tolerance ) {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
 				final List<IAgent> ns =
-					new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, In.list(scope, result)));
+					new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0,
+						In.list(scope, result)));
 				int nbAg = 1;
-				for (IAgent ag : ns) {
+				for ( IAgent ag : ns ) {
 					if ( ag != agent ) {
 						nbAg++;
 					}

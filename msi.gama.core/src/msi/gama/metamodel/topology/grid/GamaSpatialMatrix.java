@@ -582,8 +582,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Set<IAgent> getNeighboursOf(final IScope scope, final ILocation shape, final Double distance,
 		final IAgentFilter filter) {
 		Set<IAgent> allPlaces = getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
-		if ( filter != null && filter.getSpecies() == cellSpecies ) { return allPlaces; }
 		if ( filter != null ) {
+			if ( filter.getSpecies() == cellSpecies ) { return allPlaces; }
 			filter.filter(scope, shape, allPlaces);
 		}
 		return allPlaces;

@@ -2,7 +2,6 @@ package idees.gama.operators;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -11,7 +10,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.*;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 public class MapComparison {
@@ -175,13 +173,7 @@ public class MapComparison {
 		for ( int i = 0; i < nbCat; i++ ) {
 			categoriesId.put(categories.get(i), i);
 		}
-		IAgentFilter filter = null;
-		if ( agents instanceof ISpecies ) {
-			final IPopulation pop = agents.first(scope).getPopulationFor((ISpecies) agents);
-			filter = In.population(pop);
-		} else {
-			filter = In.list(scope, agents);
-		}
+		IAgentFilter filter = In.list(scope, agents);
 
 		computeXYCrispVector(scope, categoriesId, categories, vals1, vals2, fuzzycategories, nbCat, nb, crispVector1,
 			crispVector2, X, Y, sim, weights);
@@ -244,13 +236,7 @@ public class MapComparison {
 				nbInitSim[i][j] = 0;
 			}
 		}
-		IAgentFilter filter = null;
-		if ( agents instanceof ISpecies ) {
-			final IPopulation pop = agents.first(scope).getPopulationFor((ISpecies) agents);
-			filter = In.population(pop);
-		} else {
-			filter = In.list(scope, agents);
-		}
+		IAgentFilter filter = In.list(scope, agents);
 		double total = 0;
 		for ( int i = 0; i < nb; i++ ) {
 			double weight = weights == null ? 1.0 : Cast.asFloat(scope, weights.get(i));

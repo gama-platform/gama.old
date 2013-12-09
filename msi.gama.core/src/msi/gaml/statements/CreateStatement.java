@@ -76,8 +76,6 @@ import com.vividsolutions.jts.geom.Geometry;
 @validator(CreateValidator.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	
-
 	public static class CreateValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
@@ -289,7 +287,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
 		if ( !sequence.isEmpty() ) {
-			for ( final IAgent remoteAgent : list ) {
+			for ( final IAgent remoteAgent : list.iterable(scope) ) {
 				Object[] result = new Object[1];
 				if ( !scope.execute(sequence, remoteAgent, null, result) ) {
 					break;

@@ -68,11 +68,11 @@ public class GeometryUtils {
 				final double b = source.y - a * source.x;
 				final double x = rand.between(source.x, target.x);
 				final double y = a * x + b;
-				return new GamaPoint(x, y,0);
+				return new GamaPoint(x, y, 0);
 			}
 			final double x = source.x;
 			final double y = rand.between(source.y, target.y);
-			return new GamaPoint(x, y,0);
+			return new GamaPoint(x, y, 0);
 		}
 		if ( geom instanceof Polygon ) {
 			final Envelope env = geom.getEnvelopeInternal();
@@ -180,7 +180,7 @@ public class GeometryUtils {
 			for ( int c = 0; c < nbColumns; c = c + 2 ) {
 				final GamaShape poly =
 					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
-						0.75, ymin + l * heightHex,0));
+						0.75, ymin + l * heightHex, 0));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -192,7 +192,7 @@ public class GeometryUtils {
 			for ( int c = 1; c < nbColumns; c = c + 2 ) {
 				final GamaShape poly =
 					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
-						0.75, ymin + (l + 0.5) * heightHex,0));
+						0.75, ymin + (l + 0.5) * heightHex, 0));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -336,7 +336,7 @@ public class GeometryUtils {
 	}
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
-		final IList<LineString> network = new GamaList<LineString>();
+		final List<LineString> network = new GamaList<LineString>();
 		final IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
@@ -620,7 +620,7 @@ public class GeometryUtils {
 		}
 		return result;
 	}
-	
+
 	public static GamaList<IShape> split_at(final IShape geom, final ILocation pt) {
 		final GamaList<IShape> lines = new GamaList<IShape>();
 		GamaList<Geometry> geoms = null;

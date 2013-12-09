@@ -66,7 +66,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return getPopulation(scope);
 	}
 
-	protected IPopulation getPopulation(final IScope scope) {
+	@Override
+	public IPopulation getPopulation(final IScope scope) {
 		final IAgent a = scope.getAgentScope();
 		IPopulation result = null;
 		if ( a != null ) {
@@ -83,7 +84,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList listValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope);
+		return getPopulation(scope).listValue(scope);
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		final IList<IAgent> agents = listValue(scope);
 		// Default behavior : Returns a map containing the names of agents as keys and the agents themselves as values
 		final GamaMap result = new GamaMap();
-		for ( final IAgent agent : agents ) {
+		for ( final IAgent agent : agents.iterable(scope) ) {
 			result.put(agent.getName(), agent);
 		}
 		return result;
@@ -486,6 +487,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean isMirror() {
 		return getDescription().isMirror();
+	}
+
+	@Override
+	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
+		return Collections.singleton(getPopulation(scope));
 	}
 
 }

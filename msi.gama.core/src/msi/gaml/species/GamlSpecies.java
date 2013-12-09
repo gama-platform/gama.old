@@ -18,7 +18,9 @@
  */
 package msi.gaml.species;
 
+import java.util.Collection;
 import msi.gama.common.interfaces.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -26,6 +28,8 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
+import msi.gama.util.IContainer;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -97,5 +101,48 @@ public class GamlSpecies extends AbstractSpecies {
 	public IExpression getSchedule() {
 		return this.getFacet(IKeyword.SCHEDULES);
 	}
+
+	/**
+	 * Method getSpecies()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
+	 */
+	@Override
+	public ISpecies getSpecies() {
+		return this;
+	}
+
+	/**
+	 * Method getAgents()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
+	 */
+	@Override
+	public IContainer<?, ? extends IShape> getAgents() {
+		return this;
+	}
+
+	/**
+	 * Method accept()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
+	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 */
+	@Override
+	public boolean accept(final IScope scope, final IShape source, final IShape a) {
+		return getPopulation(scope).accept(scope, source, a);
+	}
+
+	/**
+	 * Method filter()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
+	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 */
+	@Override
+	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+		getPopulation(scope).filter(scope, source, results);
+	}
+
+	// @Override
+	// public IPopulation getPopulation(final IScope scope, final String name) {
+	// return getName().equals(name) ? getPopulation(scope) : null;
+	// }
 
 }

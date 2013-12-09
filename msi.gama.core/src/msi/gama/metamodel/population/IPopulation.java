@@ -39,7 +39,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IAgentFilter {
+public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IAgentFilter, IPopulationSet {
 
 	public interface Listener {
 

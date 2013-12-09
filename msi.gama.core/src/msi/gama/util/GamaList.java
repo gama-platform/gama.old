@@ -214,7 +214,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 		// TODO REVOIR CA POUR RENVOYER PLUTOT UNE MAP<INTEGER, E>
 		final GamaMap result = new GamaMap();
-		if ( isPairs(this) ) {
+		if ( isPairs(scope, this) ) {
 			for ( final E e : this ) {
 				final GamaPair pair = (GamaPair) e;
 				result.put(pair.first(), pair.last());
@@ -229,8 +229,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return result;
 	}
 
-	public static boolean isPairs(final IList list) {
-		for ( final Object obj : list ) {
+	public static boolean isPairs(final IScope scope, final IList list) {
+		for ( final Object obj : list.iterable(scope) ) {
 			if ( !(obj instanceof GamaPair) ) { return false; }
 		}
 		return true;

@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 
 /**
  * Written by drogoul Modified on 23 janv. 2011
@@ -35,8 +35,8 @@ public class LayerManager implements ILayerManager {
 
 	// public final ILayer[] layers = new ILayer[20];
 	// public final boolean[] enabled = new boolean[20];
-	private final IList<ILayer> enabledLayers = new GamaList();
-	private final IList<ILayer> disabledLayers = new GamaList();
+	private final List<ILayer> enabledLayers = new GamaList();
+	private final List<ILayer> disabledLayers = new GamaList();
 	private final IDisplaySurface surface;
 	// private final PauseLayer pd = new PauseLayer();
 	private int count = 0;

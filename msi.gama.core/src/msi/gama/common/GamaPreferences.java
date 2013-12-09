@@ -27,7 +27,7 @@ public class GamaPreferences {
 	public static final String CODE = "Code";
 	public static final String EDITOR = "Editor";
 	public static final String WORKSPACE = "Workspace";
-	public static final String LIBRARIES = "Libraries";
+	public static final String LIBRARIES = "External";
 	private static Preferences store = Preferences.userRoot().node("gama");
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;
@@ -376,14 +376,15 @@ public class GamaPreferences {
 	/**
 	 * Spatialite
 	 */
-	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite", "Path to the Spatialite library",
-		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group(
-		"Spatialite (http://www.gaia-gis.it/gaia-sins/)");
+	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite",
+		"Path to the Spatialite (http://www.gaia-gis.it/gaia-sins/) library",
+		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * R
 	 */
-	public static final Entry<String> LIB_R = create("core.lib_r", "Path to the RScript library",
-		new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("R (http://www.r-project.org)");
+	public static final Entry<String> LIB_R = create("core.lib_r",
+		"Path to the RScript (http://www.r-project.org) library", new GenericFile(getDefaultRPath()), IType.FILE).in(
+		LIBRARIES).group("Paths");
 	/**
 	 * GeoTools
 	 */
@@ -392,7 +393,8 @@ public class GamaPreferences {
 			"When no '.prj' file is supplied, consider shape files to contain projected data by default", false,
 			IType.BOOL).activates("core.lib_projection").in(LIBRARIES).group("GeoTools");;
 	public static final Entry<String> LIB_PROJECTION = create("core.lib_projection",
-		"Default projection to use when no '.prj' file is found", "UTM", IType.STRING).in(LIBRARIES).group("GeoTools");
+		"Default EPSG code (http://spatialreference.org/ref/epsg/) to use when no '.prj' file is found", "32600",
+		IType.STRING).in(LIBRARIES).group("GeoTools");
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");

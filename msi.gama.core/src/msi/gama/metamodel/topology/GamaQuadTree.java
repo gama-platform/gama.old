@@ -21,7 +21,6 @@ package msi.gama.metamodel.topology;
 
 import java.awt.*;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -46,8 +45,10 @@ public class GamaQuadTree implements ISpatialIndex {
 	private double minSize = 10;
 	private int totalAgents = 0;
 	private int totalNodes = 0;
+	private volatile boolean isDrawing;
+
 	// TODO check why we really need it?
-	private final ReentrantLock lock = new ReentrantLock();
+	// private final ReentrantLock lock = new ReentrantLock();
 
 	public GamaQuadTree(final Envelope bounds) {
 		root = new QuadNode(bounds);
@@ -92,9 +93,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	@Override
 	public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
 		final IAgentFilter f) {
-
 		// TODO filter result by topology's bounds
-
 		final double exp = dist * Maths.SQRT2;
 		Envelope env = new Envelope(source.getEnvelope());
 		env.expandBy(exp);
@@ -113,8 +112,6 @@ public class GamaQuadTree implements ISpatialIndex {
 		final double exp = dist * Maths.SQRT2;
 		Envelope env = new Envelope(source.getEnvelope());
 		env.expandBy(exp);
-		// ENVELOPE.init(source.getEnvelope());
-		// ENVELOPE.expandBy(exp);
 		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
 		double min_distance = dist;
 		IAgent min_agent = null;
@@ -125,11 +122,6 @@ public class GamaQuadTree implements ISpatialIndex {
 				min_agent = a;
 			}
 		}
-		// if ( source.euclidianDistanceTo(min_agent) > 0 ) {
-		// GuiUtils.debug("GamaQuadTree.firstAtDistance");
-		// final Collection<IAgent> toto = findIntersects(scope, source, env, f);
-		// GuiUtils.debug(" " + toto);
-		// }
 		return min_agent;
 	}
 
@@ -143,9 +135,6 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		private final Envelope bounds;
 		private final double hw, hh, minx, miny;
-		// private final Set<IAgent> objects = new TCustomHashSet(IdentityHashingStrategy.INSTANCE);
-		// private final Collection<IAgent> objects = new ArrayList(maxCapacity);
-		// private final Collection<IAgent> objects = new CollectionUtils.SetList(maxCapacity);
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered (by insertion order) **
 		private final Set<IAgent> objects = new LinkedHashSet();
 		private int size = 0;
@@ -389,6 +378,8 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public void drawOn(final Graphics2D g2, final double xr, final double yr) {
+
+			// Put size, isLeaf and bounds as volatile to allow removing the reentrant lock ?
 			if ( isLeaf ) {
 				g2.setColor(Color.gray);
 				g2.setStroke(new BasicStroke(0.1f));
@@ -409,6 +400,8 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	@Override
 	public void drawOn(final Graphics2D g2, final int width, final int height) {
+		if ( isDrawing ) { return; }
+		isDrawing = true;
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, width, height);
 
@@ -416,13 +409,12 @@ public class GamaQuadTree implements ISpatialIndex {
 		final double y_ratio = height / root.bounds.getHeight();
 
 		try {
-			lock.lock();
 			root.drawOn(g2, x_ratio, y_ratio);
 			g2.setColor(Color.ORANGE);
 			g2.setFont(new Font("Helvetica", Font.BOLD, height / 75));
 			g2.drawString("Agents: " + totalAgents + "; Nodes: " + totalNodes, 10, 10);
 		} finally {
-			lock.unlock();
+			isDrawing = false;
 		}
 	}
 

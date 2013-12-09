@@ -49,8 +49,6 @@ import msi.gaml.types.IType;
 @validator(CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
 
-	
-
 	public static class CaptureValidator implements IDescriptionValidator {
 
 		/**

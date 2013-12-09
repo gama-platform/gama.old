@@ -93,10 +93,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		@Override
 		public Object run(final IScope scope) throws GamaRuntimeException {
 			final IPopulation pop = GamaPopulation.this;
-			final IList<IAgent> targets =
-				(IList<IAgent>) Cast.asList(scope, listOfTargetAgents.value(scope)).copy(scope);
-			final IList<IAgent> toKill = new GamaList();
-			for ( final IAgent agent : pop ) {
+			final List<IAgent> targets = (List<IAgent>) Cast.asList(scope, listOfTargetAgents.value(scope)).copy(scope);
+			final List<IAgent> toKill = new GamaList();
+			for ( final IAgent agent : pop.iterable(scope) ) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
 				if ( targets.contains(target) ) {
 					targets.remove(target);
@@ -242,10 +241,10 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		}
 	}
 
-	@Override
-	public IAgent[] toArray() {
-		return super.toArray(new IAgent[0]);
-	}
+	// @Override
+	// public IAgent[] toArray() {
+	// return super.toArray(new IAgent[0]);
+	// }
 
 	/**
 	 * Special case for creating agents directly from geometries
@@ -383,7 +382,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public IAgent getAgent(final IScope scope, final ILocation coord) {
-		return topology.getAgentClosestTo(scope, coord, In.population(this));
+		return topology.getAgentClosestTo(scope, coord, In.list(scope, this));
 	}
 
 	/**
@@ -461,6 +460,16 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
+	public boolean equals(final Object o) {
+		return this == o;
+	}
+
+	@Override
+	public int hashCode() {
+		return System.identityHashCode(this);
+	}
+
+	@Override
 	public void killMembers() throws GamaRuntimeException {
 		final Iterator<IAgent> it = iterator();
 		while (it.hasNext()) {
@@ -493,7 +502,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public GamaList<IAgent> listValue(final IScope scope) throws GamaRuntimeException {
 		// TODO Is the copy necessary ?
-		return this;
+		return new GamaList(this);
+		// return this;
 	}
 
 	/**
@@ -534,6 +544,12 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public boolean remove(final Object a) {
 		remove(null, null, a, false);
 		return true;
+	}
+
+	@Override
+	public boolean contains(final IScope scope, final Object o) {
+		if ( !(o instanceof IAgent) ) { return false; }
+		return ((IAgent) o).getPopulation() == this;
 	}
 
 	private boolean hasListeners() {
@@ -667,12 +683,22 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			IAgent a = s.getAgent();
-			if ( a == null || /* a.getPopulation() != this */!a.isInstanceOf(species, true) ) {
+			if ( a == null || a.getPopulation() != this ) {
 				it.remove();
 			}
 
 		}
 
 	}
+
+	@Override
+	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
+		return Collections.singleton(this);
+	}
+	//
+	// @Override
+	// public IPopulation getPopulation(final IScope scope, final String name) {
+	// return getName().equals(name) ? this : null;
+	// }
 
 }

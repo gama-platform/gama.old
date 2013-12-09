@@ -261,7 +261,7 @@ public class TransportationSkill extends Skill {
 
 		if ( tmpPath != null ) {
 			IList<IShape> edges = tmpPath.getEdgeGeometry();
-			for ( IShape edge : edges ) {
+			for ( IShape edge : edges.iterable(scope) ) {
 				IAgent lineAg = (IAgent) tmpPath.getRealObject(edge);
 				res.add(lineAg);
 			}
@@ -308,7 +308,7 @@ public class TransportationSkill extends Skill {
 			}
 			if ( tmpPath != null ) {
 				IList<IShape> edges = tmpPath.getEdgeGeometry();
-				for ( IShape edge : edges ) {
+				for ( IShape edge : edges.iterable(scope) ) {
 					IAgent lineAg = (IAgent) tmpPath.getRealObject(edge);
 					res.add(lineAg);
 				}

@@ -26,8 +26,8 @@ public class TypeDescription extends SymbolDescription {
 	protected Class javaBase;
 	protected TypeDescription parent;
 	private static int varCount = 0;
-	private IList<String> sortedVariableNames;
-	private IList<String> updatableVariableNames;
+	private List<String> sortedVariableNames;
+	private List<String> updatableVariableNames;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
 		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
@@ -240,7 +240,7 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	public IList<String> getVarNames() {
-		return sortedVariableNames == null ? GamaList.EMPTY_LIST : sortedVariableNames;
+		return sortedVariableNames == null ? GamaList.EMPTY_LIST : new GamaList(sortedVariableNames);
 	}
 
 	public List<String> getUpdatableVarNames() {
