@@ -212,7 +212,8 @@ public class JavaWriter {
 				getterHelper =
 					concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ", ret, " run(", ISCOPE,
 						" scope, ", IAGENT, " a, ", ISKILL, " t, Object... v) {return t == null?", returnWhenNull(ret),
-						":((", clazz, ")t).", getterName, "(", scope ? "scope," : "", dynamic ? "a);}}" : ");}}");
+						":((", clazz, ")t).", getterName, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") +
+							"a);}}" : ");}}");
 			}
 
 			// initer
