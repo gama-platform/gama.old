@@ -241,7 +241,7 @@ public class DrivingSkill2d extends MovingSkill {
 			for ( final ISpecies currentSpecy : backgroundSpecies ) {
 				final IList<IAgent> overlappingBackgroundWithCurrentPosition =
 					msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
-				for ( final IAgent ia : overlappingBackgroundWithCurrentPosition ) {
+				for ( final IAgent ia : overlappingBackgroundWithCurrentPosition.iterable(scope) ) {
 					if ( consideringBackgroundAgentForCurrentPosition == null ) {
 						consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 					} else {
@@ -280,7 +280,7 @@ public class DrivingSkill2d extends MovingSkill {
 					for ( final ISpecies currentSpecy : backgroundSpecies ) {
 						final IList<IAgent> overlappingBackgroundWithCandidatePosition =
 							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
-						for ( final IAgent ia : overlappingBackgroundWithCandidatePosition ) {
+						for ( final IAgent ia : overlappingBackgroundWithCandidatePosition.iterable(scope) ) {
 							if ( consideringBackgroundAgent == null ) {
 								consideringBackgroundAgent = ia.getGeometry();
 							} else {
@@ -447,7 +447,7 @@ public class DrivingSkill2d extends MovingSkill {
 				for ( final ISpecies currentSpecy : backgroundSpecies ) {
 					final IList<IAgent> overlappingBackgroundWithCurrentPosition =
 						msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
-					for ( final IAgent ia : overlappingBackgroundWithCurrentPosition ) {
+					for ( final IAgent ia : overlappingBackgroundWithCurrentPosition.iterable(scope) ) {
 						if ( consideringBackgroundAgentForCurrentPosition == null ) {
 							consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 						} else {
@@ -486,7 +486,7 @@ public class DrivingSkill2d extends MovingSkill {
 						for ( final ISpecies currentSpecy : backgroundSpecies ) {
 							final IList<IAgent> overlappingBackgroundWithCandidatePosition =
 								msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
-							for ( final IAgent ia : overlappingBackgroundWithCandidatePosition ) {
+							for ( final IAgent ia : overlappingBackgroundWithCandidatePosition.iterable(scope) ) {
 								if ( consideringBackgroundAgent == null ) {
 									consideringBackgroundAgent = ia.getGeometry();
 								} else {
