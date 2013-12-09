@@ -20,7 +20,7 @@ package msi.gaml.descriptions;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 import msi.gama.runtime.IScope;
@@ -29,9 +29,11 @@ import msi.gama.util.GamaList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
@@ -42,8 +44,6 @@ public class SpeciesDescription extends TypeDescription {
 	protected IArchitecture control;
 	private Map<String, SpeciesDescription> microSpecies;
 	private IAgentConstructor agentConstructor;
-
-	// private final boolean isGlobal = false;
 
 	public SpeciesDescription(final String keyword, final IDescription macroDesc, final ChildrenProvider cp,
 		final EObject source, final Facets facets) {
@@ -74,7 +74,6 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public void dispose() {
 		if ( isBuiltIn() ) { return; }
-		// if ( /* isDisposed || */Types.isBuiltIn(getName()) ) { return; }
 		if ( behaviors != null ) {
 			behaviors.clear();
 		}
@@ -96,14 +95,6 @@ public class SpeciesDescription extends TypeDescription {
 		super.dispose();
 		// isDisposed = true;
 	}
-
-	// @Override
-	// public void setSuperDescription(final IDescription desc) {
-	// super.setSuperDescription(desc);
-	// if ( desc instanceof SpeciesDescription ) {
-	// macroSpecies = (SpeciesDescription) desc;
-	// }
-	// }
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		final Set<String> skillNames = new LinkedHashSet();
@@ -656,6 +647,7 @@ public class SpeciesDescription extends TypeDescription {
 		// super.finalizeDescription();
 		if ( isMirror() ) {
 			// TODO Try to find automatically the type given the "MIRROR" expression
+			IExpression expr = facets.getExpr(MIRRORS);
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
 
@@ -666,8 +658,8 @@ public class SpeciesDescription extends TypeDescription {
 			microSpec.finalizeDescription();
 			if ( !microSpec.isExperiment() ) {
 				final VariableDescription var =
-					(VariableDescription) DescriptionFactory.create(IKeyword.CONTAINER, this, NAME,
-						microSpec.getName(), OF, microSpec.getName()); // CONST = TRUE ?
+					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName(), OF,
+						microSpec.getName()); // CONST = TRUE ?
 				// FIXME : OF, microSpec.getName() ??
 				// var.setContentType(microSpec.getType());
 				// We compute the dependencies of micro species with respect to the variables
@@ -715,6 +707,28 @@ public class SpeciesDescription extends TypeDescription {
 			}
 		}
 		sortVars();
+	}
+
+	@Override
+	protected void validateChildren() {
+		IExpression mirrors = getFacets().getExpr(MIRRORS);
+		if ( mirrors != null ) {
+			// We try to change the type of the 'target' variable if the expression contains only agents from the
+			// same species
+			IType t = mirrors.getContentType();
+			if ( t.isSpeciesType() && t.id() != IType.AGENT ) {
+				VariableDescription v = getVariable(TARGET);
+				if ( v != null ) {
+					// In case, but should not be null
+					v.setType(t);
+					info("The 'target' variable will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL, MIRRORS);
+				}
+			} else {
+				info("No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
+					IGamlIssue.WRONG_TYPE, MIRRORS);
+			}
+		}
+		super.validateChildren();
 	}
 
 	public boolean isExperiment() {

@@ -26,14 +26,8 @@ public class PrimitiveDescription extends StatementDescription {
 
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
-		// if ( args != null ) {
-		// for ( IDescription child : args.values() ) {
-		// children.add(child.copy(into));
-		// }
-		// }
 		PrimitiveDescription desc =
-			new PrimitiveDescription(getKeyword(), into, ChildrenProvider.NONE /* new ChildrenProvider(children) */,
-				false, args != null, element, facets);
+			new PrimitiveDescription(getKeyword(), into, ChildrenProvider.NONE, false, args != null, element, facets);
 		if ( args != null ) {
 			desc.args.putAll(args);
 		}

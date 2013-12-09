@@ -56,7 +56,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.EDGE_SPECIES, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
-	@facet(name = "mirrors", type = IType.LIST, optional = true),
+	@facet(name = IKeyword.MIRRORS, type = { IType.LIST, IType.SPECIES }, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.LABEL, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = "compile", type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
@@ -75,10 +75,11 @@ public class GamlSpecies extends AbstractSpecies {
 		public void validate(final IDescription desc) {
 			// If torus is declared on a species other than "global", emit a warning
 			IExpression torus = desc.getFacets().getExpr(TORUS);
-			if ( torus == null ) { return; }
-			if ( desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID) ) {
-				desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
-					IGamlIssue.WRONG_CONTEXT, TORUS);
+			if ( torus != null ) {
+				if ( desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID) ) {
+					desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
+						IGamlIssue.WRONG_CONTEXT, TORUS);
+				}
 			}
 		}
 	}

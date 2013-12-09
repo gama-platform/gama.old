@@ -82,18 +82,18 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 */
 	private LinkedList<IPopulation.Listener> listeners = null;
 
-	class PopulationManagement extends GamaHelper {
+	class MirrorPopulationManagement extends GamaHelper {
 
 		final IExpression listOfTargetAgents;
 
-		PopulationManagement(final IExpression exp) {
+		MirrorPopulationManagement(final IExpression exp) {
 			listOfTargetAgents = exp;
 		}
 
 		@Override
 		public Object run(final IScope scope) throws GamaRuntimeException {
 			final IPopulation pop = GamaPopulation.this;
-			final List<IAgent> targets = (List<IAgent>) Cast.asList(scope, listOfTargetAgents.value(scope)).copy(scope);
+			final Set<IAgent> targets = new HashSet(Cast.asList(scope, listOfTargetAgents.value(scope)));
 			final List<IAgent> toKill = new GamaList();
 			for ( final IAgent agent : pop.iterable(scope) ) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
@@ -131,7 +131,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			updatableVars[i] = species.getVar(s);
 		}
 		if ( species.isMirror() ) {
-			host.getScheduler().insertEndAction(new PopulationManagement(species.getFacet(IKeyword.MIRRORS)));
+			host.getScheduler().insertEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 
 		// Add an attribute to the agents (dans SpeciesDescription)

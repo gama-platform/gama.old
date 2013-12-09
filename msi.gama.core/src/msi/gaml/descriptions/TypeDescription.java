@@ -424,20 +424,6 @@ public class TypeDescription extends SymbolDescription {
 				duplicateError(v, builtIn);
 				getChildren().remove(builtIn);
 			}
-			// else {
-			// IExpressionDescription expr = v.getFacets().get(INIT);
-			// if ( expr == null ) {
-			// expr = v.getFacets().get(VALUE);
-			// if ( expr == null ) {
-			// expr = v.getFacets().get(NAME);
-			// }
-			// }
-			// EObject target = expr.getTarget();
-			// if ( target != null ) {
-			// v.info("Redefinition, in " + v.originName + ", of the built-in variable " + vName + " defined in " +
-			// builtIn.getOriginName(), IGamlIssue.REDEFINES, target, (String[]) null);
-			// }
-			// }
 			final IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
 			final IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
 			if ( bType != vType ) {
@@ -449,6 +435,7 @@ public class TypeDescription extends SymbolDescription {
 			}
 			v.copyFrom((VariableDescription) builtIn);
 		}
+
 		v.setDefinitionOrder(varCount++);
 		if ( variables == null ) {
 			variables = new LinkedHashMap<String, VariableDescription>();

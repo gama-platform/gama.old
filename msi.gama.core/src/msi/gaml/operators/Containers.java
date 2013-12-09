@@ -309,7 +309,7 @@ public class Containers {
 		return new GamaPair(nullCheck(a), b);
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.BOTH)
 	@doc(value = "returns a new list containing all the elements of both operands", special_cases = { "if one of the operands is nil, " +
 		IKeyword.PLUS + " throws an error" }, examples = { "[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
@@ -330,7 +330,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = "union", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "union", can_be_const = true, content_type = ITypeProvider.BOTH)
 	@doc(value = "returns a new list containing all the elements of both containers without duplicated elements.", comment = "", special_cases = { "if the left or right operand is nil, union throws an error" }, examples = {
 		"[1,2,3,4,5,6] union [2,4,9] 		--: 	[1,2,3,4,5,6,9]", "[1,2,3,4,5,6] union [0,8] 			--: 	[0,1,2,3,4,5,6,8]",
 		"[1,3,2,4,5,6,8,5,6] union [0,8] 	--: 	[0,1,2,3,4,5,6,8]" }, see = { "inter", IKeyword.PLUS })

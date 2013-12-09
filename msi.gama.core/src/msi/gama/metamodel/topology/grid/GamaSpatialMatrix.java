@@ -475,7 +475,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public boolean _contains(final IScope scope, final Object o) {
-		return Iterators.contains(Iterators.forArray(matrix), o);
+		return cellSpecies.contains(scope, o);
+		// return Iterators.contains(Iterators.forArray(matrix), o);
 		// return listValue(scope).contains(o);
 	}
 
@@ -1031,10 +1032,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return (IAgent) matrix[index];
 		}
 
-		@Override
-		public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-			return _contains(scope, o);
-		}
+		// @Override
+		// public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
+		// return _contains(scope, o);
+		// }
 
 		@Override
 		public IAgent first(final IScope scope) throws GamaRuntimeException {
