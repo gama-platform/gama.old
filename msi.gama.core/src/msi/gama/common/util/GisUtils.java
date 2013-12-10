@@ -32,6 +32,8 @@ import com.vividsolutions.jts.geom.*;
 
 public class GisUtils {
 
+	public GisUtils() {}
+
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	Envelope translationEnvelope;

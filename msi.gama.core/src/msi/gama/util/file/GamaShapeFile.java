@@ -147,14 +147,21 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 			// If we have a forced EPSG code for the initial CRS, we use it (even if the .prj file is present).
 			if ( initialCRSCode != null ) {
 				gis.setInitialCRS(initialCRSCode, true, longitude, latitude);
-			} else // Otherwise, if a .prj file is present, we use it
-			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				gis.setInitialCRS(new ShpFiles(file), longitude, latitude);
+			} else if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
+				// Otherwise, if a .prj file is present, we use it
+				ShpFiles shpFiles = new ShpFiles(file);
+				try {
+					gis.setInitialCRS(shpFiles, longitude, latitude);
+				} finally {
+					shpFiles.dispose();
+				}
 			} else {
 				// If the user does not consider the data to be projected, he has entered a default value in the
 				// preferences
 				if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
 					gis.setInitialCRS(GamaPreferences.LIB_INITIAL_CRS.getValue(), true, longitude, latitude);
+				} else {
+					gis.setInitialCRS(longitude, latitude);
 				}
 			}
 			env = gis.transform(env);
