@@ -70,6 +70,7 @@ openFile</programArgs>
    <plugins>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
+      <plugin id="com.ibm.icu"/>
       <plugin id="com.ibm.icu.base"/>
       <plugin id="com.jogamp.jogl"/>
       <plugin id="com.jogamp.jogl-linux-amd64" fragment="true"/>
