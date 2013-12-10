@@ -18,16 +18,12 @@ global {
 	
 	// Environment
 	geometry shape <- envelope(shape_file_name_background);
-
-	geometry the_background;
+	
 
 	reflex stop when: empty ( people ) {
 		do halt;
   	} 
-	init {
-		create background from: shape_file_name_background ;
-		the_background <- ((first (background)).shape).contour;
-	}
+
 }
 
 species people topology: topology(shape_file_name_init) {
@@ -44,7 +40,7 @@ species people topology: topology(shape_file_name_init) {
 	
 	reflex move {
 		location <- location + { speed * ( 1 - rnd ( 2 ) ) , speed * ( 1 - rnd ( 2 ) ) };
-		if ( (shape.area > dying_size) or (shape intersects the_background)) {
+		if ( (shape.area > dying_size) or (shape intersects world.shape.contour)) {
 			do die; 
 		}
 			
@@ -76,12 +72,7 @@ species people topology: topology(shape_file_name_init) {
 	}
 }
 
-species background {
-	rgb color <- rgb ([ 255 , 240 , 240 ]);
-	aspect geometry {
-		draw shape color: color;
-	}	
-}
+
 
 experiment example_spatial_operators type: gui {
 	parameter 'Path of shapefile to load for the initial agent:' var: shape_file_name_init  category: 'GIS specific' ;
@@ -100,7 +91,9 @@ experiment example_spatial_operators type: gui {
 
 	output {
 		display space_display refresh_every: 1{
-			species background aspect: geometry;
+			graphics "background" {
+				draw world.shape color: rgb ([ 255 , 240 , 240 ]);
+			}
 			species people aspect: geometry;
 		}
 	}
