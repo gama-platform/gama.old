@@ -65,25 +65,26 @@ public class Files {
 		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
-		if (GamaFileType.isGAML(s)) { return gamlFile(scope, s); }
+		if ( GamaFileType.isGAML(s) ) { return gamlFile(scope, s); }
 		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
 		if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
 		return new GamaPreferences.GenericFile(s);
 		// throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
-	
-	@operator(value="file_exists", can_be_const = true)
-	@doc(value = "Test whether the parameter is the path to an existing file.")	
-	public static boolean exist_file(final IScope scope, final String s){
-		if ( s == null ) { return false; }		
-		if ( scope == null ) {return false;}
-		else {
+
+	@operator(value = "file_exists", can_be_const = true)
+	@doc(value = "Test whether the parameter is the path to an existing file.")
+	public static boolean exist_file(final IScope scope, final String s) {
+		if ( s == null ) { return false; }
+		if ( scope == null ) {
+			return false;
+		} else {
 			String path = scope.getModel().getRelativeFilePath(s, false);
 			File f = new File(path);
-			
-			return (f.exists() && !f.isDirectory());
-		} 	
+
+			return f.exists() && !f.isDirectory();
+		}
 	}
 
 	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)
@@ -130,13 +131,22 @@ public class Files {
 		return new GamaShapeFile(scope, s);
 	}
 
+	@operator(value = SHAPE, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/).", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
+		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
+		"properties", "image", "text" })
+	public static IGamaFile shapeFile(final IScope scope, final String s, final Integer code)
+		throws GamaRuntimeException {
+		return new GamaShapeFile(scope, s, code);
+	}
+
 	@operator(value = GAML, can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
-			"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
-			"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = {
-			"file", "properties", "image", "text" })
-	public static IGamaFile gamlFile(final IScope scope, final String s)
-			throws GamaRuntimeException {
+		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
+		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
+		"properties", "image", "text" })
+	public static IGamaFile gamlFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GAMLFile(scope, s);
 	}
 

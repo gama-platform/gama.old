@@ -574,9 +574,9 @@ public class GeometryUtils {
 			if ( crs != null || srid != null ) {
 				final GisUtils gis = scope.getTopology().getGisUtils();
 				if ( crs != null ) {
-					gis.setTransformCRS(crs, longitude, latitude);
+					gis.setInitialCRS(crs, longitude, latitude);
 				} else {
-					gis.setTransformCRS(srid, longitudeFirst, longitude, latitude);
+					gis.setInitialCRS(srid, longitudeFirst, longitude, latitude);
 				}
 				env = gis.transform(env);
 			}

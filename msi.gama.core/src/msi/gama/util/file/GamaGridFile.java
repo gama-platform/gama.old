@@ -76,7 +76,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 					final double latitude = env.centre().y;
 					final double longitude = env.centre().x;
 					final GisUtils gis = scope.getTopology().getGisUtils();
-					gis.setTransformCRS(store.getCrs(), longitude, latitude);
+					gis.setInitialCRS(store.getCrs(), longitude, latitude);
 					env = gis.transform(env);
 				}
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;

@@ -19,6 +19,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.*;
@@ -41,6 +42,9 @@ import com.vividsolutions.jts.geom.*;
  */
 public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
+	Integer initialCRSCode = null;
+	Envelope env = null;
+
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
@@ -48,6 +52,11 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 */
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+
+	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
+		super(scope, pathName);
+		initialCRSCode = code;
 	}
 
 	@Override
@@ -111,37 +120,6 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 		features.close();
 	}
 
-	public FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
-		File file = null;
-		ShpFiles shpf = null;
-		try {
-			file = getFile();
-			final ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
-			final String name = store.getTypeNames()[0];
-			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			final FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
-			// final SimpleFeatureType type = store.getSchema();
-			// final List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
-			// for ( AttributeDescriptor ad : descriptors ) {
-			// GuiUtils.debug("Type of attribute " + ad.getLocalName() + ": " +
-			// ad.getType().getBinding().getSimpleName() + "; is geometry? " +
-			// (ad.getType() instanceof GeometryType));
-			// }
-
-			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				shpf = new ShpFiles(file);
-				final double latitude = featureShp.getBounds().centre().y;
-				final double longitude = featureShp.getBounds().centre().x;
-				scope.getTopology().getGisUtils().setTransformCRS(shpf, longitude, latitude);
-			}
-			return featureShp.features();
-		} catch (final Exception e) {
-			return null;
-		} finally {
-			// clean ?
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -154,30 +132,48 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	}
 
-	@Override
-	public Envelope computeEnvelope(final IScope scope) {
-		final File shpFile = getFile();
+	public FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
+		File file = getFile();
 		ShapefileDataStore store = null;
-		Envelope env = null;
 		try {
-			store = new ShapefileDataStore(shpFile.toURI().toURL());
+			store = new ShapefileDataStore(file.toURI().toURL());
 			final String name = store.getTypeNames()[0];
 			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			env = source.getBounds();
+			final FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
+			env = featureShp.getBounds();
+			final double latitude = env.centre().y;
+			final double longitude = env.centre().x;
+			GisUtils gis = scope.getTopology().getGisUtils();
+			// If we have a forced EPSG code for the initial CRS, we use it (even if the .prj file is present).
+			if ( initialCRSCode != null ) {
+				gis.setInitialCRS(initialCRSCode, true, longitude, latitude);
+			} else // Otherwise, if a .prj file is present, we use it
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				final ShpFiles shpf = new ShpFiles(shpFile);
-				final double longitude = env.centre().x;
-				final double latitude = env.centre().y;
-				final GisUtils gis = scope.getTopology().getGisUtils();
-				gis.setTransformCRS(shpf, longitude, latitude);
-				env = gis.transform(env);
+				gis.setInitialCRS(new ShpFiles(file), longitude, latitude);
+			} else {
+				// If the user does not consider the data to be projected, he has entered a default value in the
+				// preferences
+				if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
+					gis.setInitialCRS(GamaPreferences.LIB_INITIAL_CRS.getValue(), true, longitude, latitude);
+				}
 			}
+			env = gis.transform(env);
+			return featureShp.features();
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
+		} finally {
+			if ( store != null ) {
+				store.dispose();
+			}
 		}
-		store.dispose();
-		return env;
+	}
 
+	@Override
+	public Envelope computeEnvelope(final IScope scope) {
+		if ( env == null ) {
+			getFeatureIterator(scope);
+		}
+		return env;
 	}
 
 }
