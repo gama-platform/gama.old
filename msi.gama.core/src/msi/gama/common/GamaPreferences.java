@@ -103,7 +103,7 @@ public class GamaPreferences {
 		IType type;
 		List<T> values;
 		Number min, max;
-		String[] activates;
+		String[] activates, deactivates;
 		IPreferenceChange<T> onChange;
 
 		private Entry(final String key) {
@@ -159,6 +159,11 @@ public class GamaPreferences {
 
 		public Entry activates(final String ... link) {
 			activates = link;
+			return this;
+		}
+
+		public Entry deactivates(final String ... link) {
+			deactivates = link;
 			return this;
 		}
 
@@ -275,6 +280,10 @@ public class GamaPreferences {
 			return this.activates;
 		}
 
+		public String[] getDeactivable() {
+			return this.deactivates;
+		}
+
 	}
 
 	/**
@@ -377,24 +386,31 @@ public class GamaPreferences {
 	 * Spatialite
 	 */
 	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite",
-		"Path to the Spatialite (http://www.gaia-gis.it/gaia-sins/) library",
+		"Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
 		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * R
 	 */
 	public static final Entry<String> LIB_R = create("core.lib_r",
-		"Path to the RScript (http://www.r-project.org) library", new GenericFile(getDefaultRPath()), IType.FILE).in(
-		LIBRARIES).group("Paths");
+		"Path to the RScript (see http://www.r-project.org) library", new GenericFile(getDefaultRPath()), IType.FILE)
+		.in(LIBRARIES).group("Paths");
 	/**
 	 * GeoTools
 	 */
-	public static final Entry<Boolean> LIB_PROJECTED =
-		create("core.lib_projected",
-			"When no '.prj' file is supplied, consider shape files to contain projected data by default", false,
-			IType.BOOL).activates("core.lib_projection").in(LIBRARIES).group("GeoTools");;
-	public static final Entry<String> LIB_PROJECTION = create("core.lib_projection",
-		"Default EPSG code (http://spatialreference.org/ref/epsg/) to use when no '.prj' file is found", "32600",
-		IType.STRING).in(LIBRARIES).group("GeoTools");
+	public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
+		"Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL).deactivates("core.lib_target_crs")
+		.in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Integer> LIB_TARGET_CRS = create("core.lib_target_crs",
+		"...or use the following CRS (EPSG code)", 32600, IType.INT).in(LIBRARIES).group(
+		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Boolean> LIB_PROJECTED = create("core.lib_projected",
+		"When no '.prj' file is supplied, consider that shape files contain data already projected in this CRS", true,
+		IType.BOOL).deactivates("core.lib_initial_crs").in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
+		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES).group(
+		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");
