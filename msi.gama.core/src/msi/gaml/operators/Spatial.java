@@ -204,6 +204,17 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
 		}
+		
+		@operator("box")
+		@doc(value = "A box geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the box is by default the location of the current agent in which has been called this operator.", examples = { "box(10, 5 , 5) --: returns a geometry as a rectangle with width = 10, heigh = 5 depth= 5." }, see = {
+			"around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
+			"cube", "triangle" })
+		public static IShape box(final IScope scope, final double x, final double y, final double z) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return GamaGeometryType.buildBox(x, y, z, location);
+		}
 
 		@operator("triangle")
 		@doc(value = "A triangle geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.", examples = { "triangle(5) --: returns a geometry as a triangle with side_size = 5." }, see = {
@@ -295,7 +306,7 @@ public abstract class Spatial {
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, points.last(scope)); }
 			return GamaGeometryType.buildPolyline(shapes);
 		}
-
+			
 		@operator(value = { "plan", "polyplan" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
 		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
