@@ -194,6 +194,16 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 							}
 						}
 					}
+					if ( e.getDeactivable() != null && value instanceof Boolean ) {
+						for ( String deactivable : e.getDeactivable() ) {
+							IParameterEditor ed = editors.get(deactivable);
+							if ( ed == null ) {
+								activations.put(deactivable, !(Boolean) value);
+							} else {
+								ed.setActive(!(Boolean) value);
+							}
+						}
+					}
 				}
 
 			};
