@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
 	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
 	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar" sourcepath="sources/trove-3.0.3-src.jar"/>
@@ -9,7 +10,6 @@
 	<classpathentry exported="true" kind="lib" path="gt-api-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-data-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-epsg-extension-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
-	<classpathentry exported="true" kind="lib" path="gt-epsg-hsql-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-feature-pregeneralized-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-main-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-metadata-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>

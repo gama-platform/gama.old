@@ -7,7 +7,6 @@ Bundle-ClassPath: jgrapht-jdk1.6.jar,
  gt-api-2.7.3.jar,
  gt-data-2.7.3.jar,
  gt-epsg-extension-2.7.3.jar,
- gt-epsg-hsql-2.7.3.jar,
  gt-feature-pregeneralized-2.7.3.jar,
  gt-main-2.7.3.jar,
  gt-metadata-2.7.3.jar,
@@ -52,7 +51,8 @@ Bundle-ClassPath: jgrapht-jdk1.6.jar,
  hsqldb-1.8.0.7.jar,
  trove-3.0.3.jar,
  svnkit-javahl.jar,
- trilead.jar
+ trilead.jar,
+ gt-epsg-wkt-2.7.3.jar
 Bundle-Vendor: MSI
 Export-Package: au.com.bytecode.opencsv,
  com.mysql.jdbc,
