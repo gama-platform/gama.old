@@ -28,7 +28,7 @@ import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import msi.gaml.types.GamaFileType;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.*;
+import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.*;
 import org.opengis.feature.simple.*;
 import com.vividsolutions.jts.geom.*;
@@ -149,12 +149,12 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 				gis.setInitialCRS(initialCRSCode, true, longitude, latitude);
 			} else if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 				// Otherwise, if a .prj file is present, we use it
-				ShpFiles shpFiles = new ShpFiles(file);
-				try {
-					gis.setInitialCRS(shpFiles, longitude, latitude);
-				} finally {
-					shpFiles.dispose();
-				}
+				// ShpFiles shpFiles = new ShpFiles(file);
+				// try {
+				gis.setInitialCRS(file, longitude, latitude);
+				// } finally {
+				// shpFiles.dispose();
+				// }
 			} else {
 				// If the user does not consider the data to be projected, he has entered a default value in the
 				// preferences

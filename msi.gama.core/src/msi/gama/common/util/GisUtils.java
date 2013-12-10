@@ -18,7 +18,7 @@
  */
 package msi.gama.common.util;
 
-import java.io.IOException;
+import java.io.*;
 import msi.gama.common.GamaPreferences;
 import org.geotools.data.shapefile.ShpFiles;
 import org.geotools.data.shapefile.prj.PrjFileReader;
@@ -37,7 +37,7 @@ public class GisUtils {
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	Envelope translationEnvelope;
-	private static GeometryCoordinateSequenceTransformer transformer;
+	private GeometryCoordinateSequenceTransformer transformer;
 	private GeometryCoordinateSequenceTransformer inverseTransformer;
 	private CoordinateReferenceSystem initialCRS;
 
@@ -113,8 +113,9 @@ public class GisUtils {
 		return geom;
 	}
 
-	public void setInitialCRS(final ShpFiles shpf, final double longitude, final double latitude) throws IOException {
-		PrjFileReader prjreader = new PrjFileReader(shpf);
+	public void setInitialCRS(final File shpf, final double longitude, final double latitude) throws IOException {
+		ShpFiles shpFiles = new ShpFiles(shpf);
+		PrjFileReader prjreader = new PrjFileReader(shpFiles);
 		try {
 			setInitialCRS(CRS.parseWKT(prjreader.getCoodinateSystem().toWKT()), longitude, latitude);
 		} catch (FactoryException e2) {
@@ -162,7 +163,6 @@ public class GisUtils {
 			setInitialCRS(CRS.decode("EPSG:" + epsgCode, longitudeFirst), longitude, latitude);
 		} catch (FactoryException e2) {
 			initialCRS = null;
-			e2.printStackTrace();
 		}
 	}
 
