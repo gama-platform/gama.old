@@ -9,7 +9,6 @@ import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.*;
 
 public class DisplaySurfaceMenu {
@@ -21,26 +20,33 @@ public class DisplaySurfaceMenu {
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
 		surface = s;
 		swtControl = c;
-		c.addMouseListener(new MouseListener() {
+		// GuiUtils.run(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// c.addMouseListener(new MouseListener() {
+		//
+		// @Override
+		// public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
+		// GuiUtils.debug("Mouse up for SWT control");
+		//
+		// }
+		//
+		// @Override
+		// public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
+		// GuiUtils.debug("Mouse down for SWT control");
+		//
+		// }
+		//
+		// @Override
+		// public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
+		// }
+		// });
 
-			@Override
-			public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
-				GuiUtils.debug("Mouse up for SWT control");
-
-			}
-
-			@Override
-			public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-				GuiUtils.debug("Mouse down for SWT control");
-
-			}
-
-			@Override
-			public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 		menuBuilder = new DisplayedAgentsMenu(view);
 		((AbstractAWTDisplaySurface) s).setSWTMenuManager(this);
 

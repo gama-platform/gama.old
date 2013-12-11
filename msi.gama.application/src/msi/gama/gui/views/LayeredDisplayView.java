@@ -263,6 +263,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					// see JOGLAWTGLRendered.init()
 					OutputSynchronizer.decInitializingViews(outputName);
 				}
+				// FIXME Hack to create a menu displayable on SWT
+				new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, LayeredDisplayView.this);
 			}
 		};
 
@@ -286,7 +288,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// });
 
 		// FIXME Hack to create a menu displayable on SWT
-		new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, this);
+		// new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, this);
 
 		perspectiveListener = new IPerspectiveListener() {
 
