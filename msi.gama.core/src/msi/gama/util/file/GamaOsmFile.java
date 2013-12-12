@@ -30,6 +30,7 @@ import java.util.Set;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GisUtils;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -193,35 +194,69 @@ public class GamaOsmFile extends GamaFile<Integer, GamaShape> {
 		 }
 		for (Way way : ways) {
 			Map<String, Object> values = new GamaMap<String, Object>();
-			List<IShape> points = new GamaList<IShape>();
-			for (WayNode node : way.getWayNodes()) {
-				points.add(nodesPt.get(node.getNodeId()));
-			}
 			for (Tag tg : way.getTags()) {
 				String key = tg.getKey();
 				values.put(key, tg.getValue());
 			}
-			boolean isPolyline = values.containsKey("highway") || !(points.get(0).equals(points.get(points.size() - 1))) ;
-			GamaShape geom = null;
-			if (points.size() > 1) {
-				if (isPolyline) {
-					geom = new GamaShape(GamaGeometryType.buildPolyline(points));
-				} else if (points.get(0).equals(points.get(points.size()-1))){
-					geom = new GamaShape(GamaGeometryType.buildPolygon(points));
-					if (geom.getArea() <= 0) geom = null;
+			boolean isPolyline = values.containsKey("highway") || way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size()-1));
+			if (isPolyline) {
+				((List)geometries).addAll(createSplitRoad(scope, way, values,intersectionNodes, nodesPt));
+				
+			} else  {
+				List<IShape> points = new GamaList<IShape>();
+				for (WayNode node : way.getWayNodes()) {
+					points.add(nodesPt.get(node.getNodeId()));
 				}
-			}
-			if (geom != null) {
-				for (String key : values.keySet()) {
-					geom.setAttribute(key, values.get(key));
-				}
-				if (! geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid())
+				if (points.size() < 3) continue;
+				GamaShape geom = new GamaShape(GamaGeometryType.buildPolygon(points));
+				if (geom != null && ! geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid() &&geom.getArea() > 0) {
+					for (String key : values.keySet()) {
+						geom.setAttribute(key, values.get(key));
+					}
 					geometries.add(geom);
+				}
 			}
 			
 		 }
 		
 		 return geometries;
+	 }
+	 
+	 public List<GamaShape> createSplitRoad(IScope scope, Way way ,Map<String, Object> values,Set<Long> intersectionNodes,final Map<Long, GamaShape> nodesPt) {
+			List<List<IShape>> pointsList = new GamaList<List<IShape>>();
+			List<IShape> points = new GamaList<IShape>();
+			GamaList<GamaShape> geometries = new GamaList<GamaShape>();
+			WayNode endNode = way.getWayNodes().get(way.getWayNodes().size()-1);
+			for (WayNode node : way.getWayNodes()) {
+				Long id = node.getNodeId();
+				GamaShape pt = nodesPt.get(id);
+				points.add(pt);
+				if (intersectionNodes.contains(id) || node ==  endNode) {
+					if (points.size() > 1)
+						pointsList.add(points);
+					points = new GamaList<IShape>();
+					points.add(pt);
+					
+				}
+			}
+			for (List<IShape> pts: pointsList) {
+				GamaShape g = createRoad(pts,values);
+				if (g != null) geometries.add(g);
+			}
+			return geometries; 
+			
+		}
+	 
+	 private GamaShape createRoad(List<IShape> points,Map<String, Object> values) {
+		 if (points.size() < 2) return null;
+		 GamaShape geom = new GamaShape(GamaGeometryType.buildPolyline(points));
+		 if (geom != null && ! geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid() && geom.getPerimeter() > 0) {
+			 for (String key : values.keySet()) {
+				geom.setAttribute(key, values.get(key));
+			}
+			return geom;
+		 }
+		 return null;
 	 }
 
 	/*
