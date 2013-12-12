@@ -42,7 +42,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		".text", ".tsv", "xml");
 	private static final String shpSuffix = ".shp";
 	private static final String gamlSuffix = ".gaml";
-	private static final String osmSuffix = ".osm";
+	private static final List<String>  osmSuffix = Arrays.asList(".osm", ".pbf", ".bz2",
+			".gz");
 	private static final List<String> gridSuffixes = Arrays.asList(".asc");
 
 	private static final String propertiesSuffix = ".properties";
@@ -133,7 +134,11 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_osm(\"../includes/test.osm\")            --:  true;" }, see = { "image", "is_text",
 		"is_properties", "is_image" })
 	public static Boolean isOsm(final String f) {
-		return f.toLowerCase().endsWith(osmSuffix);
+		final String fn = f.toLowerCase();
+		for ( final String s : osmSuffix ) {
+			if ( fn.endsWith(s) ) { return true; }
+		}
+		return false;
 	}
 	
 	@operator(value = "is_grid")

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoâ€�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,19 +18,43 @@
  */
 package msi.gama.util.file;
 
+
+
 import java.io.File;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GisUtils;
-import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gaml.operators.Files;
 import msi.gaml.types.GamaFileType;
-import org.geotools.feature.FeatureIterator;
-import org.jdom2.*;
-import org.jdom2.input.SAXBuilder;
-import org.opengis.feature.simple.SimpleFeature;
+import msi.gaml.types.GamaGeometryType;
+
+import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
+import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
+import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
+import org.openstreetmap.osmosis.core.domain.v0_6.Node;
+import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
+import org.openstreetmap.osmosis.core.domain.v0_6.Way;
+import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
+import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
+import org.openstreetmap.osmosis.core.task.v0_6.Sink;
+import org.openstreetmap.osmosis.xml.common.CompressionMethod;
+import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
+
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Written by drogoul
@@ -39,8 +63,10 @@ import com.vividsolutions.jts.geom.Envelope;
  * @todo Description
  * 
  */
-public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
+public class GamaOsmFile extends GamaFile<Integer, GamaShape> {
 
+
+	Envelope env = null;
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
@@ -85,19 +111,118 @@ public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
 	public String getKeyword() {
 		return Files.OSM;
 	}
+	
+	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
+		final Map<Long, GamaShape> nodesPt = new GamaMap<Long, GamaShape>();
+		final List<Node> nodes = new GamaList<Node>();
+		final List<Way> ways = new GamaList<Way>();
+		final Set<Long> intersectionNodes = new HashSet<Long>();
+		final GisUtils gis = scope.getTopology().getGisUtils();
+		final Set<Long> usedNodes = new HashSet<Long>();
+
+		Sink sinkImplementation = new Sink() {
+		
+
+			 
+			 public void process(EntityContainer entityContainer) {
+				 	Entity entity = entityContainer.getEntity();
+				 	if (entity instanceof Bound) {
+			        	Bound bound = (Bound) entity;
+			        	env = new Envelope(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop());
+			        	if ( env != null ) {
+							final double latitude = env.centre().y;
+							final double longitude = env.centre().x;
+							if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
+								gis.setInitialCRS(GamaPreferences.LIB_INITIAL_CRS.getValue(), true, longitude, latitude);
+							} else {
+								// gis.setInitialCRS(longitude, latitude);
+							}
+							env = gis.transform(env);
+						}
+			        }
+				 	else if (returnIt) {
+				 		if (entity instanceof Node) {
+				        	Node node = (Node) entity;
+				        	nodes.add(node);
+				        	Geometry g = gis.transform(new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
+				        	nodesPt.put(node.getId(), new GamaShape(g)) ;
+				        	//nodesPt.put(node.getId(), new GamaShape(gis.transform(new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry()))) ;
+				        } else if (entity instanceof Way) {
+				        	registerHighway((Way)entity,usedNodes, intersectionNodes);
+				        	ways.add((Way) entity);
+				        }
+				 	}
+				 	
+			    }
+			    public void release() { }
+			    public void complete() { }
+				public void initialize(Map<String, Object> arg0) {}
+			};
+		readFile(sinkImplementation,getFile());
+		if (returnIt)
+			buffer = buildGeometries(scope,nodes,ways,intersectionNodes,nodesPt);
+	}
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		// TO DO
+		if ( buffer != null ) { return; }
+		buffer = new GamaList();
+		getFeatureIterator(scope, true);
 	}
 
-	public FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
-		// TO DO
-		return null;
-	}
+	 public GamaList<GamaShape> buildGeometries(final IScope scope,List<Node> nodes,List<Way> ways,Set<Long> intersectionNodes,final Map<Long, GamaShape> nodesPt){
+		 GamaList<GamaShape> geometries = new GamaList<GamaShape>();
+		 for (Node node : nodes) {
+			GamaShape pt = nodesPt.get(node.getId());
+			boolean hasAttributes = ! node.getTags().isEmpty();
+			if (pt != null) {
+				for (Tag tg : node.getTags()) {
+					String key = tg.getKey();
+					pt.setAttribute(key, tg.getValue());
+					if (key.equals("highway")) {
+						intersectionNodes.add(node.getId());
+					 } 
+				}
+				if (hasAttributes)
+					geometries.add(pt);
+			}
+			 
+		 }
+		for (Way way : ways) {
+			Map<String, Object> values = new GamaMap<String, Object>();
+			List<IShape> points = new GamaList<IShape>();
+			for (WayNode node : way.getWayNodes()) {
+				points.add(nodesPt.get(node.getNodeId()));
+			}
+			for (Tag tg : way.getTags()) {
+				String key = tg.getKey();
+				values.put(key, tg.getValue());
+			}
+			boolean isPolyline = values.containsKey("highway") || !(points.get(0).equals(points.get(points.size() - 1))) ;
+			GamaShape geom = null;
+			if (points.size() > 1) {
+				if (isPolyline) {
+					geom = new GamaShape(GamaGeometryType.buildPolyline(points));
+				} else if (points.get(0).equals(points.get(points.size()-1))){
+					geom = new GamaShape(GamaGeometryType.buildPolygon(points));
+					if (geom.getArea() <= 0) geom = null;
+				}
+			}
+			if (geom != null) {
+				for (String key : values.keySet()) {
+					geom.setAttribute(key, values.get(key));
+				}
+				if (! geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid())
+					geometries.add(geom);
+			}
+			
+		 }
+		
+		 return geometries;
+	 }
 
 	/*
 	 * (non-Javadoc)
@@ -106,42 +231,72 @@ public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
 	 */
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
-		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder les fichiers.
-		// Merger progressivement save et le syst�me de fichiers afin de ne plus d�pendre de �a.
-
+		// TODO not sure that is is really interesting to save geographic as OSM file...
+	}
+	
+	private void registerHighway(Way way, Set<Long> usedNodes, Set<Long> intersectionNodes) {
+		for (Tag tg : way.getTags()) {
+			String key = tg.getKey();
+			if (key.equals("highway")) {
+				List<WayNode> nodes = way.getWayNodes();
+				for (WayNode node : nodes) {
+					long id = node.getNodeId();
+					if (usedNodes.contains(id))  
+						intersectionNodes.add(id);
+					else 
+						usedNodes.add(id);						
+				}
+				if (nodes.size() > 2 && nodes.get(0) == nodes.get(nodes.size() -1)) {
+					intersectionNodes.add( nodes.get((int)(nodes.size() / 2)).getNodeId());
+				}	
+			}	
+		}
+	}
+	
+	private void readFile(Sink sinkImplementation,File osmFile) {
+		boolean pbf = false;
+		CompressionMethod compression = CompressionMethod.None;
+		if (getName().endsWith(".pbf")) {
+		    pbf = true;
+		} else if (getName().endsWith(".gz")) {
+		    compression = CompressionMethod.GZip;
+		} else if (getName().endsWith(".bz2")) {
+		    compression = CompressionMethod.BZip2;
+		}
+	
+		RunnableSource reader;
+		
+		reader = new XmlReader(osmFile, false, compression);
+		
+		if (pbf) {
+		    try {
+				reader = new crosby.binary.osmosis.OsmosisReader(
+				        new FileInputStream(osmFile));
+			} catch (FileNotFoundException e) {
+				return;
+			}
+		} else {
+		    reader = new XmlReader(osmFile, false, compression);
+		}
+	
+		reader.setSink(sinkImplementation); 
+	
+		Thread readerThread = new Thread(reader);
+		readerThread.start();
+	
+		while (readerThread.isAlive()) {
+		    try {
+		        readerThread.join();
+		    } catch (InterruptedException e) {
+		       
+		    }
+		}
 	}
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		final File osmFile = getFile();
-		Envelope env = null;
-		try {
-			SAXBuilder sxb = new SAXBuilder();
-			try {
-				Document document = sxb.build(osmFile);
-				List<Element> listBounds = document.getRootElement().getChildren("bounds");
-				Iterator i = listBounds.iterator();
-				while (i.hasNext()) {
-					Element courant = (Element) i.next();
-					double minlat = Double.valueOf(courant.getAttributeValue("minlat"));
-					double minlon = Double.valueOf(courant.getAttributeValue("minlon"));
-					double maxlat = Double.valueOf(courant.getAttributeValue("maxlat"));
-					double maxlon = Double.valueOf(courant.getAttributeValue("maxlon"));
-					env = new Envelope(minlon, maxlon, minlat, maxlat);
-					break;
-				}
-
-			} catch (Exception e) {}
-
-			if ( env != null ) {
-				final double latitude = env.centre().y;
-				final double longitude = env.centre().x;
-				final GisUtils gis = scope.getTopology().getGisUtils();
-				gis.setInitialCRS(longitude, latitude);
-				env = gis.transform(env);
-			}
-		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e);
+		if (env == null) {
+			getFeatureIterator(scope, false);
 		}
 		return env;
 

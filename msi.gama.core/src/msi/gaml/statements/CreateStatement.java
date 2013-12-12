@@ -168,8 +168,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final Object source = getSource(scope);
 		if ( source instanceof IList ) {
 			fillInits(scope, inits, max, (IList) source);
-		} else if ( source instanceof GamaShapeFile ) {
-			fillInits(scope, inits, max, (GamaShapeFile) source);
+		} else if ( source instanceof GamaShapeFile || source instanceof GamaOsmFile ) {
+			fillInits(scope, inits, max, (GamaFile) source);
 		} else if ( source instanceof GamaGridFile ) {
 			fillInits(scope, inits, max, (GamaGridFile) source);
 		} else if ( source instanceof GamaTextFile ) {
@@ -219,10 +219,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Method used to read initial values and attributes from a GIS file.
 	 */
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaShapeFile file) {
+	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaFile file) {
 		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			final GamaGisGeometry g = file.get(scope, i);
+			final GamaShape g = (GamaShape)file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
