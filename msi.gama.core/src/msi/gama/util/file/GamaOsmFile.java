@@ -30,7 +30,6 @@ import java.util.Set;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GisUtils;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
