@@ -114,7 +114,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 	private List<String> built_in_variables =  GamaList.with("fatal", "duration", "machine_time", "step", "model_path", "total_duration", "seed", "average_duration", "warnings", "cycle", "time", "rng", "project_path", "workspace_path", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge", "shape", "location", "agents", "peers", "members","name", "population", "host");
 	private List<String> built_in_actions =  GamaList.with("goto", "move", "wander", "follow", "wander_3D", "_init_", "_step_","error", "pause", "die", "write", "tell", "debug", "percieved_area", "halt", "neighbourhood_exclusive");
 	
-	
+	 
 	public GamaFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
     }
