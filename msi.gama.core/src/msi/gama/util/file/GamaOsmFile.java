@@ -135,7 +135,7 @@ public class GamaOsmFile extends GamaFile<Integer, GamaShape> {
 							if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
 								gis.setInitialCRS(GamaPreferences.LIB_INITIAL_CRS.getValue(), true, longitude, latitude);
 							} else {
-								// gis.setInitialCRS(longitude, latitude);
+								 gis.setInitialCRS(longitude, latitude);
 							}
 							env = gis.transform(env);
 						}
