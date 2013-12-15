@@ -20,28 +20,19 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.IPopupProvider;
-import msi.gama.gui.swt.controls.Popup;
-import msi.gama.runtime.GAMA;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener, FocusListener {
 
@@ -102,9 +93,14 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	private void computeValue() {
 		try {
 			currentException = null;
-			currentValue =
-				editor.evaluateExpression() ? GAML.evaluateExpression(text.getText(), editor.getAgent()) : GAML
-					.compileExpression(text.getText(), editor.getAgent());
+			IAgent a = editor.getAgent();
+			String s = text.getText();
+			if ( a == null ) {
+				currentValue = Cast.as(s, editor.getExpectedType().toClass());
+			} else {
+				currentValue =
+					editor.evaluateExpression() ? GAML.evaluateExpression(s, a) : GAML.compileExpression(s, a);
+			}
 		} catch (final Exception e) {
 			currentException = e;
 		}

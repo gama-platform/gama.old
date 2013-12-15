@@ -1,10 +1,8 @@
 package irit.gaml.extensions.database.species;
 
 import java.sql.*;
-
 import msi.gama.common.util.GuiUtils;
-import msi.gama.database.sql.SqlConnection;
-import msi.gama.database.sql.SqlUtils;
+import msi.gama.database.sql.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -46,27 +44,26 @@ import msi.gaml.types.IType;
  * 18-Feb-2013:
  * Add public int insert(final IScope scope) throws GamaRuntimeException
  * 21-Feb-2013:
- * 	Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
- *	Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
- * 	Modify public int insert(final IScope scope) throws GamaRuntimeException
+ * Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+ * Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
+ * Modify public int insert(final IScope scope) throws GamaRuntimeException
  * 10-Mar-2013:
- * 	Modify select method: Add transform parameter
- * 	Modify insert method: Add transform parameter
+ * Modify select method: Add transform parameter
+ * Modify insert method: Add transform parameter
  * 29-Apr-2013
- * 	Remove import msi.gama.database.SqlConnection;
- *  Add import msi.gama.database.sql.SqlConnection;
- *  Change all method appropriately 
- *   
+ * Remove import msi.gama.database.SqlConnection;
+ * Add import msi.gama.database.sql.SqlConnection;
+ * Change all method appropriately
+ * 
  * Last Modified: 29-Apr-2013
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
 
 	private Connection conn = null;
-	private SqlConnection sqlConn =null;
+	private SqlConnection sqlConn = null;
 	private boolean isConnection = false;
-	private java.util.Map<String,String> params = null;
-	// private Statement stat;
+	private java.util.Map<String, String> params = null;
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	public AgentDB(final IPopulation s) throws GamaRuntimeException {
@@ -119,90 +116,27 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "connect", args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
-	})
-	public Object connectDB(final IScope scope) throws GamaRuntimeException 
-	{
+	@action(name = "connect", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	public Object connectDB(final IScope scope) throws GamaRuntimeException {
 
-//	    java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-//		params = (java.util.Map) scope.getArg("params", IType.MAP);
-//
-//		String dbtype = (String) params.get("dbtype");
-//		String host = (String) params.get("host");
-//		String port = (String) params.get("port");
-//		String database = (String) params.get("database");
-//		String user = (String) params.get("user");
-//		String passwd = (String) params.get("passwd");
-//		SqlConnection sqlConn;
-//		if ( isConnection ) { throw new GamaRuntimeException(
-//			"AgentDB.connection error: a connection is already opened"); }
-//		// create connection
-//		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-//			String DBRelativeLocation =
-//				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
-//			// sqlConn=new SqlConnection(dbtype,database);
-//			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-//		} else {
-//			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-//		}
-//		try {
-//			conn = sqlConn.connectDB();
-//			isConnection = true;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
-//		} catch (InstantiationException e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
-//		}
-//		return null;
+		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
-// Edit 29/April/2013
-//------------------------------------------------------------------------------------		
+		String dbtype = params.get("dbtype");
 
-		params = (java.util.Map<String,String>) scope.getArg("params", IType.MAP);
-		
-		String dbtype = (String) params.get("dbtype");
-//		String host = (String) params.get("host");
-//		String port = (String) params.get("port");
-//		String database = (String) params.get("database");
-//		String user = (String) params.get("user");
-//		String passwd = (String) params.get("passwd");
-
-		//		SqlConnection sqlConn;
-		if(dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
-			throw GamaRuntimeException.error("AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).");
-		}
-		if ( isConnection ) { 
-			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened");
-		}
+		// SqlConnection sqlConn;
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) { throw GamaRuntimeException
+			.error("AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info)."); }
+		if ( isConnection ) { throw GamaRuntimeException
+			.error("AgentDB.connection error: a connection is already opened"); }
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			conn = sqlConn.connectDB();
 			isConnection = true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
 		}
 		return null;
-//----------------------------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------------------------------
 	}
 
 	/*
@@ -219,53 +153,18 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
-	})
-	public boolean testConnection(final IScope scope) throws GamaRuntimeException 
-	{
-//		Connection conn;
-//		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-//		String dbtype = (String) params.get("dbtype");
-//		String host = (String) params.get("host");
-//		String port = (String) params.get("port");
-//		String database = (String) params.get("database");
-//		String user = (String) params.get("user");
-//		String passwd = (String) params.get("passwd");
-//		SqlConnection sqlConn;
-//
-//		// create connection
-//		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-//			String DBRelativeLocation =
-//				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
-//			// sqlConn=new SqlConnection(dbtype,database);
-//			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-//		} else {
-//			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-//		}
-//		try {
-//			conn = sqlConn.connectDB();
-//			conn.close();
-//		} catch (Exception e) {
-//			// e.printStackTrace();
-//			// throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
-//			return false;
-//		}
-//		return true;
-
-// Edit 29/April/2013
-//------------------------------------------------------------------------------------		
+	@action(name = "testConnection", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
 		try {
 			SqlConnection sqlConn;
 			sqlConn = SqlUtils.createConnectionObject(scope);
-			Connection conn=sqlConn.connectDB();
+			Connection conn = sqlConn.connectDB();
 			conn.close();
 		} catch (Exception e) {
 			return false;
-		} 
+		}
 		return true;
-//---------------------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------------------
 	}
 
 	/*
@@ -283,38 +182,13 @@ public class AgentDB extends GamlAgent {
 		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string")),
 		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
 		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
-	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException 
-	{	
-//		String selectComm = (String) scope.getArg("select", IType.STRING);
-//		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-//		Boolean transform =
-//			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-//		GamaList<Object> repRequest = new GamaList<Object>();
-//		// get data
-//		try {
-//			if ( values.size() > 0 ) {
-//				repRequest = new SqlConnection().executeQueryDB(conn, selectComm, values);
-//			} else {
-//				repRequest = new SqlConnection().selectDB(conn, selectComm);
-//			}
-//			if ( transform ) { return new SqlConnection().fromGisToAbsolute(scope, repRequest); }
-//			return repRequest;
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
-//		}
+	public GamaList select(final IScope scope) throws GamaRuntimeException {
 
-// Edit 29/April/2013
-//------------------------------------------------------------------------------------------------
-		if (!isConnection){
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
-		}
+		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		Boolean transform =
-			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-		GamaList<Object> repRequest = new GamaList<Object>();
+		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		GamaList<? super GamaList<? super GamaList>> repRequest = new GamaList<Object>();
 		// get data
 		try {
 			if ( values.size() > 0 ) {
@@ -322,15 +196,15 @@ public class AgentDB extends GamlAgent {
 			} else {
 				repRequest = sqlConn.selectDB(conn, selectComm);
 			}
-			if ( transform ) { return sqlConn.fromGisToAbsolute(scope, repRequest); }
+			// if ( transform ) { return sqlConn.fromGisToAbsolute(gis, repRequest); }
 			return repRequest;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.select: " + e.toString());
 		}
-//--------------------------------------------------------------------------------------------------
-		
+		// --------------------------------------------------------------------------------------------------
+
 	}
 
 	/*
@@ -348,36 +222,9 @@ public class AgentDB extends GamlAgent {
 		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
 		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")),
 		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
-	public int executeUpdate(final IScope scope) throws GamaRuntimeException 
-	{
-//		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-//		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-//		SqlConnection sqlConn;
-//		int row_count = -1;
-//		// get data
-//		try {
-//			if ( values.size() > 0 ) {
-//				row_count = new SqlConnection().executeUpdateDB(conn, updateComm, values);
-//			} else {
-//				row_count = new SqlConnection().executeUpdateDB(conn, updateComm);
-//			}
-//
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.executeUpdate: " + e.toString());
-//		}
-//		if ( DEBUG ) {
-//			GuiUtils.informConsole(updateComm + " was run");
-//		}
-//
-//		return row_count;
+	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
-// Edit 29/April/2013
-//------------------------------------------------------------------------------------------------
-		if (!isConnection){
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
-		}
+		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 
@@ -400,28 +247,26 @@ public class AgentDB extends GamlAgent {
 		}
 
 		return row_count;
-//----------------------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------------------------
 	}
-	
+
 	@action(name = "getParameter", args = {})
 	public Object getParamater(final IScope scope) throws GamaRuntimeException {
 		return params;
 	}
 
-	@action(name = "setParameter", args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
-	})
+	@action(name = "setParameter", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
 	public Object setParameter(final IScope scope) throws GamaRuntimeException {
-		params = (java.util.Map<String,String>) scope.getArg("params", IType.MAP);
-		
-		if(isConnection){
+		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
+
+		if ( isConnection ) {
 			try {
 				conn.close();
 				isConnection = false;
 			} catch (SQLException e) {
 				// e.printStackTrace();
 				throw GamaRuntimeException.error("AgentDB.close error:" + e.toString());
-			}			
+			}
 		}
 		return null;
 	}
@@ -438,56 +283,21 @@ public class AgentDB extends GamlAgent {
 		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
 		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
 		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
-	public int insert(final IScope scope) throws GamaRuntimeException 
-	{
-//		String table_name = (String) scope.getArg("into", IType.STRING);
-//		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
-//		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-//		Boolean transform =
-//			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-//		int rec_no = -1;
-//
-//		try {
-//			// Connection conn=sqlConn.connectDB();
-//			if ( cols.size() > 0 ) {
-//				rec_no =
-//					new SqlConnection().insertDB(scope, conn, table_name, cols, values, transform);
-//			} else {
-//				rec_no = new SqlConnection().insertDB(scope, conn, table_name, values, transform);
-//			}
-//			// conn.close();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.insert: " + e.toString());
-//		}
-//		if ( DEBUG ) {
-//			GuiUtils.informConsole("Insert into " + " was run");
-//		}
-//
-//		return rec_no;
-//	}
+	public int insert(final IScope scope) throws GamaRuntimeException {
 
-// Edit 29/April/2013
-//------------------------------------------------------------------------------------------------
-		if (!isConnection){
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
-		}
+		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		Boolean transform =
-			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 		int rec_no = -1;
 
 		try {
-			// Connection conn=sqlConn.connectDB();
 			if ( cols.size() > 0 ) {
-				rec_no =
-					sqlConn.insertDB(scope, conn, table_name, cols, values, transform);
+				rec_no = sqlConn.insertDB(conn, table_name, cols, values, transform);
 			} else {
-				rec_no = sqlConn.insertDB(scope, conn, table_name, values, transform);
+				rec_no = sqlConn.insertDB(table_name, values, transform);
 			}
-			// conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString());
@@ -498,5 +308,5 @@ public class AgentDB extends GamlAgent {
 
 		return rec_no;
 	}
-//-----------------------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------
 }

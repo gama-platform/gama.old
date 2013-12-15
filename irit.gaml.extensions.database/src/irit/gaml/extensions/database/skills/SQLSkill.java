@@ -87,36 +87,7 @@ public class SQLSkill extends Skill {
 	 */
 	@action(name = "testConnection", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
-		// Connection conn;
-		// java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		// String dbtype = (String) params.get("dbtype");
-		// String host = (String) params.get("host");
-		// String port = (String) params.get("port");
-		// String database = (String) params.get("database");
-		// String user = (String) params.get("user");
-		// String passwd = (String) params.get("passwd");
-		// SqlConnection sqlConn;
-		//
-		// // create connection
-		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-		// if ( DEBUG ) {
-		// GuiUtils.debug("testConnection.Database:" + database);
-		// GuiUtils.debug("testConnection.DBRelativeLocation:" + DBRelativeLocation);
-		// }
-		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-		// } else {
-		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-		// }
-		// try {
-		// conn = sqlConn.connectDB();
-		// conn.close();
-		// } catch (Exception e) {
-		// // e.printStackTrace();
-		// // throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
-		// return false;
-		// }
-		// return true;
+
 		SqlConnection sqlConn;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
@@ -129,22 +100,6 @@ public class SQLSkill extends Skill {
 		}
 		return true;
 	}
-
-	/*
-	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
-	 * 
-	 * @syntax: do action: executeUpdate {
-	 * arg params value:[
-	 * "dbtype":"MSSQL",
-	 * "url":"host address",
-	 * "port":"port number",
-	 * "database":"database name",
-	 * "user": "user name",
-	 * "passwd": "password",
-	 * ],
-	 * arg updateComm value: "update string"
-	 * }
-	 */
 
 	/*
 	 * - Make a connection to BDMS
@@ -170,45 +125,7 @@ public class SQLSkill extends Skill {
 		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
 		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")) })
 	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException {
-		// java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		// String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-		// GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		// String dbtype = (String) params.get("dbtype");
-		// String host = (String) params.get("host");
-		// String port = (String) params.get("port");
-		// String database = (String) params.get("database");
-		// String user = (String) params.get("user");
-		// String passwd = (String) params.get("passwd");
-		// SqlConnection sqlConn;
-		// int row_count = -1;
-		// // create connection
-		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-		// } else {
-		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-		// }
-		// // get data
-		// try {
-		// if ( values.size() > 0 ) {
-		// row_count = sqlConn.executeUpdateDB(updateComm, values);
-		// } else {
-		// row_count = sqlConn.executeUpdateDB(updateComm);
-		// }
-		//
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// throw new GamaRuntimeException("SQLSkill.executeUpdateDB: " + e.toString());
-		// }
-		// if ( DEBUG ) {
-		// GuiUtils.debug(updateComm + " was run");
-		// }
-		//
-		// return row_count;
-		//
 
-		// ------------------------------------------------------------------------------------------
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
@@ -250,51 +167,7 @@ public class SQLSkill extends Skill {
 		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
 		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
 	public int insert(final IScope scope) throws GamaRuntimeException {
-		// java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		// String table_name = (String) scope.getArg("into", IType.STRING);
-		// GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
-		// GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		// // String tranformStr = (String) scope.getArg("transform", IType.BOOL);
-		// // Boolean transform = ( (tranformStr != null) ? Boolean.parseBoolean(tranformStr) : false);
-		// Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-		// String dbtype = (String) params.get("dbtype");
-		// String host = (String) params.get("host");
-		// String port = (String) params.get("port");
-		// String database = (String) params.get("database");
-		// String user = (String) params.get("user");
-		// String passwd = (String) params.get("passwd");
-		// SqlConnection sqlConn;
-		// // create connection
-		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-		// if ( DEBUG ) {
-		// GuiUtils.debug("database sqlite:" + DBRelativeLocation);
-		// }
-		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation, transform);
-		// } else {
-		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd, transform);
-		// }
-		// int rec_no = -1;
-		//
-		// try {
-		// // Connection conn=sqlConn.connectDB();
-		// if ( cols.size() > 0 ) {
-		// rec_no = sqlConn.insertDB(scope, table_name, cols, values);
-		// } else {
-		// rec_no = sqlConn.insertDB(scope, table_name, values);
-		// }
-		// // conn.close();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// throw new GamaRuntimeException("SQLSkill.insert: " + e.toString());
-		// }
-		// if ( DEBUG ) {
-		// GuiUtils.debug("Insert into " + " was run");
-		// }
-		//
-		// return rec_no;
 
-		// ------------------------------------------------------------------------------------------
 		SqlConnection sqlConn;
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String table_name = (String) scope.getArg("into", IType.STRING);
@@ -305,9 +178,9 @@ public class SQLSkill extends Skill {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			// Connection conn=sqlConn.connectDB();
 			if ( cols.size() > 0 ) {
-				rec_no = sqlConn.insertDB(scope, table_name, cols, values);
+				rec_no = sqlConn.insertDB(table_name, cols, values);
 			} else {
-				rec_no = sqlConn.insertDB(scope, table_name, values);
+				rec_no = sqlConn.insertDB(table_name, values);
 			}
 			// conn.close();
 		} catch (Exception e) {
@@ -321,33 +194,6 @@ public class SQLSkill extends Skill {
 		return rec_no;
 		// ------------------------------------------------------------------------------------------
 	}
-
-	/*
-	 * Make a connection to BDMS and execute the insert statement
-	 * 
-	 * @syntax do insert with: [into:: table_name, values:value_list];
-	 * 
-	 * @return an integer
-	 */
-
-	/*
-	 * Make a connection to BDMS and execute the select statement
-	 * 
-	 * @syntax do action:
-	 * select {
-	 * arg params value:[
-	 * "dbtype":"SQLSERVER",
-	 * "url":"host address",
-	 * "port":"port number",
-	 * "database":"database name",
-	 * "user": "user name",
-	 * "passwd": "password",
-	 * ];
-	 * arg select value: "select string"
-	 * }
-	 * 
-	 * @return GamaList<GamaList<Object>>
-	 */
 
 	/*
 	 * Make a connection to BDMS and execute the select statement
@@ -375,53 +221,15 @@ public class SQLSkill extends Skill {
 		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
 	})
-	public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
-		// java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		// String selectComm = (String) scope.getArg("select", IType.STRING);
-		// GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		// Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-		// String dbtype = (String) params.get("dbtype");
-		// String host = (String) params.get("host");
-		// String port = (String) params.get("port");
-		// String database = (String) params.get("database");
-		// String user = (String) params.get("user");
-		// String passwd = (String) params.get("passwd");
-		// SqlConnection sqlConn;
-		// GamaList<Object> repRequest = new GamaList<Object>();
-		// // create connection
-		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-		// } else {
-		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-		// }
-		//
-		// // get data
-		// try {
-		// if ( values.size() > 0 ) {
-		// repRequest = sqlConn.executeQueryDB(selectComm, values);
-		// } else {
-		// repRequest = sqlConn.selectDB(selectComm);
-		// }
-		// // Transform GIS to Absolute (Geometry in GAMA)
-		// if ( transform ) {
-		// return sqlConn.fromGisToAbsolute(scope, repRequest);
-		// } else {
-		// return repRequest;
-		// }
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// throw new GamaRuntimeException("SQLSkill.select_QM: " + e.toString());
-		// }
-		// ------------------------------------------------------------------------------------------
+	public GamaList select_QM(final IScope scope) throws GamaRuntimeException {
+
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 
 		SqlConnection sqlConn;
-		GamaList<Object> repRequest = new GamaList<Object>();
+		GamaList<? super GamaList<Object>> repRequest = new GamaList<Object>();
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			if ( values.size() > 0 ) {
@@ -430,11 +238,13 @@ public class SQLSkill extends Skill {
 				repRequest = sqlConn.selectDB(selectComm);
 			}
 			// Transform GIS to Absolute (Geometry in GAMA)
-			if ( transform ) {
-				return sqlConn.fromGisToAbsolute(scope, repRequest);
-			} else {
-				return repRequest;
-			}
+			// AD: now made directly in the select / query
+			// if ( transform ) {
+			// return sqlConn.fromGisToAbsolute(scope, repRequest);
+			// } else {
+			// return repRequest;
+			// }
+			return repRequest;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -2,50 +2,51 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.IScope;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
+
 /*
- * @Author  
- *     TRUONG Minh Thai
- *     Fredric AMBLARD
- *     Benoit GAUDOU
- *     Christophe Sibertin-BLANC
+ * @Author
+ * TRUONG Minh Thai
+ * Fredric AMBLARD
+ * Benoit GAUDOU
+ * Christophe Sibertin-BLANC
  * Created date: 19-Apr-2013
- * Modified:  
- *   
+ * Modified:
+ * 
  * Last Modified: 18-July-2013
-*/
+ */
 public class MySqlConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
+
 	public MySqlConnection() {
 		super();
 	}
 
-	public MySqlConnection(String dbName) {
+	public MySqlConnection(final String dbName) {
 		super(dbName);
 	}
 
-	public MySqlConnection(String venderName, String database) {
-		super(venderName, database);	
+	public MySqlConnection(final String venderName, final String database) {
+		super(venderName, database);
 	}
 
-	public MySqlConnection(String venderName, String database, Boolean transformed) {
-		super(venderName, database,transformed);
+	public MySqlConnection(final String venderName, final String database, final Boolean transformed) {
+		super(venderName, database, transformed);
 	}
 
-
-	public MySqlConnection(String venderName, String url, String port, String dbName, String userName, String password) {
+	public MySqlConnection(final String venderName, final String url, final String port, final String dbName,
+		final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}
 
-	public MySqlConnection(String venderName, String url, String port, String dbName, String userName, String password,
-		Boolean transformed) {
+	public MySqlConnection(final String venderName, final String url, final String port, final String dbName,
+		final String userName, final String password, final Boolean transformed) {
 		super(venderName, url, port, dbName, userName, password, transformed);
 	}
 
@@ -83,7 +84,7 @@ public class MySqlConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs) {
+	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 
@@ -133,7 +134,7 @@ public class MySqlConnection extends SqlConnection {
 	}
 
 	@Override
-	protected List<Integer> getGeometryColumns(ResultSetMetaData rsmd) throws SQLException {
+	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		List<Integer> geoColumn = new ArrayList<Integer>();
@@ -166,7 +167,7 @@ public class MySqlConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException {
+	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		GamaList<Object> columnType = new GamaList<Object>();
@@ -191,8 +192,8 @@ public class MySqlConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,
-		GamaList<Object> values) throws GamaRuntimeException {
+	protected String getInsertString(final GisUtils scope, final Connection conn, final String table_name,
+		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -235,27 +236,27 @@ public class MySqlConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
-					
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
+
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = scope.inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
+					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
-					
+
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||
@@ -294,7 +295,7 @@ public class MySqlConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> values)
+	protected String getInsertString(final Connection conn, final String table_name, final GamaList<Object> values)
 		throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
@@ -332,27 +333,27 @@ public class MySqlConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
-					
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
+
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = getSavingGisProjection().inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";					
-					
+					// System.out.println(geo.toString());
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
+
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||

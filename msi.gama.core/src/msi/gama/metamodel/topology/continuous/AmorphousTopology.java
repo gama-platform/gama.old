@@ -20,7 +20,6 @@ package msi.gama.metamodel.topology.continuous;
 
 import java.awt.Graphics2D;
 import java.util.*;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -304,10 +303,11 @@ public class AmorphousTopology implements ITopology {
 		return false;
 	}
 
-	@Override
-	public GisUtils getGisUtils() {
-		return new GisUtils();
-	}
+	//
+	// @Override
+	// public GisUtils getGisUtils() {
+	// return new GisUtils();
+	// }
 
 	@Override
 	public ISpatialIndex getSpatialIndex() {

@@ -21,7 +21,7 @@ package msi.gama.metamodel.topology;
 import gnu.trove.set.hash.THashSet;
 import java.awt.Graphics2D;
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -40,12 +40,8 @@ public abstract class AbstractTopology implements ITopology {
 
 	public static class RootTopology extends ContinuousTopology {
 
-		public RootTopology(final IScope scope, final IShape gisGeom, final IShape geom, final boolean isTorus) {
+		public RootTopology(final IScope scope, final IShape geom, final boolean isTorus) {
 			super(scope, geom);
-			final Envelope env = gisGeom.getEnvelope();
-			gis.init(env);
-			// GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
-			// IShape geometry = Transformations.translated_by(scope, geom, p);
 			final Envelope bounds = geom.getEnvelope();
 			spatialIndex = new CompoundSpatialIndex(bounds);
 			this.isTorus = isTorus;
@@ -53,7 +49,6 @@ public abstract class AbstractTopology implements ITopology {
 
 		private final ISpatialIndex.Compound spatialIndex;
 		private final boolean isTorus;
-		private final GisUtils gis = new GisUtils();
 
 		@Override
 		public ISpatialIndex getSpatialIndex() {
@@ -72,17 +67,6 @@ public abstract class AbstractTopology implements ITopology {
 			return this;
 		}
 
-		//
-		// @Override
-		// public void setTorus(boolean torus) {
-		// isTorus = torus;
-		// }
-
-		@Override
-		public GisUtils getGisUtils() {
-			return gis;
-		}
-
 		@Override
 		public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
 			if ( spatialIndex == null ) { return; }
@@ -99,7 +83,6 @@ public abstract class AbstractTopology implements ITopology {
 
 	}
 
-	// protected IScope scope;
 	protected IShape environment;
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
@@ -554,10 +537,11 @@ public abstract class AbstractTopology implements ITopology {
 		return root.isTorus();
 	}
 
-	@Override
-	public GisUtils getGisUtils() {
-		return root.getGisUtils();
-	}
+	//
+	// @Override
+	// public GisUtils getGisUtils() {
+	// return root.getGisUtils();
+	// }
 
 	@Override
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {

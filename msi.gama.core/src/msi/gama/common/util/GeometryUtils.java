@@ -18,7 +18,6 @@
  */
 package msi.gama.common.util;
 
-import java.io.IOException;
 import java.util.*;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
@@ -507,56 +506,7 @@ public class GeometryUtils {
 	// Created date:24-Feb-2013: Process for SQL - MAP type
 	// Modified: 29-Apr-2013
 
-	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> bounds) {
-		// Map<String, Object> params = bounds;
-		//
-		// String dbtype = (String) params.get("dbtype");
-		// String host = (String) params.get("host");
-		// String port = (String) params.get("port");
-		// String database = (String) params.get("database");
-		// String user = (String) params.get("user");
-		// String passwd = (String) params.get("passwd");
-		// String crs = (String) params.get("crs");
-		// String srid = (String) params.get("srid");
-		// Boolean longitudeFirst = params.get("longitudeFirst") == null ? true : (Boolean)
-		// params.get("longitudeFirst");
-		// SqlConnection sqlConn;
-		// Envelope env = null;
-		// // create connection
-		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-		//
-		// // sqlConn=new SqlConnection(dbtype,database);
-		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-		// } else {
-		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-		// }
-		//
-		// GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
-		//
-		// try {
-		// env = SqlConnection.getBounds(scope, gamaList);
-		// double latitude = env.centre().x;
-		// double longitude = env.centre().y;
-		//
-		// if ( crs != null || srid != null ) {
-		// GisUtils gis = scope.getTopology().getGisUtils();
-		// if ( crs != null ) {
-		// gis.setTransformCRS(crs, latitude, longitude);
-		// } else {
-		// gis.setTransformCRS(srid, longitudeFirst, latitude, longitude);
-		// }
-		// env = gis.transform(env);
-		//
-		// }
-		// } catch (IOException e) {
-		// throw new GamaRuntimeException(e);
-		// }
-		// return env;
-		// Edit 29/April/2013
-		// ---------------------------------------------------------------------------------------------------------
-
-		final Map<String, Object> params = bounds;
+	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> params) {
 		final String crs = (String) params.get("crs");
 		final String srid = (String) params.get("srid");
 		final Boolean longitudeFirst =
@@ -564,26 +514,12 @@ public class GeometryUtils {
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
-		try {
-			sqlConn = SqlUtils.createConnectionObject(scope, bounds);
-			// get data
-			final GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
-			env = SqlConnection.getBounds(scope, gamaList);
-			final double latitude = env.centre().y;
-			final double longitude = env.centre().x;
-			if ( crs != null || srid != null ) {
-				final GisUtils gis = scope.getTopology().getGisUtils();
-				if ( crs != null ) {
-					gis.setInitialCRS(crs, longitude, latitude);
-				} else {
-					gis.setInitialCRS(srid, longitudeFirst, longitude, latitude);
-				}
-				env = gis.transform(env);
-			}
-		} catch (final IOException e) {
-			throw GamaRuntimeException.error("GeometryUtils.computeEnvelopeFromSQLData:" + e.toString());
-		}
-		// GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Envelop:"+env.toString());
+		sqlConn = SqlUtils.createConnectionObject(scope, params);
+		// get data
+		final GamaList gamaList = sqlConn.selectDB((String) params.get("select"));
+		env = SqlConnection.getBounds(gamaList);
+		GisUtils gis = GisUtils.fromParams(params, env);
+		env = gis.getProjectedEnvelope();
 		return env;
 		// ----------------------------------------------------------------------------------------------------
 	}

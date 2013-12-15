@@ -20,9 +20,10 @@ package msi.gaml.statements;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.database.sql.SqlConnection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -222,7 +223,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaFile file) {
 		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			final GamaShape g = (GamaShape)file.get(scope, i);
+			final GamaShape g = (GamaShape) file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
@@ -238,7 +239,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaGridFile file) {
 		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			final GamaGisGeometry g = file.get(scope, i);
+			final GamaShape g = file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
@@ -343,9 +344,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
 				final int val = colNames.indexOf(columnName);
-				if ( ((String) colTypes.get(val)).equalsIgnoreCase("GEOMETRY") ) {
+				if ( ((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE) ) {
 					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.getKey(), new GamaShape(scope.getTopology().getGisUtils().transform(geom)));
+					values.put(f.getKey(), new GamaShape(geom));
 				} else {
 					values.put(f.getKey(), rowList.get(val));
 				}

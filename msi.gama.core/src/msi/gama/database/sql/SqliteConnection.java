@@ -2,64 +2,63 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-
-import org.sqlite.SQLiteConfig;
-
-import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.IScope;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import org.sqlite.SQLiteConfig;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
 
 /*
- * @Author  
- *     TRUONG Minh Thai
- *     Fredric AMBLARD
- *     Benoit GAUDOU
- *     Christophe Sibertin-BLANC
+ * @Author
+ * TRUONG Minh Thai
+ * Fredric AMBLARD
+ * Benoit GAUDOU
+ * Christophe Sibertin-BLANC
  * Created date: 19-Apr-2013
- * Modified:  
- *    18-July-2013:  
- *      Add load extension library for SQLITE case.
- *      Correct error getColumnTypeName when return null value 
- *    23-July-2013
- *      Modify connectDB() method: 
- *        - Add load Extention.
- *        - Clean memory(garbage collection) after load. 
+ * Modified:
+ * 18-July-2013:
+ * Add load extension library for SQLITE case.
+ * Correct error getColumnTypeName when return null value
+ * 23-July-2013
+ * Modify connectDB() method:
+ * - Add load Extention.
+ * - Clean memory(garbage collection) after load.
  * Last Modified: 23-July-2013
-*/
+ */
 public class SqliteConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
-	//protected String extension=null;
+
+	// protected String extension=null;
 	public SqliteConnection() {
 		super();
 	}
-	
-	public SqliteConnection(String dbName) {
+
+	public SqliteConnection(final String dbName) {
 		super(dbName);
 	}
 
-	public SqliteConnection(String venderName, String database) {
+	public SqliteConnection(final String venderName, final String database) {
 		super(venderName, database);
 	}
 
-	public SqliteConnection(String venderName, String database, Boolean transformed) {
-		super(venderName, database,transformed);
+	public SqliteConnection(final String venderName, final String database, final Boolean transformed) {
+		super(venderName, database, transformed);
 	}
 
-	public SqliteConnection(String venderName, String database, String extension) {
+	public SqliteConnection(final String venderName, final String database, final String extension) {
 		super(venderName, database);
-		this.extension=extension;
+		this.extension = extension;
 	}
 
-	public SqliteConnection(String venderName, String database, String extension,Boolean transformed) {
-		super(venderName, database,transformed);
-		this.extension=extension;
+	public SqliteConnection(final String venderName, final String database, final String extension,
+		final Boolean transformed) {
+		super(venderName, database, transformed);
+		this.extension = extension;
 	}
-	
+
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
 		IllegalAccessException {
@@ -68,20 +67,20 @@ public class SqliteConnection extends SqlConnection {
 		try {
 			if ( vender.equalsIgnoreCase(SQLITE) ) {
 				Class.forName(SQLITEDriver).newInstance();
-				SQLiteConfig config=new SQLiteConfig();
+				SQLiteConfig config = new SQLiteConfig();
 				config.enableLoadExtension(true);
-				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName,config.toProperties());
+				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName, config.toProperties());
 				// load Spatialite extension library
-				if (extension!=null){
-//					Statement stmt = conn.createStatement();
-//				    stmt.setQueryTimeout(30); // set timeout to 30 sec.
-//					stmt.execute("SELECT load_extension('"+extension+"')");
-//				    String sql = "SELECT InitSpatialMetadata()";
-//				    stmt.execute(sql);
-//				    stmt.close();
-//				    stmt=null;
-//				    System.gc();
-					load_extension(conn,extension);
+				if ( extension != null ) {
+					// Statement stmt = conn.createStatement();
+					// stmt.setQueryTimeout(30); // set timeout to 30 sec.
+					// stmt.execute("SELECT load_extension('"+extension+"')");
+					// String sql = "SELECT InitSpatialMetadata()";
+					// stmt.execute(sql);
+					// stmt.close();
+					// stmt=null;
+					// System.gc();
+					load_extension(conn, extension);
 				}
 			} else {
 				throw new ClassNotFoundException("SqliteConnection.connectSQL: The " + vender + " is not supported!");
@@ -107,7 +106,7 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs) {
+	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 
@@ -157,7 +156,7 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected List<Integer> getGeometryColumns(ResultSetMetaData rsmd) throws SQLException {
+	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		List<Integer> geoColumn = new ArrayList<Integer>();
@@ -189,13 +188,14 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException {
+	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		GamaList<Object> columnType = new GamaList<Object>();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 			if ( DEBUG ) {
-				GuiUtils.debug("SqliteConnection.getColumnTypeName at " +i+":" +rsmd.getColumnTypeName(i).toUpperCase());
+				GuiUtils.debug("SqliteConnection.getColumnTypeName at " + i + ":" +
+					rsmd.getColumnTypeName(i).toUpperCase());
 			}
 
 			/*
@@ -217,8 +217,8 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,
-		GamaList<Object> values) throws GamaRuntimeException {
+	protected String getInsertString(final GisUtils scope, final Connection conn, final String table_name,
+		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -245,15 +245,15 @@ public class SqliteConnection extends SqlConnection {
 
 		try {
 			// get column type;
-//			Statement st = conn.createStatement();
-//			ResultSet rs = st.executeQuery(selectStr);
-//			ResultSetMetaData rsmd = rs.getMetaData();
-//			GamaList<Object> col_Names = getColumnName(rsmd);
-//			GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(conn,table_name,cols);
-			
+			// Statement st = conn.createStatement();
+			// ResultSet rs = st.executeQuery(selectStr);
+			// ResultSetMetaData rsmd = rs.getMetaData();
+			// GamaList<Object> col_Names = getColumnName(rsmd);
+			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			GamaList<Object> col_Types = getColumnTypeName(conn, table_name, cols);
+
 			if ( DEBUG ) {
-				//GuiUtils.debug("list of column Name:" + col_Names);
+				// GuiUtils.debug("list of column Name:" + col_Names);
 				GuiUtils.debug("list of column type:" + col_Types);
 			}
 			// Insert command
@@ -262,25 +262,25 @@ public class SqliteConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//						
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					//
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
 					// Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = scope.inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
+					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
@@ -310,8 +310,7 @@ public class SqliteConnection extends SqlConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
-		} 
-		catch (ParseException e) {
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
@@ -321,7 +320,7 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> values)
+	protected String getInsertString(final Connection conn, final String table_name, final GamaList<Object> values)
 		throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
@@ -343,9 +342,9 @@ public class SqliteConnection extends SqlConnection {
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			GamaList<Object> col_Names = getColumnName(rsmd);
-//			GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(conn,table_name,col_Names);
-			
+			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			GamaList<Object> col_Types = getColumnTypeName(conn, table_name, col_Names);
+
 			int col_no = col_Names.size();
 			// Check size of parameters
 			if ( values.size() != col_Names.size() ) { throw new IndexOutOfBoundsException(
@@ -362,26 +361,26 @@ public class SqliteConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
 					// Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = getSavingGisProjection().inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
+					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
-					
+
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||
@@ -422,65 +421,57 @@ public class SqliteConnection extends SqlConnection {
 
 		return insertStr;
 	}
-	
+
 	// 18/July/2013
-	private GamaList<Object> getColumnTypeName(Connection conn, String tableName, GamaList<Object> columns) throws SQLException
-	{
+	private GamaList<Object> getColumnTypeName(final Connection conn, final String tableName,
+		final GamaList<Object> columns) throws SQLException {
 		int numberOfColumns = columns.size();
 		GamaList<Object> columnType = new GamaList<Object>();
-		String sqlStr="PRAGMA table_info("+tableName +");";
-		GamaList<Object> result=selectDB(conn,sqlStr);
-		GamaList<GamaList<Object>>  data=(GamaList<GamaList<Object>>) result.get(2);
+		String sqlStr = "PRAGMA table_info(" + tableName + ");";
+		GamaList<? super GamaList<? super GamaList>> result = selectDB(conn, sqlStr);
+		GamaList<? extends GamaList<Object>> data = (GamaList<? extends GamaList<Object>>) result.get(2);
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery(sqlStr);
-		int numRows=data.size();
+		int numRows = data.size();
 		for ( int i = 0; i < numberOfColumns; i++ ) {
-			String colName=((String) columns.get(i)).trim();
-			for (int j=0;j<numRows;++j){
+			String colName = ((String) columns.get(i)).trim();
+			for ( int j = 0; j < numRows; ++j ) {
 				GamaList<Object> row = data.get(j);
-				String name=((String) row.get(1)).trim();
-				String type=((String) row.get(2)).trim();
-				if (colName.equalsIgnoreCase(name)){
-					if (type.equalsIgnoreCase(BLOB)
-						||	type.equalsIgnoreCase("GEOMETRY")
-						||	type.equalsIgnoreCase("POINT")
-						||	type.equalsIgnoreCase("LINESTRING")
-						||	type.equalsIgnoreCase("POLYGON")
-						||	type.equalsIgnoreCase("MULTIPOINT")
-						||	type.equalsIgnoreCase("MULTILINESTRING")
-						||	type.equalsIgnoreCase("MULTIPOLYGON")
-						||	type.equalsIgnoreCase("MULTIPOLYGON")
-						||	type.equalsIgnoreCase("GEOMETRYCOLLECTION")
-							){
+				String name = ((String) row.get(1)).trim();
+				String type = ((String) row.get(2)).trim();
+				if ( colName.equalsIgnoreCase(name) ) {
+					if ( type.equalsIgnoreCase(BLOB) || type.equalsIgnoreCase("GEOMETRY") ||
+						type.equalsIgnoreCase("POINT") || type.equalsIgnoreCase("LINESTRING") ||
+						type.equalsIgnoreCase("POLYGON") || type.equalsIgnoreCase("MULTIPOINT") ||
+						type.equalsIgnoreCase("MULTILINESTRING") || type.equalsIgnoreCase("MULTIPOLYGON") ||
+						type.equalsIgnoreCase("MULTIPOLYGON") || type.equalsIgnoreCase("GEOMETRYCOLLECTION") ) {
 						columnType.add(GEOMETRYTYPE);
-					}   
-					else{
+					} else {
 						columnType.add(type);
 					}
-						
+
 				}
 			}
 		}
 		return columnType;
 	}
-	
-	//23-July-2013
-	protected void load_extension(Connection conn, String extension) throws SQLException{
+
+	// 23-July-2013
+	protected void load_extension(final Connection conn, final String extension) throws SQLException {
 		// load Spatialite extension library
-		try{
+		try {
 			Statement stmt = conn.createStatement();
-		    stmt.setQueryTimeout(30); // set timeout to 30 sec.
-			stmt.execute("SELECT load_extension('"+extension+"')");
-		    //String sql = "SELECT InitSpatialMetadata()";
-		    //stmt.execute(sql);
-		    stmt.close();
-		    //stmt=null;
-		    //System.gc();
-		    loadExt=true;
-		}catch (SQLException e){
+			stmt.setQueryTimeout(30); // set timeout to 30 sec.
+			stmt.execute("SELECT load_extension('" + extension + "')");
+			// String sql = "SELECT InitSpatialMetadata()";
+			// stmt.execute(sql);
+			stmt.close();
+			// stmt=null;
+			// System.gc();
+			loadExt = true;
+		} catch (SQLException e) {
 			throw e;
 		}
 	}
 
-	
 }

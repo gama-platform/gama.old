@@ -132,7 +132,7 @@ public class Files {
 	}
 
 	@operator(value = SHAPE, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/).", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+	@doc(value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
 		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
 		"properties", "image", "text" })
@@ -159,10 +159,20 @@ public class Files {
 		return new GamaGridFile(scope, s);
 	}
 
-	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+	@operator(value = GRID, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of gridfile. The integer parameter allows to specify a coordinate reference system (CRS). If equal to zero, it forces reading the data as alreay projected", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		"file fileT <- gridfile(\"../includes/testProperties.asc\");",
 		"            // fileT represents the gridfile file \"../includes/testProperties.asc\"" }, see = { "file",
+		"properties", "image", "text", "shapefile" })
+	public static IGamaFile gridFile(final IScope scope, final String s, final Integer code)
+		throws GamaRuntimeException {
+		return new GamaGridFile(scope, s, code);
+	}
+
+	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+		"file fileT <- osmfile(\"../includes/testProperties.osm\");",
+		"            // fileT represents the osm file \"../includes/testProperties.osm\"" }, see = { "file",
 		"properties", "image", "text", "shapefile" })
 	public static IGamaFile osmFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s);

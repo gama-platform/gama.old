@@ -1,6 +1,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.Scanner;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.*;
@@ -10,16 +11,19 @@ import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import msi.gaml.types.*;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.data.PrjFileReader;
 import org.geotools.factory.Hints;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.geometry.*;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
-public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
+public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
 
-	private GamaGridReader createReader(final IScope scope) {
+	private GamaGridReader createReader() {
 		if ( reader == null ) {
 			final File gridFile = getFile();
 			gridFile.setReadable(true);
@@ -30,7 +34,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 				// Should not happen;
 			}
 			try {
-				reader = new GamaGridReader(scope, fis);
+				reader = new GamaGridReader(fis);
 			} catch (GamaRuntimeException e) {
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
 				GAMA.reportError(
@@ -53,7 +57,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 				}
 				text.append(NL);
 				// fis = new StringBufferInputStream(text.toString());
-				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()));
+				reader = new GamaGridReader(new StringBufferInputStream(text.toString()));
 			}
 		}
 		return reader;
@@ -61,24 +65,22 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	class GamaGridReader {
 
-		Envelope env;
 		int numRows, numCols;
 		IShape geom;
 
-		GamaGridReader(final IScope scope, final InputStream fis) throws GamaRuntimeException {
+		GamaGridReader(final InputStream fis) throws GamaRuntimeException {
 			buffer = new GamaList();
 			ArcGridReader store = null;
 			try {
-				store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false));
+				// Necessary to compute it here, because it needs to be passed to the Hints
+				CoordinateReferenceSystem crs = computeProjection(null);
+				store =
+					new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false,
+						Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
-				env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
-				if ( store.getCrs() != null ) {
-					final double latitude = env.centre().y;
-					final double longitude = env.centre().x;
-					final GisUtils gis = scope.getTopology().getGisUtils();
-					gis.setInitialCRS(store.getCrs(), longitude, latitude);
-					env = gis.transform(env);
-				}
+				Envelope env =
+					new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
+				GamaGridFile.this.gis = GisUtils.fromCRS(crs, env);
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
 				final double cellHeight = genv.getSpan(1) / numRows;
@@ -107,7 +109,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 						(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
 							.getY()));
 
-					rect = new GamaShape(scope.getTopology().getGisUtils().transform(rect.getInnerGeometry()));
+					rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
 					rect.getOrCreateAttributes();
 					rect.getAttributes().put("grid_value", vals[0]);
 					((IList) buffer).add(rect);
@@ -127,18 +129,23 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName);
+		super(scope, pathName, null);
+	}
+
+	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
+		super(scope, pathName, code);
 	}
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		return createReader(scope).env;
+		fillBuffer(scope);
+		return gis.getProjectedEnvelope();
 	}
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
-		createReader(scope);
+		createReader();
 	}
 
 	@Override
@@ -166,16 +173,68 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			this.getExtension() + " is not recognized for ArcGrid files"); }
 	}
 
-	public int getNbRows(final IScope scope) {
-		return createReader(scope).numRows;
+	public int getNbRows() {
+		return createReader().numRows;
 	}
 
-	public int getNbCols(final IScope scope) {
-		return createReader(scope).numCols;
+	public int getNbCols() {
+		return createReader().numCols;
 	}
 
-	public IShape getGeometry(final IScope scope) {
-		return createReader(scope).geom;
+	public IShape getGeometry() {
+		return createReader().geom;
+	}
+
+	@Override
+	protected CoordinateReferenceSystem getExistingCRS() {
+		File source = getFile();
+		// check to see if there is a projection file
+		// getting name for the prj file
+		final String sourceAsString;
+		sourceAsString = source.getAbsolutePath();
+		int index = sourceAsString.lastIndexOf(".");
+		final StringBuffer prjFileName;
+		if ( index == -1 ) {
+			prjFileName = new StringBuffer(sourceAsString);
+		} else {
+			prjFileName = new StringBuffer(sourceAsString.substring(0, index));
+		}
+		prjFileName.append(".prj");
+
+		// does it exist?
+		final File prjFile = new File(prjFileName.toString());
+		if ( prjFile.exists() ) {
+			// it exists then we have to read it
+			PrjFileReader projReader = null;
+			try {
+				FileChannel channel = new FileInputStream(prjFile).getChannel();
+				projReader = new PrjFileReader(channel);
+				return projReader.getCoordinateReferenceSystem();
+			} catch (FileNotFoundException e) {
+				// warn about the error but proceed, it is not fatal
+				// we have at least the default crs to use
+				return null;
+			} catch (IOException e) {
+				// warn about the error but proceed, it is not fatal
+				// we have at least the default crs to use
+				return null;
+			} catch (FactoryException e) {
+				// warn about the error but proceed, it is not fatal
+				// we have at least the default crs to use
+				return null;
+			} finally {
+				if ( projReader != null ) {
+					try {
+						projReader.close();
+					} catch (IOException e) {
+						// warn about the error but proceed, it is not fatal
+						// we have at least the default crs to use
+						return null;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

@@ -1,39 +1,35 @@
 package msi.gama.database.sql;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Map;
-
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.database.sql.SqlConnection;
+import msi.gama.common.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.types.IType;
-
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.*;
+
 /*
- * @Author  
- *     TRUONG Minh Thai
- *     Fredric AMBLARD
- *     Benoit GAUDOU
- *     Christophe Sibertin-BLANC
+ * @Author
+ * TRUONG Minh Thai
+ * Fredric AMBLARD
+ * Benoit GAUDOU
+ * Christophe Sibertin-BLANC
  * Created date: 19-Apr-2013
- * Modified:  
- *    18-July-2013:  
- *      Add load extension library for SQLITE case.
+ * Modified:
+ * 18-July-2013:
+ * Add load extension library for SQLITE case.
  * Last Modified: 18-July-2013
-*/
+ */
 public class SqlUtils {
-	private static boolean DEBUG =false;
-	
-	public static SqlConnection createConnectionObject(final IScope scope,final Map<String, Object> params) throws GamaRuntimeException 
-	{
+
+	private static boolean DEBUG = false;
+
+	public static SqlConnection createConnectionObject(final IScope scope, final Map<String, Object> params)
+		throws GamaRuntimeException {
 		String dbtype = (String) params.get("dbtype");
 		String host = (String) params.get("host");
 		String port = (String) params.get("port");
@@ -41,104 +37,48 @@ public class SqlUtils {
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
 		String extension = (String) params.get("extension");
-		
-		if (DEBUG){
-			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
-		}
-		SqlConnection sqlConn;
-		// create connection
-		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//			if (extension!=null){
-//				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
-//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
-//				
-//			}else{
-//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
-//			}
-			String EXTRelativeLocation=((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
-			//GuiUtils.debug("SqlUtils.createConnection.libPath.before:"+EXTRelativeLocation);
-			if (!EXTRelativeLocation.equalsIgnoreCase("") && (EXTRelativeLocation!=null)){
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
-				
-			}else{
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
-			}			
-		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
-			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
-		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
-			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd);
-		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
-				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)){
-			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
-		}else {
-			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
-		}
-		if (DEBUG){
-			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());
-		}
-
-		return sqlConn;
-	}
-	
-	public static SqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException 
-	{
-		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-		String dbtype = (String) params.get("dbtype");
-		String host = (String) params.get("host");
-		String port = (String) params.get("port");
-		String database = (String) params.get("database");
-		String user = (String) params.get("user");
-		String passwd = (String) params.get("passwd");
-		String extension = (String) params.get("extension");
 
-		if (DEBUG){
-			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
+		if ( DEBUG ) {
+			GuiUtils.debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database +
+				" - ");
 		}
 		SqlConnection sqlConn;
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//			if (extension!=null){
-//				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
-//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
-//				
-//			}else{
-//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
-//			}
-		//Get libspatialite path
-			String EXTRelativeLocation=((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
-			//GuiUtils.debug("SqlUtils.createConnection.libPath.before:"+EXTRelativeLocation);
-		if (!EXTRelativeLocation.equalsIgnoreCase("") && (EXTRelativeLocation!=null)){
-			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
-			
-		}else{
-			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
-		}
-		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
-			
-			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd,transform);
-		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
-			
-			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd,transform);
-		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
-				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
-			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd,transform);
-		}else {
-			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
-		}
-		if (DEBUG){
-			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());
-		}
+			String EXTRelativeLocation = ((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
+			if ( !EXTRelativeLocation.equalsIgnoreCase("") && EXTRelativeLocation != null ) {
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, EXTRelativeLocation, transform);
 
+			} else {
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, transform);
+			}
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
+			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd, transform);
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
+			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd, transform);
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(SqlConnection.POSTGIS) ) {
+			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd, transform);
+		} else {
+			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype);
+		}
+		if ( DEBUG ) {
+			GuiUtils.debug("SqlUtils.createConnection:" + sqlConn.toString());
+		}
+		// AD: Added to be sure to remember the parameters
+		sqlConn.setParams(params);
 		return sqlConn;
 	}
 
+	public static SqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException {
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		return createConnectionObject(scope, params);
+	}
 
-	
 	/*
 	 * @Method: read(byte [] b)
+	 * 
 	 * @Description: Convert Binary to Geometry (MSSQL,Sqlite, Postgres cases)
 	 * 
 	 * @param byte [] b
@@ -147,31 +87,34 @@ public class SqlUtils {
 	 * 
 	 * @throws IOException, ParseException
 	 */
-	public static Geometry read(byte [] b) throws IOException, ParseException
-	{
-		WKBReader wkb= new WKBReader();
-		Geometry geom=wkb.read(b);
+	public static Geometry read(final byte[] b) throws IOException, ParseException {
+		WKBReader wkb = new WKBReader();
+		Geometry geom = wkb.read(b);
 		return geom;
 	}
+
 	/*
 	 * @Method: Binary2Geometry(byte [] geometryAsBytes )
-	 * @description: Convert binary to Geometry 
+	 * 
+	 * @description: Convert binary to Geometry
+	 * 
 	 * @param byte []
 	 * 
 	 * @return Geometry
 	 * 
 	 * @throws ParseException
 	 */
-	public static Geometry Binary2Geometry(byte [] geometryAsBytes ) throws ParseException
-	{
+	public static Geometry Binary2Geometry(final byte[] geometryAsBytes) throws ParseException {
 		byte[] wkb = new byte[geometryAsBytes.length - 4];
 		System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
 		WKBReader wkbReader = new WKBReader();
-		Geometry geom=wkbReader.read(wkb);		
+		Geometry geom = wkbReader.read(wkb);
 		return geom;
 	}
+
 	/*
 	 * @Method: InputStream2Geometry(InputStream inputStream)
+	 * 
 	 * @Description: Convert Binary to Geometry (MySQL case)
 	 * 
 	 * @param InputStream inputStream
@@ -179,57 +122,101 @@ public class SqlUtils {
 	 * @return Geometry
 	 * 
 	 * @throws Exception
-	 */	
-	public static Geometry InputStream2Geometry(InputStream inputStream) throws Exception 
-	{		 
-		     Geometry dbGeometry = null;
-		     if (inputStream != null) 
-		     {		 
-		         //convert the stream to a byte[] array
-		         //so it can be passed to the WKBReader
-		         byte[] buffer = new byte[255];
-		         int bytesRead = 0;
-		         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		         while ((bytesRead = inputStream.read(buffer)) != -1) {
-		             baos.write(buffer, 0, bytesRead);
-		         }
-		 
-		         byte[] geometryAsBytes = baos.toByteArray();
-		 
-		         if (geometryAsBytes.length < 5) {
-		             throw new Exception("Invalid geometry inputStream - less than five bytes");
-		         }
-		 
-		         //first four bytes of the geometry are the SRID,
-		         //followed by the actual WKB.  Determine the SRID
-		         //here
-		         byte[] sridBytes = new byte[4];
-		         System.arraycopy(geometryAsBytes, 0, sridBytes, 0, 4);
-		         boolean bigEndian = (geometryAsBytes[4] == 0x00);
-		 
-		         int srid = 0;
-		         if (bigEndian) {
-		            for (int i = 0; i < sridBytes.length; i++) {
-		               srid = (srid << 8) + (sridBytes[i] & 0xff);
-		            }
-		         } else {
-		            for (int i = 0; i < sridBytes.length; i++) {
-		              srid += (sridBytes[i] & 0xff) << (8 * i);
-		            }
-		         }
-		 
-		         //use the JTS WKBReader for WKB parsing
-		         WKBReader wkbReader = new WKBReader();
-		 
-		         //copy the byte array, removing the first four
-		         //SRID bytes
-		         byte[] wkb = new byte[geometryAsBytes.length - 4];
-		         System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
-		         dbGeometry = wkbReader.read(wkb);
-		         dbGeometry.setSRID(srid);
-		     }
-		 
-		     return dbGeometry;			 
+	 */
+	public static Geometry InputStream2Geometry(final InputStream inputStream) throws Exception {
+		Geometry dbGeometry = null;
+		if ( inputStream != null ) {
+			// convert the stream to a byte[] array
+			// so it can be passed to the WKBReader
+			byte[] buffer = new byte[255];
+			int bytesRead = 0;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				baos.write(buffer, 0, bytesRead);
+			}
+
+			byte[] geometryAsBytes = baos.toByteArray();
+
+			if ( geometryAsBytes.length < 5 ) { throw new Exception(
+				"Invalid geometry inputStream - less than five bytes"); }
+
+			// first four bytes of the geometry are the SRID,
+			// followed by the actual WKB. Determine the SRID
+			// here
+			byte[] sridBytes = new byte[4];
+			System.arraycopy(geometryAsBytes, 0, sridBytes, 0, 4);
+			boolean bigEndian = geometryAsBytes[4] == 0x00;
+
+			int srid = 0;
+			if ( bigEndian ) {
+				for ( int i = 0; i < sridBytes.length; i++ ) {
+					srid = (srid << 8) + (sridBytes[i] & 0xff);
+				}
+			} else {
+				for ( int i = 0; i < sridBytes.length; i++ ) {
+					srid += (sridBytes[i] & 0xff) << 8 * i;
+				}
+			}
+
+			// use the JTS WKBReader for WKB parsing
+			WKBReader wkbReader = new WKBReader();
+
+			// copy the byte array, removing the first four
+			// SRID bytes
+			byte[] wkb = new byte[geometryAsBytes.length - 4];
+			System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
+			dbGeometry = wkbReader.read(wkb);
+			dbGeometry.setSRID(srid);
+		}
+
+		return dbGeometry;
+	}
+
+	/*
+	 * 
+	 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry
+	 */
+	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
+		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+		try {
+			GamaList<Object> response = new GamaList<Object>();
+			GamaList<Object> records_new = new GamaList<Object>();
+			GamaList<Object> columnNames = dataset.get(0);
+			GamaList<Object> columnTypes = dataset.get(1);
+			GamaList<Object> records = dataset.get(2);
+			int columnSize = columnNames.size();
+			int lineSize = records.size();
+
+			response.add(columnNames);
+			response.add(columnTypes);
+
+			// transform
+			for ( int i = 0; i < lineSize; i++ ) {
+				GamaList<Object> rec_old = (GamaList<Object>) records.get(i);
+				GamaList<Object> rec_new = new GamaList<Object>();
+				for ( int j = 0; j < columnSize; j++ ) {
+					if ( ((String) columnTypes.get(j)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE) ) {
+						Geometry geo2 = (Geometry) rec_old.get(j);
+						if ( fromAbsoluteToGis ) {
+							geo2 = gis.inverseTransform(geo2);
+						} else {
+							geo2 = gis.transform(geo2);
+						}
+						rec_new.add(geo2);
+					} else {
+						rec_new.add(rec_old.get(j));
+					}
+
+				}
+				records_new.add(rec_new);
+			}
+			response.add(records_new);
+			return response;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString());
+		}
 	}
 
 }

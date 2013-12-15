@@ -21,7 +21,6 @@ package msi.gama.metamodel.topology;
 import java.awt.Graphics2D;
 import java.util.Collection;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -52,7 +51,7 @@ import com.vividsolutions.jts.geom.Geometry;
 })
 public interface ITopology extends IValue {
 
-	public GisUtils getGisUtils();
+	// public GisUtils getGisUtils();
 
 	public abstract ISpatialIndex getSpatialIndex();
 

@@ -18,57 +18,177 @@
  */
 package msi.gama.common.util;
 
-import java.io.*;
+import java.util.Map;
 import msi.gama.common.GamaPreferences;
-import org.geotools.data.shapefile.ShpFiles;
-import org.geotools.data.shapefile.prj.PrjFileReader;
+import msi.gama.util.file.GamaGisFile;
 import org.geotools.geometry.jts.*;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.*;
-import org.opengis.referencing.crs.*;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import com.vividsolutions.jts.geom.*;
 
 public class GisUtils {
 
-	public GisUtils() {}
-
-	static final boolean DEBUG = false; // Change DEBUG = false for release version
-
-	Envelope translationEnvelope;
-	private GeometryCoordinateSequenceTransformer transformer;
-	private GeometryCoordinateSequenceTransformer inverseTransformer;
+	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
+	CoordinateFilter gisToAbsoluteTranslation, absoluteToGisTranslation;
 	private CoordinateReferenceSystem initialCRS;
+	private static CoordinateReferenceSystem targetCRS;
+	public static CoordinateReferenceSystem saveCRS;
+	Envelope projectedEnv;
 
-	public void init(final Envelope bounds) {
-		translationEnvelope = new ReferencedEnvelope(bounds, initialCRS);
+	private GisUtils() {}
+
+	private GisUtils(final CoordinateReferenceSystem crs, final Envelope env) {
+		initialCRS = crs;
+		if ( env != null ) {
+			if ( CRS.getProjectedCRS(initialCRS) == null ) {
+				createTransformation(computeProjection(env.centre().x, env.centre().y));
+			}
+			// We project the envelope and we use it for initializing the translations
+			projectedEnv = transform(env);
+			createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
+		}
 	}
 
-	CoordinateFilter gisToAbsolute = new CoordinateFilter() {
+	public static GisUtils fromEPSG(final Integer code, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromEPSG int code : " + code);
+		return fromEPSG(code, true, env);
+	}
 
-		@Override
-		public void filter(final Coordinate coord) {
-			if ( translationEnvelope == null ) { return; }
-			coord.x -= translationEnvelope.getMinX();
-			coord.y = -coord.y + translationEnvelope.getHeight() + translationEnvelope.getMinY();
+	public static GisUtils fromEPSG(final Integer code, final Boolean longitudeFirst, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromEPSG int code with longitude first : " + code);
+		try {
+			if ( code == GamaGisFile.ALREADY_PROJECTED_CODE ) { return new GisUtils(getTargetCRS(), env); }
+			return fromCRS(CRS.decode("EPSG:" + code, longitudeFirst), env);
+		} catch (Exception e) {
+			GuiUtils.debug("" + code + " cannot be decoded as an existing EPSG code. Falling back to default value");
+			return fromCRS(null, env);
 		}
-	};
+	}
 
-	CoordinateFilter absoluteToGis = new CoordinateFilter() {
+	public static GisUtils fromParams(final Map<String, Object> params, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromParams :" + params);
+		Object srid = params.get("srid");
+		Object crs = params.get("crs");
+		Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
+		if ( crs instanceof String ) { return GisUtils.fromWKT((String) crs, env); }
+		if ( srid instanceof String ) { return GisUtils.fromEPSG((String) srid, longitudeFirst, env); }
+		return fromCRS(null, env);
+	}
 
-		@Override
-		public void filter(final Coordinate coord) {
-			if ( translationEnvelope == null ) { return; }
-			coord.x += translationEnvelope.getMinX();
-			coord.y = -coord.y + translationEnvelope.getHeight() + translationEnvelope.getMinY();
+	public static GisUtils fromCRS(final CoordinateReferenceSystem crs, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromCRS : " + crs);
+		if ( crs == null ) {
+			if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
+				return fromEPSG(GamaPreferences.LIB_INITIAL_CRS.getValue(), env);
+			} else {
+				return new GisUtils(getTargetCRS(), env);
+			}
 		}
+		return new GisUtils(crs, env);
+	}
 
-	};
+	public static GisUtils fromEPSG(final String srid, final Boolean longitudeFirst, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromEPSG string code longitude first : " + srid);
+		try {
+			return fromEPSG(Integer.decode(srid), longitudeFirst, env);
+		} catch (NumberFormatException e) {
+			GuiUtils.debug("" + srid + " cannot be decoded as an EPSG code. Falling back to default value");
+			return fromCRS(null, env);
+		}
+	}
 
-	public void setTransformCRS(final MathTransform t) {
+	public static GisUtils fromEPSG(final String srid, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromEPSG string code : " + srid);
+		return fromEPSG(srid, true, env);
+	}
+
+	public static GisUtils fromEnvelope(final Envelope env) {
+		GuiUtils.debug("GisUtils.fromEnvelope with WGSS84 ");
+		return fromCRS(DefaultGeographicCRS.WGS84, env);
+	}
+
+	public static GisUtils fromWKT(final String crs, final Envelope env) {
+		GuiUtils.debug("GisUtils.fromWKT : " + crs);
+		try {
+			return fromCRS(CRS.parseWKT(crs), env);
+		} catch (FactoryException e) {
+			GuiUtils.debug("" + crs + " cannot be decoded as a WKT defintion. Falling back to default value");
+			return fromCRS(null, env);
+		}
+	}
+
+	public static void forgetTargetCRS() {
+		setTargetCRS(null);
+	}
+
+	private static void computeTargetCRS(final double longitude, final double latitude) {
+		// If we already know in which CRS we project the data in GAMA, no need to recompute it. This information is
+		// normally wiped when an experiment is disposed
+		if ( getTargetCRS() != null ) { return; }
+		try {
+			if ( !GamaPreferences.LIB_TARGETED.getValue() ) {
+				computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
+			} else {
+				int index = (int) (0.5 + (longitude + 186.0) / 6);
+				boolean north = latitude > 0;
+				String newCode = "EPSG:" + 32600 + index + (north ? 0 : 100);
+				GuiUtils.debug("GisUtils.computeTargetCRS targetCRS is " + newCode);
+				setTargetCRS(CRS.decode(newCode));
+			}
+		} catch (Exception e) {
+			GuiUtils.debug("An error prevented GAMA from computing a correct Coordinate System: " + e);
+		}
+	}
+
+	public static void computeDefaultCRS(final int code, final boolean target) {
+		String type = target ? "target CRS" : "output CRS";
+		String def = "EPSG:" + (target ? 32648 : 4326);
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = CRS.decode("EPSG:" + code);
+			System.out.println(type + " successfully changed to EPSG:" + code);
+		} catch (Exception e) {
+			GuiUtils.debug("Error in computing the " + type + " for code " + code + ". Falling back to " + def);
+		} finally {
+			if ( crs == null ) {
+				try {
+					crs = CRS.decode(def);
+				} catch (Exception e) {}
+			}
+		}
+		if ( target ) {
+			setTargetCRS(crs);
+		} else {
+			saveCRS = crs;
+		}
+	}
+
+	private void createTranslations(final double minX, final double height, final double minY) {
+		gisToAbsoluteTranslation = new CoordinateFilter() {
+
+			@Override
+			public void filter(final Coordinate coord) {
+				coord.x -= minX;
+				coord.y = -coord.y + height + minY;
+			}
+		};
+		absoluteToGisTranslation = new CoordinateFilter() {
+
+			@Override
+			public void filter(final Coordinate coord) {
+				coord.x += minX;
+				coord.y = -coord.y + height + minY;
+			}
+		};
+	}
+
+	private void createTransformation(final MathTransform t) {
 		if ( t != null ) {
 			transformer = new GeometryCoordinateSequenceTransformer();
+			// TODO see ConcatenatedTransformDirect2D
 			transformer.setMathTransform(t);
 			try {
 				inverseTransformer = new GeometryCoordinateSequenceTransformer();
@@ -76,9 +196,6 @@ public class GisUtils {
 			} catch (NoninvertibleTransformException e) {
 				e.printStackTrace();
 			}
-		} else {
-			transformer = null;
-			inverseTransformer = null;
 		}
 	}
 
@@ -91,18 +208,22 @@ public class GisUtils {
 				e.printStackTrace();
 			}
 		}
-		geom.apply(gisToAbsolute);
+		if ( gisToAbsoluteTranslation != null ) {
+			geom.apply(gisToAbsoluteTranslation);
+		}
 		return geom;
 	}
 
-	public Envelope transform(final Envelope g) {
+	private Envelope transform(final Envelope g) {
 		if ( transformer == null ) { return g; }
 		return transform(JTS.toGeometry(g)).getEnvelopeInternal();
 	}
 
 	public Geometry inverseTransform(final Geometry g) {
 		Geometry geom = GeometryUtils.factory.createGeometry(g);
-		geom.apply(absoluteToGis);
+		if ( absoluteToGisTranslation != null ) {
+			geom.apply(absoluteToGisTranslation);
+		}
 		if ( inverseTransformer != null ) {
 			try {
 				geom = inverseTransformer.transform(geom);
@@ -113,83 +234,108 @@ public class GisUtils {
 		return geom;
 	}
 
-	public void setInitialCRS(final File shpf, final double longitude, final double latitude) throws IOException {
-		ShpFiles shpFiles = new ShpFiles(shpf);
-		PrjFileReader prjreader = new PrjFileReader(shpFiles);
-		try {
-			setInitialCRS(CRS.parseWKT(prjreader.getCoodinateSystem().toWKT()), longitude, latitude);
-		} catch (FactoryException e2) {
-			e2.printStackTrace();
-			initialCRS = null;
-		} finally {
-			prjreader.close();
-		}
-	}
-
-	public void setInitialCRS(final double longitude, final double latitude) {
-		initialCRS = DefaultGeographicCRS.WGS84;
-		MathTransform transfCRS = computeProjection(longitude, latitude);
-		setTransformCRS(transfCRS);
-	}
-
-	public void setInitialCRS(final CoordinateReferenceSystem crsI, final double longitude, final double latitude) {
-		MathTransform crsTransformation = null;
-		initialCRS = crsI;
-		ProjectedCRS projectd = CRS.getProjectedCRS(initialCRS);
-		if ( projectd == null ) {
-			crsTransformation = computeProjection(longitude, latitude);
-		} else {
-			System.out.println("The GIS data is projected using " + projectd.toWKT());
-		}
-		setTransformCRS(crsTransformation);
-	}
-
-	public void setInitialCRS(final String coordinateRS, final double longitude, final double latitude) {
-		try {
-			setInitialCRS(CRS.parseWKT(coordinateRS), longitude, latitude);
-		} catch (FactoryException e2) {
-			initialCRS = null;
-		}
-	}
-
-	public void setInitialCRS(final String srid, final boolean longitudeFirst, final double longitude,
-		final double latitude) {
-		setInitialCRS(Integer.decode(srid), longitudeFirst, longitude, latitude);
-	}
-
-	public void setInitialCRS(final Integer epsgCode, final boolean longitudeFirst, final double longitude,
-		final double latitude) {
-		try {
-			setInitialCRS(CRS.decode("EPSG:" + epsgCode, longitudeFirst), longitude, latitude);
-		} catch (FactoryException e2) {
-			initialCRS = null;
-		}
-	}
-
 	private MathTransform computeProjection(final double longitude, final double latitude) {
 		MathTransform crsTransformation = null;
+		computeTargetCRS(longitude, latitude);
 		try {
-			Integer pref;
-			if ( !GamaPreferences.LIB_TARGETED.getValue() ) {
-				pref = GamaPreferences.LIB_TARGET_CRS.getValue();
-			} else {
-				int index = (int) (0.5 + (longitude + 186.0) / 6);
-				boolean north = latitude > 0;
-				pref = 32600 + index + (north ? 0 : 100);
-			}
-			CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:" + pref);
-			crsTransformation = CRS.findMathTransform(initialCRS, targetCRS);
-			System.out.println("Decoded CRS : " + targetCRS);
-		} catch (NoSuchAuthorityCodeException e) {
-			System.out.println("An error prevented GIS data to be projected: " + e);
+			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS());
 		} catch (FactoryException e) {
-			System.out.println("An error prevented GIS data to be projected: " + e);
+			e.printStackTrace();
+			return null;
 		}
 		return crsTransformation;
 	}
 
-	public CoordinateReferenceSystem getCrs() {
+	public CoordinateReferenceSystem getInitialCRS() {
 		return initialCRS;
+	}
+
+	public static GisUtils forSavingWithEPSG(final Integer epsgCode) {
+		CoordinateReferenceSystem forcedSaveCRS = null;
+		if ( epsgCode != null ) {
+			try {
+				forcedSaveCRS = CRS.decode("EPSG:" + epsgCode);
+			} catch (Exception e) {
+				System.out.println("Impossible to save in the CRS EPSG:" + epsgCode + ". Falling back to the default.");
+				forcedSaveCRS = saveCRS;
+			}
+		} else {
+			forcedSaveCRS = saveCRS;
+		}
+		GisUtils gis = new GisUtils();
+		gis.initialCRS = forcedSaveCRS;
+		try {
+			gis.createTransformation(CRS.findMathTransform(gis.initialCRS, getTargetCRS()));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return gis;
+	}
+
+	public static GisUtils forSavingWithWKT(final String wkt) {
+		CoordinateReferenceSystem forcedSaveCRS = null;
+		if ( wkt != null ) {
+			try {
+				forcedSaveCRS = CRS.parseWKT(wkt);
+			} catch (Exception e) {
+				System.out.println("Impossible to save in the CRS WKT:" + wkt + ". Falling back to the default.");
+				forcedSaveCRS = saveCRS;
+			}
+		} else {
+			forcedSaveCRS = saveCRS;
+		}
+		GisUtils gis = new GisUtils();
+		gis.initialCRS = forcedSaveCRS;
+		try {
+			gis.createTransformation(CRS.findMathTransform(gis.initialCRS, getTargetCRS()));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return gis;
+	}
+
+	public static GisUtils forSavingWithEPSG(final String srid) {
+		CoordinateReferenceSystem forcedSaveCRS = null;
+		if ( srid != null ) {
+			try {
+				forcedSaveCRS = CRS.decode("EPSG:" + Integer.decode(srid));
+			} catch (Exception e) {
+				System.out.println("Impossible to save in the CRS EPSG:" + srid + ". Falling back to the default.");
+				forcedSaveCRS = saveCRS;
+			}
+		} else {
+			forcedSaveCRS = saveCRS;
+		}
+		GisUtils gis = new GisUtils();
+		gis.initialCRS = forcedSaveCRS;
+		try {
+			gis.createTransformation(CRS.findMathTransform(gis.initialCRS, getTargetCRS()));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return gis;
+	}
+
+	public Envelope getProjectedEnvelope() {
+		return projectedEnv;
+	}
+
+	public static void forgetSaveCRS() {
+		saveCRS = getTargetCRS();
+	}
+
+	private static CoordinateReferenceSystem getTargetCRS() {
+		if ( targetCRS == null ) {
+			computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
+		}
+		return targetCRS;
+	}
+
+	private static void setTargetCRS(final CoordinateReferenceSystem targetCRS) {
+		GisUtils.targetCRS = targetCRS;
 	}
 
 }

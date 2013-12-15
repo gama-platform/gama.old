@@ -2,60 +2,45 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.IScope;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
+
 /*
- * @Author  
- *     TRUONG Minh Thai
- *     Fredric AMBLARD
- *     Benoit GAUDOU
- *     Christophe Sibertin-BLANC
+ * @Author
+ * TRUONG Minh Thai
+ * Fredric AMBLARD
+ * Benoit GAUDOU
+ * Christophe Sibertin-BLANC
  * Created date: 19-Apr-2013
- * Modified: * 
- *    26-Apr-2013:  
- *      Remove driver msi.gama.ext/sqljdbc4.jar
- *      add driver msi.gama.ext/jtds-1.2.6.jar
- *      Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
- *      Edit ConnectDB for new driver
- *      Add new condition for geometry type 2004 (it look like postgres)
- *      
+ * Modified: *
+ * 26-Apr-2013:
+ * Remove driver msi.gama.ext/sqljdbc4.jar
+ * add driver msi.gama.ext/jtds-1.2.6.jar
+ * Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
+ * Edit ConnectDB for new driver
+ * Add new condition for geometry type 2004 (it look like postgres)
+ * 
  * Last Modified: 26-Apr-2013
-*/
+ */
 public class MSSQLConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
-	private static final String SRID="0";           //must solve later
-	public MSSQLConnection() {
-		super();
-	}
+	private static final String SRID = "0"; // must solve later
 
-	public MSSQLConnection(String dbName) {
-		super(dbName);
-	}
-
-	public MSSQLConnection(String venderName, String database) {
-		super(venderName, database);	
-	}
-
-	public MSSQLConnection(String venderName, String database, Boolean transformed) {
-		super(venderName, database,transformed);
-	}
-
-
-	public MSSQLConnection(String venderName, String url, String port, String dbName, String userName, String password) {
+	public MSSQLConnection(final String venderName, final String url, final String port, final String dbName,
+		final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}
 
-	public MSSQLConnection(String venderName, String url, String port, String dbName, String userName, String password,
-		Boolean transformed) {
+	public MSSQLConnection(final String venderName, final String url, final String port, final String dbName,
+		final String userName, final String password, final Boolean transformed) {
 		super(venderName, url, port, dbName, userName, password, transformed);
 	}
-	
+
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
 		IllegalAccessException {
@@ -63,14 +48,14 @@ public class MSSQLConnection extends SqlConnection {
 		Connection conn = null;
 		try {
 			if ( vender.equalsIgnoreCase(MSSQL) ) {
-//				Class.forName(MSSQLDriver).newInstance();
-//				conn =
-//					DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port + ";databaseName=" + dbName +
-//						";user=" + userName + ";password=" + password + ";");
+				// Class.forName(MSSQLDriver).newInstance();
+				// conn =
+				// DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port + ";databaseName=" + dbName +
+				// ";user=" + userName + ";password=" + password + ";");
 				Class.forName(MSSQLDriver).newInstance();
 				conn =
-					DriverManager.getConnection("jdbc:jtds:sqlserver://" + url + ":" + port + "/" + dbName,
-							userName, password);				
+					DriverManager.getConnection("jdbc:jtds:sqlserver://" + url + ":" + port + "/" + dbName, userName,
+						password);
 			} else {
 				throw new ClassNotFoundException("MSSQLConnection.connectDB: The " + vender + " is not supported!");
 			}
@@ -95,7 +80,7 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs) {
+	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
@@ -144,7 +129,7 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected List<Integer> getGeometryColumns(ResultSetMetaData rsmd) throws SQLException {
+	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		List<Integer> geoColumn = new ArrayList<Integer>();
@@ -161,13 +146,14 @@ public class MSSQLConnection extends SqlConnection {
 			/*
 			 * for Geometry
 			 * - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647
-			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
+			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size:
+			 * 2147483647
 			 * - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647
 			 * - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 * st_asbinary(geom): - Type: -2 - TypeName: bytea - size: 2147483647
 			 */
 			// Search column with Geometry type
-			//if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			// if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
 			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == 2004 ) {
 				geoColumn.add(i);
 			}
@@ -177,7 +163,7 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException {
+	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
 		GamaList<Object> columnType = new GamaList<Object>();
@@ -185,12 +171,13 @@ public class MSSQLConnection extends SqlConnection {
 			/*
 			 * for Geometry
 			 * - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647
-			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
+			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size:
+			 * 2147483647
 			 * - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647
 			 * - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 */
 			// Search column with Geometry type
-			//if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			// if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
 			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == 2004 ) {
 				columnType.add(GEOMETRYTYPE);
 			} else {
@@ -202,8 +189,8 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,
-		GamaList<Object> values) throws GamaRuntimeException {
+	protected String getInsertString(final GisUtils gis, final Connection conn, final String table_name,
+		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -246,27 +233,27 @@ public class MSSQLConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
-					
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
+
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = gis.inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', "+SRID+")";
-					
+					// System.out.println(geo.toString());
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', " + SRID + ")";
+
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||
@@ -305,7 +292,7 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> values)
+	protected String getInsertString(final Connection conn, final String table_name, final GamaList<Object> values)
 		throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
@@ -335,26 +322,27 @@ public class MSSQLConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
-//					// Transform GAMA GIS TO NORMAL
-//					if ( transformed ) {
-//						WKTReader wkt = new WKTReader();
-//						Geometry geo2 =
-//							scope.getTopology().getGisUtils()
-//								.inverseTransform(wkt.read(values.get(i).toString()));
-//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-//					} else {
-//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
-//					}
-					
+					// // Transform GAMA GIS TO NORMAL
+					// if ( transformed ) {
+					// WKTReader wkt = new WKTReader();
+					// Geometry geo2 =
+					// scope.getTopology().getGisUtils()
+					// .inverseTransform(wkt.read(values.get(i).toString()));
+					// valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+					// } else {
+					// valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+					// }
+
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					WKTReader wkt = new WKTReader();
-					Geometry geo=wkt.read(values.get(i).toString());
-					//System.out.println(geo.toString());
+					Geometry geo = wkt.read(values.get(i).toString());
+					// System.out.println(geo.toString());
+
 					if ( transformed ) {
-						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
+						geo = getSavingGisProjection().inverseTransform(geo);
 					}
-					//System.out.println(geo.toString());
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', "+SRID+")";
+					// System.out.println(geo.toString());
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', " + SRID + ")";
 
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||

@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-ClassPath: jgrapht-jdk1.6.jar,
  gt-api-2.7.3.jar,
  gt-data-2.7.3.jar,
- gt-epsg-extension-2.7.3.jar,
  gt-feature-pregeneralized-2.7.3.jar,
  gt-main-2.7.3.jar,
  gt-metadata-2.7.3.jar,

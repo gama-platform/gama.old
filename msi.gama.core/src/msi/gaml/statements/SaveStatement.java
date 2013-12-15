@@ -21,6 +21,7 @@ package msi.gaml.statements;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -54,13 +55,17 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.DATA, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING, optional = false),
+	@facet(name = "epsg", type = IType.INT, optional = true),
 	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true) }, omissible = IKeyword.DATA)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;
+	private final IExpression epsgCode;
 
 	public SaveStatement(final IDescription desc) {
 		super(desc);
+		epsgCode = desc.getFacets().getExpr("epsg");
+
 	}
 
 	// TODO rewrite this with the GamaFile framework
@@ -220,6 +225,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IAgent> agents,
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
+		final Integer code = epsgCode == null ? null : Cast.asInt(scope, epsgCode.value(scope));
+		final GisUtils gis = GisUtils.forSavingWithEPSG(code);
 
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
@@ -236,7 +243,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			Geometry geom = (Geometry) ag.getInnerGeometry().clone();
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
 
-			geom = scope.getTopology().getGisUtils().inverseTransform(geom);
+			geom = gis.inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( final Object e : attributes.values() ) {
@@ -253,11 +260,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		t.commit();
 		t.close();
 		store.dispose();
-		writePRJ(scope, path);
+		writePRJ(scope, path, gis);
 	}
 
-	private void writePRJ(final IScope scope, final String path) {
-		final CoordinateReferenceSystem crs = scope.getTopology().getGisUtils().getCrs();
+	private void writePRJ(final IScope scope, final String path, final GisUtils gis) {
+		final CoordinateReferenceSystem crs = gis.getInitialCRS();
 		if ( crs != null ) {
 			try {
 				final FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));

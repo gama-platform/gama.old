@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GisUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -400,17 +401,68 @@ public class GamaPreferences {
 	public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
 		"Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL).deactivates("core.lib_target_crs")
 		.in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Boolean>() {
+
+			@Override
+			public boolean valueChange(final Boolean newValue) {
+				if ( newValue ) {
+					GisUtils.forgetTargetCRS();
+				} else {
+					GisUtils.computeDefaultCRS(LIB_TARGET_CRS.getValue(), true);
+				}
+				return true;
+			}
+
+		});
 	public static final Entry<Integer> LIB_TARGET_CRS = create("core.lib_target_crs",
-		"...or use the following CRS (EPSG code)", 32600, IType.INT).in(LIBRARIES).group(
-		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+		"...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Integer>() {
+
+			@Override
+			public boolean valueChange(final Integer newValue) {
+				GisUtils.computeDefaultCRS(newValue, true);
+				// TODO return false if there is an error ?
+				return true;
+			}
+		});
 	public static final Entry<Boolean> LIB_PROJECTED = create("core.lib_projected",
-		"When no '.prj' file is supplied, consider that shape files contain data already projected in this CRS", true,
-		IType.BOOL).deactivates("core.lib_initial_crs").in(LIBRARIES)
+		"When no '.prj' file is supplied, consider GIS data to be already projected in this CRS", true, IType.BOOL)
+		.deactivates("core.lib_initial_crs").in(LIBRARIES)
 		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
 		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES).group(
 		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Boolean> LIB_USE_DEFAULT = create("core.lib_use_default",
+		"When no CRS is provided, save the GIS data with the current CRS", true, IType.BOOL)
+		.deactivates("core.lib_output_crs").in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Boolean>() {
+
+			@Override
+			public boolean valueChange(final Boolean newValue) {
+				if ( newValue ) {
+					GisUtils.forgetSaveCRS();
+				} else {
+					GisUtils.computeDefaultCRS(LIB_OUTPUT_CRS.getValue(), true);
+				}
+				return true;
+			}
+
+		});;
+	public static final Entry<Integer> LIB_OUTPUT_CRS = create("core.lib_output_crs",
+		"... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Integer>() {
+
+			@Override
+			public boolean valueChange(final Integer newValue) {
+				GisUtils.computeDefaultCRS(newValue, false);
+				// TODO return false if there is an error ?
+				return true;
+			}
+		});;
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");

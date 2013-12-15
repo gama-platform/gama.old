@@ -19,8 +19,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GisUtils;
+import java.net.MalformedURLException;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,10 +39,7 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
-
-	Integer initialCRSCode = null;
-	Envelope env = null;
+public class GamaShapeFile extends GamaGisFile {
 
 	/**
 	 * @throws GamaRuntimeException
@@ -51,12 +47,11 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 * @param pathName
 	 */
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName);
+		super(scope, pathName, null);
 	}
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
-		super(scope, pathName);
-		initialCRSCode = code;
+		super(scope, pathName, code);
 	}
 
 	@Override
@@ -102,22 +97,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		getFeatureIterator(scope, true);
-		// if ( features == null ) { return; }
-		// while (features.hasNext()) {
-		// final SimpleFeature feature = features.next();
-		// Geometry g = (Geometry) feature.getDefaultGeometry();
-		// if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
-		// // Fix for Issue 677
-		// ((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
-		// } else {
-		// // See Issue 725
-		// GAMA.reportError(
-		// GamaRuntimeException.warning("GamaShapeFile.fillBuffer; geometry could not be added : " +
-		// feature.getID()), false);
-		// }
-		// }
-		// features.close();
+		getFeatureIterator(true);
 	}
 
 	/*
@@ -132,47 +112,42 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	}
 
-	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
+	@Override
+	protected CoordinateReferenceSystem getExistingCRS() {
+		File file = getFile();
+		ShapefileDataStore store = null;
+		try {
+			store = new ShapefileDataStore(file.toURI().toURL());
+			try {
+				store.getSchema();
+			} catch (IOException e) {
+				return null;
+			}
+			ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
+			return info.getCRS();
+
+		} catch (MalformedURLException e) {
+			return null;
+		} finally {
+			if ( store != null ) {
+				store.dispose();
+			}
+		}
+		// TODO Should we dispose the store ?
+	}
+
+	public void getFeatureIterator(final boolean returnIt) {
 		File file = getFile();
 		ShapefileDataStore store = null;
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
-			// store = new ShapefileDataStore(file.toURI().toURL());
-			// final String name = store.getTypeNames()[0];
-			// final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			// final FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
-			// env = featureShp.getBounds();
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
 			CoordinateReferenceSystem prj = info.getCRS();
-			env = info.getBounds();
-			final double latitude = env.centre().y;
-			final double longitude = env.centre().x;
-			GisUtils gis = scope.getTopology().getGisUtils();
-			// If we have a forced EPSG code for the initial CRS, we use it (even if the .prj file is present).
-			if ( initialCRSCode != null ) {
-				gis.setInitialCRS(initialCRSCode, true, longitude, latitude);
-			} else if ( prj != null ) {
-				// Otherwise, if a .prj file is present, we use it
-				// ShpFiles shpFiles = new ShpFiles(file);
-				// try {
-				gis.setInitialCRS(prj, longitude, latitude);
-				// } finally {
-				// shpFiles.dispose();
-				// }
-			} else {
-				// If the user does not consider the data to be projected, he has entered a default value in the
-				// preferences
-				if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
-					gis.setInitialCRS(GamaPreferences.LIB_INITIAL_CRS.getValue(), true, longitude, latitude);
-				} else {
-					// gis.setInitialCRS(longitude, latitude);
-				}
-			}
-			env = gis.transform(env);
-
+			Envelope env = info.getBounds();
+			computeProjection(env);
 			if ( features != null && returnIt ) {
 				it = features.features();
 				// return returnIt ? features.features() : null;
@@ -181,7 +156,8 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 					Geometry g = (Geometry) feature.getDefaultGeometry();
 					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
 						// Fix for Issue 677
-						((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
+						g = gis.transform(g);
+						((IList) buffer).add(new GamaGisGeometry(g, feature));
 					} else {
 						// See Issue 725
 						GAMA.reportError(
@@ -206,11 +182,10 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		if ( env == null ) {
-
-			getFeatureIterator(scope, false);
+		if ( gis == null ) {
+			getFeatureIterator(false);
 		}
-		return env;
+		return gis.getProjectedEnvelope();
 
 	}
 }

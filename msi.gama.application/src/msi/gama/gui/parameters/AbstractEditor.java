@@ -339,6 +339,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 			@Override
 			public IAgent run(final IScope scope) {
+				if ( scope == null ) { return null; }
 				return scope.getSimulationScope();
 			}
 		});

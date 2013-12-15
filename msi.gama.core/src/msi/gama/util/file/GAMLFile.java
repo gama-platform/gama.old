@@ -18,19 +18,15 @@
  */
 package msi.gama.util.file;
 
-import msi.gama.kernel.experiment.ExperimentSpecies;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.operators.Files;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.types.GamaFileType;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -40,6 +36,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  */
 public class GAMLFile extends GamaFile<Integer, IModel> {
+
 	private final IModel mymodel;
 	/**
 	 * @throws GamaRuntimeException
@@ -49,11 +46,10 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 
 	private IExperimentSpecies exp = null;
 
-	public GAMLFile(final IScope scope, final String pathName)
-			throws GamaRuntimeException {
+	public GAMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
-		mymodel = ((GamlExpressionFactory) GAML.getExpressionFactory())
-				.getParser().createModelFromFile(getFile().getName());
+		mymodel =
+			((GamlExpressionFactory) GAML.getExpressionFactory()).getParser().createModelFromFile(getFile().getName());
 		// ((ModelDescription) scope.getModel().getDescription())
 		// .getTypesManager().addSpeciesType(
 		// (ModelDescription) mymodel.getDescription());
@@ -62,22 +58,22 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 
 	}
 
-	public GamlSpecies getSpecies(String name) {
+	public GamlSpecies getSpecies(final String name) {
 
 		return (GamlSpecies) mymodel.getSpecies(name);
 	}
 
 	public IScope getModelScope() {
-		if (exp  == null) {
-			((ExperimentSpecies) exp).createAgentForMultiExp();
+		if ( exp == null ) {
+			((ExperimentSpecies) exp).createAgent();
 		}
 		return exp.getAgent().getScope();
 	}
 
 	public IExperimentSpecies getExperiment(final String exp_name) {
-		if (exp == null) {
+		if ( exp == null ) {
 			exp = mymodel.getExperiment("Experiment " + exp_name);
-			((ExperimentSpecies) exp).createAgentForMultiExp();
+			((ExperimentSpecies) exp).createAgent();
 			// exp.getAgent().createSimulation(new ParametersSet(), false)
 			// ._init_(exp.getAgent().getSimulation().getScope());
 
@@ -88,11 +84,8 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if (!GamaFileType.isGAML(getFile().getName())) {
-			throw GamaRuntimeException
-					.error("The extension " + this.getExtension()
-							+ " is not recognized for GAML files");
-		}
+		if ( !GamaFileType.isGAML(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
+			this.getExtension() + " is not recognized for GAML files"); }
 	}
 
 	/**
@@ -130,9 +123,7 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (buffer != null) {
-			return;
-		}
+		if ( buffer != null ) { return; }
 		buffer = new GamaList();
 
 		((IList) buffer).add(mymodel);
@@ -142,8 +133,6 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 	public IModel getModel() {
 		return mymodel;
 	}
-
-
 
 	/*
 	 * (non-Javadoc)

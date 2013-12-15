@@ -64,10 +64,10 @@ public class SimulationPopulation extends GamaPopulation {
 		host = agent;
 	}
 
-	public void setTopology(final IScope scope, final IShape gisShape, final IShape shape) {
+	public void setTopology(final IScope scope, final IShape shape) {
 		IExpression expr = species.getFacet(IKeyword.TORUS);
 		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class);
-		topology = new RootTopology(scope, gisShape, shape, torus);
+		topology = new RootTopology(scope, shape, torus);
 	}
 
 	@Override

@@ -20,7 +20,7 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.batch.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -108,21 +108,13 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			experimentOutputs = null;
 		}
 		parameters.clear();
+
+		// Should be put somewhere around here, but probably not here exactly.
+		GisUtils.forgetTargetCRS();
 		super.dispose();
 	}
-	
-	
-	// hqnghi didnt want to change protected of  createAgent
-	public void createAgentForMultiExp() {
-		// adjust special method to create multi-ExperimentAgent for multi-Experiment purpose
-		final ExperimentPopulation pop = new ExperimentPopulation(this);
-		final IScope scope = getExperimentScope();
-		pop.initializeFor(scope);
-		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false).get(0);
-		addDefaultParameters();
-	}
 
-	protected void createAgent() {
+	public void createAgent() {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);

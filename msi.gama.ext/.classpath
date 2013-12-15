@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
+	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
+	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar" sourcepath="sources/trove-3.0.3-src.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-api-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-data-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
-	<classpathentry exported="true" kind="lib" path="gt-epsg-extension-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-feature-pregeneralized-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-main-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-metadata-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
@@ -47,11 +50,7 @@
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry exported="true" kind="lib" path="jsr-275-1.0-beta-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="hsqldb-1.8.0.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar" sourcepath="sources/trove-3.0.3-src.jar"/>
-	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
-	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
-	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis-apidb-0.43.1.jar"/>
+		<classpathentry exported="true" kind="lib" path="osmosis-apidb-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-areafilter-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-core-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-dataset-0.43.1.jar"/>
