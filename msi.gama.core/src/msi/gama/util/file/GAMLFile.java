@@ -19,11 +19,22 @@
 package msi.gama.util.file;
 
 import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+
+import msi.gama.util.GAML;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+
 import msi.gama.util.*;
+
 import msi.gaml.expressions.GamlExpressionFactory;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Files;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.types.GamaFileType;
@@ -50,10 +61,6 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 		super(scope, pathName);
 		mymodel =
 			((GamlExpressionFactory) GAML.getExpressionFactory()).getParser().createModelFromFile(getFile().getName());
-		// ((ModelDescription) scope.getModel().getDescription())
-		// .getTypesManager().addSpeciesType(
-		// (ModelDescription) mymodel.getDescription());
-
 		exp = mymodel.getExperiment("Experiment default");
 
 	}
@@ -74,11 +81,72 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 		if ( exp == null ) {
 			exp = mymodel.getExperiment("Experiment " + exp_name);
 			((ExperimentSpecies) exp).createAgent();
-			// exp.getAgent().createSimulation(new ParametersSet(), false)
-			// ._init_(exp.getAgent().getSimulation().getScope());
-
 		}
 		return exp;
+
+	}
+
+	public void execute(IScope scope, IExpression with_exp,
+			IExpression param_input, IExpression param_output, GamaMap in,
+			GamaMap out, IExpression reset,
+			IExpression repeat, IExpression stopCondition) {
+		if (with_exp != null) {		
+			this.getExperiment(with_exp.getName());
+		}
+
+		if (param_input != null) {
+			in = (GamaMap) param_input.value(scope);
+			for (int i = 0; i < in.getKeys().size(); i++) {
+				exp.getModel().getVar(in.getKeys().get(i).toString())
+						.setValue(in.getValues().get(i));
+			}
+		}
+
+		exp.getSimulationOutputs().removeAllOutput();
+
+		SimulationAgent sim = (SimulationAgent) exp.getAgent().getSimulation();
+		IScope simScope = null;
+		if (sim == null) {
+			sim = exp.getAgent().createSimulation(new ParametersSet(), false);
+			sim._init_(sim.getScope());
+		}
+		simScope = sim.getScope();
+		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
+			sim._init_(simScope);
+		}
+
+		int n = 1;
+		int i = 0;
+		if (repeat != null) {
+			n = (Integer) repeat.value(scope);
+		}
+		boolean mustStop = false;
+		if (stopCondition == null) {
+			mustStop = true;
+		}
+		while (!mustStop || i < n) {
+			exp.getAgent().getSimulation().step(simScope);
+			if (param_output != null) {
+				out = (GamaMap) param_output.value(scope);
+				for (int j = 0; j < out.getKeys().size(); j++) {
+					scope.setAgentVarValue(
+							out.getValues().get(j).toString(),
+							((ExperimentSpecies) exp).getExperimentScope()
+									.getGlobalVarValue(
+											out.getKeys().get(j).toString()));
+
+				}
+			}
+			if (stopCondition != null) {
+				mustStop = Cast.asBool(scope,
+						scope.evaluate(stopCondition, scope.getAgentScope()));
+			}
+			i++;
+		}
+		
+		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
+			exp = null;
+		}
 	}
 
 	@Override
