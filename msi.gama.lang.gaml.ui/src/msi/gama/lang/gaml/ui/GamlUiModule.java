@@ -25,14 +25,16 @@ import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.utils.GamlEncodingProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.service.*;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
@@ -77,6 +79,15 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
 		return GamlContentAssistProcessor.class;
 	}
+
+	@Override
+	public void configureUiEncodingProvider(final Binder binder) {
+		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
+	}
+
+	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
+	// return GamlEncodingProvider.class;
+	// }
 
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
 		return ContentAssistContextFactory.class;
