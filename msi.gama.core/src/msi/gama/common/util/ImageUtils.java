@@ -115,7 +115,6 @@ public class ImageUtils {
 		final BufferedImage image = get(fileName);
 		if ( image != null ) { return image; }
 		String s = GAMA.getModel().getRelativeFilePath(fileName, true);
-		//GuiUtils.debug("ImageUtils.getImageFromFile " + s);
 		final File f = new File(s);
 		return getImageFromFile(f);
 	}
@@ -147,25 +146,21 @@ public class ImageUtils {
 
 	public static BufferedImage createCompatibleImage(final int width, final int height) {
 		BufferedImage new_image = null;
-		if ( GuiUtils.isInHeadLessMode() ) {
+		if ( GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) {
 			new_image =
 				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_RGB);
 		} else {
 			final GraphicsConfiguration gfx_config =
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 			new_image = gfx_config.createCompatibleImage(width, height);
-			// new_image.setAccelerationPriority(1f);
-
 		}
 		return new_image;
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		// obtain the current system graphical settings
-
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		if ( ge.isHeadlessInstance() ) { return image; }
-		final GraphicsConfiguration gfx_config = ge.getDefaultScreenDevice().getDefaultConfiguration();
+		if ( GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
+		final GraphicsConfiguration gfx_config =
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return

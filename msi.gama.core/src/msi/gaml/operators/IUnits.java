@@ -20,6 +20,7 @@ package msi.gaml.operators;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import msi.gama.util.GamaColor;
 
 public class IUnits {
 
@@ -155,9 +156,13 @@ public class IUnits {
 	/** The Constant square mile. */
 	public final static double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
 
-	public final static Map<String, Double> UNITS = new HashMap();
+	public final static Map<String, Object> UNITS = new HashMap();
 
 	static {
+
+		for ( Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet() ) {
+			UNITS.put(entry.getKey(), entry.getValue());
+		}
 
 		for ( final Field f : IUnits.class.getDeclaredFields() ) {
 			try {

@@ -427,10 +427,11 @@ public class GamaPreferences {
 				return true;
 			}
 		});
-	public static final Entry<Boolean> LIB_PROJECTED = create("core.lib_projected",
-		"When no '.prj' file is supplied, consider GIS data to be already projected in this CRS", true, IType.BOOL)
-		.deactivates("core.lib_initial_crs").in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+	public static final Entry<Boolean> LIB_PROJECTED =
+		create("core.lib_projected",
+			"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true,
+			IType.BOOL).deactivates("core.lib_initial_crs").in(LIBRARIES)
+			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
 		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES).group(
 		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");

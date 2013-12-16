@@ -64,7 +64,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		}
 		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
 		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
-		return createConst(IUnits.UNITS.get(unit), Types.get(IType.FLOAT));
+		Object result = IUnits.UNITS.get(unit);
+		IType t = result instanceof Double ? Types.get(IType.FLOAT) : Types.get(IType.COLOR);
+		return createConst(result, t);
 	}
 
 	@Override
