@@ -21,45 +21,30 @@ public class HeadlessListener implements IGui {
 			System.out.println("Configuring Headless Mode");
 			GuiUtils.setSwtGui(new HeadlessListener());
 		}
-
 	}
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
 		final Map<String, IType> types) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
-		// TODO Auto-generated method stub
-
-	}
+	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
 	@Override
-	public void closeDialogs() {
-		// TODO Auto-generated method stub
-
-	}
+	public void closeDialogs() {}
 
 	@Override
 	public IAgent getHighlightedAgent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setHighlightedAgent(final IAgent a) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setHighlightedAgent(final IAgent a) {}
 
 	@Override
-	public void setStatus(final String error, final int code) {
-		// TODO Auto-generated method stub
-		// IKeyword.GUI_
-	}
+	public void setStatus(final String error, final int code) {}
 
 	@Override
 	public void run(final Runnable block) {
@@ -73,171 +58,126 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void raise(final Throwable ex) {
-		System.out.println("Erreur: " + ex.getMessage());
+		System.out.println("Error: " + ex.getMessage());
 	}
 
 	@Override
 	public IGamaView showView(final String viewId, final String name, final int code) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	//
-	// @Override
-	// public void stopIfCancelled() throws InterruptedException {
-	// // TODO Auto-generated method stub
-	// // System.out.println("Stop Simulation");
-	//
-	// }
-
 	@Override
 	public void tell(final String message) {
-		System.out.println("tell : " + message);
+		System.out.println("Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
-		System.out.println("error : " + error);
+		System.out.println("Error: " + error);
 	}
 
 	@Override
-	public void showParameterView(final IExperimentSpecies exp) {
-		// System.out.println(exp.get)
-	}
+	public void showParameterView(final IExperimentSpecies exp) {}
 
 	@Override
 	public void debugConsole(final int cycle, final String s) {
-		System.out.println("debug console step " + cycle + ": " + s);
+		System.out.println("Debug (step " + cycle + "): " + s);
 	}
 
 	@Override
 	public void informConsole(final String s) {
-		System.out.println("inform console :" + s);
+		System.out.println("Information: " + s);
 	}
 
 	@Override
-	public void updateViewOf(final IDisplayOutput output) {
-		// TODO Auto-generated method stub
-
-	}
+	public void updateViewOf(final IDisplayOutput output) {}
 
 	@Override
 	public void debug(final String string) {
-		System.out.println("debug :" + string);
+		System.out.println("Debug: " + string);
 	}
 
 	@Override
 	public void warn(final String string) {
-		System.out.println("warning : " + string);
+		System.out.println("Warning: " + string);
 	}
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
-		System.out.println("runtime error : " + g.getMessage());
+		System.out.println("Runtime error: " + g.getMessage());
 	}
 
 	@Override
 	public IEditorFactory getEditorFactory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean confirmClose(final IExperimentSpecies experiment) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentSpecies exp) {
-		// TODO Auto-generated method stub
-
-	}
+	public void prepareForExperiment(final IExperimentSpecies exp) {}
 
 	@Override
-	public void showConsoleView() {
-		// TODO Auto-generated method stub
-
-	}
+	public void showConsoleView() {}
 
 	@Override
-	public void setWorkbenchWindowTitle(final String string) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setWorkbenchWindowTitle(final String string) {}
 
 	@Override
-	public void closeViewOf(final IDisplayOutput out) {
-		// TODO Auto-generated method stub
-
-	}
+	public void closeViewOf(final IDisplayOutput out) {}
 
 	@Override
 	public IGamaView hideView(final String viewId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean isModelingPerspective() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean openModelingPerspective() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isSimulationPerspective() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public void togglePerspective() {
-		// TODO Auto-generated method stub
-
-	}
+	public void togglePerspective() {}
 
 	@Override
 	public boolean openSimulationPerspective() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
-	// @Override
-	// public IGraphics newGraphics(final int width, final int height) {
-	// return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB), width, height);
-	// }
-
-	// @Override
-	// public void clearErrors() {
-	// // TODO Auto-generated method stub
-	//
-	// }
+	static Map<String, Class> displayClasses = null;
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
 		final double w, final double h, final Object ... args) {
-		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
-
-		Map<String, Class> displayClasses = new HashMap();
-
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
-		for ( IConfigurationElement e : config ) {
-			final String pluginKeyword = e.getAttribute("keyword");
-			final String pluginClass = e.getAttribute("class");
-			// final Class<IDisplaySurface> displayClass = .
-			final String pluginName = e.getContributor().getName();
-			System.out.println("displays " + pluginKeyword + " " + pluginName);
-			ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-			try {
-				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
+		if ( displayClasses == null ) {
+			displayClasses = new HashMap();
+			IConfigurationElement[] config =
+				Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
+			for ( IConfigurationElement e : config ) {
+				final String pluginKeyword = e.getAttribute("keyword");
+				final String pluginClass = e.getAttribute("class");
+				// final Class<IDisplaySurface> displayClass = .
+				final String pluginName = e.getContributor().getName();
+				// System.out.println("displays " + pluginKeyword + " " + pluginName);
+				ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+				try {
+					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 		// keyword = "image";
@@ -245,7 +185,6 @@ public class HeadlessListener implements IGui {
 		if ( clazz == null ) { throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere."); }
 		try {
 			IDisplaySurface surface = clazz.newInstance();
-			// System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
 			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
 			surface.initialize(w, h, layerDisplayOutput);
 			return surface;
@@ -255,14 +194,11 @@ public class HeadlessListener implements IGui {
 			e1.printStackTrace();
 		}
 
-		// FIXME HACK
 		return null;
 	}
 
 	@Override
-	public void editModel(final Object eObject) {
-		// NOTHING TO DO OBVIOUSLY !
-	}
+	public void editModel(final Object eObject) {}
 
 	@Override
 	public void updateParameterView(final IExperimentSpecies exp) {}
@@ -270,53 +206,26 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void cycleDisplayViews(final Set<String> names) {}
 
-	/**
-	 * Method setSelectedAgent()
-	 * @see msi.gama.common.interfaces.IGui#setSelectedAgent(msi.gama.metamodel.agent.IAgent)
-	 */
 	@Override
 	public void setSelectedAgent(final IAgent a) {}
 
-	/**
-	 * Method cleanAfterExperiment()
-	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentSpecies)
-	 */
 	@Override
 	public void cleanAfterExperiment(final IExperimentSpecies exp) {}
 
-	/**
-	 * Method prepareForSimulation()
-	 * @see msi.gama.common.interfaces.IGui#prepareForSimulation()
-	 */
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {}
 
-	/**
-	 * Method cleanAfterSimulation()
-	 * @see msi.gama.common.interfaces.IGui#cleanAfterSimulation()
-	 */
 	@Override
 	public void cleanAfterSimulation() {}
 
-	/**
-	 * Method waitForViewsToBeInitialized()
-	 * @see msi.gama.common.interfaces.IGui#waitForViewsToBeInitialized()
-	 */
 	@Override
 	public void waitForViewsToBeInitialized() {}
 
-	/**
-	 * Method debug()
-	 * @see msi.gama.common.interfaces.IGui#debug(java.lang.Exception)
-	 */
 	@Override
 	public void debug(final Exception e) {
 		e.printStackTrace();
 	}
 
-	/**
-	 * Method runModel()
-	 * @see msi.gama.common.interfaces.IGui#runModel(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public void runModel(final Object object, final String exp) throws CoreException {}
 }
