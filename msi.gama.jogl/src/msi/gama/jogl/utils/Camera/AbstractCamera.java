@@ -109,15 +109,15 @@ public abstract class AbstractCamera implements ICamera {
 		upVector.set(xPos, yPos, zPos);
 	}
 	
-	// Use when the alt+right/left is pressed (rotate the camera around z axis).
+	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
 	public void rotateCameraUpVectorOnZ(boolean clock) {
-			upPosition(Math.cos((Math.PI/2)+curZRotation),Math.sin((Math.PI/2) +curZRotation), upVector.z);
-			if(clock){
-				curZRotation=curZRotation - Math.PI/64;
-			}
-			else{
-				curZRotation=curZRotation + Math.PI/64;
-			}
+		upPosition(Math.cos((Math.PI/2)+curZRotation),Math.sin((Math.PI/2) +curZRotation), upVector.z);
+		if(clock){
+			curZRotation=curZRotation - Math.PI/64;
+		}
+		else{
+			curZRotation=curZRotation + Math.PI/64;
+		}
 	}
 
 	/* -------Get commands--------- */
