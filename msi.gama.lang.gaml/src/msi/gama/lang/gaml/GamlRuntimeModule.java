@@ -24,15 +24,15 @@ import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
 import msi.gama.lang.gaml.trials.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.validation.*;
-import msi.gama.lang.utils.GamlExpressionCompiler;
+import msi.gama.lang.utils.*;
 import msi.gaml.expressions.IExpressionCompiler;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.*;
-import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
-import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.service.*;
 import com.google.inject.Binder;
 
 /**
@@ -97,6 +97,16 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	public Class<? extends Diagnostician> bindDiagnostician() {
 		return GamlDiagnostician.class;
 	}
+
+	@Override
+	public void configureRuntimeEncodingProvider(final Binder binder) {
+		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
+			.to(GamlEncodingProvider.class);
+	}
+
+	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
+	// return GamlEncodingProvider.class;
+	// }
 
 	// @Override
 	// public

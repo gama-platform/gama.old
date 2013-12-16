@@ -176,7 +176,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	}
 
-	static void addUnit(final EClass eClass, final String t, final Double value) {
+	static void addUnit(final EClass eClass, final String t, final Object value) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
