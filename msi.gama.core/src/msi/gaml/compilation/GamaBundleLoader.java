@@ -46,7 +46,7 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) Platform.getBundle(s).loadClass(ADDITIONS);
 		} catch (ClassNotFoundException e1) {
-			GuiUtils.debug(">> Impossible to load additions from " + s);
+			GuiUtils.debug(">> Impossible to load additions from " + s + " because of " + e1);
 			return;
 		}
 		IGamlAdditions add = null;
