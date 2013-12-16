@@ -115,7 +115,8 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			final IDescription sd = desc.getEnclosingDescription();
 			if ( sd == null ) { return; }
 			for ( final IDescription child : sd.getChildren() ) {
-				if ( child.getKeyword().equals(STATE) ) {
+				String s = child.getKeyword();
+				if ( s.equals(STATE) || s.equals(USER_PANEL) ) {
 					final IExpression expr = child.getFacets().getExpr(facet);
 					if ( expr == null ) {
 						continue;

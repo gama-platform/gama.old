@@ -18,6 +18,7 @@
  */
 package msi.gaml.architecture.finite_state_machine;
 
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -36,15 +37,13 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @symbol(name = FsmTransitionStatement.TRANSITION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@inside(symbols = { FsmStateStatement.STATE })
+@inside(kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.BEHAVIOR })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = FsmTransitionStatement.TO, type = IType.ID, optional = false) }, omissible = IKeyword.WHEN)
 @validator(TransitionValidator.class)
 public class FsmTransitionStatement extends AbstractStatementSequence {
 
-	// TODO En faire une sous classe de if ?
-
-	
+	private static final List<String> states = Arrays.asList(FsmStateStatement.STATE, IKeyword.USER_PANEL);
 
 	public static class TransitionValidator implements IDescriptionValidator {
 
@@ -54,6 +53,12 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final IDescription desc) {
+			IDescription sup = desc.getEnclosingDescription();
+			String keyword = sup.getKeyword();
+			if ( !states.contains(keyword) ) {
+				desc.error("Transitions cannot be declared inside  " + keyword, IGamlIssue.WRONG_PARENT);
+				return;
+			}
 			final String behavior = desc.getFacets().getLabel(TO);
 			final SpeciesDescription sd = desc.getSpeciesContext();
 			if ( !sd.hasBehavior(behavior) ) {
