@@ -110,6 +110,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	protected void animate() {
+		
 		double translation = 2 * (Math.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
@@ -135,8 +136,13 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - -get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				updatePosition(position.x + translation, position.y, position.z);
-				lookPosition(target.x + translation, target.y, target.z);
+				if(isAltKeyDown() && isViewIn2DPlan()){
+					rotateCameraUpVectorOnZ(true);
+					
+				}else{
+					updatePosition(position.x + translation, position.y, position.z);
+					lookPosition(target.x + translation, target.y, target.z);
+				}
 			}
 		}
 		if ( isStrafeRight() ) {
@@ -144,8 +150,12 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				updatePosition(position.x - translation, position.y, position.z);
-				lookPosition(target.x - translation, target.y, target.z);
+				if(isAltKeyDown() && isViewIn2DPlan()){
+					rotateCameraUpVectorOnZ(false);
+				}else{
+					updatePosition(position.x - translation, position.y, position.z);
+					lookPosition(target.x - translation, target.y, target.z);
+				}
 			}
 		}
 	}

@@ -45,6 +45,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected double theta;
 	protected double phi;
+	protected double curZRotation = 0.0;
 
 	private final double _keyboardSensivity = 4.0;
 	private final double _sensivity = 0.4;
@@ -53,8 +54,9 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean goesBackward;
 	private boolean strafeLeft;
 	private boolean strafeRight;
-	private final boolean ctrlKeyDown = false;
+	private boolean ctrlKeyDown = false;
 	private boolean shiftKeyDown = false;
+	private boolean altKeyDown = false;
 
 	// ROI Coordionates (x1,y1,x2,y2)
 	protected int[] region = new int[4];
@@ -105,6 +107,17 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public void upPosition(final double xPos, final double yPos, final double zPos) {
 		upVector.set(xPos, yPos, zPos);
+	}
+	
+	// Use when the alt+right/left is pressed (rotate the camera around z axis).
+	public void rotateCameraUpVectorOnZ(boolean clock) {
+			upPosition(Math.cos((Math.PI/2)+curZRotation),Math.sin((Math.PI/2) +curZRotation), upVector.z);
+			if(clock){
+				curZRotation=curZRotation - Math.PI/64;
+			}
+			else{
+				curZRotation=curZRotation + Math.PI/64;
+			}
 	}
 
 	/* -------Get commands--------- */
@@ -207,30 +220,34 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void keyPressed(final KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
-			case VK_LEFT:
-				this.strafeLeft = true;
-				this.shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_RIGHT:
-				this.strafeRight = true;
-				this.shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_UP:
-				this.goesForward = true;
-				this.shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_DOWN:
-				this.goesBackward = true;
-				this.shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-		}
+		case VK_LEFT:
+			this.strafeLeft = true;
+			this.shiftKeyDown = checkShiftKeyDown(arg0);
+			this.altKeyDown = checkAlttKeyDown(arg0);	
+			break;
+		case VK_RIGHT:
+			this.strafeRight = true;
+			this.shiftKeyDown = checkShiftKeyDown(arg0);
+			this.altKeyDown = checkAlttKeyDown(arg0);
+			break;
+		case VK_UP:
+			this.goesForward = true;
+			this.shiftKeyDown = checkShiftKeyDown(arg0);
+			this.ctrlKeyDown = checkCtrlKeyDown(arg0);
+			break;
+		case VK_DOWN:
+			this.goesBackward = true;
+			this.shiftKeyDown = checkShiftKeyDown(arg0);
+			this.ctrlKeyDown =  checkCtrlKeyDown(arg0);
+			break;
+	   }
 	}
 
 	@Override
 	public final void keyReleased(final KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
 			case VK_LEFT: // player turns left (scene rotates right)
-				this.strafeLeft = false;
+				this.strafeLeft = false;	
 				break;
 			case VK_RIGHT: // player turns right (scene rotates left)
 				this.strafeRight = false;
@@ -276,6 +293,16 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean checkShiftKeyDown(final MouseEvent event) {
 		return event.isShiftDown();
 	}
+	
+	protected boolean checkAlttKeyDown(final KeyEvent event) {
+		return event.isAltDown();
+	}
+
+	protected boolean checkAltKeyDown(final MouseEvent event) {
+		return event.isAltDown();
+	}
+	
+	
 
 	protected boolean detectMacOS() {
 		String os = System.getProperty("os.name");
@@ -450,6 +477,10 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected boolean isShiftKeyDown() {
 		return shiftKeyDown;
+	}
+	
+	protected boolean isAltKeyDown() {
+		return altKeyDown;
 	}
 
 	protected boolean isForward() {
