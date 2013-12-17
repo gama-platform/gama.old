@@ -72,7 +72,8 @@ public class GisUtils {
 		GuiUtils.debug("GisUtils.fromParams :" + params);
 		Object srid = params.get("srid");
 		Object crs = params.get("crs");
-		Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
+//		Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
+		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		if ( crs instanceof String ) { return GisUtils.fromWKT((String) crs, env); }
 		if ( srid instanceof String ) { return GisUtils.fromEPSG((String) srid, longitudeFirst, env); }
 		return fromCRS(null, env);
@@ -318,7 +319,31 @@ public class GisUtils {
 		}
 		return gis;
 	}
-
+// thai.truongminh@gmail.com --------------------------
+	public static GisUtils forSavingWithEPSG(final String srid, boolean longitudeFirst ) {
+		CoordinateReferenceSystem forcedSaveCRS = null;
+		if ( srid != null ) {
+			try {
+				forcedSaveCRS = CRS.decode("EPSG:" + Integer.decode(srid),longitudeFirst);
+			} catch (Exception e) {
+				System.out.println("Impossible to save in the CRS EPSG:" + srid + ". Falling back to the default.");
+				forcedSaveCRS = saveCRS;
+			}
+		} else {
+			forcedSaveCRS = saveCRS;
+		}
+		GisUtils gis = new GisUtils();
+		gis.initialCRS = forcedSaveCRS;
+		try {
+			gis.createTransformation(CRS.findMathTransform(gis.initialCRS, getTargetCRS()));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return gis;
+	}
+	
+//------------------------------------------------------	
 	public Envelope getProjectedEnvelope() {
 		return projectedEnv;
 	}
