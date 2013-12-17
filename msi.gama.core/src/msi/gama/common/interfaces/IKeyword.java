@@ -412,5 +412,6 @@ public interface IKeyword {
 	 */
 	public static final String OPEN = "open"; // TODO "launch", or "open", or "sysopen" ? This opens a file with an
 												// external progam
+	public static final String ALPHA = "alpha";
 
 }

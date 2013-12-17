@@ -19,14 +19,13 @@
 package msi.gaml.types;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 
 /**
@@ -45,20 +44,27 @@ public class GamaColorType extends GamaType<GamaColor> {
 
 	public static GamaColor staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		if ( obj instanceof GamaColor ) { return (GamaColor) obj; }
+		// param can contain the alpha value
+		if ( obj instanceof GamaColor ) {
+			if ( param instanceof Integer ) {
+				return new GamaColor((GamaColor) obj, (Integer) param);
+			} else if ( param instanceof Double ) {
+				return new GamaColor((GamaColor) obj, (Double) param);
+			} else {
+				return (GamaColor) obj;
+			}
+		}
 		if ( obj instanceof List ) {
 			List l = (List) obj;
-			if ( l.size() > 2 ) { return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
-				Cast.asInt(scope, l.get(2))); }
+			int size = l.size();
+			if ( size == 3 ) {
+				return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)), Cast.asInt(scope,
+					l.get(2)), 255);
+			} else if ( size >= 4 ) { return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
+				Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3))); }
 			/* To allow constructions like rgb [255,255,255] */
-		} else if ( obj instanceof Map ) {
-			Map m = (Map) obj;
-			final int r = Cast.asInt(scope, m.get("r"));
-			final int g = Cast.asInt(scope, m.get("g"));
-			final int b = Cast.asInt(scope, m.get("b"));
-			return new GamaColor(r, g, b);
 		}
-		if ( obj instanceof IMatrix ) { return staticCast(scope, ((IMatrix) obj).listValue(scope), param); }
+		if ( obj instanceof IContainer ) { return staticCast(scope, ((IContainer) obj).listValue(scope), param); }
 		if ( obj instanceof String ) {
 			String s = (String) obj;
 			GamaColor c = GamaColor.colors.get(s);
@@ -72,11 +78,18 @@ public class GamaColorType extends GamaType<GamaColor> {
 				}
 				GamaColor.colors.put(s, c);
 			}
-			return c;
+			if ( param == null ) {
+				return c;
+			} else if ( param instanceof Integer ) {
+				return new GamaColor(c, (Integer) param);
+			} else if ( param instanceof Double ) { return new GamaColor(c, (Double) param); }
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? new GamaColor(Color.black) : new GamaColor(Color.white); }
 		int i = Cast.asInt(scope, obj);
 		GamaColor gc = GamaColor.getInt((255 & 0xFF) << 24 | i & 0xFFFFFF << 0);
+		if ( param instanceof Integer ) {
+			return new GamaColor(gc, (Integer) param);
+		} else if ( param instanceof Double ) { return new GamaColor(gc, (Double) param); }
 		return gc;
 	}
 

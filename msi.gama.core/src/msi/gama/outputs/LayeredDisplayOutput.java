@@ -75,8 +75,6 @@ import com.vividsolutions.jts.geom.Envelope;
 @validator(InfoValidator.class)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
-	
-
 	public static class InfoValidator implements IDescriptionValidator {
 
 		/**
@@ -142,8 +140,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
-	private Color ambientLightColor = new GamaColor(125, 125, 125);
-	private Color diffuseLightColor = new GamaColor(125, 125, 125);
+	private Color ambientLightColor = new GamaColor(125, 125, 125, 255);
+	private Color diffuseLightColor = new GamaColor(125, 125, 125, 255);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
@@ -244,7 +242,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
+				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
 
 			if ( light.isConst() ) {
@@ -262,7 +260,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-				setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue));
+				setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
 
 			if ( light2.isConst() ) {
@@ -343,7 +341,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
+					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
 			}
 		}
@@ -355,7 +353,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-					setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue));
+					setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
 			}
 		}

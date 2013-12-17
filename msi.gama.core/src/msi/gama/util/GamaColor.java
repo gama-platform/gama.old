@@ -33,8 +33,8 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT), @var(name = IKeyword.COLOR_GREEN, type = IType.INT),
-	@var(name = IKeyword.COLOR_BLUE, type = IType.INT), @var(name = IKeyword.BRIGHTER, type = IType.COLOR),
-	@var(name = IKeyword.DARKER, type = IType.COLOR) })
+	@var(name = IKeyword.COLOR_BLUE, type = IType.INT), @var(name = IKeyword.ALPHA, type = IType.INT),
+	@var(name = IKeyword.BRIGHTER, type = IType.COLOR), @var(name = IKeyword.DARKER, type = IType.COLOR) })
 public class GamaColor extends Color implements IValue/* implements IContainer<Integer, Integer> */{
 
 	public final static Object[] array = new Object[] { "transparent", new int[] { 0, 0, 0, 0 }, "aliceblue",
@@ -134,8 +134,9 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 
 		final String name;
 
-		public NamedGamaColor(final String n, final int[] c) {
-			super(c[0], c[1], c[2]); // c[3] not considered yet
+		private NamedGamaColor(final String n, final int[] c) {
+			// c must be of length 4.
+			super(c[0], c[1], c[2], c[3]);
 			name = n;
 		}
 
@@ -160,23 +161,47 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 		return rgbComp < 0 ? 0 : rgbComp > 255 ? 255 : rgbComp;
 	}
 
+	// returns a value between 0 and 255 from a double between 0 and 1
+	private static int normalize(final double transp) {
+		return (int) (transp < 0 ? 0 : transp > 1 ? 255 : 255 * transp);
+	}
+
 	public GamaColor(final Color c) {
 		super(c.getRGB());
+	}
+
+	public GamaColor(final Color c, final int alpha) {
+		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
+	}
+
+	public GamaColor(final Color c, final double alpha) {
+		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
 	}
 
 	protected GamaColor(final int awtRGB) {
 		super(awtRGB);
 	}
 
-	public GamaColor(final int r, final int g, final int b) {
-		super(normalize(r), normalize(g), normalize(b));
+	// public GamaColor(final int r, final int g, final int b) {
+	// this(normalize(r), normalize(g), normalize(b), 255);
+	//
+	// }
+
+	public GamaColor(final int r, final int g, final int b, final int t) {
+		// t between 0 and 255
+		super(normalize(r), normalize(g), normalize(b), normalize(t));
+	}
+
+	public GamaColor(final int r, final int g, final int b, final double t) {
+		// t between 0 and 1
+		super(normalize(r), normalize(g), normalize(b), normalize(t));
 	}
 
 	/**
 	 * @param is
 	 */
 	public GamaColor(final int[] c) {
-		this(c[0], c[1], c[2]); // c[3] not considered yet
+		this(c[0], c[1], c[2], c[3]); // c[3] not considered yet
 	}
 
 	@Override
@@ -186,19 +211,13 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 
 	@Override
 	public String toGaml() {
-		return "rgb (" + red() + ", " + green() + ", " + blue() + ")";
+		return "rgb (" + red() + ", " + green() + ", " + blue() + "," + getAlpha() + ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) {
 		return String.valueOf(getRGB());
 	}
-
-	//
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.COLOR);
-	// }
 
 	@getter(IKeyword.COLOR_RED)
 	public Integer red() {
@@ -213,6 +232,11 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 	@getter(IKeyword.COLOR_GREEN)
 	public Integer green() {
 		return super.getGreen();
+	}
+
+	@getter(IKeyword.ALPHA)
+	public Integer alpha() {
+		return super.getAlpha();
 	}
 
 	@getter(IKeyword.BRIGHTER)

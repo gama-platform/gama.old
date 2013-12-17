@@ -61,7 +61,7 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 		dlg.setText("Choose a Color");
 		final RGB rgb = dlg.open();
 		if ( rgb != null ) {
-			modifyAndDisplayValue(new GamaColor(rgb.red, rgb.green, rgb.blue));
+			modifyAndDisplayValue(new GamaColor(rgb.red, rgb.green, rgb.blue, 255));
 		}
 	}
 
