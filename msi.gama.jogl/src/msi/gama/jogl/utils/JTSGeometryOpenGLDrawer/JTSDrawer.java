@@ -104,11 +104,10 @@ public class JTSDrawer {
 		final double z_fighting_value) {
 
 		gl.glNormal3d(0.0d, 0.0d, 1.0d);
-
 		if ( fill == true ) {
-
+           
 			if ( !colorpicking ) {
-				gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+				gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 			}
 
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
@@ -403,7 +402,7 @@ public class JTSDrawer {
 		final double height, final boolean drawPolygonContour, final boolean drawNormal) {
 
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 
 		double elevation = 0.0d;
@@ -461,7 +460,7 @@ public class JTSDrawer {
 
 				if ( !colorpicking ) {
 					gl.glColor4d((double) b.getRed() / 255, (double) b.getGreen() / 255, (double) b.getBlue() / 255,
-						alpha);
+						alpha * (double) c.getAlpha() / 255);
 				}
 
 				gl.glBegin(GL.GL_LINES);
@@ -482,7 +481,7 @@ public class JTSDrawer {
 
 				if ( !colorpicking ) {
 					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-						alpha);
+						alpha * (double) c.getAlpha() / 255);
 				}
 
 			}
@@ -506,7 +505,7 @@ public class JTSDrawer {
 
 		// FIXME: Why setting the color here?
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 
 		// for each line of a multiline, get each point coordinates.
@@ -526,7 +525,7 @@ public class JTSDrawer {
 		final double alpha) {
 
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 
 		int numPoints = line.getNumPoints();
@@ -570,7 +569,7 @@ public class JTSDrawer {
 		DrawLineString(l, z + height, 1.2f, c, alpha);
 
 		// Draw a quad
-		gl.glColor4d(c.getRed() / 255, c.getGreen() / 255, c.getBlue() / 255, alpha);
+		gl.glColor4d(c.getRed() / 255, c.getGreen() / 255, c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -592,7 +591,7 @@ public class JTSDrawer {
 
 		if ( drawPolygonContour == true ) {
 			if ( !colorpicking ) {
-				gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+				gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * (double) c.getAlpha() / 255);
 			}
 
 			for ( int j = 0; j < numPoints - 1; j++ ) {
@@ -621,7 +620,7 @@ public class JTSDrawer {
 	public void DrawPoint(final Point point, double z, final int numPoints, final double radius, final Color c,
 		final double alpha) {
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 
 		myGlu.gluTessBeginPolygon(tobj, null);
@@ -652,7 +651,7 @@ public class JTSDrawer {
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
 		if ( !colorpicking ) {
-			gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+			gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * (double) c.getAlpha() / 255);
 		}
 		gl.glLineWidth(1.1f);
 		gl.glBegin(GL.GL_LINES);
@@ -672,7 +671,6 @@ public class JTSDrawer {
 	}
 
 	public void DrawSphere(final Polygon p, final double radius, final Color c, final double alpha) {
-
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
 		if ( Double.isNaN(p.getCoordinate().z) == false ) {
@@ -681,7 +679,7 @@ public class JTSDrawer {
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 
 		GLUquadric quad = myGlu.gluNewQuadric();
@@ -705,7 +703,7 @@ public class JTSDrawer {
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 		myGlut.glutSolidCone(radius, radius, 10, 10);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
@@ -720,7 +718,7 @@ public class JTSDrawer {
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 		gl.glRotated(90, 1.0, 0.0, 0.0);
 		myGlut.glutSolidTeapot(radius);
@@ -736,12 +734,12 @@ public class JTSDrawer {
 
 		gl.glTranslated(0, 0, z);
 		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 		PyramidSkeleton(p,radius);
 		//border
 		if ( !colorpicking ) {
-			gl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255, (double) border.getBlue() / 255, alpha);
+			gl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255, (double) border.getBlue() / 255, alpha * (double) c.getAlpha() / 255);
 		}
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 		gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
