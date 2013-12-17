@@ -254,7 +254,7 @@ public class PostgresConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = scope.inverseTransform(geo);
+						geo = scope.inverseTransform(geo);  // have problem here 
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";

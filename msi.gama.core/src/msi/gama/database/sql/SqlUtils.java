@@ -176,14 +176,22 @@ public class SqlUtils {
 	 * 
 	 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry
 	 */
-	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
-		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+//	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
+//		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? super GamaList<Object>> dataset,
+			final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+
 		try {
 			GamaList<Object> response = new GamaList<Object>();
 			GamaList<Object> records_new = new GamaList<Object>();
-			GamaList<Object> columnNames = dataset.get(0);
-			GamaList<Object> columnTypes = dataset.get(1);
-			GamaList<Object> records = dataset.get(2);
+//			GamaList<Object> columnNames =  dataset.get(0);
+//			GamaList<Object> columnTypes = dataset.get(1);
+//			GamaList<Object> records =  dataset.get(2);
+			
+			GamaList<Object> columnNames = (GamaList<Object>) dataset.get(0);
+			GamaList<Object> columnTypes = (GamaList<Object>)dataset.get(1);
+			GamaList<Object> records = (GamaList<Object>) dataset.get(2);
+
 			int columnSize = columnNames.size();
 			int lineSize = records.size();
 
