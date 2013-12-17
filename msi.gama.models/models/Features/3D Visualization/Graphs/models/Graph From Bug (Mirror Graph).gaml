@@ -54,7 +54,7 @@ entities{
    	 aspect dynamic{
    	    shape <- line ([{self.source.location.x,self.source.location.y,self.source.location.z},{self.target.location.x,self.target.location.y,self.target.location.z}]);	
    	    float val <- 255.0 *  (shape.perimeter / distance);
-   	    color <- color hsb_to_rgb ([val,1.0,1.0]);
+   	    color <- hsb (val,1.0,1.0);
    	    draw shape + 0.1 color:color border: color ;
    	 }
    }	

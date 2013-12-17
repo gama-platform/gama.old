@@ -50,7 +50,7 @@ grid cell width: width height: height neighbours: 4 {
 	}
 
 	aspect hsbElevation {
-		draw shape color: color hsb_to_rgb ([(cellValue / 255), 1.0, 1.0]) depth: elevation border: color hsb_to_rgb ([(cellValue / 255), 1.0, 1.0]);
+		draw shape color:  hsb ((cellValue / 255), 1.0, 1.0) depth: elevation border:  hsb ((cellValue / 255), 1.0, 1.0);
 	}
 
 	aspect circle {

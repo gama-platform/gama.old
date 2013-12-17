@@ -121,7 +121,7 @@ entities {
 								
 		aspect coloredByClass{
 			loop i from:0 to: nbTypeOfClass-1{
-			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
+			    colorList[i]<- hsb (classVector[i]/nbValuePerClass,1.0,1.0);					
 			    posVector[i] <- {(location.x+i*110)*(1/zoomFactor),(location.y)*(1/zoomFactor),0};  
 			    draw sphere(nodeSize/zoomFactor) color: rgb(colorList[i]) at: point(posVector[i]) ;   
 			}

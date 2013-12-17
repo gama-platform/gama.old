@@ -47,7 +47,7 @@ entities {
         aspect base{
         	int heading1 <-rnd(360);
         	float hue <- heading1/360;
-			rgb  color <- color hsb_to_rgb ([hue,1.0,1.0]);
+			rgb  color <- hsb (hue,1.0,1.0);
         	draw triangle(1)  size: 1 rotate: heading1 color: color border:color depth:0.5;
         }
     }
