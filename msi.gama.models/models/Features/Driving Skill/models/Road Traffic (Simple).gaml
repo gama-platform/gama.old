@@ -21,7 +21,7 @@ global {
 		the_graph <- as_edge_graph(road);
 	}   
 	
-	reflex createPeople when: time mod 20 = 0 and time < 400{
+	reflex createPeople when: cycle mod 20 = 0 and cycle < 400{
 		roadsList <- (road as list);  
 		create people number: 1 { 
 			speed <-  (2.0 + 2 * length(people as list)) ;

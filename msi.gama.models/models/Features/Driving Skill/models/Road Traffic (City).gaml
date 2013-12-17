@@ -12,7 +12,7 @@ global {
 	file shape_file_bounds parameter: "Shapefile for the bounds:" category: "GIS" <- file("../includes/ManhattanBounds.shp") ;
 	file shape_file_buildings parameter: "Shapefile for the buildings:" category: "GIS" <- file("../includes/ManhattanBuildings.shp") ;
 	int nbGoalsAchived <- 0;
-	int day_time update: time mod 144 ;
+	int day_time update: cycle mod 144 ;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
 	int nb_people <- 500;
@@ -181,11 +181,11 @@ experiment traffic type: gui {
 			species road aspect: traffic_jam ;
 		}
 		display chart_display refresh_every: 10 {
-			chart name: "Traffic jam" type: series background: rgb("lightGray") size: {0.9, 0.4} position: {0.05, 0.05} {
+			chart name: "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
 				data name:"Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: rgb("green") ;
 				data name:"Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: rgb("red") ;
 			}
-			chart name: "People Objectif" type: pie background: rgb("lightGray") style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
+			chart name: "People Objectif" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
 				data name:"Working" value: length ((people as list) where (each.objective="working")) color: rgb("green") ;
 				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: rgb("blue") ;
 			}
