@@ -49,7 +49,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class SpeciesLayerStatement extends AgentLayerStatement {
 

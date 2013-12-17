@@ -75,8 +75,7 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) }, omissible = IKeyword.NAME)
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {

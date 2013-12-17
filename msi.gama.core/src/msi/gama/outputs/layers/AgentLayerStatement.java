@@ -51,7 +51,6 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FOCUS, type = IType.AGENT, optional = true),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 @validator(AgentLayerValidator.class)
 public class AgentLayerStatement extends AbstractLayerStatement {

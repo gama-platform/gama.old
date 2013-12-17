@@ -57,7 +57,6 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWASDEM, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
 

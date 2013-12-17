@@ -47,7 +47,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.STRING, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class TextLayerStatement extends AbstractLayerStatement {
 
