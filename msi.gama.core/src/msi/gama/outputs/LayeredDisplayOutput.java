@@ -372,6 +372,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			if ( cameraLook != null ) {
 				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
+		}	
+		
+		final IExpression agg = getFacet(IKeyword.AGGREGATED);
+		if ( agg != null ) {
+			setAggregated(Cast.asBool(getScope(), agg.value(getScope())));
 		}
 
 		// GuiUtils.debug("LayeredDisplayOutput.update");
