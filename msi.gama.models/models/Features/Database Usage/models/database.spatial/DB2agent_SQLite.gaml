@@ -7,22 +7,28 @@
 model DB2agentSQLite
 
 global {
+	file buildingsShp <- file('../../includes/building.shp');
+	file boundsShp <- file('../../includes/bounds.shp');
+	geometry shape <- envelope(boundsShp);
+	//geometry shape <- envelope(BOUNDS);		  	
+	
 	map<string,string> BOUNDS <- ["dbtype"::"sqlite",
 								  "database"::"../../includes/spatialite.db",
-								  "extension"::"../../includes/lib/libspatialite.3.dylib",
-								  "select"::"SELECT AsBinary(geom) FROM bounds;"				
+								 'srid'::'4326',
+								  "select"::"SELECT AsBinary(geom) as geom FROM buildings;"				
 				  				 ];
 	map<string,string> PARAMS <- ["dbtype"::"sqlite",
 								  "database"::"../../includes/spatialite.db",
-								  "extension"::"../../includes/lib/libspatialite.3.dylib"];
+								  'longitudeFirst'::false,
+								  'srid'::'4326'
+								  ];
 	
-	string QUERY <- "SELECT AsBinary(geom) AS geom FROM buildings ;";
-	geometry shape <- envelope(BOUNDS);		  	
+	string QUERY <- "SELECT name, type, ST_AsBinary(geom) as geom FROM buildings ;";
 	  	
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ "shape":: geometry("geom")];
+							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
 		 }
 	}
 }
@@ -31,14 +37,15 @@ entities {
 	species DB_accessor skills: [SQLSKILL];
 	
 	species buildings {
+		string type;
 		aspect default {
-			draw shape color: rgb("gray") ;
+			draw shape color: rgb('gray') ;
 		}	
 	}	
 }
 
+//environment bounds: BOUNDS ;
 experiment DB2agentSQLite type: gui {
-	/** Insert here the definition of the input and output of the model */
 	output {
 		display fullView {
 			species buildings aspect: default;

@@ -17,7 +17,8 @@ global {
 	map<string,string> PARAMS <- [
 				'dbtype'::'sqlite',
 				'database'::'../../includes/spatialite.db',
-				'extension'::'../../includes/lib/libspatialite.3.dylib'];
+				'srid'::'4326'
+				];
 
 	init {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
@@ -34,20 +35,21 @@ global {
 
 entities {   
 	species DB_Accessor skills: [SQLSKILL] ;   
+	
 	species bounds {
 		reflex printdata{
 			 write ' name : ' + (name) ;
 		}
 		
 		reflex savetosql{  // save data into SQLite
-			write "begin"+ name;
+			write "begin bound";
 			ask DB_Accessor {
 				do insert params: PARAMS into: "bounds"
 						  columns: ["geom"]
 						  values: [myself.shape]
 						  transform: true;   //Default is false. Transform Geometry GAMA type to  Geometry DB type
 			}
-		    write "finish "+ name;
+		    write "finish bound";
 		}		
 	}	
 	species buildings {
