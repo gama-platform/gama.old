@@ -126,25 +126,25 @@ public class Colors {
 	}
 
 	@operator(value = "rgb")
-	@doc(value = "rgb color", comment = "r=red, g=greeb, b=blue, a=alpha. Each between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
+	@doc(value = "rgb named color", comment = "Alpha must be between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb")
-	@doc(value = "rgb color", comment = "r=red, g=greeb, b=blue, a=alpha. The alpha between 0 and 1, the others between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
+	@doc(value = "rgb  named color", comment = "Alpha must be between 0 and 1", examples = "set color <- rgb (255,0,0);", see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb")
-	@doc(value = "rgb color", comment = "r=red, g=greeb, b=blue, a=alpha. Each between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
+	@doc(value = "rgb color", comment = "Alpha must be between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb")
-	@doc(value = "rgb color", comment = "r=red, g=greeb, b=blue, a=alpha. The last one between 0 and 1, the others between 0 and 255", examples = "set color <- rgb (255,0,0);", see = "hsb")
+	@doc(value = "rgb color", comment = "Alpha must be between 0 and 1", examples = "set color <- rgb (255,0,0);", see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
@@ -154,6 +154,29 @@ public class Colors {
 	public static GamaColor grayscale(final GamaColor c) {
 		int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
+	}
+
+	@operator(value = "blend")
+	@doc(value = "Blend two colors with an optional ratio (c1 * r + c2 * (1 - r)) between 0 and 1", comment = "", examples = "rgb blended <- blend(°red, °blue, 0.3)", see = "rgb,hsb")
+	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
+		double ir = 1.0 - r;
+		GamaColor color =
+			new GamaColor((int) (c1.getRed() * r + c2.getRed() * ir), (int) (c1.getGreen() * r + c2.getGreen() * ir),
+				(int) (c1.getBlue() * r + c2.getBlue() * ir), (int) (c1.getAlpha() * r + c2.getAlpha() * ir));
+		return color;
+	}
+
+	/**
+	 * Make an even blend between two colors.
+	 * 
+	 * @param c1 First color to blend.
+	 * @param c2 Second color to blend.
+	 * @return Blended color.
+	 */
+	@operator(value = "blend")
+	@doc(value = "Blend two colors with an optional ratio (c1 * r + c2 * (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", comment = "", examples = "rgb blended <- blend(°red, °blue)", see = "rgb,hsb")
+	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
+		return blend(color1, color2, 0.5);
 	}
 
 }

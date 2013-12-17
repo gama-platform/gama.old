@@ -46,10 +46,11 @@ public class GamaColorType extends GamaType<GamaColor> {
 		throws GamaRuntimeException {
 		// param can contain the alpha value
 		if ( obj instanceof GamaColor ) {
+			GamaColor col = (GamaColor) obj;
 			if ( param instanceof Integer ) {
-				return new GamaColor((GamaColor) obj, (Integer) param);
+				return new GamaColor(col.getRed(), col.getGreen(), col.getBlue(), (Integer) param);
 			} else if ( param instanceof Double ) {
-				return new GamaColor((GamaColor) obj, (Double) param);
+				return new GamaColor(col.getRed(), col.getGreen(), col.getBlue(), (Double) param);
 			} else {
 				return (GamaColor) obj;
 			}

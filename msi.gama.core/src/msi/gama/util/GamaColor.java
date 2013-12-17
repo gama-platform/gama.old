@@ -136,7 +136,7 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 
 		private NamedGamaColor(final String n, final int[] c) {
 			// c must be of length 4.
-			super(c[0], c[1], c[2], c[3]);
+			super(c[0], c[1], c[2], (double) c[3]);
 			name = n;
 		}
 
@@ -167,7 +167,7 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 	}
 
 	public GamaColor(final Color c) {
-		super(c.getRGB());
+		super(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 	}
 
 	public GamaColor(final Color c, final int alpha) {
@@ -189,6 +189,11 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 
 	public GamaColor(final int r, final int g, final int b, final int t) {
 		// t between 0 and 255
+		super(normalize(r), normalize(g), normalize(b), normalize(t));
+	}
+
+	public GamaColor(final double r, final double g, final double b, final double t) {
+		// t between 0 and 1
 		super(normalize(r), normalize(g), normalize(b), normalize(t));
 	}
 
