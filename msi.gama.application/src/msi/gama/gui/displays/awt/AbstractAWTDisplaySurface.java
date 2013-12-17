@@ -136,7 +136,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			public void process(final IScope scope) {
 				save(scope, getImage());
 			}
-		});
+		});	
 
 	}
 

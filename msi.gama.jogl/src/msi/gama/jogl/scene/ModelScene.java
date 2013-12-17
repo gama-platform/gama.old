@@ -56,9 +56,9 @@ public class ModelScene {
 	/**
 	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
-	public void wipe(final JOGLAWTGLRenderer renderer) {
+	public void wipe(final JOGLAWTGLRenderer renderer) {		
 		envGeometryInitialized = false;
-		if(!renderer.getAggregated()){
+		if(!renderer.getTraceDisplay() || (renderer.displaySurface.canBeUpdated() == false)){
 			geometries.clear(renderer);
 			collections.clear(renderer);
 			images.clear(renderer);

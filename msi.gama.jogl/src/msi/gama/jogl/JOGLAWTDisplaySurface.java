@@ -88,12 +88,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
 					s.wipe(renderer);
-
 					// FIXME: Why setting this at each run??
 					renderer.setTessellation(getOutput().getTesselation());
 					renderer.setStencil(getOutput().getStencil());
 					renderer.setShowFPS(getOutput().getShowFPS());
-					renderer.setAggregated(getOutput().getAggregated());
+					renderer.setTraceDisplay(getOutput().getTraceDisplay());
 					renderer.setDrawEnv(getOutput().getDrawEnv());
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setPolygonMode(getOutput().getPolygonMode());
@@ -133,7 +132,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setStencil(getOutput().getStencil());
 		renderer.setZFighting(getOutput().getZFighting());
 		renderer.setShowFPS(getOutput().getShowFPS());
-		renderer.setAggregated(getOutput().getAggregated());
+		renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());

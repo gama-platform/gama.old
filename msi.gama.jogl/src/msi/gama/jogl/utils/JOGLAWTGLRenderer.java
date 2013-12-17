@@ -492,11 +492,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return showFPS;
 	}
 
-	public void setAggregated(final boolean agg) {
+	public void setTraceDisplay(final boolean agg) {
 		this.aggregated = agg;
 	}
 
-	public boolean getAggregated() {
+	public boolean getTraceDisplay() {
 		return aggregated;
 	}
 

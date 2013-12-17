@@ -33,7 +33,6 @@ public interface IKeyword {
 	public static final String AGENT = "agent";
 	public static final String AGENTS = "agents";
 	public static final String AGGREGATION = "aggregation";
-	public static final String AGGREGATED = "aggregated";
 	public static final String ALL = "all";
 	public static final String AMBIENT_LIGHT = "ambient_light";
 	public static final String AMONG = "among";
@@ -342,6 +341,7 @@ public interface IKeyword {
 	public static final String TO = "to";
 	public static final String TOPOLOGY = "topology";
 	public static final String TORUS = "torus";
+	public static final String TRACE = "trace";
 	public static final String TRANSPARENCY = "transparency";
 	public static final String TRIANGULATION = "triangulation";
 	public static final String TRUE = "true";
