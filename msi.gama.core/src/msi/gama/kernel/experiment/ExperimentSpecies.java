@@ -20,11 +20,12 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -110,7 +111,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		parameters.clear();
 
 		// Should be put somewhere around here, but probably not here exactly.
-		GisUtils.forgetTargetCRS();
+		ProjectionFactory.reset();
 		super.dispose();
 	}
 

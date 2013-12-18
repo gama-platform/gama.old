@@ -2,7 +2,8 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.*;
@@ -57,28 +58,28 @@ public abstract class SqlConnection {
 	protected boolean loadExt = false;
 
 	// AD: Added to be sure that SQL connections use a correct projection when they load/save geometries
-	protected GisUtils gis = null;
+	protected IProjection gis = null;
 	// AD: Added to be sure to remember the parameters (which can contain other informations about GIS data
 	protected Map<String, Object> params;
 
-	public void setGis(final GisUtils gis) {
+	public void setGis(final Projection gis) {
 		this.gis = gis;
 	}
 
-	protected GisUtils getSavingGisProjection() {
+	protected IProjection getSavingGisProjection() {
 		String srid = (String) params.get("srid");
 		String crs = (String) params.get("crs");
-		//Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
-		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst"):true;
+		// Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
+		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 
 		if ( crs != null ) {
-			return GisUtils.forSavingWithWKT(crs);
+			return ProjectionFactory.forSavingWithWKT(crs);
 		} else if ( srid != null ) {
-			//return GisUtils.forSavingWithEPSG(srid);
-			return GisUtils.forSavingWithEPSG(srid,longitudeFirst);
-			//return GisUtils.forSavingWithEPSG(srid,false);
+			// return GisUtils.forSavingWithEPSG(srid);
+			return ProjectionFactory.forSavingWithEPSG(srid, longitudeFirst);
+			// return GisUtils.forSavingWithEPSG(srid,false);
 		} else {
-			return GisUtils.forSavingWithEPSG((Integer) null);
+			return ProjectionFactory.forSavingWithEPSG((Integer) null);
 		}
 
 	}
@@ -175,8 +176,8 @@ public abstract class SqlConnection {
 	/*
 	 * Make insert command string with columns and values
 	 */
-	protected abstract String getInsertString(GisUtils gis, Connection conn, String table_name, GamaList<Object> cols,
-		GamaList<Object> values) throws GamaRuntimeException;
+	protected abstract String getInsertString(IProjection gis, Connection conn, String table_name,
+		GamaList<Object> cols, GamaList<Object> values) throws GamaRuntimeException;
 
 	/*
 	 * Make insert command string for all columns with values
@@ -216,7 +217,7 @@ public abstract class SqlConnection {
 	public GamaList<? super GamaList<? super GamaList>> selectDB(final Connection conn, final String selectComm) {
 		ResultSet rs;
 		GamaList<? super GamaList<? super GamaList>> result = new GamaList();
-		//GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
+		// GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
 
 		// GamaList<Object> rowList = new GamaList<Object>();
 		GamaList repRequest = new GamaList();
@@ -240,13 +241,13 @@ public abstract class SqlConnection {
 			if ( columns.contains(GEOMETRYTYPE) ) {
 				if ( gis == null ) {
 					// we have at least one geometry type and we compute the envelope if no gis is present
-					//Envelope env = getBounds(repRequest);
+					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = GisUtils.fromParams(params, env);
+					gis = ProjectionFactory.fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
-				//repRequest = SqlUtils.transform(gis, repRequest, false);
+				// repRequest = SqlUtils.transform(gis, repRequest, false);
 				result = SqlUtils.transform(gis, result, false);
 			}
 
@@ -254,7 +255,7 @@ public abstract class SqlConnection {
 			 * AD
 			 */
 
-//			result.add(repRequest);
+			// result.add(repRequest);
 
 			if ( DEBUG ) {
 				GuiUtils.debug("list of column name:" + result.get(0));
@@ -379,12 +380,12 @@ public abstract class SqlConnection {
 	 * @throws Exception
 	 */
 
-//	public static Envelope getBounds(final GamaList<? extends GamaList<? super GamaList>> gamaList) {
+	// public static Envelope getBounds(final GamaList<? extends GamaList<? super GamaList>> gamaList) {
 	public static Envelope getBounds(final GamaList<? super GamaList<? super GamaList>> gamaList) {
-		
+
 		Envelope envelope;
 		// get Column name
-		GamaList colNames =(GamaList) gamaList.get(0);
+		GamaList colNames = (GamaList) gamaList.get(0);
 		// get Column type
 		GamaList colTypes = (GamaList) gamaList.get(1);
 		int index = colTypes.indexOf(GEOMETRYTYPE);
@@ -438,8 +439,8 @@ public abstract class SqlConnection {
 		try {
 			// Get Insert command
 			Statement st = conn.createStatement();
-			//String sqlStr = getInsertString(gis, conn, table_name, cols, values);
-			GisUtils saveGis=this.getSavingGisProjection(); 
+			// String sqlStr = getInsertString(gis, conn, table_name, cols, values);
+			IProjection saveGis = this.getSavingGisProjection();
 			String sqlStr = getInsertString(saveGis, conn, table_name, cols, values);
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
@@ -531,7 +532,7 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
-	public int insertDB(final GisUtils scope, final Connection conn, final String table_name,
+	public int insertDB(final Projection scope, final Connection conn, final String table_name,
 		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
 		this.transformed = transformed;
 		return insertDB(conn, table_name, values);
@@ -603,22 +604,22 @@ public abstract class SqlConnection {
 			result.add(columns);
 
 			repRequest = resultSet2GamaList(rs);
-			
+
 			result.add(repRequest);
-			
+
 			/**
 			 * AD: Added to transform Geometries
 			 */
 			if ( columns.contains(GEOMETRYTYPE) ) {
 				if ( gis == null ) {
 					// we have at least one geometry type and we compute the envelope if no gis is present
-					//Envelope env = getBounds(repRequest);
+					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = GisUtils.fromParams(params, env);
+					gis = ProjectionFactory.fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
-				//repRequest = SqlUtils.transform(gis, repRequest, false);
+				// repRequest = SqlUtils.transform(gis, repRequest, false);
 				result = SqlUtils.transform(gis, result, false);
 			}
 
@@ -626,7 +627,7 @@ public abstract class SqlConnection {
 			 * AD
 			 */
 
-//			result.add(repRequest);
+			// result.add(repRequest);
 
 			if ( DEBUG ) {
 				GuiUtils.debug("list of column name:" + result.get(0));

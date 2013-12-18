@@ -21,6 +21,7 @@ package msi.gama.common.util;
 import java.util.*;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -518,7 +519,7 @@ public class GeometryUtils {
 		// get data
 		final GamaList gamaList = sqlConn.selectDB((String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
-		GisUtils gis = GisUtils.fromParams(params, env);
+		IProjection gis = ProjectionFactory.fromParams(params, env);
 		env = gis.getProjectedEnvelope();
 		return env;
 		// ----------------------------------------------------------------------------------------------------

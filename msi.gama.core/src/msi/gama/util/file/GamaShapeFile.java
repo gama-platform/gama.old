@@ -113,7 +113,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getExistingCRS() {
+	protected CoordinateReferenceSystem getOwnCRS() {
 		File file = getFile();
 		ShapefileDataStore store = null;
 		try {

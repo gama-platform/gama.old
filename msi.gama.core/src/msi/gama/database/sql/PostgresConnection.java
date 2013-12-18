@@ -2,7 +2,8 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
@@ -195,7 +196,7 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final GisUtils scope, final Connection conn, final String table_name,
+	protected String getInsertString(final IProjection scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
@@ -254,7 +255,7 @@ public class PostgresConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = scope.inverseTransform(geo);  // have problem here 
+						geo = scope.inverseTransform(geo); // have problem here
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";

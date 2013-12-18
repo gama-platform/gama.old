@@ -3,7 +3,8 @@ package msi.gama.database.sql;
 import java.io.*;
 import java.util.Map;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -176,20 +177,20 @@ public class SqlUtils {
 	 * 
 	 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry
 	 */
-//	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
-//		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
-	public static GamaList<Object> transform(final GisUtils gis, final GamaList<? super GamaList<Object>> dataset,
-			final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+	// public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
+	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
+	public static GamaList<Object> transform(final IProjection gis, final GamaList<? super GamaList<Object>> dataset,
+		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 
 		try {
 			GamaList<Object> response = new GamaList<Object>();
 			GamaList<Object> records_new = new GamaList<Object>();
-//			GamaList<Object> columnNames =  dataset.get(0);
-//			GamaList<Object> columnTypes = dataset.get(1);
-//			GamaList<Object> records =  dataset.get(2);
-			
+			// GamaList<Object> columnNames = dataset.get(0);
+			// GamaList<Object> columnTypes = dataset.get(1);
+			// GamaList<Object> records = dataset.get(2);
+
 			GamaList<Object> columnNames = (GamaList<Object>) dataset.get(0);
-			GamaList<Object> columnTypes = (GamaList<Object>)dataset.get(1);
+			GamaList<Object> columnTypes = (GamaList<Object>) dataset.get(1);
 			GamaList<Object> records = (GamaList<Object>) dataset.get(2);
 
 			int columnSize = columnNames.size();

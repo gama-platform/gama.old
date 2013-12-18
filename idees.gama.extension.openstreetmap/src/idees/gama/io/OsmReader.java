@@ -3,10 +3,10 @@ package idees.gama.io;
 import idees.gama.agents.*;
 import java.io.*;
 import java.util.*;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.types.GamaGeometryType;
@@ -25,9 +25,9 @@ public class OsmReader {
 	Set<Long> intersectionNodes;
 	Map<GamaPoint, Map> signals;
 	Map<GamaPoint, OsmNodeAgent> nodes_created;
-	GisUtils gis;
+	IProjection gis;
 
-	public OsmReader(final GisUtils gis) {
+	public OsmReader(final IProjection gis) {
 		ways = new GamaList<Way>();
 		nodesPt = new GamaMap<Long, GamaPoint>();
 		nodes = new GamaList<Node>();

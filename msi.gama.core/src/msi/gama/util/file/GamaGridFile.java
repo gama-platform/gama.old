@@ -3,7 +3,6 @@ package msi.gama.util.file;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -73,14 +72,14 @@ public class GamaGridFile extends GamaGisFile {
 			ArcGridReader store = null;
 			try {
 				// Necessary to compute it here, because it needs to be passed to the Hints
-				CoordinateReferenceSystem crs = computeProjection(null);
+				CoordinateReferenceSystem crs = getExistingCRS();
 				store =
 					new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false,
 						Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				Envelope env =
 					new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
-				GamaGridFile.this.gis = GisUtils.fromCRS(crs, env);
+				computeProjection(env);
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
 				final double cellHeight = genv.getSpan(1) / numRows;
@@ -186,7 +185,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getExistingCRS() {
+	protected CoordinateReferenceSystem getOwnCRS() {
 		File source = getFile();
 		// check to see if there is a projection file
 		// getting name for the prj file

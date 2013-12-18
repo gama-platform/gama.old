@@ -21,9 +21,9 @@ package msi.gaml.statements;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -226,7 +226,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 		final Integer code = epsgCode == null ? null : Cast.asInt(scope, epsgCode.value(scope));
-		final GisUtils gis = GisUtils.forSavingWithEPSG(code);
+		final IProjection gis = ProjectionFactory.forSavingWithEPSG(code);
 
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
@@ -263,7 +263,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		writePRJ(scope, path, gis);
 	}
 
-	private void writePRJ(final IScope scope, final String path, final GisUtils gis) {
+	private void writePRJ(final IScope scope, final String path, final IProjection gis) {
 		final CoordinateReferenceSystem crs = gis.getInitialCRS();
 		if ( crs != null ) {
 			try {

@@ -2,7 +2,8 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import org.sqlite.SQLiteConfig;
@@ -217,7 +218,7 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final GisUtils scope, final Connection conn, final String table_name,
+	protected String getInsertString(final IProjection scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();

@@ -4,9 +4,8 @@
  */
 package msi.gama.util.file;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -23,7 +22,7 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 
 	// The code to force reading the GIS data as already projected
 	public static final int ALREADY_PROJECTED_CODE = 0;
-	protected GisUtils gis;
+	protected IProjection gis;
 	protected Integer initialCRSCode = null;
 
 	// Faire les tests sur ALREADY_PROJECTED ET LE PASSER AUSSI A GIS UTILS ???
@@ -32,26 +31,43 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 	 * Returns the CRS defined with this file (in a ".prj" file or elsewhere)
 	 * @return
 	 */
-	protected abstract CoordinateReferenceSystem getExistingCRS();
+	protected CoordinateReferenceSystem getExistingCRS() {
+		if ( initialCRSCode != null ) { return ProjectionFactory.computeCRS(initialCRSCode); }
+		CoordinateReferenceSystem crs = getOwnCRS();
+		if ( crs == null ) {
+			crs = ProjectionFactory.getDefaultInitialCRS();
+		}
+		return crs;
+	}
 
-	protected CoordinateReferenceSystem computeProjection(final Envelope env) {
-		// If we have a forced EPSG code for the initial CRS, we use it (even if the .prj file is present).
-		if ( initialCRSCode != null ) {
-			gis = GisUtils.fromEPSG(initialCRSCode, env);
-			return gis.getInitialCRS();
-		}
+	/**
+	 * @return
+	 */
+	protected abstract CoordinateReferenceSystem getOwnCRS();
+
+	protected void computeProjection(final Envelope env) {
 		CoordinateReferenceSystem crs = getExistingCRS();
-		// If we have a .prj file or an existing CRS inside the project, we use it
-		if ( crs != null ) {
-			gis = GisUtils.fromCRS(crs, env);
-			// If the user does not consider the data to be projected, take the default value in the
-			// preferences else pass the code for already projected data to GisUtils
-		} else if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
-			gis = GisUtils.fromEPSG(GamaPreferences.LIB_INITIAL_CRS.getValue(), env);
-		} else {
-			gis = GisUtils.fromEPSG(ALREADY_PROJECTED_CODE, env);
-		}
-		return gis.getInitialCRS();
+		gis = ProjectionFactory.fromCRS(crs, env);
+		// return gis.getInitialCRS();
+
+		//
+		// // If we have a forced EPSG code for the initial CRS, we use it (even if the .prj file is present).
+		// if ( initialCRSCode != null ) {
+		// gis = ProjectionFactory.fromEPSG(initialCRSCode, env);
+		// return gis.getInitialCRS();
+		// }
+		// CoordinateReferenceSystem crs = getExistingCRS();
+		// // If we have a .prj file or an existing CRS inside the project, we use it
+		// if ( crs != null ) {
+		// gis = ProjectionFactory.fromCRS(crs, env);
+		// // If the user does not consider the data to be projected, take the default value in the
+		// // preferences else pass the code for already projected data to GisUtils
+		// } else if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
+		// gis = ProjectionFactory.fromEPSG(GamaPreferences.LIB_INITIAL_CRS.getValue(), env);
+		// } else {
+		// gis = ProjectionFactory.fromEPSG(ALREADY_PROJECTED_CODE, env);
+		// }
+		// return gis.getInitialCRS();
 	}
 
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code) {
@@ -68,7 +84,7 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 		// Not yet done for GIS files
 	}
 
-	public GisUtils getGis(final IScope scope) {
+	public IProjection getGis(final IScope scope) {
 		if ( gis == null ) {
 			fillBuffer(scope);
 		}

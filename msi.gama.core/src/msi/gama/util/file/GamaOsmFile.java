@@ -331,7 +331,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @see msi.gama.util.file.GamaGisFile#getExistingCRS()
 	 */
 	@Override
-	protected CoordinateReferenceSystem getExistingCRS() {
+	protected CoordinateReferenceSystem getOwnCRS() {
 		// Is it always true ?
 		return DefaultGeographicCRS.WGS84;
 	}
