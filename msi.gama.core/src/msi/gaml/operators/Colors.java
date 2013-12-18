@@ -89,7 +89,7 @@ public class Colors {
 	// see = "")
 	// public static GamaColor hsbToRgb(final GamaColor c, final GamaList<Double> list) {
 	// Color c1 = Color.getHSBColor(list.get(0).floatValue(), list.get(1).floatValue(), list.get(2).floatValue());
-	// return new GamaColor(c1.getRed(), c1.getGreen(), c1.getBlue());
+	// return new GamaColor(c1.getRed(), c1.getGreen(), c1.getBlue(), 255);
 	// }
 
 	@operator(value = "hsb")
@@ -166,13 +166,6 @@ public class Colors {
 		return color;
 	}
 
-	/**
-	 * Make an even blend between two colors.
-	 * 
-	 * @param c1 First color to blend.
-	 * @param c2 Second color to blend.
-	 * @return Blended color.
-	 */
 	@operator(value = "blend")
 	@doc(value = "Blend two colors with an optional ratio (c1 * r + c2 * (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", comment = "", examples = "rgb blended <- blend(°red, °blue)", see = "rgb,hsb")
 	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
