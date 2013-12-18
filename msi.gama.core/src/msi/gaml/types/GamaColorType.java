@@ -67,7 +67,7 @@ public class GamaColorType extends GamaType<GamaColor> {
 		}
 		if ( obj instanceof IContainer ) { return staticCast(scope, ((IContainer) obj).listValue(scope), param); }
 		if ( obj instanceof String ) {
-			String s = (String) obj;
+			String s = ((String) obj).toLowerCase();
 			GamaColor c = GamaColor.colors.get(s);
 			if ( c == null ) {
 				try {
