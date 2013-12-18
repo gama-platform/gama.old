@@ -49,6 +49,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envHeight;
 	private IZoomListener zoomListener;
 	protected DisplaySurfaceMenu menuManager;
+	public boolean outputReloaded = false;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -65,6 +66,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+		outputReloaded = true;
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;

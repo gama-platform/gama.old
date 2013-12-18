@@ -56,9 +56,10 @@ public class ModelScene {
 	/**
 	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
-	public void wipe(final JOGLAWTGLRenderer renderer) {		
+	public void wipe(final JOGLAWTGLRenderer renderer) {
 		envGeometryInitialized = false;
-		if(!renderer.getTraceDisplay() || (renderer.displaySurface.canBeUpdated() == false)){
+		//The display is cleared every iteration if not in a trace display mode or when reloading a simulation
+		if(!renderer.getTraceDisplay() || (renderer.displaySurface.outputReloaded == true)){ 
 			geometries.clear(renderer);
 			collections.clear(renderer);
 			images.clear(renderer);
@@ -74,15 +75,15 @@ public class ModelScene {
 					it.remove();
 				}
 			}
+			renderer.displaySurface.outputReloaded = false;
 		}
 		else{
 			geometries.openGLListIndex =null;
 			collections.openGLListIndex =null;
 			images.openGLListIndex =null;
 			dems.openGLListIndex =null;
-			strings.openGLListIndex =null;
+			strings.openGLListIndex =null;	
 		}
-
 	}
 
 	public void draw(final JOGLAWTGLRenderer renderer, final boolean picking, final boolean drawEnv) {
