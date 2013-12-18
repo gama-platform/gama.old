@@ -1,9 +1,9 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- file('../includes/building.shp');
-	file shape_file_roads <- file('../includes/road.shp');
-	file shape_file_bounds <- file('../includes/bounds.shp');
+	file shape_file_buildings <- shapefile('../includes/building.shp', 0);
+	file shape_file_roads <- shapefile('../includes/road.shp', 0);
+	file shape_file_bounds <- shapefile('../includes/bounds.shp', 0);
 	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
 	int day_time update: time mod 144;
