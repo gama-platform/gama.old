@@ -141,17 +141,21 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
-		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
-			species == null ? "custom" + count++ : species.getName(), IKeyword.VALUE,
-			species == null ? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE)).validate());
+		this(DescriptionFactory.create(
+			IKeyword.INSPECT,
+			GAML.getExperimentContext(),
+			IKeyword.NAME,
+			species == null ? StringUtils.toGamlString("Custom " + count++) : StringUtils.toGamlString(species
+				.getName()), IKeyword.VALUE, species == null ? "nil" : species.getName(), IKeyword.TYPE,
+			types.get(INSPECT_TABLE)).validate());
 		this.rootAgent = rootAgent;
 	}
 
 	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
-			"custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE, types.get(INSPECT_TABLE))
-			.validate());
+			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			types.get(INSPECT_TABLE)).validate());
 		lastValue = agents;
 		this.rootAgent = agent;
 	}
@@ -159,8 +163,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
-			"custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE, types.get(INSPECT_TABLE))
-			.validate());
+			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			types.get(INSPECT_TABLE)).validate());
 		// lastValue = agents;
 		this.rootAgent = agent;
 	}
