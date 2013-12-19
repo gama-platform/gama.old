@@ -160,7 +160,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 		}
 		try {
-			ISpecies species = ((IPopulation) agents).getSpecies();
+			ISpecies species = null;
+			if ( agents instanceof IPopulation ) {
+				species = ((IPopulation) agents).getSpecies();
+			} else {
+				species = agents.get(0).getSpecies();
+			}
 			for ( final String e : attributes.keySet() ) {
 				String var = attributes.get(e);
 				specs.append(',').append(e).append(':').append(type(species.getVar(var).getType()));

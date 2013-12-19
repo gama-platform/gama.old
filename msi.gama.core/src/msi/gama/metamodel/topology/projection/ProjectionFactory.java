@@ -136,7 +136,7 @@ public class ProjectionFactory {
 		if ( crs == null ) {
 			crs = getSaveCRS();
 		}
-		Projection gis = new Projection();
+		Projection gis = new Projection(world, this);
 		gis.initialCRS = crs;
 		gis.computeProjection();
 		return gis;

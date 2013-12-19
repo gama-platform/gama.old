@@ -28,13 +28,16 @@ import com.vividsolutions.jts.geom.*;
 
 public class Projection implements IProjection {
 
-	private ProjectionFactory factory;
+	private final ProjectionFactory factory;
 	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
 	CoordinateReferenceSystem initialCRS;
 	Envelope projectedEnv;
-	IProjection referenceProjection;
+	final IProjection referenceProjection;
 
-	Projection() {}
+	Projection(final IProjection world, final ProjectionFactory fact) {
+		referenceProjection = world;
+		factory = fact;
+	}
 
 	Projection(final IProjection world, final CoordinateReferenceSystem crs, final Envelope env,
 		final ProjectionFactory fact) {
