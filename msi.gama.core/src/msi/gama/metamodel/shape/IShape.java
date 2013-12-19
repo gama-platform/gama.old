@@ -23,6 +23,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.*;
 
@@ -40,6 +41,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
+	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();;
 
 	public abstract IAgent getAgent();
 

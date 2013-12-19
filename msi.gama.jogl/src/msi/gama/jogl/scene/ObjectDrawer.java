@@ -87,7 +87,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				}
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-						geometry.fill, geometry.border, geometry.angle, geometry.height, geometry.rounded,
+						geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, geometry.angle, geometry.height, geometry.rounded,
 						geometry.getZ_fighting_id());
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 	
@@ -110,7 +110,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					else {
 						if ( geometry.height > 0 ) {
 							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-								geometry.fill, geometry.height, geometry.angle, true, geometry.border,
+								geometry.fill, geometry.height, geometry.angle, true, geometry.border,geometry.isTextured,geometry.textureFileNames,
 								geometry.rounded, geometry.getZ_fighting_id());
 						} else {
 							if ( renderer.getStencil() ) {
@@ -119,7 +119,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 								renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
 							}
 							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-								geometry.fill, geometry.border, geometry.isTextured, geometry.angle, true,
+								geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, geometry.angle, true,
 								geometry.rounded, geometry.getZ_fighting_id());
 						}
 					}
@@ -201,18 +201,18 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			}
 
 			renderer.gl.glBegin(GL_QUADS);
-			// bottom-left of the texture and quad
-			renderer.gl.glTexCoord2f(textureLeft, textureBottom);
-			renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
-			// bottom-right of the texture and quad
-			renderer.gl.glTexCoord2f(textureRight, textureBottom);
-			renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
-			// top-right of the texture and quad
-			renderer.gl.glTexCoord2f(textureRight, textureTop);
-			renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
-			// top-left of the texture and quad
-			renderer.gl.glTexCoord2f(textureLeft, textureTop);
-			renderer.gl.glVertex3d(img.x, -img.y, img.z);
+				// bottom-left of the texture and quad
+				renderer.gl.glTexCoord2f(textureLeft, textureBottom);
+				renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+				// bottom-right of the texture and quad
+				renderer.gl.glTexCoord2f(textureRight, textureBottom);
+				renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+				// top-right of the texture and quad
+				renderer.gl.glTexCoord2f(textureRight, textureTop);
+				renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
+				// top-left of the texture and quad
+				renderer.gl.glTexCoord2f(textureLeft, textureTop);
+				renderer.gl.glVertex3d(img.x, -img.y, img.z);
 			renderer.gl.glEnd();
 
 			if ( img.angle != 0 ) {
@@ -541,55 +541,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			this.initialized = initialized;
 		}
 
-	}
-
-	/**
-	 * 
-	 * The class CollectionDrawer.
-	 * 
-	 * @author drogoul
-	 * @since 4 mai 2013
-	 * 
-	 */
-	public static class CollectionDrawer extends ObjectDrawer<CollectionObject> {
-
-		JTSDrawer jtsDrawer;
-
-		public CollectionDrawer(final JOGLAWTGLRenderer r) {
-			super(r);
-			jtsDrawer = new JTSDrawer(r);
-		}
-
-		@Override
-		public void _draw(final CollectionObject collection) {
-			// Draw Shape file so need to inverse the y composante.
-			jtsDrawer.yFlag = 1;
-			renderer.gl.glPushMatrix();
-			renderer.gl.glTranslated(-collection.collection.getBounds().centre().x, -collection.collection.getBounds()
-				.centre().y, 0.0d);
-			SimpleFeatureIterator iterator = collection.collection.features();
-			while (iterator.hasNext()) {
-				SimpleFeature feature = iterator.next();
-				Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
-
-				if ( sourceGeometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, collection.getColor(), 1.0d, true, null,
-						0, 0.0d, false, 0.0);
-				} else if ( sourceGeometry.getGeometryType() == "Polygon" ) {
-					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, collection.getColor(), 1.0d, true, null, false, 0,
-						true, false, 0.0);
-				} else if ( sourceGeometry.getGeometryType() == "MultiLineString" ) {
-					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.getColor(), 1.0d,
-						0.0d);
-				} else if ( sourceGeometry.getGeometryType() == "LineString" ) {
-					jtsDrawer.DrawLineString((LineString) sourceGeometry, 0.0d, 1.0d, collection.getColor(), 1.0d);
-				} else if ( sourceGeometry.getGeometryType() == "Point" ) {
-					jtsDrawer.DrawPoint((Point) sourceGeometry, 0.0d, 10, 10, collection.getColor(), 1.0d);
-				}
-			}
-			renderer.gl.glPopMatrix();
-			jtsDrawer.yFlag = -1;
-		}
 	}
 
 	/**

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.media.opengl.GL;
-import msi.gama.jogl.scene.ObjectDrawer.CollectionDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.ImageDrawer;
@@ -14,6 +13,7 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.IList;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import com.vividsolutions.jts.geom.*;
@@ -33,7 +33,6 @@ public class ModelScene {
 	private final SceneObjects<GeometryObject> staticObjects;
 	private final SceneObjects<ImageObject> images;
 	private final SceneObjects<DEMObject> dems;
-	private final SceneObjects<CollectionObject> collections;
 	private final SceneObjects<StringObject> strings;
 	private final Map<BufferedImage, MyTexture> textures = new LinkedHashMap();
 	final GamaPoint offset = new GamaPoint(0, 0, 0);
@@ -44,7 +43,6 @@ public class ModelScene {
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
 		geometries = new SceneObjects(new GeometryDrawer(renderer), true, false);
-		collections = new SceneObjects(new CollectionDrawer(renderer), true, false);
 		strings = new SceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
 		images = new SceneObjects(new ImageDrawer(renderer), true, false);
 		dems = new SceneObjects(new DEMDrawer(renderer), true, false);
@@ -61,7 +59,6 @@ public class ModelScene {
 		//The display is cleared every iteration if not in a trace display mode or when reloading a simulation
 		if(!renderer.getTraceDisplay() || (renderer.displaySurface.outputReloaded == true)){ 
 			geometries.clear(renderer);
-			collections.clear(renderer);
 			images.clear(renderer);
 			dems.clear(renderer);
 			strings.clear(renderer);
@@ -79,7 +76,6 @@ public class ModelScene {
 		}
 		else{
 			geometries.openGLListIndex =null;
-			collections.openGLListIndex =null;
 			images.openGLListIndex =null;
 			dems.openGLListIndex =null;
 			strings.openGLListIndex =null;	
@@ -98,10 +94,6 @@ public class ModelScene {
 		images.draw(picking, renderer);
 		dems.draw(picking, renderer);
 		strings.draw(picking, renderer);
-	}
-
-	public void addCollections(final SimpleFeatureCollection collection, final Color color) {
-		collections.add(new CollectionObject(collection, color));
 	}
 
 	public void addString(final String string, final double x, final double y, final double z, final Integer size,
@@ -134,13 +126,13 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
-		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
+		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured, final IList<String> textureFileNames,
 		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
 		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha,
 		final String popName) {
 
 		final GeometryObject curJTSGeometry =
-			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
+			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,textureFileNames,
 				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);
 		if ( currentLayerIsStatic ) {
 			if ( !staticObjectsAreLocked ) {
@@ -208,7 +200,7 @@ public class ModelScene {
 		}
 		final Color c = new Color(225, 225, 225);
 		if ( !envGeometryInitialized ) {
-			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, 0, 0, offset, scale, false,
+			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, null, 0, 0, offset, scale, false,
 				"env", false, 1d, "environment");
 			envGeometryInitialized = true;
 		}

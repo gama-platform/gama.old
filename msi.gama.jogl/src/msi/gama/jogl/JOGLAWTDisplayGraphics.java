@@ -32,6 +32,8 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
@@ -95,17 +97,21 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		final Color color = highlight ? highlightColor : c;
 		Double depth = 0d;
+		IList<String> textures = new GamaList<String>(); ;
 		String type = "none";
 		// Add a geometry with a depth and type coming from Attributes
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 			type = "JTS";
 		}
+		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
+			textures = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
+		}
 		if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
 			type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
 		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
-			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
+			border, textures.isEmpty() ? false: true, textures, angle,  depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
 			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
 		return rect;
 	}
@@ -191,7 +197,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
 					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false,null, 0, 0,
 				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
 		}
 
@@ -200,7 +206,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
 					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,0, 0,
 				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
 		}
 	}
@@ -217,7 +223,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				final Geometry g =
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX*wRatio, stepY*hRatio)).getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
-					false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
+					false, null, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
 					getCurrentAlpha(), popName);
 			}
 		}

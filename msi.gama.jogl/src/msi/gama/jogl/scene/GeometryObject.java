@@ -4,6 +4,8 @@ import java.awt.Color;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.IList;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
@@ -15,13 +17,14 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public String type;
 	public Color border;
 	public Boolean isTextured;
+	public IList<String> textureFileNames;
 	public int angle;
 	public double height;
 	public boolean rounded;
 	public String populationName;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
-		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
+		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,final IList<String> textureFileNames,
 		final int angle, final double height, final GamaPoint offset, final GamaPoint scale, final boolean rounded,
 		final String type, final String populationName) {
 		super(color, offset, scale, alpha);
@@ -52,7 +55,8 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		this.type = type;
 		this.fill = fill;
 		this.border = border;
-		this.isTextured = false;
+		this.isTextured = isTextured;
+		this.textureFileNames = textureFileNames;
 		this.angle = angle;
 		this.height = height;
 		this.rounded = rounded;

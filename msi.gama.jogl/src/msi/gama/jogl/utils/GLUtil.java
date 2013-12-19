@@ -766,8 +766,11 @@ public class GLUtil {
 		for ( int i = 0; i < texIDs.length; i++ ) {
 			gl.glBindTexture(GL.GL_TEXTURE_2D, texIDs[i]);
 
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+			
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE, GL.GL_MODULATE);
 
 			if ( !gluMipMaps ) {

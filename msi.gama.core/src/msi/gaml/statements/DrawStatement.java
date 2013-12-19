@@ -36,6 +36,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
+import msi.gama.util.GamaList;
 import msi.gama.util.file.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -52,6 +53,7 @@ import msi.gaml.types.*;
 	@facet(name = SHAPE, type = IType.NONE, optional = true),
 	@facet(name = TEXT, type = IType.STRING, optional = true),
 	@facet(name = IMAGE, type = IType.STRING, optional = true),
+	@facet(name = TEXTURE, type = {IType.STRING, IType.LIST}, optional = true),
 	@facet(name = EMPTY, type = IType.BOOL, optional = true),
 	@facet(name = BORDER, type = IType.COLOR, optional = true),
 	@facet(name = ROUNDED, type = IType.BOOL, optional = true), @facet(name = AT, type = IType.POINT, optional = true),
@@ -196,7 +198,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, loc, bord, rot, depth, empty, rounded;
+		IExpression size, loc, bord, rot, depth, empty, rounded, textures;
 
 		Color constCol;
 		private final Color constBord;
@@ -223,6 +225,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
 			rounded = getFacet(ROUNDED);
+			textures = getFacet(TEXTURE);
+		
 
 			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
@@ -266,6 +270,12 @@ public class DrawStatement extends AbstractStatementSequence {
 			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope.getAgentScope()
 				.getLocation() : constLoc;
 		}
+		
+		public Object getTexture(final IScope scope) throws GamaRuntimeException {
+			Object o = textures.value(scope);
+			if ( o instanceof GamaList ) { return Cast.asList(scope, o); }
+			return Cast.asString(scope, o);
+		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
 
@@ -284,11 +294,22 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
+
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) { return null; }
 			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
+			}
+			if ( textures != null ) {
+				GamaList x = new GamaList();
+				Object obj = getTexture(scope);
+				if ( obj instanceof GamaList ) {
+					x = (GamaList) obj;
+				} else {
+					x.add(obj);
+				}
+				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, x);
 			}
 			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRotation(scope),
 				getRounded(scope));

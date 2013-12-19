@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
@@ -411,7 +413,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
 		curTexture.isDynamic = isDynamic;
-		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
+		//GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
 		this.getContext().release();
 		return curTexture;
 	}
