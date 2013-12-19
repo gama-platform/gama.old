@@ -76,6 +76,7 @@ public class SimulationAgent extends GamlAgent {
 		clock = new SimulationClock();
 		scope = obtainNewScope();
 		scheduler = new AgentScheduler(scope, pop);
+
 	}
 
 	@Override

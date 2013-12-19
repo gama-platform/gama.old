@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import org.sqlite.SQLiteConfig;
@@ -218,7 +219,7 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final IProjection scope, final Connection conn, final String table_name,
+	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
@@ -251,7 +252,7 @@ public class SqliteConnection extends SqlConnection {
 			// ResultSetMetaData rsmd = rs.getMetaData();
 			// GamaList<Object> col_Names = getColumnName(rsmd);
 			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(conn, table_name, cols);
+			GamaList<Object> col_Types = getColumnTypeName(scope, conn, table_name, cols);
 
 			if ( DEBUG ) {
 				// GuiUtils.debug("list of column Name:" + col_Names);
@@ -260,6 +261,7 @@ public class SqliteConnection extends SqlConnection {
 			// Insert command
 			// set parameter value
 			valueStr = "";
+			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
@@ -279,7 +281,7 @@ public class SqliteConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = scope.inverseTransform(geo);
+						geo = saveGis.inverseTransform(geo);
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
@@ -321,8 +323,8 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final Connection conn, final String table_name, final GamaList<Object> values)
-		throws GamaRuntimeException {
+	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
+		final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -344,7 +346,7 @@ public class SqliteConnection extends SqlConnection {
 			ResultSetMetaData rsmd = rs.getMetaData();
 			GamaList<Object> col_Names = getColumnName(rsmd);
 			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(conn, table_name, col_Names);
+			GamaList<Object> col_Types = getColumnTypeName(scope, conn, table_name, col_Names);
 
 			int col_no = col_Names.size();
 			// Check size of parameters
@@ -377,7 +379,7 @@ public class SqliteConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = getSavingGisProjection().inverseTransform(geo);
+						geo = getSavingGisProjection(scope).inverseTransform(geo);
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
@@ -424,12 +426,12 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	// 18/July/2013
-	private GamaList<Object> getColumnTypeName(final Connection conn, final String tableName,
+	private GamaList<Object> getColumnTypeName(final IScope scope, final Connection conn, final String tableName,
 		final GamaList<Object> columns) throws SQLException {
 		int numberOfColumns = columns.size();
 		GamaList<Object> columnType = new GamaList<Object>();
 		String sqlStr = "PRAGMA table_info(" + tableName + ");";
-		GamaList<? super GamaList<? super GamaList>> result = selectDB(conn, sqlStr);
+		GamaList<? super GamaList<? super GamaList>> result = selectDB(scope, conn, sqlStr);
 		GamaList<? extends GamaList<Object>> data = (GamaList<? extends GamaList<Object>>) result.get(2);
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery(sqlStr);

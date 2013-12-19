@@ -192,9 +192,9 @@ public class AgentDB extends GamlAgent {
 		// get data
 		try {
 			if ( values.size() > 0 ) {
-				repRequest = sqlConn.executeQueryDB(conn, selectComm, values);
+				repRequest = sqlConn.executeQueryDB(scope, conn, selectComm, values);
 			} else {
-				repRequest = sqlConn.selectDB(conn, selectComm);
+				repRequest = sqlConn.selectDB(scope, conn, selectComm);
 			}
 			// if ( transform ) { return sqlConn.fromGisToAbsolute(gis, repRequest); }
 			return repRequest;
@@ -294,9 +294,9 @@ public class AgentDB extends GamlAgent {
 
 		try {
 			if ( cols.size() > 0 ) {
-				rec_no = sqlConn.insertDB(conn, table_name, cols, values, transform);
+				rec_no = sqlConn.insertDB(scope, conn, table_name, cols, values, transform);
 			} else {
-				rec_no = sqlConn.insertDB(table_name, values, transform);
+				rec_no = sqlConn.insertDB(scope, table_name, values, transform);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

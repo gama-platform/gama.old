@@ -13,8 +13,8 @@ public class WorldProjection extends Projection {
 
 	// public CoordinateReferenceSystem targetCRS;
 
-	WorldProjection(final CoordinateReferenceSystem crs, final Envelope env) {
-		super(null, crs, env);
+	WorldProjection(final CoordinateReferenceSystem crs, final Envelope env, final ProjectionFactory fact) {
+		super(null, crs, env, fact);
 		// referenceProjection = this;
 		if ( env != null ) {
 			createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());

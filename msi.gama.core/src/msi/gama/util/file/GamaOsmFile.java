@@ -93,7 +93,7 @@ public class GamaOsmFile extends GamaGisFile {
 		return Files.OSM;
 	}
 
-	public void getFeatureIterator(final boolean returnIt) {
+	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
 		final Map<Long, GamaShape> nodesPt = new GamaMap<Long, GamaShape>();
 		final List<Node> nodes = new GamaList<Node>();
 		final List<Way> ways = new GamaList<Way>();
@@ -108,7 +108,7 @@ public class GamaOsmFile extends GamaGisFile {
 				if ( entity instanceof Bound ) {
 					Bound bound = (Bound) entity;
 					Envelope env = new Envelope(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop());
-					computeProjection(env);
+					computeProjection(scope, env);
 				} else if ( returnIt ) {
 					if ( entity instanceof Node ) {
 						Node node = (Node) entity;
@@ -148,7 +148,7 @@ public class GamaOsmFile extends GamaGisFile {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		getFeatureIterator(true);
+		getFeatureIterator(scope, true);
 	}
 
 	public GamaList<GamaShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
@@ -320,7 +320,7 @@ public class GamaOsmFile extends GamaGisFile {
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		if ( gis == null ) {
-			getFeatureIterator(false);
+			getFeatureIterator(scope, false);
 		}
 		return gis.getProjectedEnvelope();
 

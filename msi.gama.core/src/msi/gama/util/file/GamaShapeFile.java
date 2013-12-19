@@ -97,7 +97,7 @@ public class GamaShapeFile extends GamaGisFile {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		getFeatureIterator(true);
+		getFeatureIterator(scope, true);
 	}
 
 	/*
@@ -136,7 +136,7 @@ public class GamaShapeFile extends GamaGisFile {
 		// TODO Should we dispose the store ?
 	}
 
-	public void getFeatureIterator(final boolean returnIt) {
+	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
 		File file = getFile();
 		ShapefileDataStore store = null;
 		FeatureIterator<SimpleFeature> it = null;
@@ -147,7 +147,7 @@ public class GamaShapeFile extends GamaGisFile {
 			ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
 			CoordinateReferenceSystem prj = info.getCRS();
 			Envelope env = info.getBounds();
-			computeProjection(env);
+			computeProjection(scope, env);
 			if ( features != null && returnIt ) {
 				it = features.features();
 				// return returnIt ? features.features() : null;
@@ -183,7 +183,7 @@ public class GamaShapeFile extends GamaGisFile {
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		if ( gis == null ) {
-			getFeatureIterator(false);
+			getFeatureIterator(scope, false);
 		}
 		return gis.getProjectedEnvelope();
 

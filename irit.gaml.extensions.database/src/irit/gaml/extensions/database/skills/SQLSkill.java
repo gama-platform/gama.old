@@ -178,9 +178,9 @@ public class SQLSkill extends Skill {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			// Connection conn=sqlConn.connectDB();
 			if ( cols.size() > 0 ) {
-				rec_no = sqlConn.insertDB(table_name, cols, values);
+				rec_no = sqlConn.insertDB(scope, table_name, cols, values);
 			} else {
-				rec_no = sqlConn.insertDB(table_name, values);
+				rec_no = sqlConn.insertDB(scope, table_name, values);
 			}
 			// conn.close();
 		} catch (Exception e) {
@@ -233,9 +233,9 @@ public class SQLSkill extends Skill {
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			if ( values.size() > 0 ) {
-				repRequest = sqlConn.executeQueryDB(selectComm, values);
+				repRequest = sqlConn.executeQueryDB(scope, selectComm, values);
 			} else {
-				repRequest = sqlConn.selectDB(selectComm);
+				repRequest = sqlConn.selectDB(scope, selectComm);
 			}
 			// Transform GIS to Absolute (Geometry in GAMA)
 			// AD: now made directly in the select / query

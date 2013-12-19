@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
@@ -196,7 +197,7 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final IProjection scope, final Connection conn, final String table_name,
+	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
@@ -237,6 +238,7 @@ public class PostgresConnection extends SqlConnection {
 			// Insert command
 			// set parameter value
 			valueStr = "";
+			IProjection saveProj = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
@@ -255,7 +257,7 @@ public class PostgresConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = scope.inverseTransform(geo); // have problem here
+						geo = saveProj.inverseTransform(geo); // have problem here
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
@@ -298,8 +300,8 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	protected String getInsertString(final Connection conn, final String table_name, final GamaList<Object> values)
-		throws GamaRuntimeException {
+	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
+		final GamaList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -353,7 +355,7 @@ public class PostgresConnection extends SqlConnection {
 					Geometry geo = wkt.read(values.get(i).toString());
 					// System.out.println(geo.toString());
 					if ( transformed ) {
-						geo = getSavingGisProjection().inverseTransform(geo);
+						geo = getSavingGisProjection(scope).inverseTransform(geo);
 					}
 					// System.out.println(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";

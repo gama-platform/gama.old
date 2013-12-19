@@ -22,7 +22,7 @@ public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
 
-	private GamaGridReader createReader() {
+	private GamaGridReader createReader(final IScope scope) {
 		if ( reader == null ) {
 			final File gridFile = getFile();
 			gridFile.setReadable(true);
@@ -33,7 +33,7 @@ public class GamaGridFile extends GamaGisFile {
 				// Should not happen;
 			}
 			try {
-				reader = new GamaGridReader(fis);
+				reader = new GamaGridReader(scope, fis);
 			} catch (GamaRuntimeException e) {
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
 				GAMA.reportError(
@@ -56,7 +56,7 @@ public class GamaGridFile extends GamaGisFile {
 				}
 				text.append(NL);
 				// fis = new StringBufferInputStream(text.toString());
-				reader = new GamaGridReader(new StringBufferInputStream(text.toString()));
+				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()));
 			}
 		}
 		return reader;
@@ -67,19 +67,19 @@ public class GamaGridFile extends GamaGisFile {
 		int numRows, numCols;
 		IShape geom;
 
-		GamaGridReader(final InputStream fis) throws GamaRuntimeException {
+		GamaGridReader(final IScope scope, final InputStream fis) throws GamaRuntimeException {
 			buffer = new GamaList();
 			ArcGridReader store = null;
 			try {
 				// Necessary to compute it here, because it needs to be passed to the Hints
-				CoordinateReferenceSystem crs = getExistingCRS();
+				CoordinateReferenceSystem crs = getExistingCRS(scope);
 				store =
 					new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false,
 						Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				Envelope env =
 					new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
-				computeProjection(env);
+				computeProjection(scope, env);
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
 				final double cellHeight = genv.getSpan(1) / numRows;
@@ -144,7 +144,7 @@ public class GamaGridFile extends GamaGisFile {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
-		createReader();
+		createReader(scope);
 	}
 
 	@Override
@@ -172,16 +172,16 @@ public class GamaGridFile extends GamaGisFile {
 			this.getExtension() + " is not recognized for ArcGrid files"); }
 	}
 
-	public int getNbRows() {
-		return createReader().numRows;
+	public int getNbRows(final IScope scope) {
+		return createReader(scope).numRows;
 	}
 
-	public int getNbCols() {
-		return createReader().numCols;
+	public int getNbCols(final IScope scope) {
+		return createReader(scope).numCols;
 	}
 
-	public IShape getGeometry() {
-		return createReader().geom;
+	public IShape getGeometry(final IScope scope) {
+		return createReader(scope).geom;
 	}
 
 	@Override

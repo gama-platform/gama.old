@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.*;
 
 public class Projection implements IProjection {
 
+	private ProjectionFactory factory;
 	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
 	CoordinateReferenceSystem initialCRS;
 	Envelope projectedEnv;
@@ -35,7 +36,9 @@ public class Projection implements IProjection {
 
 	Projection() {}
 
-	Projection(final IProjection world, final CoordinateReferenceSystem crs, final Envelope env) {
+	Projection(final IProjection world, final CoordinateReferenceSystem crs, final Envelope env,
+		final ProjectionFactory fact) {
+		this.factory = fact;
 		this.referenceProjection = world;
 		initialCRS = crs;
 		if ( env != null ) {
@@ -125,7 +128,7 @@ public class Projection implements IProjection {
 	@Override
 	public CoordinateReferenceSystem getTargetCRS() {
 		if ( referenceProjection != null ) { return referenceProjection.getTargetCRS(); }
-		return ProjectionFactory.getTargetCRS();
+		return factory.getTargetCRS();
 	}
 
 	/**

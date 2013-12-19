@@ -5,7 +5,7 @@
 package msi.gama.util.file;
 
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.topology.projection.*;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -31,11 +31,11 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 	 * Returns the CRS defined with this file (in a ".prj" file or elsewhere)
 	 * @return
 	 */
-	protected CoordinateReferenceSystem getExistingCRS() {
-		if ( initialCRSCode != null ) { return ProjectionFactory.computeCRS(initialCRSCode); }
+	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
+		if ( initialCRSCode != null ) { return scope.getModel().getProjectionFactory().getCRS(initialCRSCode); }
 		CoordinateReferenceSystem crs = getOwnCRS();
 		if ( crs == null ) {
-			crs = ProjectionFactory.getDefaultInitialCRS();
+			crs = scope.getModel().getProjectionFactory().getDefaultInitialCRS();
 		}
 		return crs;
 	}
@@ -45,9 +45,9 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 	 */
 	protected abstract CoordinateReferenceSystem getOwnCRS();
 
-	protected void computeProjection(final Envelope env) {
-		CoordinateReferenceSystem crs = getExistingCRS();
-		gis = ProjectionFactory.fromCRS(crs, env);
+	protected void computeProjection(final IScope scope, final Envelope env) {
+		CoordinateReferenceSystem crs = getExistingCRS(scope);
+		gis = scope.getModel().getProjectionFactory().fromCRS(crs, env);
 		// return gis.getInitialCRS();
 
 		//

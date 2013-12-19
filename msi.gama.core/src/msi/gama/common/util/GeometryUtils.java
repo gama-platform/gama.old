@@ -21,7 +21,7 @@ package msi.gama.common.util;
 import java.util.*;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.projection.*;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -517,9 +517,9 @@ public class GeometryUtils {
 		// create connection
 		sqlConn = SqlUtils.createConnectionObject(scope, params);
 		// get data
-		final GamaList gamaList = sqlConn.selectDB((String) params.get("select"));
+		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
-		IProjection gis = ProjectionFactory.fromParams(params, env);
+		IProjection gis = scope.getModel().getProjectionFactory().fromParams(params, env);
 		env = gis.getProjectedEnvelope();
 		return env;
 		// ----------------------------------------------------------------------------------------------------

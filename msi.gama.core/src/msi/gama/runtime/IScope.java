@@ -188,7 +188,6 @@ public interface IScope {
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
 	 *         by a simulation)
 	 */
-	// TODO Should directly return a SimulationAgent
 	public abstract IMacroAgent getSimulationScope();
 
 	public abstract IModel getModel();

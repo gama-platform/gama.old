@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.*;
@@ -58,7 +59,7 @@ public abstract class SqlConnection {
 	protected boolean loadExt = false;
 
 	// AD: Added to be sure that SQL connections use a correct projection when they load/save geometries
-	protected IProjection gis = null;
+	private IProjection gis = null;
 	// AD: Added to be sure to remember the parameters (which can contain other informations about GIS data
 	protected Map<String, Object> params;
 
@@ -66,20 +67,15 @@ public abstract class SqlConnection {
 		this.gis = gis;
 	}
 
-	protected IProjection getSavingGisProjection() {
-		String srid = (String) params.get("srid");
-		String crs = (String) params.get("crs");
-		// Boolean longitudeFirst = params.containsKey("longitudeFirst") && (Boolean) params.get("longitudeFirst");
+	protected IProjection getSavingGisProjection(final IScope scope) {
 		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
-
-		if ( crs != null ) {
-			return ProjectionFactory.forSavingWithWKT(crs);
-		} else if ( srid != null ) {
-			// return GisUtils.forSavingWithEPSG(srid);
-			return ProjectionFactory.forSavingWithEPSG(srid, longitudeFirst);
-			// return GisUtils.forSavingWithEPSG(srid,false);
+		String crs = (String) params.get("crs");
+		if ( crs != null ) { return scope.getModel().getProjectionFactory().forSavingWith(crs); }
+		String srid = (String) params.get("srid");
+		if ( srid != null ) {
+			return scope.getModel().getProjectionFactory().forSavingWith(srid, longitudeFirst);
 		} else {
-			return ProjectionFactory.forSavingWithEPSG((Integer) null);
+			return scope.getModel().getProjectionFactory().forSavingWith((Integer) null);
 		}
 
 	}
@@ -176,13 +172,13 @@ public abstract class SqlConnection {
 	/*
 	 * Make insert command string with columns and values
 	 */
-	protected abstract String getInsertString(IProjection gis, Connection conn, String table_name,
-		GamaList<Object> cols, GamaList<Object> values) throws GamaRuntimeException;
+	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,
+		GamaList<Object> values) throws GamaRuntimeException;
 
 	/*
 	 * Make insert command string for all columns with values
 	 */
-	protected abstract String getInsertString(Connection conn, String table_name, GamaList<Object> values)
+	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> values)
 		throws GamaRuntimeException;
 
 	/*
@@ -190,12 +186,12 @@ public abstract class SqlConnection {
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
-	public GamaList<? super GamaList<? super GamaList>> selectDB(final String selectComm) {
+	public GamaList<? super GamaList<? super GamaList>> selectDB(final IScope scope, final String selectComm) {
 		GamaList<? super GamaList<? super GamaList>> result = new GamaList();
 		Connection conn = null;
 		try {
 			conn = connectDB();
-			result = selectDB(conn, selectComm);
+			result = selectDB(scope, conn, selectComm);
 			conn.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
@@ -214,7 +210,9 @@ public abstract class SqlConnection {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	// public GamaList<GamaList<Object>> selectDB(String selectComm)
-	public GamaList<? super GamaList<? super GamaList>> selectDB(final Connection conn, final String selectComm) {
+	public GamaList<? super GamaList<? super GamaList>> selectDB(final IScope scope, final Connection conn,
+		final String selectComm) {
+		;
 		ResultSet rs;
 		GamaList<? super GamaList<? super GamaList>> result = new GamaList();
 		// GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
@@ -244,7 +242,7 @@ public abstract class SqlConnection {
 					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = ProjectionFactory.fromParams(params, env);
+					gis = scope.getModel().getProjectionFactory().fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
 				// repRequest = SqlUtils.transform(gis, repRequest, false);
@@ -431,8 +429,8 @@ public abstract class SqlConnection {
 	 * Make Insert a reccord into table
 	 * 
 	 */
-	public int insertDB(final Connection conn, final String table_name, final GamaList<Object> cols,
-		final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name,
+		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
 		if ( values.size() != cols.size() ) { throw new IndexOutOfBoundsException(
 			"Size of columns list and values list are not equal"); }
@@ -440,8 +438,7 @@ public abstract class SqlConnection {
 			// Get Insert command
 			Statement st = conn.createStatement();
 			// String sqlStr = getInsertString(gis, conn, table_name, cols, values);
-			IProjection saveGis = this.getSavingGisProjection();
-			String sqlStr = getInsertString(saveGis, conn, table_name, cols, values);
+			String sqlStr = getInsertString(scope, conn, table_name, cols, values);
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
 			}
@@ -468,12 +465,13 @@ public abstract class SqlConnection {
 	 * Make Insert a reccord into table
 	 * 
 	 */
-	public int insertDB(final Connection conn, final String table_name, final GamaList<Object> cols,
-		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name,
+		final GamaList<Object> cols, final GamaList<Object> values, final Boolean transformed)
+		throws GamaRuntimeException {
 		this.transformed = transformed;
 		int rec_no = -1;
 		// Get Insert command
-		rec_no = insertDB(conn, table_name, cols, values);
+		rec_no = insertDB(scope, conn, table_name, cols, values);
 		return rec_no;
 	}
 
@@ -481,13 +479,13 @@ public abstract class SqlConnection {
 	 * Make Insert a reccord into table
 	 * 
 	 */
-	public int insertDB(final String table_name, final GamaList<Object> cols, final GamaList<Object> values)
-		throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
+		final GamaList<Object> values) throws GamaRuntimeException {
 		Connection conn;
 		int rec_no = -1;
 		try {
 			conn = connectDB();
-			rec_no = insertDB(conn, table_name, cols, values);
+			rec_no = insertDB(scope, conn, table_name, cols, values);
 			conn.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
@@ -498,25 +496,25 @@ public abstract class SqlConnection {
 	/*
 	 * Make Insert a reccord into table
 	 */
-	public int insertDB(final String table_name, final GamaList<Object> cols, final GamaList<Object> values,
-		final Boolean transformed) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
+		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
 		this.transformed = transformed;
 		int rec_no = -1;
-		rec_no = insertDB(table_name, cols, values);
+		rec_no = insertDB(scope, table_name, cols, values);
 		return rec_no;
 	}
 
 	/*
 	 * Make Insert a reccord into table
 	 */
-	public int insertDB(final Connection conn, final String table_name, final GamaList<Object> values)
-		throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name,
+		final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
 		try {
 			// Get Insert command
 			Statement st = conn.createStatement();
 
-			rec_no = st.executeUpdate(getInsertString(conn, table_name, values));
+			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, values));
 			st.close();
 			// st=null;
 			// System.gc();
@@ -532,21 +530,22 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
-	public int insertDB(final Projection scope, final Connection conn, final String table_name,
+	public int insertDB(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
 		this.transformed = transformed;
-		return insertDB(conn, table_name, values);
+		return insertDB(scope, conn, table_name, values);
 	}
 
 	/*
 	 * Make Insert a reccord into table
 	 */
-	public int insertDB(final String table_name, final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values)
+		throws GamaRuntimeException {
 		Connection conn;
 		int rec_no = -1;
 		try {
 			conn = connectDB();
-			rec_no = insertDB(conn, table_name, values);
+			rec_no = insertDB(scope, conn, table_name, values);
 			conn.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
@@ -557,10 +556,10 @@ public abstract class SqlConnection {
 	/*
 	 * Make Insert a reccord into table
 	 */
-	public int insertDB(final String table_name, final GamaList<Object> values, final Boolean transformed)
-		throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values,
+		final Boolean transformed) throws GamaRuntimeException {
 		this.transformed = transformed;
-		return insertDB(table_name, values);
+		return insertDB(scope, table_name, values);
 	}
 
 	/*
@@ -578,7 +577,7 @@ public abstract class SqlConnection {
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
-	public GamaList<Object> executeQueryDB(final Connection conn, final String queryStr,
+	public GamaList<Object> executeQueryDB(final IScope scope, final Connection conn, final String queryStr,
 		final GamaList<Object> condition_values) throws GamaRuntimeException {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
@@ -616,7 +615,7 @@ public abstract class SqlConnection {
 					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = ProjectionFactory.fromParams(params, env);
+					gis = scope.getModel().getProjectionFactory().fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
 				// repRequest = SqlUtils.transform(gis, repRequest, false);
@@ -665,13 +664,13 @@ public abstract class SqlConnection {
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
-	public GamaList<Object> executeQueryDB(final String queryStr, final GamaList<Object> condition_values)
-		throws GamaRuntimeException {
+	public GamaList<Object> executeQueryDB(final IScope scope, final String queryStr,
+		final GamaList<Object> condition_values) throws GamaRuntimeException {
 		GamaList<Object> result = new GamaList<Object>();
 		Connection conn;
 		try {
 			conn = connectDB();
-			result = executeQueryDB(conn, queryStr, condition_values);
+			result = executeQueryDB(scope, conn, queryStr, condition_values);
 			conn.close();
 			// set value for each condition
 		} catch (Exception e) {
