@@ -619,6 +619,13 @@ public final class GamlAnnotations {
 	public static @interface operator {
 
 		/**
+		 * @return an array of strings, each representing a category in which this operator can be classified (for
+		 *         documentation indexes)
+		 */
+
+		String[] category() default {};
+
+		/**
 		 * @return an Array of strings, each representing a possible keyword for the operator. Does
 		 *         not need to be unique throughout GAML
 		 * 
