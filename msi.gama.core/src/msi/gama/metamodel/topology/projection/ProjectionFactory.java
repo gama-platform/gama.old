@@ -39,7 +39,7 @@ public class ProjectionFactory {
 			} else {
 				int index = (int) (0.5 + (longitude + 186.0) / 6);
 				boolean north = latitude > 0;
-				String newCode = EPSGPrefix + 32600 + index + (north ? 0 : 100);
+				String newCode = EPSGPrefix + (32600 + index + (north ? 0 : 100));
 				targetCRS = getCRS(newCode);
 			}
 		} catch (Exception e) {
