@@ -725,7 +725,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return factory.createVar(SELF, tt, Types.NO_TYPE, Types.get(IType.STRING), true, IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-		if ( isSkillName(s) ) { return skill(s); }
 
 		// By default, we try to find a variable
 		// if ( s.equals(MYSELF) ) {
@@ -752,6 +751,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 			return temp_sd.getVarExpr(s);
 		}
+
+		if ( isSkillName(s) ) { return skill(s); }
+
 		if ( context != null ) {
 
 			// Short circuiting the use of keyword in "draw ..." to ensure backward
