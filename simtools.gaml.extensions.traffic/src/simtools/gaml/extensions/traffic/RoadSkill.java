@@ -20,7 +20,7 @@ import msi.gaml.types.IType;
 @vars({
 	@var(name = "agents_on", type = IType.LIST, of = IType.LIST),@var(name = "source_node", type = IType.AGENT),@var(name = "target_node", type = IType.AGENT),
 	 @var(name = "lanes", type = IType.INT), @var(name = "maxspeed", type = IType.FLOAT)})
-@skill(name = "road")
+@skill(name = "skill_road")
 public class RoadSkill extends MovingSkill {
 
 	
