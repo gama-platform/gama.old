@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1" useFeatures="false" includeLaunchers="true">
+<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
@@ -22,7 +22,6 @@ Visit http://code.google.com/p/gama-platform/
    <launcherArgs>
       <programArgs>-nl ${target.nl} 
 -data @noDefault 
--clean
 --launcher.defaultAction
 openFile</programArgs>
       <vmArgs>-server
@@ -71,7 +70,6 @@ openFile</programArgs>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="com.ibm.icu.base"/>
       <plugin id="com.jogamp.jogl"/>
       <plugin id="com.jogamp.jogl-linux-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-linux-i586" fragment="true"/>
@@ -108,6 +106,8 @@ openFile</programArgs>
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.hpux.ia64_32" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
@@ -135,17 +135,30 @@ openFile</programArgs>
       <plugin id="org.eclipse.emf.mwe.core"/>
       <plugin id="org.eclipse.emf.mwe.utils"/>
       <plugin id="org.eclipse.emf.mwe2.runtime"/>
+      <plugin id="org.eclipse.emf.validation"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin.equinox"/>
       <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
+      <plugin id="org.eclipse.equinox.p2.console"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
+      <plugin id="org.eclipse.equinox.p2.directorywatcher"/>
+      <plugin id="org.eclipse.equinox.p2.discovery"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.extensionlocation"/>
+      <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
       <plugin id="org.eclipse.equinox.p2.operations"/>
+      <plugin id="org.eclipse.equinox.p2.publisher"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
+      <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.ui"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
@@ -155,6 +168,7 @@ openFile</programArgs>
       <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
+      <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.jface"/>
@@ -171,9 +185,7 @@ openFile</programArgs>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.hpux.ia64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.ppc" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
@@ -233,6 +245,11 @@ openFile</programArgs>
    </plugins>
 
    <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="version" value="1.6.1" />
    </configurations>
 
