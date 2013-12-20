@@ -8,6 +8,7 @@ model RoadTrafficComplex
  
 global {   
 	file shape_file_roads  <- file("../includes/ManhattanRoads.shp") ;
+	file shape_file_nodes  <- file("../includes/ManhattanNodes.shp") ;
 	geometry shape <- envelope(shape_file_roads);
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
@@ -15,26 +16,55 @@ global {
 	
 	 
 	init {  
+		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
+			shape <- polyline(reverse(shape.points));
 			geom_display <- shape + (2 * lanes);
 			point pt_s <- first(shape.points);
 			point pt_t <- last(shape.points);
 			do registerNode(pt_s,false);
 			do registerNode(pt_t,true);
-			maxspeed <- lanes = 1 ? 30.0 : 50.0;
+			maxspeed <- lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0);
 		}	
-		the_graph <-  directed(as_edge_graph(road)) ;
-		create people number: 500 { 
+		map general_speed_map <- road as_map (each::(each.shape.perimeter * (3600.0 / (each.maxspeed * 1000.0))));
+		the_graph <-  directed(as_edge_graph(road))  with_weights general_speed_map;
+		create people number: 300 { 
 			speed <- 15.0 ;
 			location <- first(one_of(road).shape.points);
-		}   
+		}
+		
 	}
 	
 } 
-
-species node skills: [road_node]{
+species node skills: [skill_road_node] {
+	bool is_traffic_signal;
+	bool is_green <- flip(0.5);
+	int time_to_change <- 90;
+	int counter <- rnd (time_to_change) ;
+	
+	reflex dynamic when: is_traffic_signal {
+		counter <- counter + 1;
+		if (counter >= time_to_change) { 
+			counter <- 0;
+			is_green <- not is_green;
+		} 
+	}
+	
+	aspect base {
+		if (is_traffic_signal) {	
+			draw circle(5) color: is_green ? rgb("green") : rgb("red");
+		}
+	}
+	
+	aspect base3D {
+		if (is_traffic_signal) {	
+			draw box(2,2,10) color:rgb("black");
+			draw sphere(5) at: {location.x,location.y,12} color: is_green ? rgb("green") : rgb("red");
+		}
+	}
 }
-species road skills: [road] { 
+
+species road skills: [skill_road] { 
 	geometry geom_display;
 	
 	init {
@@ -52,10 +82,8 @@ species road skills: [road] {
 	action registerNode(point pt, bool target_pt) {
 		node nd <- nodes_loc[pt];
 		if (nd = nil) {
-			create node with:[location::pt] {
-				nd <- self;
-				nodes_loc[pt] <- self;
-			}
+			nd <- node first_with (each.location = pt);
+			nodes_loc[pt] <- nd;
 		}
 		
 		if (target_pt) {
@@ -79,13 +107,13 @@ species people skills: [driving] {
 	list<point> targets <- [];
 	float speed_coeff <- 1.2 - (rnd(400) / 1000);
 	
-	int lane_choice (road la_route) {
-		if (la_route.lanes = 1) {return 0;}
+	int lane_choice (road the_road) {
+		if (the_road.lanes = 1) {return 0;}
 		else{
 			int cv <- 0;
 			int nb <- length(people);
-			loop i from: 0 to: la_route.lanes - 1{
-				int nb_l <- length(la_route.agents_on[i]);
+			loop i from: 0 to: the_road.lanes - 1{
+				int nb_l <- length(the_road.agents_on[i]);
 				if (nb_l < nb) {
 					nb <- nb_l; 
 					cv <- i; 
@@ -132,21 +160,27 @@ species people skills: [driving] {
 
 	bool is_ready_next_road (road route, int lane) {
 		bool is_ready <- true;
-		node noeud  <- node(route.source_node);
-		list<people> people_on_lane <- route.agents_on[lane] - self;
-		loop ag over:  people_on_lane{
-			people pp <- people (ag);
-			if (is_ready and ((self distance_to pp) < (2 * vehicle_length))) {
-				is_ready <- false;	
-			}
+		node the_node  <- node(route.source_node);
+		if (the_node.is_traffic_signal and not the_node.is_green) {
+			is_ready <- false;
 		}
 		if (is_ready) {
-			float angle_ref <- float(angle_between(noeud.location, current_road.location, route.location));
+			list<people> people_on_lane <- route.agents_on[lane] - self;
+			loop ag over:  people_on_lane{
+				people pp <- people (ag);
+				if (is_ready and ((self distance_to pp) < (2 * vehicle_length))) {
+					is_ready <- false;	
+				}
+			}
+		
+		}
+		if (is_ready) {
+			float angle_ref <- float(angle_between(the_node.location, current_road.location, route.location));
 			
-			loop ag over: noeud.roads_in {
+			loop ag over: the_node.roads_in {
 				road rd <- road(ag);
 				if (rd != current_road and is_ready) {
-					float angle <- float(angle_between(noeud.location, current_road.location, rd.location));
+					float angle <- float(angle_between(the_node.location, current_road.location, rd.location));
 					if (angle > angle_ref) { // right priority
 						loop i from: 0 to: rd.lanes - 1 {
 							loop agr over: rd.agents_on[i] {
@@ -158,7 +192,7 @@ species people skills: [driving] {
 						}	
 					} 
 				}
-			}	
+			}
 		}
 		return is_ready;
 	}
@@ -174,12 +208,9 @@ species people skills: [driving] {
 			if (remaining_time > 0.0 and the_final_target != nil and (location = the_target ) ) {
 				road new_road <- road(the_path.edges[index_path + 1]); 
 				int lane <- lane_choice(new_road); 
-				list<people> people_on_road <- new_road.agents_on[lane]; 
 				if (is_ready_next_road(new_road, lane)) {
 					index_path <- index_path + 1;
-					road last <- (road(current_road));
-					remove self from: last.agents_on[current_lane];
-					ask new_road {do register(myself,0);}
+					ask new_road {do register(myself,lane);}
 					the_target <-targets[index_path]; 
 				} else {remaining_time <- 0.0;}  
 			}
@@ -190,15 +221,15 @@ species people skills: [driving] {
 	} 
 	aspect base3D {
 		point loc <- calcul_loc();
-		draw rectangle(vehicle_length, 1) at: loc depth: 1 rotate:  heading color: color;
-		draw rectangle(vehicle_length / 2.0, 0.75) at: loc depth: 1.5 rotate:  heading color: color;
+		draw rectangle(vehicle_length, 1.5) at: loc depth: 1 rotate:  heading color: color;
+		draw rectangle(vehicle_length / 2.0, 1) at: loc depth: 1.5 rotate:  heading color: color;
 	} 
 	
 	point calcul_loc {
 		if (current_road = nil) {
 			return location;
 		} else {
-			int val <-road(current_road).lanes - current_lane ; 
+			float val <-1.5 * (road(current_road).lanes - current_lane) ; 
 			if (val = 0) {
 				return location;
 			} else {
@@ -215,6 +246,7 @@ experiment experiment_2D type: gui {
 	output {
 		display city_display refresh_every: 1 {
 			species road aspect: base ;
+			species node aspect: base;
 			species people aspect: base;
 		}
 		monitor nbGoalsAchived value: nbGoalsAchived refresh_every: 1 ;
@@ -225,6 +257,8 @@ experiment experiment_3D type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
 			species road aspect: base3D refresh: false;
+			species node aspect: base3D;
+			
 			species people aspect: base3D ; 
 		}
 	}
