@@ -170,12 +170,21 @@ public class Files {
 	}
 
 	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a osmfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing osmfile file, an exception is risen.", examples = {
 		"file fileT <- osmfile(\"../includes/testProperties.osm\");",
 		"            // fileT represents the osm file \"../includes/testProperties.osm\"" }, see = { "file",
 		"properties", "image", "text", "shapefile" })
 	public static IGamaFile osmFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s);
+	}
+
+	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of osmfile, specifying an optional CRS EPSG code", comment = "The file should have an osmfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing osmfile file, an exception is risen.", examples = {
+		"file fileT <- osmfile(\"../includes/testProperties.osm\", 4326);",
+		"            // fileT represents the osm file \"../includes/testProperties.osm\"" }, see = { "file",
+		"properties", "image", "text", "shapefile" })
+	public static IGamaFile osmFile(final IScope scope, final String s, final Integer i) throws GamaRuntimeException {
+		return new GamaOsmFile(scope, s, i);
 	}
 
 	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT)
