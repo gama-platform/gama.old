@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ummisco.gama.feature.models"
+      label="Models"
+      version="1.6.1.qualifier"
+      provider-name="UMMISCO"
+      colocation-affinity="ummisco.gama.feature.core">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
+   </url>
+
+   <plugin
+         id="msi.gama.models"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
