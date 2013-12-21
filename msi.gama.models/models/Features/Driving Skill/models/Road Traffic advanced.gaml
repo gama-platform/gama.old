@@ -7,13 +7,16 @@
 model RoadTrafficComplex
  
 global {   
-	file shape_file_roads  <- file("../includes/ManhattanRoads.shp") ;
-	file shape_file_nodes  <- file("../includes/ManhattanNodes.shp") ;
-	geometry shape <- envelope(shape_file_roads);
+	bool simple_data <- false;
+	file shape_file_roads  <- simple_data ? file("../includes/RoadCircleLanes.shp"): file("../includes/ManhattanRoads.shp") ;
+	file shape_file_nodes  <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
+	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
+	geometry shape <- envelope(shape_file_bounds);
+	
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
 	map<point,node> nodes_loc ;
-	
+	int nb_people <- simple_data ? 20 : 300;
 	 
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
@@ -28,18 +31,20 @@ global {
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter * (3600.0 / (each.maxspeed * 1000.0))));
 		the_graph <-  directed(as_edge_graph(road))  with_weights general_speed_map;
-		create people number: 300 { 
-			speed <- 15.0 ;
-			location <- first(one_of(road).shape.points);
-		}
-		
+		create people number: nb_people { 
+			speed <- 30 °km /°h ;
+			right_side_driving <- true;
+			proba_lane_change_up <- 0.5;
+			proba_lane_change_down <- 1.0;
+			location <- first(one_of(node).shape.points);
+		}	
 	}
 	
 } 
 species node skills: [skill_road_node] {
 	bool is_traffic_signal;
 	bool is_green <- flip(0.5);
-	int time_to_change <- 90;
+	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	
 	reflex dynamic when: is_traffic_signal {
@@ -96,7 +101,7 @@ species road skills: [skill_road] {
 	}
 }
 	
-species people skills: [driving] { 
+species people skills: [advanced_driving] { 
 	rgb color <- rgb(rnd(255), rnd(255), rnd(255)) ;
 	point the_target <- nil ; 
 	point the_final_target <- nil;
@@ -110,17 +115,20 @@ species people skills: [driving] {
 	int lane_choice (road the_road) {
 		if (the_road.lanes = 1) {return 0;}
 		else{
-			int cv <- 0;
-			int nb <- length(people);
+			int cv_tmp <- current_lane <= (the_road.lanes - 1)? current_lane : the_road.lanes - 1;
+			int cv <- cv_tmp;
+			int nb <- length(the_road.agents_on[cv_tmp]);
 			loop i from: 0 to: the_road.lanes - 1{
-				int nb_l <- length(the_road.agents_on[i]);
-				if (nb_l < nb) {
-					nb <- nb_l; 
-					cv <- i; 
+				if (i != cv_tmp) {
+					int nb_l <- length(the_road.agents_on[i]);
+					if (nb_l < nb) {
+						nb <- nb_l; 
+						cv <- i; 
+					}
 				}
 			}
 			return cv;
-		}	
+		}
 	}
 	
 	float speed_choice (road the_road) {
@@ -203,7 +211,7 @@ species people skills: [driving] {
 		loop while: (remaining_time > 0.0 and the_final_target != nil) {
 			float remaining_time_tmp <- remaining_time;
 			speed <- speed_choice(road(current_road)); 
-			remaining_time <- (follow_driving_complex (path: the_path, target: the_target,speed: speed,time: remaining_time)) with_precision 2; 
+			remaining_time <- (advanced_follow_driving (path: the_path, target: the_target,speed: speed,time: remaining_time)) with_precision 2; 
 			if (location = the_final_target) {the_final_target <- nil;}
 			if (remaining_time > 0.0 and the_final_target != nil and (location = the_target ) ) {
 				road new_road <- road(the_path.edges[index_path + 1]); 
@@ -229,7 +237,7 @@ species people skills: [driving] {
 		if (current_road = nil) {
 			return location;
 		} else {
-			float val <-1.5 * (road(current_road).lanes - current_lane) ; 
+			float val <-2.5 * (road(current_road).lanes /4 - current_lane) ; 
 			if (val = 0) {
 				return location;
 			} else {
@@ -241,24 +249,22 @@ species people skills: [driving] {
 } 
 
 experiment experiment_2D type: gui {
-	parameter "Shapefile for the roads:" var: shape_file_roads category: "GIS" ;
-	
+	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
 		display city_display refresh_every: 1 {
 			species road aspect: base ;
 			species node aspect: base;
 			species people aspect: base;
 		}
-		monitor nbGoalsAchived value: nbGoalsAchived refresh_every: 1 ;
 	}
 }
 
 experiment experiment_3D type: gui {
+	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
 		display carte_principale type: opengl ambient_light: 100{
 			species road aspect: base3D refresh: false;
 			species node aspect: base3D;
-			
 			species people aspect: base3D ; 
 		}
 	}
