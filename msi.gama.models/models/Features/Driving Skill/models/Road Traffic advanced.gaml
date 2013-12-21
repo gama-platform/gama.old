@@ -7,7 +7,7 @@
 model RoadTrafficComplex
  
 global {   
-	bool simple_data <- false;
+	bool simple_data <- true;
 	file shape_file_roads  <- simple_data ? file("../includes/RoadCircleLanes.shp"): file("../includes/ManhattanRoads.shp") ;
 	file shape_file_nodes  <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
 	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
@@ -29,8 +29,8 @@ global {
 		create people number: nb_people { 
 			speed <- 30 °km /°h ;
 			right_side_driving <- true;
-			proba_lane_change_up <- 0.5;
-			proba_lane_change_down <- 1.0;
+			proba_lane_change_up <- 0.1;
+			proba_lane_change_down <- 0.2;
 			location <- first(one_of(node).shape.points);
 		}	
 	}
@@ -92,21 +92,30 @@ species people skills: [advanced_driving] {
 	float speed_coeff <- 1.2 - (rnd(400) / 1000);
 	
 	int lane_choice (road the_road) {
-		if (the_road.lanes = 1) {return 0;}
+		if (the_road.lanes = 1) {return (is_ready_next_road(the_road, 0) ? 0 : -1);}
 		else{
-			int cv_tmp <- current_lane <= (the_road.lanes - 1)? current_lane : the_road.lanes - 1;
-			int cv <- cv_tmp;
-			int nb <- length(the_road.agents_on[cv_tmp]);
-			loop i from: 0 to: the_road.lanes - 1{
-				if (i != cv_tmp) {
-					int nb_l <- length(the_road.agents_on[i]);
-					if (nb_l < nb) {
-						nb <- nb_l; 
-						cv <- i; 
+			int cv_tmp <- min([current_lane, (the_road.lanes - 1)]);
+			int cv <- is_ready_next_road(the_road, cv_tmp) ? cv_tmp : -1;
+			bool change_down <- flip(proba_lane_change_down);
+			bool change_up <- flip(proba_lane_change_up);
+			if (cv = -1 and (change_down or change_up)) {
+				loop i from: 1 to: the_road.lanes - 1{
+					if (cv = -1) {
+						int l1 <- cv_tmp - i;
+						if (l1 > 0 and change_down) {
+							cv <- is_ready_next_road(the_road, l1) ? l1 : -1;
+						}
+						if (cv = -1 and change_up) {
+							int l2 <- cv_tmp + i;
+							if (l2 < the_road.lanes) {
+								cv <- is_ready_next_road(the_road, l2) ? l2 : -1;
+							}
+						}
 					}
 				}
 			}
 			return cv;
+			
 		}
 	}
 	
@@ -125,8 +134,6 @@ species people skills: [advanced_driving] {
 				add last(agent(edge).shape.points) to: targets;
 			}
 			index_path <- 0;
-			remove last(targets) from: targets;
-			add the_final_target to: targets;
 			road route <- road(a_path.edges[index_path]); 
 			ask route {do register(myself,0);}
 			the_target <-targets[index_path]; 
@@ -195,7 +202,7 @@ species people skills: [advanced_driving] {
 			if (remaining_time > 0.0 and the_final_target != nil and (location = the_target ) ) {
 				road new_road <- road(the_path.edges[index_path + 1]); 
 				int lane <- lane_choice(new_road); 
-				if (is_ready_next_road(new_road, lane)) {
+				if (lane >= 0) {
 					index_path <- index_path + 1;
 					ask new_road {do register(myself,lane);}
 					the_target <-targets[index_path]; 
