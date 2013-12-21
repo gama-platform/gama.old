@@ -22,10 +22,6 @@ models.
       <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
    </url>
 
-   <includes
-         id="ummisco.gama.feature.dependencies"
-         version="0.0.0"/>
-
    <plugin
          id="idees.gama.mapcomparison"
          download-size="0"
