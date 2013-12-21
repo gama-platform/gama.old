@@ -23,7 +23,6 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
-import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Transformations;
