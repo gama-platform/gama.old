@@ -252,6 +252,11 @@ openFile</programArgs>
       <feature id="ummisco.gama.feature.opengl" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.models" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.dependencies" version="1.6.1.qualifier"/>
+      <feature id="org.eclipse.equinox.p2.core.feature" version="1.0.1.v20110906-1605-8290FZ9FVKHVRKtmx3fpNuo02129"/>
+      <feature id="org.eclipse.equinox.p2.discovery.feature" version="1.0.101.R37x_v20110909-4-8_9oB5885K5B28WKK"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature" version="1.0.1.v20110906-1605-7A4FD4DiVOMap8cHSc6vPuny4gqO"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature" version="1.0.1.v20110906-1605-782EqBqNKGVkiV-PUsgz-uny4gqO"/>
+      <feature id="org.eclipse.equinox.p2.user.ui" version="2.1.2.R37x_v20110815-1155-6-Bk8pYWZz0qUTX5I15GZWwbXkrl"/>
    </features>
 
    <configurations>
