@@ -58,7 +58,7 @@ experiment schelling type: gui {
 	output {
 		display Segregation {
 			image "bg" file: bitmap_file_name.path ;
-			species people transparency: 0.5 aspect: geom z:0.001;
+			species people transparency: 0.5 aspect: geom position: {0, 1, 0.001};
 		}	
 		display Charts {
 			chart name: "Proportion of happiness" type: pie background: rgb("lightGray") style: exploded position: { 0, 0 } size: { 1.0, 0.5 } {
