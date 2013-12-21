@@ -14,8 +14,9 @@ global {
 		all_places  <- shuffle(space);
 		number_of_people <- int( density_of_people * sum (all_places collect ((each as space).capacity))); 
 		create people number: number_of_people;  
+	    all_people <- people as list ; 
 		ask people  {  
-			do move_to_new_place;      
+			do move_to_new_place;       
 		}   
 	}      
 	
@@ -57,14 +58,13 @@ entities {
 		rgb color <- rgb(255, 255, 255); 
 		float surface;
 		int capacity  <- 1 + int(surface / square_meters_per_people);  
-		action accept {
-			arg one_people type: people;
-			add one_people to: insiders of self;
-			location of (one_people as people) <- any_location_in(shape);
+		action accept (people one_people) {
+			add one_people to: insiders;
+			location of one_people <- any_location_in(shape);
 			capacity <- capacity - 1;
 		}
 		action remove_one (people one_people){
-			remove one_people from: insiders of self;
+			remove one_people from: insiders;
 			capacity <- capacity + 1;
 		}
 		aspect simple {
@@ -85,12 +85,12 @@ experiment schelling type: gui {
 			species people  aspect: simple;
 		}
 		display Charts {
-			chart name: "Proportion of happiness" type: histogram background: rgb("lightGray") gap:0.05 position: {0,0} size: {1.0,0.5}{
+			chart name: "Proportion of happiness" type: histogram background: rgb("lightgray") gap:0.05 position: {0,0} size: {1.0,0.5}{
 				data "Unhappy" value: number_of_people - sum_happy_people color: rgb("green");
 				data "Happy" value: sum_happy_people color: rgb("yellow") ;
 			}
-			chart name: "Global happiness and similarity" type: series background: rgb("lightGray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
-				data "happy" color: rgb("blue") value:  (sum_happy_people / number_of_people) * 100 style: spline ;
+			chart name: "Global happiness and similarity" type: series background: rgb("lightgray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
+				data "happy" color: rgb("blue") value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
 				data "similarity" color: rgb("red") value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
