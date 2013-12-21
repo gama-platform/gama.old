@@ -132,7 +132,7 @@ experiment road_traffic_multi_layer type: gui {
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
 		display city_display type: opengl ambient_light: 100 {
-			species road aspect: base z: 0;
+			species road aspect: base;
 			species building aspect: base position:{0,0,0.25};
 			species people aspect: base position:{0,0,0.5};
 		}
