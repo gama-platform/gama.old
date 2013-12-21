@@ -56,63 +56,91 @@
          id="idees.gama.emf.metamodel"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="idees.gama.graphicalmodeling"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.graphiti"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.8.2.v20120215-0845"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.graphiti.mm"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.8.2.v20120215-0845"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.graphiti.pattern"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.8.2.v20120215-0845"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.graphiti.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.8.2.v20120215-0845"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.graphiti.ui.capabilities"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.8.2.v20120215-0845"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.draw2d"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.7.2.v20111017-2020"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.gef"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.7.2.v20111106-2020"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.validation"
+         download-size="0"
+         install-size="0"
+         version="1.4.0.v20100428-2315"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.transaction"
+         download-size="0"
+         install-size="0"
+         version="1.4.0.v20100331-1738"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.workspace"
+         download-size="0"
+         install-size="0"
+         version="1.5.1.v20110823-1800"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.ecore.change"
+         download-size="0"
+         install-size="0"
+         version="2.7.1.v20120127-1122"
          unpack="false"/>
 
 </feature>
