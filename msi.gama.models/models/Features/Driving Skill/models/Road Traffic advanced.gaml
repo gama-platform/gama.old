@@ -15,7 +15,6 @@ global {
 	
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
-	map<point,node> nodes_loc ;
 	int nb_people <- simple_data ? 20 : 300;
 	 
 	init {  
@@ -23,14 +22,10 @@ global {
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			shape <- polyline(reverse(shape.points));
 			geom_display <- shape + (2 * lanes);
-			point pt_s <- first(shape.points);
-			point pt_t <- last(shape.points);
-			do registerNode(pt_s,false);
-			do registerNode(pt_t,true);
 			maxspeed <- lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0);
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter * (3600.0 / (each.maxspeed * 1000.0))));
-		the_graph <-  directed(as_edge_graph(road))  with_weights general_speed_map;
+		the_graph <-  (as_driving_graph(road, node))  with_weights general_speed_map;
 		create people number: nb_people { 
 			speed <- 30 °km /°h ;
 			right_side_driving <- true;
@@ -83,22 +78,6 @@ species road skills: [skill_road] {
 	aspect base3D {    
 		draw geom_display color: rgb("gray") ;
 	} 
-	
-	action registerNode(point pt, bool target_pt) {
-		node nd <- nodes_loc[pt];
-		if (nd = nil) {
-			nd <- node first_with (each.location = pt);
-			nodes_loc[pt] <- nd;
-		}
-		
-		if (target_pt) {
-			nd.roads_in << self;
-			target_node <- nd;
-		} else {
-			nd.roads_out << self;
-			source_node <- nd;
-		}
-	}
 }
 	
 species people skills: [advanced_driving] { 
