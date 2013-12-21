@@ -81,13 +81,6 @@ models.
          version="0.0.0"/>
 
    <plugin
-         id="msi.gama.jogl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="msi.gama.lang.gaml"
          download-size="0"
          install-size="0"
@@ -110,13 +103,6 @@ models.
 
    <plugin
          id="msi.gaml.extensions.fipa"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="simtools.gaml.extensions.physics"
          download-size="0"
          install-size="0"
          version="0.0.0"
