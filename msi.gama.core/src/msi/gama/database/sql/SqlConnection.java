@@ -70,12 +70,12 @@ public abstract class SqlConnection {
 	protected IProjection getSavingGisProjection(final IScope scope) {
 		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		String crs = (String) params.get("crs");
-		if ( crs != null ) { return scope.getModel().getProjectionFactory().forSavingWith(crs); }
+		if ( crs != null ) { return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs); }
 		String srid = (String) params.get("srid");
 		if ( srid != null ) {
-			return scope.getModel().getProjectionFactory().forSavingWith(srid, longitudeFirst);
+			return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
 		} else {
-			return scope.getModel().getProjectionFactory().forSavingWith((Integer) null);
+			return scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer) null);
 		}
 
 	}
@@ -242,7 +242,7 @@ public abstract class SqlConnection {
 					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = scope.getModel().getProjectionFactory().fromParams(params, env);
+					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
 				// repRequest = SqlUtils.transform(gis, repRequest, false);
@@ -615,7 +615,7 @@ public abstract class SqlConnection {
 					// Envelope env = getBounds(repRequest);
 					Envelope env = getBounds(result);
 					// we now compute the GisUtils instance for our case (based on params and env)
-					gis = scope.getModel().getProjectionFactory().fromParams(params, env);
+					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
 				}
 				// and we transform the geometries using its projection
 				// repRequest = SqlUtils.transform(gis, repRequest, false);

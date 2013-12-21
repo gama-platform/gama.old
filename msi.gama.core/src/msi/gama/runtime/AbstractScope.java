@@ -9,7 +9,7 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -38,6 +38,7 @@ public abstract class AbstractScope implements IScope {
 	private ITopology topology;
 	private volatile boolean _action_halted, _loop_halted, _agent_halted;
 	protected final IMacroAgent root;
+	protected final SimulationAgent simulation;
 	private Object each = null;
 	private final int number = ScopeNumber++;
 	private IStatement currentStatement;
@@ -46,6 +47,13 @@ public abstract class AbstractScope implements IScope {
 		this.root = root;
 		if ( root != null ) {
 			agents.push(root);
+			IMacroAgent a = root;
+			while (!(a instanceof SimulationAgent) && a != null) {
+				a = root.getHost();
+			}
+			simulation = (SimulationAgent) a;
+		} else {
+			simulation = null;
 		}
 		statements.push(new NullRecord());
 	}
@@ -726,8 +734,8 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#getSimulationScope()
 	 */
 	@Override
-	public IMacroAgent getSimulationScope() {
-		return root;
+	public SimulationAgent getSimulationScope() {
+		return simulation;
 	}
 
 	/**

@@ -20,7 +20,6 @@ package msi.gama.kernel.model;
 
 import java.util.Map;
 import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -46,7 +45,5 @@ public interface IModel extends ISpecies {
 	public abstract boolean isTorus();
 
 	public abstract Map<String, ISpecies> getAllSpecies();
-
-	public abstract ProjectionFactory getProjectionFactory();
 
 }

@@ -24,6 +24,7 @@ import msi.gama.kernel.experiment.AgentScheduler;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -70,13 +71,14 @@ public class SimulationAgent extends GamlAgent {
 	AgentScheduler scheduler;
 	IScope scope;
 	IOutputManager outputs;
+	final ProjectionFactory projectionFactory;
 
 	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
 		super(pop);
 		clock = new SimulationClock();
 		scope = obtainNewScope();
 		scheduler = new AgentScheduler(scope, pop);
-
+		projectionFactory = new ProjectionFactory();
 	}
 
 	@Override
@@ -127,6 +129,10 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public IScope getScope() {
 		return scope;
+	}
+
+	public ProjectionFactory getProjectionFactory() {
+		return projectionFactory;
 	}
 
 	@Override

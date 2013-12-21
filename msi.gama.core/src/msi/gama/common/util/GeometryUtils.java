@@ -519,7 +519,7 @@ public class GeometryUtils {
 		// get data
 		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
-		IProjection gis = scope.getModel().getProjectionFactory().fromParams(params, env);
+		IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
 		env = gis.getProjectedEnvelope();
 		return env;
 		// ----------------------------------------------------------------------------------------------------

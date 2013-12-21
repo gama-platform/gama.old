@@ -21,7 +21,6 @@ package msi.gama.kernel.model;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -53,17 +52,10 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	protected final Map<String, IExperimentSpecies> experiments = new LinkedHashMap<String, IExperimentSpecies>();
 	protected final Map<String, IExperimentSpecies> titledExperiments = new LinkedHashMap<String, IExperimentSpecies>();
 	protected Map<String, ISpecies> allSpecies;
-	final ProjectionFactory projectionFactory;
 
 	public GamlModelSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		projectionFactory = new ProjectionFactory();
-	}
-
-	@Override
-	public ProjectionFactory getProjectionFactory() {
-		return projectionFactory;
 	}
 
 	@Override

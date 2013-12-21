@@ -32,10 +32,10 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 	 * @return
 	 */
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
-		if ( initialCRSCode != null ) { return scope.getModel().getProjectionFactory().getCRS(initialCRSCode); }
+		if ( initialCRSCode != null ) { return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCode); }
 		CoordinateReferenceSystem crs = getOwnCRS();
 		if ( crs == null ) {
-			crs = scope.getModel().getProjectionFactory().getDefaultInitialCRS();
+			crs = scope.getSimulationScope().getProjectionFactory().getDefaultInitialCRS();
 		}
 		return crs;
 	}
@@ -47,7 +47,7 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 
 	protected void computeProjection(final IScope scope, final Envelope env) {
 		CoordinateReferenceSystem crs = getExistingCRS(scope);
-		gis = scope.getModel().getProjectionFactory().fromCRS(crs, env);
+		gis = scope.getSimulationScope().getProjectionFactory().fromCRS(crs, env);
 		// return gis.getInitialCRS();
 
 		//

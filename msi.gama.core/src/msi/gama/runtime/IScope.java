@@ -21,7 +21,7 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -188,7 +188,7 @@ public interface IScope {
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
 	 *         by a simulation)
 	 */
-	public abstract IMacroAgent getSimulationScope();
+	public abstract SimulationAgent getSimulationScope();
 
 	public abstract IModel getModel();
 

@@ -231,7 +231,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 		final Integer code = epsgCode == null ? null : Cast.asInt(scope, epsgCode.value(scope));
-		final IProjection gis = scope.getModel().getProjectionFactory().forSavingWith(code);
+		final IProjection gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
 
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
