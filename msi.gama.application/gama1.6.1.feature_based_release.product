@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
@@ -246,6 +246,12 @@ openFile</programArgs>
       <plugin id="simtools.gaml.extensions.traffic"/>
       <plugin id="ummisco.gaml.extensions.maths"/>
    </plugins>
+
+   <features>
+      <feature id="ummisco.gama.feature.core" version="1.6.1.qualifier"/>
+      <feature id="ummisco.gama.feature.models" version="1.6.1.qualifier"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.6.1.qualifier"/>
+   </features>
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
