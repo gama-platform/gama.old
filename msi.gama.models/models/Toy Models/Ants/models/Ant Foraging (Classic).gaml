@@ -11,17 +11,9 @@ global {
 	const types type: file <- (read(image('../images/environment75x75.pgm'))) ;
 	const ant_shape_empty type: string <- '../icons/ant.png' ;
 	const ant_shape_full type: string <- '../icons/full_ant.png'  ;
-	const black type: rgb <- rgb('black') ;
-	const blue type: rgb <- rgb('blue') ;
-	const green type: rgb <- rgb('green') ;
-	const white type: rgb <- rgb('white') ; 
-	const FF00FF type: rgb <- rgb('gray') ; 
 	const C00CC00 type: rgb <- rgb('#00CC00') ;    
 	const C009900 type: rgb <- rgb('#009900') ; 
 	const C005500 type: rgb <- rgb('#005500') ; 
-	const yellow type: rgb <- rgb('yellow') ; 
-	const red type: rgb <- rgb('red') ;  
-	const orange type: rgb <- rgb('orange') ;  
 	int food_gathered <- 0 ;
 	geometry shape <- square(gridsize);
 	init{ 
@@ -37,7 +29,7 @@ entities {
 		const type type: int <- int(types at {grid_x,grid_y}) ;
 		const isNestLocation type: bool <- (self distance_to center) < 4 ;
 		const isFoodLocation type: bool <- type = 2 ; 
-		rgb color <- isNestLocation ? FF00FF:((food > 0)? blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? FF00FF:((food > 0)? blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
+		rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
 		int food <- isFoodLocation ? 5 : 0 ;
 		const nest type: int <- 300 - int(self distance_to center) ;
 		
@@ -95,7 +87,7 @@ entities {
 				draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 			}
 			if condition: display_state {
-				draw state at: location + {-3,1.5} color: white size: 0.8 ;
+				draw state at: location + {-3,1.5} color: °white size: 0.8 ;
 			}
 		}
 		aspect default {
