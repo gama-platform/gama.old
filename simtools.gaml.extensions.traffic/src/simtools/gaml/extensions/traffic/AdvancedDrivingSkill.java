@@ -21,6 +21,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.*;
+import msi.gaml.operators.Maths;
+import msi.gaml.operators.Random;
+import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Transformations;
@@ -153,6 +156,90 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		
 
+		@action(name = "is_ready_next_road", args = {
+			@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road to test")),
+			@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane to test"))}, 
+			doc = @doc(value = "action to define", returns = "the remaining time", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
+		public Boolean primIsReadyNextRoad(final IScope scope) throws GamaRuntimeException {
+			IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
+			Integer lane = (Integer) scope.getArg("lane", IType.INT);
+			return isReadyNextRoad(scope, road,lane);
+		}
+		public Boolean isReadyNextRoad(final IScope scope,IAgent road,Integer lane) throws GamaRuntimeException {
+			IAgent theNode  = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
+			if ((Boolean) theNode.getAttribute(RoadNodeSkill.STOP)) {
+				return false;
+			}
+			IAgent driver = getCurrentAgent(scope);
+			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
+			double vL = getVehiculeLength(driver);
+			double secDist = getSecurityDistance(driver);
+			Boolean rightSide = getRightSideDriving(driver);
+			List<IAgent> drivers =(List) ((List) road.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+			for (IAgent dr: drivers){
+				if (dr == driver) continue;
+				if (dr.euclidianDistanceTo(driver) < (2 * vL)) {
+					return false;
+				}
+			}
+		
+			double angleRef = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)road.getLocation());
+			List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
+			double val = secDist + vL;
+			for (IAgent rd: roadsIn) {
+				if (rd != currentRoad) {
+					double angle = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)rd.getLocation());
+					if ((rightSide &&angle > angleRef) || (!rightSide &&angle < angleRef)) {
+						int nbL = (Integer) rd.getAttribute(RoadSkill.LANES);
+						List<List<IAgent>> agentsOn = (List) rd.getAttribute(RoadSkill.AGENTS_ON);
+						for (int i = 0 ; i < nbL ; i++) {
+							for (IAgent pp : agentsOn.get(i)) {
+								double vL2 = getVehiculeLength(pp);
+								if (Maths.round(getRealSpeed(pp),2) > 0.0 && (pp.euclidianDistanceTo(driver) < (val + vL2))) {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+		@action(name = "lane_choice", args = {
+				@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the lane"))}, 
+				doc = @doc(value = "action to define", returns = "the remaining time", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
+			public Integer primLanChoice(final IScope scope) throws GamaRuntimeException {
+				IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
+				Integer lanes = (Integer) road.getAttribute(RoadSkill.LANES);
+				IAgent driver = getCurrentAgent(scope);
+				Integer currentLane = (Integer) getCurrentLane(driver);
+				if (lanes == 0) 
+					return isReadyNextRoad(scope, road,0) ? 0 : 1;
+				int cvTmp = Math.min(currentLane, lanes - 1);
+				int cv = isReadyNextRoad(scope, road,cvTmp) ? cvTmp : -1;
+				if (cv != -1) return cv;
+				double probaLaneChangeDown = getProbaLaneChangeDown(driver);
+				double probaLaneChangeUp = getProbaLaneChangeUp(driver);
+				boolean changeDown = Random.opFlip(scope, probaLaneChangeDown);
+				boolean changeUp = Random.opFlip(scope, probaLaneChangeUp);
+				if (changeDown || changeUp) {
+					for (int i = 0; i < lanes; i++) {
+						int l1 = cvTmp - i;
+						if (l1 >= 0 && changeDown) {
+							cv = isReadyNextRoad(scope, road,l1) ? l1 : -1;
+							if (cv != -1) return cv; 
+						}
+						int l2 = cvTmp + i;
+						if (l2 < lanes && changeUp) {
+							cv = isReadyNextRoad(scope, road,l2) ? l2 : -1;
+							if (cv != -1) return cv; 
+						}
+					}
+				}
+				return cv;
+		}
+	
 
 		/**
 		 * @throws GamaRuntimeException
@@ -173,7 +260,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
 				final double security_distance, final GamaPoint currentLocation, final GamaPoint target,
 				final int lane, final IAgent currentRoad, boolean changeLane) {
-				IList agents = (IList) ((GamaList) currentRoad.getAttribute("agents_on")).get(lane);
+				IList agents = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
 				double vL = getVehiculeLength(agent);
 				if (agents.size() < 2) {
 					if (changeLane && distance < vL)
@@ -220,7 +307,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				final int lane, final IAgent currentRoad,final Double probaChangeLaneUp,final Double probaChangeLaneDown, final Boolean rightSide) {
 				double distMax = 0;
 				int newLane = lane;
-				List agentOn = (List) currentRoad.getAttribute("agents_on");
+				List agentOn = (List) currentRoad.getAttribute(RoadSkill.AGENTS_ON);
 				if (lane > 0 && GAMA.getRandom().next() < probaChangeLaneDown) {
 					double val = avoidCollision(scope,agent,distance,security_distance, currentLocation,target,lane - 1, currentRoad, true);
 					//System.out.println(agent + " lane - 1 : " + val);
@@ -244,7 +331,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					distMax = val;
 					newLane = lane;
 				}
-				if (lane <  ((Integer) currentRoad.getAttribute("lanes") - 1) && GAMA.getRandom().next() < probaChangeLaneUp) {
+				if (lane <  ((Integer) currentRoad.getAttribute(RoadSkill.LANES) - 1) && GAMA.getRandom().next() < probaChangeLaneUp) {
 					val = avoidCollision(scope,agent,distance,security_distance, currentLocation,target,lane+1, currentRoad, true);
 					//System.out.println(agent + " lane + 1 : " + val);
 					if (val > distMax && val > 0) {
@@ -266,7 +353,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		//	System.out.println("currentRoad : " + currentRoad);
 		//	System.out.println("currentRoad.getAttribute(agents_on)) : " + currentRoad.getAttribute("agents_on"));
 			
-			List<IAgent> agents = (List<IAgent>) ((GamaList) currentRoad.getAttribute("agents_on")).get(lane);
+			List<IAgent> agents = (List<IAgent>) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
 			if (agents.size() < 2)
 				return target;
 			//System.out.println("agents : " + agents);

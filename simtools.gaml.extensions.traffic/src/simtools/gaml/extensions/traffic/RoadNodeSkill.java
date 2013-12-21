@@ -14,12 +14,13 @@ import msi.gaml.types.IType;
 
 
 @vars({
-	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT)})
+	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT),@var(name = "stop", type = IType.BOOL)})
 @skill(name = "skill_road_node")
 public class RoadNodeSkill extends MovingSkill {
 
 	public final static String ROADS_IN = "roads_in";
 	public final static String ROADS_OUT = "roads_out";
+	public final static String STOP = "stop";
 
 	@getter(ROADS_IN)
 	public List getRoadsIn(final IAgent agent) {
@@ -39,6 +40,15 @@ public class RoadNodeSkill extends MovingSkill {
 	@setter(ROADS_OUT)
 	public void setTargetNode(final IAgent agent, final List rds) {
 		agent.setAttribute(ROADS_OUT, rds);
+	}
+	
+	@getter(STOP)
+	public Boolean getStop(final IAgent agent) {
+		return (Boolean) agent.getAttribute(STOP);
+	}
+	@setter(STOP)
+	public void setTargetNode(final IAgent agent, final Boolean stop) {
+		agent.setAttribute(STOP, stop);
 	}
 	
 }
