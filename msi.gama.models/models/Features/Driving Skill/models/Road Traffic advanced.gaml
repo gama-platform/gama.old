@@ -7,7 +7,7 @@
 model RoadTrafficComplex
  
 global {   
-	bool simple_data <- true;
+	bool simple_data <- false;
 	file shape_file_roads  <- simple_data ? file("../includes/RoadCircleLanes.shp"): file("../includes/ManhattanRoads.shp") ;
 	file shape_file_nodes  <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
 	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
@@ -19,6 +19,9 @@ global {
 	 
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
+		ask node where each.is_traffic_signal {
+			stop <- flip(0.5);
+		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			shape <- polyline(reverse(shape.points));
 			geom_display <- shape + (2 * lanes);
@@ -38,7 +41,7 @@ global {
 } 
 species node skills: [skill_road_node] {
 	bool is_traffic_signal;
-	bool is_green <- flip(0.5);
+	bool stop <- false;
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	
@@ -46,20 +49,20 @@ species node skills: [skill_road_node] {
 		counter <- counter + 1;
 		if (counter >= time_to_change) { 
 			counter <- 0;
-			is_green <- not is_green;
+			stop <- not stop;
 		} 
 	}
 	
 	aspect base {
 		if (is_traffic_signal) {	
-			draw circle(5) color: is_green ? rgb("green") : rgb("red");
+			draw circle(5) color: stop ? rgb("red") : rgb("green");
 		}
 	}
 	
 	aspect base3D {
 		if (is_traffic_signal) {	
-			draw box(2,2,10) color:rgb("black");
-			draw sphere(5) at: {location.x,location.y,12} color: is_green ? rgb("green") : rgb("red");
+			draw box(1,1,10) color:rgb("black");
+			draw sphere(5) at: {location.x,location.y,12} color: stop ? rgb("red") : rgb("green");
 		}
 	}
 }
@@ -90,34 +93,6 @@ species people skills: [advanced_driving] {
 	float vehicle_length <- 3.0;
 	list<point> targets <- [];
 	float speed_coeff <- 1.2 - (rnd(400) / 1000);
-	
-	int lane_choice (road the_road) {
-		if (the_road.lanes = 1) {return (is_ready_next_road(the_road, 0) ? 0 : -1);}
-		else{
-			int cv_tmp <- min([current_lane, (the_road.lanes - 1)]);
-			int cv <- is_ready_next_road(the_road, cv_tmp) ? cv_tmp : -1;
-			bool change_down <- flip(proba_lane_change_down);
-			bool change_up <- flip(proba_lane_change_up);
-			if (cv = -1 and (change_down or change_up)) {
-				loop i from: 1 to: the_road.lanes - 1{
-					if (cv = -1) {
-						int l1 <- cv_tmp - i;
-						if (l1 > 0 and change_down) {
-							cv <- is_ready_next_road(the_road, l1) ? l1 : -1;
-						}
-						if (cv = -1 and change_up) {
-							int l2 <- cv_tmp + i;
-							if (l2 < the_road.lanes) {
-								cv <- is_ready_next_road(the_road, l2) ? l2 : -1;
-							}
-						}
-					}
-				}
-			}
-			return cv;
-			
-		}
-	}
 	
 	float speed_choice (road the_road) {
 		float speed <- min([real_speed + acceleration_max, speed_coeff * (road(the_road).maxspeed/3.6)]);
@@ -151,46 +126,6 @@ species people skills: [advanced_driving] {
 			the_final_target <- nil;
 		}
 	}
-
-	bool is_ready_next_road (road route, int lane) {
-		bool is_ready <- true;
-		node the_node  <- node(route.source_node);
-		if (the_node.is_traffic_signal and not the_node.is_green) {
-			is_ready <- false;
-		}
-		if (is_ready) {
-			list<people> people_on_lane <- route.agents_on[lane] - self;
-			loop ag over:  people_on_lane{
-				people pp <- people (ag);
-				if (is_ready and ((self distance_to pp) < (2 * vehicle_length))) {
-					is_ready <- false;	
-				}
-			}
-		
-		}
-		if (is_ready) {
-			float angle_ref <- float(angle_between(the_node.location, current_road.location, route.location));
-			
-			loop ag over: the_node.roads_in {
-				road rd <- road(ag);
-				if (rd != current_road and is_ready) {
-					float angle <- float(angle_between(the_node.location, current_road.location, rd.location));
-					if (angle > angle_ref) { // right priority
-						loop i from: 0 to: rd.lanes - 1 {
-							loop agr over: rd.agents_on[i] {
-								people pp <- people (agr);
-								if (is_ready and (pp.real_speed with_precision 2 > 0.0) and ((self distance_to pp) < (security_distance + 2 * vehicle_length))) {
-									is_ready <- false;
-								}
-							} 
-						}	
-					} 
-				}
-			}
-		}
-		return is_ready;
-	}
-	
 
 	reflex move when: the_final_target != nil {
 		float remaining_time <- 1.0;
@@ -249,7 +184,7 @@ experiment experiment_3D type: gui {
 	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
 		display carte_principale type: opengl ambient_light: 100{
-			species road aspect: base3D refresh: false;
+			species road aspect: base3D refresh: true;
 			species node aspect: base3D;
 			species people aspect: base3D ; 
 		}
