@@ -174,10 +174,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				final double security_distance, final GamaPoint currentLocation, final GamaPoint target,
 				final int lane, final IAgent currentRoad, boolean changeLane) {
 				IList agents = (IList) ((GamaList) currentRoad.getAttribute("agents_on")).get(lane);
-				if (agents.size() < 2)
+				double vL = getVehiculeLength(agent);
+				if (agents.size() < 2) {
+					if (changeLane && distance < vL)
+						return 0;
 					return distance;
-				
-				double distanceMax = distance + security_distance +  getVehiculeLength(agent);
+				}
+				double distanceMax = distance + security_distance +  vL;
 				
 				List<IAgent> agsFiltered = new GamaList(agent.getTopology().getNeighboursOf(scope,agent.getLocation(), distanceMax, In.list(scope, agents)));
 				
@@ -191,6 +194,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				for (IAgent ag : agsFiltered) {
 					double dist = ag.euclidianDistanceTo(target);
 					double diff = (distanceToGoal - dist) ;
+					if (changeLane && diff < vL) return 0;
 					if (diff <  minDiff && ((changeLane && diff >= 0) || (! changeLane && diff > 0)) )  {
 						minDiff = diff;
 						nextAgent = ag;
@@ -200,8 +204,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				if (nextAgent == null)
 					return distance;
 				
-				double realDist = Math.min(distance, minDiff - security_distance - 0.5 * getVehiculeLength(agent) - 0.5 * getVehiculeLength(nextAgent) );
-				
+				double realDist = Math.min(distance, minDiff - security_distance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent) );
+				if (changeLane && realDist < vL) 
+					return 0;
 				return Math.max(0.0,realDist );
 			}
 		
@@ -216,7 +221,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				double distMax = 0;
 				int newLane = lane;
 				List agentOn = (List) currentRoad.getAttribute("agents_on");
-				if (lane > 0 && GAMA.getRandom().between(0, 1) <= probaChangeLaneDown) {
+				if (lane > 0 && GAMA.getRandom().next() < probaChangeLaneDown) {
 					double val = avoidCollision(scope,agent,distance,security_distance, currentLocation,target,lane - 1, currentRoad, true);
 					//System.out.println(agent + " lane - 1 : " + val);
 					if (val == distance) {
@@ -239,8 +244,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					distMax = val;
 					newLane = lane;
 				}
-				
-				if (lane <  ((Integer) currentRoad.getAttribute("lanes") - 1) && GAMA.getRandom().between(0, 1) <= probaChangeLaneUp) {
+				if (lane <  ((Integer) currentRoad.getAttribute("lanes") - 1) && GAMA.getRandom().next() < probaChangeLaneUp) {
 					val = avoidCollision(scope,agent,distance,security_distance, currentLocation,target,lane+1, currentRoad, true);
 					//System.out.println(agent + " lane + 1 : " + val);
 					if (val > distMax && val > 0) {

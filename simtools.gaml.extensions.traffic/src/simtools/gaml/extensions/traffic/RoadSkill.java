@@ -82,9 +82,9 @@ public class RoadSkill extends MovingSkill {
 	public void primRegister(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
-		int lane =  scope.getIntArg("lane");
 		List agentsOn = getAgentsOn(agent);
-		if (lane < agentsOn.size() && driver != null) {
+		int lane =  Math.min(agentsOn.size(),scope.getIntArg("lane"));
+		if (driver != null) {
 			((List) agentsOn.get(lane)).add(driver);
 			if (driver.hasAttribute("current_road") && driver.hasAttribute("current_lane")) {
 				IAgent cr = (IAgent) driver.getAttribute("current_road");
