@@ -184,12 +184,15 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		public Boolean primIsReadyNextRoad(final IScope scope) throws GamaRuntimeException {
 			IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
 			Integer lane = (Integer) scope.getArg("lane", IType.INT);
-			return isReadyNextRoad(scope, road,lane);
+			IAgent driver = getCurrentAgent(scope);
+			double vL = getVehiculeLength(driver);
+			double secDistCoeff = getSecurityDistanceCoeff(driver);
+			return isReadyNextRoad(scope, road,driver,secDistCoeff, vL) && nextRoadTestLane(driver,road, lane, secDistCoeff, vL);
 		}
-		public Boolean isReadyNextRoad(final IScope scope,IAgent road,Integer lane) throws GamaRuntimeException {
+		
+		public Boolean isReadyNextRoad(final IScope scope,IAgent road,IAgent driver,double secDistCoeff, double vL) throws GamaRuntimeException {
 			IAgent theNode  = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 			List<List> stops =  (List<List>) theNode.getAttribute(RoadNodeSkill.STOP);
-			IAgent driver = getCurrentAgent(scope);
 			List<Double> respectsStops = getRespectStops(driver);
 			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
 			for (int i = 0; i < stops.size(); i++) {
@@ -199,22 +202,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				}
 			}
 			
-			double vL = getVehiculeLength(driver);
-			double secDistCoeff = getSecurityDistanceCoeff(driver);
-			double realSpeed = getRealSpeed(driver);
-			double secDist = 1 + realSpeed* secDistCoeff;
 			Boolean rightSide = getRightSideDriving(driver);
-			List<IAgent> drivers =(List) ((List) road.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
-			for (IAgent dr: drivers){
-				if (dr == driver) continue;
-				if (dr.euclidianDistanceTo(driver) < (vL/2 + secDist + getVehiculeLength(dr)/2)) {
-					return false;
-				}
-			}
+			
 		
 			double angleRef = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)road.getLocation());
 			List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
-			double val = (1 + secDistCoeff * getRealSpeed(driver)) + vL;
 			if (!Random.opFlip(scope, getRespectPriorities(driver))) return true;
 			for (IAgent rd: roadsIn) {
 				if (rd != currentRoad) {
@@ -236,6 +228,20 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			return true;
 		}
 		
+		public boolean nextRoadTestLane(IAgent driver,IAgent road,int lane, double secDistCoeff, double vL){
+			double realSpeed = getRealSpeed(driver);
+			double secDist = 1 + realSpeed* secDistCoeff;
+			
+			List<IAgent> drivers =(List) ((List) road.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+			for (IAgent dr: drivers){
+				if (dr == driver) continue;
+				if (dr.euclidianDistanceTo(driver) < (vL/2 + secDist + getVehiculeLength(dr)/2)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		@action(name = "lane_choice", args = {
 				@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the lane"))}, 
 				doc = @doc(value = "action to define", returns = "the remaining time", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
@@ -244,10 +250,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				Integer lanes = (Integer) road.getAttribute(RoadSkill.LANES);
 				IAgent driver = getCurrentAgent(scope);
 				Integer currentLane = (Integer) getCurrentLane(driver);
+				double vL = getVehiculeLength(driver);
+				double secDistCoeff = getSecurityDistanceCoeff(driver);
+				boolean ready =  isReadyNextRoad(scope, road,driver,secDistCoeff, vL);
+				if (!ready) return -1;
 				if (lanes == 0) 
-					return isReadyNextRoad(scope, road,0) ? 0 : 1;
+					return nextRoadTestLane(driver,road, 0, secDistCoeff, vL) ? 0 : -1;
 				int cvTmp = Math.min(currentLane, lanes - 1);
-				int cv = isReadyNextRoad(scope, road,cvTmp) ? cvTmp : -1;
+				int cv = nextRoadTestLane(driver,road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
 				if (cv != -1) return cv;
 				double probaLaneChangeDown = getProbaLaneChangeDown(driver);
 				double probaLaneChangeUp = getProbaLaneChangeUp(driver);
@@ -257,12 +267,12 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					for (int i = 0; i < lanes; i++) {
 						int l1 = cvTmp - i;
 						if (l1 >= 0 && changeDown) {
-							cv = isReadyNextRoad(scope, road,l1) ? l1 : -1;
+							cv = nextRoadTestLane(driver,road, l1, secDistCoeff, vL) ? l1 : -1;
 							if (cv != -1) return cv; 
 						}
 						int l2 = cvTmp + i;
 						if (l2 < lanes && changeUp) {
-							cv = isReadyNextRoad(scope, road,l2) ? l2 : -1;
+							cv = nextRoadTestLane(driver,road, l2, secDistCoeff, vL) ? l2 : -1;
 							if (cv != -1) return cv; 
 						}
 					}
