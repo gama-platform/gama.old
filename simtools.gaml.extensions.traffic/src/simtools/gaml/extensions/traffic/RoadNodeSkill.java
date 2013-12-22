@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -15,7 +16,10 @@ import msi.gaml.types.IType;
 
 
 @vars({
-	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT),@var(name = "stop", type = IType.LIST, of =  IType.LIST),@var(name = "block", type = IType.MAP)})
+	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of input roads")),
+	 @var(name = "roads_out", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of output roads")),
+	 @var(name = "stop", type = IType.LIST, of =  IType.LIST, doc = @doc("define for each type of stop, the list of concerned roads")),
+	 @var(name = "block", type = IType.MAP, doc = @doc("define the list of agents blocking the node, and for each node, the list of concerned roads"))})
 @skill(name = "skill_road_node")
 public class RoadNodeSkill extends MovingSkill {
 

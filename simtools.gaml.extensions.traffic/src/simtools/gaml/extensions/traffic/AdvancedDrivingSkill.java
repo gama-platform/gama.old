@@ -35,17 +35,17 @@ import com.vividsolutions.jts.geom.*;
 
 @vars({
 	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")),
-	@var(name = "security_distance_coeff", type = IType.FLOAT, init = "1.0", doc = @doc("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed)")),
+	@var(name = "security_distance_coeff", type = IType.FLOAT, init = "1.0", doc = @doc("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance = 1°m + security_distance_coeff *real_speed )")),
 	@var(name = "real_speed", type = IType.FLOAT, init = "0.0", doc = @doc("real speed of the agent (in meter/second)")),
 	@var(name = "current_lane", type = IType.INT, init = "0", doc = @doc("the current lane on which the agent is")),
-	@var(name = "vehicle_length", type = IType.FLOAT, init = "0.0", doc = @doc("the length of the agent geometry")),
+	@var(name = "vehicle_length", type = IType.FLOAT, init = "0.0", doc = @doc("the length of the vehicle (in meters)")),
 	@var(name = "current_road", type = IType.AGENT, doc = @doc("current road on which the agent is")),
 	@var(name = "proba_lane_change_up", type = IType.FLOAT,init = "1.0",doc = @doc("probability to change lane to a upper lane (left lane if right side driving) if necessary")),
 	@var(name = "proba_lane_change_down", type = IType.FLOAT,init = "1.0",doc = @doc("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
 	@var(name = "proba_respect_priorities", type = IType.FLOAT,init = "1.0",doc = @doc("probability to respect priority (right or left) laws")),
-	@var(name = "proba_respect_stops", type = IType.LIST, of = IType.FLOAT,init = "[]",doc = @doc("probability to respect stop laws")),
-	@var(name = "proba_block_node", type = IType.FLOAT, init = "0.0",doc = @doc("probability to block a node")),
-	@var(name = "right_side_driving", type = IType.BOOL, init = "true",doc = @doc("have drivers to drive on the right size of the road?"))})
+	@var(name = "proba_respect_stops", type = IType.LIST, of = IType.FLOAT,init = "[]",doc = @doc("probability to respect stop laws - one value for each type of stop")),
+	@var(name = "proba_block_node", type = IType.FLOAT, init = "0.0",doc = @doc("probability to block a node (do not let other driver cross the crossroad)")),
+	@var(name = "right_side_driving", type = IType.BOOL, init = "true",doc = @doc("are drivers driving on the right size of the road?"))})
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
 
@@ -155,7 +155,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 	
 	@action(name = "advanced_follow_driving", args = {
-			@arg(name = "path", type = IType.PATH, optional = true, doc = @doc("a path to be followed.")),
+			@arg(name = "path", type = IType.PATH, optional = false, doc = @doc("a path to be followed.")),
 			@arg(name = "target", type = IType.POINT, optional = true, doc = @doc("the target to reach")),
 			@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 			@arg(name = "time", type = IType.FLOAT, optional = true, doc = @doc("time to travel"))}, 
@@ -192,7 +192,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		@action(name = "is_ready_next_road", args = {
 			@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road to test")),
 			@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane to test"))}, 
-			doc = @doc(value = "action to define", returns = "the remaining time", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
+			doc = @doc(value = "action to test if the driver can take the given road at the given lane", returns = "true (the driver can take the road) or false (the driver cannot take the road)", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
 		public Boolean primIsReadyNextRoad(final IScope scope) throws GamaRuntimeException {
 			IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
 			Integer lane = (Integer) scope.getArg("lane", IType.INT);
@@ -268,7 +268,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		
 		@action(name = "lane_choice", args = {
 				@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the lane"))}, 
-				doc = @doc(value = "action to define", returns = "the remaining time", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
+				doc = @doc(value = "action to choose a lane", returns = "the chosen lane, return -1 if no lane can be taken", examples = { "do lane_choice road: a_road;" }))
 			public Integer primLanChoice(final IScope scope) throws GamaRuntimeException {
 				IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
 				Integer lanes = (Integer) road.getAttribute(RoadSkill.LANES);

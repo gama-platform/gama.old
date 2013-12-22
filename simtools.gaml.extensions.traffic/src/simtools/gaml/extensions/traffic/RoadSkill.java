@@ -18,8 +18,11 @@ import msi.gaml.types.IType;
 
 
 @vars({
-	@var(name = "agents_on", type = IType.LIST, of = IType.LIST),@var(name = "source_node", type = IType.AGENT),@var(name = "target_node", type = IType.AGENT),
-	 @var(name = "lanes", type = IType.INT), @var(name = "maxspeed", type = IType.FLOAT)})
+	@var(name = "agents_on", type = IType.LIST, of = IType.LIST, doc = @doc("for each lane of the road, the list of agents on the lane")),
+	@var(name = "source_node", type = IType.AGENT, doc = @doc("the source node of the road")),
+	@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road")),
+	@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes")), 
+	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road"))})
 @skill(name = "skill_road")
 public class RoadSkill extends MovingSkill {
 
