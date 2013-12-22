@@ -33,7 +33,7 @@ import com.vividsolutions.jts.geom.*;
 
 @vars({
 	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")),
-	@var(name = "security_distance", type = IType.FLOAT, init = "1.0", doc = @doc("the min distance between two drivers")),
+	@var(name = "security_distance_coeff", type = IType.FLOAT, init = "1.0", doc = @doc("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed)")),
 	@var(name = "real_speed", type = IType.FLOAT, init = "0.0", doc = @doc("real speed of the agent (in meter/second)")),
 	@var(name = "current_lane", type = IType.INT, init = "0", doc = @doc("the current lane on which the agent is")),
 	@var(name = "vehicle_length", type = IType.FLOAT, init = "0.0", doc = @doc("the length of the agent geometry")),
@@ -44,7 +44,7 @@ import com.vividsolutions.jts.geom.*;
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
 
-	public final static String SECURITY_DISTANCE = "security_distance";
+	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
 	public final static String REAL_SPEED = "real_speed";
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String CURRENT_LANE = "current_lane";
@@ -79,14 +79,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
 
-	@getter(SECURITY_DISTANCE)
-	public double getSecurityDistance(final IAgent agent) {
-		return (Double) agent.getAttribute(SECURITY_DISTANCE);
+	@getter(SECURITY_DISTANCE_COEFF)
+	public double getSecurityDistanceCoeff(final IAgent agent) {
+		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
 	}
 
-	@setter(SECURITY_DISTANCE)
-	public void setSecurityDistance(final IAgent agent, final double ls) {
-		agent.setAttribute(SECURITY_DISTANCE, ls);
+	@setter(SECURITY_DISTANCE_COEFF)
+	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
+		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
 
 	@getter(CURRENT_ROAD)
@@ -128,7 +128,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			doc = @doc(value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "the remaining time", examples = { "do osm_follow path: the_path on: road_network;" }))
 		public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
 			final IAgent agent = getCurrentAgent(scope);
-			final double security_distance = getSecurityDistance(agent);
+			final double security_distance = getSecurityDistanceCoeff(agent) * getRealSpeed(agent) + 1;
 			final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 			final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : 1.0;
 			
@@ -172,19 +172,21 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			IAgent driver = getCurrentAgent(scope);
 			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
 			double vL = getVehiculeLength(driver);
-			double secDist = getSecurityDistance(driver);
+			double secDistCoeff = getSecurityDistanceCoeff(driver);
+			double realSpeed = getRealSpeed(driver);
+			double secDist = 1 + realSpeed* secDistCoeff;
 			Boolean rightSide = getRightSideDriving(driver);
 			List<IAgent> drivers =(List) ((List) road.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
 			for (IAgent dr: drivers){
 				if (dr == driver) continue;
-				if (dr.euclidianDistanceTo(driver) < (2 * vL)) {
+				if (dr.euclidianDistanceTo(driver) < (vL/2 + secDist + getVehiculeLength(dr)/2)) {
 					return false;
 				}
 			}
 		
 			double angleRef = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)road.getLocation());
 			List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
-			double val = secDist + vL;
+			double val = (1 + secDistCoeff * getRealSpeed(driver)) + vL;
 			for (IAgent rd: roadsIn) {
 				if (rd != currentRoad) {
 					double angle = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)rd.getLocation());
@@ -194,7 +196,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 						for (int i = 0 ; i < nbL ; i++) {
 							for (IAgent pp : agentsOn.get(i)) {
 								double vL2 = getVehiculeLength(pp);
-								if (Maths.round(getRealSpeed(pp),2) > 0.0 && (pp.euclidianDistanceTo(driver) < (val + vL2))) {
+								if (Maths.round(getRealSpeed(pp),2) > 0.0 && (pp.euclidianDistanceTo(driver) < ((1 + secDistCoeff * getRealSpeed(pp)) + vL2/2 + vL/2))) {
 									return false;
 								}
 							}
