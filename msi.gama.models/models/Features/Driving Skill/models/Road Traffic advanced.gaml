@@ -15,12 +15,12 @@ global {
 	
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
-	int nb_people <- simple_data ? 20 : 500;
+	int nb_people <- simple_data ? 20 : 300;
 	 
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
 		ask node where each.is_traffic_signal {
-			stop[0] <- flip(0.5) ? roads_in : [] ;
+			stop << flip(0.5) ? roads_in : [] ;
 		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			shape <- polyline(reverse(shape.points));
@@ -34,7 +34,7 @@ global {
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1;
 			proba_lane_change_down <- 0.2;
-			location <- first(one_of(node).shape.points);
+			location <- one_of(node where empty(each.stop)).location;
 			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
 			proba_respect_priorities <- 1.0 - rnd(200/1000);
 			proba_respect_stops <- [1.0];
@@ -44,7 +44,7 @@ global {
 } 
 species node skills: [skill_road_node] {
 	bool is_traffic_signal;
-	list<list> stop <- [[]];
+	list<list> stop <- [];
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	
@@ -111,8 +111,8 @@ species people skills: [advanced_driving] {
 				add last(agent(edge).shape.points) to: targets;
 			}
 			index_path <- 0;
-			road route <- road(a_path.edges[index_path]); 
-			ask route {do register(myself,0);}
+			road nw_road <- road(a_path.edges[index_path]); 
+			ask nw_road {do register(myself,0);}
 			the_target <-targets[index_path]; 
 			return a_path;
 		} else {
@@ -122,7 +122,7 @@ species people skills: [advanced_driving] {
 	}
 	
 	reflex time_to_go when: the_final_target = nil {
-		the_final_target <- first(one_of(road).shape.points);
+		the_final_target <- one_of(node where empty(each.stop)).location;
 		the_path <- compute_path();
 		if (the_path = nil) {
 			the_final_target <- nil;
