@@ -35,6 +35,8 @@ global {
 			proba_lane_change_up <- 0.1;
 			proba_lane_change_down <- 0.2;
 			location <- first(one_of(node).shape.points);
+			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
+		
 		}	
 	}
 	
@@ -96,7 +98,6 @@ species people skills: [advanced_driving] {
 	
 	float speed_choice (road the_road) {
 		float speed <- min([real_speed + acceleration_max, speed_coeff * (road(the_road).maxspeed/3.6)]);
-		security_distance <- 1 + (speed * 5/9 * 3.6);  
 		return speed;
 	}
 	
