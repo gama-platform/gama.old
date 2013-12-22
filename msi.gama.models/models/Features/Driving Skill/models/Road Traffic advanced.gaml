@@ -15,12 +15,12 @@ global {
 	
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
-	int nb_people <- simple_data ? 20 : 300;
+	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
 		ask node where each.is_traffic_signal {
-			stop <- flip(0.5);
+			stop[0] <- flip(0.5);
 		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			shape <- polyline(reverse(shape.points));
@@ -36,14 +36,15 @@ global {
 			proba_lane_change_down <- 0.2;
 			location <- first(one_of(node).shape.points);
 			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
-		
+			proba_respect_priorities <- 1.0 - rnd(200/1000);
+			proba_respect_stops <- [1.0];
 		}	
 	}
 	
 } 
 species node skills: [skill_road_node] {
 	bool is_traffic_signal;
-	bool stop <- false;
+	list<bool> stop <- [false];
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	
@@ -51,20 +52,20 @@ species node skills: [skill_road_node] {
 		counter <- counter + 1;
 		if (counter >= time_to_change) { 
 			counter <- 0;
-			stop <- not stop;
+			stop[0] <- not stop[0];
 		} 
 	}
 	
 	aspect base {
 		if (is_traffic_signal) {	
-			draw circle(5) color: stop ? rgb("red") : rgb("green");
+			draw circle(5) color: stop[0] ? rgb("red") : rgb("green");
 		}
 	}
 	
 	aspect base3D {
 		if (is_traffic_signal) {	
 			draw box(1,1,10) color:rgb("black");
-			draw sphere(5) at: {location.x,location.y,12} color: stop ? rgb("red") : rgb("green");
+			draw sphere(5) at: {location.x,location.y,12} color: stop[0] ? rgb("red") : rgb("green");
 		}
 	}
 }
