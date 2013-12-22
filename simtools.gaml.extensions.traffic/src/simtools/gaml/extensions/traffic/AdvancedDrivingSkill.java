@@ -1,6 +1,8 @@
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -42,6 +44,7 @@ import com.vividsolutions.jts.geom.*;
 	@var(name = "proba_lane_change_down", type = IType.FLOAT,init = "1.0",doc = @doc("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
 	@var(name = "proba_respect_priorities", type = IType.FLOAT,init = "1.0",doc = @doc("probability to respect priority (right or left) laws")),
 	@var(name = "proba_respect_stops", type = IType.LIST, of = IType.FLOAT,init = "[]",doc = @doc("probability to respect stop laws")),
+	@var(name = "proba_block_node", type = IType.FLOAT, init = "0.0",doc = @doc("probability to block a node")),
 	@var(name = "right_side_driving", type = IType.BOOL, init = "true",doc = @doc("have drivers to drive on the right size of the road?"))})
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
@@ -56,6 +59,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public final static String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
 	public final static String PROBA_RESPECT_PRIORITIES = "proba_respect_priorities";
 	public final static String PROBA_RESPECT_STOPS = "proba_respect_stops";
+	public final static String PROBA_BLOCK_NODE = "proba_block_node";
 	public final static String RIGHT_SIDE_DRIVING = "right_side_driving";
 	
 	@getter(PROBA_LANE_CHANGE_DOWN)
@@ -82,6 +86,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	@setter(PROBA_RESPECT_PRIORITIES)
 	public void setRespectPriorities(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
+	}
+	@getter(PROBA_BLOCK_NODE)
+	public double getProbaBlockNode(final IAgent agent) {
+		return (Double) agent.getAttribute(PROBA_BLOCK_NODE);
+	}
+	@setter(PROBA_BLOCK_NODE)
+	public void setProbaBlockNode(final IAgent agent, final Double proba) {
+		agent.setAttribute(PROBA_BLOCK_NODE, proba);
 	}
 	@getter(PROBA_RESPECT_STOPS)
 	public List<Double> getRespectStops(final IAgent agent) {
@@ -187,10 +199,19 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			IAgent driver = getCurrentAgent(scope);
 			double vL = getVehiculeLength(driver);
 			double secDistCoeff = getSecurityDistanceCoeff(driver);
-			return isReadyNextRoad(scope, road,driver,secDistCoeff, vL) && nextRoadTestLane(driver,road, lane, secDistCoeff, vL);
+			double probaBlock = getProbaBlockNode(driver);
+			boolean testBlockNode = Random.opFlip(scope, probaBlock);
+			IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
+			Map<IAgent,List<IAgent>> block = ((Map<IAgent,List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK));
+			List<IAgent> ba = new GamaList<IAgent>(block.keySet());
+			for (IAgent dr : ba) {
+				if (!dr.getLocation().equals(node.getLocation()))
+					block.remove(dr);
+			}
+			return isReadyNextRoad(scope, road,driver,secDistCoeff, vL,block) && (testBlockNode || nextRoadTestLane(driver,road, lane, secDistCoeff, vL));
 		}
 		
-		public Boolean isReadyNextRoad(final IScope scope,IAgent road,IAgent driver,double secDistCoeff, double vL) throws GamaRuntimeException {
+		public Boolean isReadyNextRoad(final IScope scope,IAgent road,IAgent driver,double secDistCoeff, double vL,Map<IAgent,List<IAgent>> block) throws GamaRuntimeException {
 			IAgent theNode  = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 			List<List> stops =  (List<List>) theNode.getAttribute(RoadNodeSkill.STOP);
 			List<Double> respectsStops = getRespectStops(driver);
@@ -201,7 +222,10 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					return false;
 				}
 			}
-			
+			for (List<IAgent> rd : block.values()) {
+				if (rd.contains(currentRoad))
+					return false;
+			}
 			Boolean rightSide = getRightSideDriving(driver);
 			
 		
@@ -250,15 +274,36 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				Integer lanes = (Integer) road.getAttribute(RoadSkill.LANES);
 				IAgent driver = getCurrentAgent(scope);
 				Integer currentLane = (Integer) getCurrentLane(driver);
+				IAgent currentRoad = (IAgent) getCurrentRoad(driver);
+				IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 				double vL = getVehiculeLength(driver);
 				double secDistCoeff = getSecurityDistanceCoeff(driver);
-				boolean ready =  isReadyNextRoad(scope, road,driver,secDistCoeff, vL);
+				double probaBlock = getProbaBlockNode(driver);
+				boolean testBlockNode = Random.opFlip(scope, probaBlock);
+				Map<IAgent,List<IAgent>> block = ((Map<IAgent,List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK));
+				List<IAgent> ba = new GamaList<IAgent>(block.keySet());
+				List<IAgent> roadsIn = (List<IAgent>)node.getAttribute(RoadNodeSkill.ROADS_IN);
+				
+				for (IAgent dr : ba) {
+					if (!dr.getLocation().equals(node.getLocation()))
+						block.remove(dr);
+				}
+				
+				boolean ready = isReadyNextRoad(scope, road,driver,secDistCoeff, vL, block);
 				if (!ready) return -1;
-				if (lanes == 0) 
-					return nextRoadTestLane(driver,road, 0, secDistCoeff, vL) ? 0 : -1;
+				if (lanes == 0)  {
+					int lane = testBlockNode ||nextRoadTestLane(driver,road, 0, secDistCoeff, vL) ? 0 : -1;
+					if (lane != -1 )
+						addBlockingDriver(0, testBlockNode, driver, currentRoad, road, node, roadsIn,block); 
+					return lane;
+				}
+					
 				int cvTmp = Math.min(currentLane, lanes - 1);
-				int cv = nextRoadTestLane(driver,road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
-				if (cv != -1) return cv;
+				int cv = testBlockNode ||nextRoadTestLane(driver,road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
+				if (cv != -1) {
+					addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn,block); 
+					return cv;
+				}
 				double probaLaneChangeDown = getProbaLaneChangeDown(driver);
 				double probaLaneChangeUp = getProbaLaneChangeUp(driver);
 				boolean changeDown = Random.opFlip(scope, probaLaneChangeDown);
@@ -267,19 +312,41 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					for (int i = 0; i < lanes; i++) {
 						int l1 = cvTmp - i;
 						if (l1 >= 0 && changeDown) {
-							cv = nextRoadTestLane(driver,road, l1, secDistCoeff, vL) ? l1 : -1;
-							if (cv != -1) return cv; 
+							cv = testBlockNode ||nextRoadTestLane(driver,road, l1, secDistCoeff, vL) ? l1 : -1;
+							if (cv != -1) {
+								addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn,block); 
+								return cv; 
+							}
 						}
 						int l2 = cvTmp + i;
 						if (l2 < lanes && changeUp) {
-							cv = nextRoadTestLane(driver,road, l2, secDistCoeff, vL) ? l2 : -1;
-							if (cv != -1) return cv; 
+							cv = testBlockNode ||nextRoadTestLane(driver,road, l2, secDistCoeff, vL) ? l2 : -1;
+							if (cv != -1) {
+								addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn,block); 
+								return cv; 
+							}
 						}
 					}
 				}
 				return cv;
 		}
+		
+		public void addBlockingDriver(int cv, boolean testBlockNode, IAgent driver, IAgent currentRoad, IAgent road, IAgent node, List<IAgent> roadsIn,Map<IAgent,List<IAgent>> block) {
+			if (testBlockNode && roadsIn.size() > 1) {
+				List<IAgent> rb = roadBlocked(currentRoad,road,node,roadsIn);
+				if (! rb.isEmpty())
+					block.put(driver,rb );
+			}
+		}
 	
+		public List<IAgent> roadBlocked(IAgent roadIn, IAgent roadOut, IAgent node, List<IAgent> roadsIn) {
+			List<IAgent> roadsBlocked = new GamaList<IAgent>();
+			for (IAgent rd : roadsIn) {
+				if (rd != roadIn && !rd.getLocation().equals(roadOut.getLocation()))
+					roadsBlocked.add(rd);
+			}
+			return roadsBlocked;
+		}
 
 		/**
 		 * @throws GamaRuntimeException
@@ -386,7 +453,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			}
 		
 
-		private GamaPoint computeRealTarget( final IAgent agent, 
+		private GamaPoint computeRealTarget(final IAgent agent, 
 			final double security_distance, final GamaPoint currentLocation, final GamaPoint target,
 			final int lane, final IAgent currentRoad) {
 			
