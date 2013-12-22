@@ -20,7 +20,7 @@ global {
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
 		ask node where each.is_traffic_signal {
-			stop[0] <- flip(0.5);
+			stop[0] <- flip(0.5) ? roads_in : [] ;
 		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			shape <- polyline(reverse(shape.points));
@@ -44,7 +44,7 @@ global {
 } 
 species node skills: [skill_road_node] {
 	bool is_traffic_signal;
-	list<bool> stop <- [false];
+	list<list> stop <- [[]];
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	
@@ -52,20 +52,20 @@ species node skills: [skill_road_node] {
 		counter <- counter + 1;
 		if (counter >= time_to_change) { 
 			counter <- 0;
-			stop[0] <- not stop[0];
+			stop[0] <- empty (stop[0]) ? roads_in : [] ;
 		} 
 	}
 	
 	aspect base {
 		if (is_traffic_signal) {	
-			draw circle(5) color: stop[0] ? rgb("red") : rgb("green");
+			draw circle(5) color: empty (stop[0]) ? rgb("green") : rgb("red");
 		}
 	}
 	
 	aspect base3D {
 		if (is_traffic_signal) {	
 			draw box(1,1,10) color:rgb("black");
-			draw sphere(5) at: {location.x,location.y,12} color: stop[0] ? rgb("red") : rgb("green");
+			draw sphere(5) at: {location.x,location.y,12} color: empty (stop[0]) ? rgb("green") : rgb("red");
 		}
 	}
 }
