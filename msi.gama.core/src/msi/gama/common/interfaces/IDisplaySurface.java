@@ -214,13 +214,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void setHighlightColor(int[] rgb);
 
-	void addShapeFile();
-
-	/**
-	 * @return IGraphics
-	 */
-	// public IGraphics getIGraphics();
-
 	public void addMouseListener(MouseListener e);
 
 	double getEnvWidth();
@@ -247,9 +240,5 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	void setSize(int x, int y);
 
 	boolean getQualityRendering();
-
-	// void acquireUpdateLock() throws InterruptedException;
-
-	// void releaseUpdateLock();
 
 }

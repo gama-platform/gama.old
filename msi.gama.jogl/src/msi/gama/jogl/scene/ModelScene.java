@@ -15,7 +15,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.IList;
 import msi.gaml.types.GamaGeometryType;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -38,7 +37,7 @@ public class ModelScene {
 	final GamaPoint offset = new GamaPoint(0, 0, 0);
 	final GamaPoint scale = new GamaPoint(1, 1, 1);
 	boolean staticObjectsAreLocked;
-	// final Double envWidth, envHeight;
+	boolean reloaded = false;
 	private boolean envGeometryInitialized = false;
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
@@ -47,8 +46,6 @@ public class ModelScene {
 		images = new SceneObjects(new ImageDrawer(renderer), true, false);
 		dems = new SceneObjects(new DEMDrawer(renderer), true, false);
 		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true, false);
-		// envWidth = renderer.env_width;
-		// envHeight = renderer.env_height;
 	}
 
 	/**
@@ -56,8 +53,8 @@ public class ModelScene {
 	 */
 	public void wipe(final JOGLAWTGLRenderer renderer) {
 		envGeometryInitialized = false;
-		//The display is cleared every iteration if not in a trace display mode or when reloading a simulation
-		if(!renderer.getTraceDisplay() || (renderer.displaySurface.outputReloaded == true)){ 
+		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
+		if ( reloaded || !renderer.getTraceDisplay() ) {
 			geometries.clear(renderer);
 			images.clear(renderer);
 			dems.clear(renderer);
@@ -72,13 +69,12 @@ public class ModelScene {
 					it.remove();
 				}
 			}
-			renderer.displaySurface.outputReloaded = false;
-		}
-		else{
-			geometries.openGLListIndex =null;
-			images.openGLListIndex =null;
-			dems.openGLListIndex =null;
-			strings.openGLListIndex =null;	
+		} else {
+			reloaded = false;
+			geometries.openGLListIndex = null;
+			images.openGLListIndex = null;
+			dems.openGLListIndex = null;
+			strings.openGLListIndex = null;
 		}
 	}
 
@@ -117,7 +113,8 @@ public class ModelScene {
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
 		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final boolean fromImage, final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset,
-		final GamaPoint scale, final double cellSize, final MyTexture texture, final String name, final int currentLayerId) {
+		final GamaPoint scale, final double cellSize, final MyTexture texture, final String name,
+		final int currentLayerId) {
 		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText, fromImage,
 			z_factor, null, offset, scale, alpha, cellSize, texture, name, currentLayerId));
 		if ( texture != null ) {
@@ -126,14 +123,14 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
-		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured, final IList<String> textureFileNames,
-		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
-		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha,
-		final String popName) {
+		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
+		final IList<String> textureFileNames, final Integer angle, final double height, final GamaPoint offSet,
+		final GamaPoint scale, final boolean roundCorner, final String type, final boolean currentLayerIsStatic,
+		final double alpha, final String popName) {
 
 		final GeometryObject curJTSGeometry =
-			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,textureFileNames,
-				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);
+			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
+				textureFileNames, angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);
 		if ( currentLayerIsStatic ) {
 			if ( !staticObjectsAreLocked ) {
 				staticObjects.add(curJTSGeometry);
@@ -233,6 +230,14 @@ public class ModelScene {
 	 */
 	public void lockStaticObjects() {
 		staticObjectsAreLocked = true;
+	}
+
+	/**
+	 * 
+	 */
+	public void reload() {
+		staticObjectsAreLocked = false;
+		reloaded = true;
 	}
 
 }

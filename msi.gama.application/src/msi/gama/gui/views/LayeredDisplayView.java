@@ -611,27 +611,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	@Override
-	public void addShapeFile() {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-
-					}
-				}
-				surface.addShapeFile();
-
-			}
-		}).start();
-
-	}
-
-	@Override
 	public void dispose() {
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
 		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
@@ -642,11 +621,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		super.dispose();
 	}
 
-	// @Override
-	// public void setIndicator(final ZoomIndicatorItem indicator) {
-	// zoomIndicator = indicator;
-	// }
-
 	@Override
 	public void newZoomLevel(final double zoomLevel) {
 		this.zoomLevel = (int) (zoomLevel * 100);
@@ -654,7 +628,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				// zoomIndicator.setText(String.valueOf(zoom) + "%");
 				overlay.update();
 			}
 		});

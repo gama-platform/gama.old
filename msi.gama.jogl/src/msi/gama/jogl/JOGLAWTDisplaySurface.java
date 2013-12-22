@@ -140,19 +140,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setCameraPosition(getOutput().getCameraPos());
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
 		renderer.setCameraUpVector(getOutput().getCameraUpVector());
-		// GuiUtils.debug("JOGLAWTDisplaySurface.initialize : jogl canvas added; self size = " + getSize());
 		add(renderer.canvas, BorderLayout.CENTER);
-		// openGLGraphicsGLRender.animator.start();
 		zoomFit();
-		// new way
-		// createIGraphics();
 		this.setVisible(true);
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				// resizeImage(getWidth(), getHeight());
 				if ( renderer != null && renderer.canvas != null ) {
 					renderer.canvas.setSize(getWidth(), getHeight());
 				}
@@ -325,66 +320,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		zoomFit();
 		updateDisplay();
 	}
-
-	/**
-	 * Add a simple feature collection from a .Shp file.
-	 */
-	@Override
-	public void addShapeFile() {
-
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Display.getDefault().asyncExec(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		//
-		// final Shell shell = new Shell(Display.getDefault());
-		// final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-		//
-		// dialog.setText("Browse for a .shp file");
-		//
-		// dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
-		//
-		// dialog.setFilterExtensions(new String[] { "*.shp" });
-		//
-		// if ( dialog.open() != null ) {
-		//
-		// final String path = dialog.getFilterPath();
-		//
-		// final String[] names = dialog.getFileNames();
-		//
-		// for ( int i = 0; i < names.length; i++ ) {
-		// shapeFileName[i] = path + "/" + names[i];
-		// System.out.println(shapeFileName[i]);
-		// }
-		//
-		// }
-		//
-		// renderer.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
-		// final SimpleFeatureCollection myCollection =
-		// renderer.myShapeFileReader
-		// .getFeatureCollectionFromShapeFile(renderer.myShapeFileReader.store);
-		// final Color color =
-		// new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
-		// (int) (Math.random() * 255));
-		// renderer.getScene().addCollections(myCollection, color);
-		// // FIXME: Need to reinitialise th displaylist
-		//
-		// }
-		// });
-		// }
-		// }).start();
-
-	}
-
-	//
-	// @Override
-	// public IGraphics.OpenGL getIGraphics() {
-	// return (IGraphics.OpenGL) super.getIGraphics();
-	// }
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {

@@ -27,13 +27,12 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
-import msi.gama.jogl.scene.MyTexture;
+import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
@@ -78,6 +77,20 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		fillBackground(surface.getBackgroundColor(), 1);
 	}
 
+	// This method is normally called either when the graphics is created or when the output is changed
+	@Override
+	public void initFor(final IDisplaySurface surface) {
+		super.initFor(surface);
+		if ( renderer != null ) {
+			// renderer can be temporarily null while the graphics is initialized, as this method is also called from
+			// the constructor
+			ModelScene s = renderer.getScene();
+			if ( s != null ) {
+				s.reload();
+			}
+		}
+	}
+
 	/**
 	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
 	 * existing geometry that will be displayed by openGl.
@@ -97,7 +110,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		final Color color = highlight ? highlightColor : c;
 		Double depth = 0d;
-		IList<String> textures = new GamaList<String>(); ;
+		IList<String> textures = new GamaList<String>();;
 		String type = "none";
 		// Add a geometry with a depth and type coming from Attributes
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
@@ -111,8 +124,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
 		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
-			border, textures.isEmpty() ? false: true, textures, angle,  depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
-			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
+			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
+			currentScale, rounded, type, currentLayerIsStatic, getCurrentAlpha(),
+			scope.getAgentScope().getPopulation().getName());
 		return rect;
 	}
 
@@ -197,8 +211,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
 					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false,null, 0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,
+				0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
 		}
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
@@ -206,22 +220,23 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
 					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,
+				0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
 		}
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
 		double stepX, stepY;
 
-		double wRatio= (double) this.getEnvironmentWidth()/(double)image.getWidth();
-		double hRatio = (double)this.getEnvironmentHeight()/(double)image.getHeight();
+		double wRatio = (double) this.getEnvironmentWidth() / (double) image.getWidth();
+		double hRatio = (double) this.getEnvironmentHeight() / (double) image.getHeight();
 		for ( int i = 0; i < image.getWidth(); i++ ) {
 			for ( int j = 0; j < image.getHeight(); j++ ) {
 				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
-				stepY = (j + 0.5) / image.getHeight()* image.getHeight();
+				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
 				final Geometry g =
-					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX*wRatio, stepY*hRatio)).getInnerGeometry();
+					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
+						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
 					false, null, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
 					getCurrentAlpha(), popName);
@@ -276,9 +291,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		final BufferedImage im =
-		// ImageUtils.toCompatibleImage(chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels));
-			chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
+		final BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true, "chart");
 	}
 

@@ -31,7 +31,7 @@ public interface IViewWithZoom extends IZoomListener {
 	 * Activate the arcball View
 	 */
 	public void toggleArcball();
-	
+
 	/**
 	 * Activate the inertia mode
 	 */
@@ -70,12 +70,5 @@ public interface IViewWithZoom extends IZoomListener {
 	 * @param synchro
 	 */
 	public void setSynchronized(boolean synchro);
-
-	/**
-	 * Enable to load a .Shp file and display it
-	 */
-	public void addShapeFile();
-
-	// public void setIndicator(ZoomIndicatorItem indicator);
 
 }

@@ -334,9 +334,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	 * These methods do nothing yet for JAVA2D display
 	 */
 	@Override
-	public void addShapeFile() {}
-
-	@Override
 	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {}
 
 	/**

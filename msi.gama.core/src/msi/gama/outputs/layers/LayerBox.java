@@ -40,16 +40,13 @@ public class LayerBox implements IDisplayLayerBox {
 	Double currentTransparency = 0d;
 	ILocation currentPosition;
 	ILocation currentSize;
-	// Double currentElevation;
 	Boolean currentRefresh;
 
 	ILocation constantPosition = null;
 	ILocation constantSize = null;
 	Double constantTransparency = null;
-	// Double constantElevation = null;
 	Boolean constantRefresh = null;
 
-	// Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
 	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression refr)
@@ -58,28 +55,8 @@ public class LayerBox implements IDisplayLayerBox {
 		setTransparency(scope, transp == null ? transparency : transp);
 		setPosition(scope, pos == null ? position : pos);
 		setSize(scope, ext == null ? size : ext);
-		// setElevation(scope, elev == null ? elevation : elev);
 		setRefresh(scope, refr == null ? refresh : refr);
-
 	}
-
-	// public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext, final Double elev, final Boolean
-	// refr) {
-	// setTransparency(transp);
-	// setPosition(pos);
-	// setExtent(ext);
-	// setElevation(elev);
-	// setRefresh(refr);
-	// }
-
-	// public LayerBox(final Double transp, final Double posx, final Double posy, final Double posz, final Double extx,
-	// final Double exty, final Double elev, final Boolean refr) {
-	// setTransparency(transp);
-	// setPosition(posx, posy, posz);
-	// setExtent(extx, exty);
-	// setElevation(elev);
-	// setRefresh(refr);
-	// }
 
 	@Override
 	public void compute(final IScope scope) throws GamaRuntimeException {
@@ -91,17 +68,11 @@ public class LayerBox implements IDisplayLayerBox {
 				currentPosition =
 					constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
 				currentSize = constantSize == null ? Cast.asPoint(scope, size.value(scope)) : constantSize;
-				// if ( currentPosition != null && currentExtent != null ) {
-				// computeBoundingBox();
-				// }
-				// currentElevation =
-				// constantElevation == null ? Cast.asFloat(scope, elevation.value(scope)) : constantElevation;
 				currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
 			}
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e);
 		}
-
 	}
 
 	@Override
@@ -118,10 +89,6 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if ( p != null ) {
 			position = p;
-			// if ( p instanceof BinaryOperator ) {
-			// isAbsoluteX = ((BinaryOperator) p).left().containsAny(PixelUnitExpression.class);
-			// isAbsoluteY = ((BinaryOperator) p).right().containsAny(PixelUnitExpression.class);
-			// }
 			if ( p.isConst() ) {
 				setPosition(Cast.asPoint(scope, position.value(scope)));
 			}
@@ -132,27 +99,11 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setSize(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			size = e;
-			// if ( e instanceof BinaryOperator ) {
-			// isAbsoluteWidth = ((BinaryOperator) e).left().containsAny(PixelUnitExpression.class);
-			// isAbsoluteHeight = ((BinaryOperator) e).right().containsAny(PixelUnitExpression.class);
-			// } else {
-			// isAbsoluteHeight = e.containsAny(PixelUnitExpression.class);
-			// }
 			if ( e.isConst() ) {
 				setSize(Cast.asPoint(scope, size.value(scope)));
 			}
 		}
 	}
-
-	// @Override
-	// public void setElevation(final IScope scope, final IExpression e) throws GamaRuntimeException {
-	// if ( e != null ) {
-	// elevation = e;
-	// if ( e.isConst() ) {
-	// setElevation(Cast.asFloat(scope, e.value(scope)));
-	// }
-	// }
-	// }
 
 	@Override
 	public void setRefresh(final IScope scope, final IExpression r) throws GamaRuntimeException {
@@ -180,7 +131,6 @@ public class LayerBox implements IDisplayLayerBox {
 		currentSize = constantSize = new GamaPoint(width, height, depth);
 		if ( constantPosition != null ) {
 			constantBoundingBox = true;
-			// computeBoundingBox();
 		}
 	}
 
@@ -194,14 +144,8 @@ public class LayerBox implements IDisplayLayerBox {
 		currentPosition = constantPosition = new GamaPoint(x, y, z);
 		if ( constantSize != null ) {
 			constantBoundingBox = true;
-			// computeBoundingBox();
 		}
 	}
-
-	// @Override
-	// public void setElevation(final double e) {
-	// currentElevation = constantElevation = e;
-	// }
 
 	@Override
 	public void setRefresh(final Boolean r) {
@@ -214,11 +158,6 @@ public class LayerBox implements IDisplayLayerBox {
 		return currentTransparency;
 	}
 
-	// @Override
-	// public Rectangle2D.Double getBoundingBox() {
-	// return currentBoundingBox;
-	// }
-
 	@Override
 	public ILocation getPosition() {
 		return currentPosition;
@@ -229,21 +168,9 @@ public class LayerBox implements IDisplayLayerBox {
 		return currentSize;
 	}
 
-	//
-	// @Override
-	// public final Double getElevation() {
-	// return currentElevation;
-	// }
-
 	@Override
 	public Boolean getRefresh() {
 		return currentRefresh;
 	}
-
-	// private Rectangle2D.Double computeBoundingBox() {
-	// currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(), Math.abs(currentExtent.getX()),
-	// Math.abs(currentExtent.getY()));
-	// return currentBoundingBox;
-	// }
 
 }

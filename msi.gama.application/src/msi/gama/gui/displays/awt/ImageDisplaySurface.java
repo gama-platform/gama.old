@@ -397,12 +397,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void setHighlightColor(final int[] rgb) {}
 
-	/**
-	 * This method does nothing for Image display
-	 */
-	@Override
-	public void addShapeFile() {}
-
 	//
 	// @Override
 	// public ILayerManager getLayerManager() {

@@ -49,7 +49,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envHeight;
 	private IZoomListener zoomListener;
 	protected DisplaySurfaceMenu menuManager;
-	public boolean outputReloaded = false;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -66,7 +65,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
-		outputReloaded = true;
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
@@ -79,7 +77,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			for ( final ISymbol layer : layers ) {
 				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer));
 			}
-
 		} else {
 			manager.outputChanged();
 		}
@@ -138,7 +135,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			public void process(final IScope scope) {
 				save(scope, getImage());
 			}
-		});	
+		});
 
 	}
 
