@@ -14,7 +14,7 @@ import msi.gaml.types.IType;
 
 
 @vars({
-	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT),@var(name = "stop", type = IType.BOOL)})
+	 @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT),@var(name = "stop", type = IType.LIST, of =  IType.BOOL)})
 @skill(name = "skill_road_node")
 public class RoadNodeSkill extends MovingSkill {
 
@@ -43,11 +43,11 @@ public class RoadNodeSkill extends MovingSkill {
 	}
 	
 	@getter(STOP)
-	public Boolean getStop(final IAgent agent) {
-		return (Boolean) agent.getAttribute(STOP);
+	public List<Boolean> getStop(final IAgent agent) {
+		return (List<Boolean>) agent.getAttribute(STOP);
 	}
 	@setter(STOP)
-	public void setTargetNode(final IAgent agent, final Boolean stop) {
+	public void setStop(final IAgent agent, final List<Boolean> stop) {
 		agent.setAttribute(STOP, stop);
 	}
 	

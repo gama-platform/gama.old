@@ -40,6 +40,8 @@ import com.vividsolutions.jts.geom.*;
 	@var(name = "current_road", type = IType.AGENT, doc = @doc("current road on which the agent is")),
 	@var(name = "proba_lane_change_up", type = IType.FLOAT,init = "1.0",doc = @doc("probability to change lane to a upper lane (left lane if right side driving) if necessary")),
 	@var(name = "proba_lane_change_down", type = IType.FLOAT,init = "1.0",doc = @doc("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
+	@var(name = "proba_respect_priorities", type = IType.FLOAT,init = "1.0",doc = @doc("probability to respect priority (right or left) laws")),
+	@var(name = "proba_respect_stops", type = IType.LIST, of = IType.FLOAT,init = "[]",doc = @doc("probability to respect stop laws")),
 	@var(name = "right_side_driving", type = IType.BOOL, init = "true",doc = @doc("have drivers to drive on the right size of the road?"))})
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
@@ -52,6 +54,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public final static String VEHICLE_LENGTH = "vehicle_length";
 	public final static String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
 	public final static String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
+	public final static String PROBA_RESPECT_PRIORITIES = "proba_respect_priorities";
+	public final static String PROBA_RESPECT_STOPS = "proba_respect_stops";
 	public final static String RIGHT_SIDE_DRIVING = "right_side_driving";
 	
 	@getter(PROBA_LANE_CHANGE_DOWN)
@@ -70,6 +74,24 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public void setProbaLaneChangeUp(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_LANE_CHANGE_UP, proba);
 	}
+	
+	@getter(PROBA_RESPECT_PRIORITIES)
+	public double getRespectPriorities(final IAgent agent) {
+		return (Double) agent.getAttribute(PROBA_RESPECT_PRIORITIES);
+	}
+	@setter(PROBA_RESPECT_PRIORITIES)
+	public void setRespectPriorities(final IAgent agent, final Double proba) {
+		agent.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
+	}
+	@getter(PROBA_RESPECT_STOPS)
+	public List<Double> getRespectStops(final IAgent agent) {
+		return (List<Double>) agent.getAttribute(PROBA_RESPECT_STOPS);
+	}
+	@setter(PROBA_RESPECT_STOPS)
+	public void setRespectStops(final IAgent agent, final List<Boolean> probas) {
+		agent.setAttribute(PROBA_RESPECT_STOPS, probas);
+	}
+	
 	@getter(RIGHT_SIDE_DRIVING)
 	public boolean getRightSideDriving(final IAgent agent) {
 		return (Boolean) agent.getAttribute(RIGHT_SIDE_DRIVING);
@@ -166,10 +188,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		public Boolean isReadyNextRoad(final IScope scope,IAgent road,Integer lane) throws GamaRuntimeException {
 			IAgent theNode  = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
-			if ((Boolean) theNode.getAttribute(RoadNodeSkill.STOP)) {
-				return false;
-			}
+			List<Boolean> stops =  (List<Boolean>) theNode.getAttribute(RoadNodeSkill.STOP);
 			IAgent driver = getCurrentAgent(scope);
+			List<Double> respectsStops = getRespectStops(driver);
+			for (int i = 0; i < stops.size(); i++) {
+				Boolean stop = stops.get(i);
+				if (stop && ((respectsStops.size() <= i) || Random.opFlip(scope, respectsStops.get(i)))) {
+					return false;
+				}
+			}
+			
 			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
 			double vL = getVehiculeLength(driver);
 			double secDistCoeff = getSecurityDistanceCoeff(driver);
@@ -187,6 +215,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			double angleRef = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)road.getLocation());
 			List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
 			double val = (1 + secDistCoeff * getRealSpeed(driver)) + vL;
+			if (!Random.opFlip(scope, getRespectPriorities(driver))) return true;
 			for (IAgent rd: roadsIn) {
 				if (rd != currentRoad) {
 					double angle = Punctal.angleInDegreesBetween((GamaPoint)theNode.getLocation(),(GamaPoint)currentRoad.getLocation(), (GamaPoint)rd.getLocation());
