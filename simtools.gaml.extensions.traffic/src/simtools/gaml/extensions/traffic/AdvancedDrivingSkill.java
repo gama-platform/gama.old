@@ -188,17 +188,17 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		public Boolean isReadyNextRoad(final IScope scope,IAgent road,Integer lane) throws GamaRuntimeException {
 			IAgent theNode  = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
-			List<Boolean> stops =  (List<Boolean>) theNode.getAttribute(RoadNodeSkill.STOP);
+			List<List> stops =  (List<List>) theNode.getAttribute(RoadNodeSkill.STOP);
 			IAgent driver = getCurrentAgent(scope);
 			List<Double> respectsStops = getRespectStops(driver);
+			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
 			for (int i = 0; i < stops.size(); i++) {
-				Boolean stop = stops.get(i);
+				Boolean stop = stops.get(i).contains(currentRoad);
 				if (stop && ((respectsStops.size() <= i) || Random.opFlip(scope, respectsStops.get(i)))) {
 					return false;
 				}
 			}
 			
-			IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
 			double vL = getVehiculeLength(driver);
 			double secDistCoeff = getSecurityDistanceCoeff(driver);
 			double realSpeed = getRealSpeed(driver);
