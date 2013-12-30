@@ -175,7 +175,16 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape scaledBy(final IScope scope, final double coeff) {
 		if ( isPoint() ) { return copy(scope); }
 		final Geometry newGeom = (Geometry) geometry.clone();
-		newGeom.apply(new Scaling().of(coeff, (Coordinate) location));
+		newGeom.apply(new Scaling().of(coeff, coeff, (Coordinate) location));
+		return new GamaShape(newGeom);
+	}
+
+	public GamaShape scaledTo(final IScope scope, final GamaPoint bounds) {
+		if ( isPoint() ) { return copy(scope); }
+		final Geometry newGeom = (Geometry) geometry.clone();
+		Envelope envelope = geometry.getEnvelopeInternal();
+		newGeom.apply(new Scaling().of(bounds.x / envelope.getWidth(), bounds.y / envelope.getHeight(),
+			(Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
@@ -212,9 +221,14 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	private static class Scaling extends AffineTransformation {
 
-		Scaling of(final double coeff, final Coordinate c) {
+		/**
+		 * @param bounds
+		 * @param location
+		 * @return
+		 */
+		Scaling of(final double xCoeff, final double yCoeff, final Coordinate c) {
 			setToTranslation(-c.x, -c.y);
-			scale(coeff, coeff);
+			scale(xCoeff, yCoeff);
 			translate(c.x, c.y);
 			return this;
 		}

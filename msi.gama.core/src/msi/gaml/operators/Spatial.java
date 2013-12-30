@@ -204,7 +204,7 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
 		}
-		
+
 		@operator("box")
 		@doc(value = "A box geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the box is by default the location of the current agent in which has been called this operator.", examples = { "box(10, 5 , 5) --: returns a geometry as a rectangle with width = 10, heigh = 5 depth= 5." }, see = {
 			"around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
@@ -306,7 +306,7 @@ public abstract class Spatial {
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, points.last(scope)); }
 			return GamaGeometryType.buildPolyline(shapes);
 		}
-			
+
 		@operator(value = { "plan", "polyplan" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
 		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
@@ -718,6 +718,16 @@ public abstract class Spatial {
 			final IShape g1 = g.getGeometry();
 			if ( g1 instanceof GamaShape ) { return ((GamaShape) g1).scaledBy(scope, coefficient); }
 			return new GamaShape(g1.getInnerGeometry()).scaledBy(scope, coefficient);
+			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
+
+		}
+
+		@operator(value = { "scaled_to" })
+		@doc(value = "allows to restrict the size of a geometry so that it fits in the envelope {width, height} defined by the second operand", examples = { "shape scaled_to {10,10} --: returns a geometry corresponding to the geometry of the agent applying the operator scaled so that it perfectly fits a square of 10x10" })
+		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
+			final IShape g1 = g.getGeometry();
+			if ( g1 instanceof GamaShape ) { return ((GamaShape) g1).scaledTo(scope, bounds); }
+			return new GamaShape(g1.getInnerGeometry()).scaledTo(scope, bounds);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 
 		}
