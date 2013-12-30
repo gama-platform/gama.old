@@ -31,7 +31,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010
@@ -61,7 +61,7 @@ public class Files {
 		"new_folder" })
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
-		IGamaFile f = GamaFileFactory.buildFile(scope, s);
+		IGamaFile f = GamaFileType.createFile(scope, s);
 		// if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
 		// // if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
 		// if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }

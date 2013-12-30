@@ -18,82 +18,95 @@
  */
 package msi.gaml.types;
 
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.*;
-import msi.gaml.operators.Files;
+import msi.gama.util.file.IGamaFile;
+import msi.gaml.compilation.GamaHelper;
+import org.eclipse.core.runtime.*;
 
 /**
- * Written by drogoul Modified on 1 ao�t 2010
- * 
- * @todo Description
+ * Written by drogoul
+ * Modified on 1st Aug. 2010
+ * Modified on 30 Dec. 2013
  * 
  */
-@type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
+@type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	// private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
-	// ".text", ".tsv", "xml");
-	// private static final String shpSuffix = ".shp";
-	// private static final String gamlSuffix = ".gaml";
-	// private static final List<String> osmSuffix = Arrays.asList(".osm", ".pbf", ".bz2",
-	// ".gz");
-	// private static final List<String> gridSuffixes = Arrays.asList(".asc");
-	//
-	// private static final String propertiesSuffix = ".properties";
-	// private static final List<String> imageSuffixes = Arrays.asList(".pgm", ".tif", ".tiff",
-	// ".jpg", ".jpeg", ".png", ".gif", ".pict", ".bmp");
+	static Map<String, Set<String>> typesExtensions = new HashMap();
+	static Map<Class, Set<String>> classExtensions = new HashMap();
+	static Map<String, GamaHelper<IGamaFile>> extensionsToFiles = new HashMap();
 
-	/** Constant field pgmSuffix. */
-	// public static final String pgmSuffix = ".pgm";
+	/**
+	 * Adds a new file type definition.
+	 * 
+	 * @param string a string representin the type of the file in GAML
+	 * @param clazz the class that supports this file type
+	 * @param s an array of allowed extensions for files of this type
+	 */
+	public static void addFileTypeDefinition(final String string, final Class clazz,
+		final GamaHelper<IGamaFile> builder, final String[] extensions) {
+		GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
+			Arrays.toString(extensions));
+		Set<String> exts = new HashSet(Arrays.asList(extensions));
+		typesExtensions.put(string, exts);
+		classExtensions.put(clazz, exts);
+		for ( String s : extensions ) {
+			extensionsToFiles.put(s, builder);
+		}
+	}
+
+	/**
+	 * Verifies if the path has the correct extension with respect to the type of the file.
+	 * 
+	 * @param type a string representing the type of the file
+	 * @param path an absolute or relative file path
+	 * @return true if the extension of the path belongs to the extensions of the file type, false if the type is
+	 *         unknown or if the extension does not belong to its extensions
+	 */
+
+	public static boolean verifyExtension(final String type, final String path) {
+		IPath p = new Path(path);
+		String ext = p.getFileExtension();
+		Set<String> extensions = typesExtensions.get(type);
+		if ( extensions == null ) { return false; }
+		return extensions.contains(ext);
+	}
+
+	public static boolean verifyExtension(final IGamaFile file, final String path) {
+		IPath p = new Path(path);
+		String ext = p.getFileExtension();
+		Class type = file.getClass();
+		Set<String> extensions = classExtensions.get(type);
+		if ( extensions == null ) { return false; }
+		return extensions.contains(ext);
+	}
+
+	public static IGamaFile createFile(final IScope scope, final String path) {
+		IPath p = new Path(path);
+		String ext = p.getFileExtension();
+		GamaHelper<IGamaFile> builder = extensionsToFiles.get(ext);
+		if ( builder != null ) { return builder.run(scope, path); }
+		return null;
+	}
 
 	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		if ( obj == null ) { return getDefault(); }
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }
-		if ( obj instanceof String ) { return Files.from(scope, (String) obj); }
+		if ( obj instanceof String ) { return createFile(scope, (String) obj); }
 		return getDefault();
 	}
 
-	// @operator(value = "is_text")
-	// @doc(value = "the operator tests whether the operand represents the name of a supported text file", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_text(\"../includes/Stupid_Cell.Data\")    --:  true;",
-	// "is_text(\"../includes/test.png\")            --:  false;",
-	// "is_text(\"../includes/test.properties\")     --:  false;",
-	// "is_text(\"../includes/test.shp\")            --:  false;" }, see = { "text", "is_properties", "is_shape",
-	// "is_image" })
-	// public static Boolean isTextFile(final String f) {
-	// final String fn = f.toLowerCase();
-	// for ( final String s : textSuffixes ) {
-	// if ( fn.endsWith(s) ) { return true; }
-	// }
-	// return false;
-	// }
-
-	/*
-	 * @operator(value = "is_csv")
-	 * 
-	 * @doc(
-	 * value = "the operator tests whether the operand represents the name of a supported csv file",
-	 * comment = "cf. file type definition for supported (espacially image) file extensions.",
-	 * examples = {"is_csv(\"../includes/test.csv\")    --:  true;",
-	 * "is_csv(\"../includes/test.png\")            --:  false;",
-	 * "is_csv(\"../includes/test.properties\")     --:  false;",
-	 * "is_csv(\"../includes/test.shp\")            --:  false;"},
-	 * see = {"is_text", "is_properties", "is_shape", "is_image"})
-	 * public static Boolean isCSVFile(final String f) {
-	 * return f.toLowerCase().contains(csvSuffix);
-	 * }
-	 */
-
 	@operator(value = "is_properties")
-	@doc(deprecated = "use is_property instead", value = "the operator tests whether the operand represents the name of a supported properties file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
+	@doc(deprecated = "use 'is_property' instead", value = "the operator tests whether the operand represents the name of a supported properties file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
 		"is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
 		"is_properties(\"../includes/test.png\")            --:  false;",
 		"is_properties(\"../includes/test.properties\")     --:  true;",
@@ -101,22 +114,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_shape", "is_image" })
 	@Deprecated
 	public static Boolean isProperties(final String f) {
-		return GamaFileFactory.verifyExtension("property", f);
-		// return f.toLowerCase().endsWith(propertiesSuffix);
+		return verifyExtension("property", f);
 	}
-
-	//
-	// @operator(value = "is_shape")
-	// @doc(value = "the operator tests whether the operand represents the name of a supported shapefile", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_shape(\"../includes/test.png\")            --:  false;",
-	// "is_shape(\"../includes/test.properties\")     --:  false;",
-	// "is_shape(\"../includes/test.shp\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-	// "is_image" })
-	// public static Boolean isShape(final String f) {
-	// return f.toLowerCase().endsWith(shpSuffix);
-	// }
 
 	@operator(value = "is_GAML")
 	@doc(deprecated = "use 'is_gaml' instead", value = "the operator tests whether the operand represents the name of a supported gamlfile", comment = "cf. file type definition for supported (espacially model) file extensions.", examples = {
@@ -127,56 +126,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_image" })
 	@Deprecated
 	public static Boolean isGAML(final String f) {
-		return GamaFileFactory.verifyExtension("gaml", f);
-		// return f.toLowerCase().endsWith(gamlSuffix);
+		return verifyExtension("gaml", f);
 	}
-
-	// @operator(value = "is_osm")
-	// @doc(value = "the operator tests whether the operand represents the name of a supported osm file", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_osm(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_osm(\"../includes/test.png\")            --:  false;",
-	// "is_osm(\"../includes/test.properties\")     --:  false;",
-	// "is_osm(\"../includes/test.osm\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-	// "is_image" })
-	// public static Boolean isOsm(final String f) {
-	// final String fn = f.toLowerCase();
-	// for ( final String s : osmSuffix ) {
-	// if ( fn.endsWith(s) ) { return true; }
-	// }
-	// return false;
-	// }
-	//
-	// @operator(value = "is_grid")
-	// @doc(value = "the operator tests whether the operand represents the name of a supported gridfile", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_grid(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_grid(\"../includes/test.png\")            --:  false;",
-	// "is_grid(\"../includes/test.properties\")     --:  false;",
-	// "is_grid(\"../includes/test.asc\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-	// "is_image", "is_shape" })
-	// public static Boolean isGrid(final String f) {
-	// final String fn = f.toLowerCase();
-	// for ( final String s : gridSuffixes ) {
-	// if ( fn.endsWith(s) ) { return true; }
-	// }
-	// return false;
-	// }
-
-	// @operator(value = "is_image")
-	// @doc(value = "the operator tests whether the operand represents the name of a supported image file", comment =
-	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
-	// "is_image(\"../includes/Stupid_Cell.Data\")    --:  false;",
-	// "is_image(\"../includes/test.png\")            --:  true;",
-	// "is_image(\"../includes/test.properties\")     --:  false;",
-	// "is_image(\"../includes/test.shp\")            --:  false;" }, see = { "image", "is_text", "is_properties",
-	// "is_shape" })
-	// public static Boolean isImageFile(final String f) {
-	// final String fn = f.toLowerCase();
-	// for ( final String s : imageSuffixes ) {
-	// if ( fn.endsWith(s) ) { return true; }
-	// }
-	// return false;
-	// }
 
 }

@@ -169,7 +169,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					newExpr = GAML.getExpressionFactory().createOperator("line", desc, list);
 				}
 			} else {
-				if ( GamaFileFactory.verifyExtension("image", old) ) {
+				if ( GamaFileType.verifyExtension("image", old) ) {
 					newExpr = GAML.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
