@@ -27,6 +27,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
@@ -54,6 +55,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if ( obj instanceof ISpecies ) { return geometriesToGeometry(scope,
 			scope.getAgentScope().getPopulationFor((ISpecies) obj)); }
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
+		if ( obj instanceof GamaGeometryFile ) { return ((GamaGeometryFile) obj).getGeometry(scope); }
 		if ( obj instanceof IContainer ) {
 			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope, (IContainer<?, ILocation>) obj); }
 			return geometriesToGeometry(scope, (IContainer) obj);
@@ -314,21 +316,21 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, "sphere");
 		return g;
 	}
-	
+
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final GamaShape g = new GamaShape(buildCircle(radius, location));
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, "cone");
 		return g;
 	}
-	
+
 	public static IShape buildTeapot(final double size, final ILocation location) {
 		final GamaShape g = new GamaShape(buildCircle(size, location));
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, "teapot");
 		return g;
 	}
-	
+
 	public static IShape buildPyramid(final double side_size, final ILocation location) {
 		final GamaShape g = new GamaShape(buildRectangle(side_size, side_size, location));
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);

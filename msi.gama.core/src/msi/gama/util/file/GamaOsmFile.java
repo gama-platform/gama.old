@@ -58,35 +58,6 @@ public class GamaOsmFile extends GamaGisFile {
 		super(scope, pathName, code);
 	}
 
-	/**
-	 * 
-	 * @see msi.gama.util.GamaFile#_copy()
-	 */
-	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		// TODO ? Will require to do a copy of the file. But how to get the new name ? Or maybe just
-		// as something usable like
-		// let f type: file value: write(copy(f2))
-		return null;
-	}
-
-	/**
-	 * 
-	 * @see msi.gama.util.GamaFile#_isFixedLength()
-	 */
-	// @Override
-	// protected boolean _isFixedLength() {
-	// return false;
-	// }
-
-	/**
-	 * @see msi.gama.util.GamaFile#_toGaml()
-	 */
-	// @Override
-	// public String getKeyword() {
-	// return Files.OSM;
-	// }
-
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
 		final Map<Long, GamaShape> nodesPt = new GamaMap<Long, GamaShape>();
 		final List<Node> nodes = new GamaList<Node>();

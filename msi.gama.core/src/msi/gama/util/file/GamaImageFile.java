@@ -81,16 +81,6 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	}
 
 	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		return null;
-	}
-
-	// @Override
-	// protected boolean _isFixedLength() {
-	// return true;
-	// }
-
-	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		getContents(scope);
 		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize); }

@@ -33,23 +33,6 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 		super(scope, pathName);
 	}
 
-	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		// TODO A faire
-		return null;
-	}
-
-	//
-	// @Override
-	// protected boolean _isFixedLength() {
-	// return false;
-	// }
-
-	// @Override
-	// public String getKeyword() {
-	// return Files.PROPERTIES;
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -70,15 +53,9 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 		buffer = m;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
 		// TODO A faire
-
 	}
 
 	@Override

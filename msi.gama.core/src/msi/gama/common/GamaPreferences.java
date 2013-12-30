@@ -75,7 +75,7 @@ public class GamaPreferences {
 
 		@Override
 		public Envelope computeEnvelope(final IScope scope) {
-			return null;
+			return new Envelope(0, 0, 0, 0);
 		}
 
 		@Override
@@ -83,16 +83,6 @@ public class GamaPreferences {
 
 		@Override
 		protected void flushBuffer() throws GamaRuntimeException {}
-
-		@Override
-		protected IGamaFile _copy(final IScope scope) {
-			return null;
-		}
-		//
-		// @Override
-		// public String getKeyword() {
-		// return null;
-		// }
 
 	}
 

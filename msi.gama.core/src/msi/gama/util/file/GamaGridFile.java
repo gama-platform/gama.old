@@ -154,19 +154,6 @@ public class GamaGridFile extends GamaGisFile {
 
 	}
 
-	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		// TODO ? Will require to do a copy of the file. But how to get the new name ? Or maybe just
-		// as something usable like
-		return null;
-	}
-
-	//
-	// @Override
-	// public String getKeyword() {
-	// return Files.GRID;
-	// }
-
 	public int getNbRows(final IScope scope) {
 		return createReader(scope).numRows;
 	}

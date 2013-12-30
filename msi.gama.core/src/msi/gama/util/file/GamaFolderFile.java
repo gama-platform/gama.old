@@ -43,18 +43,6 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	}
 
 	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		// TODO What to do ?
-		return null;
-	}
-
-	//
-	// @Override
-	// protected boolean _isFixedLength() {
-	// return true;
-	// }
-
-	@Override
 	public String toGaml() {
 		return Files.FOLDER + "(" + StringUtils.toGamlString(getPath()) + ")";
 	}

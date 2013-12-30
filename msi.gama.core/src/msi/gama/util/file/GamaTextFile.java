@@ -39,22 +39,11 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 		super(scope, pathName);
 	}
 
-	@Override
-	protected IGamaFile _copy(final IScope scope) {
-		return null;
-	}
-
 	public void setCsvSeparators(final String string) {
 		if ( string.length() >= 1 ) {
 			csvSeparator = string;
 		}
 	}
-
-	//
-	// @Override
-	// protected boolean _isFixedLength() {
-	// return false;
-	// }
 
 	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {

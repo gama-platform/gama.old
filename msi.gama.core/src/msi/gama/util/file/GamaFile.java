@@ -81,10 +81,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		}
 	}
 
-	protected abstract IGamaFile _copy(IScope scope);
-
-	// protected abstract boolean _isFixedLength();
-
 	protected String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		return buffer.stringValue(scope);
@@ -130,7 +126,8 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public IGamaFile copy(final IScope scope) {
-		return _copy(scope);
+		// files are supposed to be immutable
+		return this;
 	}
 
 	@Override
