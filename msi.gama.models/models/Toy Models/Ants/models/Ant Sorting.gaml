@@ -1,6 +1,7 @@
 model ant_sort
 
 global torus: true {
+	geometry ant_normal <- geometry(svg_file("../images/ant_normal.svg", {10,10})) rotated_by -90;
 	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
@@ -47,7 +48,8 @@ entities {
 			}
 		}
 		aspect default {
-			draw circle(1) empty: false color: color ;
+			draw ant_normal at: location rotate: heading  empty: false color: color;
+			//draw circle(1) empty: false color: color ;
 		}
 	}
 
