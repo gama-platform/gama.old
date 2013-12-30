@@ -138,8 +138,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		resources.get(eClass).getContents().add(stub);
 		Documentation d = DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc = new HashMap();
-		doc.put("doc", d.getDocumentation());
-		doc.put("title", d.getTitle());
+		if ( d != null ) {
+			doc.put("doc", d.getDocumentation());
+			doc.put("title", d.getTitle());
+		}
 		doc.put("type", "operator");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
@@ -153,8 +155,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		resources.get(eClass).getContents().add(stub);
 		Documentation d = DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc = new HashMap();
-		doc.put("doc", d.getDocumentation());
-		doc.put("title", d.getTitle());
+		if ( d != null ) {
+			doc.put("doc", d.getDocumentation());
+			doc.put("title", d.getTitle());
+		}
 		doc.put("type", keyword);
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
@@ -168,8 +172,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		resources.get(eClass).getContents().add(stub);
 		Documentation d = DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc = new HashMap();
-		doc.put("doc", d.getDocumentation());
-		doc.put("title", d.getTitle());
+		if ( d != null ) {
+			doc.put("doc", d.getDocumentation());
+			doc.put("title", d.getTitle());
+		}
 		doc.put("type", "action");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
