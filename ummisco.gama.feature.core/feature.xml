@@ -30,13 +30,6 @@ models.
          unpack="false"/>
 
    <plugin
-         id="idees.gama.openstreetmap"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="irit.gaml.extensions.database"
          download-size="0"
          install-size="0"
