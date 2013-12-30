@@ -39,6 +39,7 @@ public class ModelScene {
 	boolean staticObjectsAreLocked;
 	boolean reloaded = false;
 	private boolean envGeometryInitialized = false;
+	private boolean currentLayerIsStatic;
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
 		geometries = new SceneObjects(new GeometryDrawer(renderer), true, false);
@@ -125,8 +126,7 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final IList<String> textureFileNames, final Integer angle, final double height, final GamaPoint offSet,
-		final GamaPoint scale, final boolean roundCorner, final String type, final boolean currentLayerIsStatic,
-		final double alpha, final String popName) {
+		final GamaPoint scale, final boolean roundCorner, final String type, final double alpha, final String popName) {
 
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
@@ -197,8 +197,9 @@ public class ModelScene {
 		}
 		final Color c = new Color(225, 225, 225);
 		if ( !envGeometryInitialized ) {
+			currentLayerIsStatic = false;
 			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, null, 0, 0, offset, scale, false,
-				"env", false, 1d, "environment");
+				"env", 1d, "environment");
 			envGeometryInitialized = true;
 		}
 	}
@@ -238,6 +239,13 @@ public class ModelScene {
 	public void reload() {
 		staticObjectsAreLocked = false;
 		reloaded = true;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void enterStaticMode(final boolean b) {
+		currentLayerIsStatic = b;
 	}
 
 }

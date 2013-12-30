@@ -29,6 +29,7 @@ import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -59,8 +60,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	// All the geometry of the same layer are drawn in the same z plan.
 	private double currentZLayer = 0.0f;
 	private int currentLayerId = 0;
-	// Is the layer static data or dynamic geometry that has to be redrawn every iteration
-	private boolean currentLayerIsStatic = false;
 	private GamaPoint currentOffset;
 	private GamaPoint currentScale;
 	private boolean highlight = false;
@@ -125,8 +124,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
-			currentScale, rounded, type, currentLayerIsStatic, getCurrentAlpha(),
-			scope.getAgentScope().getPopulation().getName());
+			currentScale, rounded, type, getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
 		return rect;
 	}
 
@@ -180,49 +178,33 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final double cellSize, final String name) {
+		final Integer angle, final Double z, final double cellSize, final String name) {
 
 		MyTexture texture = null;
+		Envelope env = null;
+		String popName = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
 			if ( scope == null ) {
-				texture = renderer.createTexture(img, isDynamic, 0);
+				texture = renderer.createTexture(img, true, 0);
+				env = new Envelope(0, 0, widthOfEnvironmentInModelUnits, heightOfEnvironmentInModelUnits);
+				popName = "";
 			} else {
-				texture = renderer.createTexture(img, isDynamic, scope.getAgentScope().getIndex());
+				IAgent a = scope.getAgentScope();
+				texture = renderer.createTexture(img, true, a.getIndex());
+				env = scope.getSimulationScope().getEnvelope();
+				popName = a.getPopulation().getName();
 			}
 		}
 
 		renderer.getScene().addDEM(gridValueMatrix, img, null, scope == null ? null : scope.getAgentScope(),
-			isTextured, isTriangulated, isShowText, false, scope.getSimulationScope().getEnvelope(), 1.0,
-			getCurrentAlpha(), currentOffset, currentScale, cellSize, texture, name, currentLayerId);
+			isTextured, isTriangulated, isShowText, false, env, 1.0, getCurrentAlpha(), currentOffset, currentScale,
+			cellSize, texture, name, currentLayerId);
 
 		if ( gridColor != null ) {
-			drawGridLine(img, gridColor, scope.getAgentScope().getPopulation().getName());
+			drawGridLine(img, gridColor, popName);
 		}
 
 		return rect;
-	}
-
-	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
-	public void drawGridLineOld(final BufferedImage image, final Color lineColor) {
-		double stepX, stepY;
-
-		for ( int i = 0; i <= image.getWidth(); i++ ) {
-			stepX = i / (double) image.getWidth() * image.getWidth();
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,
-				0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
-		}
-
-		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = i / (double) image.getHeight() * image.getHeight();;
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, null,
-				0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
-		}
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
@@ -238,8 +220,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
-					false, null, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
-					getCurrentAlpha(), popName);
+					false, null, 0, 0, currentOffset, currentScale, false, "gridLine", getCurrentAlpha(), popName);
 			}
 		}
 	}
@@ -380,7 +361,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 
 		final Boolean refresh = layer.isDynamic();
-		currentLayerIsStatic = refresh == null ? false : !refresh;
+		renderer.getScene().enterStaticMode(refresh == null ? false : !refresh);
 
 		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
 		this.currentLayerId = currentLayerId + 1;
@@ -392,8 +373,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		currentScale =
 			new GamaPoint(widthOfLayerInPixels / (double) widthOfDisplayInPixels, heightOfLayerInPixels /
 				(double) heightOfDisplayInPixels, z_scale);
-		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
-		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
 
 	private double getMaxEnvDim() {

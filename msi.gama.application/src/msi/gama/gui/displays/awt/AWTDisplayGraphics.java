@@ -107,8 +107,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final double cellSize, final String name) {
-		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, isDynamic, "grid");
+		final Integer angle, final Double z, final double cellSize, final String name) {
+		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, true, "grid");
 	}
 
 	@Override
