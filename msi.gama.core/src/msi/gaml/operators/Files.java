@@ -31,7 +31,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.*;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010
@@ -41,14 +41,14 @@ import msi.gaml.types.*;
  */
 public class Files {
 
-	public static final String IMAGE = "image";
-	public static final String TEXT = "text";
-	public static final String PROPERTIES = "properties";
+	// public static final String IMAGE = "image";
+	// public static final String TEXT = "text";
+	// public static final String PROPERTIES = "properties";
 	public static final String FOLDER = "folder";
-	public static final String SHAPE = "shapefile";
-	public static final String GAML = "gamlfile";
-	public static final String OSM = "osmfile";
-	public static final String GRID = "gridfile";
+	// public static final String SHAPE = "shapefile";
+	// public static final String GAML = "gamlfile";
+	// public static final String OSM = "osmfile";
+	// public static final String GRID = "gridfile";
 	public static final String READ = "read";
 	public static final String WRITE = "write";
 	public static Deque<Map> tempAttributes = new LinkedList();
@@ -60,16 +60,20 @@ public class Files {
 		"			// fileT.contents here contains a matrix storing all the data of the text file" }, see = { "folder",
 		"new_folder" })
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
-		if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
-		// if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
-		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
-		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
-		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
-		if ( GamaFileType.isGAML(s) ) { return gamlFile(scope, s); }
-		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
-		if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
-		return new GamaPreferences.GenericFile(s);
+		IGamaFile f = GamaFileFactory.buildFile(scope, s);
+		// if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
+		// // if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
+		// if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
+		// if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
+		// if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
+		// if ( GamaFileType.isGAML(s) ) { return gamlFile(scope, s); }
+		// if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
+		// if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
+		if ( f == null ) {
+			f = new GamaPreferences.GenericFile(s);
+		}
+		return f;
 		// throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
 
@@ -87,18 +91,20 @@ public class Files {
 		}
 	}
 
-	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)
-	@doc(value = "opens a file that is a kind of image.", comment = "The file should have an image extension, cf. file type deifnition for supported file extensions.", special_cases = "If the specified string does not refer to an existing image file, an exception is risen.", examples = { "let fileT type: file value: image(\"../includes/testImage.png\");  // fileT represents the file \"../includes/testShape.png\"" }, see = {
+	@operator(value = "image", can_be_const = true, index_type = IType.POINT)
+	@doc(deprecated = "use image_file instead", value = "opens a file that is a kind of image.", comment = "The file should have an image extension, cf. file type deifnition for supported file extensions.", special_cases = "If the specified string does not refer to an existing image file, an exception is risen.", examples = { "let fileT type: file value: image(\"../includes/testImage.png\");  // fileT represents the file \"../includes/testShape.png\"" }, see = {
 		"file", "shapefile", "properties", "text" })
+	@Deprecated
 	public static IGamaFile imageFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaImageFile(scope, s);
 	}
 
-	@operator(value = TEXT, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of text.", comment = "The file should have a text extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing text file, an exception is risen.", examples = {
+	@operator(value = "text", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use text_file instead", value = "opens a file that a is a kind of text.", comment = "The file should have a text extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing text file, an exception is risen.", examples = {
 		"let fileT type: file value: text(\"../includes/Stupid_Cell.Data\");",
 		"				// fileT represents the text file \"../includes/Stupid_Cell.Data\"" }, see = { "file", "properties",
 		"image", "shapefile" })
+	@Deprecated
 	public static IGamaFile textFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaTextFile(scope, s);
 	}
@@ -115,70 +121,77 @@ public class Files {
 		return file;
 	}
 
-	@operator(value = PROPERTIES, can_be_const = true, index_type = IType.STRING)
-	@doc(value = "opens a file that is a kind of properties.", comment = "The file should have a properties extension, cf. type file definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing propserites file, an exception is risen.", examples = { "let fileT type: file value: properties(\"../includes/testProperties.properties\");  // fileT represents the properties file \"../includes/testProperties.properties\"" }, see = {
+	@operator(value = "properties", can_be_const = true, index_type = IType.STRING)
+	@doc(deprecated = "use property_file instead", value = "opens a file that is a kind of properties.", comment = "The file should have a properties extension, cf. type file definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing propserites file, an exception is risen.", examples = { "let fileT type: file value: properties(\"../includes/testProperties.properties\");  // fileT represents the properties file \"../includes/testProperties.properties\"" }, see = {
 		"file", "shapefile", "image", "text" })
+	@Deprecated
 	public static IGamaFile propertyFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaPropertyFile(scope, s);
 	}
 
-	@operator(value = SHAPE, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
 		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
 		"properties", "image", "text" })
+	@Deprecated
 	public static IGamaFile shapeFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s);
 	}
 
-	@operator(value = SHAPE, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
 		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
 		"properties", "image", "text" })
+	@Deprecated
 	public static IGamaFile shapeFile(final IScope scope, final String s, final Integer code)
 		throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s, code);
 	}
 
-	@operator(value = GAML, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
+	@operator(value = "gamlfile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use gaml_file instead", value = "opens a file that a is a kind of model file.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
 		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = { "file",
 		"properties", "image", "text" })
+	@Deprecated
 	public static IGamaFile gamlFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GAMLFile(scope, s);
 	}
 
-	@operator(value = GRID, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+	@operator(value = "gridfile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use grid_file instead", value = "opens a file that a is a kind of shapefile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		"file fileT <- gridfile(\"../includes/testProperties.asc\");",
 		"            // fileT represents the gridfile file \"../includes/testProperties.asc\"" }, see = { "file",
 		"properties", "image", "text", "shapefile" })
+	@Deprecated
 	public static IGamaFile gridFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaGridFile(scope, s);
 	}
 
-	@operator(value = GRID, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of gridfile. The integer parameter allows to specify a coordinate reference system (CRS). If equal to zero, it forces reading the data as alreay projected", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+	@operator(value = "gridfile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use grid_file instead", value = "opens a file that a is a kind of gridfile. The integer parameter allows to specify a coordinate reference system (CRS). If equal to zero, it forces reading the data as alreay projected", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		"file fileT <- gridfile(\"../includes/testProperties.asc\");",
 		"            // fileT represents the gridfile file \"../includes/testProperties.asc\"" }, see = { "file",
 		"properties", "image", "text", "shapefile" })
+	@Deprecated
 	public static IGamaFile gridFile(final IScope scope, final String s, final Integer code)
 		throws GamaRuntimeException {
 		return new GamaGridFile(scope, s, code);
 	}
 
-	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a osmfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing osmfile file, an exception is risen.", examples = {
+	@operator(value = "osmfile", can_be_const = true, index_type = IType.INT)
+	@doc(deprecated = "use osm_file instead", value = "opens a file that a is a kind of osmfile.", comment = "The file should have a osmfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing osmfile file, an exception is risen.", examples = {
 		"file fileT <- osmfile(\"../includes/testProperties.osm\");",
 		"            // fileT represents the osm file \"../includes/testProperties.osm\"" }, see = { "file",
 		"properties", "image", "text", "shapefile" })
+	@Deprecated
 	public static IGamaFile osmFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s);
 	}
 
-	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
+	@operator(value = "osmfile", can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens a file that a is a kind of osmfile, specifying an optional CRS EPSG code", comment = "The file should have an osmfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing osmfile file, an exception is risen.", examples = {
 		"file fileT <- osmfile(\"../includes/testProperties.osm\", 4326);",
 		"            // fileT represents the osm file \"../includes/testProperties.osm\"" }, see = { "file",

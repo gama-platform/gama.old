@@ -81,16 +81,6 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.util.GamaFile#getKeyword()
-	 */
-	@Override
-	public String getKeyword() {
-		return Files.FOLDER;
-	}
-
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		IContainer<Integer, String> files = getContents(scope);

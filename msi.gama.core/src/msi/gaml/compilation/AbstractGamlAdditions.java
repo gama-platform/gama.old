@@ -7,6 +7,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
+import msi.gama.util.file.*;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -165,6 +166,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
 		initType(keyword, typeInstance, id, varKind, wraps);
+	}
+
+	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper, final String[] s) {
+		GamaFileFactory.addFileTypeDefinition(string, clazz, helper, s);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,

@@ -21,11 +21,10 @@ package msi.gama.util.file;
 import java.io.*;
 import java.net.MalformedURLException;
 import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.operators.Files;
-import msi.gaml.types.GamaFileType;
 import org.geotools.data.shapefile.*;
 import org.geotools.feature.*;
 import org.opengis.feature.simple.*;
@@ -39,6 +38,7 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
+@file(name = "shape", extensions = { "shp" })
 public class GamaShapeFile extends GamaGisFile {
 
 	/**
@@ -52,13 +52,6 @@ public class GamaShapeFile extends GamaGisFile {
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
-	}
-
-	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isShape(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for ESRI shapefiles"); }
 	}
 
 	/**
@@ -85,10 +78,10 @@ public class GamaShapeFile extends GamaGisFile {
 	/**
 	 * @see msi.gama.util.GamaFile#_toGaml()
 	 */
-	@Override
-	public String getKeyword() {
-		return Files.SHAPE;
-	}
+	// @Override
+	// public String getKeyword() {
+	// return Files.SHAPE;
+	// }
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()

@@ -35,8 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -53,7 +52,7 @@ import msi.gaml.types.*;
 	@facet(name = SHAPE, type = IType.NONE, optional = true),
 	@facet(name = TEXT, type = IType.STRING, optional = true),
 	@facet(name = IMAGE, type = IType.STRING, optional = true),
-	@facet(name = TEXTURE, type = {IType.STRING, IType.LIST}, optional = true),
+	@facet(name = TEXTURE, type = { IType.STRING, IType.LIST }, optional = true),
 	@facet(name = EMPTY, type = IType.BOOL, optional = true),
 	@facet(name = BORDER, type = IType.COLOR, optional = true),
 	@facet(name = ROUNDED, type = IType.BOOL, optional = true), @facet(name = AT, type = IType.POINT, optional = true),
@@ -170,7 +169,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					newExpr = GAML.getExpressionFactory().createOperator("line", desc, list);
 				}
 			} else {
-				if ( GamaFileType.isImageFile(old) ) {
+				if ( GamaFileFactory.verifyExtension("image", old) ) {
 					newExpr = GAML.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
@@ -226,7 +225,6 @@ public class DrawStatement extends AbstractStatementSequence {
 			rot = getFacet(ROTATE);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
-		
 
 			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
@@ -270,7 +268,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope.getAgentScope()
 				.getLocation() : constLoc;
 		}
-		
+
 		public Object getTexture(final IScope scope) throws GamaRuntimeException {
 			Object o = textures.value(scope);
 			if ( o instanceof GamaList ) { return Cast.asList(scope, o); }

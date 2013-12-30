@@ -25,7 +25,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.GamaFileType;
 
 /**
  * Written by drogoul Modified on 7 août 2010
@@ -60,6 +59,8 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	protected void checkValidity() throws GamaRuntimeException {
 		if ( getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
 			" is a folder. Files can not overwrite folders"); }
+		if ( !GamaFileFactory.verifyExtension(this, getPath()) ) { throw GamaRuntimeException.error("The extension " +
+			this.getExtension() + " is not recognized for this type of file"); }
 	}
 
 	@Override
@@ -201,11 +202,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public boolean isPgmFile() {
-		return path.endsWith(GamaFileType.pgmSuffix);
-	}
-
-	@Override
 	public Boolean isReadable() {
 		return getFile().canRead();
 	}
@@ -287,11 +283,8 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public String toGaml() {
-		return getKeyword() + "(" + StringUtils.toGamlString(getPath()) + ")";
+		return "file(" + StringUtils.toGamlString(getPath()) + ")";
 	}
-
-	@Override
-	public abstract String getKeyword();
 
 	@Override
 	public V any(final IScope scope) {

@@ -19,25 +19,15 @@
 package msi.gama.util.file;
 
 import msi.gama.kernel.experiment.*;
-import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-
-import msi.gama.util.GAML;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.IList;
-
 import msi.gama.util.*;
-
-import msi.gaml.expressions.GamlExpressionFactory;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.Files;
 import msi.gaml.species.GamlSpecies;
-import msi.gaml.types.GamaFileType;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -46,6 +36,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @todo Description
  * 
  */
+@file(name = "gaml", extensions = { "gaml" })
 public class GAMLFile extends GamaFile<Integer, IModel> {
 
 	private final IModel mymodel;
@@ -86,19 +77,17 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 
 	}
 
-	public void execute(IScope scope, IExpression with_exp,
-			IExpression param_input, IExpression param_output, GamaMap in,
-			GamaMap out, IExpression reset,
-			IExpression repeat, IExpression stopCondition) {
-		if (with_exp != null) {		
+	public void execute(final IScope scope, final IExpression with_exp, final IExpression param_input,
+		final IExpression param_output, GamaMap in, GamaMap out, final IExpression reset, final IExpression repeat,
+		final IExpression stopCondition) {
+		if ( with_exp != null ) {
 			this.getExperiment(with_exp.getName());
 		}
 
-		if (param_input != null) {
+		if ( param_input != null ) {
 			in = (GamaMap) param_input.value(scope);
-			for (int i = 0; i < in.getKeys().size(); i++) {
-				exp.getModel().getVar(in.getKeys().get(i).toString())
-						.setValue(in.getValues().get(i));
+			for ( int i = 0; i < in.getKeys().size(); i++ ) {
+				exp.getModel().getVar(in.getKeys().get(i).toString()).setValue(in.getValues().get(i));
 			}
 		}
 
@@ -106,54 +95,43 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 
 		SimulationAgent sim = (SimulationAgent) exp.getAgent().getSimulation();
 		IScope simScope = null;
-		if (sim == null) {
+		if ( sim == null ) {
 			sim = exp.getAgent().createSimulation(new ParametersSet(), false);
 			sim._init_(sim.getScope());
 		}
 		simScope = sim.getScope();
-		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
+		if ( reset != null && Cast.asBool(scope, reset.value(scope)) ) {
 			sim._init_(simScope);
 		}
 
 		int n = 1;
 		int i = 0;
-		if (repeat != null) {
+		if ( repeat != null ) {
 			n = (Integer) repeat.value(scope);
 		}
 		boolean mustStop = false;
-		if (stopCondition == null) {
+		if ( stopCondition == null ) {
 			mustStop = true;
 		}
 		while (!mustStop || i < n) {
 			exp.getAgent().getSimulation().step(simScope);
-			if (param_output != null) {
+			if ( param_output != null ) {
 				out = (GamaMap) param_output.value(scope);
-				for (int j = 0; j < out.getKeys().size(); j++) {
-					scope.setAgentVarValue(
-							out.getValues().get(j).toString(),
-							((ExperimentSpecies) exp).getExperimentScope()
-									.getGlobalVarValue(
-											out.getKeys().get(j).toString()));
+				for ( int j = 0; j < out.getKeys().size(); j++ ) {
+					scope.setAgentVarValue(out.getValues().get(j).toString(), ((ExperimentSpecies) exp)
+						.getExperimentScope().getGlobalVarValue(out.getKeys().get(j).toString()));
 
 				}
 			}
-			if (stopCondition != null) {
-				mustStop = Cast.asBool(scope,
-						scope.evaluate(stopCondition, scope.getAgentScope()));
+			if ( stopCondition != null ) {
+				mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, scope.getAgentScope()));
 			}
 			i++;
 		}
-		
-		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
+
+		if ( reset != null && Cast.asBool(scope, reset.value(scope)) ) {
 			exp = null;
 		}
-	}
-
-	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isGAML(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for GAML files"); }
 	}
 
 	/**
@@ -181,10 +159,10 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 	/**
 	 * @see msi.gama.util.GamaFile#_toGaml()
 	 */
-	@Override
-	public String getKeyword() {
-		return Files.SHAPE;
-	}
+	// @Override
+	// public String getKeyword() {
+	// return Files.SHAPE;
+	// }
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()

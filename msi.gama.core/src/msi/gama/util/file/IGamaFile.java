@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -37,14 +37,10 @@ import com.vividsolutions.jts.geom.Envelope;
  * @param <K>
  * @param <V>
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING),
-	@var(name = IKeyword.EXTENSION, type = IType.STRING),
-	@var(name = IKeyword.PATH, type = IType.STRING),
-	@var(name = IKeyword.EXISTS, type = IType.BOOL),
-	@var(name = IKeyword.ISFOLDER, type = IType.BOOL),
-	@var(name = IKeyword.READABLE, type = IType.BOOL),
-	@var(name = IKeyword.WRITABLE, type = IType.BOOL),
-	@var(name = IKeyword.CONTENTS, type = IType.CONTAINER) })
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING), @var(name = IKeyword.EXTENSION, type = IType.STRING),
+	@var(name = IKeyword.PATH, type = IType.STRING), @var(name = IKeyword.EXISTS, type = IType.BOOL),
+	@var(name = IKeyword.ISFOLDER, type = IType.BOOL), @var(name = IKeyword.READABLE, type = IType.BOOL),
+	@var(name = IKeyword.WRITABLE, type = IType.BOOL), @var(name = IKeyword.CONTENTS, type = IType.CONTAINER) })
 public interface IGamaFile<K, V> extends IContainer<K, V> {
 
 	public abstract void setWritable(final boolean w);
@@ -72,15 +68,11 @@ public interface IGamaFile<K, V> extends IContainer<K, V> {
 	@getter(value = IKeyword.ISFOLDER, initializer = true)
 	public abstract Boolean isFolder();
 
-	public abstract boolean isPgmFile();
-
 	@getter(value = IKeyword.READABLE, initializer = true)
 	public abstract Boolean isReadable();
 
 	@getter(value = IKeyword.WRITABLE, initializer = true)
 	public abstract Boolean isWritable();
-
-	public abstract String getKeyword();
 
 	public Envelope computeEnvelope(final IScope scope);
 

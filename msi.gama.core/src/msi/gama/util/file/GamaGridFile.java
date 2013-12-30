@@ -4,11 +4,11 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.operators.Files;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.PrjFileReader;
 import org.geotools.factory.Hints;
@@ -18,6 +18,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
+@file(name = "grid", extensions = { "asc" })
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
@@ -160,17 +161,11 @@ public class GamaGridFile extends GamaGisFile {
 		return null;
 	}
 
-	@Override
-	public String getKeyword() {
-		return Files.GRID;
-	}
-
-	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isGrid(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for ArcGrid files"); }
-	}
+	//
+	// @Override
+	// public String getKeyword() {
+	// return Files.GRID;
+	// }
 
 	public int getNbRows(final IScope scope) {
 		return createReader(scope).numRows;

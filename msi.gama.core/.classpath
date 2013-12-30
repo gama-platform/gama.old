@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="schema/"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="msi/gama/runtime/GamaSelectionListener.java|msi/gama/runtime/GamaSelectionProvider.java|msi/gama/outputs/HeadlessOutputManager.java|msi/gama/outputs/GuiOutputManager.java|msi/gama/networks/ui/|msi/gama/util/graph/writer/GephiWriterAbstract.java|msi/gama/util/graph/writer/GephiWriterCSV.java|msi/gama/util/graph/writer/GephiWriterDLList.java|msi/gama/util/graph/writer/GephiWriterDLMatrix.java|msi/gama/util/graph/writer/GephiWriterGDF.java|msi/gama/util/graph/writer/GephiWriterGEXF.java|msi/gama/util/graph/writer/GephiWriterGraphML.java|msi/gama/util/graph/writer/GephiWriterPajek.java|msi/gama/util/graph/writer/GephiWriterVNA.java|msi/gama/util/graph/GraphUtilsGephi.java|msi/gaml/extensions/cluster_builder/|msi/gaml/statements/OpenStatement.java|msi/gaml/skills/GeometricSkill.java|msi/gaml/skills/GraphSkill.java" kind="src" path="src"/>

@@ -88,11 +88,11 @@ public class GamaPreferences {
 		protected IGamaFile _copy(final IScope scope) {
 			return null;
 		}
-
-		@Override
-		public String getKeyword() {
-			return null;
-		}
+		//
+		// @Override
+		// public String getKeyword() {
+		// return null;
+		// }
 
 	}
 

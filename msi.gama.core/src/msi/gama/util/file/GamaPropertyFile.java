@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -20,13 +20,13 @@ package msi.gama.util.file;
 
 import java.io.*;
 import java.util.Properties;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
-import msi.gaml.operators.Files;
-import msi.gaml.types.GamaFileType;
 import com.vividsolutions.jts.geom.Envelope;
 
+@file(name = "property", extensions = { "properties" })
 public class GamaPropertyFile extends GamaFile<String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -34,13 +34,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	}
 
 	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isProperties(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " + this.getExtension() + " is not recognized for properties files"); }
-	}
-
-	@Override
-	protected IGamaFile _copy(IScope scope) {
+	protected IGamaFile _copy(final IScope scope) {
 		// TODO A faire
 		return null;
 	}
@@ -51,10 +45,10 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	// return false;
 	// }
 
-	@Override
-	public String getKeyword() {
-		return Files.PROPERTIES;
-	}
+	// @Override
+	// public String getKeyword() {
+	// return Files.PROPERTIES;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -62,7 +56,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		Properties p = new Properties();
 		GamaMap m = new GamaMap();
 		try {

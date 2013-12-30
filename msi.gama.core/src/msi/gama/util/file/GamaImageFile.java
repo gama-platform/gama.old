@@ -24,14 +24,34 @@ import java.io.*;
 import java.util.StringTokenizer;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
-import msi.gaml.operators.Files;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaMatrixType;
 import com.vividsolutions.jts.geom.Envelope;
 
+@file(name = "image", extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" })
 public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
+
+	@file(name = "pgm", extensions = { "pgm" })
+	public static class GamaPgmFile extends GamaImageFile {
+
+		/**
+		 * @param scope
+		 * @param pathName
+		 * @throws GamaRuntimeException
+		 */
+		public GamaPgmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+			super(scope, pathName);
+		}
+
+		@Override
+		protected boolean isPgmFile() {
+			return true;
+		}
+
+	}
 
 	private BufferedImage image;
 
@@ -45,11 +65,8 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		buffer = isPgmFile() ? matrixValueFromPgm(scope, null) : matrixValueFromImage(scope, null);
 	}
 
-	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for image files"); }
+	protected boolean isPgmFile() {
+		return false;
 	}
 
 	/*
@@ -223,9 +240,9 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 
 	}
 
-	@Override
-	public String getKeyword() {
-		return Files.IMAGE;
-	}
+	// @Override
+	// public String getKeyword() {
+	// return Files.IMAGE;
+	// }
 
 }

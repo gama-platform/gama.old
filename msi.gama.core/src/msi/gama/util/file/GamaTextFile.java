@@ -21,28 +21,22 @@ package msi.gama.util.file;
 import java.io.*;
 import java.util.List;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.operators.Files;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaMatrixType;
 import au.com.bytecode.opencsv.CSVReader;
 import com.vividsolutions.jts.geom.Envelope;
 
+@file(name = "text", extensions = { "txt", "data", "csv", "text", "tsv", "xml" })
 public class GamaTextFile extends GamaFile<Integer, String> {
 
 	private String csvSeparator = null;
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
-	}
-
-	@Override
-	protected void checkValidity() throws GamaRuntimeException {
-		super.checkValidity();
-		if ( !GamaFileType.isTextFile(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for text files"); }
 	}
 
 	@Override
@@ -91,10 +85,11 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 		return sb.toString();
 	}
 
-	@Override
-	public String getKeyword() {
-		return Files.TEXT;
-	}
+	//
+	// @Override
+	// public String getKeyword() {
+	// return Files.TEXT;
+	// }
 
 	/*
 	 * (non-Javadoc)

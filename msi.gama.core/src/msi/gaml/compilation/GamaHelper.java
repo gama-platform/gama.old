@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -24,13 +24,13 @@ import msi.gaml.skills.*;
 import msi.gaml.types.*;
 
 /**
- * Written by drogoul Modified on 14 aožt 2010. Modified on 23 Apr. 2013.
+ * Written by drogoul Modified on 14 aoï¿½t 2010. Modified on 23 Apr. 2013.
  * A general purpose helper that can be subclassed like a Runnable.
  * 
  * @todo Description
  * 
  */
-public abstract class GamaHelper {
+public abstract class GamaHelper<T> {
 
 	final Class skillClass;
 	final IType returnType;
@@ -60,15 +60,15 @@ public abstract class GamaHelper {
 		return returnType;
 	}
 
-	public Object run(IScope scope) {
+	public T run(final IScope scope) {
 		return null;
 	};
 
-	public Object run(IScope scope, Object ... values) {
+	public T run(final IScope scope, final Object ... values) {
 		return null;
 	}
 
-	public Object run(IScope scope, IAgent agent, ISkill target, Object ... values) {
+	public T run(final IScope scope, final IAgent agent, final ISkill target, final Object ... values) {
 		return null;
 	}
 
