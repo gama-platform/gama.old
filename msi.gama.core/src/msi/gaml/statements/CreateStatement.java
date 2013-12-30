@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -239,7 +239,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaGridFile file) {
 		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			final GamaShape g = file.get(scope, i);
+			final IShape g = file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
