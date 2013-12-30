@@ -28,7 +28,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -344,14 +343,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final Geometry geoms[] = new Geometry[ags.length(scope)];
 		int cpt = 0;
 		boolean is_polygon = true;
-		for ( final Object ent : ags.iterable(scope) ) {
+		for ( final IShape ent : ags.iterable(scope) ) {
 			if ( ent == null ) {
 				continue;
 			}
-			if ( !(ent instanceof IShape) ) { throw GamaRuntimeException
-				.error("Cannot cast to geometry a container of " +
-					((ModelDescription) scope.getModel().getDescription()).getTypesManager().get(ent.getClass())); }
-			Geometry geom = ((IShape) ent).getInnerGeometry();
+			Geometry geom = ent.getInnerGeometry();
 			geoms[cpt] = geom;
 			if ( is_polygon && !(geom instanceof Polygon) ) {
 				is_polygon = false;
