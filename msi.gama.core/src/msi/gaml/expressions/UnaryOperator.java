@@ -112,7 +112,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public String getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
-		sb.append(doc.getMain());
+		if ( doc != null ) {
+			sb.append(doc.getMain());
+		}
 		return sb.toString();
 	}
 
