@@ -4,10 +4,11 @@
  */
 package msi.gama.util.file;
 
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.GamaGeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -18,7 +19,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 12 déc. 2013
  * 
  */
-public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
+public abstract class GamaGisFile extends GamaGeometryFile {
 
 	// The code to force reading the GIS data as already projected
 	public static final int ALREADY_PROJECTED_CODE = 0;
@@ -69,6 +70,11 @@ public abstract class GamaGisFile extends GamaFile<Integer, GamaShape> {
 			fillBuffer(scope);
 		}
 		return gis;
+	}
+
+	@Override
+	protected IShape buildGeometry(final IScope scope) {
+		return GamaGeometryType.geometriesToGeometry(scope, buffer);
 	}
 
 }
