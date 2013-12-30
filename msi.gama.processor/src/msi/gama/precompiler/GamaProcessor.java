@@ -38,6 +38,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.factory;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -111,6 +112,7 @@ public class GamaProcessor extends AbstractProcessor {
 			processSymbols(env);
 			processVars(env);
 			processDisplays(env);
+			processFiles(env);
 
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
@@ -313,7 +315,40 @@ public class GamaProcessor extends AbstractProcessor {
 				gp.put(sb.toString(), "");
 			}
 		}
+	}
 
+	public void processFiles(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(file.class) ) {
+			file f = e.getAnnotation(file.class);
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(FILE_PREFIX);
+			// name
+			sb.append(f.name()).append(SEP);
+			// class
+			sb.append(rawNameOf(e)).append(SEP);
+			// suffixes
+			String[] names = f.extensions();
+			sb.append(arrayToString(names)).append(SEP);
+			// constructors: only the arguments in addition to the scope are provided
+			for ( Element m : e.getEnclosedElements() ) {
+				if ( m.getKind() == ElementKind.CONSTRUCTOR ) {
+					ExecutableElement ex = (ExecutableElement) m;
+					List<? extends VariableElement> argParams = ex.getParameters();
+					// The first parameter must be IScope
+					int n = argParams.size();
+					if ( n <= 1 ) {
+						continue;
+					}
+					String[] args = new String[n - 1];
+					for ( int i = 1; i < n; i++ ) {
+						args[i - 1] = rawNameOf(argParams.get(i));
+					}
+					sb.append(arrayToString(args)).append(SEP);
+				}
+			}
+			gp.put(sb.toString(), docToString(f.doc()));
+		}
 	}
 
 	private String replaceCommas(final String s) {

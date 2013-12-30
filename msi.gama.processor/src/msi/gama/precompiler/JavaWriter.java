@@ -16,6 +16,7 @@ public class JavaWriter {
 	public final static String SYMBOL_PREFIX = "[";
 	public final static String FACTORY_PREFIX = "]";
 	public final static String VAR_PREFIX = "%";
+	public final static String FILE_PREFIX = "+";
 	public final static String DOC_PREFIX = "@";
 	public final static String DOC_SEP = "€";
 	public final static String DOC_REGEX = "\\€";
@@ -71,6 +72,10 @@ public class JavaWriter {
 		}
 		for ( Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet() ) {
 			writeOperatorAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
+		}
+
+		for ( Map.Entry<String, String> entry : props.filterFirst(FILE_PREFIX).entrySet() ) {
+			writeFileAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
 		}
 		for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
 			writeActionAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
@@ -146,6 +151,9 @@ public class JavaWriter {
 		return result;
 	}
 
+	final static List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
+	final static List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
+
 	private String toJavaString(final String s) {
 		if ( s == null || s.isEmpty() ) { return "(String)null"; }
 		int i = ss1.indexOf(s);
@@ -180,6 +188,21 @@ public class JavaWriter {
 		}
 		sb.setLength(sb.length() - 1);
 		sb.append(");");
+	}
+
+	protected void writeFileAddition(final StringBuilder sb, final StringBuilder docBuilder, final String file,
+		final String doc) {
+		String[] segments = file.split("\\$");
+		String name = toJavaString(segments[0]);
+		String clazz = segments[1];
+		String suffixes = toArrayOfStrings(segments[2]);
+		String helper = buildFileConstructor(new String[] { "String" }, clazz);
+		sb.append(in).append("_file(").append(name).append(',').append(toClassObject(clazz)).append(',').append(helper)
+			.append(",").append(suffixes).append(");");
+		writeIsFileOperator(sb, name);
+		for ( int i = 3; i < segments.length; i++ ) {
+			writeCreateFileOperator(sb, name, clazz, segments[i]);
+		}
 	}
 
 	protected void writeVarAddition(final StringBuilder sb, final StringBuilder docBuilder, final String var,
@@ -416,17 +439,11 @@ public class JavaWriter {
 				buildNAry(classes, m, ret, stat, scope), "}");
 
 		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',').append(classNames)
-			.append(",").append(content_type_expected).append(",").append(toClassObject(ret))/*
-																							 * .append(",").append(priority
-																							 * )
-																							 */
-			.append(',').append(canBeConst).append(',').append(type).append(',').append(contentType).append(',')
-			.append(indexType).append(',').append(helper).append(',').append("DOC(")
+			.append(",").append(content_type_expected).append(",").append(toClassObject(ret)).append(',')
+			.append(canBeConst).append(',').append(type).append(',').append(contentType).append(',').append(indexType)
+			.append(',').append(helper).append(',').append("DOC(")
 			.append(addDoc(docBuilder, toArrayOfStrings(doc, DOC_REGEX))).append("));");
 	}
-
-	final static List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
-	final static List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
 
 	protected void writeSpecies(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
@@ -439,6 +456,46 @@ public class JavaWriter {
 			sb.append(",").append(toJavaString(segments[i]));
 		}
 		sb.append(");");
+	}
+
+	/**
+	 * @param sb
+	 * @param name
+	 */
+	private void writeIsFileOperator(final StringBuilder sb, final String name) {
+		String helper =
+			concat("new GamaHelper(){", OVERRIDE, "public Boolean run(", ISCOPE,
+				" s,Object... o) { return GamaFileFactory.verifyExtension(", name, ",(String)o[0]);}}");
+		sb.append(in).append("_operator(S(").append(toJavaString("is_")).append("+").append(name)
+			.append("),C(S),I(0),B,true,3,0,0,").append(helper).append(",null);");
+	}
+
+	private void writeCreateFileOperator(final StringBuilder sb, final String name, final String clazz,
+		final String classes) {
+		String[] names = classes.split(",");
+		String helper = buildFileConstructor(names, clazz);
+		String classNames = "C(";
+		for ( int i = 0; i < names.length; i++ ) {
+			classNames += toClassObject(names[i]);
+			if ( i < names.length - 1 ) {
+				classNames += ",";
+			}
+		}
+		classNames += ")";
+		sb.append(in).append("_operator(S(").append(name).append("+").append(toJavaString("_file")).append("),")
+			.append(classNames).append(",I(0),GF,true,12,0,0,").append(helper).append(",null);");
+	}
+
+	protected String buildFileConstructor(final String[] classes, final String className) {
+		String body =
+			concat("new GamaHelper(){", OVERRIDE, "public IGamaFile run(", ISCOPE, " s,Object... o) {return new ",
+				className, "(s");
+		for ( int i = 0; i < classes.length; i++ ) {
+			body += ",";
+			body += param(classes[i], "o[" + i + "]");
+		}
+		body += ");}}";
+		return body;
 	}
 
 	protected void writeActionAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,

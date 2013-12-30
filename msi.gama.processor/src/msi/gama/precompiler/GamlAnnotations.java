@@ -891,4 +891,31 @@ public final class GamlAnnotations {
 
 	}
 
+	@Retention(RetentionPolicy.SOURCE)
+	@Target({ ElementType.TYPE })
+	@Inherited
+	public static @interface file {
+
+		/**
+		 * The name of this type of files. This name will be used to generate two operators: name+"_file" and
+		 * "is_"+name. The first operator may have variants taking one or several arguments, depending on the @builder
+		 * annotations present on the class.
+		 * @return a (human-understandable) string describing this type of files, suitable for use in composed operator
+		 *         names (e.g. "shape", "image"...)
+		 * 
+		 */
+		String name();
+
+		/**
+		 * The list of file extensions allowed for this type of files. These extensions will be used to check the
+		 * validity of the file path, but also to generate the correct type of file when a path is passed to the generic
+		 * "file" operator.
+		 * @return an array of extensions (without the '.' delimiter) or an empty array if no specific extensions are
+		 *         associated to this type of files (e.g. ["png","jpg","jpeg"...])
+		 */
+		String[] extensions();
+
+		doc[] doc() default {};
+	}
+
 }
