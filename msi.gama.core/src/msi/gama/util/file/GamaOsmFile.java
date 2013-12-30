@@ -116,9 +116,9 @@ public class GamaOsmFile extends GamaGisFile {
 		getFeatureIterator(scope, true);
 	}
 
-	public GamaList<GamaShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
+	public GamaList<IShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
 		final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
-		GamaList<GamaShape> geometries = new GamaList<GamaShape>();
+		GamaList<IShape> geometries = new GamaList();
 		for ( Node node : nodes ) {
 			GamaShape pt = nodesPt.get(node.getId());
 			boolean hasAttributes = !node.getTags().isEmpty();

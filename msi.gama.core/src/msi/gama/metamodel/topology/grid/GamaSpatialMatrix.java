@@ -139,7 +139,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.useNeighboursCache = useNeighboursCache;
 
 		for ( int i = 0; i < size; i++ ) {
-			final GamaShape g = gfile.get(scope, i);
+			final IShape g = gfile.get(scope, i);
 			gridValue[i] = (Double) g.getAttribute("grid_value");
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its attribute...
 			// matrix[i] = g;
