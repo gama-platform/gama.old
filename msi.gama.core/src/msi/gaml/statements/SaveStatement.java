@@ -168,7 +168,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			for ( final String e : attributes.keySet() ) {
 				String var = attributes.get(e);
-				specs.append(',').append(e).append(':').append(type(species.getVar(var).getType()));
+				String name = e.replaceAll("\"", "");
+				name = name.replaceAll("'", "");
+				specs.append(',').append(name).append(':').append(type(species.getVar(var).getType()));
 			}
 			final String featureTypeName = species.toString();
 
