@@ -526,7 +526,7 @@ public abstract class Spatial {
 			}
 			final Geometry visiblePercept = GeometryUtils.factory.createGeometry(source.getInnerGeometry());
 			if ( obstacles != null && !obstacles.isEmpty(scope) ) {
-				final Envelope env = visiblePercept.getEnvelopeInternal();
+				final Envelope env = source.getEnvelope();
 				final double percep_dist = Math.max(env.getHeight(), env.getWidth());
 				final Geometry locG =
 					GeometryUtils.factory.createPoint(location.toCoordinate())
