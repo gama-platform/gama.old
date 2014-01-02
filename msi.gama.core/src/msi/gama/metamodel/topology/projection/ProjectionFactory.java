@@ -10,6 +10,8 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.util.file.GamaGisFile;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ProjectedCRS;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -29,18 +31,22 @@ public class ProjectionFactory {
 	private IProjection world;
 	public CoordinateReferenceSystem targetCRS;
 
-	void computeTargetCRS(final double longitude, final double latitude) {
+	void computeTargetCRS(final CoordinateReferenceSystem crs,final double longitude, final double latitude) {
 		// If we already know in which CRS we project the data in GAMA, no need to recompute it. This information is
 		// normally wiped when an experiment is disposed
 		if ( targetCRS != null ) { return; }
 		try {
 			if ( !GamaPreferences.LIB_TARGETED.getValue() ) {
 				targetCRS = computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
-			} else {
-				int index = (int) (0.5 + (longitude + 186.0) / 6);
-				boolean north = latitude > 0;
-				String newCode = EPSGPrefix + (32600 + index + (north ? 0 : 100));
-				targetCRS = getCRS(newCode);
+			} else { 
+				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution can be found 
+                    targetCRS = crs;
+				} else {
+					int index = (int) (0.5 + (longitude + 186.0) / 6);
+					boolean north = latitude > 0;
+					String newCode = EPSGPrefix + (32600 + index + (north ? 0 : 100));
+					targetCRS = getCRS(newCode);
+				}
 			}
 		} catch (Exception e) {
 			GuiUtils.debug("An error prevented GAMA from computing a correct Coordinate System: " + e);
@@ -110,7 +116,7 @@ public class ProjectionFactory {
 	public IProjection fromCRS(final CoordinateReferenceSystem crs, final Envelope env) {
 		if ( world == null ) {
 			if ( env != null ) {
-				computeTargetCRS(env.centre().x, env.centre().y);
+				computeTargetCRS(crs, env.centre().x, env.centre().y);
 			}
 			world = new WorldProjection(crs, env, this);
 			return world;
