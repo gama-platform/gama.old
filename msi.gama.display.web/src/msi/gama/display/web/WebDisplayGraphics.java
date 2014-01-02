@@ -10,14 +10,14 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
-
+import org.jfree.chart.JFreeChart;
 
 /**
- * Class WebDisplayGraphics. 
- *
+ * Class WebDisplayGraphics.
+ * 
  * @author drogoul
  * @since 2 janv. 2014
- *
+ * 
  */
 public class WebDisplayGraphics implements IGraphics {
 
@@ -41,42 +41,52 @@ public class WebDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawGrid()
-	 * @see msi.gama.common.interfaces.IGraphics#drawGrid(msi.gama.runtime.IScope, java.awt.image.BufferedImage, double[], boolean, boolean, boolean, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGraphics#drawGrid(msi.gama.runtime.IScope, java.awt.image.BufferedImage,
+	 *      double[], boolean, boolean, boolean, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation,
+	 *      java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
 	 */
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img, double[] gridValueMatrix, boolean isTextured,
-		boolean isTriangulated, boolean isShowText, ILocation locationInModelUnits, ILocation sizeInModelUnits,
-		Color gridColor, Integer angle, Double z, double cellSize, String name) {
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
+		final Integer angle, final Double z, final double cellSize, final String name) {
 		return null;
 	}
 
 	/**
 	 * Method drawImage()
-	 * @see msi.gama.common.interfaces.IGraphics#drawImage(msi.gama.runtime.IScope, java.awt.image.BufferedImage, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer, java.lang.Double, boolean, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGraphics#drawImage(msi.gama.runtime.IScope, java.awt.image.BufferedImage,
+	 *      msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer,
+	 *      java.lang.Double, boolean, java.lang.String)
 	 */
 	@Override
-	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic, String name) {
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic, final String name) {
 		return null;
 	}
 
 	/**
 	 * Method drawString()
-	 * @see msi.gama.common.interfaces.IGraphics#drawString(java.lang.String, java.awt.Color, msi.gama.metamodel.shape.ILocation, java.lang.Double, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Double, java.lang.Boolean)
+	 * @see msi.gama.common.interfaces.IGraphics#drawString(java.lang.String, java.awt.Color,
+	 *      msi.gama.metamodel.shape.ILocation, java.lang.Double, java.lang.String, java.lang.Integer,
+	 *      java.lang.Integer, java.lang.Double, java.lang.Boolean)
 	 */
 	@Override
-	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
-		Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z, Boolean bitmap) {
+	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
+		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double z, final Boolean bitmap) {
 		return null;
 	}
 
 	/**
 	 * Method drawGamaShape()
-	 * @see msi.gama.common.interfaces.IGraphics#drawGamaShape(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.awt.Color, boolean, java.awt.Color, java.lang.Integer, boolean)
+	 * @see msi.gama.common.interfaces.IGraphics#drawGamaShape(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape,
+	 *      java.awt.Color, boolean, java.awt.Color, java.lang.Integer, boolean)
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color color, boolean fill, Color border,
-		Integer angle, boolean rounded) {
+	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
+		final Color border, final Integer angle, final boolean rounded) {
 		return null;
 	}
 
@@ -85,35 +95,35 @@ public class WebDisplayGraphics implements IGraphics {
 	 * @see msi.gama.common.interfaces.IGraphics#initFor(msi.gama.common.interfaces.IDisplaySurface)
 	 */
 	@Override
-	public void initFor(IDisplaySurface surface) {}
+	public void initFor(final IDisplaySurface surface) {}
 
 	/**
 	 * Method setOpacity()
 	 * @see msi.gama.common.interfaces.IGraphics#setOpacity(double)
 	 */
 	@Override
-	public void setOpacity(double i) {}
+	public void setOpacity(final double i) {}
 
 	/**
 	 * Method fillBackground()
 	 * @see msi.gama.common.interfaces.IGraphics#fillBackground(java.awt.Color, double)
 	 */
 	@Override
-	public void fillBackground(Color bgColor, double opacity) {}
+	public void fillBackground(final Color bgColor, final double opacity) {}
 
 	/**
 	 * Method setQualityRendering()
 	 * @see msi.gama.common.interfaces.IGraphics#setQualityRendering(boolean)
 	 */
 	@Override
-	public void setQualityRendering(boolean quality) {}
+	public void setQualityRendering(final boolean quality) {}
 
 	/**
 	 * Method setHighlightColor()
 	 * @see msi.gama.common.interfaces.IGraphics#setHighlightColor(int[])
 	 */
 	@Override
-	public void setHighlightColor(int[] rgb) {}
+	public void setHighlightColor(final int[] rgb) {}
 
 	/**
 	 * Method beginDrawingLayers()
@@ -127,7 +137,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 * @see msi.gama.common.interfaces.IGraphics#beginDrawingLayer(msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
-	public void beginDrawingLayer(ILayer layer) {}
+	public void beginDrawingLayer(final ILayer layer) {}
 
 	/**
 	 * Method getEnvironmentWidth()
@@ -170,7 +180,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 * @see msi.gama.common.interfaces.IGraphics#endDrawingLayer(msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
-	public void endDrawingLayer(ILayer layer) {}
+	public void endDrawingLayer(final ILayer layer) {}
 
 	/**
 	 * Method endDrawingLayers()
@@ -192,5 +202,15 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public void endHighlight() {}
+
+	/**
+	 * Method drawChart()
+	 * @see msi.gama.common.interfaces.IGraphics#drawChart(msi.gama.runtime.IScope,
+	 *      msi.gama.common.interfaces.JFreeChart, java.lang.Double)
+	 */
+	@Override
+	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
+		return null;
+	}
 
 }
