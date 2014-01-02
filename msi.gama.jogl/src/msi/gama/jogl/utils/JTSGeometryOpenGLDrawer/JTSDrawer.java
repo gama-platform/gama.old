@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.scene.MyTexture;
 import msi.gama.jogl.utils.*;
@@ -111,9 +112,10 @@ public class JTSDrawer {
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames, final Integer angle, final boolean drawPolygonContour, final boolean rounded,
 		final double z_fighting_value) {
-
+		
 		gl.glNormal3d(0.0d, 0.0d, 1.0d);
 		if(isTextured ==false){
+
 			if ( fill == true ) {
 	           
 				if ( !colorpicking ) {
@@ -304,6 +306,7 @@ public class JTSDrawer {
 	void DrawTexturedPolygon(final Polygon p, final int angle, Texture texture) {
 		
 		gl.glEnable(GL.GL_TEXTURE_2D);
+		gl.glColor3d(1.0, 1.0, 1.0);//Set the color to white to avoid color and texture mixture
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the
 		// current GL context's state.
 		myGLRender.getContext().makeCurrent();
@@ -401,6 +404,7 @@ public class JTSDrawer {
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames,angle, drawPolygonContour, rounded, z_fighting_value);
 		gl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
+		
 		if(isTextured){
 			if(textureFileNames.size()>1){
 				DrawTexturedFaces(p, c, alpha, fill, border, isTextured, textureFileNames.get(1), height, drawPolygonContour);
@@ -510,6 +514,7 @@ public class JTSDrawer {
 		}
 	
 		gl.glEnable(GL.GL_TEXTURE_2D);
+		gl.glColor3d(1.0, 1.0, 1.0);//Set the color to white to avoid color and texture mixture
 		myGLRender.getContext().makeCurrent();
 		texture.texture.enable();
 		texture.texture.bind();
