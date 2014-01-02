@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.displays.layers;
 
+import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.SWTChartEditor;
@@ -90,7 +91,8 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		dg.drawChart(scope, getChart(), 0.0);
+		BufferedImage im = getChart().createBufferedImage(getSizeInPixels().x, getSizeInPixels().y);
+		dg.drawChart(scope, im, 0.0);
 	}
 
 	@Override

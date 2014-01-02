@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
-import org.jfree.chart.JFreeChart;
 
 /**
  * Class WebDisplayGraphics.
@@ -209,7 +208,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 *      msi.gama.common.interfaces.JFreeChart, java.lang.Double)
 	 */
 	@Override
-	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
+	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
 		return null;
 	}
 

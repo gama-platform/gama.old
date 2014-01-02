@@ -28,7 +28,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
-import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 
@@ -152,9 +151,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 * @param chart JFreeChart
 	 */
 	@Override
-	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		final BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
-		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true, "");
+	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
+		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0, z, true, "");
 	}
 
 	/**

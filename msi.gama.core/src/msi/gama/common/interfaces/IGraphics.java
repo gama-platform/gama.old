@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
-import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -59,7 +58,7 @@ public interface IGraphics {
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
-	public abstract Rectangle2D drawChart(final IScope scope, JFreeChart chart, Double z);
+	public abstract Rectangle2D drawChart(final IScope scope, BufferedImage chart, Double z);
 
 	public abstract void initFor(IDisplaySurface surface);
 
