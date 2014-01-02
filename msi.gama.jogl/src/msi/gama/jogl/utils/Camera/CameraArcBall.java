@@ -208,8 +208,8 @@ public class CameraArcBall extends AbstractCamera {
 		final double zPos = extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100;
 		radius = zPos;
 		update();
-		updatePosition(centerX, centerY, zPos);
-		lookPosition(centerX, centerY, -(extent * 2));
+		updatePosition(centerX, -centerY, zPos);
+		lookPosition(centerX, -centerY, -(extent * 2));
 	}
 
 	@Override

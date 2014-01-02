@@ -146,8 +146,8 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
-		updatePosition(centerX, centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
-		lookPosition(centerX, centerY, -(extent * 2));
+		updatePosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
+		lookPosition(centerX, -centerY, -(extent * 2));
 	}
 
 	@Override
