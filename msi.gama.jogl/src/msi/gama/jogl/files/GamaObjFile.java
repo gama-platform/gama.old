@@ -21,7 +21,7 @@ import msi.gaml.types.GamaGeometryType;
  * @since 30 déc. 2013
  * 
  */
-@file(name = "obj", extensions = ".obj")
+@file(name = "obj", extensions = "obj")
 public class GamaObjFile extends Gama3DGeometryFile {
 
 	/**
@@ -89,7 +89,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e);
 		}
-
 	}
 
 	/**
