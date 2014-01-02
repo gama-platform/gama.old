@@ -44,7 +44,184 @@ import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
  */
 public class GeometryUtils {
 
-	public static GeometryFactory factory = new GeometryFactory();
+	public static class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory {
+
+		/**
+		 * Method create()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
+		 */
+		@Override
+		public GamaCoordinateSequence create(final Coordinate[] coordinates) {
+			return new GamaCoordinateSequence(coordinates);
+		}
+
+		/**
+		 * Method create()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
+		 */
+		@Override
+		public GamaCoordinateSequence create(final CoordinateSequence coordSeq) {
+			return new GamaCoordinateSequence(coordSeq);
+		}
+
+		/**
+		 * Method create()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
+		 */
+		@Override
+		public GamaCoordinateSequence create(final int size, final int dimension) {
+			return new GamaCoordinateSequence(size);
+		}
+
+	}
+
+	public static class GamaCoordinateSequence implements CoordinateSequence {
+
+		GamaPoint[] points;
+
+		/**
+		 * @param points2
+		 */
+		public GamaCoordinateSequence(final Coordinate[] points2) {
+			if ( points2 == null ) {
+				points = new GamaPoint[0];
+			} else {
+				points = new GamaPoint[points2.length];
+				for ( int i = 0; i < points2.length; i++ ) {
+					points[i] = new GamaPoint(points2[i]);
+				}
+			}
+		}
+
+		/**
+		 * @param size
+		 */
+		public GamaCoordinateSequence(final int size) {
+			points = new GamaPoint[size];
+			for ( int i = 0; i < size; i++ ) {
+				points[i] = new GamaPoint(0d, 0d, 0d);
+			}
+		}
+
+		/**
+		 * @param coordSeq
+		 */
+		public GamaCoordinateSequence(final CoordinateSequence coordSeq) {
+			this(coordSeq.toCoordinateArray());
+		}
+
+		/**
+		 * Method getDimension()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getDimension()
+		 */
+		@Override
+		public int getDimension() {
+			return 3;
+		}
+
+		@Override
+		public GamaCoordinateSequence clone() {
+			return new GamaCoordinateSequence(points);
+		}
+
+		/**
+		 * Method getCoordinate()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
+		 */
+		@Override
+		public Coordinate getCoordinate(final int i) {
+			return points[i];
+		}
+
+		/**
+		 * Method getCoordinateCopy()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinateCopy(int)
+		 */
+		@Override
+		public Coordinate getCoordinateCopy(final int i) {
+			return new GamaPoint((Coordinate) points[i]);
+		}
+
+		/**
+		 * Method getCoordinate()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int,
+		 *      com.vividsolutions.jts.geom.Coordinate)
+		 */
+		@Override
+		public void getCoordinate(final int index, final Coordinate coord) {
+			coord.setCoordinate(points[index]);
+		}
+
+		/**
+		 * Method getX()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getX(int)
+		 */
+		@Override
+		public double getX(final int index) {
+			return points[index].x;
+		}
+
+		/**
+		 * Method getY()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getY(int)
+		 */
+		@Override
+		public double getY(final int index) {
+			return points[index].y;
+		}
+
+		/**
+		 * Method getOrdinate()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getOrdinate(int, int)
+		 */
+		@Override
+		public double getOrdinate(final int index, final int ordinateIndex) {
+			return points[index].getOrdinate(ordinateIndex);
+		}
+
+		/**
+		 * Method size()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#size()
+		 */
+		@Override
+		public int size() {
+			return points.length;
+		}
+
+		/**
+		 * Method setOrdinate()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#setOrdinate(int, int, double)
+		 */
+		@Override
+		public void setOrdinate(final int index, final int ordinateIndex, final double value) {
+			points[index].setOrdinate(ordinateIndex, value);
+		}
+
+		/**
+		 * Method toCoordinateArray()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#toCoordinateArray()
+		 */
+		@Override
+		public Coordinate[] toCoordinateArray() {
+			return points;
+		}
+
+		/**
+		 * Method expandEnvelope()
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#expandEnvelope(com.vividsolutions.jts.geom.Envelope)
+		 */
+		@Override
+		public Envelope expandEnvelope(final Envelope env) {
+			// TODO Create an Envelope3D ??
+			for ( GamaPoint p : points ) {
+				env.expandToInclude(p);
+			}
+			return env;
+		}
+
+	}
+
+	public static GeometryFactory factory = new GeometryFactory(new GamaCoordinateSequenceFactory());
 	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
 	public static CoordinateSequenceFactory coordFactory = factory.getCoordinateSequenceFactory();
 
@@ -104,19 +281,18 @@ public class GeometryUtils {
 	}
 
 	private static Coordinate[] minimiseLength(final Coordinate[] coords) {
-		final GeometryFactory geomFact = factory;
-		final double dist1 = geomFact.createLineString(coords).getLength();
+		final double dist1 = factory.createLineString(coords).getLength();
 		final Coordinate[] coordstest1 = new Coordinate[3];
 		coordstest1[0] = coords[0];
 		coordstest1[1] = coords[2];
 		coordstest1[2] = coords[1];
-		final double dist2 = geomFact.createLineString(coordstest1).getLength();
+		final double dist2 = factory.createLineString(coordstest1).getLength();
 
 		final Coordinate[] coordstest2 = new Coordinate[3];
 		coordstest2[0] = coords[1];
 		coordstest2[1] = coords[0];
 		coordstest2[2] = coords[2];
-		final double dist3 = geomFact.createLineString(coordstest2).getLength();
+		final double dist3 = factory.createLineString(coordstest2).getLength();
 
 		if ( dist1 <= dist2 && dist1 <= dist3 ) { return coords; }
 		if ( dist2 <= dist1 && dist2 <= dist3 ) { return coordstest1; }
@@ -226,7 +402,6 @@ public class GeometryUtils {
 			final double yMax = env.getMaxY();
 			double x = env.getMinX();
 			double y = env.getMinY();
-			final GeometryFactory geomFact = factory;
 			while (x < xMax) {
 				y = env.getMinY();
 				while (y < yMax) {
@@ -235,7 +410,7 @@ public class GeometryUtils {
 					final Coordinate c3 = new Coordinate(x + size, y + size);
 					final Coordinate c4 = new Coordinate(x, y + size);
 					final Coordinate[] cc = { c1, c2, c3, c4, c1 };
-					final Geometry square = geomFact.createPolygon(geomFact.createLinearRing(cc), null);
+					final Geometry square = factory.createPolygon(factory.createLinearRing(cc), null);
 					y += size;
 					try {
 						Geometry g = null;
@@ -341,11 +516,10 @@ public class GeometryUtils {
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
 		final Collection<GamaShape> nodes = graph.vertexSet();
-		final GeometryFactory geomFact = GeometryUtils.factory;
 		for ( final GamaShape node : nodes ) {
 			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
 			if ( coordsArr != null ) {
-				network.add(geomFact.createLineString(coordsArr));
+				network.add(factory.createLineString(coordsArr));
 			}
 		}
 
