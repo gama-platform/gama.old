@@ -66,7 +66,12 @@ public abstract class SqlConnection {
 	public void setGis(final Projection gis) {
 		this.gis = gis;
 	}
-
+	public IProjection getGis() {
+		return this.gis;
+	}
+	public boolean getTransform() {
+		return transformed;
+	}
 	protected IProjection getSavingGisProjection(final IScope scope) {
 		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		String crs = (String) params.get("crs");
@@ -249,23 +254,15 @@ public abstract class SqlConnection {
 //			// repRequest = SqlUtils.transform(gis, repRequest, false);
 //			result = SqlUtils.transform(gis, result, false);
 //		}
+		
 		if ( columns.contains(GEOMETRYTYPE) && transformed ) {
 			gis=scope.getSimulationScope().getProjectionFactory().getWorld();
-			if ( gis == null ) {
-				// we have at least one geometry type and we compute the envelope if no gis is present
-				// Envelope env = getBounds(repRequest);
-				Envelope env = getBounds(result);
-				// we now compute the GisUtils instance for our case (based on params and env)
+			if ( gis != null ) // create envelope for environment
+			{
+				Envelope env = scope.getSimulationScope().getEnvelope();
 				gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-			}else {
-				Envelope env = gis.getProjectedEnvelope();
-				gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-				
+				result = SqlUtils.transform(gis, result, false);	
 			}
-			
-			// and we transform the geometries using its projection
-			// repRequest = SqlUtils.transform(gis, repRequest, false);
-			result = SqlUtils.transform(gis, result, false);
 		}
 			/**
 			 * AD
@@ -641,21 +638,11 @@ public abstract class SqlConnection {
 //			}
 			if ( columns.contains(GEOMETRYTYPE) && transformed ) {
 				gis=scope.getSimulationScope().getProjectionFactory().getWorld();
-				if ( gis == null ) {
-					// we have at least one geometry type and we compute the envelope if no gis is present
-					// Envelope env = getBounds(repRequest);
-					Envelope env = getBounds(result);
-					// we now compute the GisUtils instance for our case (based on params and env)
+				if ( gis != null ) {
+					Envelope env = scope.getSimulationScope().getEnvelope();
 					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-				}else {
-					Envelope env = gis.getProjectedEnvelope();
-					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-					
+					result = SqlUtils.transform(gis, result, false);	
 				}
-				
-				// and we transform the geometries using its projection
-				// repRequest = SqlUtils.transform(gis, repRequest, false);
-				result = SqlUtils.transform(gis, result, false);
 			}
 
 			/**

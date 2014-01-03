@@ -693,14 +693,12 @@ public class GeometryUtils {
 		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
 		
-		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
+		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
 		
-		//thai.truongminh@gmail.com
-		// remove the projection of envelope because it is already projected in select_DB method
-		//IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-		//env = gis.getProjectedEnvelope();
-		
-		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
+		IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+		env = gis.getProjectedEnvelope();			
+
+		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
 		return env;
 		// ----------------------------------------------------------------------------------------------------
 	}
