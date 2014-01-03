@@ -62,7 +62,7 @@ public class Application implements IApplication {
 		Reader in = new Reader(args[0]);
 		in.parseXmlFile();
 		int numSim = 1;
-		if (args[2] != null) {
+		if (args.length>2 && args[2] != null) {
 			numSim = Cast.asInt(null, args[2]);
 		}
 		Iterator<Simulation> it = in.getSimulation().iterator();
