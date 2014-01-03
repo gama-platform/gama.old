@@ -121,7 +121,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final LinearRing geom = GeometryUtils.factory.createLinearRing(cs);
 		final Polygon p = GeometryUtils.factory.createPolygon(geom, null);
 
-		if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); } // Why buffer (0.0) ???
+		if ( true ) { return new GamaShape(p.buffer(0.0)); } // Why buffer (0.0) ???
 		return buildPolyline(points);
 		// / ???
 	}

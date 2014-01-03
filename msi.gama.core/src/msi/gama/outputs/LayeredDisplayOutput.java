@@ -57,7 +57,6 @@ import com.vividsolutions.jts.geom.Envelope;
 		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED }, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 	@facet(name = IKeyword.TRACE, type = IType.BOOL, optional = true, doc = @doc("Allows to aggregate agent at each timestep")),
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
@@ -134,7 +133,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
-	private boolean stencil = false;
 	private boolean traceDisplay = false;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
@@ -199,11 +197,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
 			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
-		}
-
-		final IExpression st = getFacet(IKeyword.STENCIL);
-		if ( st != null ) {
-			setStencil(Cast.asBool(getScope(), st.value(getScope())));
 		}
 
 		final IExpression z = getFacet(IKeyword.ZFIGHTING);
@@ -514,13 +507,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.tesselation = tesselation;
 	}
 
-	public boolean getStencil() {
-		return stencil;
-	}
-
-	private void setStencil(final boolean stencil) {
-		this.stencil = stencil;
-	}
 
 	public boolean getZFighting() {
 		return z_fighting;

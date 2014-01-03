@@ -55,7 +55,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						for ( int i = 0; st.hasMoreTokens(); i++ ) {
 							coords[i] = Float.parseFloat(st.nextToken());
 						}
-						vertices.add(new GamaPoint(coords[0], coords[1], coords[2])); // w ignored
+						vertices.add(new GamaPoint(coords[0], -coords[1], coords[2])); // w ignored
 					} else
 
 					// LOADS FACES COORDINATES
@@ -78,11 +78,11 @@ public class GamaObjFile extends Gama3DGeometryFile {
 							StringTokenizer st2 = new StringTokenizer(sb.toString(), "/");
 							v[i] = Integer.parseInt(st2.nextToken());
 						}
-						GamaList<IShape> points = new GamaList();
+						GamaList<IShape> face = new GamaList();
 						for ( int i = 0; i < v.length; i++ ) {
-							points.add(vertices.get(v[i]-1)); // Correct only if all the vertices have been loaded before
+							face.add(vertices.get(v[i]-1)); // Correct only if all the vertices have been loaded before
 						}
-						((IList) buffer).add(GamaGeometryType.buildPolygon(points));
+						((IList) buffer).add(GamaGeometryType.buildPolygon(face));
 					}
 				}
 			}

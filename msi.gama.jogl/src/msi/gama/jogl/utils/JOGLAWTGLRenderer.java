@@ -60,8 +60,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean useTessellation = true;
 	// facet "inertia"
 	private boolean inertia = false;
-	// facet "inertia"
-	private boolean stencil = false;
 	// facet "drawEnv"
 	private boolean drawEnv = false;
 	// facet "show_fps"
@@ -231,11 +229,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				if ( !getStencil() ) {
-					gl.glEnable(GL_DEPTH_TEST);
-				} else {
-					gl.glEnable(GL_STENCIL_TEST);
-				}
+				gl.glEnable(GL_DEPTH_TEST);	
 			}
 
 			// Use polygon offset for a better edges rendering
@@ -468,14 +462,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getInertia() {
 		return inertia;
-	}
-
-	public void setStencil(final boolean st) {
-		this.stencil = st;
-	}
-
-	public boolean getStencil() {
-		return stencil;
 	}
 
 	public void setZFighting(final boolean z) {

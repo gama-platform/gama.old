@@ -320,7 +320,6 @@ public interface IKeyword {
 	public static final String STATE_TO_EXIT = "stateToExit";
 	public static final String STATES = "states";
 	public static final String STEP = "step";
-	public static final String STENCIL = "stencil";
 	public static final String STRATEGY = "scheduling_strategy";
 	public static final String STYLE = "style";
 	public static final String SWITCH = "switch";
