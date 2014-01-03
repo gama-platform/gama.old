@@ -112,8 +112,17 @@ public class JTSDrawer {
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames, final Integer angle, final boolean drawPolygonContour, final boolean rounded,
 		final double z_fighting_value) {
+		//FIXME: Need to be optimized. Compute the normal only if the polygon is not in the XY plan.
+		if(p.getNumPoints() == 4){
+			Vertex[] vertices = getTriangleVertices(p);
+			double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
+		}
+		else{
+			gl.glNormal3d(0.0d, 0.0d, 1.0d);
+		}
 		
-		gl.glNormal3d(0.0d, 0.0d, 1.0d);
+		
 		if(isTextured ==false){
 
 			if ( fill == true ) {
@@ -578,6 +587,37 @@ public class JTSDrawer {
 		
 		return vertices;
 	}
+	
+	public Vertex[] getTriangleVertices(Polygon p){
+		if(p.getNumPoints() ==4){
+			// Build the 3 vertices of the face.
+			Vertex[] vertices = new Vertex[3];
+			for ( int i = 0; i < 3; i++ ) {
+				vertices[i] = new Vertex();
+			}
+			// FIXME; change double to double in Vertex
+			vertices[0].x = p.getExteriorRing().getPointN(0).getX();
+			vertices[0].y = yFlag * p.getExteriorRing().getPointN(0).getY();
+			vertices[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+	
+			vertices[1].x = p.getExteriorRing().getPointN(1).getX();
+			vertices[1].y = yFlag * p.getExteriorRing().getPointN(1).getY();
+			vertices[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
+	
+			vertices[2].x = p.getExteriorRing().getPointN(2).getX();
+			vertices[2].y = yFlag * p.getExteriorRing().getPointN(2).getY();
+			vertices[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
+	
+			
+			return vertices;
+		}
+		else{
+			System.err.println("The Polygon is not a triangle");
+			return null;
+		}
+	}
+	
+
 
 	
 	//////////////////////////////// LINE DRAWER //////////////////////////////////////////////////////////////////////////////////
@@ -1018,6 +1058,7 @@ public class JTSDrawer {
 		// done
 		return normal;
 	}
+	
 
 	public void drawRoundRectangle(final Polygon p) {
 
