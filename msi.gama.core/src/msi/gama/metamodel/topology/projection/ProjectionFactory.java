@@ -95,7 +95,16 @@ public class ProjectionFactory {
 			return null;
 		}
 	}
-
+	/*
+	 * Thai.truongming@gmail.com ---------------begin
+	 * date: 03-01-2014
+	 */
+	public IProjection getWorld(){
+		return world;
+	}
+	/*
+	 * thai.truongming@gmail.com -----------------end
+	 */
 	public CoordinateReferenceSystem computeDefaultCRS(final int code, final boolean target) {
 		CoordinateReferenceSystem crs = getCRS(code);
 		if ( crs == null ) {

@@ -679,13 +679,12 @@ public class GeometryUtils {
 	// ---------------------------------------------------------------------------------------------
 	// Thai.truongminh@gmail.com
 	// Created date:24-Feb-2013: Process for SQL - MAP type
-	// Modified: 29-Apr-2013
+	// Modified: 03-Jan-2014
 
 	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> params) {
 		final String crs = (String) params.get("crs");
 		final String srid = (String) params.get("srid");
-		final Boolean longitudeFirst =
-			params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
+		final Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
@@ -693,11 +692,19 @@ public class GeometryUtils {
 		// get data
 		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
-		IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-		env = gis.getProjectedEnvelope();
+		
+		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
+		
+		//thai.truongminh@gmail.com
+		// remove the projection of envelope because it is already projected in select_DB method
+		//IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+		//env = gis.getProjectedEnvelope();
+		
+		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
 		return env;
 		// ----------------------------------------------------------------------------------------------------
 	}
+
 
 	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
 		Envelope result = null;

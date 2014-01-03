@@ -38,7 +38,10 @@ public class SqlUtils {
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
 		String extension = (String) params.get("extension");
-		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		// thai.truongminh@gmail.com 
+		//     Move transform arg of select to a key in params
+		//boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
+		boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		if ( DEBUG ) {
 			GuiUtils.debug("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database +
