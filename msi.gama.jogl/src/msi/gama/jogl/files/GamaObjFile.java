@@ -80,7 +80,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						}
 						GamaList<IShape> points = new GamaList();
 						for ( int i = 0; i < v.length; i++ ) {
-							points.add(vertices.get(v[i])); // Correct only if all the vertices have been loaded before
+							points.add(vertices.get(v[i]-1)); // Correct only if all the vertices have been loaded before
 						}
 						((IList) buffer).add(GamaGeometryType.buildPolygon(points));
 					}
