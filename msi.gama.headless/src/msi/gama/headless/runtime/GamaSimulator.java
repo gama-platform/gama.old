@@ -1,13 +1,25 @@
 package msi.gama.headless.runtime;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
-import msi.gama.headless.common.*;
+
+import msi.gama.headless.common.DataType;
+import msi.gama.headless.common.Display2D;
+import msi.gama.headless.common.Globals;
+import msi.gama.headless.common.ISimulator;
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.kernel.experiment.*;
-import msi.gama.outputs.*;
+import msi.gama.kernel.experiment.ExperimentSpecies;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.model.IModel;
+import msi.gama.outputs.AbstractOutputManager;
+import msi.gama.outputs.IOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
@@ -16,6 +28,7 @@ public class GamaSimulator implements ISimulator {
 
 	private int currentStep;
 	private final ParametersSet params;
+	private IModel model;
 	private String fileName;
 	private String experimentName;
 	private double seed;
@@ -29,12 +42,9 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
-		// experiment.getSchedule().
-		GAMA.controller.getScheduler().step();
-		// System.out.println(" Step " + currentStep);
-
-		// GAMA.controller.getScheduler().step();
-		// experiment.getAgent().get //currentStep.//.controller.userStep();
+		IScope simScope = experiment.getCurrentSimulation().getScope();
+		experiment.getCurrentSimulation().step(simScope);
+		experiment.getSimulationOutputs().step(simScope);
 	}
 
 	@Override
@@ -110,7 +120,7 @@ public class GamaSimulator implements ISimulator {
 		this.fileName = var;
 		this.experimentID = exp;
 		this.experimentName = expName;
-
+		this.model = HeadlessSimulationLoader.loadModel(this.fileName);
 	}
 
 	@Override
@@ -126,8 +136,8 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment =
-				HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.experimentName, this.params);
+			experiment = HeadlessSimulationLoader.newHeadlessSimulation(
+					this.model, this.experimentName, this.params);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			experiment = null;

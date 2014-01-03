@@ -1,16 +1,13 @@
 package msi.gama.headless.core;
 
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.Vector;
 
 import msi.gama.headless.common.ISimulator;
 import msi.gama.headless.runtime.GamaSimulator;
 import msi.gama.headless.xml.Writer;
-import msi.gama.runtime.GAMA;
 
-
-public class Simulation  {
+public class Simulation {
 	/**
 	 * Variable listeners
 	 */
@@ -20,15 +17,15 @@ public class Simulation  {
 	private Vector<Parameter> parameters;
 	private Vector<Output> outputs;
 	private Writer outputFile;
-	private String sourcePath;
+	private final String sourcePath;
 	//private String driver;
-	private String experimentName;
+	private final String experimentName;
 
 	/**
 	 * simulator to be loaded
 	 */
-	private ISimulator model;
-	
+	public ISimulator simulator;
+
 	/**
 	 * current step
 	 */
@@ -55,12 +52,24 @@ public class Simulation  {
 		this.outputs.add(p);
 	}
 
-	public Simulation(int expId, String sourcePath,String exp, int max)
-	{
-		this.experimentID=expId;
-		this.sourcePath=sourcePath;
-	//	this.driver=driver;
-		this.maxStep=max;
+	public Simulation(final Simulation clone) {
+		this.experimentID = clone.experimentID;
+		this.sourcePath = clone.sourcePath;
+		// this.driver=driver;
+		this.maxStep = clone.maxStep;
+		this.experimentName = clone.experimentName;
+		this.parameters = clone.parameters;
+		this.listenedVariable = clone.listenedVariable;
+		this.listenedVariableFrameRate = clone.listenedVariableFrameRate;
+		this.setStep(clone.getStep());
+		this.outputs = clone.outputs;
+	}
+
+	public Simulation(int expId, String sourcePath, String exp, int max) {
+		this.experimentID = expId;
+		this.sourcePath = sourcePath;
+		// this.driver=driver;
+		this.maxStep = max;
 		this.experimentName = exp;
 		initialize();
 	}
@@ -77,7 +86,7 @@ public class Simulation  {
 		for(int i=0; i<parameters.size();i++)
 		{
 			Parameter temp=parameters.get(i);
-			this.model.setParameterWithName(temp.getName(), temp.getValue());
+			this.simulator.setParameterWithName(temp.getName(), temp.getValue());
 			System.out.println("parameter setup : "+ temp.getName()+" "+temp.getValue());
 		}
 		for(int i=0; i<outputs.size();i++)
@@ -89,13 +98,14 @@ public class Simulation  {
 		}
 	//	this.outputFile.writeSimulationHeader(this);
 		this.setup();
+		simulator.initialize();
 	}
 
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		System.setProperty("user.dir",this.sourcePath);
-		this.model=new GamaSimulator(); //(ISimulator)(Class.forName(this.driver)).newInstance();
-		this.model.load(this.sourcePath, this.experimentID, this.experimentName);
+		this.simulator=new GamaSimulator(); //(ISimulator)(Class.forName(this.driver)).newInstance();
+		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName);
 	}
 	
 	public void setup()
@@ -104,14 +114,11 @@ public class Simulation  {
 		//this.model.setup();
 		//this.model.
 	}
-	
-	public void play()
-	{
-		this.model.initialize();
-		GAMA.getExperiment();
-		if(this.outputFile!=null)
+
+	public void play() {
+		if (this.outputFile != null)
 			this.outputFile.writeSimulationHeader(this);
-		System.out.print("Simulation is running...");
+		System.out.println("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
 		// int affDelay = maxStep/100;
 		int affDelay = maxStep < 100 ? 1 : maxStep /100;
@@ -122,7 +129,7 @@ public class Simulation  {
 			nextStepDone();
 		}
 		long endDate= Calendar.getInstance().getTimeInMillis();
-		this.model.free();
+		this.simulator.free();
 		if(this.outputFile!=null)
 			this.outputFile.close();
 		System.out.println("\nSimulation duration: "+ (endDate - startdate)+"ms");
@@ -130,7 +137,7 @@ public class Simulation  {
 	
 	public void nextStepDone()
 	{
-		model.nextStep(this.step);
+		simulator.nextStep(this.step);
 		this.exportData();
 	}
 	
@@ -158,7 +165,7 @@ public class Simulation  {
 				if((this.step%frameRate)==0)
 				{
 					String vars=this.listenedVariable[i];
-					Object obj=this.model.getVariableWithName(vars);
+					Object obj=this.simulator.getVariableWithName(vars);
 					this.results[i]=obj;
 				} 
 			}
@@ -180,13 +187,20 @@ public class Simulation  {
 			parameters=new Vector<Parameter>();
 			outputs=new Vector<Output>();
 					
-			if(model!=null)
+			if(simulator!=null)
 			{
-				model.free();
-				model=null;
+				simulator.free();
+				simulator=null;
 			}
 
-		}
+	}
 
+	public int getStep() {
+		return step;
+	}
+
+	public void setStep(int step) {
+		this.step = step;
+	}
 
 }

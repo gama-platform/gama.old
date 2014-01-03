@@ -1,19 +1,24 @@
 package msi.gama.headless.core;
 
 import java.util.Map;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
-import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.experiment.ExperimentSpecies;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
+
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+
 import com.google.inject.Injector;
 
 public class HeadlessSimulationLoader {
@@ -29,16 +34,17 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final String expName,
+	public static ExperimentSpecies newHeadlessSimulation(final IModel model,
+			final String expName,
 		final ParametersSet params) throws GamaRuntimeException {
 		// FIXME Verify all this.
 		configureHeadLessSimulation();
-		preloadGAMA();
-		IModel model = loadModel(fileName);
-		if ( model == null ) {
-			System.out.println("GAMA cannot load model " + fileName);
-			return null;
-		}
+		// preloadGAMA();  
+		// IModel model = loadModel(fileName);
+		// if ( model == null ) {
+		// System.out.println("GAMA cannot load model " + fileName);
+		// return null;
+		// }
 		ExperimentSpecies exp1 = (ExperimentSpecies) model.getExperiment(expName);
 		if ( exp1 == null ) {
 			System.out.println("Experiment " + expName + " cannot be created");
@@ -48,7 +54,10 @@ public class HeadlessSimulationLoader {
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			exp1.setParameterValue(entry.getKey(), entry.getValue());
 		}
-		GAMA.controller.newHeadlessExperiment(exp1);
+		exp1.createAgent();
+		SimulationAgent sim = exp1.getAgent().createSimulation(
+				new ParametersSet(), true);
+		// GAMA.controller.newHeadlessExperiment(exp1);
 		waitLoading(exp1);
 		return exp1;
 	}
@@ -67,7 +76,7 @@ public class HeadlessSimulationLoader {
 		GuiUtils.setHeadLessMode();
 	}
 
-	private static void preloadGAMA() {
+	public static void preloadGAMA() {
 		System.out.println("GAMA configuring and loading...");
 		GuiUtils.setSwtGui(new HeadlessListener());
 		try {
@@ -81,7 +90,7 @@ public class HeadlessSimulationLoader {
 		System.out.println("GAMA loading complete");
 	}
 
-	private static IModel loadModel(final String fileName) {
+	public static IModel loadModel(final String fileName) {
 		System.out.println(fileName + " model is loading...");
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
