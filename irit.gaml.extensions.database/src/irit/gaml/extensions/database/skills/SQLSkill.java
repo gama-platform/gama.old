@@ -161,11 +161,12 @@ public class SQLSkill extends Skill {
 	 * @return an integer
 	 */
 	@action(name = "insert", args = {
-		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
-		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
-		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
+		,@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name"))
+		,@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table"))
+		,@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+//		,@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) 
+		})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		SqlConnection sqlConn;
@@ -215,10 +216,10 @@ public class SQLSkill extends Skill {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name = "select", args = {
-		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+		 @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
+		,@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks"))
+		,@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+//		,@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
 	})
 	public GamaList select_QM(final IScope scope) throws GamaRuntimeException {
@@ -226,7 +227,10 @@ public class SQLSkill extends Skill {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		// thai.truongminh@gmail.com 
+		//     Move transform arg of select to a key in params
+		//boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
+		//boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		SqlConnection sqlConn;
 		GamaList<? super GamaList<Object>> repRequest = new GamaList<Object>();
