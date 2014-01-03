@@ -70,7 +70,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		buffer = new GamaList();
 		try {
 			FileInputStream fileInputStream = new FileInputStream(getFile());
-			DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+			dataInputStream = new DataInputStream(fileInputStream);
 			readChunkHeader(currentChunk);
 			if ( currentChunk.id != PRIMARY ) {
 				System.err.println("Unable to load PRIMARY chunk from file " + getPath());
@@ -85,6 +85,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 			Geometry g = GeometryUtils.factory.buildGeometry(obj.faces);
 			((GamaList) buffer).add(new GamaShape(g));
 		}
+		
 	}
 
 	// Verified
@@ -95,7 +96,6 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		try {
 			while (previousChunk.bytesRead < previousChunk.length) {
 				readChunkHeader(currentChunk);
-
 				switch (currentChunk.id) {
 					case VERSION:
 						currentChunk.bytesRead += 4;
