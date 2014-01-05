@@ -79,19 +79,17 @@ public class AssertStatement extends AbstractStatement {
 
 				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning."); }
-				if ( isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
+				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " raises " +
-						(isWarning ? "a warning." : "an error.")); }
-				// System.out.println("Toto OK" + raises.getName());
+					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() + 
+							", it raises " + (isWarning ? "a warning." : "an error.")); }
 				return null;
 			} catch (Exception e) {
-				if ( IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
-				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " raises an error."); }
-				// System.out.println("error weel raised");
+				if(!IKeyword.ERROR.equals(raises.getName())) {
+					throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA.");
+				}
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
