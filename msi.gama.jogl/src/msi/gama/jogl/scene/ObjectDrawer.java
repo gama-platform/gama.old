@@ -9,8 +9,6 @@ import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.*;
@@ -74,45 +72,43 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		protected void _draw(final GeometryObject geometry) {
 
 			// Rotate angle (in XY plan)
-			if ( geometry.angle != 0 ) {
-				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-				renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
-				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-			}
+			// if ( geometry.angle != 0 ) {
+			// renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+			// geometry.geometry.getCentroid().getY(), 0.0d);
+			// renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
+			// renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+			// geometry.geometry.getCentroid().getY(), 0.0d);
+			// }
 
 			if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
 				jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-					geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, geometry.angle, geometry.height, geometry.rounded,
-					geometry.getZ_fighting_id());
+					geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames,/* geometry.angle, */
+					geometry.height, geometry.rounded, geometry.getZ_fighting_id());
 			} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 
-				//3D sepcial geomtry (sphere, cone
-				if ( geometry.type != null && geometry.type.equals("sphere") ) {	
+				// 3D sepcial geomtry (sphere, cone
+				if ( geometry.type != null && geometry.type.equals("sphere") ) {
 					jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-							geometry.alpha);
-				}else if ( geometry.type != null && geometry.type.equals("cone") ) {
+						geometry.alpha);
+				} else if ( geometry.type != null && geometry.type.equals("cone") ) {
 					jtsDrawer.DrawCone((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-							geometry.alpha);
-				}
-				else if ( geometry.type != null && geometry.type.equals("teapot") ) {
+						geometry.alpha);
+				} else if ( geometry.type != null && geometry.type.equals("teapot") ) {
 					jtsDrawer.DrawTeapot((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-							geometry.alpha);
-				}
-				else if ( geometry.type != null && geometry.type.equals("pyramid") ) {
-					jtsDrawer.DrawPyramid((Polygon) geometry.geometry, geometry.height, geometry.getColor(),geometry.border,
-							geometry.alpha);
-				}
-				else {
+						geometry.alpha);
+				} else if ( geometry.type != null && geometry.type.equals("pyramid") ) {
+					jtsDrawer.DrawPyramid((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
+						geometry.border, geometry.alpha);
+				} else {
 					if ( geometry.height > 0 ) {
 						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-							geometry.fill, geometry.height, geometry.angle, true, geometry.border,geometry.isTextured,geometry.textureFileNames,
-							geometry.rounded, geometry.getZ_fighting_id());
+							geometry.fill, geometry.height, /* geometry.angle, */true, geometry.border,
+							geometry.isTextured, geometry.textureFileNames, geometry.rounded,
+							geometry.getZ_fighting_id());
 					} else {
 						jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, geometry.angle, true,
-							geometry.rounded, geometry.getZ_fighting_id());
+							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames,
+							/* geometry.angle, */true, geometry.rounded, geometry.getZ_fighting_id());
 					}
 				}
 			} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
@@ -138,16 +134,16 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						geometry.getColor(), geometry.alpha);
 				}
 			}
-			
-			// Rotate angle (in XY plan)
-			if ( geometry.angle != 0 ) {
-				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-				renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
-				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
 
-			}
+			// Rotate angle (in XY plan)
+			// if ( geometry.angle != 0 ) {
+			// renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+			// geometry.geometry.getCentroid().getY(), 0.0d);
+			// renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
+			// renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+			// geometry.geometry.getCentroid().getY(), 0.0d);
+			//
+			// }
 		}
 	}
 
@@ -193,18 +189,18 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			}
 
 			renderer.gl.glBegin(GL_QUADS);
-				// bottom-left of the texture and quad
-				renderer.gl.glTexCoord2f(textureLeft, textureBottom);
-				renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
-				// bottom-right of the texture and quad
-				renderer.gl.glTexCoord2f(textureRight, textureBottom);
-				renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
-				// top-right of the texture and quad
-				renderer.gl.glTexCoord2f(textureRight, textureTop);
-				renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
-				// top-left of the texture and quad
-				renderer.gl.glTexCoord2f(textureLeft, textureTop);
-				renderer.gl.glVertex3d(img.x, -img.y, img.z);
+			// bottom-left of the texture and quad
+			renderer.gl.glTexCoord2f(textureLeft, textureBottom);
+			renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+			// bottom-right of the texture and quad
+			renderer.gl.glTexCoord2f(textureRight, textureBottom);
+			renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+			// top-right of the texture and quad
+			renderer.gl.glTexCoord2f(textureRight, textureTop);
+			renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
+			// top-left of the texture and quad
+			renderer.gl.glTexCoord2f(textureLeft, textureTop);
+			renderer.gl.glVertex3d(img.x, -img.y, img.z);
 			renderer.gl.glEnd();
 
 			if ( img.angle != 0 ) {

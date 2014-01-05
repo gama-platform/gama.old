@@ -6,17 +6,13 @@ import java.nio.*;
 import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXException;
-
+import javax.xml.parsers.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.collada.COLLADA;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.shape.IShape;
+import org.xml.sax.SAXException;
 import com.sun.opengl.util.BufferUtil;
 import com.vividsolutions.jts.geom.*;
 
@@ -212,7 +208,7 @@ public class VertexArrayHandler {
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer,
 						curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.border,
-						curGeometry.angle, curGeometry.height, curGeometry.rounded);
+						/* curGeometry.angle, */curGeometry.height, curGeometry.rounded);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "Polygon" ) {
@@ -227,11 +223,11 @@ public class VertexArrayHandler {
 						if ( curGeometry.height > 0 ) {
 							buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
 								curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.height,
-								curGeometry.angle, true, curGeometry.border, curGeometry.rounded);
+								/* curGeometry.angle, */true, curGeometry.border, curGeometry.rounded);
 						} else {
 							buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
 								curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.isTextured,
-								curGeometry.angle, true);
+								/* curGeometry.angle, */true);
 							buildVertexArrayContours(curGeometry.z_layer);
 						}
 					}
@@ -268,18 +264,18 @@ public class VertexArrayHandler {
 			}
 		}
 
-//		fillPointBuffers();
-//		fillPolygonBuffers();
-//		fillContoursBuffers();
-//		fillFacesBuffers();
-//		fillFacesContoursBuffers();
-//		fillPlanBuffers();
-//		fillLineBuffer();
-//		fillSphereVertexArray();
-		
+		// fillPointBuffers();
+		// fillPolygonBuffers();
+		// fillContoursBuffers();
+		// fillFacesBuffers();
+		// fillFacesContoursBuffers();
+		// fillPlanBuffers();
+		// fillLineBuffer();
+		// fillSphereVertexArray();
+
 		loadCollada("null");
 
-//		createVBOs();
+		// createVBOs();
 	}
 
 	public void createVBOs() {
@@ -753,7 +749,7 @@ public class VertexArrayHandler {
 	 * 
 	 * */
 	public void buildPolygonVertexArray(final Polygon polygon, final double z_layer, final Color c, final double alpha,
-		final boolean fill, final boolean isTextured, final Integer angle, final boolean drawPolygonContour) {
+		final boolean fill, final boolean isTextured, /* final Integer angle, */final boolean drawPolygonContour) {
 		if ( fill == true ) {
 			MyTriangulatedGeometry curTriangulatedGeometry = new MyTriangulatedGeometry();
 			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon); // VERIFY
@@ -774,7 +770,7 @@ public class VertexArrayHandler {
 			curTriangulatedGeometry.color = c;
 			curTriangulatedGeometry.alpha = alpha;
 			curTriangulatedGeometry.fill = fill;
-			curTriangulatedGeometry.angle = angle;
+			// curTriangulatedGeometry.angle = angle;
 			triangulatedGeometries.add(curTriangulatedGeometry);
 			nbVerticesTriangle = nbVerticesTriangle + curTriangulatedGeometry.triangles.size() * 3;
 		} else {
@@ -910,12 +906,12 @@ public class VertexArrayHandler {
 	 * 
 	 */
 	private void buildPolyhedreVertexArray(final Polygon geometry, final double z_layer, final Color color,
-		final Double alpha2, final Boolean fill, final double height, final int angle, final boolean b,
+		final Double alpha2, final Boolean fill, final double height, /* final int angle, */final boolean b,
 		final Color border, final boolean rounded) {
 
-		buildPolygonVertexArray(geometry, z_layer, color, alpha2, fill, false, angle, true);
+		buildPolygonVertexArray(geometry, z_layer, color, alpha2, fill, false, /* angle, */true);
 		buildVertexArrayContours(z_layer);
-		buildPolygonVertexArray(geometry, z_layer + height, color, alpha2, fill, false, angle, true);
+		buildPolygonVertexArray(geometry, z_layer + height, color, alpha2, fill, false,/* angle, */true);
 		buildVertexArrayContours(z_layer + height);
 		buildFacesVertexArray(geometry, color, alpha2, fill, border, z_layer, height, true);
 
@@ -1169,7 +1165,7 @@ public class VertexArrayHandler {
 	 * buildPolyhedreVertexArray or buildPolygonVertexArray functions.
 	 */
 	public void buildMultiPolygonVertexArray(final MultiPolygon polygons, final double z_layer, final Color c,
-		final double alpha, final boolean fill, final Color border, final Integer angle, final double height,
+		final double alpha, final boolean fill, final Color border, /* final Integer angle, */final double height,
 		final boolean rounded) {
 
 		int numGeometries = polygons.getNumGeometries();
@@ -1178,9 +1174,10 @@ public class VertexArrayHandler {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if ( height > 0 ) {
-				buildPolyhedreVertexArray(curPolygon, z_layer, c, alpha, fill, height, angle, false, border, rounded);
+				buildPolyhedreVertexArray(curPolygon, z_layer, c, alpha, fill, height, /* angle, */false, border,
+					rounded);
 			} else {
-				buildPolygonVertexArray(curPolygon, z_layer, c, alpha, fill, false, angle, true);
+				buildPolygonVertexArray(curPolygon, z_layer, c, alpha, fill, false, /* angle, */true);
 			}
 		}
 	}
@@ -1622,18 +1619,17 @@ public class VertexArrayHandler {
 		long used = total - free;
 		System.out.println(label + " FREE : " + free + " TOTAL : " + total + " USED : " + used);
 	}
-	
+
 	/**
 	 * Function that load a COLLADA file
 	 * 
 	 * 
 	 * 
 	 * */
-	public void loadCollada(String filename)
-	{
-		
+	public void loadCollada(final String filename) {
+
 		COLLADA handler = new COLLADA();
-		
+
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			SAXParser saxParser = factory.newSAXParser();
@@ -1649,48 +1645,48 @@ public class VertexArrayHandler {
 			e.printStackTrace();
 		}
 		handler.ColladaIntoVbo();
-//		handler.printCollada();
-		
-		for(int i = 0; i < handler.getVertexBufferArray().size();i++)
-		{
+		// handler.printCollada();
+
+		for ( int i = 0; i < handler.getVertexBufferArray().size(); i++ ) {
 			int[] buffer3 = new int[3];
 			myGl.glGenBuffers(3, buffer3, 0);
 			sphereIndicesBufferID = buffer3[2];
-	
+
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[0]);
-			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getVertexBufferArray().get(i).capacity() * BufferUtil.SIZEOF_FLOAT,
-					handler.getVertexBufferArray().get(i), GL.GL_STATIC_DRAW);
+			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getVertexBufferArray().get(i).capacity() *
+				BufferUtil.SIZEOF_FLOAT, handler.getVertexBufferArray().get(i), GL.GL_STATIC_DRAW);
 			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-	
+
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			
+
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[1]);
-			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getColorsBufferArray().get(i).capacity()* BufferUtil.SIZEOF_FLOAT,
-					handler.getColorsBufferArray().get(i), GL.GL_STATIC_DRAW);
+			myGl.glBufferData(GL.GL_ARRAY_BUFFER, handler.getColorsBufferArray().get(i).capacity() *
+				BufferUtil.SIZEOF_FLOAT, handler.getColorsBufferArray().get(i), GL.GL_STATIC_DRAW);
 			myGl.glColorPointer(4, GL.GL_FLOAT, 0, 0);
 
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	
+
 			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[2]);
-			myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, handler.getIndicesBufferArray().get(i).capacity() * BufferUtil.SIZEOF_INT,
-					handler.getIndicesBufferArray().get(i), GL.GL_STATIC_DRAW);
-	
+			myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, handler.getIndicesBufferArray().get(i).capacity() *
+				BufferUtil.SIZEOF_INT, handler.getIndicesBufferArray().get(i), GL.GL_STATIC_DRAW);
+
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	
+
 			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
 			myGl.glEnableClientState(GL.GL_COLOR_ARRAY);
-	
+
 			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, sphereIndicesBufferID);
-			myGl.glDrawElements(GL.GL_TRIANGLES, handler.getIndicesBufferArray().get(i).capacity(), GL.GL_UNSIGNED_INT, 0);
-	
+			myGl.glDrawElements(GL.GL_TRIANGLES, handler.getIndicesBufferArray().get(i).capacity(), GL.GL_UNSIGNED_INT,
+				0);
+
 			myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 			myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 			myGl.glDeleteBuffers(3, buffer3, 0);
-	
+
 			myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
 			myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
 		}
-		
+
 	}
 
 }

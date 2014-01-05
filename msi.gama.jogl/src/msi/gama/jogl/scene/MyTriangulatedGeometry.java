@@ -20,7 +20,7 @@ public class MyTriangulatedGeometry {
 
 	public Boolean isTextured = false;
 
-	public Integer angle = 0;
+	// public Integer angle = 0;
 
 	public double elevation = 0;
 }

@@ -142,7 +142,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final IList<String> textures) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
-			currentScale, rounded, type, getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
+			currentScale, rounded, type, getCurrentAlpha()/* , scope.getAgentScope().getPopulation().getName() */);
 
 	}
 
@@ -187,7 +187,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			texture, name);
 
 		if ( gridColor != null ) {
-			drawGridLine(img, gridColor, name);
+			drawGridLine(img, gridColor/* , name */);
 		}
 		return rect;
 	}
@@ -200,17 +200,17 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		MyTexture texture = null;
 		Envelope env = null;
-		String popName = null;
+		// String popName = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
 			if ( scope == null ) {
 				texture = renderer.createTexture(img, true, 0);
 				env = new Envelope(0, 0, widthOfEnvironmentInModelUnits, heightOfEnvironmentInModelUnits);
-				popName = "";
+				// popName = "";
 			} else {
 				IAgent a = scope.getAgentScope();
 				texture = renderer.createTexture(img, true, a.getIndex());
 				env = scope.getSimulationScope().getEnvelope();
-				popName = a.getPopulation().getName();
+				// popName = a.getPopulation().getName();
 			}
 		}
 
@@ -219,13 +219,13 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			cellSize, texture, name, currentLayerId);
 
 		if ( gridColor != null ) {
-			drawGridLine(img, gridColor, popName);
+			drawGridLine(img, gridColor/* r, popName */);
 		}
 
 		return rect;
 	}
 
-	public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
+	public void drawGridLine(final BufferedImage image, final Color lineColor/* , final String popName */) {
 		double stepX, stepY;
 
 		double wRatio = (double) this.getEnvironmentWidth() / (double) image.getWidth();
@@ -237,8 +237,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				final Geometry g =
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
-				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
-					false, null, 0, 0, currentOffset, currentScale, false, "gridLine", getCurrentAlpha(), popName);
+				renderer.getScene()
+					.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor, false, null, 0,
+						0, currentOffset, currentScale, false, "gridLine", getCurrentAlpha()/* , popName */);
 			}
 		}
 	}
