@@ -117,7 +117,7 @@ public class ContainerVariable extends Variable {
 
 	@Override
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		final Object result = type.cast(scope, v, size);
+		final Object result = type.cast(scope, v, size, contentType);
 		return result;
 	}
 

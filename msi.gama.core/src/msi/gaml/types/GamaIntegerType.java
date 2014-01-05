@@ -37,7 +37,7 @@ import msi.gaml.descriptions.IDescription;
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override
-	public Integer cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public Integer cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 

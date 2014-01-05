@@ -48,7 +48,7 @@ public class Cast {
 	public static <T> T as(final Object value, final Class<T> clazz) {
 		final IScope scope = GAMA.obtainNewScope();
 		final IType<T> t = Types.get(clazz);
-		final T result = t.cast(scope, value, null);
+		final T result = t.cast(scope, value, null, Types.NO_TYPE);
 		GAMA.releaseScope(scope);
 		return result;
 	}
@@ -56,7 +56,7 @@ public class Cast {
 	public static <T> T as(final IExpression value, final Class<T> clazz) {
 		final IScope scope = GAMA.obtainNewScope();
 		final IType<T> t = Types.get(clazz);
-		final T result = t.cast(scope, value.value(scope), null);
+		final T result = t.cast(scope, value.value(scope), null, Types.NO_TYPE);
 		GAMA.releaseScope(scope);
 		return result;
 	}
@@ -158,7 +158,7 @@ public class Cast {
 		"node({23, 4.0} 		--: node2", "node(5::34) 		--: null", "node(green) 		--: null", "node([1,5,9,3]) 	--: null",
 		"node(node1)		--: node1", "node('4')		--: null" }, see = { "of_species", "species" })
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
+		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null, Types.NO_TYPE);
 	}
 
 	@operator(value = IKeyword.AS, type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
@@ -311,14 +311,14 @@ public class Cast {
 		"if the operand is a graph, returns the a map with pairs edge_source::edge_target;",
 		"otherwise returns a map containing only the pair operand::operand." }, examples = {})
 	public static GamaMap asMap(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null);
+		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null, Types.NO_TYPE);
 	}
 
 	@operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "casts the operand into a matrix", special_cases = {
 		"if the operand is a file, returns its content casted as a matrix",
 		"if the operand is a map, returns a 2-columns matrix with keyx in the first one and value in the second one;",
-		"if the operand is a list, returns a 1-row matrix. Notice that each element of the list should be a single element or lists with the same length;",
+		"if the operand is a list, returns a matrix where all sub-lists represent columns. Notice that each element of the list should be a single element or lists with the same length;",
 		"if the operand is a graph, returns nil;",
 		"otherwise, returns a 1x1 matrix with the operand at the (0,0) position." }, see = "as_matrix")
 	public static IMatrix asMatrix(final IScope scope, final Object val) throws GamaRuntimeException {
@@ -338,7 +338,7 @@ public class Cast {
 		+ "If the size is to short, some elements will be omitted. Matrix remaining elements will be filled in by nil.", special_cases = { "if the right operand is nil, as_matrix is equivalent to the matrix operator" }, see = { "matrix" })
 	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
 		throws GamaRuntimeException {
-		return (IMatrix) Types.get(IType.MATRIX).cast(scope, val, size);
+		return GamaMatrixType.staticCast(scope, val, size);
 	}
 
 	@operator(value = IKeyword.UNKNOWN, can_be_const = true)
@@ -359,7 +359,7 @@ public class Cast {
 		"pair({23, 4.0} 			--: 23.0::4.0", "pair([1,5,9,3]) 		--: 1::5", "pair([[3,7],[2,6,9],0]) 	--: [3,7]::[2,6,9]",
 		"pair(['a'::345, 'b'::13, 'c'::12])  	--: [b,c,a]::[13,12,345]" })
 	public static GamaPair asPair(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null);
+		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null, Types.NO_TYPE);
 	}
 
 	@operator(value = IKeyword.POINT, can_be_const = true)
@@ -386,7 +386,7 @@ public class Cast {
 		"species(self)			--: species of the current agent", "species('node')		--: node",
 		"species([1,5,9,3]) 	--: null", "species(node1)			--: node" })
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
+		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null, Types.NO_TYPE);
 	}
 
 	@operator(value = IKeyword.STRING, can_be_const = true)

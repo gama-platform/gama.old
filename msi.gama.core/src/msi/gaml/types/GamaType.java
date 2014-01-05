@@ -99,7 +99,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public abstract Support cast(IScope scope, final Object obj, final Object param) throws GamaRuntimeException;
+	public abstract Support cast(IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException;
 
 	@Override
 	public int id() {

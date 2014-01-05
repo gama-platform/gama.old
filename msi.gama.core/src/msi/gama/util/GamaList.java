@@ -178,6 +178,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) {
+		// TODO Should we verify the type of the objects contained in the matrix ? Otherwise, there is no way to create
+		// int / float or even spatial matrix from
 		return new GamaObjectMatrix(scope, this, false, preferredSize);
 	}
 

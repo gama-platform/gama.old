@@ -17,7 +17,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 	public ConversationType() {}
 
 	@Override
-	public Conversation cast(final IScope scope, final Object obj, final Object param)
+	public Conversation cast(final IScope scope, final Object obj, final Object param, IType contentsType)
 		throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
 		// if ( obj instanceof Message ) { return new

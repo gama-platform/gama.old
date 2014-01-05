@@ -43,7 +43,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override
-	public IShape cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public IShape cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 

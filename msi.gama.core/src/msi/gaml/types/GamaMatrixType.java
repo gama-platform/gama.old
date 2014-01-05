@@ -34,8 +34,8 @@ import msi.gama.util.matrix.*;
 	GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
-	@Override
-	public IMatrix cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param) {
+
 		if ( obj == null ) { return null; }
 		if ( param == null || !(param instanceof ILocation) ) {
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
@@ -51,6 +51,12 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		if ( obj instanceof Double ) { return with(scope, ((Double) obj).doubleValue(), (GamaPoint) param); }
 		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(), (GamaPoint) param); }
 		return with(scope, obj);
+
+	}
+
+	@Override
+	public IMatrix cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+		return staticCast(scope, obj, param);
 	}
 
 	// Simplified pattern : only ';', ',', tab and white space are accepted

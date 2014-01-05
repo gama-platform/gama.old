@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,7 +18,7 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -26,7 +26,7 @@ import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
 
-	protected TempVariableExpression(final String n, final IType type, final IType contentType, IType keyType,
+	protected TempVariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
 		final IDescription definitionDescription) {
 		super(n, type, contentType, keyType, false, definitionDescription);
 	}
@@ -38,7 +38,9 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		Object val = type.cast(scope, v, null);
+		// TODO No casting made here on the contents type. This prevents, for instance, matrices to be implemented using
+		// their correct type
+		Object val = type.cast(scope, v, null, contentType);
 		if ( create ) {
 			scope.addVarWithValue(getName(), val);
 		} else {

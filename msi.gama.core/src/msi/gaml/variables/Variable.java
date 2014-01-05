@@ -62,8 +62,6 @@ import msi.gaml.types.*;
 @validator(msi.gaml.variables.Variable.VarValidator.class)
 public class Variable extends Symbol implements IVariable {
 
-	
-
 	public static class VarValidator implements IDescriptionValidator {
 
 		public static List<String> valueFacetsList = Arrays.asList(VALUE, INIT, FUNCTION, UPDATE, MIN, MAX);
@@ -246,7 +244,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		return type.cast(scope, v, null);
+		return type.cast(scope, v, null, contentType);
 	}
 
 	// private void computeSpeciesConst(final IScope scope) {

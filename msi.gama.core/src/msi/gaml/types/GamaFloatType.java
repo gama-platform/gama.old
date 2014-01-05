@@ -36,7 +36,7 @@ import msi.gaml.descriptions.IDescription;
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override
-	public Double cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public Double cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 

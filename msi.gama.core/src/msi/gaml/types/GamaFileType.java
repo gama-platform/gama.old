@@ -103,7 +103,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	}
 
 	@Override
-	public IGamaFile cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public IGamaFile cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
 		if ( obj == null ) { return getDefault(); }
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }
 		if ( obj instanceof String ) { return createFile(scope, (String) obj); }

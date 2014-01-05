@@ -41,8 +41,6 @@ import msi.gaml.types.*;
 @validator(ContainerValidator.class)
 public abstract class AbstractContainerStatement extends AbstractStatement {
 
-	
-
 	public static class ContainerValidator implements IDescriptionValidator {
 
 		/**
@@ -148,7 +146,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			final IType t = list.getKeyType();
 			final IType i = index.getType();
 			if ( !i.isTranslatableInto(t) ) {
-				position = t.cast(scope, position, null);
+				position = t.cast(scope, position, null, Types.NO_TYPE);
 			}
 		}
 		return position;

@@ -38,7 +38,7 @@ import msi.gaml.operators.Cast;
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override
-	public IPath cast(final IScope scope, final Object obj, final Object param)
+	public IPath cast(final IScope scope, final Object obj, final Object param, IType contentsType)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}

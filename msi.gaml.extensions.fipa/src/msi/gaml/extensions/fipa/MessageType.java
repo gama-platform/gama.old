@@ -17,7 +17,7 @@ public class MessageType extends GamaType<Message> {
 	public MessageType() {}
 
 	@Override
-	public Message cast(final IScope scope, final Object obj, final Object param)
+	public Message cast(final IScope scope, final Object obj, final Object param, IType contentsType)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}

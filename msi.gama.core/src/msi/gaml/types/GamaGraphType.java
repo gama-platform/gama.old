@@ -34,7 +34,7 @@ import msi.gaml.operators.Cast;
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
-	public IGraph cast(final IScope scope, final Object obj, final Object param)
+	public IGraph cast(final IScope scope, final Object obj, final Object param, IType contentsType)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}

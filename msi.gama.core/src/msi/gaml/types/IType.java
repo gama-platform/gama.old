@@ -60,7 +60,7 @@ public interface IType<Support> {
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
-	public Support cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param, IType contentsType) throws GamaRuntimeException;
 
 	public int id();
 
