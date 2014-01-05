@@ -47,23 +47,23 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target, final IList<IShape> _edges) {
 		super(g, start, target, _edges);
-		this.init(g, start, target, _edges, true);
+		// this.init(g, start, target, _edges, true);
 	}
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
 		final IList<IShape> _edges, final boolean modify_edges) {
 		super(g, start, target, _edges, modify_edges);
-		this.init(g, start, target, _edges, modify_edges);
+		// this.init(g, start, target, _edges, modify_edges);
 	}
 
 	public GamaSpatialPath(final IShape start, final IShape target, final IList<IShape> edges) {
 		super(null, start, target, edges, false);
-		this.init(null, start, target, edges, false);
+		// this.init(null, start, target, edges, false);
 	}
 
 	public GamaSpatialPath(final IList<IShape> nodes) {
 		super(nodes);
-		this.init(null, nodes.get(0), nodes.get(nodes.size() - 1), edges, false);
+		// this.init(null, nodes.get(0), nodes.get(nodes.size() - 1), edges, false);
 	}
 
 	@Override
@@ -74,6 +74,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	@Override
 	public void init(final IGraph<IShape, IShape> g, final IShape start, final IShape target,
 		final IList<IShape> _edges, final boolean modify_edges) {
+		super.init(g, start, target, _edges, modify_edges);
 		source = start;
 		this.target = target;
 		this.graph = g;
