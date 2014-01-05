@@ -44,19 +44,19 @@ public interface IGraphics {
 
 	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
 		Double z, final double cellSize, String name);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
 		Double z, boolean isDynamic, String name);
 
 	public abstract Rectangle2D drawString(final String string, final Color stringColor,
 		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
-		final Integer angle, final Double z, final Boolean bitmap);
+		final Double angle, final Double z, final Boolean bitmap);
 
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle, final boolean rounded);
+		final boolean fill, final Color border, final boolean rounded);
 
 	public abstract Rectangle2D drawChart(final IScope scope, BufferedImage chart, Double z);
 

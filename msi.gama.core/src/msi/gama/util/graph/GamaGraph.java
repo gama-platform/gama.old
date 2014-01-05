@@ -19,53 +19,26 @@
  */
 package msi.gama.util.graph;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
-import msi.gaml.operators.Cast;
+import msi.gama.util.path.*;
+import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
-
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.Graph;
+import org.jgrapht.*;
 import org.jgrapht.Graphs;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
-import org.jgrapht.alg.BellmanFordShortestPath;
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.alg.FloydWarshallShortestPaths;
-import org.jgrapht.alg.HamiltonianCycle;
-import org.jgrapht.alg.KruskalMinimumSpanningTree;
-import org.jgrapht.graph.AsUndirectedGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.alg.*;
+import org.jgrapht.graph.*;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
@@ -116,8 +89,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		edgeMap = new GamaMap();
 		this.scope = scope;
 	}
-
-	
 
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies) {
@@ -190,9 +161,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		}
 	}
-	
-	protected void buildByEdge(final IScope scope, final IContainer edges,final IContainer vertices) {
-	}
+
+	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {}
 
 	protected _Edge<V> getEdge(final Object e) {
 		return edgeMap.get(e);
@@ -522,14 +492,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	// protected IPath<V,E> pathFromEdges(final Object source, final Object target, final IList<E> edges) {
-	protected IPath<V, E> pathFromEdges(final V source, final V target, final IList<E> edges) {
+	protected IPath<V, E, IGraph<V, E>> pathFromEdges(final V source, final V target, final IList<E> edges) {
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
 
 	@Override
 	// public IPath<V,E> computeShortestPathBetween(final Object source, final Object target) {
-	public IPath<V, E> computeShortestPathBetween(final V source, final V target) {
+	public IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final V source, final V target) {
 		return pathFromEdges(source, target, computeBestRouteBetween(source, target));
 	}
 

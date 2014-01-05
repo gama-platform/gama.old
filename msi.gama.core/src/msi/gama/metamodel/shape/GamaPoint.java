@@ -102,7 +102,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return false;
 	}
 
-	
 	@Override
 	public void setLocation(final double xx, final double yy) {
 		x = xx;
@@ -187,7 +186,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public IShape getGeometry() {
+	public GamaShape getGeometry() {
 		return GamaGeometryType.createPoint(this);
 	}
 
@@ -206,16 +205,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		return GeometryUtils.factory.createPoint(this);
-		// return getGeometry().getInnerGeometry();
+		return GeometryUtils.FACTORY.createPoint(this);
 	}
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
 	 */
 	@Override
-	public Envelope getEnvelope() {
-		return new Envelope(this);
+	public Envelope3D getEnvelope() {
+		return Envelope3D.of(this);
 	}
 
 	@Override
@@ -308,7 +306,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		return null;
+		return GamaMap.EMPTY_MAP;
 	}
 
 	@Override
@@ -323,5 +321,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public boolean hasAttribute(final Object key) {
 		return false;
 	}
+
+	/**
+	 * Method asShapeWithGeometry()
+	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(com.vividsolutions.jts.geom.Geometry)
+	 */
+	// @Override
+	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
+	// if ( g == null ) { return getGeometry(); }
+	// return new GamaShape(g);
+	// }
 
 }

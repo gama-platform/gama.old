@@ -107,32 +107,33 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public Geometry returnToroidalGeom(final Geometry geom) {
+	public List<Geometry> listToroidalGeometries(final Geometry geom) {
+		Geometry copy = (Geometry) geom.clone();
 		final List<Geometry> geoms = new GamaList<Geometry>();
 		final AffineTransformation at = new AffineTransformation();
-		geoms.add((Geometry) geom.clone());
+		geoms.add(copy);
 		for ( int cnt = 0; cnt < 8; cnt++ ) {
 			at.setToTranslation(adjustedXVector[cnt], adjustedYVector[cnt]);
-			geoms.add(at.transform(geom));
+			geoms.add(at.transform(copy));
 		}
-		return GeometryUtils.factory.buildGeometry(geoms);
+		return geoms;
 	}
 
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
 		final List<Geometry> geoms = new GamaList<Geometry>();
-		final Point pt = GeometryUtils.factory.createPoint(loc);
+		final Point pt = GeometryUtils.FACTORY.createPoint(loc);
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(pt);
 		for ( int cnt = 0; cnt < 8; cnt++ ) {
 			at.setToTranslation(adjustedXVector[cnt], adjustedYVector[cnt]);
 			geoms.add(at.transform(pt));
 		}
-		return GeometryUtils.factory.buildGeometry(geoms);
+		return GeometryUtils.FACTORY.buildGeometry(geoms);
 	}
 
 	public Geometry returnToroidalGeom(final IShape shape) {
 		if ( shape.isPoint() ) { return returnToroidalGeom((GamaPoint) shape.getLocation()); }
-		return returnToroidalGeom(shape.getInnerGeometry());
+		return GeometryUtils.FACTORY.buildGeometry(listToroidalGeometries(shape.getInnerGeometry()));
 	}
 
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
@@ -140,7 +141,9 @@ public abstract class AbstractTopology implements ITopology {
 		for ( final IShape ag : shps.iterable(scope) ) {
 			IAgent agent = ag.getAgent();
 			if ( agent != null ) {
-				geoms.put(returnToroidalGeom(agent.getGeometry().getInnerGeometry()), agent);
+				geoms
+					.put(GeometryUtils.FACTORY.buildGeometry(listToroidalGeometries(agent.getGeometry()
+						.getInnerGeometry())), agent);
 			}
 		}
 		return geoms;
@@ -271,7 +274,7 @@ public abstract class AbstractTopology implements ITopology {
 		if ( environment.getGeometry().covers(point) ) { return point; }
 
 		if ( isTorus() ) {
-			final Point pt = GeometryUtils.factory.createPoint(point.toCoordinate());
+			final Point pt = GeometryUtils.FACTORY.createPoint(point.toCoordinate());
 
 			for ( int cnt = 0; cnt < 8; cnt++ ) {
 				final AffineTransformation at = new AffineTransformation();
@@ -366,33 +369,6 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		return result;
 	}
-
-	// @Override
-	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
-	// IAgent result = null;
-	// if ( !isTorus() ) {
-	// final IShape min_neighbour = getSpatialIndex().firstAtDistance(scope, source, 0, filter);
-	// if ( min_neighbour != null ) {
-	// result = min_neighbour.getAgent();
-	// }
-	// } else {
-	// final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
-	// double distMin = Double.MAX_VALUE;
-	// final Geometry g0 = returnToroidalGeom(source);
-	// for ( final Geometry g1 : agents.keySet() ) {
-	// final IAgent ag = agents.get(g1);
-	// if ( source.getAgent() != null && ag == source.getAgent() ) {
-	// continue;
-	// }
-	// final double dist = g0.distance(g1);
-	// if ( dist < distMin ) {
-	// distMin = dist;
-	// result = ag;
-	// }
-	// }
-	// }
-	// return result;
-	// }
 
 	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
@@ -490,7 +466,7 @@ public abstract class AbstractTopology implements ITopology {
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if ( source == null ) { return Collections.EMPTY_SET; }
 		if ( !isTorus() ) {
-			final Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
+			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
 			Iterator<IAgent> it = shapes.iterator();
 			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());

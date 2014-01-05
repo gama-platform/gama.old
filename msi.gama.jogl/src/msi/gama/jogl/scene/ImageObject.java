@@ -19,14 +19,14 @@ public class ImageObject extends AbstractObject {
 	public double z;
 	public double width;
 	public double height;
-	public Integer angle = 0;
+	public Double angle = 0d;
 	public boolean isDynamic;
 	public MyTexture texture;
 	public String name;
 
 	public ImageObject(final BufferedImage image, final IAgent agent, final double z_layer, final int layerId,
 		final double x, final double y, final double z, final Double alpha, final double width, final double height,
-		final Integer angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
+		final Double angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
 		final MyTexture texture, final String name) {
 		super(null, offset, scale, alpha);
 		setZ_fighting_id((double) layerId);

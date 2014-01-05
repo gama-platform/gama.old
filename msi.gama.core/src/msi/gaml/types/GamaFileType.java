@@ -58,7 +58,12 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		Set<String> exts = new HashSet(Arrays.asList(extensions));
 		typesExtensions.put(string, exts);
 		classExtensions.put(clazz, exts);
+		// Added to ensure that extensions do not begin with a "." or contain blank characters
 		for ( String s : extensions ) {
+			String ext = s.trim();
+			if ( ext.startsWith(".") ) {
+				ext = s.substring(1);
+			}
 			extensionsToFiles.put(s, builder);
 		}
 	}

@@ -39,7 +39,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Defines an instance of a model (a simulation). Serves as the support for model species (whose metaclass is
@@ -177,8 +176,8 @@ public class SimulationAgent extends GamlAgent {
 		}
 
 		// We systematically translate the geometry to {0,0}
-		final Envelope env = geom.getEnvelope();
-		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY());
+		final Envelope3D env = geom.getEnvelope();
+		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		getPopulation().setTopology(getScope(), geometry);
 	}

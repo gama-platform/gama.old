@@ -57,8 +57,7 @@ public class AspectStatement extends AbstractStatementSequence {
 					}
 					final Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
-							agent.getDirectVarValue(scope, IKeyword.COLOR)) : GamaPreferences.CORE_COLOR
-							.getValue();
+							agent.getDirectVarValue(scope, IKeyword.COLOR)) : GamaPreferences.CORE_COLOR.getValue();
 					IShape ag = agent.getGeometry();
 					String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
 					if ( !defaultShape.equals("shape") ) {
@@ -80,7 +79,7 @@ public class AspectStatement extends AbstractStatementSequence {
 						}
 					}
 					final IShape ag2 = (IShape) ag.copy(scope);
-					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
+					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, false);
 					return r;
 				} finally {
 					g.endHighlight();

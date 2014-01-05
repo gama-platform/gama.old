@@ -36,7 +36,7 @@ public abstract class GamaGeometryFile extends GamaFile<Integer, IShape> {
 			for ( IShape shape : buffer.iterable(scope) ) {
 				faces.add(shape.getInnerGeometry());
 			}
-			return new GamaShape(GeometryUtils.factory.buildGeometry(faces));
+			return new GamaShape(GeometryUtils.FACTORY.buildGeometry(faces));
 		}
 
 	}

@@ -34,46 +34,46 @@ import org.jgrapht.*;
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
 // Si
 
-public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
+public class GamaPath<V, E, G extends IGraph<V, E>> implements GraphPath<V, E>, IPath<V, E, G> {
 
 	V source, target;
 	GamaList<E> edges;
 
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
-	IGraph<V, E> graph;
+	G graph;
 	int graphVersion;
 
 	// FIXME virer le constructeur par d�faut... used for the inheritance...
 	public GamaPath() {}
 
-	public GamaPath(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges) {
+	public GamaPath(final G g, final V start, final V target, final IList<E> _edges) {
 		init(g, start, target, _edges, true);
 		this.graph = g;
 	}
 
-	public GamaPath(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges,
-		final boolean modify_edges) {
+	public GamaPath(final G g, final V start, final V target, final IList<E> _edges, final boolean modify_edges) {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
-	
+
 	public GamaPath(final IList<V> nodes) {
 		final IList<E> _edges = new GamaList<E>();
-		for(int i = 0; i < (nodes.size() - 1);i++) {
-			E edge = createEdge(nodes.get(i),nodes.get(i+1));
-			if (edge != null) _edges.add(edge);
+		for ( int i = 0; i < nodes.size() - 1; i++ ) {
+			E edge = createEdge(nodes.get(i), nodes.get(i + 1));
+			if ( edge != null ) {
+				_edges.add(edge);
+			}
 		}
 		init(null, nodes.get(0), nodes.get(nodes.size() - 1), _edges, false);
 		this.graph = null;
 	}
 
-	protected E createEdge(V v, V v2) {
+	protected E createEdge(final V v, final V v2) {
 		// TODO to define !
 		return null;
 	}
 
-	public void init(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges,
-		final boolean modify_edges) {
+	public void init(final G g, final V start, final V target, final IList<E> _edges, final boolean modify_edges) {
 		this.source = start;
 		this.target = target;
 		this.edges = new GamaList<E>();
@@ -86,7 +86,7 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 		}
 	}
 
-	public GamaPath(final IGraph<V, E> g, final List<V> nodes) {
+	public GamaPath(final G g, final List<V> nodes) {
 		if ( !(g instanceof GamaSpatialGraph) && nodes.isEmpty() ) {
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
 		} else if ( nodes.isEmpty() ) {
@@ -108,7 +108,7 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	// Implements methods from GraphPath
 
 	@Override
-	public IGraph<V, E> getGraph() {
+	public G getGraph() {
 		return graph;
 	}
 
@@ -129,7 +129,7 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 
 	@Override
 	public double getWeight() {
-		final IGraph<V, E> graph = getGraph();
+		final G graph = getGraph();
 		if ( graph == null ) { return 0.0; }
 		return graph.computeWeight(this);
 	}
@@ -143,8 +143,8 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	}
 
 	@Override
-	public GamaPath<V, E> copy(final IScope scope) {
-		return new GamaPath<V, E>(graph, source, target, edges);
+	public GamaPath copy(final IScope scope) {
+		return new GamaPath(graph, source, target, edges);
 	}
 
 	// /////////////////////////////////////////////////
@@ -159,7 +159,7 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 
 	@Override
 	public IList<V> getVertexList() {
-		return new GamaList<V>((Collection) Graphs.getPathVertexList(this));
+		return new GamaList<V>(Graphs.getPathVertexList(this));
 		// return getPoints();
 	}
 
@@ -293,9 +293,9 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	}
 
 	@Override
-	public void setGraph(IGraph<V, E> graph) {
+	public void setGraph(final G graph) {
 		this.graph = graph;
 		graphVersion = graph.getVersion();
-		
+
 	}
 }

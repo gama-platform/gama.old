@@ -48,7 +48,7 @@ public class WebDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final double cellSize, final String name) {
+		final Double angle, final Double z, final double cellSize, final String name) {
 		return null;
 	}
 
@@ -60,7 +60,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final Double z,
 		final boolean isDynamic, final String name) {
 		return null;
 	}
@@ -73,7 +73,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
 		final Double z, final Boolean bitmap) {
 		return null;
 	}
@@ -85,7 +85,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded) {
+		final Color border, final boolean rounded) {
 		return null;
 	}
 

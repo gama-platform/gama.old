@@ -18,35 +18,22 @@
  */
 package msi.gama.metamodel.topology.graph;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaDynamicLink;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
-import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.GraphEvent;
+import msi.gama.util.*;
+import msi.gama.util.graph.*;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
-import msi.gama.util.graph._Edge;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.species.ISpecies;
-
 import org.jgrapht.Graphs;
-
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener {
@@ -86,10 +73,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public GamaSpatialGraph(final IContainer edges, final IContainer vertices, final IScope scope) {
-			this(scope);
-			init(scope, edges, vertices);
-		}
-	
+		this(scope);
+		init(scope, edges, vertices);
+	}
+
 	public GamaSpatialGraph(final IScope scope) {
 		super(scope);
 		verticesBuilt = new GamaMap<Integer, IShape>();
@@ -258,22 +245,22 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public IShape getBuiltVertex(final Coordinate vertex) {
 		return verticesBuilt.get(vertex.hashCode());
 	}
-	
-	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges,final IContainer vertices) {
+
+	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
 		for ( final Object p : edges.iterable(scope) ) {
-			addDrivingEdge(scope,(IShape) p, vertices);
+			addDrivingEdge(scope, (IShape) p, vertices);
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
-	
-	public Object addDrivingEdge(final IScope scope,final IShape e, final IContainer vertices) {
+
+	public Object addDrivingEdge(final IScope scope, final IShape e, final IContainer vertices) {
 		if ( containsEdge(e) ) { return false; }
 		Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		IShape ptS = new GamaPoint(coord[0]);
 		IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		IAgent v1 = (IAgent) Queries.closest_to(scope, vertices, ptS);
 		IAgent v2 = (IAgent) Queries.closest_to(scope, vertices, ptT);
-		
+
 		IAgent ag = e.getAgent();
 		List v1ro = (List) v1.getAttribute("roads_out");
 		v1ro.add(ag);
@@ -291,17 +278,17 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			throw e1;
 		}
 		if ( edge == null ) { return false; }
-		edgeMap.put( e, edge);
+		edgeMap.put(e, edge);
 		dispatchEvent(new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;
 	}
-	
+
 	protected void init(final IScope scope, final IContainer edges, final IContainer vertices) {
 		this.directed = true;
 		edgeBased = true;
 		vertexRelation = null;
 		edgeSpecies = null;
-		agentEdge =true;
+		agentEdge = true;
 		buildByEdgeWithNode(scope, edges, vertices);
 		version = 1;
 	}

@@ -50,6 +50,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	private static final GamaMap.ToStringProcedure toStringProcedure = new ToStringProcedure();
 	private static final GamaMap.ToMatrixProcedure toMatrixProcedure = new ToMatrixProcedure();
 	private static final GamaMap.ToReverseProcedure toReverseProcedure = new ToReverseProcedure();
+	public static final GamaMap EMPTY_MAP = new GamaMap();
 
 	public static GamaMap with(final IList keys, final IList values) {
 		final GamaMap result = new GamaMap(keys.size());

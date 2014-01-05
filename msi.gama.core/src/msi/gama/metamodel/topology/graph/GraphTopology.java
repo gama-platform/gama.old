@@ -75,22 +75,19 @@ public class GraphTopology extends AbstractTopology {
 		final IAgentFilter filter = In.edgesOf(getPlaces());
 
 		if ( !sourceNode ) {
-			edgeS =
-				source instanceof ILocation ? getAgentClosestTo(scope, source, filter) : getAgentClosestTo(scope,
-					source, filter);
+			edgeS = getAgentClosestTo(scope, source, filter);
+			// We avoid computing the target if we cannot find any source.
+			if ( edgeS == null ) { return null; }
 		}
 		if ( !targetNode ) {
-			edgeT =
-				target instanceof ILocation ? getAgentClosestTo(scope, target, filter) : getAgentClosestTo(scope,
-					target, filter);
+			edgeT = getAgentClosestTo(scope, target, filter);
+			if ( edgeT == null ) { return null; }
 		}
 
-		if ( edgeS == null && !sourceNode || edgeT == null && !targetNode ) { return null; }
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
 			targetNode); }
 
 		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
-
 	}
 
 	public GamaSpatialPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,

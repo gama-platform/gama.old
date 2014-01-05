@@ -22,14 +22,10 @@ import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.path.IPath;
 import msi.gaml.types.IType;
-
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
+import org.jgrapht.*;
 
 /**
  * Written by drogoul
@@ -70,7 +66,7 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public abstract IList<E> getSpanningTree();
 
 	@getter("circuit")
-	public abstract IPath<V, E> getCircuit();
+	public abstract IPath<V, E, IGraph<V, E>> getCircuit();
 
 	@getter("connected")
 	public abstract Boolean getConnected();
@@ -93,12 +89,12 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	// public abstract IPath<V,E> computeShortestPathBetween(final Object source, final Object target);
 	// public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);
 
-	public abstract IPath<V, E> computeShortestPathBetween(final V source, final V target);
+	public abstract IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final V source, final V target);
 
 	public abstract IList<E> computeBestRouteBetween(final V source, final V target);
 
-	public double computeWeight(final IPath<V, E> gamaPath);
-	
+	public double computeWeight(final IPath<V, E, ? extends IGraph<V, E>> gamaPath);
+
 	public double computeTotalWeight();
 
 }

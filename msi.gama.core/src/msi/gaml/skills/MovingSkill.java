@@ -402,7 +402,7 @@ public class MovingSkill extends Skill {
 					for ( int i = 0; i < nbSp - 1; i++ ) {
 						temp[0] = coords[i];
 						temp[1] = coords[i + 1];
-						final LineString segment = GeometryUtils.factory.createLineString(temp);
+						final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 						final double distS = segment.distance(pointGeom);
 						if ( distS < distanceS ) {
 							distanceS = distS;
@@ -423,7 +423,7 @@ public class MovingSkill extends Skill {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.factory.createLineString(temp);
+					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 					final double distT = segment.distance(pointGeom);
 					if ( distT < distanceT ) {
 						distanceT = distT;
@@ -648,7 +648,7 @@ public class MovingSkill extends Skill {
 	private ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
 		final Geometry geom) {
 
-		final Point locPt = GeometryUtils.factory.createPoint(getCurrentAgent(scope).getLocation().toCoordinate());
+		final Point locPt = GeometryUtils.FACTORY.createPoint(getCurrentAgent(scope).getLocation().toCoordinate());
 		final Geometry buff = locPt.buffer(dist);
 		final Geometry test = locPt.buffer(dist / 100, 4);
 		Geometry frontier = null;

@@ -254,7 +254,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 			boolean ok = isRectangle || translatedReferenceFrame.covers(rect);
 			if ( partialCells && !ok && rect.intersects(translatedReferenceFrame) ) {
-				rect.setGeometry(Spatial.Operators.inter(rect, translatedReferenceFrame));
+				rect.setGeometry(Spatial.Operators.inter(scope, rect, translatedReferenceFrame));
 				ok = true;
 			}
 			if ( ok ) {
@@ -751,7 +751,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.allAtDistance");
 		final double exp = dist * Maths.SQRT2;
-		Envelope env = new Envelope(source.getEnvelope());
+		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		Set<IAgent> result = allInEnvelope(scope, source, env, f, false);
 		Iterator<IAgent> it = result.iterator();
@@ -775,7 +775,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.firstAtDistance");
 		final double exp = dist * Maths.SQRT2;
-		Envelope env = new Envelope(source.getEnvelope());
+		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		// final Iterator<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
 		Ordering<IShape> ordering = Ordering.natural().onResultOf(new Function<IShape, Double>() {
@@ -831,7 +831,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		Iterator<IAgent> it = shapes.iterator();
 		while (it.hasNext()) {
 			IShape s = it.next();
-			Envelope e = s.getEnvelope();
+			Envelope3D e = s.getEnvelope();
 			if ( s.getAgent() == null || !(covered && env.covers(e)) || !(!covered && env.intersects(e)) ) {
 				it.remove();
 			}
@@ -1100,7 +1100,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public GamlGridAgent(final int index) {
 				super(GridPopulation.this);
 				setIndex(index);
-				geometry = matrix[getIndex()]; // TODO Verify this
+				geometry = matrix[getIndex()].getGeometry(); // TODO Verify this
 			}
 
 			@Override
@@ -1156,7 +1156,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			public MinimalGridAgent(final int index) {
 				setIndex(index);
-				geometry = matrix[index];
+				geometry = matrix[index].getGeometry();
 			}
 
 			@Override

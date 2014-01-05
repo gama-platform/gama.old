@@ -18,11 +18,10 @@
  */
 package msi.gama.util.path;
 
-import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IValue;
+import java.util.Map;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -40,23 +39,19 @@ import msi.gaml.types.IType;
  * @since 14 d�c. 2011
  * 
  */
-@vars({ @var(name = IKeyword.TARGET, type = IType.NONE),
-	@var(name = IKeyword.SOURCE, type = IType.NONE),
-	@var(name = IKeyword.GRAPH, type = IType.GRAPH),
-	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY),
+@vars({ @var(name = IKeyword.TARGET, type = IType.NONE), @var(name = IKeyword.SOURCE, type = IType.NONE),
+	@var(name = IKeyword.GRAPH, type = IType.GRAPH), @var(name = IKeyword.SHAPE, type = IType.GEOMETRY),
 	@var(name = IKeyword.SEGMENTS, type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = "distance", type = IType.FLOAT),
-	@var(name = "weight", type = IType.FLOAT),
-	@var(name = "edges", type = IType.LIST), 
-	@var(name = "vertices", type = IType.LIST)
-	//@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+	@var(name = "distance", type = IType.FLOAT), @var(name = "weight", type = IType.FLOAT),
+	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST)
+// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
 // Could be replaced by "geometries"
 /*
  * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
  * IType.LIST, of = IType.POINT)
  */
 })
-public interface IPath<V,E> extends IValue {// extends IShape {
+public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 
 	@getter(IKeyword.SOURCE)
 	public abstract V getStartVertex();
@@ -65,23 +60,23 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 	public abstract V getEndVertex();
 
 	@getter(IKeyword.GRAPH)
-	public abstract IGraph<V,E> getGraph();
-	
+	public abstract G getGraph();
+
 	@getter(IKeyword.SEGMENTS)
 	public abstract IList<IShape> getEdgeGeometry();
 
 	@getter("vertices")
-	public abstract IList<V> getVertexList();	
-	
+	public abstract IList<V> getVertexList();
+
 	@getter("edges")
 	public abstract IList<E> getEdgeList();
-	
+
 	@getter("shape")
 	public abstract IShape getGeometry();
-	
-//	@getter(IKeyword.AGENTS)
-//	public abstract List<IShape> getAgentList();
-	
+
+	// @getter(IKeyword.AGENTS)
+	// public abstract List<IShape> getAgentList();
+
 	@getter("weight")
 	public abstract double getWeight();
 
@@ -108,7 +103,7 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 
 	public abstract ITopology getTopology();
 
-	public abstract void setRealObjects(final Map<IShape,IShape> realObjects);
+	public abstract void setRealObjects(final Map<IShape, IShape> realObjects);
 
 	public abstract IShape getRealObject(final Object obj);
 
@@ -118,6 +113,6 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 
 	public int getGraphVersion();
 
-	public abstract void setGraph(IGraph<V, E> graph);
+	public abstract void setGraph(G graph);
 
 }

@@ -39,7 +39,7 @@ public class GisLayer extends AbstractLayer {
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
 		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects().iterable(scope) ) {
 			if ( geom != null ) {
-				g.drawGamaShape(scope, geom, color, true, Color.black, null, false);
+				g.drawGamaShape(scope, geom, color, true, Color.black, false);
 			}
 		}
 	}

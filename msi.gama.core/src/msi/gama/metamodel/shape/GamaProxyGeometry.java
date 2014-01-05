@@ -4,12 +4,11 @@
  */
 package msi.gama.metamodel.shape;
 
-import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference geometry and a translation. All the
@@ -34,7 +33,7 @@ import com.vividsolutions.jts.geom.*;
  * @since 18 mai 2013
  * 
  */
-public abstract class GamaProxyGeometry implements IShape {
+public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	ILocation absoluteLocation;
 
@@ -81,8 +80,8 @@ public abstract class GamaProxyGeometry implements IShape {
 	 * @see msi.gama.common.interfaces.IValue#copy(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return this; // TODO Declare it as abstract ?
+	public IShape copy(final IScope scope) throws GamaRuntimeException {
+		return new GamaShape(this);
 	}
 
 	/**
@@ -185,7 +184,7 @@ public abstract class GamaProxyGeometry implements IShape {
 	public boolean isPoint() {
 		return getReferenceGeometry().isPoint();
 	}
-	
+
 	@Override
 	public boolean isLine() {
 		return getReferenceGeometry().isLine();
@@ -207,15 +206,17 @@ public abstract class GamaProxyGeometry implements IShape {
 	}
 
 	/**
-	 * Method getEnvelope()
+	 * Method getEnvelope(). Computed dynamically. A subclass may choose to cache this (often used) information by
+	 * redefining this method
 	 * @see msi.gama.metamodel.shape.IShape#getEnvelope()
 	 */
 	@Override
-	public Envelope getEnvelope() {
-		final Envelope copy = new Envelope(getReferenceGeometry().getEnvelope());
+	public Envelope3D getEnvelope() {
+		final Envelope3D copy = new Envelope3D(getReferenceGeometry().getEnvelope());
 		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
 		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
-		copy.translate(dx, dy);
+		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
+		copy.translate(dx, dy, dz);
 		return copy;
 	}
 
@@ -292,5 +293,16 @@ public abstract class GamaProxyGeometry implements IShape {
 	 */
 	@Override
 	public void dispose() {}
+
+	/**
+	 * Method asShapeWithGeometry()
+	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope,
+	 *      com.vividsolutions.jts.geom.Geometry)
+	 */
+	// @Override
+	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
+	// if ( g == null ) { return new GamaShape(this); }
+	// return new GamaShape(g);
+	// }
 
 }

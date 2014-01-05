@@ -95,17 +95,17 @@ public class ModelScene {
 
 	public void addString(final String string, final double x, final double y, final double z, final Integer size,
 		final Double sizeInModelUnits, final GamaPoint offset, final GamaPoint scale, final Color color,
-		final String font, final Integer style, final Integer angle, final Double alpha, final Boolean bitmap) {
+		final String font, final Integer style, final Double angle, final Double alpha, final Boolean bitmap) {
 		strings.add(new StringObject(string, font, style, offset, scale, color, angle, x, y, z, 0, sizeInModelUnits,
 			size, alpha, bitmap));
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final double z_layer, final int currentLayerId,
-		final Double x, final Double y, final Double z, final Double width, final Double height, final Integer angle,
+		final Double x, final Double y, final Double z, final Double width, final Double height, final Double angle,
 		final GamaPoint offset, final GamaPoint scale, final boolean isDynamic, final Double alpha,
 		final MyTexture texture, final String name) {
 		images.add(new ImageObject(img, agent, z_layer, currentLayerId, x, y, Double.isNaN(z) ? 0 : z, alpha, width,
-			height, angle == null ? 0 : angle, offset, scale, isDynamic, texture, name));
+			height, angle == null ? 0d : angle, offset, scale, isDynamic, texture, name));
 		if ( texture != null ) {
 			textures.put(img, texture);
 		}
@@ -144,7 +144,7 @@ public class ModelScene {
 		// FIXME Should be put in the static list (get the list from the id of staticObjects)
 
 		// X Axis
-		addString("x", 1.2f * size, 0.0d, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, false);
+		addString("x", 1.2f * size, 0.0d, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0d, 1d, false);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(1.0d, 0, 0, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -156,7 +156,7 @@ public class ModelScene {
 		gl.glVertex3d(1.0d * size, 0.0d, 0.0d);
 		gl.glEnd();
 		// Y Axis
-		addString("y", 0.0d, -1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, false);
+		addString("y", 0.0d, -1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0d, 1d, false);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(0, 1.0d, 0, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -169,7 +169,7 @@ public class ModelScene {
 		gl.glEnd();
 		// Z Axis
 		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
-		addString("z", 0.0d, 0.0d, 1.2f * size, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, false);
+		addString("z", 0.0d, 0.0d, 1.2f * size, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0d, 1d, false);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(0, 0, 1.0d, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -205,8 +205,8 @@ public class ModelScene {
 	}
 
 	public void drawZValue(final double pos, final float value) {
-		addString("z:" + String.valueOf(value), pos, pos, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0,
-			1d, false);
+		addString("z:" + String.valueOf(value), pos, pos, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0,
+			0d, 1d, false);
 	}
 
 	public SceneObjects<GeometryObject> getGeometries() {

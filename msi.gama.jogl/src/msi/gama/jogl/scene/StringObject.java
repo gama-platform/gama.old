@@ -8,15 +8,17 @@ public class StringObject extends AbstractObject {
 	public String string;
 	public String font = "Helvetica";
 	public Integer style = 0;
-	public Integer angle = 0;
+	public Double angle = 0d;
 	public Integer size = 12;
 	public Double sizeInModelUnits = 12d;
 	public double x, y, z, z_layer;
-	//Draw using TextRenderer(0) or glutBitmapString(1).
+	// Draw using TextRenderer(0) or glutBitmapString(1).
 	public Boolean bitmap;
 
-	public StringObject(String string, String font, Integer style, GamaPoint offset, GamaPoint scale, Color color,
-		Integer angle, double x, double y, double z, double z_layer, Double sizeInModelUnits, Integer size, Double alpha, Boolean bitmap) {
+	public StringObject(final String string, final String font, final Integer style, final GamaPoint offset,
+		final GamaPoint scale, final Color color, final Double angle, final double x, final double y, final double z,
+		final double z_layer, final Double sizeInModelUnits, final Integer size, final Double alpha,
+		final Boolean bitmap) {
 		super(color, offset, scale, alpha);
 		this.string = string;
 		if ( font != null ) {

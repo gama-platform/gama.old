@@ -97,7 +97,8 @@ public class AmorphousTopology implements ITopology {
 	//
 	@Override
 	public void updateAgent(final IShape previous, final IAgent agent) {
-		final IShape ng = Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
+		final IShape ng =
+			Spatial.Operators.union(agent.getScope(), expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
 	}
 
@@ -294,8 +295,8 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public Geometry returnToroidalGeom(final Geometry geom) {
-		return null;
+	public List<Geometry> listToroidalGeometries(final Geometry geom) {
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override

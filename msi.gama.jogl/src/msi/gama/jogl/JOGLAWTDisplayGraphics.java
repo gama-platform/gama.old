@@ -95,22 +95,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape shape, final Color c, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded) {
-
-		Geometry geom = null;
+		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
-		final ITopology topo = scope.getTopology();
-		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(shape.getInnerGeometry());
-			geom = scope.getSimulationScope().getInnerGeometry().intersection(geom);
-		} else {
-			geom = shape.getInnerGeometry();
-		}
-		final Color color = highlight ? highlightColor : c;
 		Double depth = 0d;
-		IList<String> textures = new GamaList<String>();;
+		IList<String> textures = new GamaList<String>();
 		String type = "none";
-		// Add a geometry with a depth and type coming from Attributes
+		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 			type = "JTS";
@@ -121,10 +111,39 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
 			type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
 		}
+		final Color color = highlight ? highlightColor : c;
+		// Geometry geom = shape.getInnerGeometry();
+		// if ( angle != null ) {
+		// AffineTransformation af =
+		// AffineTransformation.rotationInstance(Math.toRadians(angle), shape.getLocation().getX(), shape
+		// .getLocation().getY());
+		// geom = af.transform(geom);
+		// }
+		// IShape rotatedShape = angle == null ? shape : Spatial.Transformations.rotated_by(scope, shape, angle);
+		if ( topo != null && topo.isTorus() ) {
+			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());
+			Geometry world = scope.getSimulationScope().getInnerGeometry();
+			for ( Geometry g : geoms ) {
+				Geometry intersect = world.intersection(g);
+				if ( !intersect.isEmpty() ) {
+					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth, type, textures);
+				}
+			}
+		} else {
+			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures);
+		}
+
+		// Add a geometry with a depth and type coming from Attributes
+		return rect;
+	}
+
+	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
+		final Color border, final Integer angle, final boolean rounded, final Double depth, final String type,
+		final IList<String> textures) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
 			currentScale, rounded, type, getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
-		return rect;
+
 	}
 
 	/**
@@ -137,7 +156,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final Double z,
 		final boolean isDynamic, final String name) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
@@ -177,7 +196,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final double cellSize, final String name) {
+		final Double angle, final Double z, final double cellSize, final String name) {
 
 		MyTexture texture = null;
 		Envelope env = null;
@@ -271,7 +290,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
-		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0, z, true, "chart");
+		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, z, true, "chart");
 	}
 
 	/**
@@ -286,7 +305,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
 		final Double z, final Boolean bitmap) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {

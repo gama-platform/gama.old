@@ -32,7 +32,7 @@ import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.triangulate.*;
+import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 /**
@@ -221,9 +221,9 @@ public class GeometryUtils {
 
 	}
 
-	public static GeometryFactory factory = new GeometryFactory(new GamaCoordinateSequenceFactory());
+	public static GeometryFactory FACTORY = new GeometryFactory(new GamaCoordinateSequenceFactory());
 	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
-	public static CoordinateSequenceFactory coordFactory = factory.getCoordinateSequenceFactory();
+	public static CoordinateSequenceFactory coordFactory = FACTORY.getCoordinateSequenceFactory();
 
 	// types of geometry
 	private final static int NULL = -1;
@@ -235,6 +235,7 @@ public class GeometryUtils {
 	private final static int MULTIPOLYGON = 5;
 
 	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
+		// WARNING Only in 2D !
 		if ( geom instanceof Point ) { return new GamaPoint(geom.getCoordinate()); }
 		if ( geom instanceof LineString ) {
 			final int i = rand.between(0, geom.getCoordinates().length - 2);
@@ -261,7 +262,7 @@ public class GeometryUtils {
 			final Coordinate coord1 = new Coordinate(x, yMin);
 			final Coordinate coord2 = new Coordinate(x, yMax);
 			final Coordinate[] coords = { coord1, coord2 };
-			Geometry line = factory.createLineString(coords);
+			Geometry line = FACTORY.createLineString(coords);
 			try {
 				line = line.intersection(geom);
 			} catch (final Exception e) {
@@ -281,18 +282,18 @@ public class GeometryUtils {
 	}
 
 	private static Coordinate[] minimiseLength(final Coordinate[] coords) {
-		final double dist1 = factory.createLineString(coords).getLength();
+		final double dist1 = FACTORY.createLineString(coords).getLength();
 		final Coordinate[] coordstest1 = new Coordinate[3];
 		coordstest1[0] = coords[0];
 		coordstest1[1] = coords[2];
 		coordstest1[2] = coords[1];
-		final double dist2 = factory.createLineString(coordstest1).getLength();
+		final double dist2 = FACTORY.createLineString(coordstest1).getLength();
 
 		final Coordinate[] coordstest2 = new Coordinate[3];
 		coordstest2[0] = coords[1];
 		coordstest2[1] = coords[0];
 		coordstest2[2] = coords[2];
-		final double dist3 = factory.createLineString(coordstest2).getLength();
+		final double dist3 = FACTORY.createLineString(coordstest2).getLength();
 
 		if ( dist1 <= dist2 && dist1 <= dist3 ) { return coords; }
 		if ( dist2 <= dist1 && dist2 <= dist3 ) { return coordstest1; }
@@ -305,9 +306,9 @@ public class GeometryUtils {
 		final Coordinate[] c1 = { coords[0], coords[1] };
 		final Coordinate[] c2 = { coords[1], coords[2] };
 		final Coordinate[] c3 = { coords[2], coords[3] };
-		final LineString l1 = factory.createLineString(c1);
-		final LineString l2 = factory.createLineString(c2);
-		final LineString l3 = factory.createLineString(c3);
+		final LineString l1 = FACTORY.createLineString(c1);
+		final LineString l2 = FACTORY.createLineString(c2);
+		final LineString l3 = FACTORY.createLineString(c3);
 		final Coordinate[] pts = new Coordinate[degree];
 		if ( degree == 3 ) {
 			pts[0] = l1.getCentroid().getCoordinate();
@@ -410,7 +411,7 @@ public class GeometryUtils {
 					final Coordinate c3 = new Coordinate(x + size, y + size);
 					final Coordinate c4 = new Coordinate(x, y + size);
 					final Coordinate[] cc = { c1, c2, c3, c4, c1 };
-					final Geometry square = factory.createPolygon(factory.createLinearRing(cc), null);
+					final Geometry square = FACTORY.createPolygon(FACTORY.createLinearRing(cc), null);
 					y += size;
 					try {
 						Geometry g = null;
@@ -455,7 +456,7 @@ public class GeometryUtils {
 		dtb.setSites(points);
 		dtb.setConstraints(points);
 		dtb.setTolerance(sizeTol);
-		final GeometryCollection tri = (GeometryCollection) dtb.getTriangles(factory);
+		final GeometryCollection tri = (GeometryCollection) dtb.getTriangles(FACTORY);
 		final int nb = tri.getNumGeometries();
 		for ( int i = 0; i < nb; i++ ) {
 			final Geometry gg = tri.getGeometryN(i);
@@ -480,7 +481,7 @@ public class GeometryUtils {
 				dtb.setSites(polygon);
 				dtb.setConstraints(polygon);
 				dtb.setTolerance(sizeTol);
-				tri = (GeometryCollection) dtb.getTriangles(factory);
+				tri = (GeometryCollection) dtb.getTriangles(FACTORY);
 			} catch (final LocateFailureException e) {
 				throw GamaRuntimeException.error("Impossible to draw Geometry");
 			}
@@ -499,17 +500,6 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public class contraintVertexFactory3D implements ConstraintVertexFactory {
-
-		@Override
-		public ConstraintVertex createVertex(final Coordinate p, final Segment constraintSeg) {
-			final Coordinate c = new Coordinate(p);
-			c.z = p.z;
-			return new ConstraintVertex(c);
-		}
-
-	}
-
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		final List<LineString> network = new GamaList<LineString>();
 		final IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
@@ -519,7 +509,7 @@ public class GeometryUtils {
 		for ( final GamaShape node : nodes ) {
 			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
 			if ( coordsArr != null ) {
-				network.add(factory.createLineString(coordsArr));
+				network.add(FACTORY.createLineString(coordsArr));
 			}
 		}
 
@@ -543,28 +533,28 @@ public class GeometryUtils {
 				for ( int i = 0; i < nb; i++ ) {
 					geoms[i] = (Point) buildPoint(listPoints.get(i));
 				}
-				return factory.createMultiPoint(geoms);
+				return FACTORY.createMultiPoint(geoms);
 			case MULTILINE:
 				final int n = listPoints.size();
 				final LineString[] lines = new LineString[n];
 				for ( int i = 0; i < n; i++ ) {
 					lines[i] = (LineString) buildLine(listPoints.get(i));
 				}
-				return factory.createMultiLineString(lines);
+				return FACTORY.createMultiLineString(lines);
 			case MULTIPOLYGON:
 				final int n3 = listPoints.size();
 				final Polygon[] polys = new Polygon[n3];
 				for ( int i = 0; i < n3; i++ ) {
 					polys[i] = (Polygon) buildPolygon(listPoints.get(i));
 				}
-				return factory.createMultiPolygon(polys);
+				return FACTORY.createMultiPolygon(polys);
 			default:
 				return null;
 		}
 	}
 
 	private static Geometry buildPoint(final List<List<ILocation>> listPoints) {
-		return factory.createPoint((Coordinate) listPoints.get(0).get(0));
+		return FACTORY.createPoint((Coordinate) listPoints.get(0).get(0));
 	}
 
 	private static Geometry buildLine(final List<List<ILocation>> listPoints) {
@@ -574,7 +564,7 @@ public class GeometryUtils {
 		for ( int i = 0; i < nb; i++ ) {
 			coordinates[i] = (Coordinate) coords.get(i);
 		}
-		return factory.createLineString(coordinates);
+		return FACTORY.createLineString(coordinates);
 	}
 
 	private static Geometry buildPolygon(final List<List<ILocation>> listPoints) {
@@ -595,10 +585,10 @@ public class GeometryUtils {
 				for ( int j = 0; j < nbp; j++ ) {
 					coordinatesH[j] = (Coordinate) coordsH.get(j);
 				}
-				holes[i] = factory.createLinearRing(coordinatesH);
+				holes[i] = FACTORY.createLinearRing(coordinatesH);
 			}
 		}
-		final Polygon poly = factory.createPolygon(factory.createLinearRing(coordinates), holes);
+		final Polygon poly = FACTORY.createPolygon(FACTORY.createLinearRing(coordinates), holes);
 		return poly;
 	}
 
@@ -708,14 +698,14 @@ public class GeometryUtils {
 		Envelope result = null;
 		if ( obj instanceof Number ) {
 			final double size = ((Number) obj).doubleValue();
-			result = new Envelope(0, size, 0, size);
+			result = new Envelope3D(0, size, 0, size, 0, size);
 		} else if ( obj instanceof ILocation ) {
 			final ILocation size = (ILocation) obj;
-			result = new Envelope(0, size.getX(), 0, size.getY());
+			result = new Envelope3D(0, size.getX(), 0, size.getY(), 0, size.getZ());
 		} else if ( obj instanceof IShape ) {
 			result = ((IShape) obj).getEnvelope();
 		} else if ( obj instanceof Envelope ) {
-			result = (Envelope) obj;
+			result = new Envelope3D((Envelope) obj);
 		} else if ( obj instanceof String ) {
 			result = computeEnvelopeFrom(scope, Files.from(scope, (String) obj));
 		} else if ( obj instanceof Map ) {
@@ -742,7 +732,7 @@ public class GeometryUtils {
 		GamaList<Geometry> geoms = null;
 		if ( geom.getInnerGeometry() instanceof LineString ) {
 			final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
-			final Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
+			final Point pt1 = FACTORY.createPoint(new GamaPoint(pt.getLocation()));
 			final int nb = coords.length;
 			int indexTarget = -1;
 			double distanceT = Double.MAX_VALUE;
@@ -750,7 +740,7 @@ public class GeometryUtils {
 				final Coordinate s = coords[i];
 				final Coordinate t = coords[i + 1];
 				final Coordinate[] seg = { s, t };
-				final Geometry segment = GeometryUtils.factory.createLineString(seg);
+				final Geometry segment = FACTORY.createLineString(seg);
 				final double distT = segment.distance(pt1);
 				if ( distT < distanceT ) {
 					distanceT = distT;
@@ -773,11 +763,11 @@ public class GeometryUtils {
 				k++;
 			}
 			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
-			geoms1.add(GeometryUtils.factory.createLineString(coords1));
-			geoms1.add(GeometryUtils.factory.createLineString(coords2));
+			geoms1.add(FACTORY.createLineString(coords1));
+			geoms1.add(FACTORY.createLineString(coords2));
 			geoms = geoms1;
 		} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
-			final Point point = GeometryUtils.factory.createPoint((Coordinate) pt);
+			final Point point = FACTORY.createPoint((Coordinate) pt);
 			Geometry geom2 = null;
 			double distMin = Double.MAX_VALUE;
 			final MultiLineString ml = (MultiLineString) geom.getInnerGeometry();
@@ -789,7 +779,7 @@ public class GeometryUtils {
 				}
 			}
 			final Coordinate[] coords = ((LineString) geom2).getCoordinates();
-			final Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
+			final Point pt1 = FACTORY.createPoint(new GamaPoint(pt.getLocation()));
 			final int nb = coords.length;
 			int indexTarget = -1;
 			double distanceT = Double.MAX_VALUE;
@@ -797,7 +787,7 @@ public class GeometryUtils {
 				final Coordinate s = coords[i];
 				final Coordinate t = coords[i + 1];
 				final Coordinate[] seg = { s, t };
-				final Geometry segment = GeometryUtils.factory.createLineString(seg);
+				final Geometry segment = FACTORY.createLineString(seg);
 				final double distT = segment.distance(pt1);
 				if ( distT < distanceT ) {
 					distanceT = distT;
@@ -820,8 +810,8 @@ public class GeometryUtils {
 				k++;
 			}
 			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
-			geoms1.add(GeometryUtils.factory.createLineString(coords1));
-			geoms1.add(GeometryUtils.factory.createLineString(coords2));
+			geoms1.add(FACTORY.createLineString(coords1));
+			geoms1.add(FACTORY.createLineString(coords2));
 			geoms = geoms1;
 		}
 		if ( geoms != null ) {

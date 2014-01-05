@@ -82,7 +82,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 			System.err.println("Error:  File IO error in: Closing File");
 		}
 		for ( Obj obj : objects ) {
-			Geometry g = GeometryUtils.factory.buildGeometry(obj.faces);
+			Geometry g = GeometryUtils.FACTORY.buildGeometry(obj.faces);
 			((GamaList) buffer).add(new GamaShape(g));
 		}
 		

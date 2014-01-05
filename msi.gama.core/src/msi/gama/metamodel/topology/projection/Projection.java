@@ -71,7 +71,7 @@ public class Projection implements IProjection {
 
 	@Override
 	public Geometry transform(final Geometry g) {
-		Geometry geom = GeometryUtils.factory.createGeometry(g);
+		Geometry geom = GeometryUtils.FACTORY.createGeometry(g);
 		if ( transformer != null ) {
 			try {
 				geom = transformer.transform(g);
@@ -90,7 +90,7 @@ public class Projection implements IProjection {
 
 	@Override
 	public Geometry inverseTransform(final Geometry g) {
-		Geometry geom = GeometryUtils.factory.createGeometry(g);
+		Geometry geom = GeometryUtils.FACTORY.createGeometry(g);
 		inverseTranslate(geom);
 		if ( inverseTransformer != null ) {
 			try {

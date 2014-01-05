@@ -22,7 +22,7 @@ package msi.gama.metamodel.topology;
 import java.awt.*;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gaml.operators.Maths;
@@ -95,7 +95,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		final IAgentFilter f) {
 		// TODO filter result by topology's bounds
 		final double exp = dist * Maths.SQRT2;
-		Envelope env = new Envelope(source.getEnvelope());
+		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		Collection<IAgent> result = findIntersects(scope, source, env, f);
 		Iterator<IAgent> it = result.iterator();
@@ -110,7 +110,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
-		Envelope env = new Envelope(source.getEnvelope());
+		Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
 		double min_distance = dist;

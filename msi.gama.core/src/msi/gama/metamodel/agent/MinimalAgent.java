@@ -2,7 +2,7 @@ package msi.gama.metamodel.agent;
 
 import static msi.gama.util.GAML.nullCheck;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
@@ -22,7 +22,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 import com.google.common.primitives.Ints;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * 
@@ -126,7 +126,7 @@ public abstract class MinimalAgent implements IAgent {
 	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
 	 */
 	@Override
-	public Envelope getEnvelope() {
+	public Envelope3D getEnvelope() {
 		final IShape g = getGeometry();
 		return g == null ? null : g.getEnvelope();
 	}
@@ -209,7 +209,7 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	@Override
-	public IValue copy(final IScope scope) throws GamaRuntimeException {
+	public IShape copy(final IScope scope) throws GamaRuntimeException {
 		return this;
 	}
 
@@ -547,4 +547,15 @@ public abstract class MinimalAgent implements IAgent {
 		dispose();
 		return null;
 	}
+
+	/**
+	 * Method asShapeWithGeometry()
+	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope,
+	 *      com.vividsolutions.jts.geom.Geometry)
+	 */
+	// @Override
+	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
+	// return getGeometry().asShapeWithGeometry(scope, g);
+	// }
+
 }

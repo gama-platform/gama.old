@@ -23,9 +23,10 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Interface for objects that can be provided with a geometry (or which can be translated to
@@ -54,10 +55,10 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract boolean isPoint();
 
 	public abstract boolean isLine();
-	
+
 	public abstract Geometry getInnerGeometry();
 
-	public abstract Envelope getEnvelope();
+	public abstract Envelope3D getEnvelope();
 
 	public abstract boolean covers(IShape g);
 
@@ -75,5 +76,16 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public abstract void dispose();
+
+	@Override
+	public IShape copy(IScope scope);
+
+	/**
+	 * Purpose of this method is to obtain a GamaShape cloned from the source IShape, initialized with the (optional)
+	 * Geometry passed in argument.
+	 * @param g
+	 * @return
+	 */
+	// public GamaShape asShapeWithGeometry(IScope scope, Geometry g);
 
 }

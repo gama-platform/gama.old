@@ -265,7 +265,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 		final Coordinate[] segment2 = { new GamaPoint(newX, newY), target_pt };
 		double minDist = distance;
-		final Geometry basicLine = GeometryUtils.factory.createLineString(segment2);
+		final Geometry basicLine = GeometryUtils.FACTORY.createLineString(segment2);
 		GamaList<IAgent> result = new GamaList<IAgent>();
 		for ( ISpecies species : obsSpecies ) {
 			// final IPopulation pop = agent.getPopulationFor(species);
@@ -546,7 +546,7 @@ public class DrivingSkill extends MovingSkill {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.factory.createLineString(temp);
+					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 					final double distS = segment.distance(pointS);
 					if ( distS < distanceS ) {
 						distanceS = distS;

@@ -34,7 +34,6 @@ import msi.gama.util.graph.*;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 
@@ -56,8 +55,9 @@ public class Graphs {
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
-			return Spatial.Properties.intersects(Spatial.Transformations.enlarged_by(p1.getGeometry(), tolerance),
-				Spatial.Transformations.enlarged_by(p2.getGeometry(), tolerance));
+			return Spatial.Properties.intersects(
+				Spatial.Transformations.enlarged_by(scope, p1.getGeometry(), tolerance),
+				Spatial.Transformations.enlarged_by(scope, p2.getGeometry(), tolerance));
 		}
 
 		@Override
@@ -217,13 +217,15 @@ public class Graphs {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
 		return new GamaList();
 	}
-	
+
 	@operator(value = "edge_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "returns the edge linking two nodes", examples = { "graphFromMap edge_between node1::node2  --:  edge1" }, see = {"out_edges_of", "in_edges_of"})
+	@doc(value = "returns the edge linking two nodes", examples = { "graphFromMap edge_between node1::node2  --:  edge1" }, see = {
+		"out_edges_of", "in_edges_of" })
 	public static Object EdgeBetween(final IGraph graph, final GamaPair verticePair) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the edge_between operator, the graph should not be null!"); }
-		if ( graph.containsVertex(verticePair.key) && graph.containsVertex(verticePair.value) ) { return graph.getEdge(verticePair.key, verticePair.value); }
+		if ( graph.containsVertex(verticePair.key) && graph.containsVertex(verticePair.value) ) { return graph.getEdge(
+			verticePair.key, verticePair.value); }
 		return null;
 	}
 
@@ -479,19 +481,19 @@ public class Graphs {
 	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 		throws GamaRuntimeException {
-		//java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 
 	}
-	
+
 	@operator(value = "as_path", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "create a graph path from the list of shape", examples = { "[road1,road2,road3] as_path my_graph --: A path road1->road2->road3 of my_graph" })
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 		throws GamaRuntimeException {
-		//java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		IPath path = GamaPathType.staticCast(scope, edgesNodes, null); 
+		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		IPath path = GamaPathType.staticCast(scope, edgesNodes, null);
 		path.setGraph(graph);
 		return path;
 

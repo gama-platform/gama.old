@@ -682,4 +682,5 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 
 	}
+
 }

@@ -156,9 +156,9 @@ public class GamaOsmFile extends GamaGisFile {
 				if ( points.size() < 3 ) {
 					continue;
 				}
-				GamaShape geom = new GamaShape(GamaGeometryType.buildPolygon(points));
-				if ( geom != null && !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid() &&
-					geom.getArea() > 0 ) {
+				IShape geom = GamaGeometryType.buildPolygon(points);
+				if ( geom != null && !geom.getInnerGeometry().isEmpty() && /* geom.getInnerGeometry().isValid() && */
+				geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
 						geom.setAttribute(key, values.get(key));
 					}
@@ -171,11 +171,11 @@ public class GamaOsmFile extends GamaGisFile {
 		return geometries;
 	}
 
-	public List<GamaShape> createSplitRoad(final Way way, final Map<String, Object> values,
+	public List<IShape> createSplitRoad(final Way way, final Map<String, Object> values,
 		final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
 		List<List<IShape>> pointsList = new GamaList<List<IShape>>();
 		List<IShape> points = new GamaList<IShape>();
-		GamaList<GamaShape> geometries = new GamaList<GamaShape>();
+		GamaList<IShape> geometries = new GamaList();
 		WayNode endNode = way.getWayNodes().get(way.getWayNodes().size() - 1);
 		for ( WayNode node : way.getWayNodes() ) {
 			Long id = node.getNodeId();
@@ -191,7 +191,7 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 		}
 		for ( List<IShape> pts : pointsList ) {
-			GamaShape g = createRoad(pts, values);
+			IShape g = createRoad(pts, values);
 			if ( g != null ) {
 				geometries.add(g);
 			}
@@ -200,9 +200,9 @@ public class GamaOsmFile extends GamaGisFile {
 
 	}
 
-	private GamaShape createRoad(final List<IShape> points, final Map<String, Object> values) {
+	private IShape createRoad(final List<IShape> points, final Map<String, Object> values) {
 		if ( points.size() < 2 ) { return null; }
-		GamaShape geom = new GamaShape(GamaGeometryType.buildPolyline(points));
+		IShape geom = GamaGeometryType.buildPolyline(points);
 		if ( geom != null && !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid() &&
 			geom.getPerimeter() > 0 ) {
 			for ( String key : values.keySet() ) {

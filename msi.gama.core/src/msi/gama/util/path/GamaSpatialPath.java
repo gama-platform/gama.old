@@ -36,7 +36,7 @@ import com.vividsolutions.jts.geom.*;
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
 // Si
 
-public class GamaSpatialPath extends GamaPath<IShape, IShape> {
+public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
 	GamaList<GamaShape> segments;
 	IShape shape = null;
@@ -60,19 +60,20 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 		super(null, start, target, edges, false);
 		this.init(null, start, target, edges, false);
 	}
-	
+
 	public GamaSpatialPath(final IList<IShape> nodes) {
 		super(nodes);
 		this.init(null, nodes.get(0), nodes.get(nodes.size() - 1), edges, false);
 	}
-	
-	protected IShape createEdge(IShape v, IShape v2) {
+
+	@Override
+	protected IShape createEdge(final IShape v, final IShape v2) {
 		return GamaGeometryType.buildLine(v.getLocation(), v2.getLocation());
 	}
 
-
-	public void init(final GamaSpatialGraph g, final IShape start, final IShape target, final IList<IShape> _edges,
-		final boolean modify_edges) {
+	@Override
+	public void init(final IGraph<IShape, IShape> g, final IShape start, final IShape target,
+		final IList<IShape> _edges, final boolean modify_edges) {
 		source = start;
 		this.target = target;
 		this.graph = g;
@@ -305,7 +306,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.factory.createLineString(temp);
+					LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 					double distS = segment.distance(pointGeom);
 					if ( distS < distanceS ) {
 						distanceS = distS;
@@ -329,7 +330,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.factory.createLineString(temp);
+					LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 					double distT = segment.distance(pointGeom);
 					if ( distT < distanceT ) {
 						distanceT = distT;
@@ -388,16 +389,17 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 				geoms[cpt] = ent.getInnerGeometry();
 				cpt++;
 			}
-			final Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
+			final Geometry geom = GeometryUtils.FACTORY.createGeometryCollection(geoms);
 			shape = new GamaShape(geom.union());
 		}
 		return shape;
 	}
-	
-	public void setGraph(IGraph<IShape, IShape> graph) {
+
+	@Override
+	public void setGraph(final IGraph<IShape, IShape> graph) {
 		this.graph = graph;
 		graphVersion = graph.getVersion();
-		
+
 		for ( IShape edge : edges ) {
 			IAgent ag = edge.getAgent();
 			if ( ag != null ) {
@@ -406,6 +408,6 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 				realObjects.put(edge.getGeometry(), edge);
 			}
 		}
-		
+
 	}
 }

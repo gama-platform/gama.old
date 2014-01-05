@@ -59,7 +59,7 @@ import msi.gaml.types.*;
 	@facet(name = SIZE, type = IType.FLOAT, optional = true), @facet(name = TO, type = IType.POINT, optional = true),
 	@facet(name = COLOR, type = IType.COLOR, optional = true),
 	@facet(name = SCALE, type = IType.FLOAT, optional = true),
-	@facet(name = ROTATE, type = IType.INT, optional = true),
+	@facet(name = ROTATE, type = { IType.FLOAT, IType.INT }, optional = true),
 	@facet(name = FONT, type = IType.STRING, optional = true),
 	@facet(name = BITMAP, type = IType.BOOL, optional = true),
 	@facet(name = DEPTH, type = IType.FLOAT, optional = true),
@@ -202,7 +202,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		Color constCol;
 		private final Color constBord;
 		private final ILocation constSize;
-		private final Integer constRot;
+		private final Double constRot;
 		private final Boolean constEmpty;
 		private final Boolean constRounded;
 		protected final ILocation constLoc;
@@ -229,14 +229,14 @@ public class DrawStatement extends AbstractStatementSequence {
 			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
 			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
-			constRot = rot != null && rot.isConst() ? Cast.asInt(scope, rot.value(scope)) : null;
+			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
 			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
 			GAMA.releaseScope(scope);
 		}
 
-		Integer getRotation(final IScope scope) throws GamaRuntimeException {
-			return constRot == null ? rot == null ? null : Cast.asInt(scope, rot.value(scope)) : constRot;
+		Double getRotation(final IScope scope) throws GamaRuntimeException {
+			return constRot == null ? rot == null ? null : Cast.asFloat(scope, rot.value(scope)) : constRot;
 		}
 
 		ILocation getSize(final IScope scope) {
@@ -295,7 +295,14 @@ public class DrawStatement extends AbstractStatementSequence {
 
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) { return null; }
-			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
+			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope));
+			// GamaShape gs = g1.asShapeWithGeometry(scope, null);
+			// IShape g2 = gs.getRotatedAndTranslatedCopy(scope, getRotation(scope), getLocation(scope, g1));
+			// Integer angle = getRotation(scope);
+			// if ( angle != null ) {
+			// g2 = Spatial.Transformations.rotated_by(scope, g2, angle);
+			// }
+			// g2 = Spatial.Transformations.at_location(scope, g2, getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
@@ -309,8 +316,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				}
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, x);
 			}
-			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRotation(scope),
-				getRounded(scope));
+			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRounded(scope));
 
 		}
 	}

@@ -274,13 +274,13 @@ public class JTSDrawer {
 				Coordinate[] cs = new Coordinate[2];
 				cs[0] = p.getCoordinates()[i];
 				cs[1] = p.getCoordinates()[i + 1];
-				segments.add(GeometryUtils.factory.createLineString(cs));
+				segments.add(GeometryUtils.FACTORY.createLineString(cs));
 			}
 			for ( IShape tri : triangles ) {
 				for ( int i = 0; i < tri.getInnerGeometry().getNumPoints(); i++ ) {
 					Coordinate coord = tri.getInnerGeometry().getCoordinates()[i];
 					if ( Double.isNaN(coord.z) ) {
-						Point pt = GeometryUtils.factory.createPoint(coord);
+						Point pt = GeometryUtils.FACTORY.createPoint(coord);
 						double distMin = Double.MAX_VALUE;
 						Geometry closestSeg = null;
 						for ( Geometry seg : segments ) {
@@ -290,8 +290,8 @@ public class JTSDrawer {
 								closestSeg = seg;
 							}
 						}
-						Point pt1 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[0]);
-						Point pt2 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[1]);
+						Point pt1 = GeometryUtils.FACTORY.createPoint(closestSeg.getCoordinates()[0]);
+						Point pt2 = GeometryUtils.FACTORY.createPoint(closestSeg.getCoordinates()[1]);
 
 						double dist1 = pt.distance(pt1);
 						double dist2 = pt.distance(pt2);

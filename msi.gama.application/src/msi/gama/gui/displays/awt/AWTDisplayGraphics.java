@@ -106,13 +106,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final double cellSize, final String name) {
+		final Double angle, final Double z, final double cellSize, final String name) {
 		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, true, "grid");
 	}
 
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final Double z,
 		final boolean isDynamic, final String name) {
 		final AffineTransform saved = renderer.getTransform();
 		int curX, curY;
@@ -152,7 +152,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
-		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0, z, true, "");
+		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, z, true, "");
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final java.lang.Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final java.lang.Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
 		final Double z, final Boolean bitmap) {
 		renderer.setColor(highlight ? highlightColor : stringColor);
 		int curX, curY;
@@ -207,21 +207,38 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 */
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded) {
+		final Color border, final boolean rounded) {
 		if ( geometry == null ) { return null; }
 		final ITopology topo = scope.getTopology();
-		Geometry geom = geometry.getInnerGeometry();
-		// Necessary to check in case the scope has been erased (in cases of reload)
+		Rectangle2D result = null;
 		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(geom);
+			java.util.List<Geometry> geoms = topo.listToroidalGeometries(geometry.getInnerGeometry());
+			for ( Geometry g : geoms ) {
+				Rectangle2D r = drawSimpleShape(scope, g, color, fill, border, rounded);
+				if ( result == null ) {
+					result = r;
+				}
+			}
+		} else {
+			result = drawSimpleShape(scope, geometry.getInnerGeometry(), color, fill, border, rounded);
 		}
+		return result;
+		// Geometry geom = geometry.getInnerGeometry();
+		// // Necessary to check in case the scope has been erased (in cases of reload)
+		// if ( topo != null && topo.isTorus() ) {
+		// geom = topo.listToroidalGeometries(geom);
+		// }
+	}
+
+	private Rectangle2D drawSimpleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
+		final Color border, final boolean rounded) {
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
 			final AffineTransform saved = renderer.getTransform();
-			if ( angle != null ) {
-				renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
-			}
+			// if ( angle != null ) {
+			// renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
+			// }
 			renderer.setColor(highlight ? highlightColor : color);
 			if ( geom instanceof Lineal || geom instanceof Puntal ? false : fill ) {
 				renderer.fill(s);
@@ -234,6 +251,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			e.printStackTrace();
 			return null;
 		}
+
 	}
 
 	@Override

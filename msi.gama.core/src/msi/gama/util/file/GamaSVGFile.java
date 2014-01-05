@@ -53,7 +53,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			URI uri = svg.loadSVG(in, path);
 			SVGDiagram diagram = svg.getDiagram(uri);
 			Shape shape = diagram.getRoot().getShape();
-			Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.factory); // flatness = ??
+			Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.FACTORY); // flatness = ??
 			IShape gs = new GamaShape(geom);
 			if ( size != null ) {
 				gs = Spatial.Transformations.scaled_to(scope, gs, size);
