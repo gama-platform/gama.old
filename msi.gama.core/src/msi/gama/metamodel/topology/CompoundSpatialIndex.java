@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
+	boolean disposed = false;
 	ISpatialIndex[] all;
 	final Map<ISpecies, Integer> indexes;
 	final protected double[] steps;
@@ -24,7 +25,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	private ISpatialIndex findSpatialIndex(final ISpecies s) {
-		if ( all == null ) { return null; }
+		if ( disposed ) { return null; }
 		Integer index = indexes.get(s);
 		if ( index == null ) {
 			indexes.put(s, 0);
@@ -36,6 +37,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	// Returns the index of the spatial index to use. Return -1 if all spatial indexes are concerned
 	private int findSpatialIndexes(final IAgentFilter f) {
+		if ( disposed ) { return -1; }
 		final Integer si = indexes.get(f.getSpecies());
 		return si == null ? -1 : si;
 	}
@@ -69,6 +71,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter) {
+		if ( disposed ) { return null; }
 		final List<IAgent> shapes = new ArrayList();
 		for ( int i = 0; i < steps.length; i++ ) {
 			for ( final ISpatialIndex si : all ) {
@@ -111,6 +114,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
 		final IAgentFilter f) {
+		if ( disposed ) { return Collections.EMPTY_LIST; }
 		int id = findSpatialIndexes(f);
 		if ( id == -1 ) {
 			Set<IAgent> agents = new THashSet();
@@ -125,6 +129,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public Collection<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
 		final IAgentFilter f, final boolean contained) {
+		if ( disposed ) { return Collections.EMPTY_LIST; }
 		int id = findSpatialIndexes(f);
 		if ( id == -1 ) {
 			Set<IAgent> agents = new THashSet();
@@ -139,11 +144,14 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public void drawOn(final Graphics2D g2, final int width, final int height) {
 		// By default, we draw the quadtree
-		all[0].drawOn(g2, width, height);
+		if ( !disposed ) {
+			all[0].drawOn(g2, width, height);
+		}
 	}
 
 	@Override
 	public void add(final ISpatialIndex index, final ISpecies species) {
+		if ( disposed ) { return; }
 		all = Arrays.copyOf(all, all.length + 1);
 		all[all.length - 1] = index;
 		indexes.put(species, all.length - 1);
@@ -154,6 +162,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		indexes.clear();
 		Arrays.fill(all, null);
 		all = null;
+		disposed = true;
 	}
 
 }

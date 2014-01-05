@@ -134,11 +134,11 @@ public class GamaQuadTree implements ISpatialIndex {
 	private class QuadNode {
 
 		private final Envelope bounds;
-		private final double hw, hh, minx, miny;
+		private final double hw, hh, minx, miny, halfx, halfy;
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered (by insertion order) **
 		private final Set<IAgent> objects = new LinkedHashSet();
-		private int size = 0;
-		boolean isLeaf = true;
+		private volatile int size = 0;
+		private volatile boolean isLeaf = true;
 		private QuadNode ne;
 		private QuadNode nw;
 		private QuadNode se;
@@ -151,22 +151,28 @@ public class GamaQuadTree implements ISpatialIndex {
 			hh = bounds.getHeight();
 			minx = bounds.getMinX();
 			miny = bounds.getMinY();
+			halfx = minx + hw / 2;
+			halfy = miny + hh / 2;
 			canSplit = hw > minSize && hh > minSize;
 			totalNodes++;
 		}
 
 		public IShape remove(final Coordinate p, final IShape a) {
 
-			if ( size != 0 ) {
-				// synchronized (objects) {
-				if ( objects.remove(a) ) {
+			if ( size > 0 ) {
+				boolean removed = false;
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.remove " + a);
+					removed = objects.remove(a);
+				}
+				if ( removed ) {
 					size--;
 					return a;
 				}
-				// }
+
 			} else if ( !isLeaf ) {
-				final boolean north = p.y >= miny && p.y < miny + hh / 2;
-				final boolean west = p.x >= minx && p.x < minx + hw / 2;
+				final boolean north = p.y >= miny && p.y < halfy;
+				final boolean west = p.x >= minx && p.x < halfx;
 				return north ? west ? nw.remove(p, a) : ne.remove(p, a) : west ? sw.remove(p, a) : se.remove(p, a);
 			}
 			return null;
@@ -178,34 +184,39 @@ public class GamaQuadTree implements ISpatialIndex {
 					split();
 					return add(p, a);
 				}
-				// synchronized (objects) {
-				if ( objects.add(a) ) {
-					size++;
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.add " + a);
+					if ( objects.add(a) ) {
+						size++;
+					}
 				}
-				// }
 				return true;
 			}
-			final boolean north = p.y >= miny && p.y < miny + hh / 2;
-			final boolean west = p.x >= minx && p.x < minx + hw / 2;
+			final boolean north = p.y >= miny && p.y < halfy;
+			final boolean west = p.x >= minx && p.x < halfx;
 			return north ? west ? nw.add(p, a) : ne.add(p, a) : west ? sw.add(p, a) : se.add(p, a);
 		}
 
-		public boolean isEmpty() {
-			return isLeaf && size == 0;
-		}
-
 		private boolean removeIfPresent(final Envelope bounds, final IShape a) {
-			return !(isLeaf && size == 0) && (objects.contains(a) || this.bounds.intersects(bounds)) &&
-				remove(bounds, a);
+			synchronized (objects) {
+				// GuiUtils.debug("GamaQuadTree.QuadNode.removeIfPresent + object.contains " + a);
+				return !(isLeaf && size == 0) && (objects.contains(a) || this.bounds.intersects(bounds)) &&
+					remove(bounds, a);
+			}
 		}
 
 		public boolean remove(final Envelope bounds, final IShape a) {
-			// synchronized (objects) {
-			if ( size != 0 && objects.remove(a) ) {
-				size--;
-				return true;
+			if ( size != 0 ) {
+				boolean removed = false;
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.remove " + a);
+					removed = objects.remove(a);
+				}
+				if ( removed ) {
+					size--;
+					return true;
+				}
 			}
-			// }
 			return !isLeaf && ne.removeIfPresent(bounds, a) | nw.removeIfPresent(bounds, a) |
 				se.removeIfPresent(bounds, a) | sw.removeIfPresent(bounds, a);
 		}
@@ -257,15 +268,18 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( canSplit && isLeaf && size >= maxCapacity ) {
 				split();
 			}
-			// synchronized (objects) {
 			if ( isLeaf || env.contains(bounds) ) {
-				if ( objects.add(o) ) {
-					size++;
-					return true;
+				boolean added = false;
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.add " + o);
+					added = objects.add(o);
 				}
-				return false;
+				if ( added ) {
+					size++;
+				}
+				return added;
 			}
-			// }
+
 			boolean retVal = false;
 
 			if ( ne.bounds.intersects(env) ) {
@@ -285,16 +299,19 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		public void split() {
 			if ( isLeaf ) {
-				final double hw = this.hw / 2;
-				final double hh = this.hh / 2;
 				final double maxx = bounds.getMaxX();
 				final double maxy = bounds.getMaxY();
-				nw = new QuadNode(new Envelope(minx, minx + hw, miny, miny + hh));
-				ne = new QuadNode(new Envelope(minx + hw, maxx, miny, miny + hh));
-				sw = new QuadNode(new Envelope(minx, minx + hw, miny + hh, maxy));
-				se = new QuadNode(new Envelope(minx + hw, maxx, miny + hh, maxy));
-				IAgent[] tempList = objects.toArray(new IAgent[size]);
-				objects.clear();
+				nw = new QuadNode(new Envelope(minx, halfx, miny, halfy));
+				ne = new QuadNode(new Envelope(halfx, maxx, miny, halfy));
+				sw = new QuadNode(new Envelope(minx, halfx, halfy, maxy));
+				se = new QuadNode(new Envelope(halfx, maxx, halfy, maxy));
+				IAgent[] tempList;
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.split ");
+					tempList = objects.toArray(new IAgent[size]);
+					objects.clear();
+				}
+
 				size = 0;
 				isLeaf = false;
 
@@ -341,24 +358,25 @@ public class GamaQuadTree implements ISpatialIndex {
 		public void findIntersects(final IScope scope, final IShape source, final Envelope r,
 			final Collection<IAgent> result) {
 			if ( bounds.intersects(r) ) {
-				// synchronized (objects) {
-				for ( IShape entry : objects ) {
-					if ( entry.getEnvelope().intersects(r) ) {
-						result.add(entry.getAgent());
+				synchronized (objects) {
+					// GuiUtils.debug("GamaQuadTree.QuadNode.findIntersects ");
+					for ( IShape entry : objects ) {
+						if ( entry.getEnvelope().intersects(r) ) {
+							result.add(entry.getAgent());
+						}
 					}
 				}
-				// }
 				if ( !isLeaf ) {
-					if ( !nw.isEmpty() ) {
+					if ( !(nw.isLeaf && nw.size == 0) ) {
 						nw.findIntersects(scope, source, r, result);
 					}
-					if ( !ne.isEmpty() ) {
+					if ( !(ne.isLeaf && ne.size == 0) ) {
 						ne.findIntersects(scope, source, r, result);
 					}
-					if ( !sw.isEmpty() ) {
+					if ( !(sw.isLeaf && sw.size == 0) ) {
 						sw.findIntersects(scope, source, r, result);
 					}
-					if ( !se.isEmpty() ) {
+					if ( !(se.isLeaf && se.size == 0) ) {
 						se.findIntersects(scope, source, r, result);
 					}
 				}

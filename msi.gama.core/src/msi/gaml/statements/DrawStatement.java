@@ -189,10 +189,15 @@ public class DrawStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		final IGraphics g = stack.getGraphics();
+	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final IGraphics g = scope.getGraphics();
 		if ( g == null ) { return null; }
-		return executer.executeOn(stack, g);
+		try {
+			return executer.executeOn(scope, g);
+		} catch (Exception e) {
+			java.lang.System.err.println("Error when drawing in a display : " + e.getMessage());
+		}
+		return null;
 	}
 
 	private abstract class DrawExecuter {

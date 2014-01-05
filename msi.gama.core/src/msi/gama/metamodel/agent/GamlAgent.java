@@ -441,12 +441,19 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public synchronized IShape getGeometry() {
+	public/* synchronized */IShape getGeometry() {
 		return geometry;
 	}
 
 	@Override
-	public synchronized void setGeometry(final IShape newGeometry) {
+	public Envelope3D getEnvelope() {
+		// Explicitely redefined here in order to address Issue 709. Having a lock on getGeometry() would prevent the
+		// QuadTree from working in a multi-thread environment.
+		return geometry.getEnvelope();
+	}
+
+	@Override
+	public/* synchronized */void setGeometry(final IShape newGeometry) {
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
 
 		final ITopology topology = population.getTopology();
@@ -477,7 +484,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public synchronized void setLocation(final ILocation point) {
+	public/* synchronized */void setLocation(final ILocation point) {
 		if ( point == null || dead() ) { return; }
 		final ILocation newLocation = point.copy(getScope());
 		final ITopology topology = population.getTopology();
@@ -520,7 +527,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public synchronized ILocation getLocation() {
+	public/* synchronized */ILocation getLocation() {
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
 			final ILocation randomLocation = population.getTopology().getRandomLocation();
 			if ( randomLocation == null ) { return null; }
