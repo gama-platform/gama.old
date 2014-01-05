@@ -1,7 +1,7 @@
 model ant_sort
 
 global torus: true {
-	geometry ant_normal <- geometry(svg_file("../images/ant_normal.svg", {10,10})) rotated_by -90;
+	geometry ant_normal <- (geometry(svg_file("../images/ant_normal.svg")) rotated_by -90) scaled_to {10,10};
 	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
@@ -48,8 +48,7 @@ entities {
 			}
 		}
 		aspect default {
-			draw ant_normal at: location rotate: heading  empty: false color: color;
-			//draw circle(1) empty: false color: color ;
+			draw ant_normal rotate: heading at: location empty: false color: color;
 		}
 	}
 
@@ -70,7 +69,7 @@ experiment sort type: gui{
 	parameter "Number of agents:" var: ants category: "Agents" ;
 	
 	output {
-		display grid_display refresh_every: 1  {
+		display grid_display refresh_every: 1 type: opengl {
 			grid ant_grid ;
 			species ant transparency: 0.2 ;
 		}
