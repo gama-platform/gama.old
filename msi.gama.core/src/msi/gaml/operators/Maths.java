@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
@@ -510,13 +511,13 @@ public class Maths {
 		return Double.valueOf(a * b);
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static IMatrix opTimes(final Integer a, final IMatrix b) {
 		return b.times(a);
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
@@ -546,13 +547,13 @@ public class Maths {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the sum of the two operands", examples = "", see = "/")
 	public static IMatrix opPlus(final Integer a, final IMatrix b) {
 		return b.plus(a);
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the sum of the two operands", examples = "", see = "/")
 	public static IMatrix opPlus(final Double a, final IMatrix b) {
 		return b.plus(a);
@@ -582,13 +583,13 @@ public class Maths {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the difference of the two operands", examples = "", see = "/")
 	public static IMatrix opMinus(final Integer a, final IMatrix b) {
 		return b.times(-1).plus(a);
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "Returns the difference of the two operands", examples = "", see = "/")
 	public static IMatrix opMinus(final Double a, final IMatrix b) {
 		return b.times(-1).plus(a);
