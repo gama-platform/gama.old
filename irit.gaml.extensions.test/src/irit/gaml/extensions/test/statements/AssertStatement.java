@@ -38,7 +38,7 @@ public class AssertStatement extends AbstractStatement {
 
 		List<IDescription> statements = desc.getSpeciesContext().getChildren();
 		for ( IDescription s : statements ) {
-			if ( s.getName().equals("setUp") ) {
+			if ( ("setUp").equals(s.getName()) ) {
 				setUpStatement = (StatementDescription) s;
 			}
 		}
