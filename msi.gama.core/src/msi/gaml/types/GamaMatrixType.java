@@ -38,6 +38,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 		if ( obj == null ) { return null; }
 		if ( param == null || !(param instanceof ILocation) ) {
+			if ( obj instanceof IList ) { return GamaMatrixType.from(scope, (IList) obj); }
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
 			if ( obj instanceof String ) { return from(scope, (String) obj, null); }
 			return with(scope, obj);
@@ -55,8 +56,18 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	}
 
 	@Override
-	public IMatrix cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public IMatrix cast(final IScope scope, final Object obj, final Object param, final IType contentsType)
+		throws GamaRuntimeException {
+		IMatrix m = staticCast(scope, obj, param);
+		switch (contentsType.id()) {
+			case IType.INT:
+				return GamaIntMatrix.from(scope, m);
+			case IType.FLOAT:
+				return GamaFloatMatrix.from(scope, m);
+				// case IType.GEOMETRY: return new GamaSpatialMatrix
+			default:
+				return m;
+		}
 	}
 
 	// Simplified pattern : only ';', ',', tab and white space are accepted
@@ -102,6 +113,31 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 			return null;
+		}
+	}
+
+	public static IMatrix from(final IScope scope, final IList list) {
+		if ( list == null || list.isEmpty() ) { return new GamaObjectMatrix(0, 0); }
+		// 3 cases to consider: whether the list is flat or not, whether it is int/float or other objects.
+		// Is the list flat ? True if one of the contained objects is not a list / they are not the same size
+		boolean flat = GamaMatrix.isFlat(list);
+		// Which type: Object, Int or Float ?
+
+		List first = (List) (flat ? list : list.get(0));
+		boolean allInt = true;
+		boolean allFloat = true;
+		for ( Object o : first ) {
+			allInt = allInt && o instanceof Integer;
+			if ( !allInt ) {
+				allFloat = allFloat && o instanceof Double;
+			}
+		}
+		if ( allInt ) {
+			return new GamaIntMatrix(scope, list, flat, null);
+		} else if ( allFloat ) {
+			return new GamaFloatMatrix(scope, list, flat, null);
+		} else {
+			return new GamaObjectMatrix(scope, list, flat, null);
 		}
 	}
 

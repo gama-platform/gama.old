@@ -328,7 +328,8 @@ public class Cast {
 	@operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
 	@doc(value = "casts the list (left operand) into a one-row matrix", examples = { " as_matrix [1, 2, 3] --: [ [1, 2, 3] ] " })
 	public static IMatrix asMatrix(final IScope scope, final IList val) throws GamaRuntimeException {
-		return asMatrix(scope, val, null);
+		return GamaMatrixType.from(scope, val);
+
 	}
 
 	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)

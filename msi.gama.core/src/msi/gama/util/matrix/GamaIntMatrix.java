@@ -39,15 +39,15 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		if ( m instanceof GamaIntMatrix ) { return (GamaIntMatrix) m; }
 		if ( m instanceof GamaObjectMatrix ) { return new GamaIntMatrix(scope, m.getCols(scope), m.getRows(scope),
 			((GamaObjectMatrix) m).getMatrix()); }
-		if ( m instanceof GamaIntMatrix ) { return new GamaIntMatrix(m.getCols(scope), m.getRows(scope),
-			((GamaIntMatrix) m).getMatrix()); }
+		if ( m instanceof GamaFloatMatrix ) { return new GamaIntMatrix(m.getCols(scope), m.getRows(scope),
+			((GamaFloatMatrix) m).getMatrix()); }
 		return null;
 	}
 
 	static public GamaIntMatrix from(final IScope scope, final int c, final int r, final IMatrix m) {
 		if ( m instanceof GamaIntMatrix ) { return new GamaIntMatrix(c, r, ((GamaIntMatrix) m).getMatrix()); }
 		if ( m instanceof GamaObjectMatrix ) { return new GamaIntMatrix(scope, c, r, ((GamaObjectMatrix) m).getMatrix()); }
-		if ( m instanceof GamaIntMatrix ) { return new GamaIntMatrix(c, r, ((GamaIntMatrix) m).matrix); }
+		if ( m instanceof GamaFloatMatrix ) { return new GamaIntMatrix(c, r, ((GamaFloatMatrix) m).getMatrix()); }
 		return null;
 	}
 

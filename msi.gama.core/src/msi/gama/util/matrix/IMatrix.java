@@ -100,25 +100,25 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)

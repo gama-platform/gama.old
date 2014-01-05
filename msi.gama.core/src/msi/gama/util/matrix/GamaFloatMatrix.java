@@ -125,13 +125,16 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
+		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
+			matrix[i] = objects[i];
+		}
+		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
 	public GamaFloatMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
 		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
-			getMatrix()[i] = Cast.asFloat(null, objects[i]);
+			matrix[i] = Cast.asFloat(null, objects[i]);
 		}
 	}
 
