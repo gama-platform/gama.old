@@ -98,12 +98,19 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return null;
 	}
 
+	// TODO : Verify the behavior in case of compilation errors.
 	public IModel build(final GamlResource resource) {
-		final ModelDescription description = parse(resource, buildResourceSet);
-		if ( resource.getErrors().isEmpty() ) {
-			final IModel model = (IModel) description.compile();
+		try {
+			final ModelDescription description = parse(resource, buildResourceSet);
+			if ( resource.getErrors().isEmpty() ) {
+				final IModel model = (IModel) description.compile();
+				return model;
+			}
+		} catch (Exception e) {
+			error("Cannot compile file because of : " + e.getMessage(), resource.getContents().get(0), null);
+			return null;
+		} finally {
 			cleanResourceSet(buildResourceSet, true);
-			return model;
 		}
 		return null;
 	}
