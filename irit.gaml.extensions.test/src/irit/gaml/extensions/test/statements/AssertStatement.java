@@ -38,7 +38,7 @@ public class AssertStatement extends AbstractStatement {
 
 		List<IDescription> statements = desc.getSpeciesContext().getChildren();
 		for ( IDescription s : statements ) {
-			if ( ("setUp").equals(s.getName()) ) {
+			if ( "setUp".equals(s.getName()) ) {
 				setUpStatement = (StatementDescription) s;
 			}
 		}
@@ -79,17 +79,19 @@ public class AssertStatement extends AbstractStatement {
 
 				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning."); }
-				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
+				if ( isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() + 
-							", it raises " + (isWarning ? "a warning." : "an error.")); }
+					.error("Assert raises ERROR: " + value.toGaml() + " raises " +
+						(isWarning ? "a warning." : "an error.")); }
+				// System.out.println("Toto OK" + raises.getName());
 				return null;
 			} catch (Exception e) {
-				if(!IKeyword.ERROR.equals(raises.getName())) {
-					throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA.");
-				}
+				if ( IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
+				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.toGaml() + " raises an error."); }
+				// System.out.println("error weel raised");
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
