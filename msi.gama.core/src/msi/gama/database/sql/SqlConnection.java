@@ -2,11 +2,15 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
+
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.operators.Cast;
+
 import com.vividsolutions.jts.geom.*;
 
 /*
@@ -78,10 +82,11 @@ public abstract class SqlConnection {
 		if ( crs != null ) { return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs); }
 		String srid = (String) params.get("srid");
 		if ( srid != null ) {
-			return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
+			return scope.getSimulationScope().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid), longitudeFirst);
+			//return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
 		} else {
 			//return scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer) null);
-			return scope.getSimulationScope().getProjectionFactory().getWorld();
+			return scope.getSimulationScope().getProjectionFactory().forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
 		}
 
 	}
