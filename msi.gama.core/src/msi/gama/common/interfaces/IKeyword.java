@@ -88,7 +88,7 @@ public interface IKeyword {
 	public static final String DECAY = "decay";
 	public static final String DEFAULT = "default";
 	// public static final String DEFAULT_EXP = "default";
-	public static final String DEM = "dem";
+	// public static final String DEM = "dem";
 	public static final String DEPENDS_ON = "depends_on";
 	public static final String DEPTH = "depth";
 	public static final String DESTINATION = "destination";
@@ -104,7 +104,8 @@ public interface IKeyword {
 	public static final String DOT = "dot";
 	public static final String DRAW = "draw";
 	public static final String DRAWENV = "draw_env";
-	public static final String DRAWASDEM = "draw_as_dem";
+	// public static final String DRAWASDEM = "draw_as_dem";
+	public static final String ELEVATION = "elevation";
 	public static final String DYNAMIC = "dynamic";
 	public static final String EACH = "each";
 	public static final String EDGE = "edge";

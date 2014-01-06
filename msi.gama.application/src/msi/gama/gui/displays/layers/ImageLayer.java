@@ -39,10 +39,10 @@ public class ImageLayer extends AbstractLayer {
 
 	public ImageLayer(final ILayerStatement layer) {
 		super(layer);
-		buildImage();
+		buildImage(null);
 	}
 
-	protected void buildImage() {
+	protected void buildImage(final IScope scope) {
 		String newImage = ((ImageLayerStatement) definition).getImageFileName();
 		if ( imageFileName != null && imageFileName.equals(newImage) ) { return; }
 		imageFileName = newImage;
@@ -80,7 +80,7 @@ public class ImageLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		buildImage();
+		buildImage(scope);
 		if ( image == null ) { return; }
 		dg.drawImage(scope, image, null, null, null, null, 0.0, false, null);
 	}

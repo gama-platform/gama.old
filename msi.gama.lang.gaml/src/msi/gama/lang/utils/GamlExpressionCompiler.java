@@ -698,10 +698,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return null;
 		}
 
-		// if ( s.equals("tototo") ) {
-		// GuiUtils.debug("GamlExpressionCompiler.caseVar");
-		// }
-
 		// HACK
 		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.get(IType.POINT),
 			Types.get(IType.FLOAT), Types.get(IType.INT), true, IVarExpression.TEMP, context); }
@@ -725,11 +721,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return factory.createVar(SELF, tt, Types.NO_TYPE, Types.get(IType.STRING), true, IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-
-		// By default, we try to find a variable
-		// if ( s.equals(MYSELF) ) {
-		// GuiUtils.debug("GamlExpressionCompiler.caseVar MYSELF");
-		// }
 
 		temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
 		if ( temp_sd != null ) {
@@ -766,6 +757,13 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 						IGamlIssue.UNKNOWN_KEYWORD, object, s);
 				}
 				return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
+			}
+
+			// Finally, a last possibility (enabled in rare occasions, like in the "elevation" facet of grid layers), is
+			// that the variable used belongs to the species denoted by the current statement
+			if ( context instanceof StatementDescription ) {
+				SpeciesDescription denotedSpecies = ((StatementDescription) context).computeSpecies();
+				if ( denotedSpecies != null && denotedSpecies.hasVar(s) ) { return denotedSpecies.getVarExpr(s); }
 			}
 
 			context.error("The variable " + s +

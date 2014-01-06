@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -47,45 +48,35 @@ import msi.gaml.types.*;
  */
 @symbol(name = IKeyword.GRID_POPULATION, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+@facets(value = {
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
+	@facet(name = IKeyword.ELEVATION, type = { IType.MATRIX, IType.FLOAT, IType.INT, IType.BOOL }, optional = true, doc = @doc("Allows to specify the elevation of each cell, if any. Can be a matrix of float (provided it is the same size as the grid), a int or float variable of the grid species, or simply true (in which case, the variable called 'grid_value' is used to compute the elevation of each cell)")),
 	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true),
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.DRAWASDEM, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
+	@facet(name = "draw_as_dem", type = IType.BOOL, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
+	@facet(name = "dem", type = IType.MATRIX, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
 
-	public GridLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
+	public GridLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 	}
 
 	IGrid grid;
-	IExpression lineColor;
-	IExpression demGridExp;
-	IExpression textureExp;
-	IExpression triExp;
-	IExpression demExp;
-	IExpression textExp;
-	GamaFloatMatrix demGridMatrix;
+	IExpression lineColor, elevation, textureExp, triExp, textExp;
 	Boolean isTextured = true;
 	GamaFile textureFile = null;
 	Boolean isTriangulated = false;
-	Boolean isDrawnAsDEM= false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
 	int cellSize;
-	// HashSet<IAgent> agents;
 	private IExpression setOfAgents;
-
-	// HashSet<IAgent> agentsForLayer;
-
-	// BufferedImage supportImage;
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
@@ -95,9 +86,12 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			currentColor = constantColor;
 		}
 
-		demGridExp = getFacet(IKeyword.DEM);
-		if ( demGridExp != null ) {
-			demGridMatrix = GamaFloatMatrix.from(scope, Cast.asMatrix(scope, demGridExp.value(scope)));
+		elevation = getFacet(IKeyword.ELEVATION);
+		if ( elevation == null ) {
+			elevation = getFacet("dem");
+			if ( elevation == null ) {
+				elevation = getFacet("draw_as_dem");
+			}
 		}
 
 		textureExp = getFacet(IKeyword.TEXTURE);
@@ -117,11 +111,6 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		if ( triExp != null ) {
 			isTriangulated = Cast.asBool(scope, triExp.value(scope));
 		}
-		
-		demExp = getFacet(IKeyword.DRAWASDEM);
-		if ( demExp != null ) {
-			isDrawnAsDEM = Cast.asBool(scope, demExp.value(scope));
-		}
 
 		textExp = getFacet(IKeyword.TEXT);
 		if ( textExp != null ) {
@@ -136,13 +125,6 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		grid = (IGrid) gridPop.getTopology().getPlaces();
 
 		return true;
-
-		// agents = new HashSet<IAgent>();
-		// agents.addAll(computeAgents());
-		// if ( supportImage != null ) {
-		// supportImage.flush();
-		// }
-		// supportImage = ImageUtils.createCompatibleImage(grid.numCols, grid.numRows);
 	}
 
 	public IGrid getEnvironment() {
@@ -189,14 +171,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {
-		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
-		// composants qui vont �tre affich�s.
 		return grid.getAgents();
 	}
 
-	public void setAspect(final String currentAspect) {
-
-	}
+	public void setAspect(final String currentAspect) {}
 
 	public String getAspectName() {
 		return IKeyword.DEFAULT;
@@ -210,8 +188,19 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		return setOfAgents;
 	}
 
-	public GamaFloatMatrix getGridValueMatrix() {
-		return demGridMatrix;
+	public double[] getElevationMatrix(final IScope scope) {
+		if ( elevation != null ) {
+			switch (elevation.getType().id()) {
+				case IType.MATRIX:
+					return GamaFloatMatrix.from(scope, Cast.asMatrix(scope, elevation.value(scope))).getMatrix();
+				case IType.FLOAT:
+				case IType.INT:
+					return grid.getGridValueOf(scope, elevation);
+				case IType.BOOL:
+					if ( (Boolean) elevation.value(scope) ) { return grid.getGridValue(); }
+			}
+		}
+		return null;
 	}
 
 	public Boolean isTextured() {
@@ -224,10 +213,6 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	public Boolean isTriangulated() {
 		return isTriangulated;
-	}
-	
-	public Boolean isDrawnAsDem() {
-		return isDrawnAsDEM;
 	}
 
 	public Boolean isShowText() {

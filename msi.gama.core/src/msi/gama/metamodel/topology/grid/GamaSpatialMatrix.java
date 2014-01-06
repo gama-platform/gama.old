@@ -293,6 +293,22 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return gridValue;
 	}
 
+	@Override
+	public double[] getGridValueOf(final IScope scope, final IExpression exp) {
+		double[] result = new double[matrix.length];
+		for ( int i = 0; i < matrix.length; i++ ) {
+			IShape s = matrix[i];
+			if ( s != null ) {
+				IAgent a = s.getAgent();
+				if ( a != null ) {
+					result[i] = Cast.asFloat(scope, scope.evaluate(exp, a));
+				}
+			}
+
+		}
+		return result;
+	}
+
 	private final int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isHexagon ) { return yy * numCols + xx; }
 		if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols + (xx < 0 ? xx + numCols : xx) %

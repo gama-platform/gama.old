@@ -49,12 +49,6 @@ public class GridTopology extends AbstractTopology {
 		getPlaces().setCellSpecies(pop);
 		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop.getSpecies());
 		super.initialize(scope, pop);
-		// if ( getPlaces().getGridValue() != null && !getPlaces().getGridValue().isEmpty() ) {
-		// for ( final IAgent ag : pop ) {
-		// ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
-		// }
-		// getPlaces().clearGridValue();
-		// }
 	}
 
 	@Override

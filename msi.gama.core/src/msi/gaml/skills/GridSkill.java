@@ -66,16 +66,6 @@ public class GridSkill extends Skill {
 		return (IGrid) agent.getPopulation().getTopology().getPlaces();
 	}
 
-	// @getter("agents")
-	// @Deprecated
-	// public final List<IAgent> getAgents(final IAgent agent) {
-	// final List<IAgent> agents =
-	// agent.getTopology().getAgentsIn(agent, new Not(In.population(agent.getPopulation())), false);
-	// return agents;
-	//
-	// // TODO Remove this (to consider instead "agents_in" or "agents_intersecting")
-	// }
-
 	@getter("grid_x")
 	public final int getX(final IAgent agent) {
 		return ((IGridAgent) agent).getX();
@@ -92,9 +82,7 @@ public class GridSkill extends Skill {
 	}
 
 	@setter("grid_x")
-	public final void setX(final IAgent agent, final Integer i) {
-
-	}
+	public final void setX(final IAgent agent, final Integer i) {}
 
 	@setter("grid_value")
 	public final void setValue(final IAgent agent, final Double d) {
@@ -102,14 +90,7 @@ public class GridSkill extends Skill {
 	}
 
 	@setter("grid_y")
-	public final void setY(final IAgent agent, final Integer i) {
-
-	}
-
-	// @setter("agents")
-	// public final void setAgents(final IAgent agent, final GamaList agents) {
-	//
-	// }
+	public final void setY(final IAgent agent, final Integer i) {}
 
 	@getter(value = "color", initializer = true)
 	public GamaColor getColor(final IAgent agent) {
@@ -120,10 +101,5 @@ public class GridSkill extends Skill {
 	public void setColor(final IAgent agent, final GamaColor color) {
 		((IGridAgent) agent).setColor(color);
 	}
-
-	// @getter("shape")
-	// public IShape getShape(final IAgent agent) {
-	//
-	// }
 
 }

@@ -21,7 +21,7 @@ package msi.gaml.descriptions;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
@@ -457,7 +457,22 @@ public class StatementDescription extends SymbolDescription {
 
 		// TODO is there a way to extract the species from a constant expression (like
 		// species("ant")) ? cf. Issue 145
-		final IExpression facet = facets.getExpr(SPECIES, facets.getExpr(AS, facets.getExpr(TARGET)));
+		IExpressionDescription ed = facets.get(SPECIES);
+		if ( ed == null ) {
+			ed = facets.get(AS);
+			if ( ed == null ) {
+				ed = facets.get(TARGET);
+				if ( ed == null ) { return null; }
+			}
+
+		}
+		IExpression facet = ed.getExpression();
+		// We try to compute as much as possible, for example if the facet is not compiled yet (see Issue 618)
+		if ( facet == null ) {
+			facet = GAML.getExpressionFactory().createExpr(ed, this);
+		}
+
+		// final IExpression facet = facets.getExpr(SPECIES, facets.getExpr(AS, facets.getExpr(TARGET)));
 		if ( facet == null ) { return null; }
 		IType t = facet.getType();
 		SpeciesDescription result = null;
@@ -541,10 +556,12 @@ public class StatementDescription extends SymbolDescription {
 	private void verifyInits(final Arguments ca) {
 		final SpeciesDescription sd = computeSpecies();
 		final Collection<IDescription> args = getArgs();
-		if ( sd == null && !args.isEmpty() ) {
-			warning(
-				"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
-				IGamlIssue.UNKNOWN_ARGUMENT);
+		if ( sd == null ) {
+			if ( !args.isEmpty() ) {
+				warning(
+					"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
+					IGamlIssue.UNKNOWN_ARGUMENT);
+			}
 			return;
 		}
 		for ( final IDescription arg : args ) {
@@ -553,8 +570,19 @@ public class StatementDescription extends SymbolDescription {
 				error("Attribute " + name + " does not exist in species " + sd.getName(), IGamlIssue.UNKNOWN_ARGUMENT,
 					arg.getFacets().get(VALUE).getTarget(), (String[]) null);
 			} else {
-				IType varType = sd.getVariable(name).getType();
-				IType initType = ca.get(name).getExpression().getType();
+				IType initType = Types.NO_TYPE;
+				IType varType = Types.NO_TYPE;
+				VariableDescription vd = sd.getVariable(name);
+				if ( vd != null ) {
+					varType = vd.getType();
+				}
+				IExpressionDescription ed = ca.get(name);
+				if ( ed != null ) {
+					IExpression expr = ed.getExpression();
+					if ( expr != null ) {
+						initType = expr.getType();
+					}
+				}
 				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
 					warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST, arg
 						.getFacets().get(VALUE).getTarget(), varType.toString());

@@ -44,13 +44,13 @@ public class GridLayer extends ImageLayer {
 	// private boolean isTexturedWithImage;
 	private boolean isTriangulated;
 	private boolean isShowText;
-	private boolean drawAsDEM;
+	// private boolean drawAsDEM;
 	private double cellSize;
 
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
-		drawAsDEM = false;
+		// drawAsDEM = false;
 	}
 
 	@Override
@@ -78,7 +78,8 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	protected void buildImage() {
+	protected void buildImage(final IScope scope) {
+		if ( scope == null ) { return; }
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IGrid m = g.getEnvironment();
 		final ILocation p = m.getDimensions();
@@ -92,10 +93,8 @@ public class GridLayer extends ImageLayer {
 		}
 		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
 
-		// As there is 2 ways to give the dem we need to check which one is active
-		// FIXME : what happen if the 2 are defined in the model?
-		if ( g.getGridValueMatrix() != null ) {
-			gridValueMatrix = g.getGridValueMatrix().getMatrix();
+		gridValueMatrix = g.getElevationMatrix(scope);
+		if ( gridValueMatrix != null ) {
 			textureFile = g.textureFile();
 
 			if ( textureFile != null ) {
@@ -105,27 +104,25 @@ public class GridLayer extends ImageLayer {
 			}
 			isTriangulated = g.isTriangulated();
 			isShowText = g.isShowText();
-			drawAsDEM = true;
 		}
-		if ( m.getGridValue() != null ) {
-			gridValueMatrix = m.getGridValue();
-			textureFile = g.textureFile();
+		// if ( m.getGridValue() != null ) {
+		// gridValueMatrix = m.getGridValue();
+		// textureFile = g.textureFile();
+		//
+		// if ( textureFile != null ) {
+		// isTextured = true;
+		// } else {
+		// isTextured = g.isTextured();
+		// }
 
-			if ( textureFile != null ) {
-				isTextured = true;
-			} else {
-				isTextured = g.isTextured();
-			}
-
-			isTriangulated = g.isTriangulated();
-			isShowText = g.isShowText();
-			drawAsDEM = g.isDrawnAsDem();
-		}
+		isTriangulated = g.isTriangulated();
+		isShowText = g.isShowText();
+		// }
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		buildImage();
+		buildImage(scope);
 		if ( image == null ) { return; }
 		Color lineColor = null;
 		if ( turnGridOn ) {
@@ -135,7 +132,7 @@ public class GridLayer extends ImageLayer {
 			}
 		}
 
-		if ( drawAsDEM ) {
+		if ( gridValueMatrix != null ) {
 
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = null;

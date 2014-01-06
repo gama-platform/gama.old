@@ -14,6 +14,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -56,6 +57,14 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract int[] getDisplayData();
 
 	public abstract double[] getGridValue();
+
+	/**
+	 * Computes and returns a double array by applying the expression to each of the agents of the grid
+	 * @param scope the current scope
+	 * @param expr cannot be null
+	 * @return a double array the size of the grid
+	 */
+	public abstract double[] getGridValueOf(IScope scope, IExpression expr);
 
 	public abstract boolean isTorus();
 
