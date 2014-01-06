@@ -104,20 +104,27 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	/**
-	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box
+	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
+	 * coefficients.
 	 * @param source cannot be null
 	 * @param geom can be null
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
+	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
+	 *            (width, height, depth) or as a set of coefficients.
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
-		final GamaPoint bounds) {
+		final GamaPoint bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
-		if ( bounds != null ) {
+		if ( bounds != null && !isPoint() ) {
 			Envelope3D envelope = getEnvelope();
 			boolean flat = envelope.getDepth() == 0.0;
-			geometry.apply(Scaling.of(bounds.x / envelope.getWidth(), bounds.y / envelope.getHeight(), flat ? 1.0
-				: bounds.z / envelope.getDepth(), (Coordinate) location));
+			if ( isBoundingBox ) {
+				geometry.apply(Scaling.of(bounds.x / envelope.getWidth(), bounds.y / envelope.getHeight(), flat ? 1.0
+					: bounds.z / envelope.getDepth(), (Coordinate) location));
+			} else {
+				geometry.apply(Scaling.of(bounds.x, bounds.y, bounds.z, (Coordinate) location));
+			}
 		}
 	}
 

@@ -721,13 +721,21 @@ public abstract class Spatial {
 			// return g1.scaledBy(scope, coefficient);
 			// return new GamaShape(g1.getInnerGeometry()).scaledBy(scope, coefficient);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
+		}
 
+		@operator(value = { IKeyword.MULTIPLY, "scaled_by" })
+		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a point, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficients in the 3 dimensions" }, examples = { "shape * {0.5,0.5,2} --: returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z" })
+		public static IShape scaled_by(final IScope scope, final IShape g, final GamaPoint coefficients) {
+			return new GamaShape(g, null, null, null, coefficients, false);
+			// return g1.scaledBy(scope, coefficient);
+			// return new GamaShape(g1.getInnerGeometry()).scaledBy(scope, coefficient);
+			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
 		@operator(value = { "scaled_to" })
 		@doc(value = "allows to restrict the size of a geometry so that it fits in the envelope {width, height} defined by the second operand", examples = { "shape scaled_to {10,10} --: returns a geometry corresponding to the geometry of the agent applying the operator scaled so that it perfectly fits a square of 10x10" })
 		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
-			return new GamaShape(g, null, null, null, bounds);
+			return new GamaShape(g, null, null, null, bounds, true);
 			// final GamaShape g1 = g.asShapeWithGeometry(scope, null);
 			// return g1.scaledTo(scope, bounds);
 			// return new GamaShape(g1.getInnerGeometry()).scaledTo(scope, bounds);
