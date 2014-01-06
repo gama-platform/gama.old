@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.shape;
 
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -40,52 +41,66 @@ import com.vividsolutions.jts.geom.Geometry;
 @vars({ @var(name = "perimeter", type = IType.FLOAT) })
 public interface IShape extends ILocated, IValue, IAttributed {
 
-	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
+	static enum Type {
+		BOX, CIRCLE, CONE, CUBE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
+		MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT(
+			"Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT;
+
+		Type() {}
+
+		Type(final String name) {
+			JTS_TYPES.put(name, this);
+		}
+	}
+
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
-	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();;
+	public static final Map<String, Type> JTS_TYPES = new HashMap();
+	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();
 
-	public abstract IAgent getAgent();
+	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
 
-	public abstract void setAgent(IAgent agent);
-
-	public abstract IShape getGeometry();
-
-	public abstract void setGeometry(IShape g);
-
-	public abstract boolean isPoint();
-
-	public abstract boolean isLine();
-
-	public abstract Geometry getInnerGeometry();
-
-	public abstract Envelope3D getEnvelope();
+	@Override
+	public IShape copy(IScope scope);
 
 	public abstract boolean covers(IShape g);
 
 	public abstract boolean crosses(IShape g);
 
-	public abstract double euclidianDistanceTo(IShape g);
+	public abstract void dispose();
 
 	public abstract double euclidianDistanceTo(ILocation g);
 
-	public abstract boolean intersects(IShape g);
+	public abstract double euclidianDistanceTo(IShape g);
+
+	public abstract IAgent getAgent();
+
+	public abstract Envelope3D getEnvelope();
+
+	/**
+	 * Returns the geometrical type of this shape. May be computed dynamically (from the JTS inner geometry) or stored
+	 * somewhere (in the attributes of the shape, using TYPE_ATTRIBUTE)
+	 * @param g
+	 * @return
+	 */
+	public IShape.Type getGeometricalType();
+
+	public abstract IShape getGeometry();
+
+	public abstract Geometry getInnerGeometry();
 
 	@getter("perimeter")
 	public abstract double getPerimeter();
 
+	public abstract boolean intersects(IShape g);
+
+	public abstract boolean isLine();
+
+	public abstract boolean isPoint();
+
+	public abstract void setAgent(IAgent agent);
+
+	public abstract void setGeometry(IShape g);
+
 	public abstract void setInnerGeometry(Geometry intersection);
-
-	public abstract void dispose();
-
-	@Override
-	public IShape copy(IScope scope);
-
-	/**
-	 * Purpose of this method is to obtain a GamaShape cloned from the source IShape, initialized with the (optional)
-	 * Geometry passed in argument.
-	 * @param g
-	 * @return
-	 */
-	// public GamaShape asShapeWithGeometry(IScope scope, Geometry g);
 
 }

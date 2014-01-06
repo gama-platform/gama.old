@@ -11,7 +11,7 @@ import msi.gama.jogl.scene.ObjectDrawer.ImageDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.IList;
 import msi.gaml.types.GamaGeometryType;
@@ -126,10 +126,7 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final IList<String> textureFileNames, final Integer angle, final double height, final GamaPoint offSet,
-		final GamaPoint scale, final boolean roundCorner, final String type, final double alpha/*
-																								 * , final String
-																								 * popName
-																								 */) {
+		final GamaPoint scale, final boolean roundCorner, final IShape.Type type, final double alpha) {
 
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
@@ -202,7 +199,7 @@ public class ModelScene {
 		if ( !envGeometryInitialized ) {
 			currentLayerIsStatic = false;
 			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, null, 0, 0, offset, scale, false,
-				"env", 1d/* , "environment" */);
+				IShape.Type.ENVIRONMENT, 1d/* , "environment" */);
 			envGeometryInitialized = true;
 		}
 	}

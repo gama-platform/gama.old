@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
@@ -43,7 +44,8 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override
-	public IShape cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public IShape cast(final IScope scope, final Object obj, final Object param, final IType contentsType)
+		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -173,7 +175,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildPolyhedron(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolygon(points);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "polyhedron");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYHEDRON);
 		return g;
 	}
 
@@ -190,7 +192,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
 		final IShape g = buildLine(location1, location2);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "plan");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, PLAN);
 		return g;
 	}
 
@@ -205,7 +207,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolyline(points);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "polyplan");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYPLAN);
 		return g;
 	}
 
@@ -222,7 +224,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "cube");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, CUBE);
 		return g;
 
 	}
@@ -250,7 +252,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildBox(final double width, final double height, final double depth, final ILocation location) {
 		final IShape g = buildRectangle(width, height, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "box");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, BOX);
 		return g;
 	}
 
@@ -306,7 +308,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "cylinder");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, CYLINDER);
 		return g;
 	}
 
@@ -314,28 +316,28 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildSphere(final double radius, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "sphere");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
 		return g;
 	}
 
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "cone");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, CONE);
 		return g;
 	}
 
 	public static IShape buildTeapot(final double size, final ILocation location) {
 		final IShape g = buildCircle(size, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, size);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "teapot");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, TEAPOT);
 		return g;
 	}
 
 	public static IShape buildPyramid(final double side_size, final ILocation location) {
 		final IShape g = buildRectangle(side_size, side_size, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, "pyramid");
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, PYRAMID);
 		return g;
 	}
 

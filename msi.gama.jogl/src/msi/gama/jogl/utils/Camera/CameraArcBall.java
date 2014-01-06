@@ -31,8 +31,8 @@ public class CameraArcBall extends AbstractCamera {
 	public CameraArcBall(final double xPos, final double yPos, final double zPos, final double xLPos,
 		final double yLPos, final double zLPos, final JOGLAWTGLRenderer renderer) {
 		super(xPos, yPos, zPos, xLPos, yLPos, zLPos, renderer);
-		position.set(xPos, yPos, zPos);
-		target.set(xLPos, yLPos, zLPos);
+		position.setLocation(xPos, yPos, zPos);
+		target.setLocation(xLPos, yLPos, zLPos);
 	}
 
 	@Override
@@ -51,8 +51,9 @@ public class CameraArcBall extends AbstractCamera {
 		double sinT = Math.sin(factorT);
 		double cosP = Math.cos(factorP);
 		double sinP = Math.sin(factorP);
-		position.set(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
-		forward.set(cosP * -cosT, cosP * -sinT, -sinP);
+		position
+			.setLocation(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
+		forward.setLocation(cosP * -cosT, cosP * -sinT, -sinP);
 	}
 
 	// public void followAgent(IAgent a) {
@@ -75,7 +76,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
 		super.resetCamera(envWidth, envHeight, threeD);
 		radius = getMaxDim() * INIT_Z_FACTOR;
-		target.set(envWidth / 2, -envHeight / 2, 0);
+		target.setLocation(envWidth / 2, -envHeight / 2, 0);
 		phi = threeD ? 135.0 : 90.0;
 		theta = 360.00;
 		update();
@@ -110,7 +111,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	protected void animate() {
-		
+
 		double translation = 2 * (Math.abs(position.z) + 1) / getRenderer().getHeight();
 		if ( isForward() ) {
 			if ( isShiftKeyDown() ) {
@@ -136,10 +137,10 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - -get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				if(isAltKeyDown() && isViewIn2DPlan()){
+				if ( isAltKeyDown() && isViewIn2DPlan() ) {
 					rotateCameraUpVectorOnZ(true);
-					
-				}else{
+
+				} else {
 					updatePosition(position.x + translation, position.y, position.z);
 					lookPosition(target.x + translation, target.y, target.z);
 				}
@@ -150,9 +151,9 @@ public class CameraArcBall extends AbstractCamera {
 				theta = theta - get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				if(isAltKeyDown() && isViewIn2DPlan()){
+				if ( isAltKeyDown() && isViewIn2DPlan() ) {
 					rotateCameraUpVectorOnZ(false);
-				}else{
+				} else {
 					updatePosition(position.x - translation, position.y, position.z);
 					lookPosition(target.x - translation, target.y, target.z);
 				}
@@ -178,7 +179,7 @@ public class CameraArcBall extends AbstractCamera {
 		int width = Math.abs(region[0] - region[2]);
 		int height = Math.abs(region[1] - region[3]);
 		radius = 1.5 * (width > height ? width : height);
-		target.set(getRoiCenter().x, getRoiCenter().y, 0.0);
+		target.setLocation(getRoiCenter().x, getRoiCenter().y, 0.0);
 		update();
 	}
 

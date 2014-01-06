@@ -27,7 +27,6 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -284,6 +283,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleTriangulation() {
 		renderer.triangulation = !renderer.triangulation;
+		updateDisplay();
 	}
 
 	@Override
@@ -413,7 +413,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public double[] getCameraPosition() {
 		if ( renderer == null && renderer.camera == null ) { return new double[] { 0, 0, 0 }; }
-		Vector3D v = renderer.camera.getPosition();
+		GamaPoint v = renderer.camera.getPosition();
 		return new double[] { v.x, v.y, v.z };
 	}
 

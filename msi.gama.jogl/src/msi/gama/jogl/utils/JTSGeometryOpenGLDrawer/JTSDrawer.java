@@ -8,7 +8,7 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.util.*;
-import msi.gama.jogl.scene.MyTexture;
+import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
@@ -80,7 +80,7 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawMultiPolygon(final MultiPolygon polygons, final Color c, final double alpha, final boolean fill,
+	public void drawMultiPolygon(final MultiPolygon polygons, final Color c, final double alpha, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
 		final double height, final boolean rounded, final double z_fighting_value) {
 
@@ -637,15 +637,15 @@ public class JTSDrawer {
 
 			LineString l = (LineString) lines.getGeometryN(i);
 			if ( height > 0 ) {
-				DrawPlan(l, z, c, alpha, height, 0, true);
+				drawPlan(l, z, c, alpha, height, 0, true);
 			} else {
-				DrawLineString(l, z, 1.2f, c, alpha);
+				drawLineString(l, z, 1.2f, c, alpha);
 			}
 
 		}
 	}
 
-	public void DrawLineString(final LineString line, final double z, final double size, final Color c,
+	public void drawLineString(final LineString line, final double z, final double size, final Color c,
 		final double alpha) {
 
 		if ( !colorpicking ) {
@@ -687,11 +687,11 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawPlan(final LineString l, double z, final Color c, final double alpha, final double height,
+	public void drawPlan(final LineString l, double z, final Color c, final double alpha, final double height,
 		final Integer angle, final boolean drawPolygonContour) {
 
-		DrawLineString(l, z, 1.2f, c, alpha);
-		DrawLineString(l, z + height, 1.2f, c, alpha);
+		drawLineString(l, z, 1.2f, c, alpha);
+		drawLineString(l, z + height, 1.2f, c, alpha);
 
 		// Draw a quad
 		gl.glColor4d(c.getRed() / 255, c.getGreen() / 255, c.getBlue() / 255, alpha * c.getAlpha() / 255);
@@ -799,86 +799,108 @@ public class JTSDrawer {
 	// //////////////////////////////SPECIAL 3D SHAPE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void DrawSphere(final Polygon p, final double radius, final Color c, final double alpha) {
+	public void drawSphere(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
+		Polygon p = (Polygon) g.geometry;
 		if ( Double.isNaN(p.getCoordinate().z) == false ) {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		Color c = g.getColor();
 		if ( !colorpicking ) {
 			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-				alpha * c.getAlpha() / 255);
+				g.getAlpha() * c.getAlpha() / 255);
 		}
 
 		GLUquadric quad = myGlu.gluNewQuadric();
-		myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		if ( !myGLRender.triangulation ) {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
 		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
 		final int slices = 16;
 		final int stacks = 16;
-		myGlu.gluSphere(quad, radius, slices, stacks);
+		myGlu.gluSphere(quad, g.height, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 
 	}
 
-	public void DrawCone(final Polygon p, final double radius, final Color c, final double alpha) {
+	public void drawCone(final GeometryObject g) {
+		// (final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
+		Polygon p = (Polygon) g.geometry;
 		if ( Double.isNaN(p.getCoordinate().z) == false ) {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
+			Color c = g.getColor();
 			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-				alpha * c.getAlpha() / 255);
+				g.getAlpha() * c.getAlpha() / 255);
 		}
-		myGlut.glutSolidCone(radius, radius, 10, 10);
+		if ( !myGLRender.triangulation ) {
+			myGlut.glutSolidCone(g.height, g.height, 10, 10);
+		} else {
+			myGlut.glutWireCone(g.height, g.height, 10, 10);
+		}
+
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 	}
 
-	public void DrawTeapot(final Polygon p, final double radius, final Color c, final double alpha) {
+	public void drawTeapot(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
-		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+		Polygon p = (Polygon) g.geometry;
+		if ( !Double.isNaN(p.getCoordinate().z) ) {
+			// TODO Normally, the NaN case is not true anymore
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 		if ( !colorpicking ) {
+			Color c = g.getColor();
 			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-				alpha * c.getAlpha() / 255);
+				g.getAlpha() * c.getAlpha() / 255);
 		}
 		gl.glRotated(90, 1.0, 0.0, 0.0);
-		myGlut.glutSolidTeapot(radius);
+		myGlut.glutSolidTeapot(g.height);
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 	}
 
-	public void DrawPyramid(final Polygon p, final double radius, final Color c, final Color border, final double alpha) {
+	public void drawPyramid(final GeometryObject g) {
 		double z = 0.0;
+		Polygon p = (Polygon) g.geometry;
 		if ( Double.isNaN(p.getCoordinate().z) == false ) {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		gl.glTranslated(0, 0, z);
 		if ( !colorpicking ) {
+			Color c = g.getColor();
 			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-				alpha * c.getAlpha() / 255);
+				g.getAlpha() * c.getAlpha() / 255);
 		}
-		PyramidSkeleton(p, radius);
+		PyramidSkeleton(p, g.height);
 		// border
 		if ( !colorpicking ) {
+			Color border = g.border;
 			gl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
-				(double) border.getBlue() / 255, alpha * c.getAlpha() / 255);
+				(double) border.getBlue() / 255, g.getAlpha() * border.getAlpha() / 255);
 		}
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 		gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
 		gl.glPolygonOffset(0.0f, -(float) 1.1);
-		PyramidSkeleton(p, radius);
+		PyramidSkeleton(p, g.height);
 		gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 		if ( !myGLRender.triangulation ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);

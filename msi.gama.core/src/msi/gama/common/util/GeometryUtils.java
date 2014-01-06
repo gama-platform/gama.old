@@ -18,6 +18,7 @@
  */
 package msi.gama.common.util;
 
+import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
@@ -224,15 +225,6 @@ public class GeometryUtils {
 	public static GeometryFactory FACTORY = new GeometryFactory(new GamaCoordinateSequenceFactory());
 	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
 	public static CoordinateSequenceFactory coordFactory = FACTORY.getCoordinateSequenceFactory();
-
-	// types of geometry
-	private final static int NULL = -1;
-	private final static int POINT = 0;
-	private final static int MULTIPOINT = 1;
-	private final static int LINE = 2;
-	private final static int MULTILINE = 3;
-	private final static int POLYGON = 4;
-	private final static int MULTIPOLYGON = 5;
 
 	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
 		// WARNING Only in 2D !
@@ -517,13 +509,13 @@ public class GeometryUtils {
 	}
 
 	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
-		final int geometryType = geometryType(listPoints);
+		final IShape.Type geometryType = geometryType(listPoints);
 		switch (geometryType) {
 			case NULL:
 				return null;
 			case POINT:
 				return buildPoint(listPoints.get(0));
-			case LINE:
+			case LINESTRING:
 				return buildLine(listPoints.get(0));
 			case POLYGON:
 				return buildPolygon(listPoints.get(0));
@@ -534,7 +526,7 @@ public class GeometryUtils {
 					geoms[i] = (Point) buildPoint(listPoints.get(i));
 				}
 				return FACTORY.createMultiPoint(geoms);
-			case MULTILINE:
+			case MULTILINESTRING:
 				final int n = listPoints.size();
 				final LineString[] lines = new LineString[n];
 				for ( int i = 0; i < n; i++ ) {
@@ -592,16 +584,16 @@ public class GeometryUtils {
 		return poly;
 	}
 
-	private static int geometryType(final List<List<List<ILocation>>> listPoints) {
+	private static IShape.Type geometryType(final List<List<List<ILocation>>> listPoints) {
 		final int size = listPoints.size();
 		if ( size == 0 ) { return NULL; }
 		if ( size == 1 ) { return geometryTypeSimp(listPoints.get(0)); }
-		final int type = geometryTypeSimp(listPoints.get(0));
+		final IShape.Type type = geometryTypeSimp(listPoints.get(0));
 		switch (type) {
 			case POINT:
 				return MULTIPOINT;
-			case LINE:
-				return MULTILINE;
+			case LINESTRING:
+				return MULTILINESTRING;
 			case POLYGON:
 				return POLYGON;
 			default:
@@ -609,12 +601,12 @@ public class GeometryUtils {
 		}
 	}
 
-	private static int geometryTypeSimp(final List<List<ILocation>> listPoints) {
+	private static IShape.Type geometryTypeSimp(final List<List<ILocation>> listPoints) {
 		if ( listPoints.isEmpty() || listPoints.get(0).isEmpty() ) { return NULL; }
 		final List<ILocation> list0 = listPoints.get(0);
 		final int size0 = list0.size();
 		if ( size0 == 1 || size0 == 2 && list0.get(0).equals(list0.get(listPoints.size() - 1)) ) { return POINT; }
-		if ( !list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3 ) { return LINE; }
+		if ( !list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3 ) { return LINESTRING; }
 		return POLYGON;
 	}
 
@@ -674,7 +666,8 @@ public class GeometryUtils {
 	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> params) {
 		final String crs = (String) params.get("crs");
 		final String srid = (String) params.get("srid");
-		final Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
+		final Boolean longitudeFirst =
+			params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
@@ -682,17 +675,16 @@ public class GeometryUtils {
 		// get data
 		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
-		
+
 		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
-		
+
 		IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-		env = gis.getProjectedEnvelope();			
+		env = gis.getProjectedEnvelope();
 
 		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
 		return env;
 		// ----------------------------------------------------------------------------------------------------
 	}
-
 
 	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
 		Envelope result = null;

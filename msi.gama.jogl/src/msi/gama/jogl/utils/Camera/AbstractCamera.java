@@ -8,7 +8,6 @@ import java.util.Collection;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.filter.Different;
@@ -38,10 +37,10 @@ public abstract class AbstractCamera implements ICamera {
 
 	// To handle mouse event
 
-	protected final Vector3D position = new Vector3D();
-	protected final Vector3D target = new Vector3D();
-	protected final Vector3D forward = new Vector3D();
-	protected final Vector3D upVector = new Vector3D();
+	protected final GamaPoint position = new GamaPoint(0, 0, 0);
+	protected final GamaPoint target = new GamaPoint(0, 0, 0);
+	protected final GamaPoint forward = new GamaPoint(0, 0, 0);
+	protected final GamaPoint upVector = new GamaPoint(0, 0, 0);
 
 	protected double theta;
 	protected double phi;
@@ -96,34 +95,33 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
-		position.set(xPos, yPos, zPos);
+		position.setLocation(xPos, yPos, zPos);
 	}
 
 	@Override
 	public void lookPosition(final double xLPos, final double yLPos, final double zLPos) {
-		target.set(xLPos, yLPos, zLPos);
+		target.setLocation(xLPos, yLPos, zLPos);
 	}
 
 	@Override
 	public void upPosition(final double xPos, final double yPos, final double zPos) {
-		upVector.set(xPos, yPos, zPos);
+		upVector.setLocation(xPos, yPos, zPos);
 	}
-	
+
 	// Use when the alt+right/left is pressed (rotate the camera upvector around z axis).
-	public void rotateCameraUpVectorOnZ(boolean clock) {
-		upPosition(Math.cos((Math.PI/2)+curZRotation),Math.sin((Math.PI/2) +curZRotation), upVector.z);
-		if(clock){
-			curZRotation=curZRotation - Math.PI/64;
-		}
-		else{
-			curZRotation=curZRotation + Math.PI/64;
+	public void rotateCameraUpVectorOnZ(final boolean clock) {
+		upPosition(Math.cos(Math.PI / 2 + curZRotation), Math.sin(Math.PI / 2 + curZRotation), upVector.z);
+		if ( clock ) {
+			curZRotation = curZRotation - Math.PI / 64;
+		} else {
+			curZRotation = curZRotation + Math.PI / 64;
 		}
 	}
 
 	/* -------Get commands--------- */
 
 	@Override
-	public Vector3D getPosition() {
+	public GamaPoint getPosition() {
 		return position;
 	}
 
@@ -220,34 +218,34 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void keyPressed(final KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
-		case VK_LEFT:
-			this.strafeLeft = true;
-			this.shiftKeyDown = checkShiftKeyDown(arg0);
-			this.altKeyDown = checkAlttKeyDown(arg0);	
-			break;
-		case VK_RIGHT:
-			this.strafeRight = true;
-			this.shiftKeyDown = checkShiftKeyDown(arg0);
-			this.altKeyDown = checkAlttKeyDown(arg0);
-			break;
-		case VK_UP:
-			this.goesForward = true;
-			this.shiftKeyDown = checkShiftKeyDown(arg0);
-			this.ctrlKeyDown = checkCtrlKeyDown(arg0);
-			break;
-		case VK_DOWN:
-			this.goesBackward = true;
-			this.shiftKeyDown = checkShiftKeyDown(arg0);
-			this.ctrlKeyDown =  checkCtrlKeyDown(arg0);
-			break;
-	   }
+			case VK_LEFT:
+				this.strafeLeft = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				this.altKeyDown = checkAlttKeyDown(arg0);
+				break;
+			case VK_RIGHT:
+				this.strafeRight = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				this.altKeyDown = checkAlttKeyDown(arg0);
+				break;
+			case VK_UP:
+				this.goesForward = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				this.ctrlKeyDown = checkCtrlKeyDown(arg0);
+				break;
+			case VK_DOWN:
+				this.goesBackward = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				this.ctrlKeyDown = checkCtrlKeyDown(arg0);
+				break;
+		}
 	}
 
 	@Override
 	public final void keyReleased(final KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
 			case VK_LEFT: // player turns left (scene rotates right)
-				this.strafeLeft = false;	
+				this.strafeLeft = false;
 				break;
 			case VK_RIGHT: // player turns right (scene rotates left)
 				this.strafeRight = false;
@@ -293,7 +291,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean checkShiftKeyDown(final MouseEvent event) {
 		return event.isShiftDown();
 	}
-	
+
 	protected boolean checkAlttKeyDown(final KeyEvent event) {
 		return event.isAltDown();
 	}
@@ -301,8 +299,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean checkAltKeyDown(final MouseEvent event) {
 		return event.isAltDown();
 	}
-	
-	
 
 	protected boolean detectMacOS() {
 		String os = System.getProperty("os.name");
@@ -478,7 +474,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean isShiftKeyDown() {
 		return shiftKeyDown;
 	}
-	
+
 	protected boolean isAltKeyDown() {
 		return altKeyDown;
 	}

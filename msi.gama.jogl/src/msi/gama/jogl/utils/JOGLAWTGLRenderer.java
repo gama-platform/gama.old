@@ -7,13 +7,10 @@ import java.awt.image.BufferedImage;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.*;
@@ -229,7 +226,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				gl.glEnable(GL_DEPTH_TEST);	
+				gl.glEnable(GL_DEPTH_TEST);
 			}
 
 			// Use polygon offset for a better edges rendering
@@ -407,7 +404,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
 		curTexture.isDynamic = isDynamic;
-		//GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
+		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
 		this.getContext().release();
 		return curTexture;
 	}
@@ -599,15 +596,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		realy = viewport[3] - y;
 
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		Vector3D v1 = new Vector3D(wcoord[0], wcoord[1], wcoord[2]);
+		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
 		glu.gluUnProject(x, realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		Vector3D v2 = new Vector3D(wcoord[0], wcoord[1], wcoord[2]);
+		GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
-		Vector3D v3 = v2.subtract(v1);
-		v3.normalize();
-		float distance = (float) (camera.getPosition().getZ() / Vector3D.dotProduct(new Vector3D(0.0, 0.0, -1.0), v3));
-		Vector3D worldCoordinates = camera.getPosition().add(v3.scalarMultiply(distance));
+		GamaPoint v3 = v2.minus(v1).normalized();
+		float distance =
+			(float) (camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
+		GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
 
 		final Point2D.Double realWorldPoint = new Point2D.Double(worldCoordinates.x, worldCoordinates.y);
 		return realWorldPoint;

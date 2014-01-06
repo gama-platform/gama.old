@@ -8,7 +8,7 @@ import java.awt.Point;
 import java.awt.event.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
+import msi.gama.metamodel.shape.GamaPoint;
 
 /**
  * Class ICamera.
@@ -29,7 +29,7 @@ public interface ICamera extends KeyListener, MouseListener, MouseMotionListener
 
 	public abstract void upPosition(final double xPos, final double yPos, final double zPos);
 
-	public abstract Vector3D getPosition();
+	public abstract GamaPoint getPosition();
 
 	// Update
 

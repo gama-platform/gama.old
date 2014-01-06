@@ -54,6 +54,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	// GLRenderer.
 	// TODO remove references to renderer
+
 	private final JOGLAWTGLRenderer renderer;
 	// private final ModelScene renderer.getScene();
 	// All the geometry of the same layer are drawn in the same z plan.
@@ -99,27 +100,19 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( shape == null ) { return null; }
 		Double depth = 0d;
 		IList<String> textures = new GamaList<String>();
-		String type = "none";
+		IShape.Type type = shape.getGeometricalType();
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
-			type = "JTS";
+			// type = "JTS";
 		}
 		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
 			textures = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
 		}
-		if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
-			type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
-		}
-		final Color color = highlight ? highlightColor : c;
-		// Geometry geom = shape.getInnerGeometry();
-		// if ( angle != null ) {
-		// AffineTransformation af =
-		// AffineTransformation.rotationInstance(Math.toRadians(angle), shape.getLocation().getX(), shape
-		// .getLocation().getY());
-		// geom = af.transform(geom);
+		// if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
+		// type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
 		// }
-		// IShape rotatedShape = angle == null ? shape : Spatial.Transformations.rotated_by(scope, shape, angle);
+		final Color color = highlight ? highlightColor : c;
 		if ( topo != null && topo.isTorus() ) {
 			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());
 			Geometry world = scope.getSimulationScope().getInnerGeometry();
@@ -138,11 +131,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	}
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded, final Double depth, final String type,
+		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
 		final IList<String> textures) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
-			currentScale, rounded, type, getCurrentAlpha()/* , scope.getAgentScope().getPopulation().getName() */);
+			currentScale, rounded, type, getCurrentAlpha());
 
 	}
 
@@ -237,9 +230,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				final Geometry g =
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
-				renderer.getScene()
-					.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor, false, null, 0,
-						0, currentOffset, currentScale, false, "gridLine", getCurrentAlpha()/* , popName */);
+				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
+					false, null, 0, 0, currentOffset, currentScale, false, IShape.Type.GRIDLINE, getCurrentAlpha());
 			}
 		}
 	}

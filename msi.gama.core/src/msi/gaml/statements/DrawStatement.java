@@ -274,10 +274,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				.getLocation() : constLoc;
 		}
 
-		public Object getTexture(final IScope scope) throws GamaRuntimeException {
+		public GamaList getTextures(final IScope scope) throws GamaRuntimeException {
+			if ( textures == null ) { return null; }
 			Object o = textures.value(scope);
-			if ( o instanceof GamaList ) { return Cast.asList(scope, o); }
-			return Cast.asString(scope, o);
+			if ( o instanceof GamaList ) { return (GamaList) o; }
+			return GamaList.with(o);
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
@@ -297,29 +298,15 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) { return null; }
-			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope));
-			// GamaShape gs = g1.asShapeWithGeometry(scope, null);
-			// IShape g2 = gs.getRotatedAndTranslatedCopy(scope, getRotation(scope), getLocation(scope, g1));
-			// Integer angle = getRotation(scope);
-			// if ( angle != null ) {
-			// g2 = Spatial.Transformations.rotated_by(scope, g2, angle);
-			// }
-			// g2 = Spatial.Transformations.at_location(scope, g2, getLocation(scope, g1));
+			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
+			GamaList textures = getTextures(scope);
 			if ( textures != null ) {
-				GamaList x = new GamaList();
-				Object obj = getTexture(scope);
-				if ( obj instanceof GamaList ) {
-					x = (GamaList) obj;
-				} else {
-					x.add(obj);
-				}
-				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, x);
+				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
 			}
 			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRounded(scope));
 

@@ -15,5 +15,4 @@ Import-Package: com.vividsolutions.jts.geom,
  org.jfree.chart
 Export-Package: 
  msi.gama.jogl,
- msi.gama.jogl.utils,
- msi.gama.jogl.utils.Camera.Arcball
+ msi.gama.jogl.utils

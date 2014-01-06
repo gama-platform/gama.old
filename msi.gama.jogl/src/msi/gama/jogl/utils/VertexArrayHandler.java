@@ -9,14 +9,35 @@ import javax.media.opengl.glu.GLU;
 import javax.xml.parsers.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.collada.COLLADA;
-import msi.gama.jogl.scene.*;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.jogl.scene.GeometryObject;
+import msi.gama.metamodel.shape.*;
+import msi.gama.util.IList;
 import org.xml.sax.SAXException;
 import com.sun.opengl.util.BufferUtil;
 import com.vividsolutions.jts.geom.*;
 
 public class VertexArrayHandler {
+
+	private class MyTriangulatedGeometry {
+
+		public IList<IShape> triangles;
+		public double z;
+		public Color color;
+		public double alpha;
+		// public String type;
+		// public Boolean fill;
+		// public Boolean isTextured = false;
+		// public double elevation = 0;
+	}
+
+	private class MyLine {
+
+		public LineString line;
+		public double z;
+		public Color color;
+		public double alpha;
+
+	}
 
 	// OpenGL member
 	private final GL myGl;
@@ -71,7 +92,7 @@ public class VertexArrayHandler {
 	private FloatBuffer colorBufferPolyContours;
 
 	/* draw Point */
-	private final ArrayList<Vector3D> pointTriangles = new ArrayList<Vector3D>();
+	private final ArrayList<GamaPoint> pointTriangles = new ArrayList<GamaPoint>();
 	private final ArrayList<Color> pointColor = new ArrayList<Color>();
 	private FloatBuffer pointVertexBuffer;
 	private FloatBuffer pointColorBuffer;
@@ -91,8 +112,8 @@ public class VertexArrayHandler {
 	/* draw plan */
 	private int nbVerticesPlan;
 	private int nbVerticesBorder;
-	private ArrayList<Vector3D> planTriangles = new ArrayList<Vector3D>();
-	private ArrayList<Vector3D> planContours = new ArrayList<Vector3D>();
+	private final ArrayList<GamaPoint> planTriangles = new ArrayList<GamaPoint>();
+	private final ArrayList<GamaPoint> planContours = new ArrayList<GamaPoint>();
 	private FloatBuffer planVertexBuffer;
 	private FloatBuffer planColorBuffer;
 	private FloatBuffer planBorderBuffer;
@@ -144,7 +165,9 @@ public class VertexArrayHandler {
 
 	private IntBuffer planBorderIndicesBuffer;
 
-	private int planIndices, planBorderIndices = 0;
+	private int planIndices;
+
+	private final int planBorderIndices = 0;
 
 	private int planIndicesBufferID;
 
@@ -207,7 +230,7 @@ public class VertexArrayHandler {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.border,
+						curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill, curGeometry.border,
 						/* curGeometry.angle, */curGeometry.height, curGeometry.rounded);
 				}
 
@@ -218,15 +241,16 @@ public class VertexArrayHandler {
 							createIcosphere = true;
 						}
 						buildSphereVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.height,
-							curGeometry.getColor(), curGeometry.alpha);
+							curGeometry.getColor(), curGeometry.getAlpha());
 					} else {
 						if ( curGeometry.height > 0 ) {
 							buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
-								curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.height,
+								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill, curGeometry.height,
 								/* curGeometry.angle, */true, curGeometry.border, curGeometry.rounded);
 						} else {
 							buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
-								curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.isTextured,
+								curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.fill,
+								curGeometry.isTextured,
 								/* curGeometry.angle, */true);
 							buildVertexArrayContours(curGeometry.z_layer);
 						}
@@ -235,16 +259,16 @@ public class VertexArrayHandler {
 
 				else if ( curGeometry.geometry.getGeometryType() == "MultiLineString" ) {
 					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.getColor(), curGeometry.alpha);
+						curGeometry.getColor(), curGeometry.getAlpha());
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "LineString" ) {
 					if ( curGeometry.height > 0 ) {
 						buildPlanVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
-							curGeometry.getColor(), curGeometry.alpha, curGeometry.height, 0, true);
+							curGeometry.getColor(), curGeometry.getAlpha(), curGeometry.height, 0, true);
 					} else {
 						buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
-							curGeometry.getColor(), curGeometry.alpha);
+							curGeometry.getColor(), curGeometry.getAlpha());
 					}
 				} else if ( curGeometry.geometry.getGeometryType() == "Point" ) {
 					// FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
@@ -254,10 +278,10 @@ public class VertexArrayHandler {
 							createIcosphere = true;
 						}
 						buildSphereVertexArray((Polygon) curGeometry.geometry.getEnvelope().buffer(1),
-							curGeometry.z_layer, curGeometry.height, curGeometry.getColor(), curGeometry.alpha);
+							curGeometry.z_layer, curGeometry.height, curGeometry.getColor(), curGeometry.getAlpha());
 					} else {
 						buildPointVertexArray((Point) curGeometry.geometry, curGeometry.z_layer, 10,
-							myGLRender.getMaxEnvDim() / 1000, curGeometry.getColor(), curGeometry.alpha);
+							myGLRender.getMaxEnvDim() / 1000, curGeometry.getColor(), curGeometry.getAlpha());
 					}
 				}
 
@@ -714,33 +738,33 @@ public class VertexArrayHandler {
 		for ( int k = 0; k < numPoints; k++ ) {
 			angle = k * 2 * Math.PI / numPoints;
 
-			pointTriangles.add(new Vector3D(point.getCoordinate().x + Math.cos(angle) * radius, -1 *
+			pointTriangles.add(new GamaPoint(point.getCoordinate().x + Math.cos(angle) * radius, -1 *
 				point.getCoordinate().y + Math.sin(angle) * radius, z));
 
 			pointColor.add(color);
 		}
 	}
 
-	private void fillPointBuffers() {
-		pointVertexBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
-		pointColorBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
-		pointIndicesBuffer = BufferUtil.newIntBuffer(pointTriangles.size());
-
-		for ( int i = 0; i < pointTriangles.size(); i++ ) {
-			pointVertexBuffer.put((float) pointTriangles.get(i).x);
-			pointVertexBuffer.put((float) pointTriangles.get(i).y);
-			pointVertexBuffer.put((float) pointTriangles.get(i).z);
-
-			pointColorBuffer.put(pointColor.get(i).getRed() / 255);
-			pointColorBuffer.put(pointColor.get(i).getGreen() / 255);
-			pointColorBuffer.put(pointColor.get(i).getBlue() / 255);
-
-			pointIndicesBuffer.put(i);
-		}
-		pointVertexBuffer.rewind();
-		pointColorBuffer.rewind();
-		pointIndicesBuffer.rewind();
-	}
+	// private void fillPointBuffers() {
+	// pointVertexBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
+	// pointColorBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
+	// pointIndicesBuffer = BufferUtil.newIntBuffer(pointTriangles.size());
+	//
+	// for ( int i = 0; i < pointTriangles.size(); i++ ) {
+	// pointVertexBuffer.put((float) pointTriangles.get(i).x);
+	// pointVertexBuffer.put((float) pointTriangles.get(i).y);
+	// pointVertexBuffer.put((float) pointTriangles.get(i).z);
+	//
+	// pointColorBuffer.put(pointColor.get(i).getRed() / 255);
+	// pointColorBuffer.put(pointColor.get(i).getGreen() / 255);
+	// pointColorBuffer.put(pointColor.get(i).getBlue() / 255);
+	//
+	// pointIndicesBuffer.put(i);
+	// }
+	// pointVertexBuffer.rewind();
+	// pointColorBuffer.rewind();
+	// pointIndicesBuffer.rewind();
+	// }
 
 	/**
 	 * 
@@ -769,7 +793,7 @@ public class VertexArrayHandler {
 			curTriangulatedGeometry.z = z_layer + z;
 			curTriangulatedGeometry.color = c;
 			curTriangulatedGeometry.alpha = alpha;
-			curTriangulatedGeometry.fill = fill;
+			// curTriangulatedGeometry.fill = fill;
 			// curTriangulatedGeometry.angle = angle;
 			triangulatedGeometries.add(curTriangulatedGeometry);
 			nbVerticesTriangle = nbVerticesTriangle + curTriangulatedGeometry.triangles.size() * 3;
@@ -1203,84 +1227,84 @@ public class VertexArrayHandler {
 		}
 
 		for ( int j = 0; j < numPoints - 1; j++ ) {
-			planTriangles.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
-			planTriangles.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
-			planTriangles.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
+			planTriangles.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
+			planTriangles.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
+			planTriangles.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
 
-			planTriangles.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
-			planTriangles.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
-			planTriangles.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
+			planTriangles.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
+			planTriangles.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
+			planTriangles.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
 		}
 
 		if ( drawPolygonContour == true ) {
 			planBorderColor = new Color(0.0f, 0.0f, 0.0f);
 			for ( int j = 0; j < numPoints - 1; j++ ) {
-				planContours.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
-				planContours.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
+				planContours.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
+				planContours.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
 
-				planContours.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
-				planContours.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
+				planContours.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));
+				planContours.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
 
-				planContours.add(new Vector3D(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
-				planContours.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
+				planContours.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z + height));
+				planContours.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
 
-				planContours.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
-				planContours.add(new Vector3D(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
+				planContours.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z + height));
+				planContours.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
 			}
 		}
 		nbVerticesPlan = nbVerticesPlan + (numPoints - 1) * 6;
 		nbVerticesBorder = nbVerticesBorder + (numPoints - 1) * 8;
 	}
 
-	private void fillPlanBuffers() {
-		this.planColorBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 4);
-		this.planVertexBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 3);
-		this.planBorderBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder * 3);
-		this.planBorderColorBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder * 3);
-		this.planIndicesBuffer = BufferUtil.newIntBuffer(nbVerticesPlan);
-		this.planBorderIndicesBuffer = BufferUtil.newIntBuffer(nbVerticesBorder);
-
-		for ( int i = 0; i < planTriangles.size(); i++ ) {
-			planVertexBuffer.put((float) planTriangles.get(i).getX());
-			planVertexBuffer.put((float) planTriangles.get(i).getY());
-			planVertexBuffer.put((float) planTriangles.get(i).getZ());
-
-			planColorBuffer.put(planColor.getRed());
-			planColorBuffer.put(planColor.getGreen());
-			planColorBuffer.put(planColor.getBlue());
-			planColorBuffer.put(planAlpha);
-
-			planIndicesBuffer.put(planIndices);
-			planIndices++;
-		}
-
-		for ( int i = 0; i < planContours.size(); i++ ) {
-			planBorderBuffer.put((float) planContours.get(i).getX());
-			planBorderBuffer.put((float) planContours.get(i).getY());
-			planBorderBuffer.put((float) planContours.get(i).getZ());
-
-			planBorderColorBuffer.put(planBorderColor.getRed());
-			planBorderColorBuffer.put(planBorderColor.getGreen());
-			planBorderColorBuffer.put(planBorderColor.getBlue());
-
-			planBorderIndicesBuffer.put(planBorderIndices);
-			planBorderIndices++;
-		}
-
-		this.planBorderBuffer.rewind();
-		this.planBorderColorBuffer.rewind();
-		this.planColorBuffer.rewind();
-		this.planVertexBuffer.rewind();
-		this.planBorderIndicesBuffer.rewind();
-		this.planIndicesBuffer.rewind();
-
-		planTriangles.clear(); // desalocate memory used by ArrayList
-		planContours.clear();
-
-		planTriangles = new ArrayList<Vector3D>(); // desalocate memory used by ArrayList
-		planContours = new ArrayList<Vector3D>();
-
-	}
+	// private void fillPlanBuffers() {
+	// this.planColorBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 4);
+	// this.planVertexBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 3);
+	// this.planBorderBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder * 3);
+	// this.planBorderColorBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder * 3);
+	// this.planIndicesBuffer = BufferUtil.newIntBuffer(nbVerticesPlan);
+	// this.planBorderIndicesBuffer = BufferUtil.newIntBuffer(nbVerticesBorder);
+	//
+	// for ( int i = 0; i < planTriangles.size(); i++ ) {
+	// planVertexBuffer.put((float) planTriangles.get(i).getX());
+	// planVertexBuffer.put((float) planTriangles.get(i).getY());
+	// planVertexBuffer.put((float) planTriangles.get(i).getZ());
+	//
+	// planColorBuffer.put(planColor.getRed());
+	// planColorBuffer.put(planColor.getGreen());
+	// planColorBuffer.put(planColor.getBlue());
+	// planColorBuffer.put(planAlpha);
+	//
+	// planIndicesBuffer.put(planIndices);
+	// planIndices++;
+	// }
+	//
+	// for ( int i = 0; i < planContours.size(); i++ ) {
+	// planBorderBuffer.put((float) planContours.get(i).getX());
+	// planBorderBuffer.put((float) planContours.get(i).getY());
+	// planBorderBuffer.put((float) planContours.get(i).getZ());
+	//
+	// planBorderColorBuffer.put(planBorderColor.getRed());
+	// planBorderColorBuffer.put(planBorderColor.getGreen());
+	// planBorderColorBuffer.put(planBorderColor.getBlue());
+	//
+	// planBorderIndicesBuffer.put(planBorderIndices);
+	// planBorderIndices++;
+	// }
+	//
+	// this.planBorderBuffer.rewind();
+	// this.planBorderColorBuffer.rewind();
+	// this.planColorBuffer.rewind();
+	// this.planVertexBuffer.rewind();
+	// this.planBorderIndicesBuffer.rewind();
+	// this.planIndicesBuffer.rewind();
+	//
+	// planTriangles.clear(); // desalocate memory used by ArrayList
+	// planContours.clear();
+	//
+	// planTriangles = new ArrayList<GamaPoint>(); // desalocate memory used by ArrayList
+	// planContours = new ArrayList<GamaPoint>();
+	//
+	// }
 
 	/**
 	 * Functions that build a LineString or a MultiLineString geometry and fill it into a vertex buffer

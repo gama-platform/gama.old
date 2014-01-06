@@ -629,6 +629,18 @@ public class GamaShape implements IShape /* , IContainer */{
 		return attributes != null && attributes.containsKey(key);
 	}
 
+	/**
+	 * Method getGeometricalType()
+	 * @see msi.gama.metamodel.shape.IShape#getGeometricalType()
+	 */
+	@Override
+	public Type getGeometricalType() {
+		if ( hasAttribute(TYPE_ATTRIBUTE) ) { return (Type) getAttribute(TYPE_ATTRIBUTE); }
+		String type = getInnerGeometry().getGeometryType();
+		if ( JTS_TYPES.containsKey(type) ) { return JTS_TYPES.get(type); }
+		return Type.NULL;
+	}
+
 	// /**
 	// * Method asShapeWithGeometry()
 	// * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(com.vividsolutions.jts.geom.Geometry)

@@ -4,14 +4,13 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 
 public class FreeFlyCamera extends AbstractCamera {
 
-	private static final Vector3D up = new Vector3D(0.0f, 0.0f, 1.0f);
-	private final Vector3D left = new Vector3D();
+	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
+	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = 0.04;
 
 	public FreeFlyCamera(final JOGLAWTGLRenderer renderer) {
@@ -34,9 +33,9 @@ public class FreeFlyCamera extends AbstractCamera {
 		double factorP = phi * factor;
 		double factorT = theta * factor;
 		double r_temp = Math.cos(factorP);
-		forward.set(r_temp * Math.cos(factorT), r_temp * Math.sin(factorT), Math.sin(factorP));
-		left.set(Vector3D.crossProduct(up, forward).normalize());
-		target.set(forward.add(position));
+		forward.setLocation(r_temp * Math.cos(factorT), r_temp * Math.sin(factorT), Math.sin(factorP));
+		left.setLocation(GamaPoint.crossProduct(up, forward).normalized());
+		target.setLocation(forward.plus(position));
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.phi = phi - -get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				position.set(position.add(forward.scalarMultiply(speed * 200))); // go forward
+				position.setLocation(position.plus(forward.times(speed * 200))); // go forward
 			}
 		}
 		if ( isBackward() ) {
@@ -54,7 +53,7 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.phi = phi - get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				position.set(position.subtract(forward.scalarMultiply(speed * 200))); // go backward
+				position.setLocation(position.minus(forward.times(speed * 200))); // go backward
 			}
 		}
 		if ( isStrafeLeft() ) {
@@ -62,7 +61,7 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.theta = theta - -get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				position.set(position.add(left.scalarMultiply(speed * 200))); // move on the right
+				position.setLocation(position.plus(left.times(speed * 200))); // move on the right
 			}
 		}
 		if ( isStrafeRight() ) {
@@ -70,11 +69,11 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.theta = theta - get_keyboardSensivity() * get_sensivity();
 				update();
 			} else {
-				position.set(position.subtract(left.scalarMultiply(speed * 200))); // move on the left
+				position.setLocation(position.minus(left.times(speed * 200))); // move on the left
 			}
 		}
 
-		target.set(position.add(forward));
+		target.setLocation(position.plus(forward));
 	}
 
 	@Override
@@ -84,15 +83,15 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	public void followAgent(final IAgent a, final GLU glu) {
 		ILocation l = a.getLocation();
-		position.set(l.getX(), l.getY(), l.getZ());
+		position.setLocation(l.getX(), l.getY(), l.getZ());
 		glu.gluLookAt(0, 0, (float) (maxDim * 1.5), 0, 0, 0, 0.0f, 0.0f, 1.0f);
 	}
 
 	@Override
 	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
 		super.resetCamera(envWidth, envHeight, threeD);
-		position.set(envWidth / 2, -envHeight * 1.75, getMaxDim());
-		target.set(envWidth / 2, -envHeight * 0.5, 0);
+		position.setLocation(envWidth / 2, -envHeight * 1.75, getMaxDim());
+		target.setLocation(envWidth / 2, -envHeight * 0.5, 0);
 		this.phi = -45;
 		this.theta = 90;
 		update();
@@ -106,9 +105,9 @@ public class FreeFlyCamera extends AbstractCamera {
 	@Override
 	public void zoom(final boolean in) {
 		float step = Math.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
-		Vector3D vector = forward.scalarMultiply(speed * 800 + step);
-		position.set(getPosition().add(in ? vector : vector.negate()));
-		target.set(forward.add(getPosition()));
+		GamaPoint vector = forward.times(speed * 800 + step);
+		position.setLocation(getPosition().plus(in ? vector : vector.negated()));
+		target.setLocation(forward.plus(getPosition()));
 		getRenderer().displaySurface.setZoomLevel(zoomLevel());
 	}
 

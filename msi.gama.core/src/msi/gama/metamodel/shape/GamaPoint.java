@@ -159,11 +159,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return "{" + x + "," + y + "," + z + "}";
 	}
 
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.POINT);
-	// }
-
 	@Override
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
@@ -323,13 +318,46 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	/**
-	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(com.vividsolutions.jts.geom.Geometry)
+	 * Method getGeometricalType()
+	 * @see msi.gama.metamodel.shape.IShape#getGeometricalType()
 	 */
-	// @Override
-	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
-	// if ( g == null ) { return getGeometry(); }
-	// return new GamaShape(g);
-	// }
+	@Override
+	public Type getGeometricalType() {
+		return Type.POINT;
+	}
+
+	public GamaPoint times(final double d) {
+		return new GamaPoint(x * d, y * d, z * d);
+	}
+
+	public GamaPoint minus(final GamaPoint other) {
+		return new GamaPoint(x - other.x, y - other.y, z - other.z);
+	}
+
+	public GamaPoint plus(final GamaPoint other) {
+		return new GamaPoint(x + other.x, y + other.y, z + other.z);
+	}
+
+	public double norm() {
+		return Math.hypot(Math.hypot(x, y), z);
+	}
+
+	public GamaPoint normalized() {
+		double r = this.norm();
+		if ( r == 0d ) { return new GamaPoint(0, 0, 0); }
+		return new GamaPoint(this.x / r, this.y / r, this.z / r);
+	}
+
+	public GamaPoint negated() {
+		return new GamaPoint(-x, -y, -z);
+	}
+
+	public final static GamaPoint crossProduct(final GamaPoint v1, final GamaPoint v2) {
+		return new GamaPoint(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
+	}
+
+	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
+		return v1.x * v2.x + v1.y * v2.y + v1.y * v2.y;
+	}
 
 }

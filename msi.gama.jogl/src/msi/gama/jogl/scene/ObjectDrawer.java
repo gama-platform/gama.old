@@ -26,8 +26,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	// Better to subclass _draw than this one
 	void draw(final T object) {
 		renderer.gl.glPushMatrix();
-		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
-		renderer.gl.glScaled(object.scale.getX(), object.scale.getY(), object.scale.getZ());
+		renderer.gl.glTranslated(object.getOffset().x, -object.getOffset().y, object.getOffset().z);
+		renderer.gl.glScaled(object.getScale().getX(), object.getScale().getY(), object.getScale().getZ());
 		if ( renderer.getZFighting() ) {
 			SetPolygonOffset(object);
 		}
@@ -70,80 +70,61 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 		@Override
 		protected void _draw(final GeometryObject geometry) {
-
-			// Rotate angle (in XY plan)
-			// if ( geometry.angle != 0 ) {
-			// renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-			// geometry.geometry.getCentroid().getY(), 0.0d);
-			// renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
-			// renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-			// geometry.geometry.getCentroid().getY(), 0.0d);
-			// }
-
-			if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
-				jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-					geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames,/* geometry.angle, */
-					geometry.height, geometry.rounded, geometry.getZ_fighting_id());
-			} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
-
-				// 3D sepcial geomtry (sphere, cone
-				if ( geometry.type != null && geometry.type.equals("sphere") ) {
-					jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-						geometry.alpha);
-				} else if ( geometry.type != null && geometry.type.equals("cone") ) {
-					jtsDrawer.DrawCone((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-						geometry.alpha);
-				} else if ( geometry.type != null && geometry.type.equals("teapot") ) {
-					jtsDrawer.DrawTeapot((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-						geometry.alpha);
-				} else if ( geometry.type != null && geometry.type.equals("pyramid") ) {
-					jtsDrawer.DrawPyramid((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-						geometry.border, geometry.alpha);
-				} else {
+			switch (geometry.type) {
+				case MULTIPOLYGON:
+					jtsDrawer.drawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+						geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames,
+						geometry.height, geometry.rounded, geometry.getZ_fighting_id());
+					break;
+				case SPHERE:
+					jtsDrawer.drawSphere(geometry);
+					break;
+				case CONE:
+					jtsDrawer.drawCone(geometry);
+					break;
+				case TEAPOT:
+					jtsDrawer.drawTeapot(geometry);
+					break;
+				case PYRAMID:
+					jtsDrawer.drawPyramid(geometry);
+					break;
+				case POLYGON:
+				case ENVIRONMENT:
+				case POLYHEDRON:
+				case CUBE:
+				case BOX:
+				case CIRCLE:
+				case GRIDLINE:
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-							geometry.fill, geometry.height, /* geometry.angle, */true, geometry.border,
-							geometry.isTextured, geometry.textureFileNames, geometry.rounded,
-							geometry.getZ_fighting_id());
+						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							geometry.fill, geometry.height, true, geometry.border, geometry.isTextured,
+							geometry.textureFileNames, geometry.rounded, geometry.getZ_fighting_id());
 					} else {
-						jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
-							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames,
-							/* geometry.angle, */true, geometry.rounded, geometry.getZ_fighting_id());
+						jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, true,
+							geometry.rounded, geometry.getZ_fighting_id());
 					}
-				}
-			} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
-
-				jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, 0, geometry.getColor(),
-					geometry.alpha, geometry.height);
-			} else if ( geometry.geometry.getGeometryType() == "LineString" ) {
-
-				if ( geometry.height > 0 ) {
-					jtsDrawer.DrawPlan((LineString) geometry.geometry, 0, geometry.getColor(), geometry.alpha,
-						geometry.height, 0, true);
-				} else {
-					jtsDrawer.DrawLineString((LineString) geometry.geometry, 0, 1.2f, geometry.getColor(),
-						geometry.alpha);
-				}
-			} else if ( geometry.geometry.getGeometryType() == "Point" ) {
-				// FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
-				if ( geometry.height > 0 ) {
-					jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.height,
-						geometry.getColor(), geometry.alpha);
-				} else {
+					break;
+				case MULTILINESTRING:
+					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, 0, geometry.getColor(),
+						geometry.getAlpha(), geometry.height);
+					break;
+				case LINESTRING:
+				case LINEARRING:
+				case PLAN:
+					if ( geometry.height > 0 ) {
+						jtsDrawer.drawPlan((LineString) geometry.geometry, 0, geometry.getColor(), geometry.getAlpha(),
+							geometry.height, 0, true);
+					} else {
+						jtsDrawer.drawLineString((LineString) geometry.geometry, 0, 1.2f, geometry.getColor(),
+							geometry.getAlpha());
+					}
+					break;
+				case POINT:
 					jtsDrawer.DrawPoint((Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000,
-						geometry.getColor(), geometry.alpha);
-				}
+						geometry.getColor(), geometry.getAlpha());
+					break;
 			}
-
-			// Rotate angle (in XY plan)
-			// if ( geometry.angle != 0 ) {
-			// renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-			// geometry.geometry.getCentroid().getY(), 0.0d);
-			// renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
-			// renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-			// geometry.geometry.getCentroid().getY(), 0.0d);
-			//
-			// }
 		}
 	}
 
@@ -173,7 +154,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			Texture t = curTexture.texture;
 			t.enable();
 			t.bind();
-			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
+			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
 			TextureCoords textureCoords;
 			textureCoords = t.getImageTexCoords();
 			textureTop = textureCoords.top();
@@ -260,7 +241,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				Texture t = curTexture.texture;
 				t.enable();
 				t.bind();
-				renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.alpha);
+				renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.getAlpha());
 				// Draw Grid with square
 				// if texture draw with color coming from the texture and z according to gridvalue
 				// else draw the grid with color according the gridValue in gray value
@@ -582,8 +563,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				TextRenderer r = get(s.font, s.size, s.style);
 				r.setColor(s.getColor());
 				r.begin3DRendering();
-				float x = (float) ((float) s.x * s.scale.x + s.offset.x);
-				float y = (float) ((float) s.y * s.scale.y - s.offset.y);
+				float x = (float) ((float) s.x * s.getScale().x + s.getOffset().x);
+				float y = (float) ((float) s.y * s.getScale().y - s.getOffset().y);
 				renderer.gl.glPushMatrix();
 				// renderer.gl.glScaled(s.scale.x, s.scale.y, 1);
 				r.draw3D(s.string, x, y, (float) (s.z + s.z_layer),

@@ -548,6 +548,11 @@ public abstract class MinimalAgent implements IAgent {
 		return null;
 	}
 
+	@Override
+	public Type getGeometricalType() {
+		return getGeometry().getGeometricalType();
+	}
+
 	/**
 	 * Method asShapeWithGeometry()
 	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope,
