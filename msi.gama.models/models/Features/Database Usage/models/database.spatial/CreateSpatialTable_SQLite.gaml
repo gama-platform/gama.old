@@ -10,7 +10,7 @@
 model SQLite_selectNUpdate
   
 global {
-	map PARAMS <- ['dbtype'::'sqlite','database'::'../includes/spatialite.db','extension'::'../includes/lib/libspatialite.3.dylib'];
+	map PARAMS <- ['dbtype'::'sqlite','database'::'../includes/spatialite.db'];
 
 	init {
 		create dummy ;

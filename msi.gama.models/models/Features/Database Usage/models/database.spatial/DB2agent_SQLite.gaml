@@ -9,21 +9,21 @@ model DB2agentSQLite
 global {
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
-	geometry shape <- envelope(boundsShp);
-	//geometry shape <- envelope(BOUNDS);		  	
+	//geometry shape <- envelope(boundsShp);
+
 	
 	map<string,string> BOUNDS <- ["dbtype"::"sqlite",
-								  "database"::"../../includes/spatialite.db",
+								  'database'::'../../includes/spatialite.db',
 								 'srid'::'4326',
-								  "select"::"SELECT AsBinary(geom) as geom FROM buildings;"				
+								  "select"::"SELECT AsBinary(geom) as geom FROM bounds;"				
 				  				 ];
 	map<string,string> PARAMS <- ["dbtype"::"sqlite",
-								  "database"::"../../includes/spatialite.db",
-								  'longitudeFirst'::false,
-								  'srid'::'4326'
+								  'srid'::'4326',
+								  'database'::'../../includes/spatialite.db'
 								  ];
 	
 	string QUERY <- "SELECT name, type, ST_AsBinary(geom) as geom FROM buildings ;";
+	geometry shape <- envelope(BOUNDS);		  	
 	  	
 	init {
 		create DB_accessor {
@@ -44,7 +44,6 @@ entities {
 	}	
 }
 
-//environment bounds: BOUNDS ;
 experiment DB2agentSQLite type: gui {
 	output {
 		display fullView {

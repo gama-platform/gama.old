@@ -18,11 +18,12 @@ model Sqlite_QGis
  
   
 global { 
-	map BOUNDS <- ["dbtype"::"sqlite","database"::"../includes/bph.db"
-								,"select"::	"select geometry  from vnm_adm2 where (id_1=3291 or id_1=3289);" //Bac trung bo and DBSCL
-								,"srid"::"4326"							
+	map BOUNDS <- ['srid'::'4326',
+				  "dbtype"::"sqlite","database"::"../includes/bph.db"
+				  ,"select"::	"select geometry  from vnm_adm2 where (id_1=3291 or id_1=3289);" //Bac trung bo and DBSCL
+														
 							  ]; 
-	map PARAMS <- ["dbtype"::"sqlite","database"::"../includes/bph.db","extension"::"../includes/lib/libspatialite.3.dylib"];
+	map PARAMS <- ['srid'::'4326',"dbtype"::"sqlite","database"::"../includes/bph.db"];
 	string LOCATIONS <- "select ID_2, varname_2,  geometry  from vnm_adm2 where id_1=3291 or id_1=3289;";
 	init {
 		create dummy 

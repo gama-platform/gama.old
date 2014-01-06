@@ -7,14 +7,16 @@
 model DB2agentMSSQL
 
 global {
-	map<string,string> BOUNDS <- [	"host"::"localhost",
+	map<string,string> BOUNDS <- [	"srid"::"4326",
+									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",
 									"port"::"1433",
 									"user"::"sa",
 									"passwd"::"tmt",
 								  	"select"::"SELECT GEOM.STAsBinary() as GEOM FROM bounds;" ];
-	map<string,string> PARAMS <- [	"host"::"localhost",
+	map<string,string> PARAMS <- [	"srid"::"4326",
+									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",
 									"port"::"1433",
@@ -26,7 +28,7 @@ global {
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ "name"::"name","type"::"type", "shape":: geometry("geom")];
+							 with:[ "name"::"name","type"::"type", "shape":: "geom"];
 		 }
 	}
 }

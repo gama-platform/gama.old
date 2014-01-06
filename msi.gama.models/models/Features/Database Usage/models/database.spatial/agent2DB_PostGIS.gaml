@@ -17,7 +17,9 @@ global {
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	 
-	map<string,string> PARAMS <-  ['host'::'localhost','dbtype'::'Postgres','database'::'spatial_db','port'::'5433','user'::'postgres','passwd'::'tmt'];
+	map<string,string> PARAMS <-  ['srid'::'4326',
+								   'host'::'localhost','dbtype'::'Postgres','database'::'spatial_DB',
+								   'port'::'5433','user'::'postgres','passwd'::'tmt'];
 
 	init {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
@@ -39,13 +41,12 @@ entities {
 			 write " name : " + (name) ;
 		}
 		
-		reflex savetosql{  // save data into MySQL
+		reflex savetosql{  // save data into Postgres
 			write "begin"+ name;
 			ask DB_Accessor {
 				do insert params: PARAMS into: "bounds"
 						  columns: ["geom"]
-						  values: [myself.shape]
-						  transform: true;   //Default is false. Transform Geometry GAMA type to  Geometry DB type
+						  values: [myself.shape];
 			}
 		    write "finish "+ name;
 		}		
@@ -57,13 +58,12 @@ entities {
 			write " name : " + (name) + "; type: " + (type) + "shape:" + shape;
 		}
 		
-		reflex savetosql{  // save data into SQLite
+		reflex savetosql{  // save data into Postgres
 			write "begin"+ name;
 			ask DB_Accessor {
 				do insert params: PARAMS into: "buildings"
 						  columns: ["name", "type","geom"]
-						  values: [myself.name,myself.type,myself.shape]
-						  transform: true;   //Default is false. Transform Geometry GAMA type to  Geometry DB type
+						  values: [myself.name,myself.type,myself.shape];
 			}
 		    write "finish "+ name;
 		}	

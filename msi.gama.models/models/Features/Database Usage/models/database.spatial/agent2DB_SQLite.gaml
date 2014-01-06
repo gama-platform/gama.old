@@ -7,18 +7,20 @@
  * 					transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
  */
 
-model agent2DB_SQLite 
+model agent2DB_SQLite  
   
-global { 
+global {  
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	
 	map<string,string> PARAMS <- [
-				'dbtype'::'sqlite',
-				'database'::'../../includes/spatialite.db',
-				'srid'::'4326'
+				'dbtype'::'sqlite', 
+				'srid'::'4326',
+				'database'::'../../includes/spatialite.db'
+			
 				];
+
 
 	init {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
@@ -40,14 +42,13 @@ entities {
 		reflex printdata{
 			 write ' name : ' + (name) ;
 		}
-		
+		 
 		reflex savetosql{  // save data into SQLite
 			write "begin bound";
 			ask DB_Accessor {
 				do insert params: PARAMS into: "bounds"
 						  columns: ["geom"]
-						  values: [myself.shape]
-						  transform: true;   //Default is false. Transform Geometry GAMA type to  Geometry DB type
+						  values: [myself.shape];
 			}
 		    write "finish bound";
 		}		
@@ -64,8 +65,7 @@ entities {
 			ask DB_Accessor {
 				do insert params: PARAMS into: "buildings"
 						  columns: ["name", "type","geom"]
-						  values: [myself.name,myself.type,myself.shape]
-						  transform: true;   //Default is false. Transform Geometry GAMA type to  Geometry DB type
+						  values: [myself.name,myself.type,myself.shape];
 			}
 		    write "finish "+ name;
 		}	

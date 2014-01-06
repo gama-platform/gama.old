@@ -7,16 +7,18 @@
 model DB2agentMySQL 
 
 global {
-	map<string,string> BOUNDS <- [	'host'::'localhost',
+	map<string,string> BOUNDS <- [	'srid'::'4326',
+	 								'host'::'localhost',
 									'dbtype'::'postgres',
-									'database'::'spatial_db',
+									'database'::'spatial_DB',
 									'port'::'5433',
 									'user'::'postgres',
 									'passwd'::'tmt',
-								  	'select'::'SELECT ST_AsBinary(geom) as geom FROM bounds;' ];
-	map<string,string> PARAMS <- [	'host'::'localhost',
+								  	'select'::'SELECT ST_AsBinary(geom) as geom FROM buildings;' ];
+	map<string,string> PARAMS <- [	'srid'::'4326',
+									'host'::'localhost',
 									'dbtype'::'postgres',
-									'database'::'spatial_db',
+									'database'::'spatial_DB',
 									'port'::'5433',
 									'user'::'postgres',
 									'passwd'::'tmt'];
@@ -27,7 +29,7 @@ global {
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
+							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
 		 }
 	}
 }
