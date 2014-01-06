@@ -29,6 +29,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
@@ -688,7 +689,9 @@ public class GeometryUtils {
 
 	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
 		Envelope result = null;
-		if ( obj instanceof Number ) {
+		if ( obj instanceof ISpecies ) {
+			return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
+		} else if ( obj instanceof Number ) {
 			final double size = ((Number) obj).doubleValue();
 			result = new Envelope3D(0, size, 0, size, 0, size);
 		} else if ( obj instanceof ILocation ) {
