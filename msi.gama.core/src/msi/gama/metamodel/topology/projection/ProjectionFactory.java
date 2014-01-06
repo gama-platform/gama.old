@@ -153,7 +153,8 @@ public class ProjectionFactory {
 		}
 		Projection gis = new Projection(world, this);
 		gis.initialCRS = crs;
-		gis.computeProjection();
+		//gis.computeProjection();
+		gis.createTransformation(gis.computeProjection());
 		return gis;
 	}
 
