@@ -162,6 +162,12 @@ public class SymbolProto {
 			if ( f.doc != null && f.doc.length() > 0 ) {
 				sb.append(" - ").append(f.doc);
 			}
+			if ( f.deprecated != null ) {
+				sb.append(" [<b>Deprecated</b>: ");
+				sb.append("<i>");
+				sb.append(f.deprecated);
+				sb.append("</i>]");
+			}
 			sb.append("</li>");
 		}
 		return sb.toString();

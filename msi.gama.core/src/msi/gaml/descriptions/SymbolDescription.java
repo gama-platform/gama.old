@@ -221,8 +221,14 @@ public class SymbolDescription implements IDescription {
 		if ( facet instanceof EObject ) { return (EObject) facet; }
 		IExpressionDescription f =
 			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets.get(facet);
-		if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
-		return element;
+		if ( f == null ) { return element; }
+		EObject target = f.getTarget();
+		if ( target == null ) { return element; }
+		if ( target.eContainer() == null ) { return target; }
+		return target.eContainer(); // Should be a Facet
+
+		// if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
+		// return element;
 
 	}
 
@@ -443,7 +449,11 @@ public class SymbolDescription implements IDescription {
 						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
 						return false;
 					}
-				} else if ( fp.values.size() > 0 ) {
+					return true;
+				} else if ( fp.deprecated != null ) {
+					warning("Facet '" + facet + "' is deprecated: " + fp.deprecated, IGamlIssue.DEPRECATED, facet);
+				}
+				if ( fp.values.size() > 0 ) {
 					final String val = expr.getExpression().literalValue();
 					// We have a multi-valued facet
 					if ( !fp.values.contains(val) ) {

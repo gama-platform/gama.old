@@ -109,8 +109,6 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 @validator(SignalValidator.class)
 public class SignalVariable extends NumberVariable {
 
-	
-
 	public static class SignalValidator implements IDescriptionValidator {
 
 		/**
@@ -159,13 +157,15 @@ public class SignalVariable extends NumberVariable {
 				f.createOperator(
 					"?",
 					s,
-					f.createOperator("<", s, v, f.createConst(0.1, Types.get(IType.FLOAT))),
+					null,
+					f.createOperator("<", s, null, v, f.createConst(0.1, Types.get(IType.FLOAT))),
 					f.createOperator(
 						":",
 						s,
+						null,
 						f.createConst(0.0, Types.get(IType.FLOAT)),
-						f.createOperator("*", s, v,
-							f.createOperator("-", s, f.createConst(1.0, Types.get(IType.FLOAT)), decay))));
+						f.createOperator("*", s, null, v,
+							f.createOperator("-", s, null, f.createConst(1.0, Types.get(IType.FLOAT)), decay))));
 			vd.getFacets().put(VALUE, value);
 			vd.setUpdatable(true);
 			s.resortVarName(vd);

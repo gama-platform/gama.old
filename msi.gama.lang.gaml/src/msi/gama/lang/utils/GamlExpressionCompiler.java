@@ -55,6 +55,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public IVarExpression each_expr;
 	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
 	private IExpression world = null;
+	private EObject currentEObject;
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is given, the global context
@@ -101,6 +102,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			// errors and not from the parser itself.
 			return null;
 		}
+		currentEObject = s;
 		IExpression expr = compiler.doSwitch(s);
 		if ( !synthetic ) {
 			DescriptionFactory.setGamlDocumentation(s, expr);
@@ -129,16 +131,16 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				IExpression myself = desc.getVarExpr(MYSELF);
 				IDescription species = myself.getType().getSpecies();
 				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
-				return factory.createOperator(_DOT, desc, myself, var);
+				return factory.createOperator(_DOT, desc, e, myself, var);
 			}
 			// Otherwise, we ignore 'my' since it refers to 'self'
 			return expr;
 		}
 		// The unary "unit" operator should let the value of its child pass through
 		if ( op.equals("°") || op.equals("#") ) { return expr; }
-		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, expr, species(op)); }
-		if ( isSkillName(op) ) { return factory.createOperator(AS, context, expr, skill(op)); }
-		return factory.createOperator(op, context, expr);
+		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, e, expr, species(op)); }
+		if ( isSkillName(op) ) { return factory.createOperator(AS, context, e, expr, skill(op)); }
+		return factory.createOperator(op, context, e, expr);
 	}
 
 	private IExpression binary(final String op, final IExpression left, final Expression e2) {
@@ -146,9 +148,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// if the operator is "as", the right-hand expression should be a casting type
 		if ( AS.equals(op) ) {
 			String type = EGaml.getKeyOf(e2);
-			if ( isSpeciesName(type) ) { return factory.createOperator(op, context, left, species(type)); }
-			if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, left, skill(type)); }
-			if ( isTypeName(type) ) { return factory.createOperator(type, context, left); }
+			if ( isSpeciesName(type) ) { return factory.createOperator(op, context, e2, left, species(type)); }
+			if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, e2, left, skill(type)); }
+			if ( isTypeName(type) ) { return factory.createOperator(type, context, e2, left); }
 			getContext().error(
 				"'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
@@ -157,9 +159,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// if the operator is "is", the right-hand expression should be a type
 		if ( IS.equals(op) ) {
 			String type = EGaml.getKeyOf(e2);
-			if ( isTypeName(type) ) { return factory.createOperator(op, context, left,
+			if ( isTypeName(type) ) { return factory.createOperator(op, context, e2.eContainer(), left,
 				factory.createConst(type, Types.get(IType.STRING))); }
-			if ( isSkillName(type) ) { return factory.createOperator(IS_SKILL, context, left,
+			if ( isSkillName(type) ) { return factory.createOperator(IS_SKILL, context, e2.eContainer(), left,
 				factory.createConst(type, Types.get(IType.STRING))); }
 			getContext().error(
 				"'is' must be followed by a type, species or skill name. " + type + " is neither of these.",
@@ -180,7 +182,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// It is not an action so it must be an operator. We emit an error and stop compiling if it
 		// is not
 		if ( !OPERATORS.containsKey(op) ) {
-			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, op);
+			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, e2.eContainer(), op);
 			return null;
 		}
 
@@ -195,7 +197,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
 		// and return the binary expression
-		return factory.createOperator(op, context, left, right);
+		return factory.createOperator(op, context, e2.eContainer(), left, right);
 
 	}
 
@@ -265,7 +267,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 					leftExpr, var, species.getName());
 			}
 			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
-			return factory.createOperator(_DOT, context, owner, expr);
+			return factory.createOperator(_DOT, context, fieldExpr, owner, expr);
 		} else if ( fieldExpr instanceof Function ) {
 			String name = EGaml.getKeyOf(fieldExpr);
 			StatementDescription action = species.getAction(name);
@@ -310,8 +312,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		if ( descriptions == null ) { return null; }
 		final GamaList list = new GamaList();
 		for ( Map.Entry<String, IExpressionDescription> d : descriptions.entrySet() ) {
-			list.add(factory.createOperator("::", context, factory.createConst(d.getKey(), Types.get(IType.STRING)),
-				compile(d.getValue(), context)));
+			list.add(factory.createOperator("::", context, d.getValue().getTarget(),
+				factory.createConst(d.getKey(), Types.get(IType.STRING)), compile(d.getValue(), context)));
 		}
 		return factory.createMap(list);
 	}
@@ -391,7 +393,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 							" is neither of these.", IGamlIssue.NOT_A_TYPE, contentTypeExpression, contentType);
 					return simpleType;
 				}
-				return factory.createOperator("containing", context, simpleType,
+				return factory.createOperator("containing", context, object, simpleType,
 					factory.createCastingExpression(context.getModelDescription().getTypeNamed(contentType)));
 			}
 			getContext().error(EGaml.toString(type) + " is not a type name. ", IGamlIssue.NOT_A_TYPE, type);
@@ -469,8 +471,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseIf(final If object) {
 			IExpression ifFalse = compile(object.getIfFalse());
-			IExpression alt = factory.createOperator(":", context, compile(object.getRight()), ifFalse);
-			return factory.createOperator("?", context, compile(object.getLeft()), alt);
+			IExpression alt = factory.createOperator(":", context, object, compile(object.getRight()), ifFalse);
+			return factory.createOperator("?", context, object, compile(object.getLeft()), alt);
 		}
 
 		@Override
@@ -500,7 +502,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			IExpression right = compile(object.getRight());
 			IExpression result = binary("*", object.getLeft(), object.getRight());
 			if ( result != null && ((BinaryOperator) result).right() instanceof PixelUnitExpression ) {
-				result = factory.createOperator("+", context, factory.createConst(1, Types.get(IType.INT)), result);
+				result =
+					factory.createOperator("+", context, object, factory.createConst(1, Types.get(IType.INT)), result);
 			}
 			return result;
 		}
@@ -550,7 +553,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			}
 
 			IExpression indices = factory.createList(result);
-			return factory.createOperator("internal_at", context, container, indices);
+			return factory.createOperator("internal_at", context, object, container, indices);
 		}
 
 		@Override
@@ -629,7 +632,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			for ( int i = 0; i < size; i++ ) {
 				compiledArgs[i] = compile(args.get(i));
 			}
-			IExpression result = factory.createOperator(op, context, compiledArgs);
+			IExpression result = factory.createOperator(op, context, object, compiledArgs);
 			return result;
 		}
 

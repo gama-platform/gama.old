@@ -25,7 +25,9 @@ public class StringListExpressionDescription extends BasicExpressionDescription 
 
 	@Override
 	public IExpressionDescription cleanCopy() {
-		return new StringListExpressionDescription(strings);
+		IExpressionDescription copy = new StringListExpressionDescription(strings);
+		copy.setTarget(target);
+		return copy;
 	}
 
 	public StringListExpressionDescription(final String ... exp) {

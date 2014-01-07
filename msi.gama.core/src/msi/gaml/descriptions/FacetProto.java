@@ -9,6 +9,7 @@ import msi.gaml.types.IType;
 public class FacetProto {
 
 	public final String name;
+	public String deprecated = null;
 	public final int[] types;
 	public final boolean optional;
 	public final boolean isLabel;
@@ -33,6 +34,14 @@ public class FacetProto {
 				this.doc = doc;
 			} else {
 				this.doc = doc.substring(0, index);
+				String remaining = doc.substring(index + 1);
+				index = remaining.indexOf(JavaWriter.DOC_SEP);
+				if ( index != -1 ) {
+					this.deprecated = remaining.substring(0, index);
+					if ( deprecated.length() == 0 ) {
+						deprecated = null;
+					}
+				}
 			}
 		}
 	}

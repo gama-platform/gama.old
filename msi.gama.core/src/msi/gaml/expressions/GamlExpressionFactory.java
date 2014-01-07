@@ -21,9 +21,11 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gaml.compilation.GamlElementDocumentation;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * The static class ExpressionFactory.
@@ -125,7 +127,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	private final List<Signature> temp_types = new ArrayList(10);
 
 	@Override
-	public IExpression createOperator(final String op, final IDescription context, final IExpression ... args) {
+	public IExpression createOperator(final String op, final IDescription context, final EObject currentEObject,
+		final IExpression ... args) {
 		if ( args == null ) { return null; }
 		for ( IExpression exp : args ) {
 			if ( exp == null ) { return null; }
@@ -171,16 +174,24 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						// Emits a warning when a float is truncated. See Issue 735.
 						if ( t.id() == IType.INT ) {
 							context.warning(t.toString() + " expected. '" + args[i].toGaml() +
-								"' will be automatically truncated.", IGamlIssue.UNMATCHED_OPERANDS);
+								"' will be automatically truncated.", IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 						}
-						args[i] = createOperator(t.toString(), context, args[i]);
+						args[i] = createOperator(t.toString(), context, currentEObject, args[i]);
 					}
 				}
 			}
 
 			final IOperator helper = ops.get(signature);
 			// We finally make a copy of the operator and init it with the arguments
-			return helper.copy().init(op, context, args);
+			IOperator copy = helper.copy().init(op, context, args);
+			GamlElementDocumentation ged = copy.getDocumentationObject();
+			if ( ged != null ) {
+				if ( ged.getDeprecated() != null ) {
+					context.warning(helper.getName() + " is deprecated: " + ged.getDeprecated(), IGamlIssue.DEPRECATED,
+						currentEObject);
+				}
+			}
+			return copy;
 		}
 		return null;
 

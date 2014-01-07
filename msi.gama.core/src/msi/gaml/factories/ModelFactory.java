@@ -282,7 +282,9 @@ public class ModelFactory extends SymbolFactory {
 			VariableDescription vd = model.getVariable(SHAPE);
 			if ( !vd.getFacets().containsKey(INIT) ) {
 				final Facets f = new Facets(NAME, SHAPE);
-				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
+				// TODO Catch the right EObject (instead of null)
+				f.put(INIT,
+					GAML.getExpressionFactory().createOperator("envelope", model, null, new ConstantExpression(100)));
 				final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
 				vd = (VariableDescription) DescriptionFactory.create(shape, model, null);
 				model.addChild(vd);

@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 27 d�c. 2010
@@ -65,10 +66,19 @@ public interface IExpressionFactory {
 
 	public IExpression createMap(final List<? extends IExpression> elements);
 
-	IExpression createOperator(String op, IDescription context, IExpression ... exprs);
+	// IExpression createOperator(String op, IDescription context, IExpression ... exprs);
 
 	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression ... exprs);
 
 	public IExpression createCastingExpression(IType typeNamed);
+
+	/**
+	 * @param op
+	 * @param context
+	 * @param currentEObject
+	 * @param args
+	 * @return
+	 */
+	IExpression createOperator(String op, IDescription context, EObject currentEObject, IExpression ... args);
 
 }

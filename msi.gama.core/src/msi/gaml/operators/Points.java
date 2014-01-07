@@ -34,41 +34,41 @@ import msi.gaml.expressions.IExpressionCompiler;
 public class Points {
 
 	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
-	@doc(deprecated = "use the standard construction {x,y} instead.")
+	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
 	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
-	@doc(deprecated = "use the standard construction {x,y} instead.")
+	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
 	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
-	@doc(deprecated = "use the standard construction {x,y} instead.")
+	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Integer b) {
 		return new GamaPoint(a, b);
 	}
 
 	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
-	@doc(deprecated = "use the standard construction {x,y} instead.")
+	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Integer b) {
 		return new GamaPoint(a, b);
 	}
 
 	@operator(value = IExpressionCompiler.INTERNAL_Z, can_be_const = true)
-	@doc(deprecated = "Used for internal purposes only. Use the standard construction {x,y,z} instead. ")
+	@doc(value = "internal use only. Use the standard construction {x,y,z} instead. ")
 	public static ILocation add_z(final GamaPoint p, final Double z) {
 		return new GamaPoint(p.x, p.y, z);
 	}
 
 	@operator(value = IExpressionCompiler.INTERNAL_Z, can_be_const = true)
-	@doc(deprecated = "Used for internal purposes only. Use the standard construction {x,y,z} instead. ")
+	@doc(value = "internal use only. Use the standard construction {x,y,z} instead. ")
 	public static ILocation add_z(final GamaPoint p, final Integer z) {
 		return new GamaPoint(p.x, p.y, z);
 	}
@@ -82,7 +82,7 @@ public class Points {
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(special_cases = "if the left-hand operator is a point and the right-hand a number, returns a point with coordinates divided by the number", examples = "{2,5} / 4	--:  {0.5;1.25}")
 	public static ILocation divide(final GamaPoint p, final Integer d) {
-		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z /d.doubleValue()); 
+		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z / d.doubleValue());
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
@@ -94,7 +94,7 @@ public class Points {
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(special_cases = "if the left-hand operator is a point and the right-hand a number, returns a point with coordinates multiplied by the number", examples = "{2,5} * 4 	--: {8.0; 20.0}")
 	public static ILocation multiply(final GamaPoint p1, final Integer d) {
-		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z /d.doubleValue());
+		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z / d.doubleValue());
 	}
 
 	// ATTENTION: produit scalaire.

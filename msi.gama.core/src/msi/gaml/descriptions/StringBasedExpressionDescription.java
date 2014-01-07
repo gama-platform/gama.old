@@ -60,7 +60,9 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 
 	@Override
 	public IExpressionDescription cleanCopy() {
-		return new StringBasedExpressionDescription(string);
+		IExpressionDescription copy = new StringBasedExpressionDescription(string);
+		copy.setTarget(target);
+		return copy;
 	}
 
 	public static IExpressionDescription create(final String string) {

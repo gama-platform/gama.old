@@ -144,14 +144,14 @@ public class DrawStatement extends AbstractStatementSequence {
 					if ( sizeExp == null ) {
 						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
-					newExpr = GAML.getExpressionFactory().createOperator("circle", desc, sizeExp);
+					newExpr = GAML.getExpressionFactory().createOperator("circle", desc, null, sizeExp);
 				} else if ( old.equals("rectangle") || old.equals("square") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
 						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
 
-					newExpr = GAML.getExpressionFactory().createOperator("square", desc, sizeExp);
+					newExpr = GAML.getExpressionFactory().createOperator("square", desc, null, sizeExp);
 				} else if ( old.equals("geometry") ) {
 					newExpr = getShapeExpression(desc);
 				} else if ( old.equals("line") ) {
@@ -166,11 +166,11 @@ public class DrawStatement extends AbstractStatementSequence {
 					elements.add(at);
 					elements.add(to);
 					final IExpression list = GAML.getExpressionFactory().createList(elements);
-					newExpr = GAML.getExpressionFactory().createOperator("line", desc, list);
+					newExpr = GAML.getExpressionFactory().createOperator("line", desc, null, list);
 				}
 			} else {
 				if ( GamaFileType.verifyExtension("image", old) ) {
-					newExpr = GAML.getExpressionFactory().createOperator("file", desc, exp);
+					newExpr = GAML.getExpressionFactory().createOperator("file", desc, null, exp);
 				}
 			}
 			// if ( newExpr == null ) {

@@ -98,6 +98,12 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		// TODO insert here a @documentation if possible
 		if ( doc != null ) {
 			sb.append(doc.getMain());
+			if ( doc.getDeprecated() != null ) {
+				sb.append("\n\n<b>Deprecated</b>: ");
+				sb.append("<i>");
+				sb.append(doc.getDeprecated());
+				sb.append("</i>");
+			}
 		}
 		return sb.toString();
 	}
@@ -105,5 +111,14 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public void setDoc(final GamlElementDocumentation doc) {
 		this.doc = doc;
+	}
+
+	/**
+	 * Method getDocumentationObject()
+	 * @see msi.gaml.expressions.IOperator#getDocumentationObject()
+	 */
+	@Override
+	public GamlElementDocumentation getDocumentationObject() {
+		return doc;
 	}
 }

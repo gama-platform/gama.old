@@ -37,7 +37,9 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public IExpressionDescription cleanCopy() {
 		// TODO Could also return this, as these expressions are not supposed to depend on the model
-		return new ConstantExpressionDescription(expression);
+		IExpressionDescription copy = new ConstantExpressionDescription(expression);
+		copy.setTarget(target);
+		return copy;
 	}
 
 	public static IExpressionDescription create(final Object object) {

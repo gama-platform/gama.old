@@ -64,5 +64,6 @@ public interface IGamlIssue {
 	public static String UNKNOWN_FACET = "gaml.unknown.facet.issue";
 	public static String IMPORT_ERROR = "gaml.import.has.error";
 	public static String MISSING_RETURN = "gaml.missing.return.issue";
+	public static String DEPRECATED = "gaml.deprecated.code.issue";
 
 }

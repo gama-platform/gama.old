@@ -114,6 +114,12 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		final StringBuilder sb = new StringBuilder(200);
 		if ( doc != null ) {
 			sb.append(doc.getMain());
+			if ( doc.getDeprecated() != null ) {
+				sb.append("<br><br><b>Deprecated</b>: ");
+				sb.append("<i>");
+				sb.append(doc.getDeprecated());
+				sb.append("</i>");
+			}
 		}
 		return sb.toString();
 	}
@@ -206,6 +212,15 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public IType getElementsKeyType() {
 		if ( contentType.hasContents() ) { return child.getKeyType(); }
 		return contentType.defaultKeyType();
+	}
+
+	/**
+	 * Method getDocumentationObject()
+	 * @see msi.gaml.expressions.IOperator#getDocumentationObject()
+	 */
+	@Override
+	public GamlElementDocumentation getDocumentationObject() {
+		return doc;
 	}
 
 }

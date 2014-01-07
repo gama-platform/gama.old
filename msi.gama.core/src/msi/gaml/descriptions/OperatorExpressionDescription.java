@@ -30,6 +30,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			exprs[i] = args[i].cleanCopy();
 		}
 		OperatorExpressionDescription result = new OperatorExpressionDescription(operator, exprs);
+		result.setTarget(target); // Necessary ?
 		return result;
 	}
 
@@ -61,7 +62,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			for ( int i = 0; i < exprs.length; i++ ) {
 				exprs[i] = args[i].compile(context);
 			}
-			expression = GAML.getExpressionFactory().createOperator(operator, context, exprs);
+			expression = GAML.getExpressionFactory().createOperator(operator, context, target, exprs);
 			if ( expression == null ) {
 				// If no operator has been found, we throw an exception
 				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY, getTarget() == null
