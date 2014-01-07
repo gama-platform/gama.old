@@ -50,12 +50,13 @@ import msi.gaml.types.IType;
  * 10-Mar-2013:
  * Modify select method: Add transform parameter
  * Modify insert method: Add transform parameter
- * 29-Apr-2013
+ * 29-Apr-2013:
  * Remove import msi.gama.database.SqlConnection;
  * Add import msi.gama.database.sql.SqlConnection;
  * Change all method appropriately
- * 
- * Last Modified: 29-Apr-2013
+ * 07-Jan-2014:
+ *   Move arg "transform" of select and insert action to key of arg "Params"
+ * Last Modified: 07-Jan-2014
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
@@ -179,15 +180,16 @@ public class AgentDB extends GamlAgent {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name = "select", args = {
-		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string"))
+		, @arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+//		, @arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public GamaList select(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+//		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 		GamaList<? super GamaList<? super GamaList>> repRequest = new GamaList<Object>();
 		// get data
 		try {
@@ -219,9 +221,10 @@ public class AgentDB extends GamlAgent {
 	 * }
 	 */
 	@action(name = "executeUpdate", args = {
-		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")),
-		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark"))
+		, @arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark"))
+//		, @arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
@@ -279,24 +282,30 @@ public class AgentDB extends GamlAgent {
 	 * @return an integer
 	 */
 	@action(name = "insert", args = {
-		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
-		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
-		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name"))
+		, @arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table"))
+		, @arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+//		,@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) 
+	})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established "); }
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		// thai.truongminh@gmail.com 
+		//     Move transform arg of select to a key in params
+		//boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
+		//boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 		int rec_no = -1;
 
 		try {
 			if ( cols.size() > 0 ) {
-				rec_no = sqlConn.insertDB(scope, conn, table_name, cols, values, transform);
+				//rec_no = sqlConn.insertDB(scope, conn, table_name, cols, values, transform);
+				rec_no = sqlConn.insertDB(scope, conn, table_name, cols, values);
 			} else {
-				rec_no = sqlConn.insertDB(scope, table_name, values, transform);
+				//rec_no = sqlConn.insertDB(scope, table_name, values, transform);
+				rec_no = sqlConn.insertDB(scope, conn, table_name, values);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

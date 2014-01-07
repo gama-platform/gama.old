@@ -31,23 +31,25 @@ import msi.gaml.types.IType;
  * - select(String select)
  * - executeUpdate(String updateComm)
  * - getParameter: return connection Parameter;
- * Delete method: selectDB, executeUpdateDB
+ *   Delete method: selectDB, executeUpdateDB
  * 25-Sep-2012: Add methods: timeStamp, helloWorld
  * 18-Feb-2013:
- * Add public int insert(final IScope scope) throws GamaRuntimeException
+ *   Add public int insert(final IScope scope) throws GamaRuntimeException
  * 21-Feb-2013:
- * Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
- * Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
- * Modify public int insert(final IScope scope) throws GamaRuntimeException
+ *   Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+ *   Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
+ *   Modify public int insert(final IScope scope) throws GamaRuntimeException
  * 10-Mar-2013:
- * Modify select method: Add transform parameter
- * Modify insert method: Add transform parameter
+ *   Modify select method: Add transform parameter
+ *   Modify insert method: Add transform parameter
  * 29-Apr-2013
- * Remove import msi.gama.database.SqlConnection;
- * Add import msi.gama.database.sql.SqlConnection;
- * Change all method appropriately
- * 
- * Last Modified: 29-Apr-2013
+ *   Remove import msi.gama.database.SqlConnection;
+ *   Add import msi.gama.database.sql.SqlConnection;
+ *   Change all method appropriately
+ * 07-Jan-2014:
+ *   Move arg "transform" of select and insert action as key of arg "Param"
+ * Last Modified: 07-Jan-2014
+ *  
  */
 @skill(name = "SQLSKILL")
 public class SQLSkill extends Skill {
