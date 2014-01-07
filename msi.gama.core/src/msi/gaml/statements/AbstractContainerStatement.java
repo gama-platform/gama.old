@@ -84,6 +84,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 			}
 
+			// Special case pour les map
+
 			if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
 				cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
 					") does not match with " + valueType, IGamlIssue.SHOULD_CAST, item == null ? IKeyword.ALL

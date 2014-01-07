@@ -62,7 +62,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// facet "show_fps"
 	private boolean showFPS = false;
 	// facet "aggregated"
-	private boolean aggregated = false;
+	private int aggregated = 0;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
 
@@ -477,11 +477,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return showFPS;
 	}
 
-	public void setTraceDisplay(final boolean agg) {
+	public void setTraceDisplay(final int agg) {
 		this.aggregated = agg;
 	}
 
-	public boolean getTraceDisplay() {
+	public int getTraceDisplay() {
 		return aggregated;
 	}
 

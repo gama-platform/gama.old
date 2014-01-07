@@ -6,8 +6,9 @@ import java.nio.FloatBuffer;
 import java.util.*;
 import javax.media.opengl.GL;
 import msi.gama.jogl.utils.*;
+import com.google.common.collect.Iterables;
 
-public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
+public class SceneObjects<T extends AbstractObject> {
 
 	public static class Static<T extends AbstractObject> extends SceneObjects<T> {
 
@@ -25,11 +26,12 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		}
 
 		@Override
-		public void clear(final JOGLAWTGLRenderer renderer) {}
+		public void clear(final JOGLAWTGLRenderer renderer, final int traceSize) {}
 	}
 
 	final ObjectDrawer<T> drawer;
-	final List<T> objects = new ArrayList();
+	final LinkedList<List<T>> objects = new LinkedList();
+	List<T> currentList;
 	Integer openGLListIndex;
 	final boolean drawAsList;
 	boolean drawAsVBO;
@@ -39,19 +41,26 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		this.drawer = drawer;
 		drawAsList = asList;
 		drawAsVBO = asVBO;
+		currentList = new ArrayList();
+		objects.add(currentList);
 	}
 
-	@Override
-	public Iterator<T> iterator() {
-		return objects.iterator();
+	//
+	// @Override
+	// public Iterator<T> iterator() {
+	// return objects.iterator();
+	// }
+
+	protected void clearObjects(final int sizeLimit) {
+		while (objects.size() > sizeLimit) {
+			objects.removeFirst();
+		}
+		currentList = new ArrayList();
+		objects.addLast(currentList);
 	}
 
-	protected void clearObjects() {
-		objects.clear();
-	}
-
-	public void clear(final JOGLAWTGLRenderer renderer) {
-		clearObjects();
+	public void clear(final JOGLAWTGLRenderer renderer, final int sizeLimit) {
+		clearObjects(sizeLimit);
 		if ( openGLListIndex != null ) {
 			renderer.getContext().makeCurrent();
 			renderer.gl.glDeleteLists(openGLListIndex, 1);
@@ -67,12 +76,12 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		this.openGLListIndex = index;
 	}
 
-	public List<T> getObjects() {
-		return objects;
+	public void add(final T object) {
+		currentList.add(object);
 	}
 
-	public void add(final T object) {
-		objects.add(object);
+	public Iterable<T> getObjects() {
+		return Iterables.concat(objects);
 	}
 
 	public void draw(final boolean picking, final JOGLAWTGLRenderer renderer) {
@@ -101,7 +110,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				drawer.getGL().glPushMatrix();
 				drawer.getGL().glInitNames();
 				drawer.getGL().glPushName(0);
-				for ( final T object : objects ) {
+				for ( final T object : getObjects() ) {
 					object.draw(drawer, picking);
 				}
 				drawer.getGL().glPopName();
@@ -112,7 +121,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 				openGLListIndex = drawer.getGL().glGenLists(1);
 				drawer.getGL().glNewList(openGLListIndex, GL_COMPILE);
-				for ( final T object : objects ) {
+				for ( final T object : getObjects() ) {
 					object.draw(drawer, picking);
 				}
 				drawer.getGL().glEndList();
@@ -121,13 +130,13 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		} else if ( drawAsVBO ) {
 			if ( vah == null ) {
 				vah = new VertexArrayHandler(renderer.gl, renderer.glu, renderer);
-				vah.buildVertexArray((List<GeometryObject>) objects);
+				vah.buildVertexArray(getObjects());
 			} else {
 				vah.loadCollada(null);
 			}
 
 		} else {
-			for ( final T object : objects ) {
+			for ( final T object : getObjects() ) {
 				object.draw(drawer, picking);
 			}
 		}

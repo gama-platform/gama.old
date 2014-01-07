@@ -119,7 +119,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			for ( Geometry g : geoms ) {
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
-					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth, type, textures);
+					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures);
 				}
 			}
 		} else {

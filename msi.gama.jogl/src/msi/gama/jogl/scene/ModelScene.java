@@ -55,11 +55,15 @@ public class ModelScene {
 	public void wipe(final JOGLAWTGLRenderer renderer) {
 		envGeometryInitialized = false;
 		// The display is cleared every iteration if not in a trace display mode or when reloading a simulation
-		if ( reloaded || !renderer.getTraceDisplay() ) {
-			geometries.clear(renderer);
-			images.clear(renderer);
-			dems.clear(renderer);
-			strings.clear(renderer);
+		int traceSize = reloaded ? 0 : Math.max(renderer.getTraceDisplay(), 0);
+		reloaded = false;
+		geometries.clear(renderer, traceSize);
+		images.clear(renderer, traceSize);
+		dems.clear(renderer, traceSize);
+		strings.clear(renderer, traceSize);
+
+		if ( traceSize == 0 ) {
+			// What to do with textures ? Ideally we should keep the n-th last (n = traceSize).
 			for ( final Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
 				final BufferedImage im = it.next();
 				// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
@@ -70,12 +74,6 @@ public class ModelScene {
 					it.remove();
 				}
 			}
-		} else {
-			reloaded = false;
-			geometries.openGLListIndex = null;
-			images.openGLListIndex = null;
-			dems.openGLListIndex = null;
-			strings.openGLListIndex = null;
 		}
 	}
 

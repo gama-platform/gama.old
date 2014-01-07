@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
-	@facet(name = IKeyword.TRACE, type = IType.BOOL, optional = true, doc = @doc("Allows to aggregate agent at each timestep")),
+	@facet(name = IKeyword.TRACE, type = { IType.BOOL, IType.INT }, optional = true, doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
@@ -133,7 +133,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
-	private boolean traceDisplay = false;
+	private int traceDisplay = 0;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
@@ -218,10 +218,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
 		}
 
-		final IExpression trace = getFacet(IKeyword.TRACE);
-		if ( trace != null ) {
-			setTraceDisplay(Cast.asBool(getScope(), trace.value(getScope())));
-		}
+		computeTrace(getScope());
 
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
@@ -365,16 +362,25 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			if ( cameraLook != null ) {
 				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
-		}	
-		
-		final IExpression agg = getFacet(IKeyword.TRACE);
-		if ( agg != null ) {
-			setTraceDisplay(Cast.asBool(getScope(), agg.value(getScope())));
 		}
+		computeTrace(getScope());
 
 		// GuiUtils.debug("LayeredDisplayOutput.update");
 		surface.updateDisplay();
 
+	}
+
+	private void computeTrace(final IScope scope) {
+		final IExpression agg = getFacet(IKeyword.TRACE);
+		if ( agg != null ) {
+			int limit = 0;
+			if ( agg.getType().id() == IType.BOOL && Cast.asBool(getScope(), agg.value(getScope())) ) {
+				limit = Integer.MAX_VALUE;
+			} else {
+				limit = Cast.asInt(getScope(), agg.value(getScope()));
+			}
+			setTraceDisplay(limit);
+		}
 	}
 
 	@Override
@@ -507,7 +513,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.tesselation = tesselation;
 	}
 
-
 	public boolean getZFighting() {
 		return z_fighting;
 	}
@@ -524,11 +529,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.showfps = fps;
 	}
 
-	public boolean getTraceDisplay() {
+	public int getTraceDisplay() {
 		return traceDisplay;
 	}
 
-	private void setTraceDisplay(final boolean agg) {
+	private void setTraceDisplay(final int agg) {
 		this.traceDisplay = agg;
 	}
 

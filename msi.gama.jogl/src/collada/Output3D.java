@@ -26,7 +26,7 @@ public class Output3D {
 		doc = Output3D.createXML();
 		nbCycle = (int) nbCycles.getY();
 		initialized = false;
-		
+
 		System.out.println("NbCycles to store: " + nbCycle);
 	}
 
@@ -34,13 +34,13 @@ public class Output3D {
 		// TODO
 		int currentClock = GAMA.getClock().getCycle();
 		System.out.println("Nb cycle " + currentClock);
-		if ( ! initialized ) {
+		if ( !initialized ) {
 			initGLGEModel(openGLGraphicsGLRender);
 			initialized = true;
 		}
 
 		// Update of the animations
-		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries() ) {
+		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries().getObjects() ) {
 			String animID = myGeom.agent.getName() + "anim";
 			// Find the Element with id = animID
 			// add a position
@@ -82,7 +82,7 @@ public class Output3D {
 
 		Element groupElt = doc.createElement("group");
 		groupElt.setAttribute("id", "objects");
-		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries() ) {
+		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries().getObjects() ) {
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName() + "material";
 			// String animationID = myGeom.agent.getName()+"animation";
@@ -140,10 +140,10 @@ public class Output3D {
 		Element cameraElt = doc.createElement("camera");
 		cameraElt.setAttribute("id", "maincamera");
 		// TODO
-		// The camera should be computed from the OpenGL camera position (see 3 lines comment below)	
+		// The camera should be computed from the OpenGL camera position (see 3 lines comment below)
 		cameraElt.setAttribute("loc_x", "0");
 		cameraElt.setAttribute("loc_y", "2000");
-		cameraElt.setAttribute("loc_z", "0");		
+		cameraElt.setAttribute("loc_z", "0");
 		// cameraElt.setAttribute("loc_x", "" + openGLGraphicsGLRender.camera.getPosition().getX());
 		// cameraElt.setAttribute("loc_y", "" + openGLGraphicsGLRender.camera.getPosition().getY());
 		// cameraElt.setAttribute("loc_z", "" + openGLGraphicsGLRender.camera.getPosition().getZ());
@@ -245,7 +245,7 @@ public class Output3D {
 	}
 
 	public static String facesFromVertices(final int nbVertices) {
-		return (nbVertices >= 3 ) ? facesFromVertices(0, nbVertices - 1) : "";
+		return nbVertices >= 3 ? facesFromVertices(0, nbVertices - 1) : "";
 	}
 
 	public static String facesFromVertices(final int firstVertex, final int lastVertex) {

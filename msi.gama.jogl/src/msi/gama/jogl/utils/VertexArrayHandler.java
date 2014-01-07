@@ -9,7 +9,7 @@ import javax.media.opengl.glu.GLU;
 import javax.xml.parsers.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.collada.COLLADA;
-import msi.gama.jogl.scene.GeometryObject;
+import msi.gama.jogl.scene.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.IList;
 import org.xml.sax.SAXException;
@@ -215,17 +215,21 @@ public class VertexArrayHandler {
 	 * @param myJTSGeometries
 	 * @param size
 	 */
-	public void buildVertexArray(final List<GeometryObject> list) {
+	public void buildVertexArray(final Iterable<? extends AbstractObject> list) {
 
 		nbVerticesTriangle = 0;
 		nbVerticesLine = 0;
 
-		Iterator<GeometryObject> it = list.iterator();
+		Iterator<? extends AbstractObject> it = list.iterator();
 
 		// Loop over all the geometries, triangulate them and get the total
 		// number of vertices.
 		while (it.hasNext()) {
-			curGeometry = it.next();
+			AbstractObject o = it.next();
+			if ( !(o instanceof GeometryObject) ) {
+				continue;
+			}
+			curGeometry = (GeometryObject) o;
 			for ( int i = 0; i < curGeometry.geometry.getNumGeometries(); i++ ) {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {

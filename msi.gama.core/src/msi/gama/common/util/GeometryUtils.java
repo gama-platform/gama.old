@@ -22,6 +22,7 @@ import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -815,5 +816,14 @@ public class GeometryUtils {
 			}
 		}
 		return lines;
+	}
+
+	/**
+	 * @param intersect
+	 * @return
+	 */
+	public static Type getTypeOf(final Geometry g) {
+		if ( g == null ) { return Type.NULL; }
+		return IShape.JTS_TYPES.get(g.getGeometryType());
 	}
 }
