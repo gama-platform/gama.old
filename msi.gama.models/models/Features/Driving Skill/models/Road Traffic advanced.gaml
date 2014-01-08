@@ -23,22 +23,38 @@ global {
 			stop << flip(0.5) ? roads_in : [] ;
 		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
-			shape <- polyline(reverse(shape.points));
-			geom_display <- shape + (2 * lanes);
+			geom_display <- shape + (2.5 * lanes);
 			maxspeed <- lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0);
+			if (not simple_data) {
+				create road {
+					lanes <- myself.lanes;
+					shape <- polyline(reverse(myself.shape.points));
+					geom_display <- shape + (2.5 * lanes);
+					maxspeed <- myself.maxspeed;
+					linked_road <- myself;
+					myself.linked_road <- self;
+				}
+			}
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter * (3600.0 / (each.maxspeed * 1000.0))));
 		the_graph <-  (as_driving_graph(road, node))  with_weights general_speed_map;
 		create people number: nb_people { 
 			speed <- 30 °km /°h ;
+			vehicle_length <- 3.0 °m;
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1;
-			proba_lane_change_down <- 0.2;
+			proba_lane_change_down <- 0.5;
 			location <- one_of(node where empty(each.stop)).location;
 			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
 			proba_respect_priorities <- 1.0 - rnd(200/1000);
 			proba_respect_stops <- [1.0];
-			proba_block_node <- 0.1;
+			proba_block_node <- 0.0;
+			proba_use_linked_road <- 0.0;
+			
+			acceleration_max <- 5/3.6;
+			speed_coeff <- 1.2 - (rnd(400) / 1000);
+			threshold_stucked <-int ( (1 + rnd(5))°mn);
+			proba_breakdown <- 0.00001;
 		}	
 	}
 	
@@ -91,16 +107,26 @@ species people skills: [advanced_driving] {
 	rgb color <- rgb(rnd(255), rnd(255), rnd(255)) ;
 	point the_target <- nil ; 
 	point the_final_target <- nil;
-	float acceleration_max <- 5/3.6;
 	path the_path <- nil;
 	int index_path; 
-	float vehicle_length <- 3.0;
+	float vehicle_length;
 	list<point> targets <- [];
-	float speed_coeff <- 1.2 - (rnd(400) / 1000);
-	
+	float acceleration_max;
+	float speed_coeff ;
+	int counter_stucked <- 0;
+	int threshold_stucked;
+	bool breakdown <- false;
+	float proba_breakdown ;
 	float speed_choice (road the_road) {
-		float speed <- min([real_speed + acceleration_max, speed_coeff * (road(the_road).maxspeed/3.6)]);
-		return speed;
+		if (breakdown) {
+			return 1°km/°h;
+		} else {
+			return min([real_speed + acceleration_max, speed_coeff * (road(the_road).maxspeed/3.6)]);
+		}
+	}
+	
+	reflex breakdown when: flip(proba_breakdown){
+		breakdown <- true;
 	}
 	
 	path compute_path{
@@ -146,24 +172,39 @@ species people skills: [advanced_driving] {
 					the_target <-targets[index_path]; 
 				} else {remaining_time <- 0.0;}  
 			}
-		}  
+		}
+		if real_speed < 5°km/°h {
+			counter_stucked<- counter_stucked + 1;
+			if (counter_stucked > threshold_stucked) {
+				proba_use_linked_road <- proba_use_linked_road + 0.1;
+			}
+		} else {
+			counter_stucked<- 0;
+			proba_use_linked_road <- 0.0;
+		}
 	}
 	aspect base { 
 		draw triangle(8) color: color rotate:heading + 90;
 	} 
 	aspect base3D {
 		point loc <- calcul_loc();
-		draw rectangle(vehicle_length, 1.5) at: loc depth: 1 rotate:  heading color: color;
-		draw rectangle(vehicle_length / 2.0, 1) at: loc depth: 1.5 rotate:  heading color: color;
+		draw box(vehicle_length, 1,1) at: loc rotate:  heading color: color;
+		
+		draw triangle(0.5) depth: 1.5 at: loc rotate:  heading + 90 color: color;
+		
+		if (breakdown) {
+			draw circle(2) at: loc color: rgb("red");
+		}
 	} 
 	
 	point calcul_loc {
 		if (current_road = nil) {
 			return location;
 		} else {
-			float val <-2.5 * (road(current_road).lanes /4 - current_lane) ; 
+			float val <- (road(current_road).lanes - current_lane) + 0.5;
+			val <- on_linked_road ? val * - 1 : val;
 			if (val = 0) {
-				return location;
+				return location; 
 			} else {
 				return (location + {cos(heading + 90) * val, sin(heading + 90) * val});
 			}
