@@ -210,7 +210,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final IAgent linkedRoad = (IAgent) currentRoad.getAttribute(RoadSkill.LINKED_ROAD);
 		final boolean onLinkedRoad = getOnLinkedRoad(agent);
 		final ITopology topo = computeTopology(scope, agent);
-		if ( topo == null ) { return 0.0; }
+		if ( topo == null || maxDist == 0 ) { return 0.0; }
 		final GamaPoint target = scope.hasArg("target") ? (GamaPoint) scope.getArg("target", IType.NONE) : null;
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		if ( path != null && !path.getEdgeList().isEmpty() ) {
