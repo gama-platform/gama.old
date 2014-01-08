@@ -322,11 +322,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		IAgent driver = getCurrentAgent(scope);
 		Integer currentLane = getCurrentLane(driver);
 		IAgent currentRoad = getCurrentRoad(driver);
-		IAgent linkedRoad = (IAgent) currentRoad.getAttribute(RoadSkill.LINKED_ROAD);
+		IAgent linkedRoad = (IAgent) road.getAttribute(RoadSkill.LINKED_ROAD);
 		boolean onLinkedRoad = getOnLinkedRoad(driver);
-		if (onLinkedRoad) {
-			currentLane = lanes - 1;
-		}
+		
 		IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 		double vL = getVehiculeLength(driver);
 		double secDistCoeff = getSecurityDistanceCoeff(driver);
@@ -336,6 +334,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		List<IAgent> ba = new GamaList<IAgent>(block.keySet());
 		List<IAgent> roadsIn = (List<IAgent>) node.getAttribute(RoadNodeSkill.ROADS_IN);
 
+		double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
+		boolean testUseLinkedRoad = Random.opFlip(scope, probaUseLinkedRoad);
+		if (onLinkedRoad) {
+			currentLane = lanes - 1;
+		}
 		for ( IAgent dr : ba ) {
 			if ( !dr.getLocation().equals(node.getLocation()) ) {
 				block.remove(dr);
@@ -344,10 +347,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 		boolean ready = isReadyNextRoad(scope, road, driver, secDistCoeff, vL, block);
 		if ( !ready ) { return -1; }
-		if ( lanes == 0 ) {
+		if ( lanes == 0 && !onLinkedRoad) {
 			int lane = testBlockNode || nextRoadTestLane(driver, road, 0, secDistCoeff, vL) ? 0 : -1;
 			if ( lane != -1 ) {
 				addBlockingDriver(0, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
+				return lane;
+			} else if (linkedRoad != null && testUseLinkedRoad){
+				Integer lanesLinked = (Integer) linkedRoad.getAttribute(RoadSkill.LANES);
+				int newLane = nextRoadTestLane(driver, linkedRoad, lanesLinked - 1, secDistCoeff, vL) ? lanesLinked - 1 : -1;
+				if (newLane > -1 ) 
+					return newLane + lanes;
 			}
 			return lane;
 		}
@@ -358,7 +367,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
 			return cv;
 		}
-		double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
 		double probaLaneChangeDown = getProbaLaneChangeDown(driver);
 		double probaLaneChangeUp = getProbaLaneChangeUp(driver);
 		boolean changeDown = Random.opFlip(scope, probaLaneChangeDown);
@@ -381,6 +389,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 						return cv;
 					}
 				}
+			}
+		}
+		if (cv == -1 && linkedRoad != null && testUseLinkedRoad) {
+			Integer lanesLinked = (Integer) linkedRoad.getAttribute(RoadSkill.LANES);
+			for ( int i = 1; i <= lanesLinked; i++ ) {
+				int newLane = nextRoadTestLane(driver, linkedRoad, lanesLinked - i, secDistCoeff, vL) ? lanesLinked - i : -1;
+				if (newLane > -1 ) 
+					return newLane + lanes;
 			}
 		}
 		return cv;
