@@ -15,7 +15,7 @@ global {
 	
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
-	int nb_people <- simple_data ? 20 : 300;
+	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
 		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
@@ -42,8 +42,8 @@ global {
 			speed <- 30 °km /°h ;
 			vehicle_length <- 3.0 °m;
 			right_side_driving <- true;
-			proba_lane_change_up <- 0.1;
-			proba_lane_change_down <- 0.5;
+			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
+			proba_lane_change_down <- 0.5+ (rnd(500) / 500);
 			location <- one_of(node where empty(each.stop)).location;
 			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
 			proba_respect_priorities <- 1.0 - rnd(200/1000);
@@ -175,8 +175,8 @@ species people skills: [advanced_driving] {
 		}
 		if real_speed < 5°km/°h {
 			counter_stucked<- counter_stucked + 1;
-			if (counter_stucked > threshold_stucked) {
-				proba_use_linked_road <- proba_use_linked_road + 0.1;
+			if (counter_stucked mod threshold_stucked = 0) {
+				proba_use_linked_road <- min([1.0,proba_use_linked_road + 0.1]);
 			}
 		} else {
 			counter_stucked<- 0;
