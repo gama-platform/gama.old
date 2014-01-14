@@ -55,7 +55,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public IVarExpression each_expr;
 	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
 	private IExpression world = null;
-	private EObject currentEObject;
+	// To disable reentrant parsing (Issue 782)
+	private IExpressionDescription currentExpressionDescription;
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is given, the global context
@@ -78,12 +79,15 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public void reset() {
 		world = null;
 		each_expr = null;
+		currentExpressionDescription = null;
 		synthetic = false;
 	}
 
 	@Override
 	public IExpression compile(final IExpressionDescription s, final IDescription parsingContext) {
-		if ( s.isConstant() ) { return s.getExpression(); }
+		// Cf. Issue 782. Returns null if an expression needs its compiled version to be compiled.
+		if ( s.isConstant() || s == currentExpressionDescription ) { return s.getExpression(); }
+		currentExpressionDescription = s;
 		EObject e = getEObjectOf(s);
 		IDescription previous = setContext(parsingContext);
 		try {
@@ -102,7 +106,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			// errors and not from the parser itself.
 			return null;
 		}
-		currentEObject = s;
 		IExpression expr = compiler.doSwitch(s);
 		if ( !synthetic ) {
 			DescriptionFactory.setGamlDocumentation(s, expr);
@@ -577,7 +580,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			Expression z = object.getZ();
 			return z == null ? point2d : binary(IExpressionCompiler.INTERNAL_Z, point2d, z);
 		}
-
+		
 		@Override
 		public IExpression caseParameters(final Parameters object) {
 			IList<IExpression> list = new GamaList();
@@ -695,7 +698,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	};
 
-	public IExpression caseVar(final String s, final EObject object) {
+	private IExpression caseVar(final String s, final EObject object) {
 		if ( s == null ) {
 			getContext().error("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 			return null;
@@ -758,8 +761,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 					context.warning("The symbol " + s +
 						" is not used anymore in draw. Please use geometries instead, e.g. '" + s + "(size)'",
 						IGamlIssue.UNKNOWN_KEYWORD, object, s);
+					return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
 				}
-				return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
 			}
 
 			// Finally, a last possibility (enabled in rare occasions, like in the "elevation" facet of grid layers), is
