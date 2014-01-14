@@ -19,6 +19,11 @@
 package msi.gaml.operators;
 
 import java.util.*;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.ConnectivityInspector;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.*;
@@ -267,7 +272,80 @@ public class Graphs {
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }
 		return 0;
 	}
+	
+	@operator(value = "connected_components_of")
+	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = { "list<list> <- connected_components_of (my_graph)" }, see = {
+			"alpha_index","connectivity_index", "nb_cycles" })
+	public static List<List> connectedComponentOf(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the nb_connected_components_of operator, the graph should not be null!"); }
 
+		ConnectivityInspector ci;
+		if (graph.isDirected())
+			ci= new ConnectivityInspector((DirectedGraph) graph);
+		else 
+			ci= new ConnectivityInspector((UndirectedGraph) graph);
+		List<List> results = new GamaList<List>();
+		for (Object obj : ci.connectedSets()) {
+			results.add(new GamaList((Set) obj));
+		}
+		return results;
+	}
+	
+	@operator(value = "beta_index")
+	@doc(value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.", examples = { "beta_index(graphEpidemio)" }, see = {
+		"alpha_index","gamma_index","nb_cycles","connectivity_index" })
+	public static int betaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the beta_index operator, the graph should not be null!"); }
+		return graph.getEdges().size() / graph.getVertices().size();
+	}
+	
+	@operator(value = "gamma_index")
+	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 * (v - 2)) - for planar graph.", examples = { "gamma_index(graphEpidemio)" }, see = {
+		"alpha_index","beta_index","nb_cycles","connectivity_index" })
+	public static int gammaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the gamma_index operator, the graph should not be null!"); }
+		return graph.getEdges().size() / (2 * graph.getVertices().size() - 5);
+	}
+	
+	@operator(value = "connectivity_index")
+	@doc(value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).", examples = { "connectivity_index(graphEpidemio)" }, see = {
+		"alpha_index","beta_index","gamma_index","nb_cycles" })
+	public static int connectivityIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the connectivity_index operator, the graph should not be null!"); }
+		int S = graph.getVertices().size();
+		int C = connectedComponentOf(graph).size();
+		return (S-C)/(S-1);
+	}
+
+	
+
+	@operator(value = "nb_cycles")
+	@doc(value = "returns the maximum number of independent cycles in a graph. This number (u) is estimated through the number of nodes (v), links (e) and of sub-graphs (p): u = e - v + p.", examples = { "nb_cycles(graphEpidemio)" }, see = {
+		"alpha_index","beta_index","gamma_index","connectivity_index" })
+	public static int nbCycles(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the nb_cycles operator, the graph should not be null!"); }
+		int S = graph.getVertices().size();
+		int C = connectedComponentOf(graph).size();
+		int L = graph.getEdges().size();
+		return (L-S+C);
+	}
+
+	@operator(value = "alpha_index")
+	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = { "alpha_index(graphEpidemio)" }, see = {
+		"beta_index","gamma_index","nb_cycles","connectivity_index" })
+	public static int alphaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the alpha_index operator, the graph should not be null!"); }
+		int S = graph.getVertices().size();
+		return nbCycles(graph) / (2 * S-5);
+	}
+
+	
 	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",
