@@ -13,8 +13,7 @@ global {
 	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
 	geometry shape <- envelope(shape_file_bounds);
 	
-	int nbGoalsAchived <- 0;
-	graph the_graph;  
+	graph road_network;  
 	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
@@ -24,7 +23,7 @@ global {
 		}
 		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
 			geom_display <- shape + (2.5 * lanes);
-			maxspeed <- lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0);
+			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km/°h;
 			if (not simple_data) {
 				create road {
 					lanes <- myself.lanes;
@@ -36,10 +35,10 @@ global {
 				}
 			}
 		}	
-		map general_speed_map <- road as_map (each::(each.shape.perimeter * (3600.0 / (each.maxspeed * 1000.0))));
-		the_graph <-  (as_driving_graph(road, node))  with_weights general_speed_map;
+		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
+		road_network <-  (as_driving_graph(road, node))  with_weights general_speed_map;
 		create people number: nb_people { 
-			speed <- 30 °km /°h ;
+			max_speed <- 160 °km/°h;
 			vehicle_length <- 3.0 °m;
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
@@ -50,11 +49,11 @@ global {
 			proba_respect_stops <- [1.0];
 			proba_block_node <- 0.0;
 			proba_use_linked_road <- 0.0;
-			
-			acceleration_max <- 5/3.6;
+			max_acceleration <- 5/3.6;
 			speed_coeff <- 1.2 - (rnd(400) / 1000);
 			threshold_stucked <-int ( (1 + rnd(5))°mn);
 			proba_breakdown <- 0.00001;
+			
 		}	
 	}
 	
@@ -90,11 +89,6 @@ species node skills: [skill_road_node] {
 species road skills: [skill_road] { 
 	geometry geom_display;
 	
-	init {
-		loop i from: 0 to: lanes - 1 {
-			add [] to: agents_on;
-		}
-	}
 	aspect base {    
 		draw shape color: rgb("black") ;
 	} 
@@ -105,74 +99,21 @@ species road skills: [skill_road] {
 	
 species people skills: [advanced_driving] { 
 	rgb color <- rgb(rnd(255), rnd(255), rnd(255)) ;
-	point the_target <- nil ; 
-	point the_final_target <- nil;
-	path the_path <- nil;
-	int index_path; 
-	float vehicle_length;
-	list<point> targets <- [];
-	float acceleration_max;
-	float speed_coeff ;
 	int counter_stucked <- 0;
 	int threshold_stucked;
 	bool breakdown <- false;
 	float proba_breakdown ;
-	float speed_choice (road the_road) {
-		if (breakdown) {
-			return 1°km/°h;
-		} else {
-			return min([real_speed + acceleration_max, speed_coeff * (road(the_road).maxspeed/3.6)]);
-		}
-	}
 	
 	reflex breakdown when: flip(proba_breakdown){
 		breakdown <- true;
+		max_speed <- 1 °km/°h;
 	}
 	
-	path compute_path{
-		path a_path <- nil;
-		a_path <- the_graph path_between (location::the_final_target);	
-		if (a_path != nil and not (empty(a_path.segments))) {
-			targets <- [];
-			loop edge over: a_path.edges {
-				add last(agent(edge).shape.points) to: targets;
-			}
-			index_path <- 0;
-			road nw_road <- road(a_path.edges[index_path]); 
-			ask nw_road {do register(myself,0);}
-			the_target <-targets[index_path]; 
-			return a_path;
-		} else {
-			return nil;
-		}
-		
+	reflex time_to_go when: final_target = nil {
+		current_path <- compute_path(graph: road_network, target: one_of(node));
 	}
-	
-	reflex time_to_go when: the_final_target = nil {
-		the_final_target <- one_of(node where empty(each.stop)).location;
-		the_path <- compute_path();
-		if (the_path = nil) {
-			the_final_target <- nil;
-		}
-	}
-
-	reflex move when: the_final_target != nil {
-		float remaining_time <- 1.0;
-		loop while: (remaining_time > 0.0 and the_final_target != nil) {
-			float remaining_time_tmp <- remaining_time;
-			speed <- speed_choice(road(current_road)); 
-			remaining_time <- (advanced_follow_driving (path: the_path, target: the_target,speed: speed,time: remaining_time)) with_precision 2; 
-			if (location = the_final_target) {the_final_target <- nil;}
-			if (remaining_time > 0.0 and the_final_target != nil and (location = the_target ) ) {
-				road new_road <- road(the_path.edges[index_path + 1]); 
-				int lane <- lane_choice(new_road); 
-				if (lane >= 0) {
-					index_path <- index_path + 1;
-					ask new_road {do register(myself,lane);}
-					the_target <-targets[index_path]; 
-				} else {remaining_time <- 0.0;}  
-			}
-		}
+	reflex move when: final_target != nil {
+		do drive;
 		if real_speed < 5°km/°h {
 			counter_stucked<- counter_stucked + 1;
 			if (counter_stucked mod threshold_stucked = 0) {
@@ -183,6 +124,7 @@ species people skills: [advanced_driving] {
 			proba_use_linked_road <- 0.0;
 		}
 	}
+
 	aspect base { 
 		draw triangle(8) color: color rotate:heading + 90;
 	} 
