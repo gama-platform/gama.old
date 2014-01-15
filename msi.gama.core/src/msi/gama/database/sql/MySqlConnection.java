@@ -19,12 +19,19 @@ import com.vividsolutions.jts.io.*;
  * Created date: 19-Apr-2013
  * Modified:
  * 
- * Last Modified: 18-July-2013
+ * 15-Jan-2014
+ *   Fix null error of getInsertString methods
+ *   Fix date/time error of getInsertString methods
+ * 
+ * Last Modified: 15-Jan-2014
  */
 public class MySqlConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
+	private static final String PREFIX_TIMESTAMP= "cast('";
+	private static final String MID_TIMESTAMP= "' as ";
+	private static final String SUPFIX_TIMESTAMP= ")";
 
 	public MySqlConnection() {
 		super();
@@ -238,6 +245,9 @@ public class MySqlConnection extends SqlConnection {
 			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -269,7 +279,17 @@ public class MySqlConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
-				} else { // For other type
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ 
+					valueStr=valueStr+"TIMESTAMP('"+values.get(i).toString()+"')";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(YEAR)){ 
+					valueStr=valueStr+"YEAR('"+values.get(i).toString()+"')";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIME)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIME+SUPFIX_TIMESTAMP;
+				}else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}
 				if ( i != col_no - 1 ) { // Add delimiter of each value
@@ -335,6 +355,9 @@ public class MySqlConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -366,7 +389,17 @@ public class MySqlConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
-				} else { // For other type
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ 
+					valueStr=valueStr+"TIMESTAMP('"+values.get(i).toString()+"')";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(YEAR)){ 
+					valueStr=valueStr+"YEAR('"+values.get(i).toString()+"')";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIME)){ 
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIME+SUPFIX_TIMESTAMP;
+				}else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}
 				// Value list end--------------------------------------------------------

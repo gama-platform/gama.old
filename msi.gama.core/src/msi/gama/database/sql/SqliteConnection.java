@@ -26,7 +26,11 @@ import com.vividsolutions.jts.io.*;
  * Modify connectDB() method:
  * - Add load Extention.
  * - Clean memory(garbage collection) after load.
- * Last Modified: 23-July-2013
+ * 15-Jan-2014
+ *   Fix null error of getInsertString method
+ *   
+ * 
+ * Last Modified: 15-Jan-2014
  */
 public class SqliteConnection extends SqlConnection {
 
@@ -264,6 +268,9 @@ public class SqliteConnection extends SqlConnection {
 			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -363,6 +370,9 @@ public class SqliteConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {

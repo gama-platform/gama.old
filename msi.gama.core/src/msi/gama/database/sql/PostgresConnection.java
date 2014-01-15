@@ -18,8 +18,11 @@ import com.vividsolutions.jts.io.*;
  * Christophe Sibertin-BLANC
  * Created date: 19-Apr-2013
  * Modified:
+ * 15-Jan-2014
+ *   Fix null error of getInsertString method
+ *   
  * 
- * Last Modified: 18-July-2013
+ * Last Modified: 15-Jan-2014
  */
 public class PostgresConnection extends SqlConnection {
 
@@ -241,6 +244,9 @@ public class PostgresConnection extends SqlConnection {
 			IProjection saveProj = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -338,6 +344,9 @@ public class PostgresConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {

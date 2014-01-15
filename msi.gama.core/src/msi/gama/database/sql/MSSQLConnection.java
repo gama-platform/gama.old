@@ -24,14 +24,21 @@ import com.vividsolutions.jts.io.*;
  * Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
  * Edit ConnectDB for new driver
  * Add new condition for geometry type 2004 (it look like postgres)
+ * 15-Jan-2014
+ *   Fix null error of getInsertString methods
+ *   Fix date/time error of getInsertString methods
  * 
- * Last Modified: 26-Apr-2013
+ * Last Modified: 15-Jan-2014
  */
 public class MSSQLConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
 	private static final String SRID = "0"; // must solve later
+	private static final String PREFIX_TIMESTAMP= "cast('";
+	private static final String MID_TIMESTAMP= "' as ";
+	private static final String SUPFIX_TIMESTAMP= ")";
+
 
 	public MSSQLConnection(final String venderName, final String url, final String port, final String dbName,
 		final String userName, final String password) {
@@ -235,6 +242,9 @@ public class MSSQLConnection extends SqlConnection {
 			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -266,6 +276,12 @@ public class MSSQLConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ // For timestamp
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIMESTAMP+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ // For datetime
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ // For datetime
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
 				} else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}
@@ -324,6 +340,9 @@ public class MSSQLConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
+				if (values.get(i)==null){
+					valueStr=valueStr+NULLVALUE;
+				}else 
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
@@ -356,6 +375,12 @@ public class MSSQLConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ // For timestamp
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIMESTAMP+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ // For datetime
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
+				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ // For datetime
+					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
 				} else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}

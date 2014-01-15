@@ -27,8 +27,10 @@ import com.vividsolutions.jts.geom.*;
  * Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
  * 18-July-2013:
  * Add load extension library for SQLITE case.
- * 
- * Last Modified: 18-July-2013
+ * 15-Jan-2014:
+ *    Add datetime type.
+ *    Add NULL VALUE 
+ * Last Modified: 15-Jan-2014
  */
 public abstract class SqlConnection {
 
@@ -44,6 +46,14 @@ public abstract class SqlConnection {
 	public static final String NVARCHAR = "NVARCHAR";
 	public static final String TEXT = "TEXT";
 	public static final String BLOB = "BLOB";
+	public static final String TIMESTAMP="TIMESTAMP"; //MSSQL (number);Postgres,MySQL ('YYYY-MM-DD HH:MM:SS') 
+	public static final String DATETIME="DATETIME";  //MSSQL,Postgres, MySQL, SQLite ( "YYYY-MM-DD HH:MM:SS.SSS")
+	public static final String SMALLDATETIME="SMALLDATETIME"; //MSSQL
+	public static final String DATE="DATE"; //MSSQL,Postgres, MySQL, SQlite
+	public static final String YEAR="YEAR"; //Postgres, MySQL(yyyy)
+	public static final String TIME="TIME"; // MySQL ('00:00:00')	
+	public static final String NULLVALUE= "NULL";
+	
 
 	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 	// static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
