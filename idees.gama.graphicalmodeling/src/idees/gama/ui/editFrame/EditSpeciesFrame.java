@@ -1429,7 +1429,8 @@ public class EditSpeciesFrame extends EditFrame {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
 			    	     public void doExecute() {
 			    	    	 eobject.setName(textName.getText());
-			    	    	 ((ESpecies) eobject).setInit(textInit.getText());
+			    	    	 if (textInit != null)
+			    	    		 ((ESpecies) eobject).setInit(textInit.getText());
 			    	    	 modifyReflexOrder();
 			    	    	 modifyVariables();
 			    	    	 species.getSkills().clear();
