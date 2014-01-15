@@ -34,7 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
@@ -429,7 +429,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = GuiUtils.getDisplaySurfaceFor(displayType, this, envWidth, envHeight);
 		if ( !GuiUtils.isInHeadLessMode() ) {
 			// FIXME These lines do nothing...
-			surface.setSnapshotFileName(getName() + "_snapshot");
+			surface.setSnapshotFileName(GAMA.getModel().getName() + "_display_" + getName());
 			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		}
 	}
