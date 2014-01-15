@@ -157,7 +157,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		String snapshotFile =
 			scope.getSimulationScope().getModel().getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
 
-		String file = snapshotFile + scope.getClock().getCycle() + ".png";
+		String file =
+			snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
+				scope.getClock().getCycle() + "_time_" + System.currentTimeMillis() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
