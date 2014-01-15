@@ -1,10 +1,14 @@
 package simtools.gaml.extensions.traffic;
 
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
 
@@ -15,6 +19,22 @@ public class DrivingOperators {
 		"as_intersection_graph", "as_distance_graph","as_edge_graph" })
 	public static IGraph spatialDrivingFromEdges(final IScope scope, final IContainer edges, final IContainer nodes) {
 		IGraph graph = new GamaSpatialGraph(edges, nodes,scope);
+		for (Object edge: edges.iterable(scope)) {
+			if (edge instanceof IShape) {
+				IAgent ag = ((IShape) edge).getAgent();
+				if (ag.hasAttribute(RoadSkill.LANES) && ag.hasAttribute(RoadSkill.AGENTS_ON)) {
+					int lanes = (Integer) ag.getAttribute(RoadSkill.LANES);
+					if (lanes > 0) {
+						IList agentsOn = (IList) ag.getAttribute(RoadSkill.AGENTS_ON) ;
+						for (int i = 0; i < lanes; i++) {
+							agentsOn.add(new GamaList());
+						}
+					}
+				}
+				
+				
+			}
+		}
 		return graph;
 	}
 
