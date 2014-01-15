@@ -88,6 +88,39 @@ public class RoadSkill extends MovingSkill {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 	
+	public static void register(IAgent road,IAgent driver,int lane ) throws GamaRuntimeException {
+		final IAgent linkedRoad = (IAgent) road.getAttribute(LINKED_ROAD);
+		final boolean agentOnLinkedRoad = (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
+		final int nbLanes = (Integer) road.getAttribute(LANES);
+		if (driver != null) {
+			IAgent cr = (IAgent) driver.getAttribute(AdvancedDrivingSkill.CURRENT_ROAD);
+			Integer pl = (Integer) driver.getAttribute(AdvancedDrivingSkill.CURRENT_LANE);
+			if (cr != null && pl != null) {
+				if (agentOnLinkedRoad) {
+					IAgent lr =(IAgent) cr.getAttribute(LINKED_ROAD);
+					((List) ((List) lr.getAttribute(AGENTS_ON)).get(pl)).remove(driver);
+				} else {
+					((List) ((List) cr.getAttribute(AGENTS_ON)).get(pl)).remove(driver);
+				}
+			}
+			if (lane >= nbLanes && linkedRoad != null) {
+				int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
+				lane = nbLanesLinked - nbLanes - lane + 1;
+				lane = Math.max(0, Math.min(lane, nbLanesLinked-1));
+				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
+				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
+				((List) agentsOn.get(lane)).add(driver);
+			} else {
+				lane = Math.min(lane, nbLanes -1);
+				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, false);
+				List agentsOn = (List) road.getAttribute(AGENTS_ON);
+				((List) agentsOn.get(lane)).add(driver);
+			}
+			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
+			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
+		}
+	}
+	
 	@action(name = "register", args = {
 			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to register on the road.")),
 			@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road"))}, 
