@@ -61,7 +61,9 @@ import com.vividsolutions.jts.geom.Point;
 	@var(name = "proba_respect_stops", type = IType.LIST, of = IType.FLOAT, init = "[]", doc = @doc("probability to respect stop laws - one value for each type of stop")),
 	@var(name = "proba_block_node", type = IType.FLOAT, init = "0.0", doc = @doc("probability to block a node (do not let other driver cross the crossroad)")),
 	@var(name = "proba_use_linked_road", type = IType.FLOAT, init = "0.0", doc = @doc("probability to change lane to a linked road lane if necessary")),
-	@var(name = "right_side_driving", type = IType.BOOL, init = "true", doc = @doc("are drivers driving on the right size of the road?")) })
+	@var(name = "right_side_driving", type = IType.BOOL, init = "true", doc = @doc("are drivers driving on the right size of the road?")),
+	@var(name = "max_speed", type = IType.FLOAT, init = "50.0", doc = @doc("maximal speed of the vehicle")),
+	})
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
 
@@ -86,6 +88,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public final static String CURRENT_PATH = "current_path";
 	public final static String ACCELERATION_MAX = "max_acceleration";
 	public final static String SPEED_COEFF = "speed_coeff";
+	public final static String MAX_SPEED = "max_speed";
 
 	@getter(ACCELERATION_MAX)
 	public double getAccelerationMax(final IAgent agent) {
@@ -104,6 +107,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	@setter(SPEED_COEFF)
 	public void setSpeedCoeff(final IAgent agent, final Double val) {
 		agent.setAttribute(SPEED_COEFF, val);
+	}
+	
+	@getter(MAX_SPEED)
+	public double getMaxSpeed(final IAgent agent) {
+		return (Double) agent.getAttribute(MAX_SPEED);
+	}
+
+	@setter(MAX_SPEED)
+	public void setMaxSpeed(final IAgent agent, final Double val) {
+		agent.setAttribute(MAX_SPEED, val);
 	}
 	
 	@getter(CURRENT_TARGET)
@@ -442,7 +455,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	
 	
 	private Double speedChoice(IAgent agent, IAgent road)  {
-		return Math.min(getRealSpeed(agent) + getAccelerationMax(agent),getSpeedCoeff(agent) * (Double)road.getAttribute(RoadSkill.MAXSPEED));
+		return Math.min(getMaxSpeed(agent), Math.min(getRealSpeed(agent) + getAccelerationMax(agent),getSpeedCoeff(agent) * (Double)road.getAttribute(RoadSkill.MAXSPEED)));
 	}
 	
 	@action(name = "drive", doc = @doc(value = "action to drive toward the final target", examples = { "do drive;" }))
