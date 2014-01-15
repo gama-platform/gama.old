@@ -157,7 +157,7 @@ public class GamaOsmFile extends GamaGisFile {
 					continue;
 				}
 				IShape geom = GamaGeometryType.buildPolygon(points);
-				if ( geom != null && !geom.getInnerGeometry().isEmpty() && /* geom.getInnerGeometry().isValid() && */
+				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() && /* geom.getInnerGeometry().isValid() && */
 				geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
 						geom.setAttribute(key, values.get(key));
