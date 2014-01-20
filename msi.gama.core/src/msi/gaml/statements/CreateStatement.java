@@ -167,17 +167,19 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map> inits = new GamaList(max == null ? 10 : max);
 		final Object source = getSource(scope);
-		if ( source instanceof IList ) {
-			fillInits(scope, inits, max, (IList) source);
-		} else if ( source instanceof GamaShapeFile || source instanceof GamaOsmFile ) {
-			fillInits(scope, inits, max, (GamaFile) source);
-		} else if ( source instanceof GamaGridFile ) {
-			fillInits(scope, inits, max, (GamaGridFile) source);
-		} else if ( source instanceof GamaTextFile ) {
-			fillInits(scope, inits, max, (GamaTextFile) source);
-		} else {
-			fillInits(scope, inits, max);
-		}
+		 if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
+             // DBAccess
+             fillInitsWithDBResults(scope, inits, max, (IList) source);
+     } else if ( source instanceof IList && ((IList) source).get(0) instanceof GamaShape ||
+             source instanceof GamaShapeFile || source instanceof GamaOsmFile ) {
+             fillInits(scope, inits, max, (IContainer) source);
+     } else if ( source instanceof GamaGridFile ) {
+             fillInits(scope, inits, max, (GamaGridFile) source);
+     } else if ( source instanceof GamaTextFile ) {
+             fillInits(scope, inits, max, (GamaTextFile) source);
+     } else {
+             fillInits(scope, inits, max);
+     }
 		// and we create and return the agent(s)
 		final IList<? extends IAgent> agents = createAgents(scope, pop, inits);
 		if ( returns != null ) {
@@ -220,18 +222,18 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Method used to read initial values and attributes from a GIS file.
 	 */
-	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaFile file) {
-		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
-		for ( int i = 0; i < num; i++ ) {
-			final GamaShape g = (GamaShape) file.get(scope, i);
-			final Map map = g.getOrCreateAttributes();
-			// The shape is added to the initial values
-			map.put(IKeyword.SHAPE, g);
-			// GIS attributes are mixed with the attributes of agents
-			fillWithUserInit(scope, map);
-			inits.add(map);
-		}
-	}
+	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final IContainer<Integer, GamaShape> file) {
+        final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
+        for ( int i = 0; i < num; i++ ) {
+            final GamaShape g = file.get(scope, i);
+            final Map map = g.getOrCreateAttributes();
+            // The shape is added to the initial values
+            map.put(IKeyword.SHAPE, g);
+            // GIS attributes are mixed with the attributes of agents
+            fillWithUserInit(scope, map);
+            inits.add(map);
+        }
+    }
 
 	/**
 	 * Method used to read initial values and attributes from a GRID file.
@@ -267,7 +269,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @author thai.truongminh@gmail.com
 	 * @since 04-09-2012
 	 */
-	private void fillInits(final IScope scope, final List<Map> initialValues, final Integer max, final IList list)
+	private void fillInitsWithDBResults(final IScope scope, final List<Map> initialValues, final Integer max, final IList list)
 		throws GamaRuntimeException {
 		// get Column name
 		final GamaList<Object> colNames = (GamaList<Object>) list.get(0);
