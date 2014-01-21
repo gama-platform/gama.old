@@ -19,6 +19,7 @@
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
+import msi.gama.lang.gaml.services.GamlGrammarAccess;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
@@ -213,8 +214,16 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// @Inject
 	// private GamlJavaValidator validator;
 
+	@Inject
+	private GamlGrammarAccess ga;
+
 	@Override
 	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+		// Disabling for comments (see Issue 786)
+		EObject grammarElement = context.getCurrentNode().getGrammarElement();
+		if ( grammarElement == ga.getML_COMMENTRule() ) { return; }
+		if ( grammarElement == ga.getSL_COMMENTRule() ) { return; }
+		//
 		addBuiltInElements(context, acceptor);
 		super.createProposals(context, acceptor);
 

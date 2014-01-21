@@ -37,7 +37,7 @@ import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.service.*;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
-import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.contentassist.*;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.*;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
@@ -91,6 +91,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
 		return ContentAssistContextFactory.class;
+	}
+
+	public Class<? extends ITemplateProposalProvider> bindTemplateProposalProvider() {
+		return GamlTemplateProposalProvider.class;
 	}
 
 	@Override
