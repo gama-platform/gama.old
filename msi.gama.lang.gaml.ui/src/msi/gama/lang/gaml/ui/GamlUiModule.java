@@ -93,7 +93,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return ContentAssistContextFactory.class;
 	}
 
-	public Class<? extends ITemplateProposalProvider> bindTemplateProposalProvider() {
+	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
 		return GamlTemplateProposalProvider.class;
 	}
 
