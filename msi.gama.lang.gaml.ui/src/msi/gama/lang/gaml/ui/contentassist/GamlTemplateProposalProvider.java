@@ -26,6 +26,7 @@ public class GamlTemplateProposalProvider extends DefaultTemplateProposalProvide
 	 * @param registry
 	 * @param helper
 	 */
+	@Inject
 	public GamlTemplateProposalProvider(final TemplateStore templateStore, final ContextTypeRegistry registry,
 		final ContextTypeIdHelper helper) {
 		super(templateStore, registry, helper);
