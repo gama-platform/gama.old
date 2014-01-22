@@ -94,6 +94,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				case CUBE:
 				case BOX:
 				case CIRCLE:
+				case CYLINDER:
 				case GRIDLINE:
 					if ( geometry.height > 0 ) {
 						jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
