@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -28,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 6 fÃ©vr. 2010
@@ -51,7 +51,7 @@ public class ReturnStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final Object result = value.value(scope);
+		final Object result = value == null ? null : value.value(scope);
 		scope.interruptAction();
 		return result;
 	}
@@ -59,17 +59,17 @@ public class ReturnStatement extends AbstractStatement {
 	@Override
 	public IType getType() {
 		// FIXME Verify the return type against the action return type
-		return value.getType();
+		return value == null ? Types.NO_TYPE : value.getType();
 	}
 
 	@Override
 	public IType getContentType() {
-		return value.getContentType();
+		return value == null ? Types.NO_TYPE : value.getContentType();
 	}
 
 	@Override
 	public IType getKeyType() {
-		return value.getKeyType();
+		return value == null ? Types.NO_TYPE : value.getKeyType();
 	}
 
 }
