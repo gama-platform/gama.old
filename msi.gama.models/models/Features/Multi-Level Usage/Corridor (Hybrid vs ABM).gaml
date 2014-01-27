@@ -40,9 +40,9 @@ global {
 		}
 	}
 
-	reflex generate_pedestrians when: ( (time mod new_pedestian_generate_frequency) = 0 ) { 
+	reflex generate_pedestrians when: ( (cycle mod new_pedestian_generate_frequency) = 0 ) { 
 		create pedestrian number: 2 returns: new_pedestrians {
-			if ( (time mod (red_pedestrian_frequency * new_pedestian_generate_frequency) ) = 0 ) {
+			if ( (cycle mod (red_pedestrian_frequency * new_pedestian_generate_frequency) ) = 0 ) {
 				color <- pedestrian_red;
 			}
 			else {

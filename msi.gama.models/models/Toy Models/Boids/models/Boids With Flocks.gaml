@@ -52,7 +52,7 @@ entities {
 
 		}
 
-		reflex capture_nearby_boids when: ((time mod update_frequency) = 0) {
+		reflex capture_nearby_boids when: ((cycle mod update_frequency) = 0) {
 			geometry buffered_shape <- shape + perception_range;
 			list<boids> nearby_boids <- (boids overlapping buffered_shape);
 			if (!(empty(nearby_boids))) {
@@ -65,7 +65,7 @@ entities {
 
 		}
 
-		reflex merge_nearby_flocks when: ((time mod merge_frequency) = 0) {
+		reflex merge_nearby_flocks when: ((cycle mod merge_frequency) = 0) {
 			loop f over: (flock) {
 				if (f != self and (shape intersects f.shape)) {
 					geometry new_shape <- convex_hull(polygon(shape.points + f.shape.points));

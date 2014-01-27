@@ -44,7 +44,7 @@ global {
 		create cloud_agents_viewer;
 	}
 	
-	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
+	reflex create_groups when: ( create_group and ((cycle mod creation_frequency) = 0) ) {
 		list<ball> free_balls <- ball where ((each.state) = 'follow_nearest_ball') ;
 
 		if (length (free_balls) > 1) {
@@ -60,7 +60,7 @@ global {
 		}
 	}
 	
-	reflex create_clouds when: (create_cloud and ((time mod creation_frequency) = 0) ) {
+	reflex create_clouds when: (create_cloud and ((cycle mod creation_frequency) = 0) ) {
 		list<group> candidate_groups <- group where (length(each.members) > (0.05 * ball_number) );
 		list<list> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
 		loop one_cloud over: satisfying_groups {
@@ -220,7 +220,7 @@ entities {
 			}
 		}
 		
-		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
+		reflex capture_nearby_free_balls when: (cycle mod update_frequency) = 0 {
 			list<ball> nearby_free_balls <- (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if !(empty (nearby_free_balls)) {
 				capture nearby_free_balls as: ball_in_group;
@@ -235,7 +235,7 @@ entities {
 			do die ;
 		}
 		
-		reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
+		reflex merge_nearby_groups when: (cycle mod merge_frequency) = 0 {
 			if ( (target != nil) and ((species_of (target)) = group) ) {
 				list<group> nearby_groups <- (group overlapping (shape + perception_range)) - self ;
 				
@@ -319,10 +319,10 @@ entities {
 		species group_delegation parent: group topology: (topology(world.shape)) {
 			geometry shape update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
-			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
+			reflex capture_nearby_free_balls when: (cycle mod update_frequency) = 0 {
 			}
 			
-			reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
+			reflex merge_nearby_groups when: (cycle mod merge_frequency) = 0 {
 			}
 			
 			reflex chase_target when: (target != nil) {

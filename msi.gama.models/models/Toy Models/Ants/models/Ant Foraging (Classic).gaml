@@ -8,7 +8,7 @@ global {
 	bool display_state <- true;
 	int gridsize <- 75 ;
 	const center type: point <- { (gridsize / 2),  (gridsize / 2)} ;
-	const types type: file <- (read(image('../images/environment75x75.pgm'))) ;
+	const types type: file <- file('../images/environment75x75.pgm') ;
 	const ant_shape_empty type: string <- '../icons/ant.png' ;
 	const ant_shape_full type: string <- '../icons/full_ant.png'  ;
 	const C00CC00 type: rgb <- rgb('#00CC00') ;    

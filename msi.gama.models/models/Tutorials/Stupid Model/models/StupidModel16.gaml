@@ -7,8 +7,8 @@ global {
     float initialBugSizeMean <- 0.1;
 	float initialBugSizeSD <- 0.03;
 	matrix<int> init_data <- matrix(file("../data/Stupid_Cell.Data"));
-    int width <- int(max ((init_data column_at 0) copy_between {3, init_data.rows - 1}));
-    int height  <- int(max((init_data column_at 1) copy_between {3,init_data.rows - 1}));
+    int width <- int(max (copy_between ((init_data column_at 0),3, init_data.rows - 1)));
+    int height  <- int(max( copy_between ((init_data column_at 1),3,init_data.rows - 1)));
     geometry shape <- rectangle(width,height);
 	init {
 		create bug number: numberBugs {
@@ -82,7 +82,7 @@ species bug schedules:[]{
         do die;
     }
 	aspect basic {
-		float val <- 255 * (1 - min([1.0,size/10.0]));
+		int val <- int(255 * (1 - min([1.0,size/10.0])));
 		draw circle(0.5) color: rgb(255,val,val);
 	}
 }

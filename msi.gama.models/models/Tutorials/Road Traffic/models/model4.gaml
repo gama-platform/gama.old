@@ -6,7 +6,7 @@ global {
 	file shape_file_bounds <- file('../includes/bounds.shp');
 	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
-	int day_time update: time mod 144 ;
+	int day_time update: cycle mod 144 ;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
 	int min_work_end <- 84; 

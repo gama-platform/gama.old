@@ -42,7 +42,7 @@ species bug {
 		my_place.food <- my_place.food - transfer;
 	}
 	aspect basic {
-		float val <- 255 * (1 - min([1.0,size/10.0]));
+		int val <- int(255 * (1 - min([1.0,size/10.0])));
 		draw circle(0.5) color: rgb(255,val,val);
 	}
 } 

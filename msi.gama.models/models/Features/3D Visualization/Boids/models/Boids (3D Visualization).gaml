@@ -99,7 +99,7 @@ entities {
 	species name: boids_goal skills: [moving] {
 		const range type: float init: 20.0;
 		const size type: float init: 10.0;
-		int radius <-3.5;
+		int radius <-3;
 		
 		/*reflex wander { 
 			do wander amplitude: 45 speed: 20;  

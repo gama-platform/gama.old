@@ -56,7 +56,7 @@ entities {
 		float max_food <- 100.0;
 		float foodProd <- 10.0;
 		float food max:max_food update: food + foodProd;
-		rgb color update: rgb(255 * ((max_food - food) / max_food), 255, 255 * ((max_food - food) / max_food));
+		rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
 		aspect base {
 			draw shape color: color;
 		}

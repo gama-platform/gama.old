@@ -46,7 +46,7 @@ species foyer {
 		do emmenager;
 	}
 	aspect revenu {
-		float val <- 255 * (revenu / 3000);
+		int val <- int(255 * (revenu / 3000));
 		draw sphere(5) color: rgb(255 - val, val, 0);
 	}
 }
@@ -66,7 +66,7 @@ species batiment {
 		draw shape color: type = "Industrial" ? rgb("pink") : rgb("gray") depth: hauteur;
 	}
 	aspect information_foyer {
-		draw shape color: type = "Industrial" ? rgb("pink") : (empty(foyers) ? rgb("gray") : rgb(255 * (1 - (revenu_moyen / 3000)), 255 * (revenu_moyen / 3000), 0)) depth: length(foyers);
+		draw shape color: type = "Industrial" ? rgb("pink") : (empty(foyers) ? rgb("gray") : rgb(int(255 * (1 - (revenu_moyen / 3000))), int(255 * (revenu_moyen / 3000)), 0)) depth: length(foyers);
 	}
 }
 species route {

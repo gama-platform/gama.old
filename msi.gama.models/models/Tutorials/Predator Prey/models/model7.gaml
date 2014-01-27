@@ -108,7 +108,7 @@ entities {
 		float maxFood <- 1.0 ;
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 		float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
-		rgb color <- rgb(255 * (1 - food), 255, 255 * (1 - food)) update: rgb(255 * (1 - food), 255, 255 * (1 - food)) ;
+		rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
 		list<vegetation_cell> neighbours  <- (self neighbours_at 2);
 	}
 }

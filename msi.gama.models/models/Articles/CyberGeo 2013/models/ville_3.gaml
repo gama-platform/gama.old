@@ -43,7 +43,7 @@ species foyer {
 		do emmenager;
 	}
 	aspect revenu {
-		float val <- 255 * (revenu / 3000);
+		int val <- int(255 * (revenu / 3000));
 		draw circle(5) color: rgb(255 - val, val, 0);
 	}
 }

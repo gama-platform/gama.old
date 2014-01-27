@@ -44,7 +44,7 @@ global {
 		
 	}
 	
-	reflex generate_pedestrians when: ((time mod new_pedestian_generate_frequency) = 0) {
+	reflex generate_pedestrians when: ((cycle mod new_pedestian_generate_frequency) = 0) {
 		create pedestrian number: new_pedestrian_rate returns: new_pedestrians; 
 		
 		int loop_times <- 0;

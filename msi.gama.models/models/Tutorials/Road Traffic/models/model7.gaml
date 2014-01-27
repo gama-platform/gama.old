@@ -7,7 +7,7 @@ global {
 	file shape_file_bounds <- file('../includes/bounds.shp');
 	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
-	int day_time update: time mod 144 ;
+	int day_time update: cycle mod 144 ;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
 	int min_work_end <- 84; 
@@ -46,7 +46,7 @@ global {
 		the_graph <- the_graph with_weights weights_map;
 	}
 	
-	reflex repair_road when: (time mod repair_time) = 0 {
+	reflex repair_road when: (cycle mod repair_time) = 0 {
 		let the_road_to_repair type: road value: (road as list) with_max_of (each.destruction_coeff) ;
 		ask the_road_to_repair {
 			set destruction_coeff value: 1.0 ;
