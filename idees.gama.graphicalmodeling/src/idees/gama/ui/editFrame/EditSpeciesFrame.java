@@ -10,9 +10,11 @@ import gama.EVariable;
 import gama.EWorldAgent;
 import idees.gama.features.edit.EditSpeciesFeature;
 
+import java.util.Collection;
 import java.util.List;
 
 import msi.gama.util.GamaList;
+import msi.gaml.compilation.AbstractGamlAdditions;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -52,8 +54,9 @@ public class EditSpeciesFrame extends EditFrame {
 	//Variables
 	int cpt = 1;
 	private Table table_vars;
-	private String[] types_base = {"int", "float", "string", "bool", "rgb", "pair", "list", "map", "file", "geometry", "path", "graph"};
-	private List<String> types = new GamaList<String>(types_base);
+	//private String[] types_base = {"int", "float", "string", "bool", "rgb", "pair", "list", "map", "file", "geometry", "path", "graph"};
+	//private String[] types_base = new String[AbstractGamlAdditions.getAllFields().size()];
+	private List<String> types = new GamaList<String>();
 	
 	//Shapes
 	private CCombo comboShape;
@@ -124,13 +127,9 @@ public class EditSpeciesFrame extends EditFrame {
 	public EditSpeciesFrame(Diagram diagram, IFeatureProvider fp, EditSpeciesFeature esf, ESpecies species, List<ESpecies> speciesList) {
 		super(diagram, fp, esf,  species, "Species definition" );
 		skillsStrs = new GamaList<String>();
-		skillsStrs.add("moving");
-		skillsStrs.add("communicating");
-		skillsStrs.add("EDP");
-		skillsStrs.add("driving");
-		skillsStrs.add("optimizing");
-		skillsStrs.add("physical3D");
-		skillsStrs.add("SQLSKILL");
+		skillsStrs.addAll(AbstractGamlAdditions.getAllSkills());
+		skillsStrs.removeAll(AbstractGamlAdditions.ARCHITECTURES);
+		skillsStrs.remove("grid");
 		if (species.getSkills() != null) {
 			for (String sk: species.getSkills()) {
 				skillsStrs.remove(sk);
@@ -158,8 +157,14 @@ public class EditSpeciesFrame extends EditFrame {
 				}
 			}
 		}
+		
+		for (Collection varType : AbstractGamlAdditions.VARTYPE2KEYWORDS.values()) {
+			types.addAll(varType);
+		}
 		for (ESpecies sp : speciesList) 
 			types.add(sp.getName());
+		types.remove("unknown");
+		types.remove("world");
 	}
 
 	/**
