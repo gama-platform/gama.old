@@ -99,6 +99,7 @@ public class GraphTopology extends AbstractTopology {
 		 */
 
 		IShape nodeS = source;
+		IShape nodeSbis = source;
 		IShape nodeT = target;
 
 		if ( !targetNode ) {
@@ -120,20 +121,34 @@ public class GraphTopology extends AbstractTopology {
 			s2 = getPlaces().getEdgeTarget(edgeS);
 			if ( s1 == null || s2 == null ) { return null; }
 			nodeS = s1;
+			nodeSbis = s2;
 			if ( s1.equals(nodeT) ||
 				!s2.equals(nodeT) &&
 				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation().euclidianDistanceTo(
 					source.getLocation()) ) {
 				nodeS = s2;
+				nodeSbis = s1;
 			}
 		}
-		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
-		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
+		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }	
 		if ( !sourceNode ) {
-			final Set edgesSetInit = new THashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+			Set edgesSetInit = new THashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 			final Set edgesSetS = new THashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 			if ( !edgesSetS.equals(edgesSetInit) ) {
-				edges.add(0, edgeS);
+				double l1 = pathlengthEdges(edges) + lengthEdge(edgeS, source, nodeSbis, nodeS);
+				final IList<IShape> edgesbis = getPlaces().computeBestRouteBetween(nodeSbis, nodeT);
+				double l2 = pathlengthEdges(edgesbis) + lengthEdge(edgeS, source, nodeS, nodeSbis);
+				if (l1 < l2)
+					edges.add(0, edgeS);
+				else {
+					edges = edgesbis;
+					edgesSetInit = new THashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+					if ( !edgesSetS.equals(edgesSetInit) ) {
+						edges.add(0, edgeS);
+					}
+				}
+				
 			}
 		}
 		if ( !targetNode ) {
@@ -149,7 +164,20 @@ public class GraphTopology extends AbstractTopology {
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
+	
+	public double pathlengthEdges(IList<IShape> edges){
+		double length = 0;
+		for (IShape sp: edges) {
+			length += sp.getPerimeter();
+		}
+		return length;
+	}
 
+	public double lengthEdge(IShape edge,IShape location, IShape source, IShape target){
+		return edge.getPerimeter() * location.euclidianDistanceTo(target) / source.euclidianDistanceTo(target);
+	}
+
+	
 	public GamaSpatialPath pathBetweenCommonDirected(final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges;
