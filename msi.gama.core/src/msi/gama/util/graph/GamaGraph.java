@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -58,7 +59,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	protected ISpecies edgeSpecies;
 	protected int optimizerType = Djikstra;
-	private FloydWarshallShortestPaths<V, E> optimizer;
+	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
@@ -509,9 +510,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		switch (optimizerType) {
 			case 1:
 				if ( optimizer == null ) {
-					optimizer = new FloydWarshallShortestPaths<V, E>(this);
+					optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
 				}
-				return new GamaList<E>((Iterable) optimizer.getShortestPath(source, target).getEdgeList());
+				GraphPath<V, E> path = optimizer.getShortestPath(source, target);
+				if (path == null) return new GamaList<E>();
+				return new GamaList<E>((Iterable) path.getEdgeList());
 			case 2:
 				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
 				return new GamaList<E>((Iterable) p1.getPathEdgeList(target));

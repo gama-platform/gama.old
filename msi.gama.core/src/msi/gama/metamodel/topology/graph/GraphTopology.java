@@ -139,7 +139,7 @@ public class GraphTopology extends AbstractTopology {
 				double l1 = pathlengthEdges(edges) + lengthEdge(edgeS, source, nodeSbis, nodeS);
 				final IList<IShape> edgesbis = getPlaces().computeBestRouteBetween(nodeSbis, nodeT);
 				double l2 = pathlengthEdges(edgesbis) + lengthEdge(edgeS, source, nodeS, nodeSbis);
-				if (l1 < l2)
+				if (l1 < l2 || edgesbis.isEmpty() || edgesbis.get(0) == null)
 					edges.add(0, edgeS);
 				else {
 					edges = edgesbis;
