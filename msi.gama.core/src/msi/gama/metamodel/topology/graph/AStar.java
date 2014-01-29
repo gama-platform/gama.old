@@ -1,8 +1,6 @@
 package msi.gama.metamodel.topology.graph;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +51,7 @@ public class AStar<V,E> {
 	/**
 	 * The closed set.
 	 */
-	protected HashMap<V, AStarNode> closed = new HashMap<V, AStarNode>();
+	protected GamaMap<V, AStarNode> closed = new GamaMap<V, AStarNode>();
 
 	/**
 	 * If found the shortest path is stored here.
@@ -179,7 +177,7 @@ public class AStar<V,E> {
 	public List<E> buildPath(AStarNode target) {
 		List<E> path = new GamaList<E>();
 
-		ArrayList<AStarNode> thePath = new ArrayList<AStarNode>();
+		GamaList<AStarNode> thePath = new GamaList<AStarNode>();
 		AStarNode node = target;
 
 		while (node != null) {
