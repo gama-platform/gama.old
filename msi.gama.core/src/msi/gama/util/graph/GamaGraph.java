@@ -56,7 +56,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public static int FloydWarshall = 1;
 	public static int BellmannFord = 2;
 	public static int Djikstra = 3;
-
+	public static int AStar = 4;
+	
 	protected ISpecies edgeSpecies;
 	protected int optimizerType = Djikstra;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
@@ -483,7 +484,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void setOptimizerType(final String s) {
-		if ( "Djikstra".equals(s) ) {
+		if ( "AStar".equals(s) ) {
+			optimizerType = 4;
+		} else if ( "Djikstra".equals(s) ) {
 			optimizerType = 3;
 		} else if ( "Bellmann".equals(s) ) {
 			optimizerType = 2;
@@ -527,6 +530,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				} catch (IllegalArgumentException e) {
 					return new GamaList<E>();
 				}
+			case 4: 
+				long t1 = java.lang.System.currentTimeMillis();
+				msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(this, source, target);
+				astarAlgo.compute();
+				return new GamaList<E>(astarAlgo.getShortestPath());
 		}
 		return new GamaList<E>();
 
