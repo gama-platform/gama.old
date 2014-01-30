@@ -4,10 +4,14 @@ package msi.gama.metamodel.topology.graph;
 import java.util.List;
 import java.util.Set;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
-import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph._Edge;
+import msi.gama.util.graph._Vertex;
+import msi.gaml.operators.Maths;
 
 /**
  * An implementation of the A* algorithm: use of GraphStream implementation adapted to GAMA (thanks to the Graphstream team !)
@@ -31,7 +35,7 @@ public class AStar<V,E> {
 	/**
 	 * The graph.
 	 */
-	protected IGraph<V,E> graph;
+	protected GamaGraph<V,E> graph;
 
 	/**
 	 * The source node.
@@ -78,7 +82,7 @@ public class AStar<V,E> {
 	 * @param graph
 	 *            The graph where the algorithm will compute paths.
 	 */
-	public AStar(IGraph<V,E> graph) {
+	public AStar(GamaGraph<V,E> graph) {
 		init(graph);
 	}
 
@@ -92,7 +96,7 @@ public class AStar<V,E> {
 	 * @param trg
 	 *            The destination node.
 	 */
-	public AStar(IGraph<V,E> graph, V src, V trg) {
+	public AStar(GamaGraph<V,E> graph, V src, V trg) {
 		this(graph);
 		setSource(src);
 		setTarget(trg);
@@ -127,7 +131,7 @@ public class AStar<V,E> {
 	 * @see
 	 * org.graphstream.algorithm.Algorithm#init(org.graphstream.graph.Graph)
 	 */
-	public void init(IGraph<V,E> graph) {
+	public void init(GamaGraph<V,E> graph) {
 		clearAll();
 		this.graph = graph;
 		isSpatialGraph = graph instanceof ISpatialGraph;
@@ -227,32 +231,35 @@ public class AStar<V,E> {
 						sourceNode, targetNode)));
 
 		pathFound = false;
-
+		
 		while (!open.isEmpty()) {
 			AStarNode current = getNextBetterNode();
 
 			assert (current != null);
-
+			
 			if (current.node == targetNode) {
 				// We found it !
+				
 				assert current.edge != null;
 				pathFound = true;
 				result = buildPath(current);
+				
 				return;
 			} else {
 				open.remove(current.node);
 				closed.put(current.node, current);
-
-				// For each successor of the current node :
-				Set<E> edges = graph.outgoingEdgesOf(current.node);
-				if (! graph.isDirected()) edges.addAll(graph.incomingEdgesOf(current.node));
+				_Vertex<E> node = graph.getVertex(current.node);
 				
+				// For each successor of the current node :
+				Set<E> edges = node.getOutEdges();
+				if (! graph.isDirected()) edges.addAll(node.getInEdges());
 				for (E edge : edges){
-					V next = getOpposite(current.node,edge);
+					_Edge<V> eg = graph.getEdge(edge);
+					
+					V next = (V) eg.getOther(current.node);
 					double h = heuristic(next, targetNode);
-					double g = current.g + graph.getEdgeWeight(edge);
+					double g = current.g + eg.getWeight(eg);
 					double f = g + h;
-
 					// If the node is already in open with a better rank, we
 					// skip it.
 
@@ -276,15 +283,16 @@ public class AStar<V,E> {
 		}
 	}
 	
-	protected V getOpposite(V node, E edge) {
-		V s = graph.getEdgeSource(edge);
-		if (s == node)
-			return graph.getEdgeTarget(edge);
-		return s;
-	}
+	
 	protected double heuristic (Object node1, Object node2) {
-		if (isSpatialGraph)
-			return ((IShape) node1).euclidianDistanceTo((IShape)node2);
+		if (isSpatialGraph) {
+			GamaPoint pt1 = (GamaPoint) ((IShape) node1).getLocation();
+			GamaPoint pt2 = (GamaPoint) ((IShape) node2).getLocation();
+			return Maths.hypot(pt1.x, pt2.x, pt1.y,pt2.y);
+			
+		}
+			//return ((ILocation) node1).euclidianDistanceTo((ILocation)node2);
+//			return ((IShape) node1).euclidianDistanceTo((IShape)node2);
 		return 0;	
 	}
 
