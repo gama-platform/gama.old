@@ -255,7 +255,7 @@ public class AStar<V,E> {
 				if (! graph.isDirected()) edges.addAll(node.getInEdges());
 				for (E edge : edges){
 					_Edge<V> eg = graph.getEdge(edge);
-					
+					 
 					V next = (V) eg.getOther(current.node);
 					double h = heuristic(next, targetNode);
 					double g = current.g + eg.getWeight(eg);

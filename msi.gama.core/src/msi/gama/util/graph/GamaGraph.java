@@ -36,10 +36,17 @@ import msi.gama.util.path.*;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.GamaGraphType;
+
+import org.graphstream.algorithm.AStar;
+import org.graphstream.graph.Path;
+import org.graphstream.graph.implementations.AbstractEdge;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.jgrapht.*;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
+import org.jgrapht.util.VertexPair;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
@@ -49,7 +56,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected boolean edgeBased;
 	protected boolean agentEdge;
 	protected final IScope scope;
-
+	protected Map<VertexPair<V>,GamaList<E>> shortestPathComputed = null;
+	protected MultiGraph graphStreamGraph = null;
 	protected VertexRelationship vertexRelation;
 	// protected IScope scope;
 
@@ -58,6 +66,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public static int Djikstra = 3;
 	public static int AStar = 4;
 	
+	protected boolean saveComputedShortestPaths = true;
+
 	protected ISpecies edgeSpecies;
 	protected int optimizerType = Djikstra;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
@@ -76,12 +86,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		version = 1;
 		agentEdge = false;
 		this.scope = scope;
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
 	}
 
 	public GamaGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
 		this.scope = scope;
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
@@ -89,6 +101,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public GamaGraph(final IScope scope) {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
 		this.scope = scope;
 	}
 
@@ -519,22 +532,57 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				if (path == null) return new GamaList<E>();
 				return new GamaList<E>((Iterable) path.getEdgeList());
 			case 2:
-				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
-				return new GamaList<E>((Iterable) p1.getPathEdgeList(target));
-			case 3:
-				// FIXME : ToCheck.....
-				try {
-					final DijkstraShortestPath<GamaShape, GamaShape> p2 =
-						new DijkstraShortestPath(getProxyGraph(), source, target);
-					return new GamaList<E>(p2.getPathEdgeList());
-				} catch (IllegalArgumentException e) {
-					return new GamaList<E>();
+				VertexPair<V> nodes1 = new VertexPair<V>(source, target);
+				GamaList<E> sp1 = shortestPathComputed.get(nodes1);
+				if (sp1 == null) {
+					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
+					List<E> re = p1.getPathEdgeList(target);
+					if (re == null) sp1 = new GamaList<E>();
+					else sp1 = new GamaList<E>(re);
+					if (saveComputedShortestPaths) {
+						shortestPathComputed.put(nodes1, sp1);
+					}
 				}
+				return sp1;
+			case 3:
+				//long t1 = java.lang.System.currentTimeMillis();
+				VertexPair<V> nodes2 = new VertexPair<V>(source, target);
+				GamaList<E> sp2 = shortestPathComputed.get(nodes2);
+				if (sp2 == null) {
+					try {
+						final DijkstraShortestPath<GamaShape, GamaShape> p2 =
+								new DijkstraShortestPath(getProxyGraph(), source, target);
+						List re = p2.getPathEdgeList();
+						if (re == null) sp2 = new GamaList<E>();
+						else sp2 = new GamaList<E>(re);
+					} catch (IllegalArgumentException e) {
+						sp2 = new GamaList<E>();
+					}
+					if (saveComputedShortestPaths) {
+						shortestPathComputed.put(nodes2, sp2);
+					}
+				}
+				//java.lang.System.out.println("DijkstraShortestPath : " + (java.lang.System.currentTimeMillis() - t1 ));
+				return sp2;
 			case 4: 
-				long t1 = java.lang.System.currentTimeMillis();
-				msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(this, source, target);
-				astarAlgo.compute();
-				return new GamaList<E>(astarAlgo.getShortestPath());
+				//t1 = java.lang.System.currentTimeMillis();
+				
+				VertexPair<V> nodes3 = new VertexPair<V>(source, target);
+				GamaList<E> sp3 = shortestPathComputed.get(nodes3);
+				if (sp3 == null) {
+					msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(this, source, target);
+					astarAlgo.compute();
+					sp3 = new GamaList<E>(astarAlgo.getShortestPath());
+					if (saveComputedShortestPaths) {
+						shortestPathComputed.put(nodes3, sp3);
+					}
+					
+				}
+				
+				//java.lang.System.out.println("ASTAR : " + (java.lang.System.currentTimeMillis() - t1 ));
+				return sp3;
+				
+				
 		}
 		return new GamaList<E>();
 
@@ -820,11 +868,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public void setVersion(final int version) {
 		this.version = version;
+		shortestPathComputed.clear();
 	}
 
 	@Override
 	public void incVersion() {
 		version++;
+		shortestPathComputed.clear();
 	}
 
 	@Override
@@ -860,5 +910,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public boolean isAgentEdge() {
 		return agentEdge;
+	}
+	
+	public boolean isSaveComputedShortestPaths() {
+		return saveComputedShortestPaths;
+	}
+
+	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths) {
+		this.saveComputedShortestPaths = saveComputedShortestPaths;
 	}
 }

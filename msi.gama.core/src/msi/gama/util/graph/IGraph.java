@@ -96,5 +96,9 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public double computeWeight(final IPath<V, E, ? extends IGraph<V, E>> gamaPath);
 
 	public double computeTotalWeight();
+	
+	public boolean isSaveComputedShortestPaths() ;
+
+	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths) ;
 
 }

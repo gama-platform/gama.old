@@ -458,6 +458,12 @@ public class Graphs {
 	// return GamaGraphType.asRegularGraph(g);
 	// }
 
+	@operator(value = "use_cache")
+	@doc(value = "if the second operand is true, the operand graph will store in a cache all the previously computed shortest path (the cache be cleared if the graph is modified).", comment = "the operator alters the operand graph, it does not create a new one.", see = { "path_between" })
+	public static IGraph useCacheForShortestPaths(final IGraph g, final boolean useCache) {
+		return GamaGraphType.useChacheForShortestPath(g, useCache);
+	}
+	
 	@operator(value = "directed")
 	@doc(value = "the operand graph becomes a directed graph.", comment = "the operator alters the operand graph, it does not create a new one.", see = { "undirected" })
 	public static IGraph asDirectedGraph(final IGraph g) {

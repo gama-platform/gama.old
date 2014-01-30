@@ -64,9 +64,9 @@ public class _Edge<V> {
 
 	public double getWeight(final Object storedObject) {
 		// Syst�matique ??
-		Double na = graph.getVertexWeight(source);
-		Double nb = graph.getVertexWeight(target);
-		return weight * (na + nb) / 2;
+		//Double na = graph.getVertexWeight(source);
+		//Double nb = graph.getVertexWeight(target);
+		return weight;// * (na + nb) / 2;
 	}
 
 	public Object getSource() {
