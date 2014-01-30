@@ -117,12 +117,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	protected _SpatialEdge getEdge(final Object e) {
+	public _SpatialEdge getEdge(final Object e) {
 		return (_SpatialEdge) edgeMap.get(e);
 	}
 
 	@Override
-	protected _SpatialVertex getVertex(final Object v) {
+	public _SpatialVertex getVertex(final Object v) {
 		return (_SpatialVertex) vertexMap.get(v);
 	}
 

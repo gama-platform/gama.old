@@ -115,4 +115,12 @@ public class _Vertex<V> {
 		return index;
 	}
 
+	public Set getInEdges() {
+		return inEdges;
+	}
+
+	public Set getOutEdges() {
+		return outEdges;
+	}
+
 }

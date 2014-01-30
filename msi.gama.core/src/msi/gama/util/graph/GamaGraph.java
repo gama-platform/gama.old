@@ -166,11 +166,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {}
 
-	protected _Edge<V> getEdge(final Object e) {
+	public _Edge<V> getEdge(final Object e) {
 		return edgeMap.get(e);
 	}
 
-	protected _Vertex<E> getVertex(final Object v) {
+	public _Vertex<E> getVertex(final Object v) {
 		return vertexMap.get(v);
 	}
 
