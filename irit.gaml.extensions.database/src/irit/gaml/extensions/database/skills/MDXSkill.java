@@ -90,15 +90,16 @@ public class MDXSkill extends Skill{
 
 	@action(name = "select", args = {
 			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-			@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
-			@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+//			@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+//			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+//			@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 			
 //			@arg(name = "mdx", type = IType.STRING, optional = true, doc = @doc("select string with question marks")),
-//			@arg(name = "onColumns", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-//			@arg(name = "onRows", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-//			@arg(name = "from", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-//			@arg(name = "where", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "onColumns", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+			@arg(name = "onRows", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "from", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "where", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
 
 
 		})
@@ -107,20 +108,24 @@ public class MDXSkill extends Skill{
 
 	//------------------------------------------------------------------------------------------
 			java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-			String selectStr = (String) scope.getArg("select", IType.STRING);
-			GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST):null;
+//			String selectStr = (String) scope.getArg("select", IType.STRING);
+//			GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST):null;
 			boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 
 //			String mdxStr = scope.hasArg("mdx") ? (String) scope.getArg("mdx", IType.STRING):null;
-//			String onRowStr = (String) scope.getArg("onRows", IType.STRING);
-//			String onColumnStr = (String) scope.getArg("onColums", IType.STRING);
-//			String fromStr = (String) scope.getArg("from", IType.STRING);
-//			String whereStr = scope.hasArg("where") ? (String) scope.getArg("where", IType.STRING): null;
-			
+			String onRowStr = (String) scope.getArg("onRows", IType.STRING);
+			String onColumnStr = (String) scope.getArg("onColums", IType.STRING);
+			String fromStr = (String) scope.getArg("from", IType.STRING);
+			String whereStr = scope.hasArg("where") ? (String) scope.getArg("where", IType.STRING): null;
+			GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST):null;
+			String selectStr="SELECT " + onColumnStr + " ON COLUMNS , " + onRowStr + " ON ROWS FROM " + fromStr;
 
 			MdxConnection mdxConn;
 			GamaList<Object> repRequest = new GamaList<Object>();
 			try {
+				if (whereStr!=null){
+					selectStr = selectStr + " WHERE " + whereStr; 
+				}
 				mdxConn = MdxUtils.createConnectionObject(scope,params);
 				if  (values!=null) { 
 					repRequest = mdxConn.selectMDB(selectStr,values);
