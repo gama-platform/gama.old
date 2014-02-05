@@ -101,4 +101,8 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 
 	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths) ;
 
+	public abstract List<IPath<V, E, IGraph<V, E>>> computeKShortestPathsBetween(V source, V target, int k);
+	
+	public abstract IList<IList<E>> computeKBestRoutesBetween(final V source, final V target,int k);
+
 }

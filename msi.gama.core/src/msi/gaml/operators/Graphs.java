@@ -38,6 +38,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gama.util.graph.*;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
+import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -562,11 +563,22 @@ public class Graphs {
 	}
 
 	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
+	@doc(value = "The shortest path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
+
+		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+
+	}
+	
+	@operator(value = "K_path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "The K shortest paths between a list of two objects in a graph", examples = { "K_path_between(my_graph, ag1:: ag2, 2) --: the 2 shortest paths (ordered by length) between ag1 and ag2" })
+	public static List<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg, final int k)
+		throws GamaRuntimeException {
+		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value,k);
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 

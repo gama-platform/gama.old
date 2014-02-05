@@ -19,6 +19,7 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -229,5 +230,21 @@ public class GridTopology extends AbstractTopology {
 		super.dispose();
 		getPlaces().dispose();
 	}
+
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source,
+			IShape target, int k) {
+		// TODO for the moment, returns only 1 shortest path.... need to fix it!
+		return super.KpathsBetween(scope, source, target, k);
+	}
+
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source,
+			ILocation target, int k) {
+		// TODO for the moment, returns only 1 shortest path.... need to fix it!
+		return super.KpathsBetween(scope, source, target, k);
+	}
+	
+	
 
 }

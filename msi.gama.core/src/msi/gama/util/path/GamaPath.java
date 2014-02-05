@@ -34,7 +34,7 @@ import org.jgrapht.*;
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
 // Si
 
-public class GamaPath<V, E, G extends IGraph<V, E>> implements GraphPath<V, E>, IPath<V, E, G> {
+public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, GraphPath<V, E>, IPath<V, E, G> {
 
 	V source, target;
 	GamaList<E> edges;
@@ -297,5 +297,10 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements GraphPath<V, E>, 
 		this.graph = graph;
 		graphVersion = graph.getVersion();
 
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return (int)(this.getWeight() - ((GamaPath) o).getWeight());
 	}
 }

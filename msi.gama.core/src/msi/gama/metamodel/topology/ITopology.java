@@ -20,6 +20,7 @@ package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
 import java.util.*;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -188,5 +189,9 @@ public interface ITopology extends IValue {
 	 * @return the direction or null if one these two geometries are invalid in this topology
 	 */
 	public abstract Integer directionInDegreesTo(IScope scope, IShape source, IShape target);
+
+
+	public abstract List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source,IShape target, int k);
+	public abstract List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source,ILocation target, int k);
 
 }

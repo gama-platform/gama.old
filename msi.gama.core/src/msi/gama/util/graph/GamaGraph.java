@@ -587,6 +587,29 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return new GamaList<E>();
 
 	}
+	
+	@Override
+	public IList<IPath<V, E, IGraph<V, E>>> computeKShortestPathsBetween(final V source, final V target, int k) {
+		final IList<IList<E>>  pathLists = computeKBestRoutesBetween(source, target, k); 
+		IList<IPath<V, E, IGraph<V, E>>> paths = new GamaList<IPath<V,E,IGraph<V,E>>>();
+		
+		for (IList<E> p : pathLists) {
+			paths.add(pathFromEdges(source, target,  p));
+		}
+		return paths;
+	}
+	
+	@Override
+	public IList<IList<E>> computeKBestRoutesBetween(final V source, final V target,int k) {
+		final KShortestPaths<V, E> kp = new KShortestPaths<V, E>(getProxyGraph(), source, k);
+		List<GraphPath<V, E>> pathsJGT = kp.getPaths(target);
+		IList<IList<E>> paths = new GamaList<IList<E>> ();
+		
+		for (GraphPath<V, E> p : pathsJGT) {
+			paths.add(new GamaList(p.getEdgeList()));
+		}
+		return paths;
+	}
 
 	protected Graph<V, E> getProxyGraph() {
 		return directed ? this : new AsUndirectedGraph<V, E>(this);

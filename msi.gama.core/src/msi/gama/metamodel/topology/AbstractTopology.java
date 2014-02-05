@@ -21,6 +21,7 @@ package msi.gama.metamodel.topology;
 import gnu.trove.set.hash.THashSet;
 import java.awt.Graphics2D;
 import java.util.*;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -236,6 +237,20 @@ public abstract class AbstractTopology implements ITopology {
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
 		return PathFactory.newInstance(this, GamaList.with(source, target));
+	}
+	
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k) {
+		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		paths.add(pathBetween(scope, source, target));
+		return paths;
+	}
+
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k) {
+		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		paths.add(pathBetween(scope, source, target));
+		return paths;
 	}
 
 	private void setEnvironmentBounds() {

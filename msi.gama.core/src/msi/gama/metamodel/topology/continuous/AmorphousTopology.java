@@ -20,6 +20,7 @@ package msi.gama.metamodel.topology.continuous;
 
 import java.awt.Graphics2D;
 import java.util.*;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -318,4 +319,17 @@ public class AmorphousTopology implements ITopology {
 	@Override
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {}
 
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k) {
+		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		paths.add(pathBetween(scope, source, target));
+		return paths;
+	}
+
+	@Override
+	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k) {
+		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		paths.add(pathBetween(scope, source, target));
+		return paths;
+	}
 }
