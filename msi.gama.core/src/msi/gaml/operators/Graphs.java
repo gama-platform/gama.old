@@ -353,7 +353,7 @@ public class Graphs {
 
 	
 	@operator(value = "betweenness_centrality")
-	@doc(value = "returns a map containing for each node (key), its betweenness centrality (value)", examples = { "betweenness_centrality(graphEpidemio)" }, see = {
+	@doc(value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ", examples = { "betweenness_centrality(graphEpidemio)" }, see = {
 		 })
 	public static GamaMap betweennessCentrality(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
