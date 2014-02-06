@@ -942,4 +942,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths) {
 		this.saveComputedShortestPaths = saveComputedShortestPaths;
 	}
+
+	public FloydWarshallShortestPathsGAMA<V, E> getOptimizer() {
+		return optimizer;
+	}
+
+	public void setOptimizer(FloydWarshallShortestPathsGAMA<V, E> optimizer) {
+		this.optimizer = optimizer;
+	}
+	
+	
 }

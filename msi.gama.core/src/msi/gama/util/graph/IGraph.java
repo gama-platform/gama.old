@@ -19,6 +19,8 @@
 package msi.gama.util.graph;
 
 import java.util.*;
+
+import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -78,6 +80,10 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public abstract Object addEdge(Object p);
 
 	public abstract void setOptimizerType(String optiType);
+	
+	public FloydWarshallShortestPathsGAMA<V, E> getOptimizer();
+
+	public void setOptimizer(FloydWarshallShortestPathsGAMA<V, E> optimizer);
 
 	public int getVersion();
 

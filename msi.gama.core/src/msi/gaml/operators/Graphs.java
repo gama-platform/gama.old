@@ -18,30 +18,44 @@
  */
 package msi.gaml.operators;
 
-import java.util.*;
-
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.alg.ConnectivityInspector;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
-import msi.gama.util.graph.*;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph.GraphAlgorithmsHandmade;
+import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGraphType;
+import msi.gaml.types.GamaPathType;
+import msi.gaml.types.IType;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.ConnectivityInspector;
 
 /**
  * Written by drogoul Modified on 13 avr. 2011
@@ -289,6 +303,7 @@ public class Graphs {
 		List<List> results = new GamaList<List>();
 		for (Object obj : ci.connectedSets()) {
 			results.add(new GamaList((Set) obj));
+			
 		}
 		return results;
 	}
@@ -336,6 +351,40 @@ public class Graphs {
 		return (L-S+C);
 	}
 
+	
+	@operator(value = "betweenness_centrality")
+	@doc(value = "returns a map containing for each node (key), its betweenness centrality (value)", examples = { "betweenness_centrality(graphEpidemio)" }, see = {
+		 })
+	public static GamaMap betweennessCentrality(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the betweenness_centrality operator, the graph should not be null!"); }
+		//java.lang.System.out.println("result.getRaw() : " + result.getRaw());
+		FloydWarshallShortestPathsGAMA optimizer = graph.getOptimizer();
+		if (optimizer == null) {
+			optimizer = new FloydWarshallShortestPathsGAMA(graph);
+			graph.setOptimizer(optimizer);
+		}
+		GamaMap mapResult = new GamaMap();
+		
+		for (Object v1 : graph.getVertices()) {
+			for (Object v2 : graph.getVertices()) {
+				if (v1 == v2) continue;
+				GraphPath path = optimizer.getShortestPath(v1, v2);
+				if (path == null) continue;
+				for (Object edge :path.getEdgeList()) {
+					Object node = graph.getEdgeTarget(edge);
+					if (node != v2) {
+						Double val = (Double) mapResult.get(node);
+						if (val == null) {val = 1.0;}
+						else {val += 1;}
+						mapResult.put(node, val);
+					}
+				}
+			}
+		}
+		return mapResult;
+	}
+	
 	@operator(value = "alpha_index")
 	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = { "alpha_index(graphEpidemio)" }, see = {
 		"beta_index","gamma_index","nb_cycles","connectivity_index" })
