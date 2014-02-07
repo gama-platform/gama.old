@@ -234,13 +234,13 @@ public class GraphTopology extends AbstractTopology {
 		boolean sourceNode = graph.containsVertex(source);
 		boolean targetNode = graph.containsVertex(target);
 		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
-
-		if ( !graph.getEdges().isEmpty() ) {
+		IList<IShape> edges = graph.getEdges();
+		if ( !edges.isEmpty() ) {
 			if ( graph instanceof GamaSpatialGraph && !((GamaSpatialGraph) graph).isAgentEdge() ) {
 
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
-				for ( final IShape shp : this.getPlaces().getEdges() ) {
+				for ( final IShape shp : edges ) {
 					if ( !sourceNode ) {
 						final double distS = shp.euclidianDistanceTo(source);
 						if ( distS < distMinS ) {
