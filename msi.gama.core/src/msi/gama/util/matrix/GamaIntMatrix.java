@@ -168,6 +168,12 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		updateMatrix(rm);
 	}
 
+	public GamaIntMatrix(final GamaMatrix rm) {
+		super(rm.numCols, rm.numRows);
+		matrix = new int[rm.numCols * rm.numRows];
+		fillMatrix(rm);
+	}
+	
 	@Override
 	public void _clear() {
 		Arrays.fill(matrix, 0);
@@ -429,6 +435,14 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		for ( int i = 0; i < this.numRows; i++ ) {
 			for ( int j = 0; j < this.numCols; j++ ) {
 				getMatrix()[i * numCols + j] = Cast.asInt(null, realMatrix.getEntry(i, j));
+			}
+		}
+	}
+	
+	void fillMatrix(final GamaMatrix matrix) {
+		for ( int i = 0; i < this.numRows; i++ ) {
+			for ( int j = 0; j < this.numCols; j++ ) {
+				getMatrix()[i * numCols + j] = Cast.asInt(null, matrix.get(null, j, i));
 			}
 		}
 	}

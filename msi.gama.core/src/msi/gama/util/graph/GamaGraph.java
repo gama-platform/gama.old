@@ -978,33 +978,53 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public void loadShortestPaths(GamaMatrix matrix) {
 		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		GamaIntMatrix mat = null;
+		if (matrix instanceof GamaIntMatrix) 
+			mat = (GamaIntMatrix) matrix;
+		else {
+			mat = new GamaIntMatrix(matrix);
+		}
+		GamaMap<VertexPair<V>, E> edgesVertices = new GamaMap<VertexPair<V>, E>();
 		for (int i = 0; i < this.getVertices().size(); i++) {
 			V v1 = (V) getVertices().get(i);
 			for (int j = 0; j < this.getVertices().size(); j++) {
 				V v2 = (V) getVertices().get(j);
 				VertexPair<V> vv = new VertexPair<V>(v1, v2);
 				GamaList<E> edges = new GamaList<E>();
-				Integer next = Cast.asInt(scope, matrix.get(scope, j, i));
+				if (v1 == v2) {
+					shortestPathComputed.put(vv, edges);
+					continue;
+				}
 				V vs = v1;
-				V vn = (V) getVertices().get(next);
-				
-				while (next.intValue() != j) {
-					Set<E> eds = this.getAllEdges(vs, vn);
-					E edge = null;
-					for (E ed: eds) {
-						if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
-							edge = ed;
+				int previous = i;
+				Integer next =  mat.get(scope, j, i);
+				do  {
+					V vn = (V) getVertices().get(next);
+					
+					VertexPair<V> vv2 = new VertexPair<V>(vs, vn);
+					E edge = edgesVertices.get(vv2);
+					if (edge == null) {
+						Set<E> eds = this.getAllEdges(vs, vn);
+						for (E ed: eds) {
+							if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
+								edge = ed;
+							}
 						}
+						edgesVertices.put(vv2, edge);
 					}
+					
 					if (edge == null) break;
 					edges.add(edge);
-					next = Cast.asInt(scope, matrix.get(scope, j,next));
+					previous = next;
+					next = mat.get(scope, j,next);
+					
 					vs = vn;
-					vn = (V) getVertices().get(next);
-				}
+					//vn = (V) getVertices().get(next);
+				}while (previous != j);
 				shortestPathComputed.put(vv, edges);
 				
 			}
+			
 		}
 		
 	}
