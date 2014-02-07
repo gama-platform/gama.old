@@ -984,11 +984,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				V v2 = (V) getVertices().get(j);
 				VertexPair<V> vv = new VertexPair<V>(v1, v2);
 				GamaList<E> edges = new GamaList<E>();
-				Integer next = (Integer) matrix.get(scope, j, i);
+				Integer next = Cast.asInt(scope, matrix.get(scope, j, i));
+				V vs = v1;
+				V vn = (V) getVertices().get(next);
 				
 				while (next.intValue() != j) {
-					System.out.println("next : " + next + " j: " + j);
-					Set<E> eds = this.getAllEdges(v1, v2);
+					Set<E> eds = this.getAllEdges(vs, vn);
 					E edge = null;
 					for (E ed: eds) {
 						if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
@@ -997,12 +998,15 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					}
 					if (edge == null) break;
 					edges.add(edge);
-					next = (Integer) matrix.get(scope, j,next);
+					next = Cast.asInt(scope, matrix.get(scope, j,next));
+					vs = vn;
+					vn = (V) getVertices().get(next);
 				}
 				shortestPathComputed.put(vv, edges);
 				
 			}
 		}
+		
 	}
 	
 	public GamaIntMatrix saveShortestPaths() {
