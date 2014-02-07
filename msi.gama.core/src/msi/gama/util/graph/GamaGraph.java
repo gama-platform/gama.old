@@ -19,33 +19,58 @@
  */
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.*;
-import msi.gaml.operators.*;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGraphType;
 
-import org.graphstream.algorithm.AStar;
-import org.graphstream.graph.Path;
-import org.graphstream.graph.implementations.AbstractEdge;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.jgrapht.*;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
-import org.jgrapht.alg.*;
-import org.jgrapht.graph.*;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.KShortestPaths;
+import org.jgrapht.alg.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.util.VertexPair;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
@@ -949,6 +974,88 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public void setOptimizer(FloydWarshallShortestPathsGAMA<V, E> optimizer) {
 		this.optimizer = optimizer;
+	}
+
+	public void loadShortestPaths(GamaMatrix matrix) {
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		for (int i = 0; i < this.getVertices().size(); i++) {
+			V v1 = (V) getVertices().get(i);
+			for (int j = 0; j < this.getVertices().size(); j++) {
+				V v2 = (V) getVertices().get(j);
+				VertexPair<V> vv = new VertexPair<V>(v1, v2);
+				GamaList<E> edges = new GamaList<E>();
+				Integer next = (Integer) matrix.get(scope, j, i);
+				
+				while (next.intValue() != j) {
+					System.out.println("next : " + next + " j: " + j);
+					Set<E> eds = this.getAllEdges(v1, v2);
+					E edge = null;
+					for (E ed: eds) {
+						if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
+							edge = ed;
+						}
+					}
+					if (edge == null) break;
+					edges.add(edge);
+					next = (Integer) matrix.get(scope, j,next);
+				}
+				shortestPathComputed.put(vv, edges);
+				
+			}
+		}
+	}
+	
+	public GamaIntMatrix saveShortestPaths() {
+		GamaMap<V, Integer> indexVertices = new GamaMap<V, Integer>();
+		for (int i= 0; i < vertexMap.size(); i++) {
+			indexVertices.put((V) getVertices().get(i), i);
+		}
+		GamaIntMatrix matrix = new GamaIntMatrix(getVertices().size(), getVertices().size());
+		if (optimizer != null) {
+			for (int i = 0; i < this.getVertices().size(); i++) {
+				V v1 = (V) getVertices().get(i);
+				for (int j = 0; j < this.getVertices().size(); j++) {
+					V v2 = (V) getVertices().get(j);
+					GraphPath<V, E> path = optimizer.getShortestPath(v1, v2);
+					matrix.set(scope, j,i, nextVertice(path.getEdgeList(), i, j, v1, indexVertices, directed));
+				}
+			}
+		} else {
+			for (int i = 0; i < vertexMap.size(); i++) {
+				V v1 = (V) getVertices().get(i);
+				for (int j = 0; j < vertexMap.size(); j++) {
+					V v2 = (V) getVertices().get(j);
+					if (v1 == v2) {matrix.set(scope, j, i,j);};
+					List edges = computeBestRouteBetween(v1, v2);
+					matrix.set(scope, j,i, nextVertice(edges, i, j, v1, indexVertices, directed));
+				}
+			}
+		}
+		return matrix;
+		
+	}
+	
+	
+	private Integer nextVertice(List<E> edges, int s, int t, V source, GamaMap<V, Integer> indexVertices, boolean isDirected) {
+		if (edges.size() > 0) {
+			E firstE = edges.get(0);
+			if (isDirected) {
+				return (Integer) indexVertices.get(scope, this.getEdgeTarget(firstE));
+			} else {
+				V target = (V) this.getEdgeTarget(firstE);
+				if (target != source) {
+					return (Integer) indexVertices.get(scope, target);
+				}
+				return (Integer) indexVertices.get(scope, this.getEdgeSource(firstE));
+			}
+			
+		}
+		return t;
+		
+	}
+
+	public Map<VertexPair<V>, GamaList<E>> getShortestPathComputed() {
+		return shortestPathComputed;
 	}
 	
 	

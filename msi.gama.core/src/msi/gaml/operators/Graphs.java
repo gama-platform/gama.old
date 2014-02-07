@@ -26,7 +26,6 @@ import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -45,6 +44,8 @@ import msi.gama.util.graph.GraphAlgorithmsHandmade;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
@@ -53,7 +54,6 @@ import msi.gaml.types.GamaPathType;
 import msi.gaml.types.IType;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.GraphPath;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 
@@ -359,19 +359,15 @@ public class Graphs {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the betweenness_centrality operator, the graph should not be null!"); }
 		//java.lang.System.out.println("result.getRaw() : " + result.getRaw());
-		FloydWarshallShortestPathsGAMA optimizer = graph.getOptimizer();
-		if (optimizer == null) {
-			optimizer = new FloydWarshallShortestPathsGAMA(graph);
-			graph.setOptimizer(optimizer);
-		}
+		
 		GamaMap mapResult = new GamaMap();
 		
 		for (Object v1 : graph.getVertices()) {
 			for (Object v2 : graph.getVertices()) {
 				if (v1 == v2) continue;
-				GraphPath path = optimizer.getShortestPath(v1, v2);
-				if (path == null) continue;
-				for (Object edge :path.getEdgeList()) {
+				List edges = graph.computeBestRouteBetween(v1, v2);
+				if (edges == null) continue;
+				for (Object edge :edges) {
 					Object node = graph.getEdgeTarget(edge);
 					if (node != v2) {
 						Double val = (Double) mapResult.get(node);
@@ -757,7 +753,34 @@ public class Graphs {
 	 * return g;
 	 * }
 	 */
+	
+	@operator(value = "load_shortest_paths")
+	@doc(value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)", examples = { "my_graph load_shortest_paths(shortest_paths_matrix) --: return my_graph with all the shortest paths computed" })
+	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
+		throws GamaRuntimeException {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the load_shortest_paths operator, the graph should not be null!"); }
+		if ( graph.getVertices().size() != matrix.numCols || graph.getVertices().size() != matrix.numRows ) { throw GamaRuntimeException
+			.error("In the load_shortest_paths operator, the number of vertices of the graph should be equal to the number of rows and columns of the matrix!"); }
+		graph.loadShortestPaths(matrix);
+		return graph;
+		// throw GamaRuntimeException.error("not implemented: loading from gama file");
 
+	}
+	
+
+	@operator(value = "save_shortest_paths")
+	@doc(value = "return a matrix containing all the shortest paths (rows: source, columns: target)", examples = { "matrix shortest_paths_matrix <- save_shortest_paths(my_graph); --: shortest_paths_matrix will contain all the shortest paths" })
+	public static GamaIntMatrix primSaveGraphFromFile(final IScope scope, final GamaGraph graph)
+		throws GamaRuntimeException {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the save_shortest_paths operator, the graph should not be null!"); }
+		return graph.saveShortestPaths();
+		// throw GamaRuntimeException.error("not implemented: loading from gama file");
+
+	}
+	
+	
 	@operator(value = "layout")
 	@doc(value = "layouts a GAMA graph.", comment = "TODO", special_cases = { "TODO." }, examples = { "TODO;" }, see = { "TODO" })
 	// TODO desc
