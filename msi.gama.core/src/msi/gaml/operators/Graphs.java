@@ -361,9 +361,9 @@ public class Graphs {
 		//java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 		
 		GamaMap mapResult = new GamaMap();
-		
-		for (Object v1 : graph.getVertices()) {
-			for (Object v2 : graph.getVertices()) {
+		GamaList vertices = (GamaList) graph.getVertices();
+		for (Object v1 : vertices) {
+			for (Object v2 : vertices) {
 				if (v1 == v2) continue;
 				List edges = graph.computeBestRouteBetween(v1, v2);
 				if (edges == null) continue;

@@ -977,6 +977,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public void loadShortestPaths(GamaMatrix matrix) {
+		GamaList<V> vertices = (GamaList<V>) getVertices();
+		int nbvertices = matrix.numCols;
 		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
 		GamaIntMatrix mat = null;
 		if (matrix instanceof GamaIntMatrix) 
@@ -984,11 +986,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		else {
 			mat = new GamaIntMatrix(matrix);
 		}
-		GamaMap<VertexPair<V>, E> edgesVertices = new GamaMap<VertexPair<V>, E>();
-		for (int i = 0; i < this.getVertices().size(); i++) {
-			V v1 = (V) getVertices().get(i);
-			for (int j = 0; j < this.getVertices().size(); j++) {
-				V v2 = (V) getVertices().get(j);
+		Map<Integer,E> edgesVertices = new GamaMap<Integer,E>();
+		for (int i = 0; i < nbvertices; i++) {
+			V v1 = vertices.get(i);
+			for (int j = 0; j < nbvertices; j++) {
+				V v2 = vertices.get(j);
 				VertexPair<V> vv = new VertexPair<V>(v1, v2);
 				GamaList<E> edges = new GamaList<E>();
 				if (v1 == v2) {
@@ -1003,10 +1005,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					continue;
 				}
 				do  {
-					V vn = (V) getVertices().get(next);
-					
-					VertexPair<V> vv2 = new VertexPair<V>(vs, vn);
-					E edge = edgesVertices.get(vv2);
+					V vn = (V) vertices.get(next);
+					Integer id = (previous * nbvertices) + next;
+					E edge = edgesVertices.get(id);
 					if (edge == null) {
 						Set<E> eds = this.getAllEdges(vs, vn);
 						for (E ed: eds) {
@@ -1014,36 +1015,33 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 								edge = ed;
 							}
 						}
-						edgesVertices.put(vv2, edge);
+						edgesVertices.put(id, edge);
 					}
-					
 					if (edge == null) break;
 					edges.add(edge);
 					previous = next;
 					next = mat.get(scope, j,next);
 					
 					vs = vn;
-					//vn = (V) getVertices().get(next);
 				}while (previous != j);
-				shortestPathComputed.put(vv, edges);
-				
-			}
-			
+				shortestPathComputed.put(vv, edges);	
+			}	
 		}
-		
 	}
 	
 	public GamaIntMatrix saveShortestPaths() {
 		GamaMap<V, Integer> indexVertices = new GamaMap<V, Integer>();
+		GamaList<V> vertices = (GamaList<V>) getVertices();
+		
 		for (int i= 0; i < vertexMap.size(); i++) {
-			indexVertices.put((V) getVertices().get(i), i);
+			indexVertices.put(vertices.get(i), i);
 		}
-		GamaIntMatrix matrix = new GamaIntMatrix(getVertices().size(), getVertices().size());
+		GamaIntMatrix matrix = new GamaIntMatrix(vertices.size(), vertices.size());
 		if (optimizer != null) {
-			for (int i = 0; i < this.getVertices().size(); i++) {
-				V v1 = (V) getVertices().get(i);
-				for (int j = 0; j < this.getVertices().size(); j++) {
-					V v2 = (V) getVertices().get(j);
+			for (int i = 0; i < vertices.size(); i++) {
+				V v1 = (V) vertices.get(i);
+				for (int j = 0; j < vertices.size(); j++) {
+					V v2 = vertices.get(j);
 					GraphPath<V, E> path = optimizer.getShortestPath(v1, v2);
 					if (path == null || path.getEdgeList() == null) {
 						matrix.set(scope, j,i, i);
@@ -1053,9 +1051,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		} else {
 			for (int i = 0; i < vertexMap.size(); i++) {
-				V v1 = (V) getVertices().get(i);
+				V v1 = vertices.get(i);
 				for (int j = 0; j < vertexMap.size(); j++) {
-					V v2 = (V) getVertices().get(j);
+					V v2 = vertices.get(j);
 					if (v1 == v2) {matrix.set(scope, j, i,j);};
 					List edges = computeBestRouteBetween(v1, v2);
 					if (edges == null) {
