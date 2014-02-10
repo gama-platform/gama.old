@@ -19,7 +19,14 @@
 package msi.gaml.operators;
 
 import gnu.trove.set.hash.THashSet;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
+
+
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -1716,6 +1723,34 @@ public abstract class Spatial {
 			// final IAgent a = scope.getAgentScope();
 			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
+		}
+		
+		@operator("rgb_to_xyz")
+		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z", special_cases = { "" }, comment = "", examples = { "rgb_to_xyz(texture) --: returns a " }, see = {})
+		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
+
+			final IList<ILocation> points = new GamaList<ILocation>();
+			BufferedImage texture = null;
+			int rows, cols, x, y;
+			
+			try {
+				texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			
+			rows = texture.getHeight() - 1;
+			cols = texture.getWidth() - 1;
+			
+			for ( y = 0; y < rows; y++ ) {
+				for ( x = 0; x <= cols; x++ ) {					
+					Color c = new Color(texture.getRGB(cols - x, y));
+					GuiUtils.informConsole("x:" + c.getRed() + " y: " + c.getGreen() + "z:" + c.getBlue());
+					points.add(new GamaPoint(c.getRed(),c.getGreen(),c.getBlue()));
+				}	
+			}
+			
+			return points;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
 	}
 
