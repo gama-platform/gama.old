@@ -1726,7 +1726,7 @@ public abstract class Spatial {
 		}
 		
 		@operator("rgb_to_xyz")
-		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z", special_cases = { "" }, comment = "", examples = { "rgb_to_xyz(texture) --: returns a " }, see = {})
+		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z", special_cases = { "" }, comment = "", examples = { "rgb_to_xyz(texture) --: returns a list of points" }, see = {})
 		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
 
 			final IList<ILocation> points = new GamaList<ILocation>();
@@ -1745,12 +1745,11 @@ public abstract class Spatial {
 			for ( y = 0; y < rows; y++ ) {
 				for ( x = 0; x <= cols; x++ ) {					
 					Color c = new Color(texture.getRGB(cols - x, y));
-					GuiUtils.informConsole("x:" + c.getRed() + " y: " + c.getGreen() + "z:" + c.getBlue());
 					points.add(new GamaPoint(c.getRed(),c.getGreen(),c.getBlue()));
 				}	
 			}
 			
-			return points;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
+			return points;
 		}
 	}
 
