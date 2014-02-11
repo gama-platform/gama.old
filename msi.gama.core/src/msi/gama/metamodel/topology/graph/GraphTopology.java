@@ -66,9 +66,9 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
-		ISpatialGraph graph = getPlaces();
-		boolean sourceNode = graph.containsVertex(source);
-		boolean targetNode = graph.containsVertex(target);
+		GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
+		boolean sourceNode = graph.getVertexMap().containsKey(source);
+		boolean targetNode = graph.getVertexMap().containsKey(target);
 		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
 
 		IShape edgeS = null, edgeT = null;
@@ -88,52 +88,231 @@ public class GraphTopology extends AbstractTopology {
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
 			targetNode); }
 
-		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
+		return pathBetweenCommon(graph, edgeS, edgeT, source, target, sourceNode, targetNode);
 	}
 
-	public GamaSpatialPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
+	public GamaSpatialPath pathBetweenCommon(final GamaSpatialGraph graph, final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target, final boolean sourceNode, final boolean targetNode) {
-		/*
-		 * if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
-		 * // return new GamaPath(this, source, target, GamaList.with(edgeS));
-		 * }
-		 */
-
-		IShape nodeS = source;
-		IShape nodeSbis = source;
-		IShape nodeT = target;
-
-		if ( !targetNode ) {
-			IShape t1 = null;
-			IShape t2 = null;
-			t1 = getPlaces().getEdgeSource(edgeT);
-			t2 = getPlaces().getEdgeTarget(edgeT);
-			if ( t1 == null || t2 == null ) { return null; }
-			nodeT = t1;
-			if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation().euclidianDistanceTo(
-				target.getLocation()) ) {
-				nodeT = t2;
+		IList<IShape> edges = new GamaList<IShape>();
+		if (sourceNode &&  !targetNode) {
+			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
+			IShape nodeT2 = (IShape) graph.getEdgeTarget(edgeT);
+			double l1 = 0;
+			boolean computeOther = true;
+			if (nodeT1 == source) {
+				l1 = lengthEdge(edgeS, target, nodeT2, nodeT1);
+			} else {
+				edges = getPlaces().computeBestRouteBetween(source, nodeT1);
+				boolean isEmpty = edges.isEmpty();
+				l1 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + lengthEdge(edgeS, target, nodeT2, nodeT1));
+				if (! isEmpty) {
+					IShape el = edges.get(edges.size()-1);
+					if (graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2) {
+						//edges.remove(edges.size()-1);
+						computeOther = false;
+					}
+				}
 			}
-		}
-		if ( !sourceNode ) {
-			IShape s1 = null;
-			IShape s2 = null;
-			s1 = getPlaces().getEdgeSource(edgeS);
-			s2 = getPlaces().getEdgeTarget(edgeS);
-			if ( s1 == null || s2 == null ) { return null; }
-			nodeS = s1;
-			nodeSbis = s2;
-			if ( s1.equals(nodeT) ||
-				!s2.equals(nodeT) &&
-				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation().euclidianDistanceTo(
-					source.getLocation()) ) {
-				nodeS = s2;
-				nodeSbis = s1;
+			if (computeOther) {
+				double l2 = 0;
+				IList<IShape> edges2 = new GamaList<IShape>();
+				if (nodeT2 == source) { 
+					l2 = lengthEdge(edgeS, target, nodeT1, nodeT2);
+				} else {
+					edges2 = getPlaces().computeBestRouteBetween(source, nodeT2);
+					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, target, nodeT1, nodeT2));
+				}
+				if (l2 < l1) { 
+					edges = edges2;
+					l1 = l2;
+				}
 			}
+			if (l1 == Double.MAX_VALUE) {
+				return null;
+			}
+			if (edges.isEmpty() || edges.get(edges.size() - 1) != edgeT)
+				edges.add(edgeT);
+		} else if (! sourceNode &&  targetNode) {
+			IShape nodeS1 = (IShape) graph.getEdgeSource(edgeS);
+			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
+			double l1 = 0;
+			boolean computeOther = true;
+			if (nodeS1 == target) {
+				l1 = lengthEdge(edgeS, source, nodeS2, nodeS1);
+			} else {
+				edges = getPlaces().computeBestRouteBetween(nodeS1, target);
+				boolean isEmpty = edges.isEmpty();
+				l1 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + lengthEdge(edgeS, source, nodeS2, nodeS1));
+				if (! isEmpty) {
+					IShape e0 = edges.get(0);
+					if (graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2) {
+						//edges.remove(0);
+						computeOther = false;
+					}
+				}
+			}
+			if (computeOther) {
+				double l2 = 0;
+				IList<IShape> edges2 = new GamaList<IShape>();
+				if (nodeS2 == target) {
+					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2);
+				} else {
+					edges2 = getPlaces().computeBestRouteBetween(nodeS2, target);
+					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, source, nodeS1, nodeS2));
+				}
+				if (l2 < l1) {
+					edges = edges2;
+					l1 = l2;
+				}
+			}
+			if (l1 == Double.MAX_VALUE) {
+				return null;
+			}
+			if (edges.isEmpty() || edges.get(0) != edgeS)
+			edges.add(0,edgeS);
+		} else {
+			IShape nodeS1 = (IShape) graph.getEdgeSource(edgeS);
+			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
+			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
+			IShape nodeT2 = (IShape) graph.getEdgeTarget(edgeT);
+			/*System.out.println("*************************\nlocation : " + source);
+			System.out.println("nodeS1 : " + nodeS1);
+			System.out.println("nodeS2 : " + nodeS2);
+			System.out.println("nodeT1 : " + nodeT1);
+			System.out.println("nodeT2 : " + nodeT2);*/
+			double lmin = Double.MAX_VALUE;
+			
+			boolean computeS1T2 = true;
+			boolean computeS2T1 = true;
+			boolean computeS2T2 = true;
+			if (nodeS1 == nodeT1) {
+				lmin = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeS, target, nodeT2, nodeT1);
+			} else {
+				edges = getPlaces().computeBestRouteBetween(nodeS1, nodeT1);
+				boolean isEmpty = edges.isEmpty();
+				double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
+				double elt =  lengthEdge(edgeS, target, nodeT2, nodeT1);
+				lmin =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + els + elt);
+				
+				if (! isEmpty) {
+					IShape e0 = edges.get(0);
+					IShape el = edges.get(edges.size()-1);
+					boolean ts1 = graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2;
+					boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
+					if (ts1) {
+						computeS2T1 = false;
+						double val = lmin - els - e0.getPerimeter() + lengthEdge(edgeS, source, nodeS1, nodeS2);
+						if (lmin > val) lmin = val;
+					}
+					if (ts2) {
+						computeS1T2 = false;
+						double val = lmin - elt - el.getPerimeter() + lengthEdge(edgeS, target, nodeT1, nodeT2);
+						if (lmin > val) lmin = val;
+					}
+					if (ts1 && ts2) {
+						computeS2T2 = false;
+						double val = lmin - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS1, nodeS2)+lengthEdge(edgeS, target, nodeT1, nodeT2);
+						if (lmin > val) lmin = val;
+					}
+					
+				}
+			}
+			//System.out.println("edges : " + edges + " lmin : " + lmin);
+			if (computeS2T1) { 
+				double l2 = 0;
+				IList<IShape> edges2 = new GamaList<IShape>();
+				if (nodeS2 == nodeT1) {
+					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT2, nodeT1);
+				} else {
+					edges2 = getPlaces().computeBestRouteBetween(nodeS2, nodeT1);
+					boolean isEmpty = edges2.isEmpty();
+					double els = lengthEdge(edgeS, source, nodeS1, nodeS2);
+					double elt = lengthEdge(edgeS, target, nodeT2, nodeT1);
+					
+					l2 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges2) + els + elt); 
+					if (! isEmpty) {
+						IShape e0 = edges2.get(0);
+						IShape el = edges2.get(edges2.size()-1);
+						boolean ts1 = graph.getEdgeSource(e0) == nodeS1 || graph.getEdgeTarget(e0) == nodeS1;
+						boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
+						if (ts2) {
+							computeS2T2 = false;
+							double val = l2 - elt - el.getPerimeter() + lengthEdge(edgeS, target, nodeT1, nodeT2);
+							if (l2 > val) l2 = val;
+						}
+						if (ts1 && ts2) {
+							computeS1T2 = false;
+							double val = l2 - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS2, nodeS1)+lengthEdge(edgeS, target, nodeT1, nodeT2);
+							if (l2 > val) l2 = val;
+						}
+						
+					}
+				}
+				//System.out.println("edges2 : " + edges2 + " l2 : " + l2);
+				if (l2 < lmin) {
+					edges = edges2;
+					lmin = l2;
+				}
+				
+			}
+			if (computeS1T2) { 
+				
+				double l2 = 0;
+				IList<IShape> edges2 = new GamaList<IShape>();
+				if (nodeS2 == nodeT1) {
+					l2 = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeS, target, nodeT1, nodeT2);
+				} else {
+					edges2 = getPlaces().computeBestRouteBetween(nodeS1, nodeT2);
+					boolean isEmpty = edges2.isEmpty();
+					double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
+					double elt =  lengthEdge(edgeS, target, nodeT1, nodeT2);
+					l2 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges2) + els + elt);
+					if (! isEmpty) {
+						IShape e0 = edges2.get(0);
+						boolean ts1 = graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2;
+						if (ts1) {
+							computeS2T2 = false;
+							double val = l2 - els - e0.getPerimeter() + lengthEdge(edgeS, source, nodeS1, nodeS2);
+							if (l2 > val) l2 = val;
+						}
+						
+					}
+				}
+				//System.out.println("edges3 : " + edges2 + " l3 : " + l2);
+				if (l2 < lmin) {
+					edges = edges2;
+					lmin = l2;
+				}
+			}
+			if (computeS2T2) { 
+				double l2 = 0;
+				IList<IShape> edges2 = new GamaList<IShape>();
+				if (nodeS2 == nodeT2) {
+					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT1, nodeT2);
+				} else {
+					edges2 = getPlaces().computeBestRouteBetween(nodeS2, nodeT2);
+					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT1, nodeT2));
+				}
+
+				//System.out.println("edges4 : " + edges2 + " l4 : " + l2);
+				if (l2 < lmin) {
+					edges = edges2;
+					lmin = l2;
+				}
+			}
+			if (lmin == Double.MAX_VALUE) {
+				return null;
+			}
+			if (edges.isEmpty() || edges.get(0) != edgeS)
+				edges.add(0,edgeS);
+			
+			if (edges.get(edges.size() - 1) != edgeT)
+				edges.add(edgeT);
+			//System.out.println("lmin : " + lmin);
+			//System.out.println("edges : " + edges);
+			
 		}
-		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
-		
-		return pathFromEdgesUndirected( edges,edgeS, edgeT, source,target, sourceNode, targetNode, nodeS ,nodeSbis,nodeT, true);
+		return PathFactory.newInstance(this, source, target, edges);
 	}
 	
 	GamaSpatialPath pathFromEdgesUndirected(IList<IShape> edges,final IShape edgeS, final IShape edgeT, final IShape source,
@@ -229,47 +408,7 @@ public class GraphTopology extends AbstractTopology {
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
-		IShape edgeS = null, edgeT = null;
-		ISpatialGraph graph = getPlaces();
-		boolean sourceNode = graph.containsVertex(source);
-		boolean targetNode = graph.containsVertex(target);
-		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
-		IList<IShape> edges = graph.getEdges();
-		if ( !edges.isEmpty() ) {
-			if ( graph instanceof GamaSpatialGraph && !((GamaSpatialGraph) graph).isAgentEdge() ) {
-
-				double distMinT = Double.MAX_VALUE;
-				double distMinS = Double.MAX_VALUE;
-				for ( final IShape shp : edges ) {
-					if ( !sourceNode ) {
-						final double distS = shp.euclidianDistanceTo(source);
-						if ( distS < distMinS ) {
-							distMinS = distS;
-							edgeS = shp;
-						}
-					}
-					if ( !targetNode ) {
-						final double distT = shp.euclidianDistanceTo(target);
-						if ( distT < distMinT ) {
-							distMinT = distT;
-							edgeT = shp;
-						}
-					}
-				}
-			} else {
-				final IAgentFilter filter = In.edgesOf(getPlaces());
-				if ( !sourceNode ) {
-					edgeS = getAgentClosestTo(scope, source, filter);
-				}
-				if ( !targetNode ) {
-					edgeT = getAgentClosestTo(scope, target, filter);
-				}
-			}
-		}
-
-		if ( graph.isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
-			targetNode); }
-		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
+		return pathBetween(scope, (IShape) source, (IShape)target);
 	}
 
 	/**
