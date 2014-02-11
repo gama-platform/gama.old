@@ -162,9 +162,10 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 			str = buf.toString();
 			tok = new StringTokenizer(str);
 			final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
-			for ( int i = 0; i < xSize; i++ ) {
-				for ( int j = 0; j < ySize; j++ ) {
-					matrix.set(scope, j, i, Integer.valueOf(tok.nextToken()));
+			for ( int j = 0; j < ySize; j++ ) {
+				for ( int i = 0; i < xSize; i++ ) {
+					Integer val = Integer.valueOf(tok.nextToken());
+					matrix.set(scope,i, j, val);
 				}
 			}
 			return matrix;
