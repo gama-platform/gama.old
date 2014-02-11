@@ -56,7 +56,7 @@ public class JTSDrawer {
 	MyTexture texture = null;
 
 	public boolean colorpicking = false;
-
+	
 	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
 		gl = gLRender.gl;
@@ -110,12 +110,18 @@ public class JTSDrawer {
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value) {
 		// FIXME: Need to be optimized. Compute the normal only if the polygon is not in the XY plan.
-		if ( p.getNumPoints() == 4 ) {
+		/*if ( p.getNumPoints() == 4 ) {
 			Vertex[] vertices = getTriangleVertices(p);
 			double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
 			gl.glNormal3dv(normal, 0);
 		} else {
 			gl.glNormal3d(0.0d, 0.0d, 1.0d);
+		}*/
+		
+		if(myGLRender.computeNormal){
+			Vertex[] vertices = getTriangleVertices(p);
+			double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
 		}
 
 		if ( isTextured == false ) {
@@ -462,9 +468,12 @@ public class JTSDrawer {
 			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height);
 
 			if ( fill ) {
-				double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
+				
 				gl.glBegin(GL.GL_QUADS);
-				gl.glNormal3dv(normal, 0);
+				if(myGLRender.computeNormal){
+					double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+					gl.glNormal3dv(normal, 0);
+				}
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
 				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
@@ -543,12 +552,13 @@ public class JTSDrawer {
 
 			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height);
 
-			// Compute the normal of the quad (for the moment only give 3 point
-			// of the quad, to be enhance for non plan polygon)
-			double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
+		
 
 			gl.glBegin(GL.GL_QUADS);
-			gl.glNormal3dv(normal, 0);
+			if(myGLRender.computeNormal){
+				double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+				gl.glNormal3dv(normal, 0);
+			}
 			gl.glTexCoord2f(0.0f, 0.0f);
 			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 			gl.glTexCoord2f(1.0f, 0.0f);
@@ -591,8 +601,7 @@ public class JTSDrawer {
 	}
 
 	public Vertex[] getTriangleVertices(final Polygon p) {
-		if ( p.getNumPoints() == 4 ) {
-			// Build the 3 vertices of the face.
+			// Build the 3 vertices of the face from the 3 first point (maybe wrong in some case).
 			Vertex[] vertices = new Vertex[3];
 			for ( int i = 0; i < 3; i++ ) {
 				vertices[i] = new Vertex();
@@ -611,10 +620,6 @@ public class JTSDrawer {
 			vertices[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
 
 			return vertices;
-		} else {
-			System.err.println("The Polygon is not a triangle");
-			return null;
-		}
 	}
 
 	// ////////////////////////////// LINE DRAWER
@@ -1030,48 +1035,7 @@ public class JTSDrawer {
 		return vertices;
 	}
 
-	// Calculate the normal, from three points on a surface
-	protected double[] CalculateNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
-		// Step 1
-		// build two vectors, one pointing from A to B, the other pointing from
-		// A to C
-		double[] vector1 = new double[3];
-		double[] vector2 = new double[3];
-
-		vector1[0] = pointB.x - pointA.x;
-		vector2[0] = pointC.x - pointA.x;
-
-		vector1[1] = pointB.y - pointA.y;
-		vector2[1] = pointC.y - pointA.y;
-
-		vector1[2] = pointB.z - pointA.z;
-		vector2[2] = pointC.z - pointA.z;
-
-		// Step 2
-		// do the cross product of these two vectors to find the normal
-		// of the surface
-
-		double[] normal = new double[3];
-		normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
-		normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
-		normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
-
-		// Step 3
-		// "normalise" the normal (make sure it has length of one)
-
-		double total = 0.0d;
-		for ( int i = 0; i < 3; i++ ) {
-			total += normal[i] * normal[i];
-		}
-		double length = Math.sqrt(total);
-
-		for ( int i = 0; i < 3; i++ ) {
-			normal[i] /= length;
-		}
-
-		// done
-		return normal;
-	}
+	
 
 	public void drawRoundRectangle(final Polygon p) {
 

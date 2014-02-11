@@ -67,6 +67,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean z_fighting = false;
 
 	public boolean triangulation = false;
+	
+	public boolean computeNormal = true;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -140,6 +142,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Set up the lighting for Light-1
 		GLUtil.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
 			ambientLightValue, diffuseLightValue);
+		
 
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {

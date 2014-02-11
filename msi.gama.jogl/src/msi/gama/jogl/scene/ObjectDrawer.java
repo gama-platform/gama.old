@@ -6,7 +6,10 @@ import java.awt.image.*;
 import java.io.File;
 import java.util.*;
 import javax.media.opengl.GL;
+
+import msi.gama.jogl.utils.GLUtil;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Vertex;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import com.sun.opengl.util.GLUT;
@@ -259,7 +262,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 							if ( demObj.dem != null ) {
 								zValue = demObj.dem[(int) (j * envWidth + i)];
 							}
-
 							if ( demObj.isTextured ) {
 								renderer.gl.glBegin(GL_QUADS);
 								renderer.gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
@@ -330,6 +332,34 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 								}
 
 							}
+							
+							//Compute normal
+							if(renderer.computeNormal){
+								Vertex[] vertices = new Vertex[4];
+								for ( int i1 = 0; i1 < 4; i1++ ) {
+									vertices[i1] = new Vertex();
+								}
+								vertices[0].x = x1 * demObj.cellSize;
+								vertices[0].y = -y1 * demObj.cellSize;
+								vertices[0].z = z1 * altFactor;
+	
+								vertices[1].x = x1 * demObj.cellSize;
+								vertices[1].y = -y2 * demObj.cellSize;
+								vertices[1].z = z1 * altFactor;
+	
+								vertices[2].x = x2 * demObj.cellSize;
+								vertices[2].y = -y1 * demObj.cellSize;
+								vertices[2].z = z4 * altFactor;
+								
+								vertices[3].x = x2 * demObj.cellSize;
+								vertices[3].y = -y2 * demObj.cellSize;
+								vertices[3].z = z3 * altFactor;
+								double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+								renderer.gl.glNormal3dv(normal, 0);
+							}
+
+						
+							
 
 							if ( demObj.isTextured ) {
 								renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);

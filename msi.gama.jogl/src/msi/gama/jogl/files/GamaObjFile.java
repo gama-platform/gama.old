@@ -23,6 +23,8 @@ import msi.gaml.types.GamaGeometryType;
  */
 @file(name = "obj", extensions = "obj")
 public class GamaObjFile extends Gama3DGeometryFile {
+	
+	protected String mtl_path;
 
 	/**
 	 * @param scope
@@ -47,6 +49,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			while ((newline = br.readLine()) != null) {
 				if ( newline.length() > 0 ) {
 					newline = newline.trim();
+					//LOADS MATERIALS
+                    if (newline.charAt(0) == 'm' && newline.charAt(1) == 't' && newline.charAt(2) == 'l' && newline.charAt(3) == 'l' && newline.charAt(4) == 'i' && newline.charAt(5) == 'b') {
+						String[] coordstext = new String[3];
+						coordstext = newline.split("\\s+");
+						if(mtl_path!=null)
+							loadmaterials();
+					}
+					
 					// LOADS VERTEX COORDINATES
 					if ( newline.startsWith("v ") ) {
 						float coords[] = new float[4];
@@ -90,6 +100,21 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			throw GamaRuntimeException.create(e);
 		}
 	}
+	
+	 private void loadmaterials() {
+			FileReader frm;
+			String refm = mtl_path;
+
+			try {
+				frm = new FileReader(refm);
+				BufferedReader brm = new BufferedReader(frm);
+				//materials = new MtlLoader(brm,mtl_path);
+				frm.close();
+			} catch (IOException e) {
+				System.out.println("Could not open file: " + refm);
+				//materials = null;
+			}
+		}
 
 	/**
 	 * Method flushBuffer()

@@ -566,30 +566,46 @@ public class GLUtil {
 				(float) diffuseLightValue.getBlue() / 255, 1.0f };
 		float diffuseMean = 0.5f;
 
-		float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		light0Position[0] = widthEnv * 2;
-		light0Position[1] = -heightEnv / 2;
-		light0Position[2] = 2 * widthEnv;
-		light0Position[3] = 0.0f;
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
-		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
-
-		float[] light1DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		light1Position[0] = -widthEnv;
-		light1Position[1] = -heightEnv / 2;
-		light1Position[2] = 2 * widthEnv;
-		light1Position[3] = 1.0f;
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
+		boolean use2light = true;
+		//use Two lights
+		if(use2light){
+			float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+			light0Position[0] = widthEnv * 2;
+			light0Position[1] = -heightEnv / 2;
+			light0Position[2] = 2 * widthEnv;
+			light0Position[3] = 0.0f;
+			gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+			gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
+	
+			float[] light1DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+			light1Position[0] = -widthEnv;
+			light1Position[1] = -heightEnv / 2;
+			light1Position[2] = 2 * widthEnv;
+			light1Position[3] = 0.0f;
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+			gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
+			
+			gl.glEnable(GL.GL_LIGHT0); // Enable Light-0
+			gl.glEnable(GL.GL_LIGHT1); // Enable Light-1
+		}
+		else{
+			float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+			light0Position[0] = widthEnv / 2;
+			light0Position[1] = -heightEnv / 2;
+			light0Position[2] = 2 * widthEnv;
+			light0Position[3] = 0.0f;
+			gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+			gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
+			gl.glEnable(GL.GL_LIGHT0);
+		}
 
 		// Specular
 		float specularMean = 0.1f;
 		float[] lightSpecularValue = { specularMean, specularMean, specularMean, 1f };
 
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
+		//gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
 
-		// gl.glEnable(GL.GL_LIGHT0); // Enable Light-0
-		gl.glEnable(GL.GL_LIGHT1); // Enable Light-1
+		
 
 		// enable color tracking
 		gl.glEnable(GL_COLOR_MATERIAL);
@@ -817,4 +833,47 @@ public class GLUtil {
 
 		return texID[0];
 	}
+	
+	// Calculate the normal, from three points on a surface
+		public static double[] CalculateNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
+			// Step 1
+			// build two vectors, one pointing from A to B, the other pointing from
+			// A to C
+			double[] vector1 = new double[3];
+			double[] vector2 = new double[3];
+
+			vector1[0] = pointB.x - pointA.x;
+			vector2[0] = pointC.x - pointA.x;
+
+			vector1[1] = pointB.y - pointA.y;
+			vector2[1] = pointC.y - pointA.y;
+
+			vector1[2] = pointB.z - pointA.z;
+			vector2[2] = pointC.z - pointA.z;
+
+			// Step 2
+			// do the cross product of these two vectors to find the normal
+			// of the surface
+
+			double[] normal = new double[3];
+			normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
+			normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
+			normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
+
+			// Step 3
+			// "normalise" the normal (make sure it has length of one)
+
+			double total = 0.0d;
+			for ( int i = 0; i < 3; i++ ) {
+				total += normal[i] * normal[i];
+			}
+			double length = Math.sqrt(total);
+
+			for ( int i = 0; i < 3; i++ ) {
+				normal[i] /= length;
+			}
+
+			// done
+			return normal;
+		}
 }
