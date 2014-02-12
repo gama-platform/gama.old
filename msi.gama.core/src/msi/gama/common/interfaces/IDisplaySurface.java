@@ -83,7 +83,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		/**
 		 * @return the position of the camera
 		 */
-		double[] getCameraPosition();
+		GamaPoint getCameraPosition();
 
 	}
 
