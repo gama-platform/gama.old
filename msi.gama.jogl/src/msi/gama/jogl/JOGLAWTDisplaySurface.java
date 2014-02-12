@@ -20,7 +20,6 @@ package msi.gama.jogl;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -401,7 +400,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public GamaPoint getModelCoordinates() {
 		Point mp = renderer.camera.getMousePosition();
 		if ( mp == null ) { return null; }
-		Point2D.Double p = renderer.getRealWorldPointFromWindowPoint(renderer.camera.getMousePosition());
+		Point2D.Double p = renderer.getRealWorldPointFromWindowPoint(mp);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
 	}
@@ -411,10 +410,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraPosition()
 	 */
 	@Override
-	public double[] getCameraPosition() {
-		if ( renderer == null && renderer.camera == null ) { return new double[] { 0, 0, 0 }; }
-		GamaPoint v = renderer.camera.getPosition();
-		return new double[] { v.x, v.y, v.z };
+	public GamaPoint getCameraPosition() {
+		if ( renderer == null && renderer.camera == null ) { return new GamaPoint(0, 0, 0); }
+		return renderer.camera.getPosition();
 	}
 
 	/**
