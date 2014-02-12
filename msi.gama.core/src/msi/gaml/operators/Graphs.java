@@ -314,7 +314,7 @@ public class Graphs {
 	public static double betaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the beta_index operator, the graph should not be null!"); }
-		return graph.getEdges().size() / graph.getVertices().size();
+		return (graph.getEdges().size() + 0.0) / graph.getVertices().size();
 	}
 	
 	@operator(value = "gamma_index")
@@ -323,7 +323,7 @@ public class Graphs {
 	public static double gammaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the gamma_index operator, the graph should not be null!"); }
-		return graph.getEdges().size() / (2 * graph.getVertices().size() - 5);
+		return graph.getEdges().size() / (2.0 * graph.getVertices().size() - 5);
 	}
 	
 	@operator(value = "connectivity_index")
@@ -334,7 +334,7 @@ public class Graphs {
 			.error("In the connectivity_index operator, the graph should not be null!"); }
 		int S = graph.getVertices().size();
 		int C = connectedComponentOf(graph).size();
-		return (S-C)/(S-1);
+		return (S-C)/(S-1.0);
 	}
 
 	
@@ -388,7 +388,7 @@ public class Graphs {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the alpha_index operator, the graph should not be null!"); }
 		int S = graph.getVertices().size();
-		return nbCycles(graph) / (2 * S-5);
+		return nbCycles(graph) / (2.0 * S-5);
 	}
 
 	
