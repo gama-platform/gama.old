@@ -114,7 +114,7 @@ public class MDXSkill extends Skill{
 
 //			String mdxStr = scope.hasArg("mdx") ? (String) scope.getArg("mdx", IType.STRING):null;
 			String onRowStr = (String) scope.getArg("onRows", IType.STRING);
-			String onColumnStr = (String) scope.getArg("onColums", IType.STRING);
+			String onColumnStr = (String) scope.getArg("onColumns", IType.STRING);
 			String fromStr = (String) scope.getArg("from", IType.STRING);
 			String whereStr = scope.hasArg("where") ? (String) scope.getArg("where", IType.STRING): null;
 			GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST):null;
