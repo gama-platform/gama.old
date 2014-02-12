@@ -53,8 +53,7 @@ import com.vividsolutions.jts.geom.Envelope;
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED }, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
+	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
@@ -123,6 +122,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
+	public static final String WEB = "web";
 	public static final String THREED = "3D";
 	// public static final String SWT = "swt";
 
