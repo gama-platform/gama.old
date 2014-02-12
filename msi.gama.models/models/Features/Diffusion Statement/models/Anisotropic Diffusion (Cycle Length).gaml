@@ -52,10 +52,10 @@ entities {
 experiment diffusion type: gui {
 	output {
 		display a type: opengl {
-			grid cells draw_as_dem: true triangulation: true;
+			grid cells elevation: true triangulation: true;
 		}
 		display quick type: opengl {
-			grid quick_cells draw_as_dem: true triangulation: true;
+			grid quick_cells elevation: true triangulation: true;
 		}
 	}
 }

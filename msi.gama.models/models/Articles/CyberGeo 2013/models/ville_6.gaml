@@ -87,7 +87,7 @@ species route {
 experiment ville type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
-			grid mnt_cell triangulation: true texture:texture draw_as_dem:true transparency: 0.3;
+			grid mnt_cell triangulation: true texture:texture elevation:true transparency: 0.3;
 			species batiment aspect: geometrie;
 			species route aspect: geometrie;
 			species foyer aspect: revenu;

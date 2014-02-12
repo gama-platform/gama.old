@@ -55,18 +55,19 @@ entities {
 
 experiment gridloading type: gui {
 	output {
-		display gridTextured type:opengl ambient_light:255{
-			grid cell texture:map_texture triangulation:false draw_as_dem:true;
+		
+		display gridNonTextured type:opengl ambient_light:100{
+			grid cell elevation:true;
 			species people aspect:base;
 		}
 		
-		display gridNonTextured type:opengl ambient_light:100{
-			grid cell;
+		display gridTextured type:opengl ambient_light:255{
+			grid cell texture:map_texture triangulation:false elevation:true;
 			species people aspect:base;
 		}
 				
 		display gridTexturedTriangulated type:opengl ambient_light:100{
-			grid cell texture:map_texture text:false triangulation:true draw_as_dem:true;
+			grid cell texture:map_texture text:false triangulation:true elevation:true;
 			species people aspect:base;
 		}
 	}
