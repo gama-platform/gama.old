@@ -86,6 +86,7 @@ public class WebDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
 		final Color border, final boolean rounded) {
+		System.out.println("WebDisplaydrawGamaShape");
 		return null;
 	}
 

@@ -7,10 +7,16 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.gui.displays.layers.LayerManager;
 
+
+@display("web")
 public class WebDisplaySurface implements IDisplaySurface {
 
-	public WebDisplaySurface() {}
+	public WebDisplaySurface(final Object ... args) {
+		
+	}
 
 	/**
 	 * Method getImage()
@@ -87,7 +93,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public ILayerManager getManager() {
-		return null;
+		return new LayerManager(this);
 	}
 
 	/**
