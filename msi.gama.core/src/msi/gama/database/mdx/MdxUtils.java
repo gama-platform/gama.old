@@ -29,9 +29,13 @@ public class MdxUtils {
 		}else if ( olaptype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			String fullPath =
 					scope.getSimulationScope().getModel().getRelativeFilePath(catalog, true);
-			
 			//catalog=fullPath.replace('\\', '/');
 			catalog=fullPath;
+			if (DEBUG){
+				GuiUtils.debug("MdxlUtils.createConnectionObject- full path:" + fullPath);
+				GuiUtils.debug("MdxlUtils.createConnectionObject- Catalog path:" + catalog);
+			}
+
 			if (DEBUG){
 				GuiUtils.debug("MdxlUtils.createConnectionObject.catalog.Mondrian:"+olaptype+" - "+dbtype+" - "+" - "+host+" - "
 						+ port+" - "+database+" - "+catalog+" - "+user+" - "+passwd+" - ");
