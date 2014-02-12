@@ -53,6 +53,7 @@ import com.vividsolutions.jts.geom.Envelope;
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
@@ -448,6 +449,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
+		if ( displayType.equals(WEB) ) { return GuiUtils.WEB_VIEW_ID; }
 		return GuiUtils.LAYER_VIEW_ID;
 	}
 
