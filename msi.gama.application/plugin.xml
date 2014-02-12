@@ -45,7 +45,7 @@
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.LayeredDisplayView"
+            class="msi.gama.gui.views.LayeredDisplayView$AWTDisplayView"
             icon="icons/view.display.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
@@ -94,6 +94,15 @@
             icon="icons/view.panel.png"
             id="msi.gama.views.userControlView"
             name="User Control"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.LayeredDisplayView$WebDisplayView"
+            icon="icons/view.display.png"
+            id="msi.gama.application.view.WebDisplayView"
+            name="Web Display"
             restorable="true">
       </view>
 
