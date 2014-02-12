@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="commons-math-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="mondrian.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-resgen.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-vfs-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-properties.jar"/>
+	<classpathentry exported="true" kind="lib" path="log4j-1.2.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-xom.jar"/>
+	<classpathentry exported="true" kind="lib" path="xercesImpl-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="svgSalamander.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
