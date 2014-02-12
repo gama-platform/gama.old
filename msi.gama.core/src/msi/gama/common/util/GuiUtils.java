@@ -46,6 +46,7 @@ public class GuiUtils {
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
+	public static final String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 
