@@ -199,6 +199,7 @@ public class MovingSkill extends Skill {
 	@action(name = "wander_3D", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
+		@arg(name = "z_max", type = IType.INT, optional = true, doc = @doc("the maximum alltitude (z) the geometry can reach")),
 		@arg(name = "bounds", type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
 
@@ -206,6 +207,8 @@ public class MovingSkill extends Skill {
 		final ILocation location = agent.getLocation();
 		final int heading = computeHeadingFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
+		//By default the max z value is 100
+		final int z_max = scope.hasArg("z_max") ? scope.getIntArg("z_max") : 100;
 
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 
@@ -221,11 +224,11 @@ public class MovingSkill extends Skill {
 				}
 			}
 			((GamaPoint) loc).z =
-				Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
-			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
+			Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
+			((GamaPoint) loc).z = Math.min(((GamaPoint) loc).z, z_max);
 			agent.setLocation(loc);
 		}
-		// scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+
 		return null;
 	}
 

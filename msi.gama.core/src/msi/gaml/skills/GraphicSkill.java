@@ -80,14 +80,15 @@ public class GraphicSkill extends Skill {
 		final IAgent agent = getCurrentAgent(scope);
 		double curTrans = getTransparency(agent);
 		double  curStep = scope.getSimulationScope().getTime(scope, agent);
+		
 		Integer period = (Integer) scope.getArg("period", IType.INT);
 		
 		if(period == 0){
 			period = 360;		
 		}
-		GuiUtils.informConsole("curTrans " + curTrans + "period " + period + "curStep" + curStep);
 		curTrans = Math.abs(Math.cos((curStep*(180/period)*(Math.PI/180))));
 		setTransparency(agent, curTrans);
+		scope.getGraphics().setOpacity(curTrans);
 		return;
 	}
 
