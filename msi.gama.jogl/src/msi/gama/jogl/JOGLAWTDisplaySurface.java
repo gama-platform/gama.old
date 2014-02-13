@@ -400,7 +400,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public GamaPoint getModelCoordinates() {
 		Point mp = renderer.camera.getMousePosition();
 		if ( mp == null ) { return null; }
-		Point2D.Double p = renderer.getRealWorldPointFromWindowPoint(mp);
+		GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
 	}

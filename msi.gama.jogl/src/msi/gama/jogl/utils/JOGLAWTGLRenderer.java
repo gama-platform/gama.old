@@ -589,7 +589,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	// ////////////////////////ROI HANDLER ////////////////////////////////////
-	public Point2D.Double getRealWorldPointFromWindowPoint(final Point windowPoint) {
+	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
 		if ( glu == null ) { return null; }
 		int realy = 0;// GL y coord pos
 		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
@@ -609,13 +609,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			(float) (camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
 		GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
 
-		final Point2D.Double realWorldPoint = new Point2D.Double(worldCoordinates.x, worldCoordinates.y);
-		return realWorldPoint;
+		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
-	public Point getIntWorldPointFromWindowPoint(final Point windowPoint) {
-		Point2D.Double p = getRealWorldPointFromWindowPoint(windowPoint);
-		return new Point((int) p.x, (int) p.y);
+	public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {
+		GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);
+		return new GamaPoint((int) p.x, (int) p.y);
 	}
 
 	public Point2D.Double getWindowPointPointFromRealWorld(final Point realWorldPoint) {
@@ -659,8 +658,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void drawROI() {
 		if ( camera.isEnableROIDrawing() ) {
-			Point realPressedPoint = getIntWorldPointFromWindowPoint(camera.getLastMousePressedPosition());
-			Point realMousePositionPoint = getIntWorldPointFromWindowPoint(camera.getMousePosition());
+			GamaPoint realPressedPoint = getIntWorldPointFromWindowPoint(camera.getLastMousePressedPosition());
+			GamaPoint realMousePositionPoint = getIntWorldPointFromWindowPoint(camera.getMousePosition());
 			drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x, -realMousePositionPoint.y,
 				this.getZFighting(), this.getMaxEnvDim());
 			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint);

@@ -73,7 +73,7 @@ public class ImageObject extends AbstractObject {
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
-						final Point pickedPoint =
+						final GamaPoint pickedPoint =
 							renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
 						IAgent ag = GAMA.run(new InScope<IAgent>() {
 

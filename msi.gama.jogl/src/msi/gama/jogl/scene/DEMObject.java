@@ -76,7 +76,7 @@ public class DEMObject extends AbstractObject {
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
-						final Point pickedPoint =
+						final GamaPoint pickedPoint =
 							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera
 								.getLastMousePressedPosition().x, renderer.camera.getLastMousePressedPosition().y));
 						IAgent ag = GAMA.run(new InScope<IAgent>() {

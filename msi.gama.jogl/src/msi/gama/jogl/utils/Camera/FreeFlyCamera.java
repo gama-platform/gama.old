@@ -120,28 +120,6 @@ public class FreeFlyCamera extends AbstractCamera {
 		update();
 	}
 
-	@Override
-	public void setRegionOfInterest(final Point origin, final Point end) {
-		region[0] = origin.x;
-		region[1] = origin.y;
-		region[2] = end.x;
-		region[3] = end.y;
-		int roiWidth = Math.abs(end.x - origin.x);
-		int roiHeight = Math.abs(end.y - origin.y);
-		if ( region[0] == region[2] && region[1] == region[3] ) {
-			getRoiCenter().setLocation(end.x, end.y);
-
-		} else if ( region[0] < region[2] && region[1] > region[3] ) {
-			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y + roiHeight / 2);
-		} else if ( region[0] < region[2] && region[1] < region[3] ) {
-			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y - roiHeight / 2);
-		} else if ( region[0] > region[2] && region[1] < region[3] ) {
-			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y - roiHeight / 2);
-		} else if ( region[0] > region[2] && region[1] > region[3] ) {
-			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y + roiHeight / 2);
-		}
-
-	}
 
 	@Override
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {

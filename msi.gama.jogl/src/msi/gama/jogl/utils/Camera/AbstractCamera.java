@@ -453,6 +453,25 @@ public abstract class AbstractCamera implements ICamera {
 	protected void setEnableROIDrawing(final boolean enableROIDrawing) {
 		this.enableROIDrawing = enableROIDrawing;
 	}
+	
+	@Override
+	public void setRegionOfInterest(final GamaPoint origin, final GamaPoint end) {
+		region[0] = (int) origin.x;
+		region[1] = (int) origin.y;
+		region[2] = (int) end.x;
+		region[3] = (int) end.y;
+		int roiWidth = (int) Math.abs(end.x - origin.x);
+		int roiHeight = (int) Math.abs(end.y - origin.y);
+		if ( region[0] < region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y + roiHeight / 2);
+		} else if ( region[0] < region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y + roiHeight / 2);
+		}
+	}
 
 	@Override
 	public Point getLastMousePressedPosition() {
@@ -516,5 +535,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected Point getRoiCenter() {
 		return roiCenter;
 	}
+	
+	
 
 }
