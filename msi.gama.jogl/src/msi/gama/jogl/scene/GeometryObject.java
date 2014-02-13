@@ -19,11 +19,12 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public IList<String> textureFileNames;
 	public double height;
 	public boolean rounded;
+	public double ratio;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
 		final IList<String> textureFileNames, final int angle, final double height, final GamaPoint offset,
-		final GamaPoint scale, final boolean rounded, final IShape.Type type/* , final String populationName */) {
+		final GamaPoint scale, final boolean rounded, final IShape.Type type,final double ratio) {
 		super(color, offset, scale, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
@@ -56,6 +57,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		this.textureFileNames = textureFileNames;
 		this.height = height;
 		this.rounded = rounded;
+		this.ratio = ratio;
 	}
 
 	@Override

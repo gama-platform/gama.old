@@ -44,7 +44,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	static enum Type {
 		BOX, CIRCLE, CONE, CUBE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
 		MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT(
-			"Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT;
+			"Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT, HEMISPHERE;
 
 		Type() {}
 
@@ -58,6 +58,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();
 
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
+	
+	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
 
 	@Override
 	public IShape copy(IScope scope);

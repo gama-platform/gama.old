@@ -124,11 +124,11 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final IList<String> textureFileNames, final Integer angle, final double height, final GamaPoint offSet,
-		final GamaPoint scale, final boolean roundCorner, final IShape.Type type, final double alpha) {
+		final GamaPoint scale, final boolean roundCorner, final IShape.Type type, final double alpha, final double ratio) {
 
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
-				textureFileNames, angle == null ? 0 : angle, height, offSet, scale, roundCorner, type/* , popName */);
+				textureFileNames, angle == null ? 0 : angle, height, offSet, scale, roundCorner, type,ratio);
 		if ( currentLayerIsStatic ) {
 			if ( !staticObjectsAreLocked ) {
 				staticObjects.add(curJTSGeometry);
@@ -197,7 +197,7 @@ public class ModelScene {
 		if ( !envGeometryInitialized ) {
 			currentLayerIsStatic = false;
 			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, null, 0, 0, offset, scale, false,
-				IShape.Type.ENVIRONMENT, 1d/* , "environment" */);
+				IShape.Type.ENVIRONMENT, 1d,0);
 			envGeometryInitialized = true;
 		}
 	}

@@ -4,6 +4,7 @@ import static javax.media.opengl.GL.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
@@ -830,9 +831,57 @@ public class JTSDrawer {
 		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
 		final int slices = 16;
 		final int stacks = 16;
+	
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+
+
+	}
+	
+	public void drawHemiSphere(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		Polygon p = (Polygon) g.geometry;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
+
+		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		Color c = g.getColor();
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+				g.getAlpha() * c.getAlpha() / 255);
+		}
+
+		GLUquadric quad = myGlu.gluNewQuadric();
+		if ( !myGLRender.triangulation ) {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
+		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+		
+
+
+		gl.glEnable(GL_CLIP_PLANE0);
+		double ratio= 0.25;
+		//upper sphere
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)},0);		
+		myGlu.gluSphere(quad, g.height, slices, stacks);
+		//down sphere
+		gl.glColor4d(1.0,0.0,0.0,1.0);
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,-(2*g.ratio-1)},0);		
+		myGlu.gluSphere(quad, g.height, slices, stacks);
+		
+		
+		myGlu.gluDeleteQuadric(quad);
+		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+		gl.glDisable(GL_CLIP_PLANE0);
 
 	}
 
