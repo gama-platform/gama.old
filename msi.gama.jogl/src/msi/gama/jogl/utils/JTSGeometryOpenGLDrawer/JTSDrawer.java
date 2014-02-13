@@ -871,11 +871,11 @@ public class JTSDrawer {
 		gl.glEnable(GL_CLIP_PLANE0);
 		double ratio= 0.25;
 		//upper sphere
-		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)},0);		
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)*g.height/2},0);		
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 		//down sphere
 		gl.glColor4d(1.0,0.0,0.0,1.0);
-		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,-(2*g.ratio-1)},0);		
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,-(2*g.ratio-1)*g.height/2},0);		
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 		
 		
