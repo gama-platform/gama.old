@@ -63,6 +63,8 @@ import org.jfree.ui.RectangleInsets;
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */
+	@facet(name = ChartLayerStatement.XRANGE, type = { IType.FLOAT, IType.INT }, optional = true),
+	@facet(name = ChartLayerStatement.YRANGE, type = { IType.FLOAT, IType.INT }, optional = true),
 	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
@@ -77,6 +79,9 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) }, omissible = IKeyword.NAME)
 public class ChartLayerStatement extends AbstractLayerStatement {
+
+	public static final String XRANGE = "x_range";
+	public static final String YRANGE = "y_range";
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {
 
@@ -152,33 +157,30 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));
 				}
-				// else {
-				// timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-				// .setExpression(new ConstantExpression(null) {
-				//
-				// @Override
-				// public Integer value(final IScope scope) {
-				// return scope.getClock().getCycle();
-				// }
-				//
-				// @Override
-				// public boolean isConst() {
-				// return false;
-				// }
-				// });
-				// }
-
 			}
 
 			if ( !datas.contains(timeSeriesXData) ) {
 				datas.add(0, timeSeriesXData.createData(scope));
 			}
 		}
-
+		IExpression expr = getFacet(XRANGE);
+		if ( expr != null ) {
+			Double range = Cast.asFloat(scope, expr.value(scope));
+			if ( range > 0 ) {
+				domainAxis.setFixedAutoRange(range);
+			}
+		}
 		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 		domainAxis.setLabel(datas.get(0).getName());
+		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+		expr = getFacet(YRANGE);
+		if ( expr != null ) {
+			Double range = Cast.asFloat(scope, expr.value(scope));
+			if ( range > 0 ) {
+				yAxis.setFixedAutoRange(range);
+			}
+		}
 		if ( datas.size() == 2 ) {
-			final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 			yAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 			yAxis.setLabel(datas.get(1).getName());
 			chart.removeLegend();
