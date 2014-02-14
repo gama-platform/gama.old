@@ -866,22 +866,105 @@ public class JTSDrawer {
 		final int slices = 16;
 		final int stacks = 16;
 		
+		
+        double angle = (g.ratio*360);
+        if(angle%360 <=180){
+        	gl.glEnable(GL_CLIP_PLANE0);
+    		gl.glEnable(GL_CLIP_PLANE1);
+    		
+    		gl.glColor4d(1.0,0.0,0.0,1.0);
+    		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,0},0);
+    		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{-Math.cos((angle* Math.PI)/180),Math.sin((angle* Math.PI)/180),0,0},0);
+    		myGlu.gluSphere(quad, g.height*1.05, slices, stacks);
+    		
+    		gl.glDisable(GL_CLIP_PLANE0);
+    		gl.glDisable(GL_CLIP_PLANE1);
+    		
+    		gl.glColor4d(0.0,1.0,0.0,1.0);
+    		myGlu.gluSphere(quad, g.height, slices, stacks);
+        }
+        
+        else{
+        	angle = ((1-g.ratio)*360);
+        	gl.glEnable(GL_CLIP_PLANE0);
+    		gl.glEnable(GL_CLIP_PLANE1);
+    		
+    		gl.glColor4d(0.0,1.0,0.0,1.0);
+    		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,0},0);
+    		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{Math.cos((angle* Math.PI)/180),Math.sin((angle* Math.PI)/180),0,0},0);
+    		myGlu.gluSphere(quad, g.height*1.05, slices, stacks);
+    		
+    		gl.glDisable(GL_CLIP_PLANE0);
+    		gl.glDisable(GL_CLIP_PLANE1);
+    		
+    		gl.glColor4d(1.0,0.0,0.0,1.0);
+    		myGlu.gluSphere(quad, g.height, slices, stacks);
+        	
+        }
+		
+		
+		
+
+		
+	
+
+	}
+	
+	
+	public void drawNemiSphere(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		Polygon p = (Polygon) g.geometry;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
+
+		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		Color c = g.getColor();
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+				g.getAlpha() * c.getAlpha() / 255);
+		}
+
+		GLUquadric quad = myGlu.gluNewQuadric();
+		if ( !myGLRender.triangulation ) {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
+		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+		
 
 
 		gl.glEnable(GL_CLIP_PLANE0);
-		double ratio= 0.25;
-		//upper sphere
-		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)*g.height/2},0);		
-		myGlu.gluSphere(quad, g.height, slices, stacks);
-		//down sphere
+		gl.glEnable(GL_CLIP_PLANE1);
 		gl.glColor4d(1.0,0.0,0.0,1.0);
-		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,-(2*g.ratio-1)*g.height/2},0);		
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)*g.height/2},0);
+		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{0,1,0,(2*g.ratio-1)*g.height/2},0);
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 		
+		gl.glColor4d(0.0,1.0,0.0,1.0);
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{1,0,0,(2*g.ratio-1)*g.height/2},0);
+		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{0,-1,0,(2*g.ratio-1)*g.height/2},0);
+		myGlu.gluSphere(quad, g.height, slices, stacks);
 		
-		myGlu.gluDeleteQuadric(quad);
-		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+		gl.glColor4d(0.0,0.0,1.0,1.0);
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,(2*g.ratio-1)*g.height/2},0);
+		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{0,-1,0,(2*g.ratio-1)*g.height/2},0);
+		myGlu.gluSphere(quad, g.height, slices, stacks);
+		
+		gl.glColor4d(1.0,1.0,0.0,1.0);
+		gl.glClipPlane(GL_CLIP_PLANE0, new double[]{-1,0,0,(2*g.ratio-1)*g.height/2},0);
+		gl.glClipPlane(GL_CLIP_PLANE1, new double[]{0,1,0,(2*g.ratio-1)*g.height/2},0);
+		myGlu.gluSphere(quad, g.height, slices, stacks);
+		
 		gl.glDisable(GL_CLIP_PLANE0);
+		gl.glDisable(GL_CLIP_PLANE1);
+	
 
 	}
 
