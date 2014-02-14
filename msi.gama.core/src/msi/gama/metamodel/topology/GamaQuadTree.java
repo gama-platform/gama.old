@@ -51,7 +51,9 @@ public class GamaQuadTree implements ISpatialIndex {
 	// private final ReentrantLock lock = new ReentrantLock();
 
 	public GamaQuadTree(final Envelope bounds) {
-		root = new QuadNode(bounds);
+		// AD To address Issue 804, explictely converts the bounds to an Envelope 2D, so that all computations are made
+		// in 2D in the QuadTree
+		root = new QuadNode(new Envelope(bounds));
 		minSize = bounds.getWidth() / 1000d;
 	}
 
