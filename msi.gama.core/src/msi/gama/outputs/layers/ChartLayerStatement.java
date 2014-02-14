@@ -198,8 +198,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				((DefaultTableXYDataset) dataset).addSeries(serie);
 				expressions_index.put(legend, i);
 				plot.setRenderer(i, (XYItemRenderer) e.getRenderer(), false);
-				final Color c = e.getColor();
-				plot.getRenderer(i).setSeriesPaint(0, c);
+				// final Color c = e.getColor();
+				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setSeriesPaint(0, c);
+				// TODO Control this with a facet
+				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setBaseShapesFilled(false);
+				// TODO Control this with a facet
+				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setSeriesShapesVisible(0, false);
 				plot.setDataset(i, (DefaultTableXYDataset) dataset);
 			}
 			history.append(legend);

@@ -44,10 +44,15 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
 		IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
+
+	public static final String MARKER = "marker";
+	public static final String FILL = "fill";
 
 	public static class ChartData {
 
@@ -113,28 +118,46 @@ public class ChartDataStatement extends AbstractStatement {
 		if ( style == null ) {
 			style = IKeyword.LINE;
 		}
+
+		GamaColor color = Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
+		boolean showMarkers = getFacetValue(scope, MARKER, true);
+		boolean fillMarkers = getFacetValue(scope, FILL, true);
+
 		AbstractRenderer r = null;
 		if ( style.equals(IKeyword.LINE) ) {
-			r = new XYLineAndShapeRenderer();
+			r = new XYLineAndShapeRenderer(true, showMarkers);
+			r.setSeriesPaint(0, color);
+			((XYLineAndShapeRenderer) r).setBaseShapesFilled(fillMarkers);
 		} else if ( style.equals(IKeyword.AREA) ) {
 			r = new XYAreaRenderer();
+			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.WHISKER) ) {
 			r = new BoxAndWhiskerRenderer();
+			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.BAR) ) {
 			r = new XYBarRenderer();
+			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.DOT) ) {
 			r = new XYDotRenderer();
+			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.SPLINE) ) {
 			r = new XYSplineRenderer();
+			r.setSeriesPaint(0, color);
+			((XYSplineRenderer) r).setBaseShapesFilled(fillMarkers);
+			((XYSplineRenderer) r).setBaseShapesVisible(showMarkers);
 		} else if ( style.equals(IKeyword.STEP) ) {
 			r = new XYStepRenderer();
+			r.setSeriesPaint(0, color);
+			((XYStepRenderer) r).setBaseShapesFilled(fillMarkers);
+			((XYStepRenderer) r).setBaseShapesVisible(showMarkers);
 		}
 		data.renderer = r;
 
 		data.name =
 			Cast.asString(scope,
 				getFacetValue(scope, IKeyword.LEGEND, getFacetValue(scope, IKeyword.NAME, "data" + dataNumber++)));
-		data.color = Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
+		data.color = color;
+		// r.setSeriesPaint(0, data.color);
 		// in order to "detach" the expression from the current definition scope
 		data.value = getFacet(IKeyword.VALUE).resolveAgainst(scope);
 		return data;
