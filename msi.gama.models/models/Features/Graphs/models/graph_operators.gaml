@@ -22,7 +22,7 @@ global {
 			centrality <- (bc[self] - min_centrality) / (max_centrality - min_centrality);
 			centrality_color <- rgb(255, int(255 * (1 - centrality)), int(255 * (1 - centrality)));
 		}
-		
+		write "mean vertice degree: " + mean(the_graph.vertices collect (the_graph degree_of each));
 		write "nb_cycles: " + nb_cycles(the_graph);
 		write "alpha_index: " + alpha_index(the_graph);
 		write "beta_index: " + beta_index(the_graph);

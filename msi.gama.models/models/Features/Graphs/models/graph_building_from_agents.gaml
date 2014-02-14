@@ -9,16 +9,20 @@ model graphbuilding
 global {
 	graph the_graph ;
 	string graph_builing_type <- "distance";
+	float distance <- 20.0;
+	float tolerance <- 0.0;
 	init {
 		create dummy_agent number: 30; 
 		switch graph_builing_type {
 			match "distance" {
-				the_graph <- as_distance_graph(dummy_agent, 20);	
+				the_graph <- as_distance_graph(dummy_agent, distance);	
 			}
-			match "inetersection" {
-				the_graph <- as_intersection_graph(dummy_agent, 0.01);	
+			match "intersection" {
+				the_graph <- as_intersection_graph(dummy_agent, tolerance);	
 			}	
 		}
+		write "nb vertices: " + length(the_graph.vertices);
+		write "nb edges: " + length(the_graph.edges);
 	}
 	
 }
@@ -31,8 +35,9 @@ species dummy_agent {
 }
 
 experiment loadgraph type: gui {
-	parameter "Method to build the graph" var: graph_builing_type among: [ "distance", "inetersection"];
-	
+	parameter "Method to build the graph" var: graph_builing_type among: [ "distance", "intersection"];
+	parameter "Tolerance" var: tolerance min: 0 max: 2.0 category: "Intersection";
+	parameter "Distance" var: distance min: 1.0 max: 50.0 category: "Distance";
 	output {
 		display map {
 			species dummy_agent ;
