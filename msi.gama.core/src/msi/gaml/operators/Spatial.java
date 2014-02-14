@@ -111,7 +111,7 @@ public abstract class Spatial {
 		}
 		
 		@operator("hemisphere")
-		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { "sphere(10) --: returns a geometry as a circle of radius 10 but displays a sphere." }, see = {
+		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { "hemisphere(10,0.5) --: returns a geometry as a circle of radius 10 but displays a sphere." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
 		public static IShape hemisphere(final IScope scope, final Double radius, final Double ratio) {
 			ILocation location;
