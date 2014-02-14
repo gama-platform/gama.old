@@ -119,10 +119,12 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		Iterator itPrefuseNodes = viz.getVisualGroup(PREFUSE_GRAPH + ".nodes").tuples();
 		while (itPrefuseNodes.hasNext()) {
 			VisualItem prefuseNode = (VisualItem) itPrefuseNodes.next();
-			IShape gamaNode = (IShape) prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
-			prefuseNode.setX(gamaNode.getLocation().getX());
-			prefuseNode.setY(gamaNode.getLocation().getY());
-
+			Object pn = prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
+			if (pn instanceof IShape) {
+				IShape gamaNode = (IShape) pn;
+				prefuseNode.setX(gamaNode.getLocation().getX());
+				prefuseNode.setY(gamaNode.getLocation().getY());
+			}
 		}
 
 		// actually run layout
@@ -149,8 +151,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		}
 
 		// stop and end layout
-		// viz.cancel("layout");
-		viz.cancel("layout");
+		 viz.cancel("layout");
+		//viz.cancel("layout");
 		logger.fine("layout finished in: " + (System.currentTimeMillis() - timeBegin));
 
 		// retrieve the resulting coordinates
@@ -158,12 +160,15 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 		while (itPrefuseNodes.hasNext()) {
 			VisualItem prefuseNode = (VisualItem) itPrefuseNodes.next();
+			Object pn = prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
+			if (pn instanceof IShape) {
+				IShape gamaNode = (IShape) pn;
+				ILocation newloc = new GamaPoint(prefuseNode.getX(), prefuseNode.getY());
+				gamaNode.setLocation(newloc);
 
-			IShape gamaNode = (IShape) prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
-
-			ILocation newloc = new GamaPoint(prefuseNode.getX(), prefuseNode.getY());
-			gamaNode.setLocation(newloc);
-
+			}
+			
+			
 		}
 
 		// free memory

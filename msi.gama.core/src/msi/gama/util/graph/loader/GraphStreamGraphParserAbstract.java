@@ -57,7 +57,7 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		@Override
 		public void graphAttributeAdded(String sourceId, long timeId,
 				String attribute, Object value) {
-			warnings.addWarning("an information was ignored during the loading of the graph: graph attribute '"+attribute+"'='"+value+"'");
+			//warnings.addWarning("an information was ignored during the loading of the graph: graph attribute '"+attribute+"'='"+value+"'");
 		}
 
 		@Override
@@ -70,73 +70,73 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		public void edgeAttributeChanged(String sourceId, long timeId,
 				String edgeId, String attribute, Object oldValue,
 				Object newValue) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of an edge changed.");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"the attribute '"+attribute+"' of an edge changed.");
 		}
 
 		@Override
 		public void edgeAttributeRemoved(String sourceId, long timeId,
 				String edgeId, String attribute) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of an edge was removed");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"the attribute '"+attribute+"' of an edge was removed");
 		}
 
 		@Override
 		public void graphAttributeChanged(String sourceId, long timeId,
 				String attribute, Object oldValue, Object newValue) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of the graph changed.");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"the attribute '"+attribute+"' of the graph changed.");
 		}
 
 		@Override
 		public void graphAttributeRemoved(String sourceId, long timeId,
 				String attribute) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of the graph was removed");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"the attribute '"+attribute+"' of the graph was removed");
 		}
 
 		@Override
 		public void nodeAttributeChanged(String sourceId, long timeId,
 				String nodeId, String attribute, Object oldValue,
 				Object newValue) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of a node changed.");
+			//warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+			//		"the attribute '"+attribute+"' of a node changed.");
 		}
 
 		@Override
 		public void nodeAttributeRemoved(String sourceId, long timeId,
 				String nodeId, String attribute) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the attribute '"+attribute+"' of a node was removed");
+			/*warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+					"the attribute '"+attribute+"' of a node was removed");*/
 		}
 
 		@Override
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"an edge should have been removed");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"an edge should have been removed");
 		}
 
 		@Override
 		public void graphCleared(String sourceId, long timeId) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"the graph should have been cleaned");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"the graph should have been cleaned");
 		}
 
 		@Override
 		public void nodeRemoved(String sourceId, long timeId, String nodeId) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"a node should have been removed");
+		//	warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+		//			"a node should have been removed");
 		}
 
 		@Override
 		public void stepBegins(String sourceId, long timeId, double step) {
-			warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
-					"new step detected.");
+			//warnings.addWarning("an event was ignored during the loading of the graph (the dynamic part of graphs is ignored): " +
+			//		"new step detected.");
 		}
 		
 		public void endParsing() {
 			listener.endOfParsing();
-			warnings.publishAsGAMAWarning("during the parsing of the graph, warnings have been detected:");
+			//warnings.publishAsGAMAWarning("during the parsing of the graph, warnings have been detected:");
 		}
 		
 		

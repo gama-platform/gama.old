@@ -22,7 +22,7 @@ public class GraphUtilsPrefuse {
 		
 		Graph g = new Graph();
 		
-		g.addColumn(PREFUSE_ATTRIBUTE_GAMA_OBJECT, Object.class);
+		g.addColumn(PREFUSE_ATTRIBUTE_GAMA_OBJECT, IShape.class);
 		//g.addColumn(VisualItem.VISIBLE, Boolean.class, Boolean.TRUE);
 		
 		Map<Object,Node> gamaVertex2prefuseNode = new HashMap<Object, Node>(graph._internalVertexMap().size());
@@ -32,10 +32,10 @@ public class GraphUtilsPrefuse {
 			//Object vertex = graph._internalVertexMap().get(content);
 			if (content instanceof IShape) {
 				IShape shContent = (IShape) content;
-				ILocation loc = shContent.getLocation();
+				//ILocation loc = shContent.getLocation();
 				
 				Node prefuseNode = g.addNode();
-				prefuseNode.set(PREFUSE_ATTRIBUTE_GAMA_OBJECT, content);
+				prefuseNode.set(PREFUSE_ATTRIBUTE_GAMA_OBJECT, shContent);
 				
 				gamaVertex2prefuseNode.put(content, prefuseNode);
 				
@@ -66,7 +66,8 @@ public class GraphUtilsPrefuse {
 	}
 	
 	public static Graph getPrefuseGraphFromGamaGraph(IGraph<?, ?> graph) {
-		
+		return getPrefuseGraphFromGamaGraphForVisu((GamaGraph) graph);
+	/*	
 		System.err.println("translation of the graph to a prefuse graph...");
 		
 		Graph g = new Graph();
@@ -109,7 +110,7 @@ public class GraphUtilsPrefuse {
 		if (graph._internalVertexMap().size() != g.getNodeCount())
 			throw GamaRuntimeException.error("error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
 		
-		return g;
+		return g;*/
 		
 	}
 }

@@ -79,9 +79,9 @@ public class GraphLoader {
 						loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename,
 							spatial);
-					GAMA.reportError(GamaRuntimeException
+					/*GAMA.reportError(GamaRuntimeException
 						.warning("Automatically detected the type of this graph from file extension ('" + extension +
-							"'). Hope this was the relevant type ?"), false);
+							"'). Hope this was the relevant type ?"), false);*/
 					return res;
 				} catch (GamaRuntimeException e) {
 					e.addContext("attempted to detect the type of this graph from file extension ('" + extension +
