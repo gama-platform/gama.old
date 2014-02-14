@@ -120,8 +120,8 @@ public class ChartDataStatement extends AbstractStatement {
 		}
 
 		GamaColor color = Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
-		boolean showMarkers = getFacetValue(scope, MARKER, true);
-		boolean fillMarkers = getFacetValue(scope, FILL, true);
+		boolean showMarkers = (Boolean) getFacetValue(scope, MARKER, true);
+		boolean fillMarkers = (Boolean) getFacetValue(scope, FILL, true);
 
 		AbstractRenderer r = null;
 		if ( style.equals(IKeyword.LINE) ) {
