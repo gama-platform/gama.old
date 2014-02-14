@@ -8,11 +8,7 @@ global {
   }  
 } 
   
-species cells skills: [moving] {  
-  rgb color;
-  reflex move {
-    do wander_3D;       
-  }                     
+species cells{                      
   aspect default {
     draw sphere(1) color:rgb('blue');   
   }
