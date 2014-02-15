@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -63,8 +64,8 @@ import org.jfree.ui.RectangleInsets;
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */
-	@facet(name = ChartLayerStatement.XRANGE, type = { IType.FLOAT, IType.INT }, optional = true),
-	@facet(name = ChartLayerStatement.YRANGE, type = { IType.FLOAT, IType.INT }, optional = true),
+	@facet(name = ChartLayerStatement.XRANGE, type = { IType.FLOAT, IType.INT, IType.POINT }, optional = true),
+	@facet(name = ChartLayerStatement.YRANGE, type = { IType.FLOAT, IType.INT, IType.POINT }, optional = true),
 	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
@@ -165,9 +166,18 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		IExpression expr = getFacet(XRANGE);
 		if ( expr != null ) {
-			Double range = Cast.asFloat(scope, expr.value(scope));
-			if ( range > 0 ) {
-				domainAxis.setFixedAutoRange(range);
+			Object range = expr.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					domainAxis.setFixedAutoRange(r);
+					domainAxis.setAutoRangeMinimumSize(r);
+				}
+				domainAxis.setAutoRangeIncludesZero(false);
+			} else if ( range instanceof GamaPoint ) {
+				domainAxis.setRange(((GamaPoint) range).getX(), ((GamaPoint) range).getY());
 			}
 		}
 		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
@@ -175,9 +185,18 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		expr = getFacet(YRANGE);
 		if ( expr != null ) {
-			Double range = Cast.asFloat(scope, expr.value(scope));
-			if ( range > 0 ) {
-				yAxis.setFixedAutoRange(range);
+			Object range = expr.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					yAxis.setFixedAutoRange(r);
+					yAxis.setAutoRangeMinimumSize(r);
+				}
+				yAxis.setAutoRangeIncludesZero(false);
+			} else if ( range instanceof GamaPoint ) {
+				yAxis.setRange(((GamaPoint) range).getX(), ((GamaPoint) range).getY());
 			}
 		}
 		if ( datas.size() == 2 ) {
