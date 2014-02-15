@@ -100,11 +100,11 @@ public class GraphTopology extends AbstractTopology {
 			double l1 = 0;
 			boolean computeOther = true;
 			if (nodeT1 == source) {
-				l1 = lengthEdge(edgeS, target, nodeT2, nodeT1);
+				l1 = lengthEdge(edgeT, target, nodeT2, nodeT1);
 			} else {
 				edges = getPlaces().computeBestRouteBetween(source, nodeT1);
 				boolean isEmpty = edges.isEmpty();
-				l1 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + lengthEdge(edgeS, target, nodeT2, nodeT1));
+				l1 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + lengthEdge(edgeT, target, nodeT2, nodeT1));
 				if (! isEmpty) {
 					IShape el = edges.get(edges.size()-1);
 					if (graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2) {
@@ -117,10 +117,10 @@ public class GraphTopology extends AbstractTopology {
 				double l2 = 0;
 				IList<IShape> edges2 = new GamaList<IShape>();
 				if (nodeT2 == source) { 
-					l2 = lengthEdge(edgeS, target, nodeT1, nodeT2);
+					l2 = lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
 					edges2 = getPlaces().computeBestRouteBetween(source, nodeT2);
-					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, target, nodeT1, nodeT2));
+					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeT, target, nodeT1, nodeT2));
 				}
 				if (l2 < l1) { 
 					edges = edges2;
@@ -186,35 +186,39 @@ public class GraphTopology extends AbstractTopology {
 			boolean computeS2T1 = true;
 			boolean computeS2T2 = true;
 			if (nodeS1 == nodeT1) {
-				lmin = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeS, target, nodeT2, nodeT1);
+				lmin = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 			} else {
 				edges = getPlaces().computeBestRouteBetween(nodeS1, nodeT1);
 				boolean isEmpty = edges.isEmpty();
+				
 				double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
-				double elt =  lengthEdge(edgeS, target, nodeT2, nodeT1);
+				double elt =  lengthEdge(edgeT, target, nodeT2, nodeT1);
 				lmin =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges) + els + elt);
 				
 				if (! isEmpty) {
 					IShape e0 = edges.get(0);
 					IShape el = edges.get(edges.size()-1);
-					boolean ts1 = graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2;
-					boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
-					if (ts1) {
-						computeS2T1 = false;
-						double val = lmin - els - e0.getPerimeter() + lengthEdge(edgeS, source, nodeS1, nodeS2);
-						if (lmin > val) lmin = val;
-					}
-					if (ts2) {
-						computeS1T2 = false;
-						double val = lmin - elt - el.getPerimeter() + lengthEdge(edgeS, target, nodeT1, nodeT2);
-						if (lmin > val) lmin = val;
-					}
-					if (ts1 && ts2) {
-						computeS2T2 = false;
-						double val = lmin - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS1, nodeS2)+lengthEdge(edgeS, target, nodeT1, nodeT2);
-						if (lmin > val) lmin = val;
-					}
-					
+					if (e0 != el) {
+						boolean ts1 = graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2;
+						boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
+						double valmin = lmin;
+						if (ts1) {
+							computeS2T1 = false;
+							double val = lmin - els - e0.getPerimeter() + lengthEdge(edgeS, source, nodeS1, nodeS2);
+							if (valmin > val) valmin = val;
+						}
+						if (ts2) {
+							computeS1T2 = false;
+							double val = lmin - elt - el.getPerimeter() + lengthEdge(edgeT, target, nodeT1, nodeT2);
+							if (valmin > val) valmin = val;
+						}
+						if (ts1 && ts2) {
+							computeS2T2 = false;
+							double val = lmin - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS1, nodeS2)+lengthEdge(edgeT, target, nodeT1, nodeT2);
+							if (valmin > val) valmin = val;
+						}
+						lmin = valmin;
+					}	
 				}
 			}
 			//System.out.println("edges : " + edges + " lmin : " + lmin);
@@ -222,28 +226,33 @@ public class GraphTopology extends AbstractTopology {
 				double l2 = 0;
 				IList<IShape> edges2 = new GamaList<IShape>();
 				if (nodeS2 == nodeT1) {
-					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT2, nodeT1);
+					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 				} else {
 					edges2 = getPlaces().computeBestRouteBetween(nodeS2, nodeT1);
 					boolean isEmpty = edges2.isEmpty();
 					double els = lengthEdge(edgeS, source, nodeS1, nodeS2);
-					double elt = lengthEdge(edgeS, target, nodeT2, nodeT1);
+					double elt = lengthEdge(edgeT, target, nodeT2, nodeT1);
 					
 					l2 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges2) + els + elt); 
 					if (! isEmpty) {
 						IShape e0 = edges2.get(0);
 						IShape el = edges2.get(edges2.size()-1);
-						boolean ts1 = graph.getEdgeSource(e0) == nodeS1 || graph.getEdgeTarget(e0) == nodeS1;
-						boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
-						if (ts2) {
-							computeS2T2 = false;
-							double val = l2 - elt - el.getPerimeter() + lengthEdge(edgeS, target, nodeT1, nodeT2);
-							if (l2 > val) l2 = val;
-						}
-						if (ts1 && ts2) {
-							computeS1T2 = false;
-							double val = l2 - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS2, nodeS1)+lengthEdge(edgeS, target, nodeT1, nodeT2);
-							if (l2 > val) l2 = val;
+						if (e0 != el) {
+							boolean ts1 = graph.getEdgeSource(e0) == nodeS1 || graph.getEdgeTarget(e0) == nodeS1;
+						
+							boolean ts2 = graph.getEdgeSource(el) == nodeT2 || graph.getEdgeTarget(el) == nodeT2;
+							double valmin = l2;
+							if (ts2) {
+								computeS2T2 = false;
+								double val = l2 - elt - el.getPerimeter() + lengthEdge(edgeT, target, nodeT1, nodeT2);
+								if (valmin > val) valmin = val;
+							}
+							if (ts1 && ts2) {
+								computeS1T2 = false;
+								double val = l2 - els - e0.getPerimeter() - elt - el.getPerimeter()+ lengthEdge(edgeS, source, nodeS2, nodeS1)+lengthEdge(edgeT, target, nodeT1, nodeT2);
+								if (valmin > val) valmin = val;
+							}
+							l2 = valmin;
 						}
 						
 					}
@@ -259,13 +268,13 @@ public class GraphTopology extends AbstractTopology {
 				
 				double l2 = 0;
 				IList<IShape> edges2 = new GamaList<IShape>();
-				if (nodeS2 == nodeT1) {
-					l2 = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeS, target, nodeT1, nodeT2);
+				if (nodeS1 == nodeT2) {
+					l2 = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
 					edges2 = getPlaces().computeBestRouteBetween(nodeS1, nodeT2);
 					boolean isEmpty = edges2.isEmpty();
 					double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
-					double elt =  lengthEdge(edgeS, target, nodeT1, nodeT2);
+					double elt =  lengthEdge(edgeT, target, nodeT1, nodeT2);
 					l2 =  isEmpty ? Double.MAX_VALUE : (pathlengthEdges(edges2) + els + elt);
 					if (! isEmpty) {
 						IShape e0 = edges2.get(0);
@@ -288,10 +297,10 @@ public class GraphTopology extends AbstractTopology {
 				double l2 = 0;
 				IList<IShape> edges2 = new GamaList<IShape>();
 				if (nodeS2 == nodeT2) {
-					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT1, nodeT2);
+					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
 					edges2 = getPlaces().computeBestRouteBetween(nodeS2, nodeT2);
-					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeS, target, nodeT1, nodeT2));
+					l2 =  edges2.isEmpty() ? Double.MAX_VALUE : (pathlengthEdges(edges2) + lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2));
 				}
 
 				//System.out.println("edges4 : " + edges2 + " l4 : " + l2);
