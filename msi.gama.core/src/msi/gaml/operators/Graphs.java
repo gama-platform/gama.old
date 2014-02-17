@@ -769,15 +769,13 @@ public class Graphs {
 	}
 	
 
-	@operator(value = "save_shortest_paths")
-	@doc(value = "return a matrix containing all the shortest paths (rows: source, columns: target)", examples = { "matrix shortest_paths_matrix <- save_shortest_paths(my_graph); --: shortest_paths_matrix will contain all the shortest paths" })
-	public static GamaIntMatrix primSaveGraphFromFile(final IScope scope, final GamaGraph graph)
+	@operator(value = "all_pairs_shortest_path")
+	@doc(value = "return a matrix containing all pairs of shortest paths (rows: source, columns: target)", examples = { "matrix shortest_paths_matrix <- all_pairs_shortest_paths(my_graph); --: shortest_paths_matrix will contain all pairs of shortest paths" })
+	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)
 		throws GamaRuntimeException {
 		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the save_shortest_paths operator, the graph should not be null!"); }
+			.error("In the all_pairs_shortest_paths operator, the graph should not be null!"); }
 		return graph.saveShortestPaths();
-		// throw GamaRuntimeException.error("not implemented: loading from gama file");
-
 	}
 	
 	
