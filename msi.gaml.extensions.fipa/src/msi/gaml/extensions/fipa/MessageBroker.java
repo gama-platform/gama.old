@@ -217,7 +217,6 @@ public class MessageBroker {
 		List<Conversation> conversations;
 		List<Conversation> endedConversations = new GamaList<Conversation>();
 		for ( IAgent a : conversationsMessages.keySet() ) {
-
 			if ( a.dead() ) {
 				ConversationsMessages cm = conversationsMessages.get(a);
 				cm.conversations.clear();
@@ -225,8 +224,8 @@ public class MessageBroker {
 				cm.conversations = null;
 				cm.messages = null;
 				conversationsMessages.remove(a);
+				return;
 			}
-
 			conversations = conversationsMessages.get(a).conversations;
 			endedConversations.clear();
 
