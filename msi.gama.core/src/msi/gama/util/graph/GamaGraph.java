@@ -82,7 +82,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected boolean edgeBased;
 	protected boolean agentEdge;
 	protected final IScope scope;
-	protected Map<VertexPair<V>,GamaList<E>> shortestPathComputed = null;
+	protected Map<VertexPair<V>,GamaList<GamaList<E>>> shortestPathComputed = null;
 	protected VertexRelationship vertexRelation;
 	// protected IScope scope;
 
@@ -111,14 +111,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		version = 1;
 		agentEdge = false;
 		this.scope = scope;
-		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<GamaList<E>>>();
 	}
 
 	public GamaGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
-		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<GamaList<E>>>();
 		this.scope = scope;
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
@@ -126,7 +126,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public GamaGraph(final IScope scope) {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
-		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		shortestPathComputed = new GamaMap<VertexPair<V>,GamaList<GamaList<E>>>();
 		this.scope = scope;
 	}
 
@@ -558,64 +558,70 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				return new GamaList<E>((Iterable) path.getEdgeList());
 			case 2:
 				VertexPair<V> nodes1 = new VertexPair<V>(source, target);
-				GamaList<E> sp1 = shortestPathComputed.get(nodes1);
-				if (sp1 == null) {
+				GamaList<GamaList<E>> sp1 = shortestPathComputed.get(nodes1);
+				GamaList<E> spl1 = null;
+				if (sp1 == null || sp1.isEmpty()) {
+					spl1 = new GamaList<E>();
 					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
 					List<E> re = p1.getPathEdgeList(target);
-					if (re == null) sp1 = new GamaList<E>();
-					else sp1 = new GamaList<E>(re);
+					if (re == null) spl1 = new GamaList<E>();
+					else spl1 = new GamaList<E>(re);
 					if (saveComputedShortestPaths) {
-						saveShortestPaths(sp1,source,target);
+						saveShortestPaths(spl1,source,target);
 					}
 				} else {
-					sp1 = new GamaList<E>(sp1);
+					spl1 = new GamaList<E>(sp1.get(0));
 				}
-				return sp1;
+				return spl1;
 			case 3:
 				//long t1 = java.lang.System.currentTimeMillis();
 				VertexPair<V> nodes2 = new VertexPair<V>(source, target);
 				//System.out.println("nodes2 : " + nodes2);
-				GamaList<E> sp2 = shortestPathComputed.get(nodes2);
-				//System.out.println("sp2 : " + sp2);
-				if (sp2 == null) {
+				GamaList<GamaList<E>> sp2 = shortestPathComputed.get(nodes2);
+				GamaList<E> spl2 = null;
+				
+				if (sp2 == null || sp2.isEmpty()) {
+					spl2 = new GamaList<E>();
+					
 					try {
 						final DijkstraShortestPath<GamaShape, GamaShape> p2 =
 								new DijkstraShortestPath(getProxyGraph(), source, target);
 						List re = p2.getPathEdgeList();
-						//System.out.println("re : " + re + " source : " + source + " target : " + target);
-						if (re == null) sp2 = new GamaList<E>();
-						else sp2 = new GamaList<E>(re);
+						if (re == null) spl2 = new GamaList<E>();
+						else spl2 = new GamaList<E>(re);
 						
 					} catch (IllegalArgumentException e) {
-						sp2 = new GamaList<E>();
+						spl2 = new GamaList<E>();
 					}
 					if (saveComputedShortestPaths) {
-						saveShortestPaths(sp2,source,target);
+						saveShortestPaths(spl2,source,target);
 					}
 				} else {
-					sp2 = new GamaList<E>(sp2);
+					spl2 = new GamaList<E>(sp2.get(0));
 				}
 				//java.lang.System.out.println("DijkstraShortestPath : " + (java.lang.System.currentTimeMillis() - t1 ));
-				return sp2;
+				return spl2;
 			case 4: 
 				//t1 = java.lang.System.currentTimeMillis();
 				
 				VertexPair<V> nodes3 = new VertexPair<V>(source, target);
-				GamaList<E> sp3 = shortestPathComputed.get(nodes3);
-				if (sp3 == null) {
+				GamaList<GamaList<E>> sp3 = shortestPathComputed.get(nodes3);
+				GamaList<E> spl3 = null;
+				if (sp3 == null || sp3.isEmpty()) {
+					spl3 = new GamaList<E>();
 					msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(this, source, target);
 					astarAlgo.compute();
-					sp3 = new GamaList<E>(astarAlgo.getShortestPath());
+					spl3 = new GamaList<E>(astarAlgo.getShortestPath());
 					if (saveComputedShortestPaths) {
-						saveShortestPaths(sp3,source,target);
+						saveShortestPaths(spl3,source,target);
 					}
 					
 				} else {
-					sp3 = new GamaList<E>(sp3);
+					spl3 = new GamaList<E>(sp3.get(0));
 				}
 				
 				//java.lang.System.out.println("ASTAR : " + (java.lang.System.currentTimeMillis() - t1 ));
-				return sp3;
+				return spl3;
 				
 				
 		}
@@ -625,7 +631,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	
 	private void saveShortestPaths(List<E> edges, V source, V target){
 		V s = source;
-		shortestPathComputed.put(new VertexPair<V>(source, target), new GamaList<E>(edges));
+		GamaList<GamaList<E>> spl = new GamaList<GamaList<E>>();
+		spl.add(new GamaList<E>(edges));
+		shortestPathComputed.put(new VertexPair<V>(source, target), spl);
 		List<E> edges2 = new GamaList<E>(edges);
 		for (E edge: edges) {
 			edges2.remove(0);
@@ -634,8 +642,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			if (! directed && nwS == s) {
 				nwS = (V) this.getEdgeSource(edge);
 			}
-			shortestPathComputed.put(new VertexPair<V>(nwS, target), new GamaList<E>(edges2));
-			
+			VertexPair<V> pp = new VertexPair<V>(nwS, target);
+			if (!shortestPathComputed.containsKey(pp)) {
+				GamaList<GamaList<E>> spl2 = new GamaList<GamaList<E>>();
+				spl2.add(new GamaList<E>(edges2));	
+				shortestPathComputed.put(pp, spl2);
+			}
 			s = nwS;
 			if (edges2.isEmpty()) break;
 		}
@@ -654,12 +666,25 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	
 	@Override
 	public IList<IList<E>> computeKBestRoutesBetween(final V source, final V target,int k) {
-		final KShortestPaths<V, E> kp = new KShortestPaths<V, E>(getProxyGraph(), source, k);
-		List<GraphPath<V, E>> pathsJGT = kp.getPaths(target);
+		VertexPair<V> pp = new VertexPair<V>(source, target);
 		IList<IList<E>> paths = new GamaList<IList<E>> ();
-		
-		for (GraphPath<V, E> p : pathsJGT) {
-			paths.add(new GamaList(p.getEdgeList()));
+		GamaList<GamaList<E>> sps = shortestPathComputed.get(pp);
+		if (sps != null && sps.size() >= k) {
+			for (GamaList<E> sp : sps) {
+				paths.add(new GamaList<E>(sp));
+			}
+		} else {
+			final KShortestPaths<V, E> kp = new KShortestPaths<V, E>(getProxyGraph(), source, k);
+			List<GraphPath<V, E>> pathsJGT = kp.getPaths(target);
+			GamaList<GamaList<E>> el = new GamaList<GamaList<E>>();
+			for (GraphPath<V, E> p : pathsJGT) {
+				paths.add(new GamaList(p.getEdgeList()));
+				if (saveComputedShortestPaths) {
+					el.add(new GamaList<E>(p.getEdgeList()));
+				}
+			}
+			if (saveComputedShortestPaths)
+				shortestPathComputed.put(pp, el);
 		}
 		return paths;
 	}
@@ -1007,7 +1032,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public void loadShortestPaths(GamaMatrix matrix) {
 		GamaList<V> vertices = (GamaList<V>) getVertices();
 		int nbvertices = matrix.numCols;
-		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<E>>();
+		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<GamaList<E>>>();
 		GamaIntMatrix mat = null;
 		if (matrix instanceof GamaIntMatrix) 
 			mat = (GamaIntMatrix) matrix;
@@ -1022,14 +1047,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				VertexPair<V> vv = new VertexPair<V>(v1, v2);
 				GamaList<E> edges = new GamaList<E>();
 				if (v1 == v2) {
-					shortestPathComputed.put(vv, edges);
+					GamaList<GamaList<E>> spl  = new GamaList<GamaList<E>>();
+					spl.add(edges);
+					shortestPathComputed.put(vv, spl);
 					continue;
 				}
 				V vs = v1;
 				int previous = i;
 				Integer next =  mat.get(scope, j, i);
 				if(i == next) {
-					shortestPathComputed.put(vv, edges);
+					GamaList<GamaList<E>> spl  = new GamaList<GamaList<E>>();
+					spl.add(edges);
+					shortestPathComputed.put(vv, spl);
 					continue;
 				}
 				do  {
@@ -1052,7 +1081,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					
 					vs = vn;
 				}while (previous != j);
-				shortestPathComputed.put(vv, edges);	
+				GamaList<GamaList<E>> spl  = new GamaList<GamaList<E>>();
+				spl.add(edges);
+				shortestPathComputed.put(vv, spl);
 			}	
 		}
 	}
@@ -1130,7 +1161,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return (Integer) indexVertices.get(scope, source);
 	}
 
-	public Map<VertexPair<V>, GamaList<E>> getShortestPathComputed() {
+	public Map<VertexPair<V>, GamaList<GamaList<E>>> getShortestPathComputed() {
 		return shortestPathComputed;
 	}
 	

@@ -107,15 +107,16 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				if ( modify_edges ) {
 					IAgent ag = edge.getAgent();
 					Geometry geom = edge.getInnerGeometry();
+					Geometry geom2;
 					Coordinate c0 = geom.getCoordinates()[0];
 					Coordinate c1 = geom.getCoordinates()[geom.getNumPoints() - 1];
 					IShape edge2 = null;
 					if ( !g.isDirected() && pt.distance(c0) > pt.distance(c1) ) {
-						geom = geom.reverse();
-						edge2 = new GamaShape(geom);
+						geom2 = geom.reverse();
+						edge2 = new GamaShape(geom2);
 						pt = c0;
 					} else {
-						edge2 = edge;
+						edge2 = edge.copy(null);
 						pt = c1;
 					}
 					if ( cpt == 0 && !source.equals(pt) ) {
