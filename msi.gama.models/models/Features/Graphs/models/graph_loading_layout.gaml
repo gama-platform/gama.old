@@ -8,7 +8,7 @@ model graphloadinglayout
 
 global {
 	graph the_graph ;
-	string barabasi_file <- "../includes/Barabasi.dgs";
+	string barabasi_file <- "../includes/ProteinSimple.dgs";
 	geometry shape <- rectangle(500,500);
 	string layout_type <- "radialtree";
 	int layout_time <- 1000;
@@ -32,7 +32,7 @@ species edge {
 
 species node {
 	aspect default {	
-		draw circle(1) color: rgb("red");
+		draw circle(2) color: rgb("red");
 	}
 }
 

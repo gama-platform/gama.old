@@ -30,43 +30,41 @@ global {
 	}
 }
 
-entities {
-	species people skills: [moving]{
-		point location <- any_location_in(one_of(road));
-		people target<- one_of(people);
-		float size <- 3.0;
-		action updateSize {
-			path friendship_path <- friendship_graph path_between(self::target);
-			
-			if (friendship_path != nil) {
-				size <-max([2,length( friendship_path.segments)]) as float;
-			}
-		}
-		reflex movement {
-			if (location distance_to target < 5.0) {
-				target <- one_of(people);
-				do updateSize;
-			}
-			do goto on:road_graph target:target speed:1 + rnd(2);
-		}
-		aspect base {
-			draw circle(size) color: rgb("red");
-		}
-		
-	}
+species people skills: [moving]{
+	point location <- any_location_in(one_of(road));
+	people target<- one_of(people);
+	float size <- 3.0;
 	
-	species friendship_link {
-		aspect base {
-			draw shape color: rgb("blue");
+	action updateSize {
+		path friendship_path <- friendship_graph path_between(self::target);
+		if (friendship_path != nil) {
+			size <-max([2,length( friendship_path.segments)]) as float;
 		}
 	}
-	
-	species road  {
-		aspect base {
-			draw geometry: shape color: rgb('black') ;
+	reflex movement {
+		if (location distance_to target < 5.0) {
+			target <- one_of(people);
+			do updateSize;
 		}
-	} 
+		do goto on:road_graph target:target speed:1 + rnd(2);
+	}
+	aspect base {
+		draw circle(size) color: rgb("red");
+	}	
 }
+	
+species friendship_link {
+	aspect base {
+		draw shape color: rgb("blue");
+	}
+}
+	
+species road  {
+	aspect base {
+		draw shape color: rgb('black') ;
+	}
+} 
+
 
 experiment multigraph type: gui {
 	output {
