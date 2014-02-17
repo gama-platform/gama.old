@@ -30,7 +30,7 @@ global {
 		
 		//computes all the shortest paths, puts them in a matrix, then saves the matrix in a file
 		if save_shortest_paths {
-			matrix ssp <- save_shortest_paths(the_graph);
+			matrix ssp <- all_pairs_shortest_path(the_graph);
 			save ssp type:"text" to:shortest_paths_file;
 			
 		//loads the file of the shortest paths as a matrix and uses it to initialize all the shortest paths of the graph

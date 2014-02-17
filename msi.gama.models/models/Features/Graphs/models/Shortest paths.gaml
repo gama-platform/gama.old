@@ -28,7 +28,7 @@ global {
 		
 		//computes all the shortest paths, puts them in a matrix, then saves the matrix in a file
 		if save_shortest_paths {
-			matrix ssp <- save_shortest_paths(road_graph);
+			matrix ssp <- all_pairs_shortest_path(road_graph);
 			write "Matrix of all shortest paths: " + ssp;
 			save ssp type:"text" to:shortest_paths_file;
 			
