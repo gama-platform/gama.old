@@ -34,7 +34,7 @@ public class FacetProto {
 				this.doc = doc;
 			} else {
 				this.doc = doc.substring(0, index);
-				String remaining = doc.substring(index + 1);
+				String remaining = doc.substring(index + JavaWriter.DOC_SEP.length());
 				index = remaining.indexOf(JavaWriter.DOC_SEP);
 				if ( index != -1 ) {
 					this.deprecated = remaining.substring(0, index);
