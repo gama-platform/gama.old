@@ -1,21 +1,14 @@
-package msi.gama.doc.util;
+package msi.gama.doc.transform;
 import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import msi.gama.doc.Constants;
+import msi.gama.doc.util.DocTransformer;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -61,20 +54,23 @@ public class XmlToWiki {
 		DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
 		File fileXml = new File(xml);
 		Document document = constructeur.parse(fileXml);
-		Source source = new DOMSource(document);
 		
-		// Creation of the output file
-		File fileWiki = new File(wiki);
-		Result resultat = new StreamResult(fileWiki);
+		DocTransformer.transformDocument(document, xsl, wiki); 		
 		
-		// configuration of the transformer
-		TransformerFactory fabriqueT = TransformerFactory.newInstance();
-		StreamSource stylesource = new StreamSource(xsl);
-		Transformer transformer = fabriqueT.newTransformer(stylesource);
-		transformer.setOutputProperty(OutputKeys.METHOD, "text");
-		
-		// Transformation
-		transformer.transform(source, resultat);
+//		Source source = new DOMSource(document);
+//		
+//		// Creation of the output file
+//		File fileWiki = new File(wiki);
+//		Result resultat = new StreamResult(fileWiki);
+//		
+//		// configuration of the transformer
+//		TransformerFactory fabriqueT = TransformerFactory.newInstance();
+//		StreamSource stylesource = new StreamSource(xsl);
+//		Transformer transformer = fabriqueT.newTransformer(stylesource);
+//		transformer.setOutputProperty(OutputKeys.METHOD, "text");
+//		
+//		// Transformation
+//		transformer.transform(source, resultat);
 	}
 	
 	/**

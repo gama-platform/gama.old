@@ -14,8 +14,11 @@ public class PrepareEnv {
 		// - Creates every folders when they do not exist
 
 		File genFolder = new File(Constants.GEN_FOLDER);
-
+		File testFolder = new File(Constants.TEST_FOLDER);
+		File svnFolder = new File(Constants.SVN_FOLDER);
 		if(genFolder.exists()) {FileUtils.deleteDirectory(genFolder);}
+		if(testFolder.exists()) {FileUtils.deleteDirectory(testFolder);}
+		if(svnFolder.exists()) {FileUtils.deleteDirectory(svnFolder);}
 
 		genFolder.mkdir();	
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
@@ -23,6 +26,10 @@ public class PrepareEnv {
 		new File(Constants.WIKI2WIKI_FOLDER).mkdirs();
 		new File(Constants.HTML2XML_FOLDER).mkdirs();
 		new File(Constants.PDF_FOLDER).mkdirs();
+		new File(Constants.TEST_FOLDER).mkdirs();
+	
+		svnFolder.mkdir();
+		
 //		createCleanFolder(Constants.XML2WIKI_FOLDER);
 //		createCleanFolder(Constants.WIKI2WIKI_FOLDER);
 		

@@ -104,6 +104,22 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
   * Special cases:<xsl:for-each select="documentation/specialCases/case">
     * <xsl:value-of select="@item"/> </xsl:for-each>
   </xsl:if>  
+
+  <xsl:if test="documentation/usages[node()] | documentation/usagesNoExample[node()]">
+  * Special cases from usages: <xsl:for-each select="documentation/usagesNoExample/usage">
+    * <xsl:value-of select="@descUsageElt"/> </xsl:for-each>
+  <xsl:for-each select="documentation/usages/usage">
+    * <xsl:value-of select="@descUsageElt"/> 
+  {{{
+<xsl:call-template name="buildExamples"/> }}} </xsl:for-each>
+  </xsl:if>
+
+  <xsl:if test="documentation/usagesExamples[node()]">
+  * Examples from usages: 
+  {{{ 
+<xsl:for-each select="documentation/usagesExamples/usage">
+<xsl:call-template name="buildExamples"/> </xsl:for-each>}}} 
+  </xsl:if>
   
   <xsl:if test="documentation/seeAlso[node()]">    
   * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[#</xsl:text><xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/><xsl:text>]</xsl:text><xsl:text>, </xsl:text> </xsl:for-each>
@@ -137,6 +153,23 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 	</xsl:choose>
  </xsl:template> 
  
+ <xsl:template name="buildExamples">
+	<xsl:for-each select="examples/example">
+	  	<xsl:if test="@isTestOnly = 'false'">	
+		<xsl:choose>
+			<xsl:when test="@equals">
+				<xsl:value-of select="@type"/> var<xsl:value-of select="@index"/> &lt;- <xsl:value-of select="@code"/>; 	// var<xsl:value-of select="@index"/> equals <xsl:value-of select="@equals"/><xsl:text>
+</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="@code"/><xsl:text>
+</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		</xsl:if>
+	</xsl:for-each>
+</xsl:template>	
+ 
  <xsl:template name="checkName">
  	<xsl:choose>
  		<xsl:when test="@name = '*'"><xsl:text>`*`</xsl:text></xsl:when>
@@ -146,3 +179,13 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
  	</xsl:choose>
  </xsl:template>
 </xsl:stylesheet>
+
+<!--  
+<xsl:for-each select="documentation/usages/usage" >  
+<xsl:call-template name="generateTestFromExample"/>  
+</xsl:for-each>
+<xsl:for-each select="documentation/usagesExamples/usage" >  
+<xsl:call-template name="generateTestFromExample"/>  
+</xsl:for-each>
+-->
+

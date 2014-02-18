@@ -17,7 +17,7 @@
 
 /* $Id: ExampleXML2PDF.java 679326 2008-07-24 09:35:34Z vhennebert $ */
 
-package msi.gama.doc.util;
+package msi.gama.doc.transform;
 
 //Java
 import java.io.File;

@@ -1,5 +1,6 @@
 package msi.gama.doc;
 
+import msi.gama.doc.transform.XmlToPdf;
 import msi.gama.doc.util.*;
 
 public class MainAfterPython {

@@ -9,12 +9,11 @@ import org.jdom2.JDOMException;
 import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 
-import msi.gama.doc.transform.XmlToWiki;
+import msi.gama.doc.transform.XmlToTestGAML;
 import msi.gama.doc.util.PrepareEnv;
-import msi.gama.doc.util.SVNUtils;
 import msi.gama.doc.util.UnifyDoc;
 
-public class MainGenerateWiki {
+public class MainGenerateUnitTest {
 
 	/**
 	 * @param args
@@ -28,7 +27,7 @@ public class MainGenerateWiki {
 	public static void main(String[] args) 
 			throws IOException, JDOMException, ParserConfigurationException, SAXException, 
 					TransformerException, SVNException {
-		System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
+		System.out.println("GENERATION OF THE TESTS FROM JAVA CODE");
 		System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 		System.out.print("Preparation of the folders................");
 		PrepareEnv.prepareDocumentation();
@@ -36,18 +35,9 @@ public class MainGenerateWiki {
 		System.out.print("Merge all the docGAMA.xml files................");		
 		UnifyDoc.unify();
 		System.out.println("DONE");
-		System.out.print("Transform the docGAMA.xml file into Wiki Files................");		
-		XmlToWiki.createAllWikis();
+		System.out.print("Transform the docGAMA.xml file into test files................");		
+		XmlToTestGAML.createAllTests();
 		System.out.println("DONE");		
-		
-		// FIXME send the documentation on the SVN repository
-		try {
-			System.out.print("Checkout Wiki Files from GAMA SVN................");		
-			SVNUtils.checkoutSVNGamaDoc();		
-			System.out.println("DONE");			
-		} catch (Exception e){
-			System.out.println("NO AVAILABLE CONNECTION");
-		}
 	}
 
 }
