@@ -1,4 +1,4 @@
-package msi.gama.precompiler.utils.doc;
+package msi.gama.precompiler.doc.utils;
 
 import java.util.HashMap;
 
@@ -21,6 +21,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
 		hm.put("java.lang.Integer", "int");
 		hm.put("java.lang.Double", "float");
+		hm.put("java.lang.Long", "float");		
 		hm.put("msi.gama.util.file.IGamaFile", "file");
 		hm.put("msi.gama.util.GamaColor", "rgb");
 		hm.put("msi.gama.util.IList", "list");
@@ -57,6 +58,7 @@ public class TypeConverter {
 		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map");
 		hm.put("msi.gama.util.IPath", "path");		
 		hm.put("msi.gama.util.path.IPath", "path");
+		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,any>");
 		return hm;
 	}
 	
@@ -103,7 +105,11 @@ public class TypeConverter {
 		hm.put("GraphsGraphstream", "Graphs-related operators");
 		hm.put("Logic", "Logical operators");
 		hm.put("Maths", "Mathematics operators");
-		hm.put("IMatrix", "Matrix-related operators");
+		hm.put("GamaFloatMatrix", 	"Matrix-related operators");
+		hm.put("GamaIntMatrix", 	"Matrix-related operators");
+		hm.put("GamaMatrix", 		"Matrix-related operators");
+		hm.put("GamaObjectMatrix", 	"Matrix-related operators");
+		hm.put("IMatrix", 			"Matrix-related operators");
 		hm.put("SingleEquationStatement", "EDP-related operators");
 		hm.put("Creation", "Spatial operators");
 		hm.put("Operators", "Spatial operators");
@@ -119,6 +125,7 @@ public class TypeConverter {
 		hm.put("Stats", "Statistical operators");
 		hm.put("Strings", "Strings-related operators");		
 		hm.put("System", "System");
+		hm.put("Types", "Types-related operators");
 		hm.put("WaterLevel", "Water level operators");
 		return hm;
 	}

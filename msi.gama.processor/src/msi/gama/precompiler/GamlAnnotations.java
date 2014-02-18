@@ -807,6 +807,14 @@ public final class GamlAnnotations {
 		String value() default "";
 
 		/**
+		 * masterDoc.
+		 * 
+		 * @return a boolean representing the fact whether this instance of the operator is the master one,
+		 *  that is whether its value will subsume the value of all other instances of it.
+		 */
+		boolean masterDoc() default false;
+
+		/**
 		 * Deprecated.
 		 * 
 		 * @return a String indicating (if it is not empty) that the element is deprecated and
@@ -856,7 +864,7 @@ public final class GamlAnnotations {
 		 * 
 		 * @return An array of usages representing possible usage of the element in GAML
 		 */
-		usages[] usages() default {};
+		usage[] usages() default {};
 	}
 
 	/**
@@ -872,7 +880,7 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.SOURCE)
 	// @Target({ ElementType.TYPE, ElementType.METHOD })
 	@Inherited
-	public static @interface usages {
+	public static @interface usage {
 
 		/**
 		 * Value.
@@ -887,8 +895,62 @@ public final class GamlAnnotations {
 		 * @return An array of String representing some examples or use-cases about how to use this
 		 *         element, related to the particular usage above
 		 */
-		String[] examples() default {};
+		example[] examples() default {};
+	}
+	
+	@Retention(RetentionPolicy.SOURCE)
+	// @Target({ ElementType.TYPE, ElementType.METHOD })
+	@Inherited
+	public static @interface example {
 
+		/**
+		 * Value.
+		 * 
+		 * @return a String representing the expression to 
+		 */
+		String value() default "";
+
+		/**
+		 * var
+		 * 
+		 * @return The variable that will be tested in the equals, if it is omitted a default variable will be used.
+		 */
+		String var() default "";			
+		
+		/**
+		 * equals
+		 * 
+		 * @return The value to which the value will be compared
+		 */
+		String equals() default "";
+
+		/**
+		 * isnot
+		 * 
+		 * @return The value to which the value will be compared
+		 */
+		String isNot() default "";
+		
+		/**
+		 * raises
+		 * 
+		 * @return The exception or warning that the expression could raise.
+		 */
+		String raises() default "";	
+		
+		/**
+		 * isTestOnly
+		 * 
+		 * @return isTestOnly specifies that the example should not be included into the documentation.
+		 */
+		boolean isTestOnly() default false;		
+		
+		/**
+		 * isExecutable
+		 * 
+		 * @return isExecutable specifies that the example is correct GAML code that can be executed.
+		 */
+		boolean isExecutable() default true;	
 	}
 
 	@Retention(RetentionPolicy.SOURCE)

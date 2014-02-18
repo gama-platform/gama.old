@@ -31,17 +31,22 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.utils.doc.DocProcessorAnnotations;
-import msi.gama.precompiler.utils.doc.TypeConverter;
+import msi.gama.precompiler.doc.DocProcessorAnnotations;
+import msi.gama.precompiler.doc.Element.Category;
+import msi.gama.precompiler.doc.Element.Operand;
+import msi.gama.precompiler.doc.Element.Operator;
+import msi.gama.precompiler.doc.utils.TypeConverter;
+import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.*;
 
@@ -117,6 +122,29 @@ public class GamlDocProcessor {
 		Set<? extends Element> setCmds = env.getElementsAnnotatedWith(symbol.class);
 		root.appendChild(this.processDocXMLStatements(setCmds, doc));
 
+		// ////////////////////////////////////////////////
+		// /// Parsing of Types 
+		Set<? extends Element> setTypes = env.getElementsAnnotatedWith(type.class);
+		ArrayList<org.w3c.dom.Element> listEltOperatorsFromTypes = this.processDocXMLOperatorsFromTypes(setTypes, doc);
+		
+		org.w3c.dom.Element eltOperators = (org.w3c.dom.Element) root.getElementsByTagName("operators").item(0);
+		for(org.w3c.dom.Element eltOp : listEltOperatorsFromTypes){
+			eltOperators.appendChild(eltOp);
+		}
+		
+		root.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).item(0).appendChild(new Category(doc, tc.getProperCategory("Types")).getElementDOM());
+		
+		
+		// ////////////////////////////////////////////////
+		// /// Parsing of Files 
+		Set<? extends Element> setFiles = env.getElementsAnnotatedWith(file.class);
+		ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFiles, doc);
+		
+		for(org.w3c.dom.Element eltOp : listEltOperatorsFromFiles){
+			eltOperators.appendChild(eltOp);
+		}	
+
+		
 		// //////////////////////
 		// Final step:
 		doc.appendChild(root);
@@ -146,19 +174,60 @@ public class GamlDocProcessor {
 		}
 	}
 
-	private static org.w3c.dom.Element getOperatorElement(final org.w3c.dom.Element operators,
-		final String eltName) {
-		NodeList nL = operators.getElementsByTagName("operator");
-		int i = 0;
-		boolean found = false;
-		while (!found && i < nL.getLength()) {
-			org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-			if ( eltName.equals(elt.getAttribute("id")) ) { return elt; }
-			i++;
+	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromTypes(
+			final Set<? extends Element> set, final Document doc) {
+		
+		ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<org.w3c.dom.Element>();
+		for ( Element e : set ) {
+			// Operators to be created:
+			// - name_type: converts the parameter into the type name_type
+			Operator op = new Operator(doc, tc.getProperCategory("Types"), e.getAnnotation(type.class).name());
+			op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
+			op.addOperand(new Operand(doc,"val",0,"any"));
+			op.setDocumentation("Casts the operand into the type "+ e.getAnnotation(type.class).name());
+			
+			eltOpFromTypes.add(op.getElementDOM());
 		}
-		return null;
+		
+		return eltOpFromTypes;
 	}
 
+	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(
+			final Set<? extends Element> set, final Document doc) {
+		
+		ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<org.w3c.dom.Element>();
+		for ( Element e : set ) {
+			// Operators to be created:
+			// - "is_"+name : test whether the operand parameter is of the given kind of file			
+			// - name+"_file": converts the parameter into the type name_type
+			Operator op_is = new Operator(doc, tc.getProperCategory("Files"), "is_" + e.getAnnotation(file.class).name());
+			op_is.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
+			op_is.addOperand(new Operand(doc,"val",0,"any"));
+			op_is.setDocumentation("Tests whether the operand is a "+ e.getAnnotation(file.class).name() + " file.");
+
+			Operator op_file = new Operator(doc, tc.getProperCategory("Files"), e.getAnnotation(file.class).name() + "_file");
+			op_file.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "file", "");
+			op_file.addOperand(new Operand(doc, "val", 0, "string"));
+			
+			String[] tabExtension = e.getAnnotation(file.class).extensions();
+			String listExtension = "";
+			if(tabExtension.length > 0){
+				listExtension = tabExtension[0];
+				if(tabExtension.length > 1){
+					for(int i = 1; i< tabExtension.length; i++){
+						listExtension = listExtension + ", " + tabExtension[i];
+					}
+				}
+			}
+			op_file.setDocumentation("Constructs a file of type "+ e.getAnnotation(file.class).name() + ". Allowed extensions are limited to " + listExtension);
+			
+			eltOpFromTypes.add(op_is.getElementDOM());
+			eltOpFromTypes.add(op_file.getElementDOM());
+		}
+			
+		return eltOpFromTypes;
+	}
+	
 	private org.w3c.dom.Element processDocXMLOperatorsCategories(
 		final Set<? extends ExecutableElement> set, final Document doc) {
 		org.w3c.dom.Element operatorsCategories = doc.createElement("operatorsCategories");
@@ -208,7 +277,7 @@ public class GamlDocProcessor {
 			} else {
 				// Look for an already parsed operator with the same name
 				org.w3c.dom.Element operator =
-					getOperatorElement(operators, e.getAnnotation(operator.class).value()[0]);
+						DocProcessorAnnotations.getOperatorElement(operators, e.getAnnotation(operator.class).value()[0]);
 				if ( operator == null ) {
 					operator = doc.createElement("operator");
 					firstInstanceOperator = true;
@@ -230,7 +299,7 @@ public class GamlDocProcessor {
 					if ( !"".equals(name) &&
 						!name.equals(e.getAnnotation(operator.class).value()[0]) ) {
 						// Look for an already parsed operator with the same name
-						org.w3c.dom.Element altElt = getOperatorElement(operators, name);
+						org.w3c.dom.Element altElt = DocProcessorAnnotations.getOperatorElement(operators, name);
 						if ( altElt == null ) {
 							altElt = doc.createElement("operator");
 							altElt.setAttribute("id", name);
@@ -312,11 +381,11 @@ public class GamlDocProcessor {
 				// Parsing of the documentation
 				org.w3c.dom.Element docElt;
 				if(operator.getElementsByTagName("documentation").getLength() == 0){
-					docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Operator " + operator.getAttribute("name"), tc);
+					docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Operator " + operator.getAttribute("name"), tc, e);
 				} else {
 					docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc,
 							(org.w3c.dom.Element) operator.getElementsByTagName("documentation").item(0),
-							mes, "Operator " + operator.getAttribute("name"), tc);
+							mes, "Operator " + operator.getAttribute("name"), tc, e);
 				}
 				
 				if(docElt != null){
@@ -346,7 +415,7 @@ public class GamlDocProcessor {
 			skillElt.setAttribute("extends", ((TypeElement) e).getSuperclass().toString());
 			
 			org.w3c.dom.Element docEltSkill = 
-					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc);
+					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc, null);
 			if(docEltSkill != null){
 				skillElt.appendChild(docEltSkill);
 			}
@@ -361,7 +430,7 @@ public class GamlDocProcessor {
 					varElt.setAttribute("constant", "" + v.constant());
 					
 					org.w3c.dom.Element docEltVar = 
-							DocProcessorAnnotations.getDocElt(v.doc(), doc, mes, "Var " + v.name() + " from " + skillElt.getAttribute("name"), tc);
+							DocProcessorAnnotations.getDocElt(v.doc(), doc, mes, "Var " + v.name() + " from " + skillElt.getAttribute("name"), tc, null);
 					if(docEltVar != null){
 						varElt.appendChild(docEltVar);
 					}
@@ -433,7 +502,7 @@ public class GamlDocProcessor {
 			spec.setAttribute("name", e.getAnnotation(species.class).name());
 			
 			org.w3c.dom.Element docEltSkill = 
-					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc);
+					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc, null);
 			if(docEltSkill != null){
 				spec.appendChild(docEltSkill);
 			}
@@ -480,7 +549,7 @@ public class GamlDocProcessor {
 
 			// Parsing of documentation
 			org.w3c.dom.Element docstatElt = 
-				DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Statement " + statElt.getAttribute("name"), tc);
+				DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Statement " + statElt.getAttribute("name"), tc, null);
 			if(docstatElt != null){
 				statElt.appendChild(docstatElt);
 			}
@@ -496,4 +565,5 @@ public class GamlDocProcessor {
 		}
 		return statementsElt;
 	}
+
 }
