@@ -3,6 +3,8 @@ package simtools.gaml.extensions.traffic;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.field.RemainderDateTimeField;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,11 +31,15 @@ import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.IPath;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.skills.MovingSkill;
+import msi.gaml.species.ISpecies;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -463,12 +469,23 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		IAgent agent = getCurrentAgent(scope);
 		GamaPoint finalTarget = getFinalTarget(agent);
 		final IPath path = getCurrentPath(agent);
+		final ISpecies context = agent.getSpecies();
+		final IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
+		Arguments argsEF = new Arguments();
+		final IStatement.WithArgs actionLC = context.getAction("lane_choice");
+		Arguments argsLC = new Arguments();
+		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
+		Arguments argsSC = new Arguments();
 		
 		double remainingTime = 1.0;
 		while (remainingTime > 0.0) {
 			IAgent road = getCurrentRoad(agent);
 			final GamaPoint target = getCurrentTarget(agent);
-			double speed = speedChoice(agent,road);
+			argsSC.put("road", ConstantExpressionDescription.create(road));
+			actionSC.setRuntimeArgs(argsSC);
+			double speed = (Double) actionSC.executeOn(scope);
+			
+			//double speed = speedChoice(agent,road);
 			setSpeed(agent, speed);
 			remainingTime = primAdvancedFollow(scope,agent, speed, remainingTime,path, target); 
 			if (agent.getLocation().equals(finalTarget)) {
@@ -476,9 +493,15 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				return;
 			}
 			if (remainingTime > 0.0 && agent.getLocation().equals(getCurrentTarget(agent))) {
+				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
+				actionImpactEF.setRuntimeArgs(argsEF);
+				remainingTime = (Double) actionImpactEF.executeOn(scope);
 				Integer currentIndex = getCurrentIndex(agent);
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currentIndex + 1); 
-				int lane = laneChoice(scope,newRoad); 
+				argsLC.put("road", ConstantExpressionDescription.create(newRoad));
+				actionLC.setRuntimeArgs(argsLC);
+				int lane = (Integer) actionLC.executeOn(scope);
+				//int lane = laneChoice(scope,newRoad); 
 				if (lane >= 0) {
 					currentIndex = currentIndex + 1;
 					setCurrentIndex(agent, currentIndex);
@@ -492,6 +515,12 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		
 	}
+	
+	@action(name = "external_factor_impact", args = {@arg(name = "remaining_time", type = IType.FLOAT, optional = false, doc = @doc("the remaining time"))  },doc = @doc(value = "action that allows to define how the remaining time is impacted by external factor", returns = "the remaining time", examples = { "do external_factor_impact;" }))
+	public Double primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {
+		return scope.getFloatArg("remaining_time");
+	}
+	
 	@action(name = "speed_choice", args = {@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the speed"))  }, doc = @doc(value = "action to choose a speed", returns = "the chosen speed", examples = { "do speed_choice;" }))
 	public Double primSpeedChoice(final IScope scope) throws GamaRuntimeException {
 		IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
@@ -508,7 +537,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		IAgent currentRoad = getCurrentRoad(driver);
 		IAgent linkedRoad = (IAgent) road.getAttribute(RoadSkill.LINKED_ROAD);
 		boolean onLinkedRoad = getOnLinkedRoad(driver);
-		
 		IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 		double vL = getVehiculeLength(driver);
 		double secDistCoeff = getSecurityDistanceCoeff(driver);
