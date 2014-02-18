@@ -344,10 +344,10 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	}
 
 	@action(name = "is_ready_next_road", args = {
-		@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road to test")),
-		@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane to test")) }, doc = @doc(value = "action to test if the driver can take the given road at the given lane", returns = "true (the driver can take the road) or false (the driver cannot take the road)", examples = { "do is_ready_next_road road: a_road lane: 0;" }))
+		@arg(name = "new_road", type = IType.AGENT, optional = false, doc = @doc("the road to test")),
+		@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane to test")) }, doc = @doc(value = "action to test if the driver can take the given road at the given lane", returns = "true (the driver can take the road) or false (the driver cannot take the road)", examples = { "do is_ready_next_road new_road: a_road lane: 0;" }))
 	public Boolean primIsReadyNextRoad(final IScope scope) throws GamaRuntimeException {
-		IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		Integer lane = (Integer) scope.getArg("lane", IType.INT);
 		IAgent driver = getCurrentAgent(scope);
 		double vL = getVehiculeLength(driver);
@@ -481,7 +481,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		while (remainingTime > 0.0) {
 			IAgent road = getCurrentRoad(agent);
 			final GamaPoint target = getCurrentTarget(agent);
-			argsSC.put("road", ConstantExpressionDescription.create(road));
+			argsSC.put("new_road", ConstantExpressionDescription.create(road));
 			actionSC.setRuntimeArgs(argsSC);
 			double speed = (Double) actionSC.executeOn(scope);
 			
@@ -493,12 +493,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				return;
 			}
 			if (remainingTime > 0.0 && agent.getLocation().equals(getCurrentTarget(agent))) {
-				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
-				actionImpactEF.setRuntimeArgs(argsEF);
-				remainingTime = (Double) actionImpactEF.executeOn(scope);
 				Integer currentIndex = getCurrentIndex(agent);
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currentIndex + 1); 
-				argsLC.put("road", ConstantExpressionDescription.create(newRoad));
+				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
+				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
+				actionImpactEF.setRuntimeArgs(argsEF);
+				remainingTime = (Double) actionImpactEF.executeOn(scope);
+				argsLC.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionLC.setRuntimeArgs(argsLC);
 				int lane = (Integer) actionLC.executeOn(scope);
 				//int lane = laneChoice(scope,newRoad); 
@@ -516,14 +517,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		
 	}
 	
-	@action(name = "external_factor_impact", args = {@arg(name = "remaining_time", type = IType.FLOAT, optional = false, doc = @doc("the remaining time"))  },doc = @doc(value = "action that allows to define how the remaining time is impacted by external factor", returns = "the remaining time", examples = { "do external_factor_impact;" }))
+	@action(name = "external_factor_impact", args = { @arg(name = "new_road", type = IType.AGENT, optional = false, doc = @doc("the road on which to the driver wants to go")),@arg(name = "remaining_time", type = IType.FLOAT, optional = false, doc = @doc("the remaining time"))  },doc = @doc(value = "action that allows to define how the remaining time is impacted by external factor", returns = "the remaining time", examples = { "do external_factor_impact new_road: a_road remaining_time: 0.5;" }))
 	public Double primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {
 		return scope.getFloatArg("remaining_time");
 	}
 	
-	@action(name = "speed_choice", args = {@arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the speed"))  }, doc = @doc(value = "action to choose a speed", returns = "the chosen speed", examples = { "do speed_choice;" }))
+	@action(name = "speed_choice", args = {@arg(name = "new_road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the speed"))  }, doc = @doc(value = "action to choose a speed", returns = "the chosen speed", examples = { "do speed_choice new_road: the_road;" }))
 	public Double primSpeedChoice(final IScope scope) throws GamaRuntimeException {
-		IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		IAgent agent = getCurrentAgent(scope);
 		double speed = speedChoice(agent,road);
 		setSpeed(agent, speed);
@@ -614,9 +615,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		return cv;
 	}
 	
-	@action(name = "lane_choice", args = { @arg(name = "road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the lane")) }, doc = @doc(value = "action to choose a lane", returns = "the chosen lane, return -1 if no lane can be taken", examples = { "do lane_choice road: a_road;" }))
+	@action(name = "lane_choice", args = { @arg(name = "new_road", type = IType.AGENT, optional = false, doc = @doc("the road on which to choose the lane")) }, doc = @doc(value = "action to choose a lane", returns = "the chosen lane, return -1 if no lane can be taken", examples = { "do lane_choice new_road: a_road;" }))
 	public Integer primLaneChoice(final IScope scope) throws GamaRuntimeException {
-		IAgent road = (IAgent) scope.getArg("road", IType.AGENT);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		return laneChoice(scope,road);
 	}
 
