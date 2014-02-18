@@ -494,6 +494,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			}
 			if (remainingTime > 0.0 && agent.getLocation().equals(getCurrentTarget(agent))) {
 				Integer currentIndex = getCurrentIndex(agent);
+				if (currentIndex >= path.getEdgeList().size()) {
+					setCurrentPath(agent, null);
+					setFinalTarget(agent, null);
+					return;
+				}
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currentIndex + 1); 
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
