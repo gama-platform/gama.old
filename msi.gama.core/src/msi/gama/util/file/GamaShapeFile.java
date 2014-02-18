@@ -109,7 +109,6 @@ public class GamaShapeFile extends GamaGisFile {
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
-			CoordinateReferenceSystem prj = info.getCRS();
 			Envelope env = info.getBounds();
 			computeProjection(scope, env);
 			if ( features != null && returnIt ) {
