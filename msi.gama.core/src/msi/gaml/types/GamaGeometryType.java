@@ -143,6 +143,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
 		return buildPolygon(points);
 	}
+	
+	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
+		public static IShape buildRGBTriangle(final double side_size, final ILocation location) {
+			final IShape g = buildTriangle(side_size,location);
+			g.setAttribute(IShape.TYPE_ATTRIBUTE, RGBTRIANGLE);
+			return g;
+		}
 
 	public static IShape buildRectangle(final double width, final double height, final ILocation location) {
 		final Coordinate[] points = new Coordinate[5];
@@ -221,6 +228,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildCube(final double side_size, final ILocation location) {
+
+		final IShape g = buildRectangle(side_size, side_size, location);
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, CUBE);
+		return g;
+
+	}
+	
+	public static IShape buildRGBCube(final double side_size, final ILocation location) {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);

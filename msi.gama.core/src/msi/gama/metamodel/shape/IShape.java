@@ -42,7 +42,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {
-		BOX, CIRCLE, CONE, CUBE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
+		BOX, CIRCLE, CONE, CUBE, RGBCUBE,RGBTRIANGLE,CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
 		MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT(
 			"Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT, HEMISPHERE;
 

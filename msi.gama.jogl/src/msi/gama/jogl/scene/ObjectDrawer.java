@@ -93,6 +93,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					break;
 				case PYRAMID:
 					jtsDrawer.drawPyramid(geometry);
+				case RGBCUBE:
+					jtsDrawer.drawRGBCube(geometry);
+				case RGBTRIANGLE:
+					jtsDrawer.drawRGBTriangle(geometry);
 					break;
 				case POLYGON:
 				case ENVIRONMENT:

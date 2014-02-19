@@ -1074,7 +1074,74 @@ public class JTSDrawer {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 		}
 		gl.glTranslated(0, 0, -z);
+	}
+	
+	public void drawRGBCube(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+				// Add z value (Note: getCentroid does not return a z value)
+				double z = 0.0;
+				Polygon p = (Polygon) g.geometry;
+				if ( !Double.isNaN(p.getCoordinate().z) ) {
+					// TODO Normally, the NaN case is not true anymore
+					z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+				}
 
+				gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+				if ( !colorpicking ) {
+					Color c = g.getColor();
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+						g.getAlpha() * c.getAlpha() / 255);
+				}
+				gl.glBegin(GL_QUADS);
+				    gl.glColor3d(1.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glColor3d(0.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glColor3d(0.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glColor3d(1.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+				gl.glEnd();
+				gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+				
+				if ( !colorpicking ) {
+					Color c = g.getColor();
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+						g.getAlpha() * c.getAlpha() / 255);
+				}
+	}
+	
+	public void drawRGBTriangle(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+				// Add z value (Note: getCentroid does not return a z value)
+				double z = 0.0;
+				Polygon p = (Polygon) g.geometry;
+				if ( !Double.isNaN(p.getCoordinate().z) ) {
+					// TODO Normally, the NaN case is not true anymore
+					z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+				}
+
+				gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+				if ( !colorpicking ) {
+					Color c = g.getColor();
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+						g.getAlpha() * c.getAlpha() / 255);
+				}
+				gl.glBegin(GL_TRIANGLES);
+				    gl.glColor3d(1.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glColor3d(0.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glColor3d(0.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+				gl.glEnd();
+				gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+				
+				if ( !colorpicking ) {
+					Color c = g.getColor();
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+						g.getAlpha() * c.getAlpha() / 255);
+				}
 	}
 	
 	

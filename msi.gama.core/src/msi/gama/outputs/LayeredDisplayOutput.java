@@ -137,6 +137,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private int traceDisplay = 0;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
+	private boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
@@ -530,6 +531,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setDrawNorm(final boolean draw_norm) {
 		this.draw_norm = draw_norm;
+	}
+	
+	public boolean getCubeDisplay() {
+		return cubeDisplay;
+	}
+
+	private void setCubeDisplay(final boolean c) {
+		this.cubeDisplay = c;
 	}
 
 	public boolean getShowFPS() {

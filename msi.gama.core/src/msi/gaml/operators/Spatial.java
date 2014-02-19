@@ -192,6 +192,17 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildCube(side_size, location);
 		}
+		
+		@operator("rgbcube")
+		@doc(value = "A cube geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.", examples = { "cube(10) --: returns a geometry as a square of side size 10." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "triangle" })
+		public static IShape rgbcube(final IScope scope, final Double side_size) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( side_size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildRGBCube(side_size, location);
+		}
 
 		@operator("rectangle")
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle({10, 5}) --: returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
@@ -244,6 +255,17 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
+		}
+		
+		@operator("rgbtriangle")
+		@doc(value = "A triangle geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.", examples = { "triangle(5) --: returns a geometry as a triangle with side_size = 5." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square" })
+		public static IShape rgbtriangle(final IScope scope, final Double side_size) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( side_size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildRGBTriangle(side_size, location);
 		}
 
 		@operator("pyramid")

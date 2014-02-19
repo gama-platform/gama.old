@@ -48,8 +48,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Use multiple view port
 	public final boolean multipleViewPort = false;
-	// Display model a a 3D Cube
-	private final boolean CubeDisplay = false;
+	
 	// Handle Shape file
 	// public ShapeFileReader myShapeFileReader;
 	// use glut tesselation or JTS tesselation
@@ -67,6 +66,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean z_fighting = false;
 	// preference "drawNormal"
 	private boolean drawNormal = false;
+	// Display model a a 3D Cube
+	private boolean CubeDisplay = true;
 
 	public boolean triangulation = false;
 	
@@ -482,6 +483,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getDrawNorm() {
 		return drawNormal;
+	}
+	
+	public void setCubeDisplay(final boolean d) {
+		this.CubeDisplay = d;
+	}
+
+	public boolean getCubeDisplay() {
+		return this.CubeDisplay;
 	}
 
 	public void setShowFPS(final boolean fps) {
