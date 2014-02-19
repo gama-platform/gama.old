@@ -113,7 +113,7 @@ public class JTSDrawer {
         // calculate the normal vectors for each of the polygonal facets and then average the normal
 		if(myGLRender.computeNormal){			
 			Vertex[] vertices = getExteriorRingVertices(p);
-			HandleNormal(vertices,c,alpha,norm_dir);
+			HandleNormal(vertices,c,alpha,norm_dir,myGLRender.getMaxEnvDim());
 		}
 
 		if ( isTextured == false ) {
@@ -491,6 +491,7 @@ public class JTSDrawer {
 
 		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 
+
 		for ( int j = 0; j < curPolyGonNumPoints; j++ ) {
 			int k = (j + 1) % curPolyGonNumPoints;
 			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height);
@@ -498,7 +499,7 @@ public class JTSDrawer {
 			if ( fill ) {
 				
 				if(myGLRender.computeNormal){
-					HandleNormal(vertices,c,alpha,1);
+					HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 				}
 				gl.glBegin(GL.GL_QUADS);
 					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -581,7 +582,7 @@ public class JTSDrawer {
 
 			gl.glBegin(GL.GL_QUADS);
 			if(myGLRender.computeNormal){
-				HandleNormal(vertices,null,0,1);
+				HandleNormal(vertices,null,0,1,myGLRender.getMaxEnvDim());
 			}
 			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
 			gl.glTexCoord2f(0.0f, 0.0f);
@@ -1104,7 +1105,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = getExteriorRingVertices(p);
-			HandleNormal(vertices,c,alpha,1);
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 
 		gl.glBegin(GL_QUADS);
@@ -1117,7 +1118,7 @@ public class JTSDrawer {
 
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,0,1,size,1,-1);
-			HandleNormal(vertices,c,alpha,-1);
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
@@ -1128,7 +1129,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,1,2,size,-1,-1);
-			HandleNormal(vertices,c,alpha,-1);
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
@@ -1139,7 +1140,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,2,3,size,-1,1);
-			HandleNormal(vertices,c,alpha,-1);
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
@@ -1150,7 +1151,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,3,0,size,1,1);
-			HandleNormal(vertices,c,alpha,-1);
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
@@ -1256,17 +1257,25 @@ public class JTSDrawer {
 		return vertices;
 	}
 	
-	public void HandleNormal(Vertex[] vertices, Color c, double alpha, int norm_dir){
+	public void HandleNormal(Vertex[] vertices, Color c, double alpha, int norm_dir, double factor){
 		
 		
 		double[] normalmean = new double[3];
 		for (int i= 0; i< vertices.length-2;i++){
 			double[] normal = GLUtil.CalculateNormal(vertices[i+2], vertices[i+1], vertices[i]);
-			normalmean[0]= norm_dir*(normalmean[0] + normal[0])/(i+1);
-			normalmean[1]= norm_dir*(normalmean[1] + normal[1])/(i+1);
-			normalmean[2]= norm_dir*(normalmean[2] + normal[2])/(i+1);
-		}	
+			normalmean[0]= (normalmean[0] + normal[0])/(i+1);
+			normalmean[1]= (normalmean[1] + normal[1])/(i+1);
+			normalmean[2]= (normalmean[2] + normal[2])/(i+1);
+		}
+		normalmean[0]= norm_dir*normalmean[0];
+		normalmean[1]= norm_dir*normalmean[1];
+		normalmean[2]= norm_dir*normalmean[2];
+		
 		gl.glNormal3dv(normalmean, 0);
+		
+		normalmean[0]= (factor/20)*normalmean[0];
+		normalmean[1]= (factor/20)*normalmean[1];
+		normalmean[2]= (factor/20)*normalmean[2];
 
 		if(myGLRender.getDrawNorm()){
 			Vertex center = GLUtil.GetCenter(vertices);
@@ -1280,11 +1289,16 @@ public class JTSDrawer {
 			gl.glBegin(GL_POINTS);
 			gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
 			gl.glEnd();
+			
+			if ( !colorpicking ) {
+				if(c != null){
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+							alpha * c.getAlpha() / 255);
+				}
+				
+			}
 		}
-		if ( !colorpicking ) {
-			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-				alpha * c.getAlpha() / 255);
-		}
+		
 }
 
 	
