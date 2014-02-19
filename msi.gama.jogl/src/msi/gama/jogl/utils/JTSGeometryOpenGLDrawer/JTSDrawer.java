@@ -109,19 +109,17 @@ public class JTSDrawer {
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value) {
-		// FIXME: Need to be optimized. Compute the normal only if the polygon is not in the XY plan.
-		/*if ( p.getNumPoints() == 4 ) {
-			Vertex[] vertices = getTriangleVertices(p);
-			double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
-			gl.glNormal3dv(normal, 0);
-		} else {
-			gl.glNormal3d(0.0d, 0.0d, 1.0d);
-		}*/
-		
-		if(myGLRender.computeNormal){
-			Vertex[] vertices = getTriangleVertices(p);
-			double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
-			gl.glNormal3dv(normal, 0);
+        // calculate the normal vectors for each of the polygonal facets and then average the normal
+		if(myGLRender.computeNormal){			
+			Vertex[] vertices = getExteriorRingVertices(p);
+			double[] normalmean = new double[3];
+			for (int i= 0; i< p.getNumPoints();i++){
+				double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+				normalmean[0]= (normalmean[0] + normal[0])/(i+1);
+				normalmean[1]= (normalmean[1] + normal[1])/(i+1);
+				normalmean[2]= (normalmean[2] + normal[2])/(i+1);
+			}	
+			gl.glNormal3dv(normalmean, 0);
 		}
 
 		if ( isTextured == false ) {
@@ -623,6 +621,18 @@ public class JTSDrawer {
 
 			return vertices;
 	}
+	
+	public Vertex[] getExteriorRingVertices(final Polygon p) {
+		// Build the n vertices of the facet of the polygon.
+		Vertex[] vertices = new Vertex[p.getExteriorRing().getNumPoints()];
+		for ( int i = 0; i < p.getExteriorRing().getNumPoints(); i++ ) {
+			vertices[i] = new Vertex();
+			vertices[i].x = p.getExteriorRing().getPointN(i).getX();
+			vertices[i].y = yFlag * p.getExteriorRing().getPointN(i).getY();
+			vertices[i].z = p.getExteriorRing().getPointN(i).getCoordinate().z;
+		}
+		return vertices;
+}
 
 	// ////////////////////////////// LINE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
@@ -1042,6 +1052,7 @@ public class JTSDrawer {
 	}
 
 	public void PyramidSkeleton(final Polygon p, final double size) {
+				
 		gl.glBegin(GL_QUADS);
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
