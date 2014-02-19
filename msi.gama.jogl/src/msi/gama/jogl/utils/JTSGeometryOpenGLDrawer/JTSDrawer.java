@@ -85,6 +85,7 @@ public class JTSDrawer {
 		final Color border, final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
 		final double height, final boolean rounded, final double z_fighting_value) {
 
+
 		numGeometries = polygons.getNumGeometries();
 
 		// for each polygon of a multipolygon, get each point coordinates.
@@ -101,11 +102,6 @@ public class JTSDrawer {
 		}
 	}
 
-	public void DrawPolygonMain(final Polygon p, final double z_layer, final Color c, final double alpha,
-		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
-		final boolean drawPolygonContour, final boolean rounded) {
-
-	}
 
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
@@ -224,8 +220,11 @@ public class JTSDrawer {
 				gl.glEnd();
 				
 				if ( !colorpicking ) {
-					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-						alpha * c.getAlpha() / 255);
+					if(c!=null){
+						gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+								alpha * c.getAlpha() / 255);
+					}
+					
 				}
 			}
 			
@@ -439,11 +438,12 @@ public class JTSDrawer {
 		final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames, final boolean rounded,
 		final Double z_fighting_value) {
-		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
-			z_fighting_value,1);
-		gl.glTranslated(0, 0, height);
+		
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
 			z_fighting_value,-1);
+		gl.glTranslated(0, 0, height);
+		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
+			z_fighting_value,1);
 		gl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
 
@@ -499,7 +499,7 @@ public class JTSDrawer {
 			if ( fill ) {
 				
 				if(myGLRender.computeNormal){
-					HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+					HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 				}
 				gl.glBegin(GL.GL_QUADS);
 					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -1105,7 +1105,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = getExteriorRingVertices(p);
-			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 
 		gl.glBegin(GL_QUADS);
@@ -1118,7 +1118,7 @@ public class JTSDrawer {
 
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,0,1,size,1,-1);
-			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
@@ -1129,7 +1129,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,1,2,size,-1,-1);
-			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
@@ -1140,7 +1140,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,2,3,size,-1,1);
-			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
@@ -1151,7 +1151,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,3,0,size,1,1);
-			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
@@ -1263,13 +1263,16 @@ public class JTSDrawer {
 		double[] normalmean = new double[3];
 		for (int i= 0; i< vertices.length-2;i++){
 			double[] normal = GLUtil.CalculateNormal(vertices[i+2], vertices[i+1], vertices[i]);
-			normalmean[0]= (normalmean[0] + normal[0])/(i+1);
-			normalmean[1]= (normalmean[1] + normal[1])/(i+1);
-			normalmean[2]= (normalmean[2] + normal[2])/(i+1);
+			normalmean[0]= (normalmean[0] + normal[0]);
+			normalmean[1]= (normalmean[1] + normal[1]);
+			normalmean[2]= (normalmean[2] + normal[2]);
 		}
-		normalmean[0]= norm_dir*normalmean[0];
-		normalmean[1]= norm_dir*normalmean[1];
-		normalmean[2]= norm_dir*normalmean[2];
+		
+		//norm_dir=norm_dir; //works with GIS
+		norm_dir=-norm_dir; //works with Procedural
+		normalmean[0]= norm_dir*normalmean[0]/vertices.length;
+		normalmean[1]= norm_dir*normalmean[1]/vertices.length;
+		normalmean[2]= norm_dir*normalmean[2]/vertices.length;
 		
 		gl.glNormal3dv(normalmean, 0);
 		
