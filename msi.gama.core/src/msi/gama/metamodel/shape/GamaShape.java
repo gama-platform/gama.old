@@ -400,7 +400,8 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public Envelope3D getEnvelope() {
 		if ( envelope == null ) {
-			envelope = Envelope3D.of(getInnerGeometry());
+			//envelope = Envelope3D.of(getInnerGeometry());
+			envelope = Envelope3D.of(this);
 		}
 		return envelope;
 	}

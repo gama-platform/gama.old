@@ -104,6 +104,7 @@ public interface IKeyword {
 	public static final String DOT = "dot";
 	public static final String DRAW = "draw";
 	public static final String DRAWENV = "draw_env";
+	public static final String DRAW_NORM = "draw_norm";
 	// public static final String DRAWASDEM = "draw_as_dem";
 	public static final String ELEVATION = "elevation";
 	public static final String DYNAMIC = "dynamic";

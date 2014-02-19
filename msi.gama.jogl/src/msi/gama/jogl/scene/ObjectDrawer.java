@@ -86,7 +86,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					jtsDrawer.drawHemiSphere(geometry);
 					break;
 				case CONE:
-					jtsDrawer.drawCone(geometry);
+					jtsDrawer.drawCone3D(geometry);
 					break;
 				case TEAPOT:
 					jtsDrawer.drawTeapot(geometry);

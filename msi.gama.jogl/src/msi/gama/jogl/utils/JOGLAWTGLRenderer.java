@@ -65,10 +65,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private int aggregated = 0;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
+	// preference "drawNormal"
+	private boolean drawNormal = false;
 
 	public boolean triangulation = false;
 	
 	public boolean computeNormal = true;
+
+
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -470,6 +474,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getZFighting() {
 		return z_fighting;
+	}
+	
+	public void setDrawNorm(final boolean d) {
+		this.drawNormal = d;
+	}
+
+	public boolean getDrawNorm() {
+		return drawNormal;
 	}
 
 	public void setShowFPS(final boolean fps) {

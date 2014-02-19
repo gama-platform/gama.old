@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 
+import com.vividsolutions.jts.awt.PointShapeFactory.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -880,6 +881,30 @@ public class GLUtil {
 			return normal;
 		}
 		
+		
+		public static Vertex GetCenter(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
+			Vertex center = new Vertex();
+			center.x = (pointA.x + pointB.x + pointC.x)/3;
+			center.y = (pointA.y + pointB.y + pointC.y)/3;
+			center.z = (pointA.z + pointB.z + pointC.z)/3;
+			return center;
+		}
+		
+		public static Vertex GetCenter(Vertex[] vertices) {
+			Vertex center = new Vertex();
+			for (int i= 0; i< vertices.length;i++){
+				center.x = center.x + vertices[i].x;
+				center.y = center.y + vertices[i].y;
+				center.z = center.z + vertices[i].z;
+			}
+			
+			center.x = center.x/vertices.length;
+			center.y = center.y/vertices.length;
+			center.z = center.z/vertices.length;
+			return center;
+		}
+		
+
 
 		
 }

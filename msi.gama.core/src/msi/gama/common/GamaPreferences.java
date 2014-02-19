@@ -365,6 +365,8 @@ public class GamaPreferences {
 		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normal by default", false,
+			IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",

@@ -127,6 +127,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setZFighting(getOutput().getZFighting());
+		renderer.setDrawNorm(getOutput().getDrawNorm());
 		renderer.setShowFPS(getOutput().getShowFPS());
 		renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());

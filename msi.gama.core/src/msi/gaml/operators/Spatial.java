@@ -170,7 +170,8 @@ public abstract class Spatial {
 			return polygon(scope, GamaList.with(origin, minPoint, maxPoint));
 		}
 
-		@operator("square")
+	
+        @operator("square")
 		@doc(value = "A square geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the square is by default the location of the current agent in which has been called this operator.", examples = { "square(10) --: returns a geometry as a square of side size 10." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "triangle" })
 		public static IShape square(final IScope scope, final Double side_size) {
@@ -362,7 +363,7 @@ public abstract class Spatial {
 			return Operators.minus(scope, Transformations.enlarged_by(scope, g, width), g);
 		}
 
-		@operator("envelope")
+		/*@operator("envelope")
 		@doc(value = "A rectangular 2D geometry that represents the rectangle that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,0,100,100) is returned")
 		public static IShape envelope(final IScope scope, final Object obj) {
 
@@ -375,7 +376,22 @@ public abstract class Spatial {
 				GamaGeometryType.buildRectangle(env.getWidth(), env.getHeight(),
 					new GamaPoint(env.getMinX() + env.getWidth() / 2, env.getMinY() + env.getHeight() / 2));
 			return shape;
-		}
+		}*/
+		
+		
+		@operator("envelope")
+         @doc(value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned")
+         public static IShape envelope(final IScope scope, final Object obj) {
+                 Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
+                 if ( env.isNull() ) {
+                         env = new Envelope3D(0, 100, 0, 100, 0, 100);
+                 }
+                 final IShape shape =
+                         GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(), new GamaPoint(env.centre()));
+                 return shape;
+         }	
+ 
+		
 	}
 
 	public static abstract class Operators {

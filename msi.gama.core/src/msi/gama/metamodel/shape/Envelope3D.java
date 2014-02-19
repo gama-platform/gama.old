@@ -45,9 +45,22 @@ public class Envelope3D extends Envelope {
 		return env;
 	}
 
-	public static Envelope3D of(final GamaShape s) {
+	/*public static Envelope3D of(final GamaShape s) {
 		return of(s.getInnerGeometry());
-	}
+	}*/
+	
+	
+	 public static Envelope3D of(final GamaShape s) {
+         Envelope3D env = of(s.getInnerGeometry());
+         if (s.hasAttribute("depth")) {
+                 Double d = (Double) s.getAttribute("depth");
+                 GamaPoint center = (GamaPoint) s.getLocation();
+                 center.setZ(d);
+                 env.expandToInclude(center);
+         }
+         return env;
+     }
+	
 
 	public static Envelope3D of(final GamaPoint p) {
 		return of(p.getInnerGeometry());

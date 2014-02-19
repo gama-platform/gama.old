@@ -211,6 +211,7 @@ public class MovingSkill extends Skill {
 		final int z_max = scope.hasArg("z_max") ? scope.getIntArg("z_max") : 100;
 
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
+		Envelope env = scope.getSimulationScope().getEnvelope();
 
 		if ( loc == null ) {
 			agent.setHeading(heading - 180);
@@ -219,6 +220,14 @@ public class MovingSkill extends Skill {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
 				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
+				//java.lang.System.out.println("define bound w:" + geom.getEnvelope().getWidth() + "h:" + geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
+				if ( geom != null && geom.getInnerGeometry() != null ) {
+					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
+				}
+			}
+			else{
+				final IShape geom = scope.getSimulationScope().getGeometry();
+				//java.lang.System.out.println("world bound w:" + geom.getEnvelope().getWidth() + "h:" + geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
