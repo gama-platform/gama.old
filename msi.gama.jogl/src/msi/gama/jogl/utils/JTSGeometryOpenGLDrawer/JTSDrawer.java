@@ -95,7 +95,7 @@ public class JTSDrawer {
 					textureFileNames, rounded, z_fighting_value);
 			} else {
 				DrawPolygon(curPolygon, c, alpha, fill, border, isTextured, textureFileNames, /* angle, */true, rounded,
-					z_fighting_value);
+					z_fighting_value,1);
 			}
 		}
 	}
@@ -108,16 +108,16 @@ public class JTSDrawer {
 
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
-		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value) {
+		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value, final int norm_dir) {
         // calculate the normal vectors for each of the polygonal facets and then average the normal
 		if(myGLRender.computeNormal){			
 			Vertex[] vertices = getExteriorRingVertices(p);
 			double[] normalmean = new double[3];
 			for (int i= 0; i< p.getNumPoints();i++){
 				double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
-				normalmean[0]= (normalmean[0] + normal[0])/(i+1);
-				normalmean[1]= (normalmean[1] + normal[1])/(i+1);
-				normalmean[2]= (normalmean[2] + normal[2])/(i+1);
+				normalmean[0]= norm_dir*(normalmean[0] + normal[0])/(i+1);
+				normalmean[1]= norm_dir*(normalmean[1] + normal[1])/(i+1);
+				normalmean[2]= norm_dir*(normalmean[2] + normal[2])/(i+1);
 			}	
 			gl.glNormal3dv(normalmean, 0);
 		}
@@ -412,10 +412,10 @@ public class JTSDrawer {
 		final boolean isTextured, final IList<String> textureFileNames, final boolean rounded,
 		final Double z_fighting_value) {
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
-			z_fighting_value);
+			z_fighting_value,1);
 		gl.glTranslated(0, 0, height);
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
-			z_fighting_value);
+			z_fighting_value,-1);
 		gl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
 
@@ -1050,31 +1050,81 @@ public class JTSDrawer {
 		gl.glTranslated(0, 0, -z);
 
 	}
+	
+	
+	public Vertex[] GetPyramidfaceVertices(final Polygon p, int i, int j, double size){
+		Vertex[] vertices = new Vertex[3];
+		for ( int i1 = 0; i1 < 3; i1++ ) {
+			vertices[i1] = new Vertex();
+		}
+		
+		vertices[0].x = p.getExteriorRing().getPointN(i).getX();
+		vertices[0].y = yFlag * p.getExteriorRing().getPointN(i).getY();
+		vertices[0].z = 0.0d;
+
+		vertices[1].x = p.getExteriorRing().getPointN(j).getX();
+		vertices[1].y = yFlag * p.getExteriorRing().getPointN(j).getY();
+		vertices[1].z = 0.0d;
+
+		vertices[2].x = p.getExteriorRing().getPointN(i).getX() + size / 2;
+		vertices[2].y = yFlag *
+				(p.getExteriorRing().getPointN(i).getY() - size / 2);
+		vertices[2].z = size;
+		return vertices;
+	}
 
 	public void PyramidSkeleton(final Polygon p, final double size) {
 				
+		Vertex[] vertices;
+		double[] normal;
+
 		gl.glBegin(GL_QUADS);
+		if(myGLRender.computeNormal){
+			gl.glNormal3d(0,0,-1);
+		}
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 		gl.glEnd();
+		
+
 		gl.glBegin(GL_TRIANGLES);
+		if(myGLRender.computeNormal){
+			vertices = GetPyramidfaceVertices(p,0,1,size);
+			normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
+		}
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX() + size / 2, yFlag *
 			(p.getExteriorRing().getPointN(0).getY() - size / 2), size);
-
+		
+		if(myGLRender.computeNormal){
+			vertices = GetPyramidfaceVertices(p,1,2,size);
+			normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
+		}
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(1).getX() - size / 2, yFlag *
 			(p.getExteriorRing().getPointN(1).getY() - size / 2), size);
-
+		
+		if(myGLRender.computeNormal){
+			vertices = GetPyramidfaceVertices(p,2,3,size);
+			normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
+		}
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(2).getX() - size / 2, yFlag *
 			(p.getExteriorRing().getPointN(2).getY() + size / 2), size);
-
+		
+		if(myGLRender.computeNormal){
+			vertices = GetPyramidfaceVertices(p,3,0,size);
+			normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			gl.glNormal3dv(normal, 0);
+		}	
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 		gl.glVertex3d(p.getExteriorRing().getPointN(3).getX() + size / 2, yFlag *

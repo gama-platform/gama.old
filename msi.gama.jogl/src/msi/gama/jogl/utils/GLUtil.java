@@ -19,6 +19,9 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
+
+import com.vividsolutions.jts.geom.Polygon;
+
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class GLUtil {
@@ -834,7 +837,7 @@ public class GLUtil {
 		return texID[0];
 	}
 	
-	// Calculate the normal, from three points on a surface
+	    // Calculate the normal, from three points on a surface
 		public static double[] CalculateNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
 			// Step 1
 			// build two vectors, one pointing from A to B, the other pointing from
@@ -876,4 +879,7 @@ public class GLUtil {
 			// done
 			return normal;
 		}
+		
+
+		
 }

@@ -109,7 +109,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					} else {
 						jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
 							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, true,
-							geometry.rounded, geometry.getZ_fighting_id());
+							geometry.rounded, geometry.getZ_fighting_id(),1);
 					}
 					break;
 				case MULTILINESTRING:
