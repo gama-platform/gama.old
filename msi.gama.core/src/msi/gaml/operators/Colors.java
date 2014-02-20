@@ -94,21 +94,21 @@ public class Colors {
 
 	@operator(value = "hsb")
 	@doc(value = "Converts hsb value to Gama color", comment = "h=hue, s=saturation, b=brightness. h,s and b components should be floating-point values between 0.0 and 1.0.", examples = "set color <- hsb (60,0.5,0);"
-		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)", see = "")
+		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)", see = "rgb")
 	public static GamaColor hsb(final Double h, final Double s, final Double b) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()));
 	}
 
 	@operator(value = "hsb")
 	@doc(value = "Converts hsb value to Gama color", comment = "h=hue, s=saturation, b=brightness. h,s and b components should be floating-point values between 0.0 and 1.0. Alpha can be an integer (between 0 and 255) or a float (between 0 and 1)", examples = "set color <- hsb (60,0.5,0);"
-		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)", see = "")
+		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Double a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
 
 	@operator(value = "hsb")
 	@doc(value = "Converts hsb value to Gama color", comment = "h=hue, s=saturation, b=brightness. h,s and b components should be floating-point values between 0.0 and 1.0. Alpha can be an integer (between 0 and 255) or a float (between 0 and 1)", examples = "set color <- hsb (60,0.5,0);"
-		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)", see = "")
+		+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Integer a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
@@ -150,14 +150,14 @@ public class Colors {
 	}
 
 	@operator(value = "grayscale")
-	@doc(value = "Converts rgb color to grayscale value", comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 * red + 0.587 * green + 0.114 * blue (Photoshop value)", examples = "set grayscale_color <- grayscale (color);", see = "rgb,hsb")
+	@doc(value = "Converts rgb color to grayscale value", comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)", examples = "set grayscale_color <- grayscale (color);", see = {"rgb","hsb"})
 	public static GamaColor grayscale(final GamaColor c) {
 		int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
 	}
 
 	@operator(value = "blend")
-	@doc(value = "Blend two colors with an optional ratio (c1 * r + c2 * (1 - r)) between 0 and 1", comment = "", examples = "rgb blended <- blend(°red, °blue, 0.3)", see = "rgb,hsb")
+	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1", comment = "", examples = "rgb blended <- blend(°red, °blue, 0.3)", see = {"rgb","hsb"})
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
 		double ir = 1.0 - r;
 		GamaColor color =
@@ -167,7 +167,7 @@ public class Colors {
 	}
 
 	@operator(value = "blend")
-	@doc(value = "Blend two colors with an optional ratio (c1 * r + c2 * (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", comment = "", examples = "rgb blended <- blend(°red, °blue)", see = "rgb,hsb")
+	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", comment = "", examples = "rgb blended <- blend(°red, °blue)", see = {"rgb","hsb"})
 	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
 		return blend(color1, color2, 0.5);
 	}

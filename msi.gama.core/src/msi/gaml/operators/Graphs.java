@@ -318,7 +318,7 @@ public class Graphs {
 	}
 	
 	@operator(value = "gamma_index")
-	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 * (v - 2)) - for planar graph.", examples = { "gamma_index(graphEpidemio)" }, see = {
+	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.", examples = { "gamma_index(graphEpidemio)" }, see = {
 		"alpha_index","beta_index","nb_cycles","connectivity_index" })
 	public static double gammaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException

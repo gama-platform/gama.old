@@ -7,7 +7,8 @@ public class Constants {
 	
 	public static String GEN_FOLDER = SRC_FOLDER + File.separator + "gen";
 	public static String INPUT_FOLDER = SRC_FOLDER + File.separator + "input";
-	public static String SVN_FOLDER = SRC_FOLDER + File.separator + "svn";
+	// public static String SVN_FOLDER = SRC_FOLDER + File.separator + "svn";
+	public static String SVN_FOLDER = BASE_FOLDER + File.separator + "svn";
 	
 	public static String JAVA2XML_FOLDER = GEN_FOLDER + File.separator + "java2xml";
 //	public static String XML2WIKI_FOLDER = GEN_FOLDER + File.separator + "xml2wiki";

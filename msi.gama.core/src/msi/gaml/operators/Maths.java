@@ -354,7 +354,9 @@ public class Maths {
 	}
 
 	@operator(value = "tan", can_be_const = true)
-	@doc(value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.", masterDoc = true, special_cases = {"Operand values out of the range [0-359] are normalized. Notice that tan(360) does not return 0.0 but -2.4492935982947064E-16","The tangent is only defined for any real number except 90+k*180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity)."}, 
+	@doc(value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.", masterDoc = true, 
+	special_cases = {"Operand values out of the range [0-359] are normalized. Notice that tan(360) does not return 0.0 but -2.4492935982947064E-16",
+			"The tangent is only defined for any real number except 90 + k `*` 180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity)."}, 
 			see = {"cos", "sin" })
 	public static Double tan(final Double v) {
 		double rad = toRad * v;

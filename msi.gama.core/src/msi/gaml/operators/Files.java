@@ -27,6 +27,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -201,7 +203,7 @@ public class Files {
 	}
 
 	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens an existing repository", special_cases = " If the specified string does not refer to an existing repository, an exception is risen.", examples = {
+	@doc(value = "opens an existing repository", special_cases = "If the specified string does not refer to an existing repository, an exception is risen.", examples = {
 		"let dirT type: file value: folder(\"../includes/\");",
 		"				// dirT represents the repository \"../includes/\"",
 		"				// dirT.contents here contains the list of the names of included files" }, see = { "file", "new_folder" })
@@ -267,21 +269,25 @@ public class Files {
 	}
 
 	@operator(value = "get")
-	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute's name is specified by the right operand.", examples = { "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable. " })
+//	@doc(examples = { "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable." })
+	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute name is specified by the right operand.",
+		usages = {@usage(examples = @example("string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable"))})
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return g.getAttribute(s);
 	}
 
 	@operator(value = "get")
-	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute's name is specified by the right operand.", examples = { "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable. " })
+//	@doc(examples = { "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable." })
+	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute name is specified by the right operand.",
+		usages = {@usage(examples = @example("string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable"))})
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
 	}
 
 	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING)
-	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", special_cases = " If the specified string does not refer to an existing repository, the repository is created. If the string refers to an existing file, an exception is risen.", examples = {
+	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", special_cases = {"If the specified string does not refer to an existing repository, the repository is created.", "If the string refers to an existing file, an exception is risen."}, examples = {
 		"let dirNewT type: file value: new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\"",
 		"															// eventually creates the directory ../incl" }, see = { "folder", "file" })
 	public static IGamaFile newFolder(final IScope scope, final String folder) throws GamaRuntimeException {

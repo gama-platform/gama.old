@@ -47,7 +47,7 @@ public class MainBeforePython {
 		
 		System.out.println("");
 		System.out.println("This is the end of the step 1. ");
-		System.out.println("Please run the python file 'statwiki.py' in the python folder with arguments: --build --d=files/gen/wiki2wiki ");
+		System.out.println("Please run the python file 'statwiki.py' in the python folder with arguments: --build --d=../../files/gen/wiki2wiki ");
 
 	}
 	
