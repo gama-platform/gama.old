@@ -3,19 +3,35 @@ package msi.gama.display.web;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.display.web.utils.Logger;
+import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.views.LayeredDisplayView.WebDisplayView;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.gui.displays.layers.LayerManager;
+
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
 
 
 @display("web")
 public class WebDisplaySurface implements IDisplaySurface {
 
+	private static final String TAG = WebDisplaySurface.class.getName();
+
 	public WebDisplaySurface(final Object ... args) {
-		
+		Logger.mlog(TAG, "constructor");
 	}
 
 	/**
@@ -34,12 +50,48 @@ public class WebDisplaySurface implements IDisplaySurface {
 	@Override
 	public void dispose() {}
 
+	private boolean isJavascriptInitialized = false;
+
 	/**
 	 * Method updateDisplay()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#updateDisplay()
 	 */
 	@Override
-	public void updateDisplay() {}
+	public void updateDisplay() {
+		Logger.mlog(TAG, "updateDisplay");
+
+		if (isWebDisplayViewNotFound()) {
+			Logger.mlog("Finding view...");
+			findWebDisplayView();
+		}
+
+		if (false == isJavascriptInitialized) {
+			isJavascriptInitialized = true;
+
+			if (internalBrowser != null) {
+				Logger.elog("NO ERROR HERE!");
+				testInternalBrowser();
+			} else {
+				Logger.elog("Internal Browser error!");
+			}
+		}
+	}
+
+	private void testInternalBrowser() {
+
+		SwtGui.getDisplay().syncExec(new Runnable() {
+			static final String webUrl = "http://get.webgl.org/";
+			@Override
+			public void run() {
+				try {
+					internalBrowser.setUrl(webUrl);
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+	}
 
 	/**
 	 * Method forceUpdateDisplay()
@@ -102,7 +154,9 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 *      msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
-	public void focusOn(final IShape geometry, final ILayer display) {}
+	public void focusOn(final IShape geometry, final ILayer display) {
+		Logger.mlog(TAG, "focusOn event");
+	}
 
 	/**
 	 * Method canBeUpdated()
@@ -251,7 +305,64 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h, final LayeredDisplayOutput layerDisplayOutput) {}
+	public void initialize(final double w, final double h,
+			final LayeredDisplayOutput output) {
+
+		final String viewId = output.getViewId();
+		String viewName = output.getViewName();
+		Logger.mlog(TAG, "initialize", viewId, viewName);
+
+		debugViewId();
+
+		// SwtGui.getDisplay().syncExec(new Runnable() {
+		// @Override
+		// public void run() {
+		// try {
+		// IViewReference[] result = SwtGui.getPage()
+		// .getViewReferences();
+		//
+		// for (IViewReference view : result) {
+		// Logger.mlog(view.getId());
+		// }
+		// } catch (final Exception e) {
+		// e.printStackTrace();
+		// }
+		//
+		// }
+		// });
+
+
+		// final IViewReference ref = SwtGui.getPage(
+		// SwtGui.PERSPECTIVE_SIMULATION_ID)
+		// .findViewReference(output.getViewId(),
+		// output.isUnique() ? null : output.getName());
+		// if (ref == null) {
+		// System.err.println("MinhVV get ViewReference null");
+		// return;
+		// }
+		// final IViewPart part = ref.getView(true);
+		// if (!(part instanceof IGamaView)) {
+		// System.out.println("MinhVV get view false");
+		// return;
+		// }
+		//
+		// final IGamaView view = (IGamaView) part;
+
+		// WebDisplayView view = WebDisplayView.getWebDisplayView();
+		//
+		// if (null == view) {
+		// Logger.elog("getWebDisplayView null");
+		// }
+
+		// WebDisplayView webDisplayView = WebDisplayView.this;
+		// Browser browser = (Browser) WebDisplayView.this.getComponent();
+		// if (null != browser) {
+		// browser.setUrl("google.com");
+		// } else {
+		// Logger.elog(TAG, "can not find browser");
+		// }
+
+	}
 
 	/**
 	 * Method outputChanged()
@@ -377,4 +488,78 @@ public class WebDisplaySurface implements IDisplaySurface {
 		return false;
 	}
 
+	public void debugViewId() {
+		traceViews();
+
+		final IWorkbenchPage page = SwtGui.getPage();
+		if (page == null) {
+			Logger.elog(TAG, "Page null");
+			return;
+		} // Closing the workbench
+		final IViewReference ref = page.findViewReference(WebDisplayView.ID);
+		if (ref == null) {
+			Logger.elog(TAG, "View Ref null");
+			return;
+		}
+		final IViewPart part = ref.getView(true);
+		if (!(part instanceof IGamaView)) {
+			Logger.elog(TAG, "Not view display");
+			return;
+		}
+		final IGamaView view = (IGamaView) part;
+		Logger.elog(TAG, "View OK");
+	}
+
+	public void traceViews() {
+		SwtGui.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					IViewReference[] result = SwtGui.getPage()
+							.getViewReferences();
+
+					for (IViewReference view : result) {
+						Logger.mlog(view.getId());
+					}
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+	}
+	
+	private WebDisplayView webDisplayView = null;
+	private Browser internalBrowser = null;
+
+	private boolean isWebDisplayViewNotFound() {
+		return null == this.webDisplayView;
+	}
+
+	public void findWebDisplayView() {
+		SwtGui.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					IViewReference[] listViews = SwtGui.getPage()
+							.getViewReferences();
+
+					for (IViewReference viewRef : listViews) {
+						if (viewRef.getId().equals(WebDisplayView.ID)) {
+							webDisplayView = (WebDisplayView) viewRef
+									.getView(true);
+							internalBrowser = (Browser) webDisplayView
+									.getComponent();
+							Logger.mlog(
+									"Create browser OK grace a View found: ",
+									viewRef.getId());
+						}
+					}
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+	}
 }
