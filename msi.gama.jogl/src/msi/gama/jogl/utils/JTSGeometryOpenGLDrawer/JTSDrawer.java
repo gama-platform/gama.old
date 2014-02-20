@@ -1086,23 +1086,141 @@ public class JTSDrawer {
 					z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 				}
 
-				gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
 				if ( !colorpicking ) {
 					Color c = g.getColor();
 					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
 						g.getAlpha() * c.getAlpha() / 255);
 				}
+				
+				if(g.picked){
+					Color c = g.getColor();
+					gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+						g.getAlpha() * c.getAlpha() / 255);
+					gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(0.0, 0.0, -1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+				gl.glEnd();
+				
 				gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(1.0, 0.0, 0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+			    gl.glEnd();
+			    
+			    gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(0.0, -1.0, 0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+			    gl.glEnd();
+			    
+			    gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(-1.0, 0.0, 0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+		        gl.glEnd();
+		        
+		        gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(0.0, 1.0, 0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+				 	gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+	            gl.glEnd();
+	            
+	            gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(0.0, 0.0, 1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+			    gl.glEnd();
+					
+					
+				}
+				else{
+				gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(0.0, 0.0, -1.0);
 				    gl.glColor3d(1.0, 0.0,0.0);
 					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
-					gl.glColor3d(0.0, 0.0,0.0);
+					gl.glColor3d(1.0, 1.0,0.0);
 					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 					gl.glColor3d(0.0, 1.0,0.0);
 					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
-					gl.glColor3d(1.0, 1.0,0.0);
+					gl.glColor3d(0.0, 0.0,0.0);
 					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 				gl.glEnd();
-				gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+				
+				gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(1.0, 0.0, 0.0);
+			        gl.glColor3d(1.0, 1.0,0.0); 
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glColor3d(0.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glColor3d(0.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+					gl.glColor3d(1.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+			    gl.glEnd();
+			    
+			    gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(0.0, -1.0, 0.0);
+			        gl.glColor3d(0.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glColor3d(0.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+					gl.glColor3d(0.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+					gl.glColor3d(0.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+			    gl.glEnd();
+			    
+			    gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(-1.0, 0.0, 0.0);
+			        gl.glColor3d(0.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
+					gl.glColor3d(1.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glColor3d(1.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+					gl.glColor3d(0.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+		        gl.glEnd();
+		        
+		        gl.glBegin(GL_QUADS);
+		            gl.glNormal3d(0.0, 1.0, 0.0);
+			        gl.glColor3d(1.0, 0.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glColor3d(1.0, 1.0,0.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glColor3d(1.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+					gl.glColor3d(1.0, 0.0,1.0);
+				 	gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+	            gl.glEnd();
+	            
+	            gl.glBegin(GL_QUADS);
+				    gl.glNormal3d(0.0, 0.0, 1.0);
+				    gl.glColor3d(1.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), g.height);
+					gl.glColor3d(1.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), g.height);
+					gl.glColor3d(0.0, 1.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), g.height);
+					gl.glColor3d(0.0, 0.0,1.0);
+					gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), g.height);
+			    gl.glEnd();
+				}
+
+
 				
 				if ( !colorpicking ) {
 					Color c = g.getColor();
