@@ -3,17 +3,11 @@ package simtools.gaml.extensions.traffic;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.field.RemainderDateTimeField;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -69,6 +63,7 @@ import com.vividsolutions.jts.geom.Point;
 	@var(name = "proba_use_linked_road", type = IType.FLOAT, init = "0.0", doc = @doc("probability to change lane to a linked road lane if necessary")),
 	@var(name = "right_side_driving", type = IType.BOOL, init = "true", doc = @doc("are drivers driving on the right size of the road?")),
 	@var(name = "max_speed", type = IType.FLOAT, init = "50.0", doc = @doc("maximal speed of the vehicle")),
+	@var(name = "distance_to_goal", type = IType.FLOAT, init = "0.0", doc = @doc("euclidean distance to the next point of the current segment")),
 	})
 @skill(name = "advanced_driving")
 public class AdvancedDrivingSkill extends MovingSkill {
@@ -720,7 +715,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				In.list(scope, agents)));
 		if ( agsFiltered.isEmpty() ) { return distance; }
 */
-		double distanceToGoal = distance2D((GamaPoint) agent.getLocation(), target);//agent.euclidianDistanceTo(target);// getDistanceToGoal(agent);
+		double distanceToGoal = getDistanceToGoal(agent); //distance2D((GamaPoint) agent.getLocation(), target);//agent.euclidianDistanceTo(target);// getDistanceToGoal(agent);
 		// double distanceMax = distance + security_distance + 0.5 * getVehiculeLength(agent);
 		IAgent nextAgent = null;
 		double minDiff = Double.MAX_VALUE;
@@ -728,7 +723,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		//t = System.currentTimeMillis();
 		
 		for ( IAgent ag : agents ) {
-			double dist = distance2D((GamaPoint) ag.getLocation(), target);
+			double dist = getDistanceToGoal(ag);//distance2D((GamaPoint) ag.getLocation(), target);
 			double diff = distanceToGoal - dist;
 			if ( changeLane && diff < vL ) { return 0; }
 			if ( diff < minDiff && (changeLane && diff >= 0 || !changeLane && diff > 0) ) {
@@ -937,6 +932,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				pt = new GamaPoint(coords[j]);
 			}
 			double dist = pt.euclidianDistanceTo(currentLocation);
+			setDistanceToGoal(agent, dist);
 			boolean onLinkedRoad = getOnLinkedRoad(agent);
 		//	t33 += System.currentTimeMillis() - t;
 			t = System.currentTimeMillis();
@@ -975,7 +971,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			agent.setLocation(currentLocation);
 		path.setSource(currentLocation.copy(scope));
 		agent.setAttribute(REAL_SPEED, realDistance / scope.getClock().getStep());
-		setDistanceToGoal(agent, currentLocation.euclidianDistanceTo(falseTarget));
 		//t37 += System.currentTimeMillis() - t;
 		return _distance == 0.0 ? 1.0 : distance / _distance;
 	}

@@ -2,6 +2,8 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -157,6 +159,22 @@ public class RoadSkill extends MovingSkill {
 				((List) agentsOn.get(lane)).add(driver);
 			}
 			//System.out.println("register " + driver + " lane : " + lane);
+			Coordinate[] coords = road.getInnerGeometry().getCoordinates();
+			Coordinate pt = (Coordinate) driver.getLocation();
+			if (coords[0].equals(pt)) 
+				driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL, coords[1].distance(pt));
+			else {
+				Coordinate cc = coords[1];
+				double min = coords[0].distance(pt) + coords[1].distance(pt);
+				for (int i = 1; i < coords.length - 2; i++) {
+					double dt = coords[i].distance(pt) + coords[i+1].distance(pt);
+					if (dt < min) {
+						min = dt;
+						cc = coords[i+1];
+					}
+				}
+				driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL, cc.distance(pt));
+			}
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
 		}
