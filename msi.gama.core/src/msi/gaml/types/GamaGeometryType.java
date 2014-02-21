@@ -240,7 +240,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, CUBE);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, RGBCUBE);
 		return g;
 
 	}
