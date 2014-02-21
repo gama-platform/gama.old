@@ -196,7 +196,32 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				renderer.gl.glRotated(-img.angle, 0.0d, 0.0d, 1.0d);
 				renderer.gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
 			}
+			
+			
+			if(renderer.computeNormal){
+				Vertex[] vertices = new Vertex[4];
+				for ( int i = 0; i < 4; i++ ) {
+					vertices[i] = new Vertex();
+				}
+				vertices[0].x = img.x;
+				vertices[0].y = -(img.y + img.height);
+				vertices[0].z = img.z;
+				
+				vertices[1].x = img.x + img.width;
+				vertices[1].y = -(img.y + img.height);
+				vertices[1].z = img.z;
+				
+				vertices[2].x = img.x + img.width;
+				vertices[2].y = -img.y;
+				vertices[2].z = img.z;
+				
+				vertices[3].x = img.x;
+				vertices[3].y = -img.y;
+				vertices[3].z = img.z;
+				GLUtil.HandleNormal(vertices,null,img.getAlpha(),-1,renderer);
+			}
 
+			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
 			renderer.gl.glBegin(GL_QUADS);
 			// bottom-left of the texture and quad
 			renderer.gl.glTexCoord2f(textureLeft, textureBottom);

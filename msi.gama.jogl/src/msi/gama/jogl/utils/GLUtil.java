@@ -12,6 +12,7 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -904,6 +905,49 @@ public class GLUtil {
 			return center;
 		}
 		
+
+		public static void HandleNormal(Vertex[] vertices, Color c, double alpha, int norm_dir, JOGLAWTGLRenderer renderer){
+			
+			
+			double[] normalmean = new double[3];
+			for (int i= 0; i< vertices.length-2;i++){
+				double[] normal = GLUtil.CalculateNormal(vertices[i+2], vertices[i+1], vertices[i]);
+				normalmean[0]= (normalmean[0] + normal[0]);
+				normalmean[1]= (normalmean[1] + normal[1]);
+				normalmean[2]= (normalmean[2] + normal[2]);
+			}
+
+			normalmean[0]= norm_dir*normalmean[0]/vertices.length;
+			normalmean[1]= norm_dir*normalmean[1]/vertices.length;
+			normalmean[2]= norm_dir*normalmean[2]/vertices.length;
+			
+			renderer.gl.glNormal3dv(normalmean, 0);
+			
+			normalmean[0]= (renderer.getMaxEnvDim()/20)*normalmean[0];
+			normalmean[1]= (renderer.getMaxEnvDim()/20)*normalmean[1];
+			normalmean[2]= (renderer.getMaxEnvDim()/20)*normalmean[2];
+
+			if(renderer.getDrawNorm()){
+				Vertex center = GLUtil.GetCenter(vertices);
+				renderer.gl.glBegin(GL_LINES);
+				renderer.gl.glColor3d(1.0, 0.0, 0.0);
+				renderer.gl.glVertex3d(center.x, center.y, center.z);		   
+				renderer.gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
+				renderer.gl.glEnd();
+
+				renderer.gl.glPointSize(2.0f);
+				renderer.gl.glBegin(GL_POINTS);
+				renderer.gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
+				renderer.gl.glEnd();
+				
+				if(c != null){
+					renderer.gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+							alpha * c.getAlpha() / 255);
+				}
+							
+			}
+			
+	}
 
 
 		
