@@ -290,7 +290,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	}
 
 	public Double primAdvancedFollow(final IScope scope,IAgent agent, double s, double t,IPath path, GamaPoint target) throws GamaRuntimeException {
-		final double security_distance = getSecurityDistanceCoeff(agent) * getRealSpeed(agent) + 1;
+		final double security_distance = getSecurityDistanceCoeff(agent);
 		final int currentLane = getCurrentLane(agent);
 		final Double probaChangeLaneUp = getProbaLaneChangeUp(agent);
 		final Double probaChangeLaneDown = getProbaLaneChangeDown(agent);
@@ -381,6 +381,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				(GamaPoint) road.getLocation());
 		List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
 		if ( !Random.opFlip(scope, getRespectPriorities(driver)) ) { return true; }
+		double realSpeed = Math.max(0.5, getRealSpeed(driver) + getAccelerationMax(driver));
 		for ( IAgent rd : roadsIn ) {
 			if ( rd != currentRoad ) {
 				double angle =
@@ -392,8 +393,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					for ( int i = 0; i < nbL; i++ ) {
 						for ( IAgent pp : agentsOn.get(i) ) {
 							double vL2 = getVehiculeLength(pp);
-							if ( Maths.round(getRealSpeed(pp), 2) > 0.0 &&
-								pp.euclidianDistanceTo(driver) < 1 + secDistCoeff * getRealSpeed(pp) + vL2 / 2 + vL / 2 ) { return false; }
+							double rp2 = getRealSpeed(pp);
+							double dist = pp.euclidianDistanceTo(driver);
+							if ( Maths.round(getRealSpeed(pp), 2) > 0.0 && (rp2 * ((7.0 / realSpeed) + secDistCoeff)) > (dist  - vL2 / 2 - vL / 2)) { return false; }
 						}
 					}
 				}
@@ -706,7 +708,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			if ( changeLane && distance < vL ) { return 0; }
 			return distance;
 		}
-		double distanceMax = distance + security_distance + vL;
+		//double distanceMax = distance + security_distance + vL;
 		//t341+= System.currentTimeMillis() - t;
 		//t = System.currentTimeMillis();
 		
@@ -736,9 +738,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		
 
 		if ( nextAgent == null ) { return distance; }
-
-		double realDist =
-			Math.min(distance, minDiff - security_distance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
+		double secDistance = 0.0;
+		if (getOnLinkedRoad(nextAgent) == getOnLinkedRoad(agent))
+			secDistance= 0.5 + security_distance * getRealSpeed(agent);
+		else {
+			secDistance= 0.5 + security_distance * (getRealSpeed(agent) + getRealSpeed(nextAgent));
+		}
+		double realDist = Math.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
 		//t345+= System.currentTimeMillis() - t;
 		
 		if ( changeLane && realDist < vL ) { return 0; }
