@@ -109,7 +109,7 @@ public class JTSDrawer {
         // calculate the normal vectors for each of the polygonal facets and then average the normal
 		if(myGLRender.computeNormal){			
 			Vertex[] vertices = getExteriorRingVertices(p);
-			HandleNormal(vertices,c,alpha,norm_dir,myGLRender.getMaxEnvDim());
+		    HandleNormal(vertices,c,alpha,norm_dir,myGLRender.getMaxEnvDim());
 		}
 
 		if ( isTextured == false ) {
@@ -338,7 +338,7 @@ public class JTSDrawer {
 	void DrawTexturedPolygon(final Polygon p,/* final int angle, */final Texture texture) {
 
 		gl.glEnable(GL.GL_TEXTURE_2D);
-		gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
+		gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the
 		// current GL context's state.
 		myGLRender.getContext().makeCurrent();
@@ -350,6 +350,12 @@ public class JTSDrawer {
 			DrawTesselatedPolygon(p,1,null,1.0);
 		}
 		else{
+			Vertex[] vertices =  this.getExteriorRingVertices(p);
+			if(myGLRender.computeNormal){
+				HandleNormal(vertices,null,0,1,myGLRender.getMaxEnvDim());
+			}
+			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+			
 			gl.glBegin(GL_QUADS);
 
 			gl.glTexCoord2f(0.0f, 1.0f);
@@ -439,11 +445,25 @@ public class JTSDrawer {
 		final boolean isTextured, final IList<String> textureFileNames, final boolean rounded,
 		final Double z_fighting_value) {
 		
+		int face_norm_dir=-1;
+		int p_norm_dir=1;;
+		if(this.myGLRender.computeNormal){
+		Vertex[] vertices = getExteriorRingVertices(p);
+			if(IsClockwise(vertices)){
+				face_norm_dir = -1;
+				p_norm_dir =1;
+			}
+			else{
+				face_norm_dir =1;
+				p_norm_dir= -1;
+			}
+		}
+		
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
-			z_fighting_value,-1);
+			z_fighting_value,-p_norm_dir);
 		gl.glTranslated(0, 0, height);
 		DrawPolygon(p, c, alpha, fill, border, isTextured, textureFileNames/* ,angle */, drawPolygonContour, rounded,
-			z_fighting_value,1);
+			z_fighting_value,p_norm_dir);
 		gl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
 
@@ -457,7 +477,7 @@ public class JTSDrawer {
 			}
 
 		} else {
-			DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour);
+			DrawFaces(p, c, alpha, fill, border, isTextured, height, drawPolygonContour,face_norm_dir);
 		}
 
 	}
@@ -476,7 +496,7 @@ public class JTSDrawer {
 	 *            : height of the polygon
 	 */
 	public void DrawFaces(final Polygon p, final Color c, final double alpha, final boolean fill, final Color b,
-		final boolean isTextured, final double height, final boolean drawPolygonContour) {
+		final boolean isTextured, final double height, final boolean drawPolygonContour,final int norm_dir) {
 
 		if ( !colorpicking ) {
 			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
@@ -499,7 +519,7 @@ public class JTSDrawer {
 			if ( fill ) {
 				
 				if(myGLRender.computeNormal){
-					HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+	              HandleNormal(vertices,c,alpha,norm_dir,myGLRender.getMaxEnvDim());
 				}
 				gl.glBegin(GL.GL_QUADS);
 					gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -580,19 +600,20 @@ public class JTSDrawer {
 
 			Vertex[] vertices = getFaceVertices(p, j, k, elevation, height);
 
-			gl.glBegin(GL.GL_QUADS);
 			if(myGLRender.computeNormal){
 				HandleNormal(vertices,null,0,1,myGLRender.getMaxEnvDim());
 			}
-			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
+			gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid color and texture mixture
+			gl.glBegin(GL.GL_QUADS);
+				gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color and texture mixture
+				gl.glTexCoord2f(0.0f, 0.0f);
+				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
+				gl.glTexCoord2f(1.0f, 0.0f);
+				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
+				gl.glTexCoord2f(1.0f, 1.0f);
+				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
+				gl.glTexCoord2f(0.0f, 1.0f);
+				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 			gl.glEnd();
 
 		}
@@ -1287,7 +1308,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = getExteriorRingVertices(p);
-			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
 		}
 
 		gl.glBegin(GL_QUADS);
@@ -1300,7 +1321,7 @@ public class JTSDrawer {
 
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,0,1,size,1,-1);
-			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
@@ -1311,7 +1332,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,1,2,size,-1,-1);
-			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
@@ -1322,7 +1343,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,2,3,size,-1,1);
-			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
@@ -1333,7 +1354,7 @@ public class JTSDrawer {
 		
 		if(myGLRender.computeNormal){
 			vertices = GetPyramidfaceVertices(p,3,0,size,1,1);
-			HandleNormal(vertices,c,alpha,1,myGLRender.getMaxEnvDim());
+			HandleNormal(vertices,c,alpha,-1,myGLRender.getMaxEnvDim());
 		}
 		gl.glBegin(GL_TRIANGLES);
 			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
@@ -1439,6 +1460,18 @@ public class JTSDrawer {
 		return vertices;
 	}
 	
+	
+	public boolean IsClockwise(Vertex[] vertices)
+	{
+	    double sum = 0.0;
+	    for (int i = 0; i < vertices.length; i++) {
+	    	Vertex v1 = vertices[i];
+	    	Vertex v2 = vertices[(i + 1) % vertices.length];
+	        sum += (v2.x - v1.x) * (v2.y + v1.y);
+	    }
+	    return sum > 0.0;
+	}
+	
 	public void HandleNormal(Vertex[] vertices, Color c, double alpha, int norm_dir, double factor){
 		
 		
@@ -1451,7 +1484,10 @@ public class JTSDrawer {
 		}
 		
 		//norm_dir=norm_dir; //works with GIS
-		norm_dir=-norm_dir; //works with Procedural
+		//norm_dir=-norm_dir; //works with Procedural
+		
+
+		
 		normalmean[0]= norm_dir*normalmean[0]/vertices.length;
 		normalmean[1]= norm_dir*normalmean[1]/vertices.length;
 		normalmean[2]= norm_dir*normalmean[2]/vertices.length;

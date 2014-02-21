@@ -113,9 +113,23 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 							geometry.fill, geometry.height, true, geometry.border, geometry.isTextured,
 							geometry.textureFileNames, geometry.rounded, geometry.getZ_fighting_id());
 					} else {
-						jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
-							geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, true,
-							geometry.rounded, geometry.getZ_fighting_id(),1);
+						if(jtsDrawer.myGLRender.computeNormal){
+							int norm_dir=1;
+							Vertex[] vertices = jtsDrawer.getExteriorRingVertices((Polygon) geometry.geometry);
+							if(!jtsDrawer.IsClockwise(vertices)){
+								norm_dir=-1;
+							}
+							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+									geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, true,
+									geometry.rounded, geometry.getZ_fighting_id(),norm_dir);
+						}
+						else{
+							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+									geometry.fill, geometry.border, geometry.isTextured, geometry.textureFileNames, true,
+									geometry.rounded, geometry.getZ_fighting_id(),-1);
+						}
+						
+						
 					}
 					break;
 				case MULTILINESTRING:
@@ -125,6 +139,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				case LINESTRING:
 				case LINEARRING:
 				case PLAN:
+				case POLYPLAN:
 					if ( geometry.height > 0 ) {
 						jtsDrawer.drawPlan((LineString) geometry.geometry, 0, geometry.getColor(), geometry.getAlpha(),
 							geometry.height, 0, true);
