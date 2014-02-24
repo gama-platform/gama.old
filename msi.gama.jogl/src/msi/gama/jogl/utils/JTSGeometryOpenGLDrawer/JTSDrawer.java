@@ -1,24 +1,46 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL.GL_CLIP_PLANE0;
+import static javax.media.opengl.GL.GL_CLIP_PLANE1;
+import static javax.media.opengl.GL.GL_LINES;
+import static javax.media.opengl.GL.GL_POINTS;
+import static javax.media.opengl.GL.GL_POLYGON;
+import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_TRIANGLES;
+import static javax.media.opengl.GL.GL_TRIANGLE_FAN;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.DoubleBuffer;
 import java.util.Iterator;
+
 import javax.media.opengl.GL;
-import javax.media.opengl.glu.*;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+import javax.media.opengl.glu.GLUtessellator;
 import javax.vecmath.Vector3d;
 
-import msi.gama.common.util.*;
-import msi.gama.jogl.scene.*;
-import msi.gama.jogl.utils.*;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.ImageUtils;
+import msi.gama.jogl.scene.GeometryObject;
+import msi.gama.jogl.scene.MyTexture;
+import msi.gama.jogl.utils.GLUtil;
+import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Vertex;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
+
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 public class JTSDrawer {
@@ -917,6 +939,35 @@ public class JTSDrawer {
 
 	}
 	
+	public void drawSphere(final GeometryObject g, double z) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		Geometry p = g.geometry;
+		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		Color c = g.getColor();
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+				g.getAlpha() * c.getAlpha() / 255);
+		}
+
+		GLUquadric quad = myGlu.gluNewQuadric();
+		if ( !myGLRender.triangulation ) {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
+		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+	
+		myGlu.gluSphere(quad, g.height, slices, stacks);
+		myGlu.gluDeleteQuadric(quad);
+		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+
+
+	}
+	
 	public void drawHemiSphere(final GeometryObject g) {
 		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
@@ -1304,12 +1355,16 @@ public class JTSDrawer {
 		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
-		LineString l = (LineString) g.geometry;
-		if ( Double.isNaN(l.getCoordinate().z) == false ) {
-			z = l.getCentroid().getCoordinate().z;
-		}
-
+		Geometry gg = (Geometry) g.geometry;
 		
+		if ( Double.isNaN(gg.getCoordinate().z) == false ) {
+			z = gg.getCentroid().getCoordinate().z;
+		}
+		if (gg instanceof Point) {
+			drawSphere(g, z);
+			return;
+		}
+		LineString l = (LineString) gg;
 		double x_length = l.getPointN(1).getX() - l.getPointN(0).getX();
 		double y_length = l.getPointN(1).getY() - l.getPointN(0).getY();
 		double z_length = l.getPointN(1).getCoordinate().z - l.getPointN(0).getCoordinate().z;
