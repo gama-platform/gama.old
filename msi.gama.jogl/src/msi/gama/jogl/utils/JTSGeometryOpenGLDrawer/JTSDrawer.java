@@ -9,6 +9,8 @@ import java.nio.DoubleBuffer;
 import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
+import javax.vecmath.Vector3d;
+
 import msi.gama.common.util.*;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.*;
@@ -1296,6 +1298,72 @@ public class JTSDrawer {
 						gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 				    gl.glEnd();	
 				}				
+	}
+	
+	public void drawLineCylinder(final GeometryObject g) {
+		// final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		LineString l = (LineString) g.geometry;
+		if ( Double.isNaN(l.getCoordinate().z) == false ) {
+			z = l.getCentroid().getCoordinate().z;
+		}
+
+		
+		double x_length = l.getPointN(1).getX() - l.getPointN(0).getX();
+		double y_length = l.getPointN(1).getY() - l.getPointN(0).getY();
+		double z_length = l.getPointN(1).getCoordinate().z - l.getPointN(0).getCoordinate().z;
+
+		double distance = Math.sqrt(x_length*x_length + y_length*y_length + z_length*z_length) ;
+		
+		gl.glTranslated(l.getPointN(0).getX(), yFlag * l.getPointN(0).getY(), z);
+		Vector3d  d;
+		if ( Double.isNaN(l.getCoordinate().z) == false ) {
+		  d = new Vector3d((l.getPointN(1).getX() - l.getPointN(0).getX())/distance, -(l.getPointN(1).getY() - l.getPointN(0).getY())/distance,(l.getPointN(1).getCoordinate().z - l.getPointN(0).getCoordinate().z)/distance);
+		}else{
+		  d = new Vector3d((l.getPointN(1).getX() - l.getPointN(0).getX())/distance, -(l.getPointN(1).getY() - l.getPointN(0).getY())/distance,0);
+		}
+				
+		Vector3d z_up = new Vector3d(0,0,1);
+		
+		Vector3d a = new Vector3d();
+		a.cross(z_up, d);
+	
+		double omega = Math.acos(z_up.dot(d));
+		omega= omega *180 / Math.PI;
+		gl.glRotated(omega, a.x, a.y, a.z);
+		
+		
+
+		
+		/*gl.glRotated((Math.asin(v.y))*180/Math.PI,0.0, 1.0, 0.0);*/
+		Color c = g.getColor();
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+				g.getAlpha() * c.getAlpha() / 255);
+		}
+
+		GLUquadric quad = myGlu.gluNewQuadric();
+		if ( !myGLRender.triangulation ) {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+		} else {
+			myGlu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
+		}
+		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+		myGlu.gluCylinder(quad, g.height, g.height, distance, slices, stacks);
+		myGlu.gluDeleteQuadric(quad);
+		
+		
+		gl.glRotated(-omega, a.x, a.y, a.z);
+		gl.glTranslated(-(l.getPointN(0).getX()), -yFlag * (l.getPointN(0).getY()), -z);
+
+		
+		
+
+
 	}
 	
 	

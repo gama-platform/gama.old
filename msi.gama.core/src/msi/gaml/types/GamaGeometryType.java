@@ -195,6 +195,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if ( coordinates[0].equals(coordinates[1]) ) { return createPoint((GamaPoint) coordinates[0]); }
 		return new GamaShape(GeometryUtils.FACTORY.createLineString(coordinates));
 	}
+	
+	public static IShape buildLineCylinder(final IShape location1, final IShape location2, final double radius) {
+		final IShape g = buildLine(location1, location2);
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, LINECYLINDER);
+		return g;
+	}
 
 	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
 		final IShape g = buildLine(location1, location2);

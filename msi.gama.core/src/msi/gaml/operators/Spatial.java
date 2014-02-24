@@ -347,6 +347,21 @@ public abstract class Spatial {
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, points.last(scope)); }
 			return GamaGeometryType.buildPolyline(shapes);
 		}
+		
+		@operator(value = { "line", "polyline" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
+		@doc(value = "A polyline geometry from the given list of points represented as a cylinder of radius r.", special_cases = {
+			"if the operand is nil, returns the point geometry {0,0}",
+			"if the operand is composed of a single point, returns a point geometry." }, examples = { "polyline([{0,0}, {0,10}, {10,10}, {10,0}],r) --: returns a polyline geometry composed of the 4 points." }, see = {
+			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle" })
+		public static IShape line(final IScope scope, final IContainer<?, IShape> points,final double radius) {
+			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
+			final IList<IShape> shapes = points.listValue(scope);
+			final int size = shapes.length(scope);
+			final IShape first = shapes.first(scope);
+			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
+			if ( size == 2 ) { return GamaGeometryType.buildLineCylinder(first, points.last(scope),radius); }
+			return GamaGeometryType.buildPolyline(shapes);
+		}
 
 		@operator(value = { "plan", "polyplan" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
 		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
