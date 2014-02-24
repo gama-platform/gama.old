@@ -1355,6 +1355,7 @@ public class JTSDrawer {
 		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
+		
 		Geometry gg = (Geometry) g.geometry;
 		
 		if ( Double.isNaN(gg.getCoordinate().z) == false ) {
@@ -1365,6 +1366,11 @@ public class JTSDrawer {
 			return;
 		}
 		LineString l = (LineString) gg;
+		
+		if ( Double.isNaN(l.getCoordinate().z) == false ) {
+			z= l.getPointN(0).getCoordinate().z;
+		}
+		
 		double x_length = l.getPointN(1).getX() - l.getPointN(0).getX();
 		double y_length = l.getPointN(1).getY() - l.getPointN(0).getY();
 		double z_length = l.getPointN(1).getCoordinate().z - l.getPointN(0).getCoordinate().z;
