@@ -828,7 +828,10 @@ public abstract class Spatial {
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size) {
 			if ( g == null ) { return null; }
-			return new GamaShape(g, g.getInnerGeometry().buffer(size));
+			Geometry gg =  g.getInnerGeometry().buffer(size);
+			if (gg != null && ! gg.isEmpty())
+				return new GamaShape(g,gg);
+			return null;
 		}
 
 		@operator(value = { "-", "reduced_by" })
