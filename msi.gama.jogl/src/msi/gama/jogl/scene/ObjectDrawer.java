@@ -100,8 +100,12 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				case RGBTRIANGLE:
 					jtsDrawer.drawRGBTriangle(geometry);
 					break;
+				case POLYLINECYLINDER:
+					jtsDrawer.DrawMultiLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							geometry.height);
 				case LINECYLINDER:
-					jtsDrawer.drawLineCylinder(geometry);
+					jtsDrawer.drawLineCylinder(geometry.geometry, geometry.getColor(), geometry.getAlpha(),
+							geometry.height);
 					break;
 				case POLYGON:
 				case ENVIRONMENT:
