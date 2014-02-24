@@ -217,6 +217,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		return new GamaShape(GeometryUtils.FACTORY.createLineString(coordinates.toArray(new Coordinate[0])));
 	}
+	
+	public static IShape buildPolylineCylinder(final List<IShape> points, final double radius) {
+		final IShape g = buildPolyline(points);
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, LINECYLINDER);
+		return g;
+	}
 
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolyline(points);

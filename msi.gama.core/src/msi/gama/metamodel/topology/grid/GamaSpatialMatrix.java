@@ -848,7 +848,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			Envelope3D e = s.getEnvelope();
-			if ( s.getAgent() == null || !(covered && env.covers(e)) || !(!covered && env.intersects(e)) ) {
+			if (s.getAgent() == null ||  !( covered ?  env.covers(e) : env.intersects(e) )) {
 				it.remove();
 			}
 		}

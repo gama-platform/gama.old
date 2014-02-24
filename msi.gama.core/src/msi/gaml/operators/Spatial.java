@@ -360,7 +360,7 @@ public abstract class Spatial {
 			final IShape first = shapes.first(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
 			if ( size == 2 ) { return GamaGeometryType.buildLineCylinder(first, points.last(scope),radius); }
-			return GamaGeometryType.buildPolyline(shapes);
+			return GamaGeometryType.buildPolylineCylinder(shapes,radius);
 		}
 
 		@operator(value = { "plan", "polyplan" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
