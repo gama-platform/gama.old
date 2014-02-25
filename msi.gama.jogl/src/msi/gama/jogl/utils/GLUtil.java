@@ -143,6 +143,33 @@ public class GLUtil {
 		return curTexture;
 	}
 	
+	
+	static void drawCubeDisplay(final JOGLAWTGLRenderer renderer,final float width) {
+		final float envMaxDim = width;
+		renderer.drawModel();
+		renderer.gl.glTranslatef(envMaxDim, 0, 0);
+		renderer.gl.glRotatef(90, 0, 1, 0);
+		renderer.drawModel();
+		renderer.gl.glTranslatef(envMaxDim, 0, 0);
+		renderer.gl.glRotatef(90, 0, 1, 0);
+		renderer.drawModel();
+		renderer.gl.glTranslatef(envMaxDim, 0, 0);
+		renderer.gl.glRotatef(90, 0, 1, 0);
+		renderer.drawModel();
+		renderer.gl.glTranslatef(envMaxDim, 0, 0);
+		renderer.gl.glRotatef(90, 0, 1, 0);
+		renderer.gl.glRotatef(-90, 1, 0, 0);
+		renderer.gl.glTranslatef(0, envMaxDim, 0);
+		renderer.drawModel();
+		renderer.gl.glTranslatef(0, -envMaxDim, 0);
+		renderer.gl.glRotatef(90, 1, 0, 0);
+		renderer.gl.glRotatef(90, 1, 0, 0);
+		renderer.gl.glTranslatef(0, 0, envMaxDim);
+		renderer.drawModel();
+		renderer.gl.glTranslatef(0, 0, -envMaxDim);
+		renderer.gl.glRotatef(-90, 1, 0, 0);
+	}
+	
 
 		
 }

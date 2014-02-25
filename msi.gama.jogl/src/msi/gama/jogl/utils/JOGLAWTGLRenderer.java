@@ -333,7 +333,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
-				drawCubeDisplay((float) displaySurface.getEnvWidth());
+				GLUtil.drawCubeDisplay(this,(float) displaySurface.getEnvWidth());
 
 			} else {
 				this.drawModel();
@@ -341,31 +341,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
-	private void drawCubeDisplay(final float width) {
-		final float envMaxDim = width;
-		this.drawModel();
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel();
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel();
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel();
-		gl.glTranslatef(envMaxDim, 0, 0);
-		gl.glRotatef(90, 0, 1, 0);
-		gl.glRotatef(-90, 1, 0, 0);
-		gl.glTranslatef(0, envMaxDim, 0);
-		this.drawModel();
-		gl.glTranslatef(0, -envMaxDim, 0);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glTranslatef(0, 0, envMaxDim);
-		this.drawModel();
-		gl.glTranslatef(0, 0, -envMaxDim);
-		gl.glRotatef(-90, 1, 0, 0);
-	}
+	
 
 	public void switchCamera() {
 		canvas.removeKeyListener(camera);
@@ -561,33 +537,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
 		}
 	}
-
-	// ////////////////////////ROI HANDLER ////////////////////////////////////
-
-
-
 	
 	public void CalculateFrameRate() {
 
-		// Increase frame count
 		frameCount++;
-
-		// Get the number of milliseconds since display started
 		currentTime = System.currentTimeMillis() - startTime;
 
-		// Calculate time passed
 		int timeInterval = (int) (currentTime - previousTime);
 		if ( timeInterval > 1000 ) {
-			// calculate the number of frames per second
 			fps = frameCount / (timeInterval / 1000.0f);
-
-			// Set time
 			previousTime = currentTime;
-
-			// Reset frame count
 			frameCount = 0;
 		}
-
 	}
 	
 
@@ -625,7 +586,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setPicking(final boolean value) {
 		picking = value;
-		// GuiUtils.debug("JOGLAWTDisplaySurface.setPicking " + value);
 		if ( !value ) {
 			if ( currentPickedObject != null ) {
 				currentPickedObject.unpick();
