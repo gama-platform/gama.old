@@ -39,6 +39,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Lighting
 	private Color ambientLightValue;
 	private Color diffuseLightValue;
+	private GamaPoint diffuseLightPosition;
 
 
 	public JOGLAWTDisplaySurface displaySurface;
@@ -65,7 +66,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public boolean computeNormal = true;
 	
-	public boolean drawDiffuseLight = false;
+	public boolean drawDiffuseLight = true;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -195,13 +196,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_LIGHTING);
 			}
 
-			if(drawDiffuseLight){
-				GLUtilLight.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
-			}
+			
 			
 
-			GLUtilLight.UpdateAmbiantLight(gl, glu, ambientLightValue);
-			GLUtilLight.UpdateDiffuseLight(gl, glu, diffuseLightValue);
+			GLUtilLight.UpdateAmbiantLightValue(gl, glu, ambientLightValue);
+			GLUtilLight.UpdateDiffuseLightValue(gl, glu, diffuseLightValue);
+			
+			float[] light0Position = new float[4];
+			light0Position[0] = (float) diffuseLightPosition.x;
+			light0Position[1] = -(float) diffuseLightPosition.y;
+			light0Position[2] = (float) diffuseLightPosition.z;
+			light0Position[3] = 0.0f;
+			
+			if(drawDiffuseLight){
+				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu,getMaxEnvDim()/10);
+			}
+			
+			//System.out.println("x:" + light0Position[0] + "y:" + light0Position[1] + "z:" + light0Position[2] );
+			GLUtilLight.UpdateDiffuseLightPosition(gl, glu, light0Position);
 
 
 			// Blending control
@@ -358,6 +370,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setDiffuseLightValue(final Color diffuseLightValue) {
 		this.diffuseLightValue = diffuseLightValue;
 	}
+	
+	public void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
+		if ( diffuseLightPosition.equals(new GamaPoint(-1, -1, -1)) ) {
+			this.diffuseLightPosition = new GamaPoint(0,0,0);
+			this.diffuseLightPosition.x = (float) displaySurface.getEnvWidth() /2;
+			this.diffuseLightPosition.y = (float) displaySurface.getEnvHeight() / 2;
+			this.diffuseLightPosition.z = (float) displaySurface.getEnvWidth() *2;
+		} else {
+			this.diffuseLightPosition = diffuseLightPosition;
+			
+		}	
+	}
 
 	public void setPolygonMode(final boolean polygonMode) {
 		this.polygonMode = polygonMode;
@@ -423,6 +447,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawEnv = denv;
 	}
 
+	public boolean getDrawDiffuseLight() {
+		return drawDiffuseLight;
+	}
+	
+	public void setDrawDiffuseLight(final boolean ddiff) {
+		this.drawDiffuseLight = ddiff;
+	}
+
 	public boolean getDrawEnv() {
 		return drawEnv;
 	}
@@ -476,8 +508,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			scene.dispose();
 		}
 	}
-
-	
 
 	// Use when the rotation button is on.
 	public void rotateModel() {

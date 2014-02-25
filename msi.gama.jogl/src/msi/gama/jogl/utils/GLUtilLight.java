@@ -514,6 +514,13 @@ public class GLUtilLight {
 		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
 	}
 
+	public static void DrawDiffuseLight0(float[] light0Position, final GL gl, final GLU glu, final double radius) {
+		gl.glTranslatef(light0Position[0], light0Position[1], light0Position[2]);
+		gl.glColor3f(1.0f, 1.0f, 0.0f);
+		DrawSphere(gl, glu, radius);
+		gl.glTranslatef(-light0Position[0], -light0Position[1], -light0Position[2]);
+	}
+	
 	public static void DrawDiffuseLights(final GL gl, final GLU glu, final double radius) {
 		DrawLight0(gl, glu, radius);
 		DrawLight1(gl, glu, radius);
@@ -558,12 +565,10 @@ public class GLUtilLight {
 		float[] lightDiffuseValue =
 			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
 				(float) diffuseLightValue.getBlue() / 255, 1.0f };
-		float diffuseMean = 0.5f;
 
-		boolean use2light = true;
+		boolean use2light = false;
 		//use Two lights
 		if(use2light){
-			float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 			light0Position[0] = widthEnv * 2;
 			light0Position[1] = -heightEnv / 2;
 			light0Position[2] = 2 * widthEnv;
@@ -571,7 +576,6 @@ public class GLUtilLight {
 			gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
 	
-			float[] light1DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 			light1Position[0] = -widthEnv;
 			light1Position[1] = -heightEnv / 2;
 			light1Position[2] = 2 * widthEnv;
@@ -583,7 +587,6 @@ public class GLUtilLight {
 			gl.glEnable(GL.GL_LIGHT1); // Enable Light-1
 		}
 		else{
-			float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 			light0Position[0] = widthEnv / 2;
 			light0Position[1] = -heightEnv / 2;
 			light0Position[2] = 2 * widthEnv;
@@ -619,7 +622,7 @@ public class GLUtilLight {
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void UpdateAmbiantLight(final GL gl, final GLU glu, final Color ambiantLightValue) {
+	public static void UpdateAmbiantLightValue(final GL gl, final GLU glu, final Color ambiantLightValue) {
 
 		float[] lightAmbientValue =
 			{ (float) ambiantLightValue.getRed() / 255, (float) ambiantLightValue.getGreen() / 255,
@@ -627,13 +630,19 @@ public class GLUtilLight {
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void UpdateDiffuseLight(final GL gl, final GLU glu, final Color diffuseLightValue) {
+	public static void UpdateDiffuseLightValue(final GL gl, final GLU glu, final Color diffuseLightValue) {
 
 		float[] lightDiffuseValue =
 			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
 				(float) diffuseLightValue.getBlue() / 255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+	}
+	
+	public static void UpdateDiffuseLightPosition(final GL gl, final GLU glu, float[] lightDiffusePos) {
+
+		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePos, 0);
+
 	}
 
 	public static void DrawLight(final GL gl, final GLU glu) {

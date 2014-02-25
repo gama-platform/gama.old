@@ -91,9 +91,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.setTessellation(getOutput().getTesselation());
 					renderer.setShowFPS(getOutput().getShowFPS());
 					renderer.setTraceDisplay(getOutput().getTraceDisplay());
-					renderer.setDrawEnv(getOutput().getDrawEnv());
+					//renderer.setDrawEnv(getOutput().getDrawEnv());
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
+					renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
 					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
@@ -134,8 +135,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setShowFPS(getOutput().getShowFPS());
 		renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
+		renderer.setDrawDiffuseLight(getOutput().getDrawDiffuseLight());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
+		renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());
 		renderer.setPolygonMode(getOutput().getPolygonMode());
 		renderer.setCameraPosition(getOutput().getCameraPos());
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());

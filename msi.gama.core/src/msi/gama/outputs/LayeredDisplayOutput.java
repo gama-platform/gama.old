@@ -62,11 +62,13 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
-	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
-	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
-	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true),
-	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
+	@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width*2}")),
+	@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
+	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true,doc = @doc("Allows to define the position of the camera")),
+	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true,doc = @doc("Allows to define the direction of the camera")),
+	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true,doc = @doc("Allows to define the orientation of the camera")),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
@@ -141,8 +143,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
+	private boolean drawDiffLight = false;
 	private Color ambientLightColor = new GamaColor(125, 125, 125, 255);
 	private Color diffuseLightColor = new GamaColor(125, 125, 125, 255);
+	private GamaPoint diffuseLightPosition = new GamaPoint(-1, -1, -1);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
@@ -150,6 +154,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
 	private boolean constantDiffuseLight = true;
+	private boolean constantDiffusePos = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
 	private boolean polygonMode = true;
@@ -235,6 +240,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( denv != null ) {
 			setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
 		}
+		
+		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
+		if ( ddiff != null ) {
+			setDrawDiffuseLight(Cast.asBool(getScope(), ddiff.value(getScope())));
+		}
 
 		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
@@ -270,6 +280,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				constantDiffuseLight = false;
 			}
 
+		}
+		
+		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
+		if ( light3 != null ) {
+			setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+			if ( light3.isConst() ) {
+				constantDiffusePos = true;
+			} else {
+				constantDiffusePos = false;
+			}
 		}
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
@@ -366,6 +386,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
 					setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
+			}
+		}
+		
+		if ( !constantDiffusePos ) {
+			final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
+			if ( light3 != null ) {
+					setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+	
 			}
 		}
 
@@ -582,6 +610,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDrawEnv(final boolean drawEnv) {
 		this.drawEnv = drawEnv;
 	}
+	
+	public boolean getDrawDiffuseLight() {
+		return drawDiffLight;
+	}
+
+	private void setDrawDiffuseLight(final boolean drawDiff) {
+		this.drawDiffLight = drawDiff;
+	}
 
 	public boolean getOutput3D() {
 		return output3D;
@@ -629,6 +665,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setDiffuseLightColor(final Color diffuseLightColor) {
 		this.diffuseLightColor = diffuseLightColor;
+	}
+	
+	public GamaPoint getDiffuseLightPosition() {
+		return diffuseLightPosition;
+	}
+
+	private void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
+		this.diffuseLightPosition = diffuseLightPosition;
 	}
 
 	public boolean getPolygonMode() {

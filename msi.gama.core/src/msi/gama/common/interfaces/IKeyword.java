@@ -94,6 +94,7 @@ public interface IKeyword {
 	public static final String DESTINATION = "destination";
 	public static final String DIFFUSION = "diffusion";
 	public static final String DIFFUSE_LIGHT = "diffuse_light";
+	public static final String DIFFUSE_LIGHT_POS = "diffuse_light_pos";
 	public static final String DISABLE = "disable";
 	public static final String DISPLAY = "display";
 	public static final String DISPLAY_GL = "graphdisplaygl";
@@ -105,6 +106,7 @@ public interface IKeyword {
 	public static final String DRAW = "draw";
 	public static final String DRAWENV = "draw_env";
 	public static final String DRAW_NORM = "draw_norm";
+	public static final String DRAW_DIFFUSE_LIGHT = "draw_diffuse_light";
 	// public static final String DRAWASDEM = "draw_as_dem";
 	public static final String ELEVATION = "elevation";
 	public static final String DYNAMIC = "dynamic";
