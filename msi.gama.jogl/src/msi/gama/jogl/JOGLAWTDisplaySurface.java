@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.jogl.scene.ModelScene;
+import msi.gama.jogl.utils.GLUtil;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -403,7 +404,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public GamaPoint getModelCoordinates() {
 		Point mp = renderer.camera.getMousePosition();
 		if ( mp == null ) { return null; }
-		GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
+		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer,mp);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
 	}

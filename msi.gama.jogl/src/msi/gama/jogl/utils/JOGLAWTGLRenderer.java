@@ -610,78 +610,39 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	// ////////////////////////ROI HANDLER ////////////////////////////////////
-	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
-		if ( glu == null ) { return null; }
-		int realy = 0;// GL y coord pos
-		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
 
-		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 
-		realy = viewport[3] - y;
 
-		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+	
 
-		glu.gluUnProject(x, realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
-
-		GamaPoint v3 = v2.minus(v1).normalized();
-		float distance =
-			(float) (camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
-		GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
-
-		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
-	}
-
-	public GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {
-		GamaPoint p = getRealWorldPointFromWindowPoint(windowPoint);
-		return new GamaPoint((int) p.x, (int) p.y);
-	}
-
-	public Point2D.Double getWindowPointPointFromRealWorld(final Point realWorldPoint) {
-		if ( glu == null ) { return null; }
-
-		DoubleBuffer model = DoubleBuffer.allocate(16);
-		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, model);
-
-		DoubleBuffer proj = DoubleBuffer.allocate(16);
-		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, proj);
-
-		IntBuffer view = IntBuffer.allocate(4);
-		gl.glGetIntegerv(GL.GL_VIEWPORT, view);
-
-		DoubleBuffer winPos = DoubleBuffer.allocate(3);
-		glu.gluProject(realWorldPoint.x, realWorldPoint.y, 0, model, proj, view, winPos);
-
-		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), viewport[3] - winPos.get());
-		return WindowPoint;
-	}
+	
 
 	public double GetEnvWidthOnScreen() {
 		Point realWorld = new Point(0, 0);
-		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
+		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this,realWorld);
 
 		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
-		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
+		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this,realWorld2);
 		if ( WindowPoint2 == null || WindowPoint == null ) { return 0.0; }
 		return WindowPoint2.x - WindowPoint.x;
 	}
 
 	public double GetEnvHeightOnScreen() {
 		Point realWorld = new Point(0, 0);
-		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
+		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this,realWorld);
 
 		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
-		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
+		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this,realWorld2);
 
 		return WindowPoint2.y - WindowPoint.y;
 	}
-
+	
+	
 	public void drawROI() {
 		if ( camera.isEnableROIDrawing() ) {
-			GamaPoint realPressedPoint = getIntWorldPointFromWindowPoint(camera.getLastMousePressedPosition());
-			GamaPoint realMousePositionPoint = getIntWorldPointFromWindowPoint(camera.getMousePosition());
-			drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x, -realMousePositionPoint.y,
+			GamaPoint realPressedPoint = GLUtil.getIntWorldPointFromWindowPoint(this,camera.getLastMousePressedPosition());
+			GamaPoint realMousePositionPoint = GLUtil.getIntWorldPointFromWindowPoint(this,camera.getMousePosition());
+			GLUtil.drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x, -realMousePositionPoint.y,
 				this.getZFighting(), this.getMaxEnvDim());
 			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint);
 		}
@@ -704,45 +665,5 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return picking;
 	}
 
-	private void drawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
-		final boolean z_fighting, final double maxEnvDim) {
 
-		if ( z_fighting ) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-			// Draw on top of everything
-			gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
-			gl.glBegin(GL.GL_POLYGON);
-
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glVertex3d(x2, -y1, 0.0f);
-
-			gl.glVertex3d(x2, -y1, 0.0f);
-			gl.glVertex3d(x2, -y2, 0.0f);
-
-			gl.glVertex3d(x2, -y2, 0.0f);
-			gl.glVertex3d(x1, -y2, 0.0f);
-
-			gl.glVertex3d(x1, -y2, 0.0f);
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		} else {
-			gl.glBegin(GL.GL_LINES);
-
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glVertex3d(x2, -y1, 0.0f);
-
-			gl.glVertex3d(x2, -y1, 0.0f);
-			gl.glVertex3d(x2, -y2, 0.0f);
-
-			gl.glVertex3d(x2, -y2, 0.0f);
-			gl.glVertex3d(x1, -y2, 0.0f);
-
-			gl.glVertex3d(x1, -y2, 0.0f);
-			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();
-		}
-
-	}
 }

@@ -8,6 +8,7 @@ import java.util.*;
 import javax.media.opengl.GL;
 
 import msi.gama.jogl.utils.GLUtil;
+import msi.gama.jogl.utils.GLUtilNormal;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Vertex;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
@@ -225,7 +226,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				vertices[3].x = img.x;
 				vertices[3].y = -img.y;
 				vertices[3].z = img.z;
-				GLUtil.HandleNormal(vertices,null,img.getAlpha(),-1,renderer);
+				GLUtilNormal.HandleNormal(vertices,null,img.getAlpha(),-1,renderer);
 			}
 
 			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
@@ -410,7 +411,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 								vertices[3].x = x2 * demObj.cellSize;
 								vertices[3].y = -y2 * demObj.cellSize;
 								vertices[3].z = z3 * altFactor;
-								double[] normal = GLUtil.CalculateNormal(vertices[2], vertices[1], vertices[0]);
+								double[] normal = GLUtilNormal.CalculateNormal(vertices[2], vertices[1], vertices[0]);
 								renderer.gl.glNormal3dv(normal, 0);
 							}
 

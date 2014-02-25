@@ -2,6 +2,8 @@ package msi.gama.jogl.scene;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import msi.gama.jogl.utils.GLUtil;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -74,7 +76,7 @@ public class ImageObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						final GamaPoint pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
+							GLUtil.getIntWorldPointFromWindowPoint(renderer,renderer.camera.getLastMousePressedPosition());
 						IAgent ag = GAMA.run(new InScope<IAgent>() {
 
 							@Override

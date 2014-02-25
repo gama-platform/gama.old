@@ -19,6 +19,8 @@ public class GLUtilLight {
 	
 	private static float light0Position[] = new float[4];
 	private static float light1Position[] = new float[4];
+	
+	public static final int fogMode[] = { GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR };
 
 	/**
 	 * 

@@ -13,219 +13,108 @@ package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import javax.imageio.ImageIO;
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.*;
 
-import com.vividsolutions.jts.awt.PointShapeFactory.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import javax.media.opengl.GL;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+
 public class GLUtil {
 
-	public static final int fogMode[] = { GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR };
+	static void drawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
+			final boolean z_fighting, final double maxEnvDim) {
 
-	
+			if ( z_fighting ) {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+				gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+				// Draw on top of everything
+				gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
+				gl.glBegin(GL.GL_POLYGON);
 
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /TEXTURES////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////////////////////////////////////
+				gl.glVertex3d(x1, -y1, 0.0f);
+				gl.glVertex3d(x2, -y1, 0.0f);
 
-	public static void TenableTex2D(final GL gl) {
-		gl.glEnable(GL.GL_TEXTURE_2D);
-	}
+				gl.glVertex3d(x2, -y1, 0.0f);
+				gl.glVertex3d(x2, -y2, 0.0f);
 
-	public static void TdisableTex2D(final GL gl) {
-		gl.glDisable(GL.GL_TEXTURE_2D);
-	}
+				gl.glVertex3d(x2, -y2, 0.0f);
+				gl.glVertex3d(x1, -y2, 0.0f);
 
-	/**
-	 * Create 2D textures array and add them to openGL buffor
-	 * @param gl
-	 * @param texIDs - reference to textures IDs
-	 * @param texture[texture][colors] - containt textures colors
-	 * @param texW - texture width
-	 * @param texH - texture height
-	 */
-	public static void TcreateTexture2Dmipmap(final GL gl, final int texIDs[], final int texture[][], final int texW,
-		final int texH, final boolean gluMipMaps) {
-		gl.glGenTextures(texIDs.length, texIDs, 0);
-		for ( int i = 0; i < texIDs.length; i++ ) {
-			gl.glBindTexture(GL.GL_TEXTURE_2D, texIDs[i]);
-
-			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-			
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE, GL.GL_MODULATE);
-
-			if ( !gluMipMaps ) {
-				gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, texW, texH, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
-					IntBuffer.wrap(texture[i]));
+				gl.glVertex3d(x1, -y2, 0.0f);
+				gl.glVertex3d(x1, -y1, 0.0f);
+				gl.glEnd();
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			} else {
-				GLU glu = new GLU();
-				glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGBA, texW, texH, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
-					IntBuffer.wrap(texture[i]));
+				gl.glBegin(GL.GL_LINES);
+
+				gl.glVertex3d(x1, -y1, 0.0f);
+				gl.glVertex3d(x2, -y1, 0.0f);
+
+				gl.glVertex3d(x2, -y1, 0.0f);
+				gl.glVertex3d(x2, -y2, 0.0f);
+
+				gl.glVertex3d(x2, -y2, 0.0f);
+				gl.glVertex3d(x1, -y2, 0.0f);
+
+				gl.glVertex3d(x1, -y2, 0.0f);
+				gl.glVertex3d(x1, -y1, 0.0f);
+				gl.glEnd();
 			}
 
 		}
-	}
-
-	/**
-	 * Create texture form image, image has to have dimensions which are pow od 2:
-	 * @param gl
-	 * @param url- image url
-	 * @param gluMipMaps - if yes generate texture by gluBuild2DMipMaps method
-	 * @return - texture ID
-	 */
-	public static int TcreatTexture2DFromImage(final GL gl, final URL url, final boolean gluMipMaps) {
-		BufferedImage image = null;
-		int texID[] = new int[1];
-		try {
-			image = ImageIO.read(url);
-		} catch (Exception e) {
-			System.err.println("Cannot load image " + url + " . Mesage:" + e.getMessage());
-			return -1;
-		}
-
-		int texW = image.getWidth();
-		int texH = image.getHeight();
-
-		int pixels[][] = new int[1][texW * texH];
-
-		for ( int w = 0; w < texW; w++ ) {
-			for ( int h = 0; h < texH; h++ ) {
-				pixels[0][texH * w + h] = image.getRGB(w, h);
-			}
-		}
-
-		TcreateTexture2Dmipmap(gl, texID, pixels, texW, texH, gluMipMaps);
-
-		return texID[0];
+	
+	public static GamaPoint getIntWorldPointFromWindowPoint(final JOGLAWTGLRenderer renderer,final Point windowPoint) {
+		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer,windowPoint);
+		return new GamaPoint((int) p.x, (int) p.y);
 	}
 	
-	    // Calculate the normal, from three points on a surface
-		public static double[] CalculateNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
-			// Step 1
-			// build two vectors, one pointing from A to B, the other pointing from
-			// A to C
-			double[] vector1 = new double[3];
-			double[] vector2 = new double[3];
+	public static GamaPoint getRealWorldPointFromWindowPoint(final JOGLAWTGLRenderer renderer, final Point windowPoint) {
+		if ( renderer.glu == null ) { return null; }
+		int realy = 0;// GL y coord pos
+		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
 
-			vector1[0] = pointB.x - pointA.x;
-			vector2[0] = pointC.x - pointA.x;
+		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 
-			vector1[1] = pointB.y - pointA.y;
-			vector2[1] = pointC.y - pointA.y;
+		realy = renderer.viewport[3] - y;
 
-			vector1[2] = pointB.z - pointA.z;
-			vector2[2] = pointC.z - pointA.z;
+		renderer.glu.gluUnProject(x, realy, 0.1,renderer. mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0, wcoord, 0);
+		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
-			// Step 2
-			// do the cross product of these two vectors to find the normal
-			// of the surface
+		renderer.glu.gluUnProject(x, realy, 0.9, renderer.mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0, wcoord, 0);
+		GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
-			double[] normal = new double[3];
-			normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
-			normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
-			normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
+		GamaPoint v3 = v2.minus(v1).normalized();
+		float distance =
+			(float) (renderer.camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
+		GamaPoint worldCoordinates = renderer.camera.getPosition().plus(v3.times(distance));
 
-			// Step 3
-			// "normalise" the normal (make sure it has length of one)
-
-			double total = 0.0d;
-			for ( int i = 0; i < 3; i++ ) {
-				total += normal[i] * normal[i];
-			}
-			double length = Math.sqrt(total);
-
-			for ( int i = 0; i < 3; i++ ) {
-				normal[i] /= length;
-			}
-
-			// done
-			return normal;
-		}
-		
-		
-		public static Vertex GetCenter(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
-			Vertex center = new Vertex();
-			center.x = (pointA.x + pointB.x + pointC.x)/3;
-			center.y = (pointA.y + pointB.y + pointC.y)/3;
-			center.z = (pointA.z + pointB.z + pointC.z)/3;
-			return center;
-		}
-		
-		public static Vertex GetCenter(Vertex[] vertices) {
-			Vertex center = new Vertex();
-			for (int i= 0; i< vertices.length;i++){
-				center.x = center.x + vertices[i].x;
-				center.y = center.y + vertices[i].y;
-				center.z = center.z + vertices[i].z;
-			}
-			
-			center.x = center.x/vertices.length;
-			center.y = center.y/vertices.length;
-			center.z = center.z/vertices.length;
-			return center;
-		}
-		
-
-		public static void HandleNormal(Vertex[] vertices, Color c, double alpha, int norm_dir, JOGLAWTGLRenderer renderer){
-			
-			
-			double[] normalmean = new double[3];
-			for (int i= 0; i< vertices.length-2;i++){
-				double[] normal = GLUtil.CalculateNormal(vertices[i+2], vertices[i+1], vertices[i]);
-				normalmean[0]= (normalmean[0] + normal[0]);
-				normalmean[1]= (normalmean[1] + normal[1]);
-				normalmean[2]= (normalmean[2] + normal[2]);
-			}
-
-			normalmean[0]= norm_dir*normalmean[0]/vertices.length;
-			normalmean[1]= norm_dir*normalmean[1]/vertices.length;
-			normalmean[2]= norm_dir*normalmean[2]/vertices.length;
-			
-			renderer.gl.glNormal3dv(normalmean, 0);
-			
-			normalmean[0]= (renderer.getMaxEnvDim()/20)*normalmean[0];
-			normalmean[1]= (renderer.getMaxEnvDim()/20)*normalmean[1];
-			normalmean[2]= (renderer.getMaxEnvDim()/20)*normalmean[2];
-
-			if(renderer.getDrawNorm()){
-				Vertex center = GLUtil.GetCenter(vertices);
-				renderer.gl.glBegin(GL_LINES);
-				renderer.gl.glColor3d(1.0, 0.0, 0.0);
-				renderer.gl.glVertex3d(center.x, center.y, center.z);		   
-				renderer.gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
-				renderer.gl.glEnd();
-
-				renderer.gl.glPointSize(2.0f);
-				renderer.gl.glBegin(GL_POINTS);
-				renderer.gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
-				renderer.gl.glEnd();
-				
-				if(c != null){
-					renderer.gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-							alpha * c.getAlpha() / 255);
-				}
-							
-			}
-			
+		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
+	
+	
+	public static Point2D.Double getWindowPointPointFromRealWorld(final JOGLAWTGLRenderer renderer,final Point realWorldPoint) {
+		if ( renderer.glu == null ) { return null; }
 
+		DoubleBuffer model = DoubleBuffer.allocate(16);
+		renderer.gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, model);
+
+		DoubleBuffer proj = DoubleBuffer.allocate(16);
+		renderer.gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, proj);
+
+		IntBuffer view = IntBuffer.allocate(4);
+		renderer.gl.glGetIntegerv(GL.GL_VIEWPORT, view);
+
+		DoubleBuffer winPos = DoubleBuffer.allocate(3);
+		renderer.glu.gluProject(realWorldPoint.x, realWorldPoint.y, 0, model, proj, view, winPos);
+
+		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), renderer.viewport[3] - winPos.get());
+		return WindowPoint;
+	}
+	
 
 		
 }
