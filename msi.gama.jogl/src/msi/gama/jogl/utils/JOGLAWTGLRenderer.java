@@ -138,14 +138,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		setBackground(displaySurface.getBackgroundColor());
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
-		GLUtil.enableSmooth(gl);
+		GLUtilLight.enableSmooth(gl);
 
 		// Perspective correction
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		GLUtil.enableDepthTest(gl);
+		GLUtilLight.enableDepthTest(gl);
 
 		// Set up the lighting for Light-1
-		GLUtil.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
+		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
 			ambientLightValue, diffuseLightValue);
 		
 
@@ -215,8 +215,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
 			// ambiantLightValue.floatValue(), 1.0f);
 			// The ambiant_light is always reset in case of dynamic lighting.
-			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
-			GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
+			GLUtilLight.UpdateAmbiantLight(gl, glu, ambientLightValue);
+			GLUtilLight.UpdateDiffuseLight(gl, glu, diffuseLightValue);
 
 			// Show triangulated polygon or not (trigger by GAMA)
 			/*
