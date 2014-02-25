@@ -3,8 +3,6 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
@@ -14,7 +12,7 @@ import msi.gama.jogl.utils.Camera.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
@@ -41,17 +39,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Lighting
 	private Color ambientLightValue;
 	private Color diffuseLightValue;
-	// Blending
+
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
 
-	// Use multiple view port
-	public final boolean multipleViewPort = false;
-	
-	// Handle Shape file
-	// public ShapeFileReader myShapeFileReader;
-	// use glut tesselation or JTS tesselation
 	// facet "tesselation"
 	private boolean useTessellation = true;
 	// facet "inertia"
@@ -72,8 +64,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean triangulation = false;
 	
 	public boolean computeNormal = true;
-
-
+	
+	public boolean drawDiffuseLight = false;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -106,11 +98,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Enabling the stencil buffer
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
-		// Initialize the user camera
 		displaySurface = d;
 		camera = new CameraArcBall(this);
 		canvas = new GLCanvas(cap);
-		// use for color picking
 		canvas.setAutoSwapBufferMode(autoSwapBuffers);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(camera);
@@ -147,8 +137,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Set up the lighting for Light-1
 		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
 			ambientLightValue, diffuseLightValue);
-		
-
+	
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -189,14 +178,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 			gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
 
-			// Clear the screen and the depth buffer
 			gl.glClearDepth(1.0f);
 			gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f,
 				background.getBlue() / 255.0f, 1.0f);
 			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			gl.glMatrixMode(GL.GL_PROJECTION);
-			// Reset the view (x, y, z axes back to normal)
+
 			gl.glLoadIdentity();
 
 			camera.updateCamera(gl, glu, width, height);
@@ -207,28 +195,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_LIGHTING);
 			}
 
-			// Draw Diffuse light as yellow sphere
-			// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
+			if(drawDiffuseLight){
+				GLUtilLight.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
+			}
+			
 
-			// FIXME: Now the background is not updated but it should to have a night effect.
-			// Set background color
-			// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
-			// ambiantLightValue.floatValue(), 1.0f);
-			// The ambiant_light is always reset in case of dynamic lighting.
 			GLUtilLight.UpdateAmbiantLight(gl, glu, ambientLightValue);
 			GLUtilLight.UpdateDiffuseLight(gl, glu, diffuseLightValue);
 
-			// Show triangulated polygon or not (trigger by GAMA)
-			/*
-			 * if ( !triangulation ) {
-			 * gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-			 * } else {
-			 * gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-			 * }
-			 */
 
 			// Blending control
-
 			if ( BLENDING_ENABLED ) {
 				gl.glEnable(GL_BLEND); // Turn blending on
 
@@ -237,14 +213,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_DEPTH_TEST);
 			}
 
-			// Use polygon offset for a better edges rendering
-			// (http://www.glprogramming.com/red/chapter06.html#name4)
-			// gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			// gl.glPolygonOffset(1, 1);
-
-			// gl.glDisable(GL_DEPTH_TEST);
-
-			// Show triangulated polygon or not (trigger by GAMA)
 			if ( !triangulation ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			} else {
@@ -259,25 +227,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			this.drawScene();
 
-			// this.DrawShapeFile();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPopMatrix();
 
-			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
 				drawROI();
 			}
 
-			// Show fps for performance mesures
 			if ( this.getShowFPS() ) {
-				CalculateFrameRate();
-				gl.glDisable(GL_BLEND);
-				gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-				gl.glRasterPos3d(-this.getWidth() / 10, this.getHeight() / 10, 0);
-				gl.glScaled(8.0d, 8.0d, 8.0d);
-				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
-				gl.glScaled(0.125d, 0.125d, 0.125d);
-				gl.glEnable(GL_BLEND);
+				ShowFPS();
 			}
 
 			if ( !autoSwapBuffers ) {
@@ -287,7 +245,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					canvas.swapBuffers();
 				}
 			}
-
 		}
 	}
 
@@ -340,9 +297,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 		}
 	}
-
 	
-
 	public void switchCamera() {
 		canvas.removeKeyListener(camera);
 		canvas.removeMouseListener(camera);
@@ -549,6 +504,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			previousTime = currentTime;
 			frameCount = 0;
 		}
+	}
+	
+	public void ShowFPS(){
+		CalculateFrameRate();
+		gl.glDisable(GL_BLEND);
+		gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+		gl.glRasterPos3d(-this.getWidth() / 10, this.getHeight() / 10, 0);
+		gl.glScaled(8.0d, 8.0d, 8.0d);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
+		gl.glScaled(0.125d, 0.125d, 0.125d);
+		gl.glEnable(GL_BLEND);
 	}
 	
 
