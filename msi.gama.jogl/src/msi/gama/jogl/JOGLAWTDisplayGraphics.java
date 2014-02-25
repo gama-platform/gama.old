@@ -28,6 +28,7 @@ import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.jogl.scene.*;
+import msi.gama.jogl.utils.GLUtil;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -175,9 +176,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
 			if ( scope == null ) {
-				texture = renderer.createTexture(img, isDynamic, 0);
+				texture = GLUtil.createTexture(renderer,img, isDynamic, 0);
 			} else {
-				texture = renderer.createTexture(img, isDynamic, scope.getAgentScope().getIndex());
+				texture = GLUtil.createTexture(renderer,img, isDynamic, scope.getAgentScope().getIndex());
 			}
 		}
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
@@ -201,12 +202,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// String popName = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
 			if ( scope == null ) {
-				texture = renderer.createTexture(img, true, 0);
+				texture = GLUtil.createTexture(renderer, img, true, 0);
 				env = new Envelope(0, 0, widthOfEnvironmentInModelUnits, heightOfEnvironmentInModelUnits);
 				// popName = "";
 			} else {
 				IAgent a = scope.getAgentScope();
-				texture = renderer.createTexture(img, true, a.getIndex());
+				texture = GLUtil.createTexture(renderer, img, true, a.getIndex());
 				env = scope.getSimulationScope().getEnvelope();
 				// popName = a.getPopulation().getName();
 			}
@@ -261,7 +262,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		texture = FlipRightSideLeftImage(texture);
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false, 0);
+			_texture = GLUtil.createTexture(renderer,texture, false, 0);
 		}
 
 		// getASCfromImg(dem);

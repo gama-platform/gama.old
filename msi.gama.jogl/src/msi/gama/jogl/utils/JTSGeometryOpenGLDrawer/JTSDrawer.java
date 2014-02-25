@@ -24,6 +24,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.scene.GeometryObject;
 import msi.gama.jogl.scene.MyTexture;
+import msi.gama.jogl.utils.GLUtil;
 import msi.gama.jogl.utils.GLUtilNormal;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Vertex;
@@ -204,7 +205,7 @@ public class JTSDrawer {
 			texture = myGLRender.getScene().getTextures().get(image);
 			if ( texture == null ) { // If the texture has not been created yet we created it and put it in the map of
 										// texture.
-				texture = myGLRender.createTexture(image, false, 0);
+				texture = GLUtil.createTexture(myGLRender,image, false, 0);
 				myGLRender.getScene().getTextures().put(image, texture);
 			}
 
@@ -600,7 +601,7 @@ public class JTSDrawer {
 		texture = myGLRender.getScene().getTextures().get(image);
 		if ( texture == null ) { // If the texture has not been created yet we created it and put it in the map of
 									// texture.
-			texture = myGLRender.createTexture(image, false, 0);
+			texture = GLUtil.createTexture(myGLRender,image, false, 0);
 			myGLRender.getScene().getTextures().put(image, texture);
 		}
 

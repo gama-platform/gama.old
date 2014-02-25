@@ -395,27 +395,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		magAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
 
-	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic, final int index) {
-		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
-		// need to have an opengl context valide
-		this.getContext().makeCurrent();
-		Texture texture;
-		try {
-			texture = TextureIO.newTexture(image, false /* true for mipmapping */);
-		} catch (final GLException e) {
-			return null;
-		}
-		// FIXME:need to see the effect of this bending
-		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
-		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, minAntiAliasing);
-		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, magAntiAliasing);
-		final MyTexture curTexture = new MyTexture();
-		curTexture.texture = texture;
-		curTexture.isDynamic = isDynamic;
-		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
-		this.getContext().release();
-		return curTexture;
-	}
 
 	public void drawPickableObjects() {
 		if ( camera.beginPicking(gl) ) {
@@ -555,12 +534,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
-	//
-	// public void cleanListsAndVertices() {
-	// if ( USE_VERTEX_ARRAY ) {
-	// graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();
-	// }
-	// }
+
 
 	public ModelScene getScene() {
 		return scene;
@@ -572,6 +546,27 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
+	
+
+	// Use when the rotation button is on.
+	public void rotateModel() {
+		if ( this.displaySurface.rotation ) {
+			frame++;
+		}
+		if ( frame != 0 ) {
+			double env_width = displaySurface.getEnvWidth();
+			double env_height = displaySurface.getEnvHeight();
+			gl.glTranslated(env_width / 2, -env_height / 2, 0);
+			gl.glRotatef(frame, 0, 0, 1);
+			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
+		}
+	}
+
+	// ////////////////////////ROI HANDLER ////////////////////////////////////
+
+
+
+	
 	public void CalculateFrameRate() {
 
 		// Increase frame count
@@ -594,27 +589,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 	}
-
-	// Use when the rotation button is on.
-	public void rotateModel() {
-		if ( this.displaySurface.rotation ) {
-			frame++;
-		}
-		if ( frame != 0 ) {
-			double env_width = displaySurface.getEnvWidth();
-			double env_height = displaySurface.getEnvHeight();
-			gl.glTranslated(env_width / 2, -env_height / 2, 0);
-			gl.glRotatef(frame, 0, 0, 1);
-			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
-		}
-	}
-
-	// ////////////////////////ROI HANDLER ////////////////////////////////////
-
-
-
-	
-
 	
 
 	public double GetEnvWidthOnScreen() {

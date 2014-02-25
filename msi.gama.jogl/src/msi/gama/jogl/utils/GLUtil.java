@@ -15,11 +15,17 @@ import static javax.media.opengl.GL.*;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GLException;
 
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
+
+import msi.gama.jogl.scene.MyTexture;
 import msi.gama.metamodel.shape.GamaPoint;
 
 
@@ -113,6 +119,28 @@ public class GLUtil {
 
 		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), renderer.viewport[3] - winPos.get());
 		return WindowPoint;
+	}
+	
+	public static MyTexture createTexture(final JOGLAWTGLRenderer renderer,final BufferedImage image, final boolean isDynamic, final int index) {
+		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
+		// need to have an opengl context valide
+		renderer.getContext().makeCurrent();
+		Texture texture;
+		try {
+			texture = TextureIO.newTexture(image, false /* true for mipmapping */);
+		} catch (final GLException e) {
+			return null;
+		}
+		// FIXME:need to see the effect of this bending
+		renderer.gl.glBindTexture(GL.GL_TEXTURE_2D, index);
+		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, renderer.minAntiAliasing);
+		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, renderer.magAntiAliasing);
+		final MyTexture curTexture = new MyTexture();
+		curTexture.texture = texture;
+		curTexture.isDynamic = isDynamic;
+		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
+		renderer.getContext().release();
+		return curTexture;
 	}
 	
 
