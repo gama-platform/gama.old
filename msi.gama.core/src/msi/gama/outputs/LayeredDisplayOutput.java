@@ -147,6 +147,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
+	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
 	private boolean constantDiffuseLight = true;
 	private boolean constantCamera = true;
@@ -175,7 +176,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
+			
+			if ( color.isConst() ) {
+				constantBackground = true;
+			} else {
+				constantBackground = false;
+			}
 		}
+		
 
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
@@ -327,6 +335,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void update() throws GamaRuntimeException {
 		if ( surface == null ) { return; }
 		// /////////////// dynamic Lighting ///////////////////
+		
+		if(!constantBackground){
+			
+			final IExpression color = getFacet(IKeyword.BACKGROUND);
+			if ( color != null ) {
+				setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
+			}
+			
+		}
+		
 		if ( !constantAmbientLight ) {
 			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
