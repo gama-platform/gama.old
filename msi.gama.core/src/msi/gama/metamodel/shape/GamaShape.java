@@ -457,7 +457,8 @@ public class GamaShape implements IShape /* , IContainer */{
 		Geometry g = getInnerGeometry();
 		final Point p = getInnerGeometry().getCentroid();
 
-		final Coordinate c = p.getCoordinate();
+		final Coordinate c = (p.isValid() || g.isEmpty())? p.getCoordinate() : gravityCenterComputation(g);
+		
 		if ( isPoint() ) {
 			c.z = g.getCoordinate().z;
 		} else {
@@ -468,6 +469,21 @@ public class GamaShape implements IShape /* , IContainer */{
 		} else {
 			location.setLocation(c.x, c.y, c.z);
 		}
+	}
+	
+	protected GamaPoint gravityCenterComputation(final Geometry g) {
+		double x = 0d;
+		double y = 0d;
+		Coordinate[] coords = g.getCoordinates();
+		for ( Coordinate c : coords ) {
+			if ( c.x != Double.NaN ) {
+				x += c.x;
+			}
+			if ( c.y != Double.NaN ) {
+				y += c.y;
+			}
+		}
+		return new GamaPoint(x/coords.length,y/coords.length);
 	}
 
 	private double computeAverageZOrdinate(final Geometry g) {
