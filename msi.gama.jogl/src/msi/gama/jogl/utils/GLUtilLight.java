@@ -594,6 +594,14 @@ public class GLUtilLight {
 			gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
 			gl.glEnable(GL.GL_LIGHT0);
+			
+			light1Position[0] = widthEnv / 2;
+			light1Position[1] = -heightEnv / 2;
+			light1Position[2] = 2 * widthEnv;
+			light1Position[3] = 0.0f;
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+			gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light0Position, 0);
+			gl.glEnable(GL.GL_LIGHT1);
 		}
 
 		// Specular
@@ -642,6 +650,7 @@ public class GLUtilLight {
 	public static void UpdateDiffuseLightPosition(final GL gl, final GLU glu, float[] lightDiffusePos) {
 
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePos, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, lightDiffusePos, 0);
 
 	}
 
