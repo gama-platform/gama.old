@@ -292,7 +292,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		ILocation getLocation(final IScope scope, final IShape shape) {
-			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : shape.getLocation()
+			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : null
 				: constLoc;
 		}
 
