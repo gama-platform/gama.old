@@ -1,0 +1,115 @@
+/**
+ *  OSMdata_to_shapefile
+ *  Author: patricktaillandier
+ *  Description: load OSM data and format them in order to be used easily by the advance driving skill
+ */
+
+model OSMdata_to_shapefile 
+ 
+global{
+	//map used to filter the object to build from the OSM file according to attributes. for an exhaustive list, see: http://wiki.openstreetmap.org/wiki/Map_Features
+	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"]]);
+	
+	//OSM file to load
+	file<geometry> osmfile <-  osm_file("../includes/rouen.gz", filtering)  ;
+	
+	geometry shape <- envelope(osmfile);
+	graph the_graph; 
+	map<point, node> nodes_map;
+	
+	
+
+	init {
+		write "OSM file loaded: " + length(osmfile) + " geometries";
+		
+		//from the OSM file, creation of the selected agents
+		loop geom over: osmfile {
+			if (shape covers geom) {
+				string highway_str <- geom get ("highway");
+				if (length(geom.points) = 1 ) {
+					if ( highway_str != nil ) {
+						string crossing <- geom get ("crossing");
+						create node with: [shape ::geom, type:: highway_str, crossing::crossing] {
+							nodes_map[location] <- self;
+						}
+					}
+				} else {
+					string oneway <- geom get ("oneway");
+					float maxspeed <- geom get ("maxspeed");
+					string lanes_str <- string(geom get ("lanes"));
+					int lanes <- empty(lanes_str) ? 0 : ((length(lanes_str) > 1) ? int(first(lanes_str)) : int(lanes_str));
+					create road with: [shape ::geom, type:: highway_str, oneway::oneway, maxspeed::float(maxspeed), lanes::int(lanes)] {
+						if lanes < 1 {lanes <- 1;} //default value for the lanes attribute
+						if maxspeed = 0 {maxspeed <- 50.0;} //default value for the maxspeed attribute
+					}
+				}	
+			}
+		}
+		write "Road and node agents created";
+		
+		ask road {
+			point ptF <- first(shape.points);
+			if (not(ptF in nodes_map)) {
+				create node with:[location::ptF] {
+					nodes_map[location] <- self;
+				}	
+			}
+			point ptL <- last(shape.points);
+			if (not(ptL in nodes_map)) {
+				create node with:[location::ptL] {
+					nodes_map[location] <- self;
+				}
+			}
+		}
+			
+		write "Supplementary node agents created";
+		ask node {
+			if (empty (road overlapping (self))) {
+				do die;
+			}
+		}
+		
+		write "node agents filtered";
+		
+		save road type:"shp" to:"roads.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
+		save node type:"shp" to:"nodes.shp" with:[type::"type", crossing::"crossing"] ;
+		write "road and node shapefile saved";
+	}
+	
+	
+		
+}
+	
+
+species road{
+	rgb color <- rgb(rnd(255),rnd(255),rnd(255));
+	string type;
+	string oneway;
+	float maxspeed;
+	int lanes;
+	aspect base_ligne {
+		draw shape color: color; 
+	}
+	
+} 
+	
+species node {
+	string type;
+	string crossing;
+	aspect base { 
+		draw square(3) color: rgb("red") ;
+	}
+} 
+	
+
+experiment fromOSMtoShapefiles type: gui {
+	output {
+		display map type: opengl ambient_light: 100{
+			graphics "world" {
+				draw world.shape.contour;
+			}
+			species road aspect: base_ligne  refresh: false  ;
+			species node aspect: base   refresh: false ;
+		}
+	}
+}
