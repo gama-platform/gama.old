@@ -32,6 +32,8 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gama.util.file.*;
 import msi.gaml.types.*;
 
@@ -131,6 +133,23 @@ public class Files {
 		return new GamaPropertyFile(scope, s);
 	}
 
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of OSM file with some filtering.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing OSM file, an exception is risen.", examples = {
+		"file myOSMfile osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]);"}, see = { "file",
+		"properties", "image", "text" })
+	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption) throws GamaRuntimeException {
+		return new GamaOsmFile(scope, s, filteringOption);
+	}
+	
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing OSM file, an exception is risen.", examples = {
+		"file myOSMfile osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]), 0);"}, see = { "file",
+		"properties", "image", "text" })
+	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption,final Integer code) throws GamaRuntimeException {
+		return new GamaOsmFile(scope, s, filteringOption, code);
+	}
+
+	
 	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
@@ -140,7 +159,7 @@ public class Files {
 	public static IGamaFile shapeFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s);
 	}
-
+	
 	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",

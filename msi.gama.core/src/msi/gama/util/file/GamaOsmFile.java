@@ -45,6 +45,7 @@ import com.vividsolutions.jts.geom.*;
 @file(name = "osm", extensions = { "osm", "pbf", "bz2", "gz" })
 public class GamaOsmFile extends GamaGisFile {
 
+	GamaMap<String, GamaList> filteringOptions;
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
@@ -56,6 +57,18 @@ public class GamaOsmFile extends GamaGisFile {
 
 	public GamaOsmFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
+	}
+
+	public GamaOsmFile(IScope scope, String pathName,
+			GamaMap<String, GamaList> filteringOptions) {
+		super(scope, pathName, null);
+		this.filteringOptions = filteringOptions;
+	}
+
+	public GamaOsmFile(IScope scope, String pathName,
+			GamaMap<String, GamaList> filteringOption, Integer code) {
+		super(scope, pathName, code);
+		this.filteringOptions = filteringOptions;
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
@@ -70,6 +83,7 @@ public class GamaOsmFile extends GamaGisFile {
 			@Override
 			public void process(final EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
+				boolean toFilter = filteringOptions != null && ! filteringOptions.isEmpty();  
 				if ( entity instanceof Bound ) {
 					Bound bound = (Bound) entity;
 					Envelope env = new Envelope(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop());
@@ -81,9 +95,23 @@ public class GamaOsmFile extends GamaGisFile {
 						Geometry g =
 							gis.transform(new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
 						nodesPt.put(node.getId(), new GamaShape(g));
-						// nodesPt.put(node.getId(), new GamaShape(gis.transform(new GamaPoint(node.getLongitude(),
-						// node.getLatitude()).getInnerGeometry()))) ;
 					} else if ( entity instanceof Way ) {
+						if (toFilter) {
+							boolean keepObject = false;
+							for (String keyN: filteringOptions.getKeys()) {
+								GamaList valsPoss = filteringOptions.get(keyN);
+								for (Tag tagN : ((Way) entity).getTags()) {
+
+									if (keyN.equals(tagN.getKey())) {
+										if (valsPoss.contains(tagN.getValue())) {
+											keepObject = true;
+											break;
+										}
+									} 
+								}
+							}
+							if (! keepObject) return;
+						}
 						registerHighway((Way) entity, usedNodes, intersectionNodes);
 						ways.add((Way) entity);
 					}
