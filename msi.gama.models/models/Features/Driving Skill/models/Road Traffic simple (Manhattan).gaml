@@ -14,7 +14,7 @@ global {
 	graph the_graph;  
 	 
 	init {  
-		create road from: shape_file_roads with:[nbLanes::int(read("LANE_NB"))] {
+		create road from: shape_file_roads with:[nbLanes::int(read("lanes"))] {
 			geom_visu <- shape + (2 * nbLanes);
 		}	
 		the_graph <-  (as_edge_graph(road)) ;

@@ -27,7 +27,7 @@ global {
 	
 	 
 	init {  
-		create road from: shape_file_roads with:[nbLanes::int(read("LANE_NB"))];
+		create road from: shape_file_roads with:[nbLanes::int(read("lanes"))];
 		create building from: shape_file_buildings;
 		ask road as list {
 			visu_geom <- shape + (2 * nbLanes);	

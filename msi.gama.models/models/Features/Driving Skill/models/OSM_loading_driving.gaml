@@ -35,10 +35,10 @@ global{
 					}
 				} else {
 					string oneway <- geom get ("oneway");
-					float maxspeed <- geom get ("maxspeed");
+					float maxspeed_val <- geom get ("maxspeed");
 					string lanes_str <- string(geom get ("lanes"));
-					int lanes <- empty(lanes_str) ? 0 : ((length(lanes_str) > 1) ? int(first(lanes_str)) : int(lanes_str));
-					create road with: [shape ::geom, type:: highway_str, oneway::oneway, maxspeed::float(maxspeed), lanes::int(lanes)] {
+					int lanes_val <- empty(lanes_str) ? 1 : ((length(lanes_str) > 1) ? int(first(lanes_str)) : int(lanes_str));
+					create road with: [shape ::geom, type:: highway_str, oneway::oneway, maxspeed::maxspeed_val, lanes::lanes_val] {
 						if lanes < 1 {lanes <- 1;} //default value for the lanes attribute
 						if maxspeed = 0 {maxspeed <- 50.0;} //default value for the maxspeed attribute
 					}
@@ -71,13 +71,10 @@ global{
 		
 		write "node agents filtered";
 		
-		save road type:"shp" to:"roads.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
-		save node type:"shp" to:"nodes.shp" with:[type::"type", crossing::"crossing"] ;
+		save road type:"shp" to:"../includes/roads.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
+		save node type:"shp" to:"../includes/nodes.shp" with:[type::"type", crossing::"crossing"] ;
 		write "road and node shapefile saved";
 	}
-	
-	
-		
 }
 	
 

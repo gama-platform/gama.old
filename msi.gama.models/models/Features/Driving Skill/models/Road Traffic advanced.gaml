@@ -17,22 +17,25 @@ global {
 	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
-		create node from: shape_file_nodes with:[is_traffic_signal::(int(read("SIGNAL")) = 1)];
-		ask node where each.is_traffic_signal {
-			stop << flip(0.5) ? roads_in : [] ;
-		}
-		create road from: shape_file_roads with:[lanes::int(read("LANE_NB"))] {
+		create node from: shape_file_nodes with:[is_traffic_signal::(read("type") = "traffic_signals")];
+		create road from: shape_file_roads with:[lanes::int(read("lanes")), oneway::string(read("oneway"))] {
 			geom_display <- shape + (2.5 * lanes);
 			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km/°h;
-			if (not simple_data) {
-				create road {
-					lanes <- myself.lanes;
-					shape <- polyline(reverse(myself.shape.points));
-					geom_display <- shape + (2.5 * lanes);
-					maxspeed <- myself.maxspeed;
-					linked_road <- myself;
-					myself.linked_road <- self;
+			switch oneway {
+				match "no" {
+					create road {
+						lanes <- max([1, int (myself.lanes / 2.0)]);
+						shape <- polyline(reverse(myself.shape.points));
+						maxspeed <- myself.maxspeed;
+						geom_display  <- myself.geom_display;
+						linked_road <- myself;
+						myself.linked_road <- self;
+					}
+					lanes <- int(lanes /2.0 + 0.5);
 				}
+				match "-1" {
+					shape <- polyline(reverse(shape.points));
+				}	
 			}
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
@@ -63,32 +66,82 @@ species node skills: [skill_road_node] {
 	list<list> stop <- [];
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
+	list<road> ways1;
+	list<road> ways2;
+	bool is_green;
+	rgb color_fire;
 	
-	reflex dynamic when: is_traffic_signal {
+	init {
+		if (is_traffic_signal) {
+			do compute_crossing;
+			stop<< [];
+			if (flip(0.5)) {
+				do to_green;
+			} else {
+				do to_red;
+			}	
+		}
+	}
+	
+	action compute_crossing{
+		if  (length(roads_in) >= 2) {
+			road rd0 <- road(roads_in[0]);
+			list<point> pts <- rd0.shape.points;						
+			float ref_angle <-  float( last(pts) direction_to rd0.location);
+			loop rd over: roads_in {
+				list<point> pts2 <- road(rd).shape.points;						
+				float angle_dest <-  float( last(pts2) direction_to rd.location);
+				float ang <- abs(angle_dest - ref_angle);
+				if (ang > 45 and ang < 135) or  (ang > 225 and ang < 315) {
+					ways2<< road(rd);
+				}
+			}
+		}
+		loop rd over: roads_in {
+			if not(rd in ways2) {
+				ways1 << road(rd);
+			}
+		}
+	}
+	
+	action to_green {
+		stop[0] <- ways2 ;
+		color_fire <- rgb("green");
+		is_green <- true;
+	}
+	
+	action to_red {
+		stop[0] <- ways1;
+		color_fire <- rgb("red");
+		is_green <- false;
+	}
+	reflex dynamic_node when: is_traffic_signal  {
 		counter <- counter + 1;
 		if (counter >= time_to_change) { 
 			counter <- 0;
-			stop[0] <- empty (stop[0]) ? roads_in : [] ;
+			if is_green {do to_red;}
+			else {do to_green;}
 		} 
 	}
 	
 	aspect base {
 		if (is_traffic_signal) {	
-			draw circle(5) color: empty (stop[0]) ? rgb("green") : rgb("red");
+			draw circle(5) color: color_fire;
 		}
 	}
 	
 	aspect base3D {
 		if (is_traffic_signal) {	
 			draw box(1,1,10) color:rgb("black");
-			draw sphere(5) at: {location.x,location.y,12} color: empty (stop[0]) ? rgb("green") : rgb("red");
+			draw sphere(5) at: {location.x,location.y,12} color: color_fire;
 		}
 	}
 }
 
 species road skills: [skill_road] { 
 	geometry geom_display;
-	
+	string oneway;
+	list<people> people_dessus update: agents_on accumulate each;
 	aspect base {    
 		draw shape color: rgb("black") ;
 	} 
@@ -103,6 +156,7 @@ species people skills: [advanced_driving] {
 	int threshold_stucked;
 	bool breakdown <- false;
 	float proba_breakdown ;
+	node target;
 	
 	reflex breakdown when: flip(proba_breakdown){
 		breakdown <- true;
@@ -110,7 +164,8 @@ species people skills: [advanced_driving] {
 	}
 	
 	reflex time_to_go when: final_target = nil {
-		current_path <- compute_path(graph: road_network, target: one_of(node));
+		target <- one_of(node where not each.is_traffic_signal);
+		current_path <- compute_path(graph: road_network, target: target );
 	}
 	reflex move when: final_target != nil {
 		do drive;
@@ -126,7 +181,7 @@ species people skills: [advanced_driving] {
 	}
 
 	aspect base { 
-		draw triangle(8) color: color rotate:heading + 90;
+		draw breakdown ? square(8) : triangle(8) color: color rotate:heading + 90;
 	} 
 	aspect base3D {
 		point loc <- calcul_loc();

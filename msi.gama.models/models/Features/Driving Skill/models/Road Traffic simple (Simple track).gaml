@@ -16,7 +16,7 @@ global {
 		
 	
 	init {  
-		create road from: shape_file_roads with: [nbLanes::int(read("LANE_NB"))] {
+		create road from: shape_file_roads with: [nbLanes::int(read("lanes"))] {
 			geom_visu <- shape + nbLanes;
 		}
 		the_graph <- as_edge_graph(road);
