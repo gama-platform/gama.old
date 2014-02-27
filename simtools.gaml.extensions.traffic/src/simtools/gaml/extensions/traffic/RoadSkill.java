@@ -116,10 +116,12 @@ public class RoadSkill extends MovingSkill {
 				lane = Math.min(lane, nbLanes -1);
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, false);
 				List agentsOn = (List) road.getAttribute(AGENTS_ON);
+				
 				((List) agentsOn.get(lane)).add(driver);
 			}
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
+			//driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
 		}
 	}
 	
@@ -177,6 +179,7 @@ public class RoadSkill extends MovingSkill {
 			}
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
+			//driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
 		}
 	}
 		
@@ -186,6 +189,7 @@ public class RoadSkill extends MovingSkill {
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
+		//driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, -1);
 		final boolean agentOnLinkedRoad = (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
 		if (driver.hasAttribute("current_road") && driver.hasAttribute("current_lane")) {
 			IAgent cr = (IAgent) driver.getAttribute("current_road");
