@@ -35,6 +35,7 @@ public class DrivingOperators {
 							agentsOn.add(lisSg);
 						}
 					}
+					ag.setAttribute(RoadSkill.AGENTS, new GamaList());
 				}
 				
 				
