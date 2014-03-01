@@ -27,7 +27,12 @@ public class DrivingOperators {
 					if (lanes > 0) {
 						IList agentsOn = (IList) ag.getAttribute(RoadSkill.AGENTS_ON) ;
 						for (int i = 0; i < lanes; i++) {
-							agentsOn.add(new GamaList());
+							int nbSeg = ag.getInnerGeometry().getNumPoints() - 1;
+							GamaList lisSg = new GamaList();
+							for (int j = 0; j < nbSeg; j++) {
+								lisSg.add(new GamaList());
+							}
+							agentsOn.add(lisSg);
 						}
 					}
 				}

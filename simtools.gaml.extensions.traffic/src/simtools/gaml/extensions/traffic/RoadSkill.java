@@ -3,8 +3,14 @@ package simtools.gaml.extensions.traffic;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -15,12 +21,13 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.types.IType;
 
 
 @vars({
-	@var(name = "agents_on", type = IType.LIST, of = IType.LIST, doc = @doc("for each lane of the road, the list of agents on the lane")),
+	@var(name = "agents_on", type = IType.LIST, of = IType.AGENT, doc = @doc("for each lane of the road, the list of agents")),
 	@var(name = "source_node", type = IType.AGENT, doc = @doc("the source node of the road")),
 	@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road")),
 	@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes")), 
@@ -38,41 +45,41 @@ public class RoadSkill extends MovingSkill {
 	public final static String LINKED_ROAD = "linked_road";
 
 	@getter(AGENTS_ON)
-	public List getAgentsOn(final IAgent agent) {
+	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
-	
+
 	@getter(SOURCE_NODE)
-	public IAgent getSourceNode(final IAgent agent) {
+	public static IAgent getSourceNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(SOURCE_NODE);
 	}
 	
 	@getter(TARGET_NODE)
-	public IAgent getTargetNode(final IAgent agent) {
+	public static IAgent getTargetNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(TARGET_NODE);
 	}
 	
 	@getter(LANES)
-	public Integer getLanes(final IAgent agent) {
+	public static Integer getLanes(final IAgent agent) {
 		return (Integer) agent.getAttribute(LANES);
 	}
 	
 	@getter(MAXSPEED)
-	public Double getMaxSpeed(final IAgent agent) {
+	public static Double getMaxSpeed(final IAgent agent) {
 		return (Double) agent.getAttribute(MAXSPEED);
 	}
 	
 	@setter(LANES)
-	public void setLanes(final IAgent agent, final int ln) {
+	public static void setLanes(final IAgent agent, final int ln) {
 		agent.setAttribute(LANES, ln);
 	}
 	@setter(MAXSPEED)
-	public void setMaxSpeed(final IAgent agent, final Double sp) {
+	public static void setMaxSpeed(final IAgent agent, final Double sp) {
 		agent.setAttribute(MAXSPEED, sp);
 	}
 	
 	@setter(SOURCE_NODE)
-	public void setSourceNode(final IAgent agent, final IAgent nd) {
+	public static void setSourceNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(SOURCE_NODE, nd);
 	}
 	
@@ -82,11 +89,11 @@ public class RoadSkill extends MovingSkill {
 	}
 	
 	@getter(LINKED_ROAD)
-	public IAgent getLinkedRoad(final IAgent agent) {
+	public static IAgent getLinkedRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(LINKED_ROAD);
 	}
 	@setter(LINKED_ROAD)
-	public void setLinkedRoad(final IAgent agent, final IAgent rd) {
+	public static void setLinkedRoad(final IAgent agent, final IAgent rd) {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 	
@@ -98,31 +105,71 @@ public class RoadSkill extends MovingSkill {
 			IAgent cr = (IAgent) driver.getAttribute(AdvancedDrivingSkill.CURRENT_ROAD);
 			Integer pl = (Integer) driver.getAttribute(AdvancedDrivingSkill.CURRENT_LANE);
 			if (cr != null && pl != null) {
+				Integer segmentIndex = (Integer) driver.getAttribute(AdvancedDrivingSkill.SEGMENT_INDEX);
 				if (agentOnLinkedRoad) {
 					IAgent lr =(IAgent) cr.getAttribute(LINKED_ROAD);
-					((List) ((List) lr.getAttribute(AGENTS_ON)).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(lr, driver);
+					((List)((List) getAgentsOn(lr).get(pl)).get(segmentIndex)).remove(driver);
+					
 				} else {
-					((List) ((List) cr.getAttribute(AGENTS_ON)).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(cr, driver);
+					((List)((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
 				}
 			}
+			int indexSegment = 0;
+			boolean onLinkedRoad = false;
 			if (lane >= nbLanes && linkedRoad != null) {
 				int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
+				onLinkedRoad = true;
 				lane = nbLanesLinked - nbLanes - lane + 1;
 				lane = Math.max(0, Math.min(lane, nbLanesLinked-1));
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
+				indexSegment = getSegmentIndex(linkedRoad, driver);
 				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
-				((List) agentsOn.get(lane)).add(driver);
+				((List)((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 			} else {
 				lane = Math.min(lane, nbLanes -1);
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, false);
+				indexSegment = getSegmentIndex(road, driver);
 				List agentsOn = (List) road.getAttribute(AGENTS_ON);
-				
-				((List) agentsOn.get(lane)).add(driver);
+				((List)((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 			}
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
-			//driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
+			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, onLinkedRoad? (road.getInnerGeometry().getNumPoints() - indexSegment - 2): indexSegment);
+			
 		}
+	}
+	
+	public static int getSegmentIndex(IAgent road,IAgent driver){
+		Coordinate[] coords = road.getInnerGeometry().getCoordinates();
+		if (coords.length == 2) {
+			return 0;
+		}
+			
+		ILocation loc = driver.getLocation();
+		for (int i = 0; i < coords.length; i++) {
+			if (coords[i].equals(loc)) {
+				return i;
+			}
+		}
+		double distanceS = Double.MAX_VALUE;
+		int indexSegment = 0;
+		final Point pointS = (Point) loc.getInnerGeometry();
+		final int nbSp = coords.length;
+		final Coordinate[] temp = new Coordinate[2];
+		for ( int i = 0; i < nbSp - 1; i++ ) {
+			temp[0] = coords[i];
+			temp[1] = coords[i + 1];
+			final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+			final double distS = segment.distance(pointS);
+			if ( distS < distanceS ) {
+				distanceS = distS;
+				indexSegment = i;
+			}
+		}
+		return indexSegment;
+		
 	}
 	
 	@action(name = "register", args = {
@@ -140,25 +187,31 @@ public class RoadSkill extends MovingSkill {
 			IAgent cr = (IAgent) driver.getAttribute(AdvancedDrivingSkill.CURRENT_ROAD);
 			Integer pl = (Integer) driver.getAttribute(AdvancedDrivingSkill.CURRENT_LANE);
 			if (cr != null && pl != null) {
+				Integer segmentIndex = (Integer) driver.getAttribute(AdvancedDrivingSkill.SEGMENT_INDEX);
 				if (agentOnLinkedRoad) {
 					IAgent lr = getLinkedRoad(cr);
-					((List) getAgentsOn(lr).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(lr, driver);
+					((List)((List) getAgentsOn(lr).get(pl)).get(segmentIndex)).remove(driver);
+					
 				} else {
-					((List) getAgentsOn(cr).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(cr, driver);
+					((List)((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
 				}
 			}
+			int indexSegment = 0;
 			if (lane >= nbLanes && linkedRoad != null) {
 				int nbLanesLinked = getLanes(linkedRoad);
 				lane = nbLanesLinked - nbLanes - lane + 1;
 				lane = Math.max(0, Math.min(lane, nbLanesLinked-1));
-				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, true);
-				List agentsOn = getAgentsOn(linkedRoad);
-				((List) agentsOn.get(lane)).add(driver);
+				indexSegment = getSegmentIndex(linkedRoad, driver);
+				List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
+				((List)((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 			} else {
 				lane = Math.min(lane, nbLanes -1);
 				driver.setAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD, false);
-				List agentsOn = getAgentsOn(road);
-				((List) agentsOn.get(lane)).add(driver);
+				indexSegment = getSegmentIndex(road, driver);
+				List agentsOn = (List) road.getAttribute(AGENTS_ON);
+				((List)((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 			}
 			//System.out.println("register " + driver + " lane : " + lane);
 			Coordinate[] coords = road.getInnerGeometry().getCoordinates();
@@ -179,6 +232,7 @@ public class RoadSkill extends MovingSkill {
 			}
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
+			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, indexSegment);
 			//driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
 		}
 	}
@@ -194,12 +248,17 @@ public class RoadSkill extends MovingSkill {
 		if (driver.hasAttribute("current_road") && driver.hasAttribute("current_lane")) {
 			IAgent cr = (IAgent) driver.getAttribute("current_road");
 			Integer pl = (Integer) driver.getAttribute("current_lane");
+			Integer segmentIndex = (Integer) driver.getAttribute(AdvancedDrivingSkill.SEGMENT_INDEX);
 			if (cr != null && pl != null) {
 				if (agentOnLinkedRoad) {
 					IAgent lr = getLinkedRoad(cr);
-					((List) getAgentsOn(lr).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(lr, driver);
+					((List)((List) getAgentsOn(lr).get(pl)).get(segmentIndex)).remove(driver);
+					
 				} else {
-					((List) getAgentsOn(cr).get(pl)).remove(driver);
+					if (segmentIndex == null) segmentIndex = getSegmentIndex(cr, driver);
+					((List)((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
+				
 				}
 			}
 		}
