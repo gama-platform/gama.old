@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jogl-windows-amd64
+Bundle-SymbolicName: com.jogamp.jogl2-windows-amd64
+Bundle-Version: 2.0.0
+Bundle-Vendor: Jogamp
+Fragment-Host: msi.gama.jogl2;bundle-version="1.0.0"
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86_64))
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

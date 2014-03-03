@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension
+            point="gama.display">
+         <implementation
+               class="msi.gama.jogl.JOGLAWTDisplaySurface"
+               keyword="opengl">
+         </implementation>
+         
+    </extension>
+    <extension
+          point="gaml.grammar.addition">
+       <path
+             name="gaml">
+       </path>
+    </extension>
+</plugin>
