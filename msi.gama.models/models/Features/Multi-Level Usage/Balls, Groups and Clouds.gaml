@@ -437,7 +437,32 @@ experiment group_experiment type: gui {
 	parameter 'Create clouds?' var: create_cloud <- false;
 		
 	output {
-		display name: 'Standard display' {
+		display 'Standard display' {
+			species ball aspect: default transparency: 0.5 ;
+			
+			species group aspect: default transparency: 0.5 {
+				species ball_in_group;
+			}
+		}
+		
+		display 'Ball display' {
+			species ball;
+		}
+		
+		display 'Group display' {
+			species group;
+			species group_agents_viewer;
+		}
+	}
+}
+
+experiment cloud_experiment type: gui {
+
+	parameter 'Create groups?' var: create_group <- true;
+	parameter 'Create clouds?' var: create_cloud <- true;
+		
+	output {
+		display 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
 			
 			species group aspect: default transparency: 0.5 {
@@ -452,11 +477,16 @@ experiment group_experiment type: gui {
 			}
 		}
 		
-		display name: 'Ball display' {
+		display 'Ball display' {
 			species ball;
 		}
 		
-		display name: 'Group display' {
+		display 'Group display' {
+			species group;
+			species group_agents_viewer;
+		}
+
+		display 'Group display' {
 			species group;
 			species group_agents_viewer;
 		}
