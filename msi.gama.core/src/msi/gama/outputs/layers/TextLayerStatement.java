@@ -66,7 +66,7 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	public TextLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		IExpression c = getFacet(IKeyword.COLOR);
-		color = c == null ? new ConstantExpression(Cast.asColor(null, "white")) : c;
+		color = c == null ? new ConstantExpression(Cast.asColor(null, "Black")) : c;
 		c = getFacet(IKeyword.FONT);
 		font = c == null ? new ConstantExpression("Helvetica") : c;
 		// If 'value:' is not defined, we take the name as the text to display.
