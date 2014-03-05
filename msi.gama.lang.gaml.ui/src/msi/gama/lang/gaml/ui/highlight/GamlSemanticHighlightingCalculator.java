@@ -24,6 +24,7 @@ import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.utils.EGaml;
+import msi.gaml.descriptions.SymbolProto;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.*;
@@ -39,7 +40,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
  */
 public class GamlSemanticHighlightingCalculator extends GamlSwitch implements ISemanticHighlightingCalculator {
 
-	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->"));
+	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+",
+		">>-", "+<-"));
 
 	private IHighlightedPositionAcceptor acceptor;
 	Set<INode> done = new HashSet();
@@ -130,6 +132,9 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 
 	@Override
 	public Object caseTypeRef(final TypeRef object) {
+		Statement s = EGaml.getStatement(object);
+		if ( s != null && SymbolProto.nonTypeStatements.contains(EGaml.getKeyOf(object)) ) { return setStyle(
+			KEYWORD_ID, NodeModelUtils.getNode(object)); }
 		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
 	}
 
