@@ -60,6 +60,7 @@ openFile</programArgs>
    </launcher>
 
    <vm>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
    </vm>
 
    <license>
@@ -249,7 +250,6 @@ openFile</programArgs>
 
    <features>
       <feature id="ummisco.gama.feature.core" version="1.6.1.qualifier"/>
-      <feature id="ummisco.gama.feature.opengl" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.models" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.dependencies" version="1.6.1.qualifier"/>
       <feature id="org.eclipse.equinox.p2.core.feature" version="1.0.1.v20110906-1605-8290FZ9FVKHVRKtmx3fpNuo02129"/>
@@ -257,6 +257,7 @@ openFile</programArgs>
       <feature id="org.eclipse.equinox.p2.extras.feature" version="1.0.1.v20110906-1605-7A4FD4DiVOMap8cHSc6vPuny4gqO"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature" version="1.0.1.v20110906-1605-782EqBqNKGVkiV-PUsgz-uny4gqO"/>
       <feature id="org.eclipse.equinox.p2.user.ui" version="2.1.2.R37x_v20110815-1155-6-Bk8pYWZz0qUTX5I15GZWwbXkrl"/>
+      <feature id="ummisco.gama.feature.opengl.jogl1" version="1.6.1.qualifier"/>
    </features>
 
    <configurations>
