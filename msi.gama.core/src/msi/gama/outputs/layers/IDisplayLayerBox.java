@@ -40,9 +40,11 @@ public interface IDisplayLayerBox {
 
 	public abstract void setSize(final IScope sim, final IExpression e) throws GamaRuntimeException;
 
-	// public abstract void setElevation(final IScope sim, final IExpression e) throws GamaRuntimeException;
-
 	public abstract void setRefresh(final IScope sim, final IExpression r) throws GamaRuntimeException;
+
+	public abstract void setTrace(IScope scope, final IExpression t);
+
+	public abstract void setFading(IScope scope, final IExpression f);
 
 	public abstract void setTransparency(final double f);
 
@@ -69,5 +71,9 @@ public interface IDisplayLayerBox {
 	// public abstract Double getElevation();
 
 	public abstract Boolean getRefresh();
+
+	public abstract Integer getTrace();
+
+	public abstract Boolean getFading();
 
 }
