@@ -173,6 +173,8 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 					if ( e.acceptChange(value) ) {
 						modelValues.put(e.getKey(), value);
 						checkActivables(value);
+					} else {
+						GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 					}
 				}
 
@@ -223,6 +225,14 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		activations.clear();
 		compo.layout();
 		compo.pack(true);
+	}
+
+	/**
+	 * @param string
+	 */
+	protected void showError(final String string) {
+		// TODO make it a proper component of the view
+		GuiUtils.debug("Error in preferences : " + string);
 	}
 
 	private void buildButtons() {
