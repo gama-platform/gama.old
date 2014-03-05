@@ -150,6 +150,7 @@ public interface IKeyword {
 	public static final String EXPLODED = "exploded";
 	public static final String EXPORT = "export";
 	public static final String EXTENSION = "extension";
+	public static final String FADING = "fading";
 	public static final String FALSE = "false";
 	public static final String FILE = "file";
 	public static final String OUTPUT_FILE = "output_file";
@@ -247,6 +248,7 @@ public interface IKeyword {
 	public static final String MYSELF = "myself";
 	public static final String NAME = "name";
 	public static final String NEIGHBOURS = "neighbours";
+	public static final String NODE = "node";
 	public static final String NULL = "nil";
 	public static final String NUMBER = "number";
 	public static final String OF = "of";
@@ -391,7 +393,7 @@ public interface IKeyword {
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE };
 	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	public static final String USER_INIT = "user_init";
-	public static final String AS_SKILL = "as_skill";
+	// public static final String AS_SKILL = "as_skill";
 	public static final String IS_SKILL = "is_skill";
 
 	/**
