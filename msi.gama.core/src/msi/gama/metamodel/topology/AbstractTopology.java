@@ -21,7 +21,6 @@ package msi.gama.metamodel.topology;
 import gnu.trove.set.hash.THashSet;
 import java.awt.Graphics2D;
 import java.util.*;
-
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -238,16 +237,17 @@ public abstract class AbstractTopology implements ITopology {
 		// return new GamaPath(this, GamaList.with(source, target));
 		return PathFactory.newInstance(this, GamaList.with(source, target));
 	}
-	
+
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k) {
+	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k) {
+	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+		final int k) {
 		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
 		paths.add(pathBetween(scope, source, target));
 		return paths;
@@ -477,8 +477,6 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
 		final boolean covered) {
-		// GuiUtils.debug("AbstractTopology.getAgentsIn");
-		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if ( source == null ) { return Collections.EMPTY_SET; }
 		if ( !isTorus() ) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
