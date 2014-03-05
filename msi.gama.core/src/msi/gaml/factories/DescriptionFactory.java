@@ -156,6 +156,7 @@ public class DescriptionFactory {
 
 	// To be called once the validation has been done
 	public static void document(final IDescription desc) {
+		if ( desc == null ) { return; }
 		setGamlDocumentation(desc.getUnderlyingElement(null), desc);
 		for ( IDescription d : desc.getChildren() ) {
 			document(d);
@@ -234,7 +235,10 @@ public class DescriptionFactory {
 		if ( children == null ) {
 			final List<IDescription> children_list = new ArrayList();
 			for ( final ISyntacticElement e : source.getChildren() ) {
-				children_list.add(create(e, superDesc, null));
+				IDescription desc = create(e, superDesc, null);
+				if ( desc != null ) {
+					children_list.add(desc);
+				}
 			}
 			children = new ChildrenProvider(children_list);
 		}
