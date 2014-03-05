@@ -174,25 +174,28 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	String rawNameOf(final Element e) {
-		return rawNameOf(e.asType());
+		return rawNameOf(e.asType(), e);
 	}
 
-	String rawNameOf(final TypeMirror t) {
+	String rawNameOf(final TypeMirror t, final Element e) {
 		String init = processingEnv.getTypeUtils().erasure(t).toString();
-		int i = init.indexOf('<');
-		int j = init.lastIndexOf('>');
-		String string = i > -1 ? init.substring(0, i) + init.substring(j + 1) : init;
-		// processingEnv.getMessager().printMessage(Kind.NOTE, "Init : " + init + " / String : " + string);
-		return check(string.replace('$', '.'));
-	}
-
-	protected String check(final String clazz) {
+		String[] segments = init.split("\\.");
+		StringBuilder sb = new StringBuilder();
+		int index = 0;
+		for ( String segment : segments ) {
+			int i = segment.indexOf('<');
+			int j = segment.lastIndexOf('>');
+			String string = i > -1 ? segment.substring(0, i) + segment.substring(j + 1) : segment;
+			if ( index++ > 0 ) {
+				sb.append(".");
+			}
+			sb.append(string);
+		}
+		String clazz = sb.toString();
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			if ( clazz.startsWith(IMPORTS[i]) ) {
-				String result = clazz.replace(IMPORTS[i] + ".", "");
-				return result;
+				clazz = clazz.replace(IMPORTS[i] + ".", "");
 			}
-			// return clazz.substring(clazz.lastIndexOf('.') + 1); }
 		}
 		return clazz;
 	}
@@ -267,7 +270,7 @@ public class GamaProcessor extends AbstractProcessor {
 						// method
 						sb.append(ex.getSimpleName()).append(SEP);
 						// retClass
-						sb.append(rawNameOf(ex.getReturnType())).append(SEP);
+						sb.append(rawNameOf(ex.getReturnType(), e)).append(SEP);
 						// dynamic ?
 						sb.append(!scope && n > 0 || scope && n > 1).append(SEP);
 						// field ?
@@ -390,7 +393,7 @@ public class GamaProcessor extends AbstractProcessor {
 			// prefix
 			sb.append(SYMBOL_PREFIX);
 			// validator
-			sb.append(type == null ? "" : rawNameOf(type)).append(SEP);
+			sb.append(type == null ? "" : rawNameOf(type, e)).append(SEP);
 			// kind
 			sb.append(symbol.kind()).append(SEP);
 			// class
@@ -679,7 +682,7 @@ public class GamaProcessor extends AbstractProcessor {
 				wraps = Arrays.asList(ex2.getTypeMirror());
 			}
 			for ( TypeMirror tm : wraps ) {
-				sb.append(SEP).append(rawNameOf(tm));
+				sb.append(SEP).append(rawNameOf(tm, e));
 			}
 			gp.put(sb.toString(), docToString(t.doc()));
 		}
@@ -726,7 +729,7 @@ public class GamaProcessor extends AbstractProcessor {
 						"; begin: " + begin + "; shift: " + shift);
 			}
 
-			String ret = rawNameOf(ex.getReturnType());
+			String ret = rawNameOf(ex.getReturnType(), ex);
 			methodName = stat ? declClass + "." + methodName : methodName;
 			StringBuilder sb = new StringBuilder();
 			// prefix
@@ -787,7 +790,7 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( tm.getKind().equals(TypeKind.VOID) ) {
 				sb.append("void").append(SEP);
 			} else {
-				sb.append(rawNameOf(tm)).append(SEP);
+				sb.append(rawNameOf(tm, e)).append(SEP);
 			}
 			// virtual
 			sb.append(action.virtual()).append(SEP);
