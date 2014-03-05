@@ -178,7 +178,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		menu.setLayoutData(data);
 		menu.setText("Other...");
-		menu.setToolTipText("Experiments defined in other models of the project");
+		menu.setToolTipText("All the experiments defined in the project");
 		menu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -280,11 +280,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				String platformString = resource.getURI().toPlatformString(true);
 				IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 				IProject proj = myFile.getProject();
-				List<URI> resources = getAllGamaFilesInProject(proj, resource.getURI());
+				// AD Addresses Issue 796 by passing null to the "without" parameter
+				List<URI> resources = getAllGamaFilesInProject(proj, /* resource.getURI() */null);
 				ResourceSet rs = resourceSetProvider.get(proj);
 				for ( URI uri : resources ) {
-					// GuiUtils.debug("GamlEditor.fillCombo().new Void() {...}.process : "
-					// + uri);
 					GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if ( xr.getErrors().isEmpty() ) {
 						ISyntacticElement el = xr.getSyntacticContents();
@@ -338,8 +337,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				// for gama files
 				if ( "gaml".equalsIgnoreCase(iR.getFileExtension()) ) {
 					URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
-					// GuiUtils.debug("GamlEditor.recursiveFindGamaFiles uri:" +
-					// uri + " equals " + without);
 					if ( !uri.equals(without) ) {
 						allGamaFiles.add(uri);
 					}
@@ -422,7 +419,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					if ( size == 0 ) {
 						setStatus("Model is functional, but no experiments have been defined.", ok);
 					} else {
-						setStatus(size == 1 ? "Run experiment:" : "Choose an experiment:", ok);
+						setStatus(size == 1 ? "Run :" : "Run :", ok);
 					}
 					int i = 0;
 					for ( String e : abbreviations ) {
