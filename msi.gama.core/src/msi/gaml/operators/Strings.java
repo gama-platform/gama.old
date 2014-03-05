@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -42,6 +41,8 @@ import org.joda.time.format.*;
  */
 public class Strings {
 
+	public static final String LN = java.lang.System.getProperty("line.separator");
+
 	static Pattern p = Pattern.compile("%[YMDhms]");
 	private static PeriodFormatterBuilder format;
 	private static PeriodFormatter dateFormat;
@@ -58,9 +59,8 @@ public class Strings {
 	static PeriodFormatter getTimeFormat() {
 		if ( timeFormat == null ) {
 			timeFormat =
-				new PeriodFormatterBuilder().printZeroAlways().minimumPrintedDigits(2)
-					.appendHours().appendLiteral(":").appendMinutes().appendLiteral(":")
-					.appendSeconds().toFormatter();
+				new PeriodFormatterBuilder().printZeroAlways().minimumPrintedDigits(2).appendHours().appendLiteral(":")
+					.appendMinutes().appendLiteral(":").appendSeconds().toFormatter();
 		}
 		return timeFormat;
 	}
@@ -68,10 +68,9 @@ public class Strings {
 	static PeriodFormatter getDateFormat() {
 		if ( dateFormat == null ) {
 			dateFormat =
-				new PeriodFormatterBuilder().appendYears().appendSuffix(" year", " years")
-					.appendSeparator(", ").appendMonths().appendSuffix(" month", " months")
-					.appendSeparator(", ").appendWeeks().appendSuffix(" week", " weeks")
-					.appendSeparator(", ").appendDays().appendSuffix(" day", " days")
+				new PeriodFormatterBuilder().appendYears().appendSuffix(" year", " years").appendSeparator(", ")
+					.appendMonths().appendSuffix(" month", " months").appendSeparator(", ").appendWeeks()
+					.appendSuffix(" week", " weeks").appendSeparator(", ").appendDays().appendSuffix(" day", " days")
 					.appendSeparator(" ").toFormatter();
 		}
 		return dateFormat;
@@ -92,8 +91,7 @@ public class Strings {
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(examples = "\"hello \" + 12 	--: 	\"hello 12\"")
-	public static String opPlus(final IScope scope, final String a, final Object b)
-		throws GamaRuntimeException {
+	public static String opPlus(final IScope scope, final String a, final Object b) throws GamaRuntimeException {
 		return a + Cast.asString(scope, b);
 	}
 
@@ -140,11 +138,19 @@ public class Strings {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true)
-	@doc(examples = "\"abcabcabc\" copy_between {2,6}	--: 	cabc")
+	@doc(deprecated = "Deprecated. Use copy_between(string, int, int) instead")
 	public static String opCopy(final String target, final GamaPoint p) {
-		final int beginIndex = p.x < 0 ? 0 : (int) p.x;
-		final int endIndex = p.y > target.length() ? target.length() : (int) p.y;
-		if ( beginIndex > endIndex ) { return ""; }
+		final int beginIndex = (int) p.x;
+		final int endIndex = (int) p.y;
+		return opCopy(target, beginIndex, endIndex);
+	}
+
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true)
+	@doc(examples = "copy_between(\"abcabcabc\", 2,6) --: 	cabc")
+	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
+		int bIndex = beginIndex < 0 ? 0 : beginIndex;
+		int eIndex = endIndex > target.length() ? target.length() : endIndex;
+		if ( beginIndex >= endIndex ) { return ""; }
 		return target.substring(beginIndex, endIndex);
 	}
 
@@ -158,9 +164,8 @@ public class Strings {
 	@operator(value = "is_number", can_be_const = true)
 	@doc(value = "tests whether the operand represents a numerical value", comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
 		+ "Symbols e and E are also accepted. A hexadecimal value should begin with #.", examples = {
-		"is_number(\"test\") 	--: false", "is_number(\"123.56\") 	--: true",
-		"is_number(\"-1.2e5\") 	--: true", "is_number(\"1,2\") 	--: false",
-		"is_number(\"#12FA\") 	--: true" })
+		"is_number(\"test\") 	--: false", "is_number(\"123.56\") 	--: true", "is_number(\"-1.2e5\") 	--: true",
+		"is_number(\"1,2\") 	--: false", "is_number(\"#12FA\") 	--: true" })
 	public static Boolean isGamaNumber(final String s) {
 		// copright notice:
 		// original code taken from org.apache.commons.lang.NumberUtils.isNumber(String)
@@ -287,14 +292,20 @@ public class Strings {
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
-	
-	@operator(value = "toChar", can_be_const = true)
-	@doc(special_cases = { "convert ACSII integer value to character" }, examples = { "toChar (34) 		--: 	\"" })
-	static public String toChar(final Integer s) {
+
+	@operator(value = "char", can_be_const = true)
+	@doc(special_cases = { "convert ACSII integer value to character" }, examples = { "char (34) 		--: 	\"" })
+	static public String asChar(final Integer s) {
 		if ( s == null ) { return ""; }
-		return ""+(char)s.intValue();
+		return Character.toString((char) s.intValue());
 	}
 	
+	@operator(value = "toChar", can_be_const = true)
+	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { "toChar (34) 		--: 	\"" })
+	static public String toChar(final Integer s) {
+		return asChar(s);
+	}
+
 	private static final class GamaChronology extends AssembledChronology {
 
 		private GamaChronology(final Chronology base) {
@@ -303,10 +314,8 @@ public class Strings {
 
 		@Override
 		protected void assemble(final AssembledChronology.Fields fields) {
-			fields.months =
-				new PreciseDurationField(DurationFieldType.months(), (long) IUnits.month * 1000);
-			fields.years =
-				new PreciseDurationField(DurationFieldType.years(), (long) IUnits.year * 1000);
+			fields.months = new PreciseDurationField(DurationFieldType.months(), (long) IUnits.month * 1000);
+			fields.years = new PreciseDurationField(DurationFieldType.years(), (long) IUnits.year * 1000);
 		}
 
 		@Override
@@ -380,8 +389,7 @@ public class Strings {
 
 		PeriodFormatter pf = getCustomFormat().toFormatter();
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return pf.print(new Period(new Duration((long) time * 1000), getChronology())
-			.normalizedStandard(pt));
+		return pf.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
 
 	}
 
