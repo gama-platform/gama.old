@@ -109,10 +109,11 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 		buttons.moveAbove(null);
 		buttons.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		buttons.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		final GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
 		buttons.setLayoutData(data);
-		final GridLayout layout = new GridLayout(3, false);
-		buttons.setLayout(layout);
+		// final GridLayout layout = new GridLayout(3, false);
+		// buttons.setLayout(layout);
+		buttons.setLayout(new FillLayout());
 
 		for ( final IStatement command : userCommands ) {
 			final Button b = new Button(buttons, SWT.PUSH);
@@ -136,6 +137,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 
 			});
 		}
+		buttons.layout();
 		buttons.pack();
 		buttons.update();
 		return attributes;
