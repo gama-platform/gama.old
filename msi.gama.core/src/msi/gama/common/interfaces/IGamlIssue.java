@@ -65,5 +65,6 @@ public interface IGamlIssue {
 	public static String IMPORT_ERROR = "gaml.import.has.error";
 	public static String MISSING_RETURN = "gaml.missing.return.issue";
 	public static String DEPRECATED = "gaml.deprecated.code.issue";
+	public static String UNUSED = "gaml.unused.code.issue";
 
 }
