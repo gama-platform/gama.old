@@ -6,6 +6,7 @@ package msi.gama.lang.gaml.ui.hover;
 
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
+import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.*;
 import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
@@ -195,10 +196,22 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	@Override
 	protected String getFirstLine(final EObject o) {
 		Documentation description = DescriptionFactory.getGamlDocumentation(o);
-		String result =
-			description == null ? (o instanceof TypeRef ? "type " : "") + EGaml.getKeyOf(o) : description.getTitle();
-		result = "<b>" + result + "</b>";
-		return result;
+		if ( description == null ) {
+			Statement s = EGaml.getStatement(o);
+			if ( s != null && SymbolProto.nonTypeStatements.contains(EGaml.getKeyOf(o)) ) {
+				return getFirstLine(s);
+			} else {
+				if ( o instanceof TypeRef ) {
+					return "type " + EGaml.getKeyOf(o);
+				} else {
+					return "";
+				}
+			}
+		} else {
+			String result = description.getTitle();
+			result = "<b>" + result + "</b>";
+			return result;
+		}
 	}
 
 }
