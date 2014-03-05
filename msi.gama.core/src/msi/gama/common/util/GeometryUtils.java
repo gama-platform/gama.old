@@ -680,7 +680,8 @@ public class GeometryUtils {
 
 		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
 
-		IProjection gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+		IProjection gis;
+		gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
 		env = gis.getProjectedEnvelope();
 
 		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.After Projection:" + env);
@@ -689,7 +690,7 @@ public class GeometryUtils {
 	}
 
 	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
-		Envelope result = null;
+		Envelope result = new Envelope3D();
 		if ( obj instanceof ISpecies ) {
 			return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
 		} else if ( obj instanceof Number ) {
