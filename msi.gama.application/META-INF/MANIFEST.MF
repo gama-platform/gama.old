@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
 Bundle-Name: GamaApplication
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ JavaSE-1.7
 Require-Bundle: org.eclipse.ui.console;bundle-version="3.5.0",
  msi.gama.ext,
  msi.gama.core;bundle-version="1.0.0",
