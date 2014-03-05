@@ -288,22 +288,6 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	}
 
 	/**
-	 * Applies this transformation to the i'th coordinate
-	 * in the given CoordinateSequence.
-	 * 
-	 * @param seq a <code>CoordinateSequence</code>
-	 * @param i the index of the coordinate to transform
-	 */
-	public void transform(final CoordinateSequence seq, final int i) {
-		double xp = m00 * seq.getOrdinate(i, 0) + m01 * seq.getOrdinate(i, 1) + m02 * seq.getOrdinate(i, 2) + m03;
-		double yp = m10 * seq.getOrdinate(i, 0) + m11 * seq.getOrdinate(i, 1) + m12 * seq.getOrdinate(i, 2) + m13;
-		double zp = m20 * seq.getOrdinate(i, 0) + m21 * seq.getOrdinate(i, 1) + m22 * seq.getOrdinate(i, 2) + m23;
-		seq.setOrdinate(i, 0, xp);
-		seq.setOrdinate(i, 1, yp);
-		seq.setOrdinate(i, 2, zp);
-	}
-
-	/**
 	 * Transforms the i'th coordinate in the input sequence
 	 * 
 	 * @param seq a <code>CoordinateSequence</code>
@@ -311,7 +295,15 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	 */
 	@Override
 	public void filter(final CoordinateSequence seq, final int i) {
-		transform(seq, i);
+		double x = seq.getOrdinate(i, 0);
+		double y = seq.getOrdinate(i, 1);
+		double z = seq.getOrdinate(i, 2);
+		double xp = m00 * x + m01 * y + m02 * z + m03;
+		double yp = m10 * x + m11 * y + m12 * z + m13;
+		double zp = m20 * x + m21 * y + m22 * z + m23;
+		seq.setOrdinate(i, 0, xp);
+		seq.setOrdinate(i, 1, yp);
+		seq.setOrdinate(i, 2, zp);
 	}
 
 	@Override
