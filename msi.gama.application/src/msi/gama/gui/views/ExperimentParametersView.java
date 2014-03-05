@@ -35,7 +35,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
 
 	private IExperimentSpecies experiment;
-	private Composite commands;
+	private Composite commandsComposite, commandsBody;
+	int maxButtonWidth;
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -46,14 +47,23 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 0;
 		intermediate.setLayout(parentLayout);
-		commands = new Composite(intermediate, SWT.BORDER_SOLID);
-		commands.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		commands.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		commands.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		final GridLayout layout = new GridLayout(3, false);
+		commandsComposite = new Composite(intermediate, SWT.BORDER_SOLID);
+		commandsComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
-		commands.setLayout(layout);
-		commands.pack();
+		// layout.horizontalSpacing = 0;
+		commandsComposite.setLayout(layout);
+		Label l = new Label(commandsComposite, SWT.None);
+		l.setText("Commands");
+		l.setFont(SwtGui.getLabelfont());
+		commandsBody = new Composite(commandsComposite, SWT.None);
+		commandsBody.setBackgroundMode(SWT.INHERIT_FORCE);
+		layout = new GridLayout(5, true);
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		commandsBody.setLayout(layout);
+		commandsBody.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		// commands.pack();
 		view.pack();
 		view.layout();
 		parent = intermediate;
@@ -75,17 +85,28 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	public void displayItems() {
 		super.displayItems();
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-		for ( final Control c : commands.getChildren() ) {
+		for ( final Control c : commandsBody.getChildren() ) {
 			c.dispose();
 		}
 		if ( userCommands.isEmpty() ) {
-			commands.setVisible(false);
+			commandsComposite.setVisible(false);
+			((GridData) commandsComposite.getLayoutData()).exclude = true;
 			return;
 		}
-		commands.setVisible(true);
+		((GridData) commandsComposite.getLayoutData()).exclude = false;
+		commandsComposite.setVisible(true);
+
 		for ( final IStatement command : userCommands ) {
-			final Button b = new Button(commands, SWT.PUSH);
+			final Button b = new Button(commandsBody, SWT.PUSH);
+			GridData data = new GridData();
+			b.setLayoutData(data);
 			b.setText(command.getName());
+			b.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			b.pack();
+			if ( b.getSize().x > maxButtonWidth ) {
+				maxButtonWidth = b.getSize().x;
+			}
+
 			b.addSelectionListener(new SelectionAdapter() {
 
 				@Override
@@ -104,8 +125,29 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 			});
 		}
-		commands.pack();
-		commands.update();
+		commandsComposite.layout();
+		int numColumns = commandsBody.getClientArea().width / maxButtonWidth;
+		((GridLayout) commandsBody.getLayout()).numColumns = numColumns;
+		commandsBody.layout();
+		parent.layout();
+		parent.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				if ( !commandsComposite.isVisible() ) { return; }
+				commandsComposite.layout();
+				int numColumns = commandsBody.getClientArea().width / maxButtonWidth;
+				if ( numColumns == 0 ) {
+					numColumns = 1;
+				}
+				((GridLayout) commandsBody.getLayout()).numColumns = numColumns;
+				commandsBody.layout();
+				parent.layout();
+			}
+
+			@Override
+			public void controlMoved(final ControlEvent e) {}
+		});
 	}
 
 	/**
