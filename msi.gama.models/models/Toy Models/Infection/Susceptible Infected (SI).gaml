@@ -65,7 +65,7 @@ entities {
         		int nb_hosts_infected <- 0;
         		loop hst over: ((myPlace.neighbours + myPlace) accumulate (Host overlapping each)) {
         			nb_hosts <- nb_hosts + 1;
-        			if (Host(hst).is_infected) {
+        			if (hst.is_infected) {
         				nb_hosts_infected <- nb_hosts_infected + 1;
         			}
         		}
