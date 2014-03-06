@@ -10,8 +10,8 @@ global {
 	int number_of_groups <- 3;
 	const google_buildings type: list <- [rgb("#EBE6DC"), rgb("#D1D0CD"), rgb("#F2EFE9"), rgb("#EEEBE1"), rgb("#F9EFE8")] ;
 	list<space> available_places ;
-	file bitmap_file_name <- file("../images/hanoi.png") parameter: "Name of image file to load:" category: "Environment" ;
-	matrix map_colors;
+	file bitmap_file_name <- file<unknown, int>("../images/hanoi.png") parameter: "Name of image file to load:" category: "Environment" ;
+	matrix<int> map_colors;
  
 	action initialize_people {
 		create people number: number_of_people ;  
@@ -21,7 +21,7 @@ global {
 	action initialize_places { 
 		map_colors <- (bitmap_file_name) as_matrix {dimensions,dimensions} ;
 		ask space as list {
-			color <- map_colors at {grid_x,grid_y} ;
+			color <- rgb(map_colors at {grid_x,grid_y}) ;
 		}
 		all_places <- shuffle (space where (each.color in google_buildings)) ;
 		free_places <- copy(all_places);
@@ -66,9 +66,9 @@ experiment schelling type: gui {
 				data "Happy" value: sum_happy_people color: rgb("yellow");
 			}
 
-			chart name: "Global happiness and similarity" type: series background: rgb("lightGray") axes: rgb("white") position: { 0, 0.5 } size: { 1.0, 0.5 } {
-				data "happy" color: rgb("blue") value: (sum_happy_people / number_of_people) * 100 style: spline;
-				data "similarity" color: rgb("red") value: float(sum_similar_neighbours / sum_total_neighbours) * 100 style: step;
+			chart name: "Global happiness and similarity" type: series background: rgb("lightGray") axes: rgb("white") position: { 0, 0.5 } size: { 1.0, 0.5 } x_range: 20 y_range: 20 {
+				data "happy" color: °blue value: (sum_happy_people / number_of_people) * 100 style: spline fill: false;
+				data "similarity" color: °red value: (sum_similar_neighbours / sum_total_neighbours) * 100 style: line fill: true ;
 			}
 		}
 	}

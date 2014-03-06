@@ -55,7 +55,7 @@ experiment schelling type: gui {
 			}
 			chart name: "Global happiness and similarity" type: series background: rgb("gray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
 				data "happy" color: rgb("blue") value:  (sum_happy_people / number_of_people) * 100 style: spline ;
-				data "similarity" color: rgb("red") value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+				data "similarity" color: rgb("red") value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
 	}

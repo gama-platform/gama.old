@@ -12,7 +12,7 @@ global {
 	action initialize_people { 
 		create space from: shape_file_name with: [surface :: float(read("AREA"))];
 		all_places  <- shuffle(space);
-		number_of_people <- int( density_of_people * sum (all_places collect ((each as space).capacity))); 
+		number_of_people <- int( density_of_people * sum (all_places collect (each.capacity))); 
 		create people number: number_of_people;  
 	    all_people <- people as list ; 
 		ask people  {  
@@ -91,7 +91,7 @@ experiment schelling type: gui {
 			}
 			chart name: "Global happiness and similarity" type: series background: rgb("lightgray") axes: rgb("white") position: {0,0.5} size: {1.0,0.5} {
 				data "happy" color: rgb("blue") value:  ((sum_happy_people * 100) / number_of_people)  style: spline ;
-				data "similarity" color: rgb("red") value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+				data "similarity" color: rgb("red") value:  (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
 	}
