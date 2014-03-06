@@ -32,7 +32,7 @@ species foyer {
 	}
 	action emmenager {
 		habitation.capacite <- habitation.capacite - 1;
-		location <- any_location_in(habitation.shape) add_z habitation.hauteur;
+		location <- any_location_in(habitation.shape) + {0,0, habitation.hauteur};
 	}
 	action demenager {
 		habitation.capacite <- habitation.capacite + 1;
@@ -76,7 +76,7 @@ species route {
 }
 experiment ville type: gui {
 	output {
-		display carte_principale type: opengl ambient_light: 100{
+		display carte_principale type: java2D ambient_light: 100{
 			species batiment aspect: geometrie;
 			species route aspect: geometrie;
 			species foyer aspect: revenu;
