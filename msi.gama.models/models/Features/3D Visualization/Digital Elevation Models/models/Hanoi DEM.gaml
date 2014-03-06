@@ -18,20 +18,20 @@ experiment Display type: gui {
 	output {
 		
 		//Display a DEM model with its associated texture coming from google maps for instance.
-		display HanoiMap  type: opengl ambient_light:255 {
+		display HanoiMap  type: opengl ambient_light:255 draw_env: true{
 			graphics 'DEMTextured' {
 				draw dem(dem, map_texture,z_factor);
 			}
 		}
 		
 		//Display a DEM model with its associated texture coming from google maps for instance.
-		display HanoiStreet  type: opengl ambient_light:255 {
+		display HanoiStreet  type: opengl ambient_light:255 draw_env: false {
 			graphics 'DEMTextured' {
 				draw dem(dem, street_texture,z_factor);
 			}
 		}
 		//Display a DEM model with the original color of the DEM file.
-		display HanoiDEM  type: opengl ambient_light:255 {
+		display HanoiDEM  type: opengl ambient_light:255 draw_env: false{
 			graphics 'DEM' {
 				draw dem(dem, dem,z_factor);
 			}
