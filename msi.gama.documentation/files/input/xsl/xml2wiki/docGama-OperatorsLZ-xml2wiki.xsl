@@ -6,6 +6,10 @@
 <xsl:variable name="html_iterator" select="0"/>
 <xsl:variable name="emptyStr" select="''"/>
 
+<xsl:variable name="alphabetID" select="'lz'"/>
+<xsl:variable name="fileAK" select="'OperatorsAKCurrent'"/>
+<xsl:variable name="fileLZ" select="'OperatorsLZCurrent'"/>
+
 <xsl:template match="/">
  	<xsl:text>#summary Operators(Modeling Guide)
  	
@@ -13,7 +17,16 @@
 
 = &lt;font color="blue"&gt; Table of Contents &lt;/font&gt; =
 
-&lt;wiki:toc max_depth="3" /&gt;
+&lt;wiki:toc max_depth="1" /&gt;
+
+= &lt;font color="blue"&gt; Operators by categories &lt;/font&gt; = 
+</xsl:text>
+	<xsl:call-template name="buildOperatorsByCategories"/>
+<xsl:text>
+
+= &lt;font color="blue"&gt; Operators by alphabetic order &lt;/font&gt; =
+
+&lt;wiki:toc max_depth="2" /&gt;
 
 = &lt;font color="blue"&gt; Definition &lt;/font&gt; =
 
@@ -50,10 +63,6 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 [#Table_of_Contents Top of the page] 
 	</xsl:text>
 
-
-= &lt;font color="blue"&gt; Operators by categories &lt;/font&gt; =
-	<xsl:call-template name="buildOperatorsByCategories"/>
-
 = &lt;font color="blue"&gt; Operators &lt;/font&gt; =
 	<xsl:call-template name="buildOperators"/>
 
@@ -66,7 +75,7 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 		<xsl:sort select="@id"/>
 		<xsl:variable name="categoryGlobal" select="@id"/> 
 		<xsl:text>
-== </xsl:text> <xsl:value-of select="@id"/> <xsl:text> ==</xsl:text>
+=== </xsl:text> <xsl:value-of select="@id"/> <xsl:text> ===</xsl:text>
 		<xsl:text>
   * </xsl:text>
 		<xsl:for-each select="/doc/operators/operator"> 
@@ -76,7 +85,16 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 			<xsl:for-each select="operatorsCategories/category">
 				<xsl:variable name="catItem" select="@id"/>
 				<xsl:if test="$catItem = $categoryGlobal "> 
-					<xsl:text>[#</xsl:text> <xsl:value-of select="$nameOp"/> <xsl:text> </xsl:text> <xsl:value-of select="$nameOp"/> <xsl:text>],  </xsl:text> 
+					 <xsl:for-each select="/doc/operators/operator[@id = $nameOp]">
+					 	<xsl:choose>
+							<xsl:when test="@alphabetOrder = 'ak'"> 
+								<xsl:text>[</xsl:text><xsl:value-of select="$fileAK"/><xsl:text>#</xsl:text><xsl:value-of select="$nameOp"/><xsl:text> </xsl:text><xsl:value-of select="$nameOp"/><xsl:text>], </xsl:text> 
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>[</xsl:text><xsl:value-of select="$fileLZ"/><xsl:text>#</xsl:text><xsl:value-of select="$nameOp"/><xsl:text> </xsl:text><xsl:value-of select="$nameOp"/><xsl:text>], </xsl:text> 
+							</xsl:otherwise>
+						</xsl:choose>
+					 </xsl:for-each> 
 				</xsl:if>			
 			</xsl:for-each>
 		</xsl:for-each>    	
@@ -84,7 +102,7 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 </xsl:template>
     
  <xsl:template name="buildOperators"> 
-    <xsl:for-each select="doc/operators/operator">
+    <xsl:for-each select="doc/operators/operator[@alphabetOrder = $alphabetID]">
     	<xsl:sort select="@name" />
     
 == <xsl:call-template name="checkName"/> == 
@@ -126,7 +144,21 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
   </xsl:if>
   
   <xsl:if test="documentation/seeAlso[node()]">    
-  * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[#</xsl:text><xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/><xsl:text>]</xsl:text><xsl:text>, </xsl:text> </xsl:for-each>
+  * See also: <xsl:for-each select="documentation/seeAlso/see">
+ 	<xsl:variable name="idOperator" select="@id"/>
+ <xsl:for-each select="/doc/operators/operator[@id = $idOperator]">
+ 	<xsl:choose>
+		<xsl:when test="@alphabetOrder = 'ak'"> 
+			<xsl:text>[</xsl:text><xsl:value-of select="$fileAK"/><xsl:text>#</xsl:text><xsl:value-of select="$idOperator"/><xsl:text> </xsl:text><xsl:value-of select="$idOperator"/><xsl:text>], </xsl:text> 
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:text>[</xsl:text><xsl:value-of select="$fileLZ"/><xsl:text>#</xsl:text><xsl:value-of select="$idOperator"/><xsl:text> </xsl:text><xsl:value-of select="$idOperator"/><xsl:text>], </xsl:text> 
+		</xsl:otherwise>
+	</xsl:choose>
+ </xsl:for-each> 
+  
+  </xsl:for-each>
+
   </xsl:if>
   
   <xsl:if test="documentation/examples[node()]">
@@ -182,6 +214,14 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
  		<xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
  	</xsl:choose>
  </xsl:template>
+
+ <xsl:template name="linkName">
+ 	<xsl:choose>
+ 		<xsl:when test="@name = '*'"><xsl:text>`*`</xsl:text></xsl:when>
+ 		<xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+ 	</xsl:choose>
+ </xsl:template>
+ 
 </xsl:stylesheet>
 
 <!--  
