@@ -1,7 +1,7 @@
 /**
  *  syntax
  *  Author: A. Drogoul
- *  Description: An overview of the new syntactic constructs that will be introduced in GAMA 1.6
+ *  Description: An overview of the new syntactic constructs that have been introduced in GAMA 1.6
  */
 model syntax
 
@@ -48,6 +48,10 @@ global skills: [moving] control: fsm {
 	//...
 
 	}
+	init {
+		create species0 number: 20;
+	}
+	
 
 	/**
  * UNITS
@@ -94,25 +98,27 @@ global skills: [moving] control: fsm {
  */
 	reflex variables {
 
-	// Temporary variables can use the same syntax than attributes. The classic form:
-		let name: t type: int value: length(a1);
+	// Temporary variables can use the same syntax as attributes. The classic form:
+		let name: t1 type: int value: length(a1);
 		// is equivalent to the more compact one:
-		int t <- length(a1);
+		int t2 <- length(a1);
 
 		// Assigning a value to variables is also sporting a new syntax 
-		set t value: 100;
+		set t2 value: 100;
 		// ... can be replaced by 
-		set t <- 100;
+		set t2 <- 100;
 		// ... or even by
-		t <- 100;
+		t2 <- 100;
 
 		// Species can now act as direct containers of their agents..
 		let spec_with_location <- species0 select (each.location = { 0, 0 });
-		let agent0 <- species0[100, 100];
+		let agent0 <- species0[10];
+		write string(agent0);
 
 		// ...  and agents as direct containers of their attributes (mimicking the internal attributes map). This "virtual map" will now contain, in addition to the attributes, 
 		// all the variables loaded from CSV, SQL or shape files (some stored in the agent itself, others in the shape).
 		agent0["departure"] <- { 0, 0 };
+		write string(agent0);
 
 		// Keys are not necessarily strings, by the way ! A warning is emitted in such cases, but it is just a warning.
 		agent0[0] <- 0;
@@ -126,12 +132,16 @@ global skills: [moving] control: fsm {
 		my_grid cell0 <- my_grid[10, 10]; // Here, it is the cell at {10, 10} in the matrix of cells
 
 		// Shapes also act as containers of CVS/Shapefile attributes (in case they are loaded without being attributed to an agent), as well as 3D properties (for the display).
-		agent0.name <- agent0.shape["ID"];
+		agent0.name <- string(agent0.shape["ID"]);
 		geometry geom <- square(100);
 		geom["type"] <- "cube";
+		
+		
+		// All these attributes can be accessed using the casting of agents to map
+		write string(map(agent0));
 
 		//This access can be used everywhere, easing the use of shape files (and data files in general)
-		list<geometry> shapes <- file("something.shp") as list;
+		list<geometry> shapes <- list<geometry>(file("something.shp"));
 
 		// If we suppose val1, val2, etc. are defined in the shape file
 		float max <- min(shapes collect float(each["val1"]));
@@ -151,16 +161,16 @@ global skills: [moving] control: fsm {
 		// Adding a value
 		add item: 1 to: l;
 		// ... can now be written
-		l << 1;
+		l <+ 1;
 
 		// Removing a value
 		remove 1 from: l;
 		remove "type" from: geom;
 
 		// ... can now be written
-		l >> 1;
-		geom >> "type";
-		any(species0) >> "name"; // removes the "name" attribute from a random agent. Can be dangerous in some cases... 
+		l >- 1;
+		geom >- "type";
+		any(species0)[] >- "name"; // removes the "name" attribute from a random agent. Can be dangerous in some cases... 
 
 		// Setting/putting a value
 		put "a" at: 'key' in: m;
@@ -169,8 +179,8 @@ global skills: [moving] control: fsm {
 		m['key'] <- "a";
 		l[0] <- 1;
 		list<list> ll <- [];
-		ll << []; // [[]]
-		ll[0] << 10; // [[10]]
+		ll <+ []; // [[]]
+		ll[0] <+ 10; // [[10]]
 
 	}
 
@@ -204,23 +214,23 @@ global skills: [moving] control: fsm {
 
 		// IN FUNCTIONAL MODE (i.e. as part of expressions)
 		// The "classic" way of calling actions. Note that in that case, dummy1 is used like a binary operator (callee on the left, argument map on the right)
-		list d <- self dummy1 [a::10, b::100];
+		list d1 <- self dummy1 [a::10, b::100];
 
 		// First improvement, argument maps can now be simplified, which results in a functional syntax with named arguments
-		list d <- self dummy1 (b: 100); // a is not passed as it has a default value.
+		list d2 <- self dummy1 (b: 100); // a is not passed as it has a default value.
 
 		// To improve the readability of this way of calling actions, the dotted notation is now allowed as well 
-		list d <- self.dummy1(a: 100, b: 100);
+		list d3 <- self.dummy1(a: 100, b: 100);
 		float s <- any(species1).compute_speed_using_an_action(max: 100);
 
 		// Finally, the functional syntax is also introduced. In that case, all the arguments need to be passed as they are not named.
 		// This unifies the way of calling operators and actions furthermore. 
 
 		// The action can be called as a n_ary operator, and in that case, the callee is implicitely the agent that executes the call
-		list d <- dummy1(10, 100);
+		list d4 <- dummy1(10, 100);
 
 		// And it can also be called using the "dotted" syntax, in which case the callee needs to be explicit (can be "self" of course)
-		path s <- world.move(100, 45, shape); // speed, heading, bounds
+		path p <- world.move(100, 45, shape); // speed, heading, bounds
 
 
 		/**
@@ -231,17 +241,17 @@ global skills: [moving] control: fsm {
 		// This method is convenient as it allows to pass only some arguments (if defaults are defined, which is implicitely the case in primitives), 
 		// but also to pass them in any order
 		do wander(speed: 100, amplitude: 10);
-		path d <- self.wander(amplitude: 10, speed: 100);
-		path d <- self wander (speed: 100, bounds: square(10));
-		path d <- wander(speed: 100);
-		path d <- wander();
+		path p1 <- self.wander(amplitude: 10, speed: 100);
+		path p2 <- self wander (speed: 100, bounds: square(10));
+		path p3 <- wander(speed: 100);
+		path p4 <- wander();
 
 		// CALLING WITH COMPLETE ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
 		// This method is convenient as it follows the functional syntax of operators and then allows to declare "quasi-operators" in species, even to redefine existing ones.
 		do wander(100, 100, self.shape); // speed, amplitude, bounds as defined in primitive wander
-		int d <- self.max(10, 100);
-		int d <- self max (10, 100);
-		int d <- max(10, 100);
+		int d5 <- self.max(10, 100);
+		int d6 <- self max (10, 100);
+		int d7 <- max(10, 100);
 		list others <- filter(species1);
 
 		// As a side note, the new syntax for arguments maps is not only usable in action calls, but also in create, for instance
@@ -315,15 +325,15 @@ species species0 {
 	float speed <- float(rnd(1000));
 }
 
-species species1 mirrors: list(species0) skills: [moving] {
+species species1 mirrors: species0 skills: [moving] {
 	point location update: target.location + { 10, 10 };
 	float speed1 update: self compute_speed_using_an_action (); // No parameter as "max" is defaulted
 	float speed2 update: compute_speed_using_a_functional_attribute;
 	float compute_speed_using_a_functional_attribute {
-		float(speed of (target as species0))
+		speed of target
 	}
 	float compute_speed_using_an_action (int max <- 100) {
-		return min([max, int(speed of (target as species0))]);
+		return min([max, int(speed of target)]);
 	}
 
 	init {
