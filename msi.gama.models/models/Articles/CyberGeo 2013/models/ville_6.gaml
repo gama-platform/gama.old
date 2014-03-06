@@ -8,18 +8,22 @@ global {
 	file texture <- file('../includes/Texture.png');
 	geometry shape <- envelope(mnt);
 	graph<point, route> reseau_route;
+	topology topo_route;
+	list<batiment> industries;
 	
 	init {
 		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))] {
 			float z <- (mnt_cell(location)).grid_value;   
 			location <- {location.x,location.y,z};
 		}
+		industries <- batiment select (each.type = "Industrial");
 		create route from: shape_file_routes {
 			float z <- (mnt_cell(location)).grid_value;   
 			location <- {location.x,location.y,z};
 		}
 		create foyer number: 500;
 		reseau_route <- as_edge_graph(route);
+		topo_route <- topology(reseau_route);
 	}
 }
 
@@ -42,13 +46,14 @@ species foyer {
 	}
 	action emmenager {
 		habitation.capacite <- habitation.capacite - 1;
-		location <- any_location_in(habitation.shape) add_z (habitation.hauteur + habitation.location.z);
+		location <- any_location_in(habitation.shape) + {0,0, (habitation.hauteur + habitation.location.z)};
 	}
 	action demenager {
 		habitation.capacite <- habitation.capacite + 1;
 	}
 	batiment choisir_batiment {
-		return one_of(batiment where ((each.capacite >0) and ( each.distances[lieu_travail]< 1000.0)));
+		batiment b  <- one_of(batiment where ((each.capacite >0) and ( each.distances[lieu_travail]< 1000.0)));
+		return b;
 	}
 	reflex demenagement when: !est_satisfait {
 		do demenager;
@@ -69,7 +74,9 @@ species batiment {
 	float revenu_moyen update: empty(foyer) ? 0.0 : mean (foyers collect each.revenu);
 	init {
 		loop bat over: batiment where (each.type = "Industrial") {
-			put (topology(reseau_route) distance_between [self,bat]) at: bat in: distances;
+			float dist <- topology(reseau_route) distance_between [self,bat];
+			write "distance between " + self + " and " + bat + ": " + dist;
+			put (topo_route distance_between [self,bat]) at: bat in: distances;
 		}
 	}
 	aspect geometrie {
