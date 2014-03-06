@@ -68,7 +68,7 @@ entities {
 		
 		reflex movement when: location != the_target{
 			if (path_to_follow = nil) {
-				path_to_follow <- (road_network with_weights roads_knowledge) path_between (location::the_target);
+				path_to_follow <- path_between(road_network with_weights roads_knowledge, location,the_target);
 			}
 			do follow path:path_to_follow speed: 5 move_weights: roads_weight;
 		}
