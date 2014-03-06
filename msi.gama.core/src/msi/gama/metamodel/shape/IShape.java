@@ -25,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -42,9 +42,10 @@ import com.vividsolutions.jts.geom.Geometry;
 public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {
-		BOX, CIRCLE, CONE, CUBE, RGBCUBE,RGBTRIANGLE,CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"), LINESTRING("LineString"),
-		MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT(
-			"Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE, TEAPOT, HEMISPHERE, LINECYLINDER, POLYLINECYLINDER;
+		BOX, CIRCLE, CONE, CUBE, RGBCUBE, RGBTRIANGLE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"),
+		LINESTRING("LineString"), MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON(
+			"MultiPolygon"), NULL, PLAN, POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE,
+		TEAPOT, HEMISPHERE, LINECYLINDER, POLYLINECYLINDER;
 
 		Type() {}
 
@@ -58,7 +59,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();
 
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
-	
+
 	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
 
 	@Override
@@ -77,6 +78,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public abstract IAgent getAgent();
 
 	public abstract Envelope3D getEnvelope();
+
+	public IList<? extends ILocation> getPoints();
 
 	/**
 	 * Returns the geometrical type of this shape. May be computed dynamically (from the JTS inner geometry) or stored

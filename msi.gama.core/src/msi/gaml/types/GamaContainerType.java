@@ -24,6 +24,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul
@@ -33,19 +34,21 @@ import msi.gama.util.IContainer;
  * 
  */
 @type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaContainerType<T extends IContainer> extends GamaType<T> {
+public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
 
-	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
-		return obj instanceof IContainer ? (IContainer) obj : GamaListType.staticCast(scope, obj,
-			param);
-		// reverts by default to a list (most generic type)
+	@Override
+	public T cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+		return cast(scope, obj, param, getKeyType(), getContentType());
+		// return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
+		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
 	@Override
-	public T cast(final IScope scope, final Object obj, final Object param, IType contentsType)
+	public T cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType)
 		throws GamaRuntimeException {
-		return (T) staticCast(scope, obj, param);
+		// by default
+		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
+			Types.NO_TYPE, Types.NO_TYPE));
 	}
 
 	@Override
@@ -54,18 +57,35 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public GamaContainerType getType() {
+		return this;
+	}
+
+	@Override
+	public IType getContentType() {
 		return Types.NO_TYPE;
 	}
 
 	@Override
-	public boolean hasContents() {
+	public boolean isContainer() {
 		return true;
 	}
 
 	@Override
 	public boolean isFixedLength() {
 		return false;
+	}
+
+	@Override
+	public IType contentsTypeIfCasting(final IExpression exp) {
+		IType itemType = exp.getType();
+		if ( itemType.isContainer() || itemType.isAgentType() ) { return itemType.getContentType(); }
+		return itemType;
+	}
+
+	@Override
+	public IContainerType typeIfCasting(final IExpression exp) {
+		return (IContainerType) super.typeIfCasting(exp);
 	}
 
 }

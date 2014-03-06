@@ -7,8 +7,8 @@ package msi.gama.metamodel.shape;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
-import com.vividsolutions.jts.geom.Geometry;
+import msi.gama.util.*;
+import com.vividsolutions.jts.geom.*;
 
 /**
  * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference geometry and a translation. All the
@@ -297,6 +297,20 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	@Override
 	public Type getGeometricalType() {
 		return getReferenceGeometry().getGeometricalType();
+	}
+
+	/**
+	 * Method getPoints()
+	 * @see msi.gama.metamodel.shape.IShape#getPoints()
+	 */
+	@Override
+	public IList<? extends ILocation> getPoints() {
+		final GamaList<GamaPoint> result = new GamaList();
+		final Coordinate[] points = getInnerGeometry().getCoordinates();
+		for ( final Coordinate c : points ) {
+			result.add(new GamaPoint(c));
+		}
+		return result;
 	}
 
 	/**

@@ -33,7 +33,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.uncommons.maths.statistics.DataSet;
 import rcaller.*;
 import rcaller.exception.*;
@@ -208,7 +208,17 @@ public class Stats {
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })
 	@doc(value = "the mean of all the elements of the operand", comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = { "if the container contains points, the result will be a point" }, examples = { "mean ([4.5, 3.5, 5.5, 7.0]) --: 5.125 " }, see = { "sum" })
+	public static Object getMean(final IScope scope, final IExpression expr) throws GamaRuntimeException {
+		IType type = expr.getType();
+		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'mean' can only operate on containers."); }
+		IContainer l = (IContainer) Types.get(IType.CONTAINER).cast(scope, expr.value(scope), null);
+		if ( l.length(scope) == 0 ) { return type.getContentType().id() == IType.POINT ? new GamaPoint(0, 0, 0)
+			: Double.valueOf(0d); }
+		return getMean(scope, l);
+	}
+
 	public static Object getMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
+		// FIXME Problem wiith this line if the container is intended to contain points...
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
 		Object s = sum(scope, l);
 		if ( s instanceof Number ) { return ((Number) s).doubleValue() / l.length(scope); }

@@ -19,66 +19,33 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import java.util.List;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.GamaMatrixType;
-import au.com.bytecode.opencsv.CSVReader;
+import msi.gama.util.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "text", extensions = { "txt", "data", "csv", "text", "tsv", "xml" })
-public class GamaTextFile extends GamaFile<Integer, String> {
-
-	private String csvSeparator = null;
+public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
-	public void setCsvSeparators(final String string) {
-		if ( string.length() >= 1 ) {
-			csvSeparator = string;
-		}
-	}
-
-	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		if ( csvSeparator != null ) {
-			try {
-				CSVReader reader = new CSVReader(new FileReader(getPath()), csvSeparator.charAt(0));
-				List<String[]> strings = reader.readAll();
-				return GamaMatrixType.from(scope, strings, preferredSize);
-			} catch (FileNotFoundException e) {} catch (IOException e) {
-				throw new GamaRuntimeException(e);
-			}
-		} else {
-			final String string = stringValue(scope);
-			if ( string == null ) { return null; }
-			return GamaMatrixType.from(scope, string, preferredSize); // Necessary ?
-		}
-		return null;
+	public GamaTextFile(final IScope scope, final String pathName, final IList<String> text) {
+		super(scope, pathName, text);
 	}
 
 	@Override
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		StringBuilder sb = new StringBuilder(buffer.length(scope) * 200);
-		for ( String s : buffer.iterable(scope) ) {
+		StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
+		for ( String s : getBuffer().iterable(scope) ) {
 			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
 	}
-
-	//
-	// @Override
-	// public String getKeyword() {
-	// return Files.TEXT;
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -87,7 +54,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
+		if ( getBuffer() != null ) { return; }
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
 			final GamaList<String> allLines = new GamaList();
@@ -98,7 +65,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 				str = in.readLine();
 			}
 			in.close();
-			buffer = allLines;
+			setBuffer(allLines);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
@@ -117,33 +84,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		Envelope boundsEnv = null;
-		if ( getExtension().equals("asc") ) {
-			try {
-				File ascFile = getFile();
-				InputStream ips = new FileInputStream(ascFile);
-				InputStreamReader ipsr = new InputStreamReader(ips);
-				BufferedReader in = new BufferedReader(ipsr);
-
-				String[] nbColsStr = in.readLine().split(" ");
-				int nbCols = Integer.valueOf(nbColsStr[nbColsStr.length - 1]);
-				String[] nbRowsStr = in.readLine().split(" ");
-				int nbRows = Integer.valueOf(nbRowsStr[nbRowsStr.length - 1]);
-				String[] xllcornerStr = in.readLine().split(" ");
-				double xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
-				String[] yllcornerStr = in.readLine().split(" ");
-				double yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
-				String[] cellSizeStr = in.readLine().split(" ");
-				double cellSize = Double.valueOf(cellSizeStr[cellSizeStr.length - 1]);
-				boundsEnv =
-					new Envelope(xllcorner, xllcorner + cellSize * nbCols, yllcorner, yllcorner + cellSize * nbRows);
-				in.close();
-			} catch (IOException e) {
-				throw GamaRuntimeException.create(e);
-			}
-		}
-		return boundsEnv;
-
+		return null;
 	}
 
 }

@@ -25,7 +25,7 @@ import msi.gaml.types.*;
 public class DisplayWidthUnitExpression extends ConstantExpression {
 
 	public DisplayWidthUnitExpression() {
-		super("display_width", Types.get(IType.FLOAT), Types.get(IType.FLOAT));
+		super("display_width", Types.get(IType.FLOAT));
 	}
 
 	@Override

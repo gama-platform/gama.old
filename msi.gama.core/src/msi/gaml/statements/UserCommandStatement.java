@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -29,11 +29,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 7 fÃ©vr. 2010
@@ -98,26 +98,26 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	@Override
 	public void setRuntimeArgs(final Arguments args) {}
 
-	@Override
-	public IType getType() {
-		if ( actionName == null ) { return super.getType(); }
-		final StatementDescription executer = description.getSpeciesContext().getAction(actionName);
-		return executer.getType();
-	}
+	// @Override
+	// public IType getType() {
+	// if ( actionName == null ) { return super.getType(); }
+	// final StatementDescription executer = description.getSpeciesContext().getAction(actionName);
+	// return executer.getType();
+	// }
 
-	@Override
-	public IType getContentType() {
-		if ( actionName == null ) { return super.getContentType(); }
-		final StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getContentType();
-	}
-
-	@Override
-	public IType getKeyType() {
-		if ( actionName == null ) { return Types.NO_TYPE; }
-		final StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getKeyType();
-	}
+	// @Override
+	// public IType getContentType() {
+	// if ( actionName == null ) { return super.getContentType(); }
+	// final StatementDescription executer = description.getSpeciesContext().getAction(name);
+	// return executer.getContentType();
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// if ( actionName == null ) { return Types.NO_TYPE; }
+	// final StatementDescription executer = description.getSpeciesContext().getAction(name);
+	// return executer.getKeyType();
+	// }
 
 	public boolean isEnabled(final IScope scope) {
 		return when == null || Cast.asBool(scope, when.value(scope));

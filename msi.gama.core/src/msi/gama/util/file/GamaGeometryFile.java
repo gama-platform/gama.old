@@ -9,6 +9,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -20,7 +21,7 @@ import com.vividsolutions.jts.geom.*;
  * @since 30 déc. 2013
  * 
  */
-public abstract class GamaGeometryFile extends GamaFile<Integer, IShape> {
+public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, Integer, IShape> {
 
 	protected IShape geometry;
 
@@ -33,7 +34,7 @@ public abstract class GamaGeometryFile extends GamaFile<Integer, IShape> {
 		@Override
 		protected IShape buildGeometry(final IScope scope) {
 			List<Geometry> faces = new ArrayList();
-			for ( IShape shape : buffer.iterable(scope) ) {
+			for ( IShape shape : getBuffer().iterable(scope) ) {
 				faces.add(shape.getInnerGeometry());
 			}
 			return new GamaShape(GeometryUtils.FACTORY.buildGeometry(faces));

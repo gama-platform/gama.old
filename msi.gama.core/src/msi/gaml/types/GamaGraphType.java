@@ -19,18 +19,14 @@
 package msi.gaml.types;
 
 import java.util.Map;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IList;
-import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.IGraph;
+import msi.gama.util.*;
+import msi.gama.util.graph.*;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
@@ -38,7 +34,7 @@ import msi.gaml.operators.Cast;
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
-	public IGraph cast(final IScope scope, final Object obj, final Object param, IType contentsType)
+	public IGraph cast(final IScope scope, final Object obj, final Object param, IType keyType, IType contentsType)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -50,8 +50,8 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		final IExpression ... args) {
 		this.exprs = args;
 		type = action.getType();
-		contentType = action.getContentType();
-		keyType = action.getKeyType();
+		// contentType = action.getContentType();
+		// keyType = action.getKeyType();
 		parameters = createArgs();
 		// final IDescription cd = DescriptionFactory.create(IKeyword.DO, action.getSpeciesContext(), IKeyword.ACTION,
 		// op);
@@ -110,7 +110,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("action ").append(getName()).append(" of ").append(arg(0).getType().getSpeciesName())
-			.append(" returns ").append(typeToString());
+			.append(" returns ").append(getType().getTitle());
 		return sb.toString();
 
 	}
@@ -119,7 +119,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	public String getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
-		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
+		sb.append("Returns a value of type ").append(type.getDocumentation()).append("<br>");
 		sb.append("Defined in ").append(arg(0).getType().getSpeciesName()).append("<br>");
 		return sb.toString();
 	}

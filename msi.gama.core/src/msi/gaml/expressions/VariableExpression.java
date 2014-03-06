@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -21,19 +21,19 @@ package msi.gaml.expressions;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 public abstract class VariableExpression extends AbstractExpression implements IVarExpression {
 
 	protected final Boolean isNotModifiable;
 	private final IDescription definitionDescription;
 
-	protected VariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
-		final boolean notModifiable, final IDescription definitionDescription) {
+	protected VariableExpression(final String n, final IType type, final boolean notModifiable,
+		final IDescription definitionDescription) {
 		setName(n);
 		setType(type);
-		setContentType(contentType);
-		setKeyType(keyType);
+		// setContentType(contentType);
+		// setKeyType(keyType);
 		isNotModifiable = notModifiable;
 		this.definitionDescription = definitionDescription;
 	}
@@ -69,19 +69,19 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		this.type = type;
 	}
 
-	protected void setContentType(final IType t) {
-		contentType = t == null || t == Types.NO_TYPE ? type.defaultContentType() : t;
-
-	}
-
-	protected void setKeyType(final IType t) {
-		keyType = t == null || t == Types.NO_TYPE ? type.defaultKeyType() : t;
-
-	}
+	// protected void setContentType(final IType t) {
+	// contentType = t == null || t == Types.NO_TYPE ? type.getContentType() : t;
+	//
+	// }
+	//
+	// protected void setKeyType(final IType t) {
+	// keyType = t == null || t == Types.NO_TYPE ? type.getKeyType() : t;
+	//
+	// }
 
 	@Override
 	public String getTitle() {
-		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + typeToString() + " defined in " +
+		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + getType() + " defined in " +
 			getDefinitionDescription().getTitle();
 	}
 

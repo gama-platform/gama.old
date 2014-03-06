@@ -22,37 +22,61 @@ import java.awt.Color;
 import java.util.Collection;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.expressions.IExpression;
 
 @type(name = IKeyword.LIST, id = IType.LIST, wraps = { IList.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
-	public IList cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public IList cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentsType) throws GamaRuntimeException {
+		IList list = staticCast(scope, obj, contentsType);
+		if ( contentsType != null && contentsType != Types.NO_TYPE ) {
+			for ( int i = 0; i < list.size(); i++ ) {
+				list.set(i, toType(scope, list.get(i), contentsType));
+			}
+		}
+		return list;
 	}
 
-	public static IList staticCast(final IScope scope, final Object obj, final Object param)
+	public static IList staticCast(final IScope scope, final Object obj, final IType contentsType)
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaList(); }
-		if ( obj instanceof IList ) { return (IList) obj; }
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope); }
-		if ( obj instanceof Collection ) { return new GamaList((Collection) obj); }
+		// if ( obj instanceof IList ) { return (IList) obj; }
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope, contentsType); }
+		if ( obj instanceof Collection ) { return new GamaList((Collection) obj).listValue(scope, contentsType); }
 		if ( obj instanceof Color ) {
 			final Color c = (Color) obj;
-			return GamaList.with(c.getRed(), c.getGreen(), c.getBlue());
+			return GamaList.with(c.getRed(), c.getGreen(), c.getBlue()).listValue(scope, contentsType);
 		}
-		if ( obj instanceof String ) { return new GamaList(StringUtils.tokenize((String) obj)); }
-		return GamaList.with(obj);
+		if ( obj instanceof GamaPoint ) {
+			GamaPoint point = (GamaPoint) obj;
+			return GamaList.with(point.x, point.y, point.z).listValue(scope, contentsType);
+		}
+		if ( obj instanceof String ) { return new GamaList(StringUtils.tokenize((String) obj)).listValue(scope,
+			contentsType); }
+		return GamaList.with(obj).listValue(scope, contentsType);
 	}
 
 	@Override
-	public IType defaultKeyType() {
-		return Types.get(IType.INT);
+	public IType getKeyType() {
+		return Types.get(INT);
 	}
 
+	@Override
+	public IType contentsTypeIfCasting(final IExpression expr) {
+		switch (expr.getType().id()) {
+			case COLOR:
+				return Types.get(INT);
+			case POINT:
+				return Types.get(FLOAT);
+		}
+		return super.contentsTypeIfCasting(expr);
+	}
 }

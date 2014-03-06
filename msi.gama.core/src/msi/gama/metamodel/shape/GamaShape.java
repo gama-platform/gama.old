@@ -36,20 +36,20 @@ import com.vividsolutions.jts.geom.*;
  * 
  */
 @vars({ @var(name = "area", type = IType.FLOAT), @var(name = "volume", type = IType.FLOAT),
-	@var(name = "width", type = IType.FLOAT), @var(name = "depth", type = IType.FLOAT),
-	@var(name = "height", type = IType.FLOAT), @var(name = "points", type = IType.LIST, of = IType.POINT),
-	@var(name = "envelope", type = IType.GEOMETRY), @var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = "multiple", type = IType.BOOL), @var(name = "holes", type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = "contour", type = IType.GEOMETRY) })
+	@var(name = "centroid", type = IType.POINT), @var(name = "width", type = IType.FLOAT),
+	@var(name = "depth", type = IType.FLOAT), @var(name = "height", type = IType.FLOAT),
+	@var(name = "points", type = IType.LIST, of = IType.POINT), @var(name = "envelope", type = IType.GEOMETRY),
+	@var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY), @var(name = "multiple", type = IType.BOOL),
+	@var(name = "holes", type = IType.LIST, of = IType.GEOMETRY), @var(name = "contour", type = IType.GEOMETRY) })
 public class GamaShape implements IShape /* , IContainer */{
 
 	// private static final boolean USE_PREPARED_OPERATIONS = false;
 
 	protected Geometry geometry;
-	protected volatile ILocation location;
-	private boolean isPoint;
+	// protected volatile ILocation location;
+	// private boolean isPoint;
 	private IAgent agent;
-	// TODO This represents a waste of memory but it is necessary to maintain it, as the Geometry does not give access
+	// This represents a waste of memory but it is necessary to maintain it, as the Geometry does not give access
 	// to a custom envelope builder
 	private Envelope3D envelope;
 
@@ -59,10 +59,14 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
+
+	}
+
+	public GamaShape(final Geometry geom, final boolean computeLocation) {
+		setGeometry(geom, computeLocation);
 	}
 
 	public GamaShape(final Envelope3D env) {
-		// WARNING For the moment only in 2D
 		this(env.toGeometry());
 	}
 
@@ -96,7 +100,8 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation) {
 		this(source, geom);
 		if ( !isPoint() && rotation != null ) {
-			geometry.apply(Rotation.of(Math.toRadians(rotation), location.toCoordinate()));
+			Coordinate c = geometry.getCentroid().getCoordinate();
+			geometry.apply(AffineTransform3D.createRotationOz(Math.toRadians(rotation), c.x, c.y));
 		}
 		if ( newLocation != null ) {
 			setLocation(newLocation);
@@ -117,14 +122,17 @@ public class GamaShape implements IShape /* , IContainer */{
 		final GamaPoint bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
 		if ( bounds != null && !isPoint() ) {
+			GamaPoint previous = getLocation();
 			Envelope3D envelope = getEnvelope();
-			boolean flat = envelope.getDepth() == 0.0;
+			boolean flat = envelope.isFlat();
 			if ( isBoundingBox ) {
-				geometry.apply(Scaling.of(bounds.x / envelope.getWidth(), bounds.y / envelope.getHeight(), flat ? 1.0
-					: bounds.z / envelope.getDepth(), (Coordinate) location));
+				geometry.apply(AffineTransform3D.createScaling(bounds.x / envelope.getWidth(),
+					bounds.y / envelope.getHeight(), flat ? 1.0 : bounds.z / envelope.getDepth()));
 			} else {
-				geometry.apply(Scaling.of(bounds.x, bounds.y, bounds.z, (Coordinate) location));
+				geometry.apply(AffineTransform3D.createScaling(bounds.x, bounds.y, bounds.z));
 			}
+			envelope = null;
+			setLocation(previous);
 		}
 	}
 
@@ -139,7 +147,10 @@ public class GamaShape implements IShape /* , IContainer */{
 		final Double scaling) {
 		this(source, geom, rotation, newLocation);
 		if ( scaling != null && !isPoint() ) {
-			geometry.apply(Scaling.of(scaling, scaling, scaling, (Coordinate) location));
+			GamaPoint previous = getLocation();
+			geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
+			envelope = null;
+			setLocation(previous);
 		}
 	}
 
@@ -165,7 +176,9 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@Override
 	public boolean isPoint() {
-		return isPoint;
+		// return isPoint;
+		if ( geometry == null ) { return false; }
+		return geometry.getNumPoints() == 1;
 	}
 
 	@Override
@@ -202,28 +215,29 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
-	public ILocation getLocation() {
-		return location;
+	public GamaPoint getLocation() {
+		if ( isPoint() ) { return new GamaPoint(geometry.getCoordinate()); }
+		return getEnvelope().centre();
 	}
 
 	@Override
 	public void setLocation(final ILocation l) {
-		final ILocation previous = location;
-		location = l;
+		final GamaPoint previous = getLocation();
+		Coordinate location = l.toCoordinate();
 		if ( previous != null ) {
 			if ( isPoint() ) {
-				geometry.apply(new Modification().with((Coordinate) location));
-				envelope = null;
+				geometry = GeometryUtils.FACTORY.createPoint(location);
+				envelope = Envelope3D.of(location);
 			} else {
 				// if ( isPoint ) {
-				final double dx = location.getX() - previous.getX();
-				final double dy = location.getY() - previous.getY();
-				final double dz = location.getZ() - previous.getZ();
+				final double dx = location.x - previous.getX();
+				final double dy = location.y - previous.getY();
+				final double dz = location.z - previous.getZ();
 				geometry.apply(new Translation(dx, dy, dz));
 				// We move the envelope as well if it has been computed
-				if ( envelope != null ) {
-					envelope.translate(dx, dy, dz);
-				}
+				// if ( envelope != null ) {
+				envelope.translate(dx, dy, dz);
+				// }
 				// Changed to avoid side effects when computing displacements & display at a given location at the same
 				// time.
 			}
@@ -264,51 +278,21 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	}
 
-	private static class Scaling extends AffineTransform3D {
-
-		/**
-		 * @param bounds
-		 * @param location
-		 * @return
-		 */
-		static Scaling of(final double xCoeff, final double yCoeff, final double zCoeff, final Coordinate c) {
-			// TODO minimize the creation of AffineTransform3D by reusing the same object
-			Scaling t = new Scaling();
-			t.compose(createTranslation(-c.x, -c.y, -c.z));
-			t.compose(createScaling(xCoeff, yCoeff, zCoeff));
-			t.compose(createTranslation(c.x, c.y, c.z));
-			return t;
-		}
-
-	}
-
-	private static class Rotation extends AffineTransform3D {
-
-		static AffineTransform3D of(final double theta, final Coordinate c) {
-
-			// TODO Verify this code. Do we need to make the translation ?
-			// TODO minimize the creation of AffineTransform3D by reusing the same object
-			AffineTransform3D t = createRotationOz(theta, c.x, c.y);
-			// t.compose(createTranslation(c.x, c.y, c.z));
-			return t;
-		}
-	}
-
-	private static class Modification implements CoordinateFilter {
-
-		Coordinate modif;
-
-		@Override
-		public void filter(final Coordinate c) {
-			c.setCoordinate(modif);
-		}
-
-		public Modification with(final Coordinate c) {
-			modif = c;
-			return this;
-		}
-
-	}
+	// private static class Modification implements CoordinateFilter {
+	//
+	// Coordinate modif;
+	//
+	// @Override
+	// public void filter(final Coordinate c) {
+	// c.setCoordinate(modif);
+	// }
+	//
+	// public Modification with(final Coordinate c) {
+	// modif = c;
+	// return this;
+	// }
+	//
+	// }
 
 	final static PointLocator pl = new PointLocator();
 
@@ -344,6 +328,15 @@ public class GamaShape implements IShape /* , IContainer */{
 			}
 		}
 		return holes;
+	}
+
+	@getter("centroid")
+	public GamaPoint getCentroid() {
+		if ( geometry == null ) { return null; }
+		if ( isPoint() ) { return getLocation(); }
+		Coordinate c = geometry.getCentroid().getCoordinate();
+		c.z = computeAverageZOrdinate();
+		return new GamaPoint(c);
 	}
 
 	@getter("contour")
@@ -388,7 +381,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@getter("points")
-	public IList<GamaPoint> getPoints() {
+	public IList<? extends ILocation> getPoints() {
 		final GamaList<GamaPoint> result = new GamaList();
 		final Coordinate[] points = getInnerGeometry().getCoordinates();
 		for ( final Coordinate c : points ) {
@@ -400,7 +393,6 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public Envelope3D getEnvelope() {
 		if ( envelope == null ) {
-			//envelope = Envelope3D.of(getInnerGeometry());
 			envelope = Envelope3D.of(this);
 		}
 		return envelope;
@@ -424,7 +416,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public void setGeometry(final IShape geom) {
 		if ( geom == null || geom == this ) { return; }
-		location = geom.getLocation();
+		// location = geom.getLocation();
 		// if ( Double.isNaN(location.getX()) ) {
 		// GuiUtils.debug("GamaShape.setGeometry");
 		// }
@@ -446,49 +438,49 @@ public class GamaShape implements IShape /* , IContainer */{
 		} else {
 			geometry = geom;
 		}
-		isPoint = geom.getNumPoints() == 1;
+		// isPoint = geom.getNumPoints() == 1;
 		envelope = null;
-		if ( computeLoc ) {
-			computeLocation();
-		}
+		// if ( computeLoc ) {
+		// computeLocation();
+		// }
 	}
 
-	private void computeLocation() {
-		Geometry g = getInnerGeometry();
-		final Point p = getInnerGeometry().getCentroid();
+	//
+	// private void computeLocation() {
+	// Geometry g = getInnerGeometry();
+	// final Point p = getInnerGeometry().getCentroid();
+	//
+	// final Coordinate c = p.getCoordinate();
+	// if ( isPoint() ) {
+	// c.z = g.getCoordinate().z;
+	// } else {
+	// c.z = computeAverageZOrdinate(g);
+	// }
+	// if ( location == null ) {
+	// location = new GamaPoint(c);
+	// } else {
+	// location.setLocation(c.x, c.y, c.z);
+	// }
+	// }
 
-		final Coordinate c = (p.isValid() || g.isEmpty())? p.getCoordinate() : gravityCenterComputation(g);
-		
-		if ( isPoint() ) {
-			c.z = g.getCoordinate().z;
-		} else {
-			c.z = computeAverageZOrdinate(g);
-		}
-		if ( location == null ) {
-			location = new GamaPoint(c);
-		} else {
-			location.setLocation(c.x, c.y, c.z);
-		}
-	}
-	
-	protected GamaPoint gravityCenterComputation(final Geometry g) {
-		double x = 0d;
-		double y = 0d;
-		Coordinate[] coords = g.getCoordinates();
-		for ( Coordinate c : coords ) {
-			if ( c.x != Double.NaN ) {
-				x += c.x;
-			}
-			if ( c.y != Double.NaN ) {
-				y += c.y;
-			}
-		}
-		return new GamaPoint(x/coords.length,y/coords.length);
-	}
-
-	private double computeAverageZOrdinate(final Geometry g) {
+	// public static GamaPoint computeCentroidOf(final Geometry g) {
+	// if ( g.isEmpty() ) { return null; }
+	// Coordinate[] coords = g.getCoordinates();
+	// int n = coords.length;
+	// double x = 0;
+	// double y = 0;
+	// double z = 0;
+	// for ( Coordinate c : coords ) {
+	// x = x + c.x;
+	// y = y + c.y;
+	// z = z + c.z;
+	// }
+	// return new GamaPoint(x / n, y / n, z / n);
+	// }
+	//
+	private double computeAverageZOrdinate() {
 		double z = 0d;
-		Coordinate[] coords = g.getCoordinates();
+		Coordinate[] coords = geometry.getCoordinates();
 		for ( Coordinate c : coords ) {
 			if ( c.z == Double.NaN ) {
 				continue;

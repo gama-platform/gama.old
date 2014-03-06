@@ -21,6 +21,8 @@ public class CastingExpression extends AbstractExpression {
 
 	public CastingExpression(final IType type) {
 		this.type = type;
+		// this.keyType = keyType;
+		// this.contentType = contentsType;
 	}
 
 	/**
@@ -56,7 +58,7 @@ public class CastingExpression extends AbstractExpression {
 	 */
 	@Override
 	public String getTitle() {
-		return null;
+		return type.getTitle();
 	}
 
 	/**
@@ -65,12 +67,17 @@ public class CastingExpression extends AbstractExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return null;
+		return "Represents a transformation of the argument to the type " + type.getTitle();
 	}
 
 	@Override
 	public IType getType() {
 		return type;
+	}
+
+	@Override
+	public String literalValue() {
+		return type.toString();
 	}
 
 }

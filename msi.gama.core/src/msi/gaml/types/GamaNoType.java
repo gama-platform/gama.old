@@ -35,7 +35,7 @@ import msi.gama.runtime.IScope;
 public class GamaNoType extends GamaType {
 
 	@Override
-	public Object cast(final IScope scope, final Object obj, final Object param, IType contentsType) {
+	public Object cast(final IScope scope, final Object obj, final Object param) {
 		return obj;
 	}
 
@@ -50,9 +50,9 @@ public class GamaNoType extends GamaType {
 	}
 
 	@Override
-	public IType findCommonSupertypeWith(IType iType) {
+	public IType findCommonSupertypeWith(final IType iType) {
 		// By default, this is the supertype common to all subtypes
-		return this;
+		return /* iType.getDefault() == null ? iType : */this;
 	}
 
 }

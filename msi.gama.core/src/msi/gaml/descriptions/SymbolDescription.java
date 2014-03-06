@@ -18,10 +18,11 @@
  */
 package msi.gaml.descriptions;
 
+import static msi.gama.util.GAML.getExpressionFactory;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -37,14 +38,18 @@ import org.eclipse.emf.ecore.EObject;
  * @todo Description
  * 
  */
-public class SymbolDescription implements IDescription {
+public abstract class SymbolDescription implements IDescription {
+
+	protected static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX,
+		FUNCTION, UPDATE, INIT);
 
 	protected final Facets facets;
 	protected final EObject element;
 	protected IDescription enclosing;
 	protected String originName;
-	protected final List<IDescription> children;
+	// protected final List<IDescription> children;
 	protected final String keyword;
+	protected boolean validated = false;
 
 	// protected boolean isDisposed = false;
 
@@ -59,24 +64,25 @@ public class SymbolDescription implements IDescription {
 		}
 		setEnclosingDescription(superDesc);
 		if ( getMeta().hasSequence() ) {
-			this.children = new ArrayList();
+			// this.children = new ArrayList();
 			addChildren(cp.getChildren());
 		} else {
-			this.children = null;
+			// this.children = null;
 		}
-	}
-
-	protected String typeToString() {
-		String t = getType().toString();
-		if ( getType().hasContents() ) {
-			t += "&lt;" + getKeyType().toString() + ", " + getContentType().toString() + "&gt;";
-		}
-		return t;
 	}
 
 	@Override
 	public int getKind() {
 		return getMeta().getKind();
+	}
+
+	protected void compileTypeProviderFacets() {
+		for ( String s : typeProviderFacets ) {
+			IExpressionDescription expr = facets.get(s);
+			if ( expr != null ) {
+				expr.compile(this);
+			}
+		}
 	}
 
 	@Override
@@ -177,12 +183,12 @@ public class SymbolDescription implements IDescription {
 	public void dispose() {
 		if ( isBuiltIn() ) { return; }
 		facets.dispose();
-		if ( children != null ) {
-			for ( IDescription c : children ) {
-				c.dispose();
-			}
-			children.clear();
-		}
+		// if ( children != null ) {
+		// for ( IDescription c : children ) {
+		// c.dispose();
+		// }
+		// children.clear();
+		// }
 		enclosing = null;
 	}
 
@@ -206,7 +212,7 @@ public class SymbolDescription implements IDescription {
 	public IDescription addChild(final IDescription child) {
 		if ( child == null ) { return null; }
 		child.setEnclosingDescription(this);
-		children.add(child);
+		// children.add(child);
 		return child;
 	}
 
@@ -219,13 +225,15 @@ public class SymbolDescription implements IDescription {
 	public EObject getUnderlyingElement(final Object facet) {
 		if ( facet == null ) { return element; }
 		if ( facet instanceof EObject ) { return (EObject) facet; }
+
 		IExpressionDescription f =
 			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets.get(facet);
 		if ( f == null ) { return element; }
 		EObject target = f.getTarget();
 		if ( target == null ) { return element; }
-		if ( target.eContainer() == null ) { return target; }
-		return target.eContainer(); // Should be a Facet
+		return getExpressionFactory().getFacetExpression(this, target);
+		// if ( target.eContainer() == null ) { return target; }
+		// return target.eContainer(); // Should be a Facet
 
 		// if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
 		// return element;
@@ -243,9 +251,11 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public List<IDescription> getChildren() {
-		return children == null ? Collections.EMPTY_LIST : children;
-	}
+	public abstract List<IDescription> getChildren();
+
+	// {
+	// return children == null ? Collections.EMPTY_LIST : children;
+	// }
 
 	@Override
 	public IDescription getEnclosingDescription() {
@@ -280,7 +290,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType, final IType keyType) {
+	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
 		return null;
 	}
 
@@ -298,17 +308,13 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public IType getType() {
-		return Types.get(IType.NONE);
-	}
-
-	@Override
-	public IType getContentType() {
-		return Types.get(IType.NONE);
-	}
-
-	@Override
-	public IType getKeyType() {
-		return Types.get(IType.NONE);
+		IType tt = facets.getTypeDenotedBy(TYPE, this);
+		if ( tt.isContainer() ) {
+			IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
+			IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());
+			return GamaType.from(tt, kt, ct);
+		}
+		return tt;
 	}
 
 	@Override
@@ -383,8 +389,14 @@ public class SymbolDescription implements IDescription {
 		}
 	}
 
+	public void resetOriginName() {
+		originName = null;
+	}
+
 	@Override
 	public final IDescription validate() {
+		if ( validated ) { return this; }
+		validated = true;
 		if ( isBuiltIn() ) {
 			// We simply make sure that the facets are correctly compiled
 			validateFacets();
@@ -461,15 +473,6 @@ public class SymbolDescription implements IDescription {
 							facet);
 						return false;
 					}
-				} else if ( fp.isType ) {
-					final String val = expr.getExpression().literalValue();
-					// The facet is supposed to be a type (IType.TYPE_ID)
-					final IType type = getTypeNamed(val);
-					if ( type == Types.NO_TYPE && !UNKNOWN.equals(val) && !IKeyword.SIGNAL.equals(val) ) {
-						error("Facet '" + facet + "' is expecting a type name. " + val + " is not a type name",
-							IGamlIssue.NOT_A_TYPE, facet, val);
-						return false;
-					}
 				} else {
 					IExpression exp;
 					if ( fp.types[0] == IType.NEW_TEMP_ID ) {
@@ -482,6 +485,7 @@ public class SymbolDescription implements IDescription {
 					}
 
 					if ( exp != null && !isBuiltIn ) {
+
 						// Some expresssions might not be compiled (like "depends_on", for instance)
 						boolean compatible = false;
 						final IType actualType = exp.getType();
@@ -497,6 +501,7 @@ public class SymbolDescription implements IDescription {
 							for ( int i = 0; i < fp.types.length; i++ ) {
 								strings[i] = tm.get(fp.types[i]).toString();
 							}
+
 							warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of " +
 								actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(fp.types[0]).toString());
 						}
@@ -519,10 +524,8 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected void validateChildren() {
-		if ( children != null ) {
-			for ( final IDescription child : children ) {
-				child.validate();
-			}
+		for ( final IDescription child : getChildren() ) {
+			child.validate();
 		}
 	}
 
@@ -550,13 +553,13 @@ public class SymbolDescription implements IDescription {
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
 	protected List<? extends ISymbol> compileChildren() {
+		List<IDescription> children = getChildren();
+		if ( children.isEmpty() ) { return Collections.EMPTY_LIST; }
 		final List<ISymbol> lce = new ArrayList();
-		if ( children != null ) {
-			for ( final IDescription sd : children ) {
-				final ISymbol s = sd.compile();
-				if ( s != null ) {
-					lce.add(s);
-				}
+		for ( final IDescription sd : children ) {
+			final ISymbol s = sd.compile();
+			if ( s != null ) {
+				lce.add(s);
 			}
 		}
 		return lce;

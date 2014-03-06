@@ -75,7 +75,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		sb.append("operator ").append(getName()).append(" (");
 		if ( exprs != null ) {
 			for ( int i = 0; i < exprs.length; i++ ) {
-				sb.append(exprs[i] == null ? "nil" : exprs[i].getType());
+				sb.append(exprs[i] == null ? "nil" : exprs[i].getType().getTitle());
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
@@ -84,11 +84,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		}
 		sb.append(") returns ");
 		IType type = getType();
-		sb.append(type.toString());
-		if ( type.hasContents() ) {
-			sb.append("&lt;").append(getKeyType().toString()).append(",").append(getContentType().toString())
-				.append("&gt;");
-		}
+		sb.append(type.getTitle());
 		return sb.toString();
 	}
 

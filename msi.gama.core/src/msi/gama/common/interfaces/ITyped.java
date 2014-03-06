@@ -6,8 +6,8 @@ public interface ITyped {
 
 	public IType getType();
 
-	public IType getContentType();
+	// public IType getContentType();
 
-	public IType getKeyType();
+	// public IType getKeyType();
 
 }

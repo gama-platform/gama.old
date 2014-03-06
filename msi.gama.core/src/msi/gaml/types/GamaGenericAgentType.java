@@ -47,7 +47,13 @@ public class GamaGenericAgentType extends GamaAgentType {
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentsType) throws GamaRuntimeException {
+		return cast(scope, obj, param);
+	}
+
+	@Override
+	public IAgent cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		if ( obj == null ) { return getDefault(); }
 		if ( obj instanceof IAgent ) { return (IAgent) obj; }
 		return getDefault();

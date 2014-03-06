@@ -21,7 +21,7 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaMap;
 import msi.gaml.types.*;
 
 /**
@@ -51,9 +51,9 @@ public class MapExpression extends AbstractExpression {
 		}
 		values = new GamaMap(keys.length);
 		setName(pairs.toString());
-		type = Types.get(IType.MAP);
-		keyType = findCommonType(Arrays.asList(keys), _type);
-		contentType = findCommonType(Arrays.asList(vals), _type);
+		type =
+			GamaType.from(Types.get(IType.MAP), findCommonType(Arrays.asList(keys), _type),
+				findCommonType(Arrays.asList(vals), _type));
 	}
 
 	@Override
@@ -92,8 +92,18 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public String toGaml() {
-		final IList list = getElements().getPairs();
-		return list.toGaml();
+		final StringBuilder sb = new StringBuilder();
+		sb.append(' ').append('[');
+		for ( int i = 0; i < keys.length; i++ ) {
+			if ( i > 0 ) {
+				sb.append(',');
+			}
+			sb.append(keys[i].toGaml());
+			sb.append("::");
+			sb.append(vals[i].toGaml());
+		}
+		sb.append(']').append(' ');
+		return sb.toString();
 	}
 
 	public IExpression[] keysArray() {
@@ -125,7 +135,7 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public String getTitle() {
-		return "literal map of type " + typeToString();
+		return "literal map of type " + getType().getTitle();
 	}
 
 	/**
@@ -134,7 +144,7 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public String getDocumentation() {
-		return "Constant " + isConst() + "<br>Contains elements of type " + contentType;
+		return "Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle();
 	}
 
 }

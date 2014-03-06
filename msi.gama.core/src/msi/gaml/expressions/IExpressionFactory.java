@@ -32,18 +32,16 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IExpressionFactory {
 
-	public static final IExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL),
-		Types.get(IType.BOOL));
-	public static final IExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL),
-		Types.get(IType.BOOL));
-	public static final IExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE, Types.NO_TYPE);
+	public static final IExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL));
+	public static final IExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL));
+	public static final IExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
 
 	public void registerParser(IExpressionCompiler parser);
 
 	public abstract IExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
-	public abstract IExpression createConst(final Object val, final IType type, final IType contentType)
-		throws GamaRuntimeException;
+	// public abstract IExpression createConst(final Object val, final IType type, final IType contentType)
+	// throws GamaRuntimeException;
 
 	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
 
@@ -59,8 +57,7 @@ public interface IExpressionFactory {
 
 	public IExpressionCompiler getParser();
 
-	IVarExpression createVar(String name, IType type, IType contentType, IType keyType, boolean isConst, int scope,
-		IDescription definitionDescription);
+	IVarExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
 
 	public IExpression createList(final List<? extends IExpression> elements);
 
@@ -70,8 +67,6 @@ public interface IExpressionFactory {
 
 	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression ... exprs);
 
-	public IExpression createCastingExpression(IType typeNamed);
-
 	/**
 	 * @param op
 	 * @param context
@@ -80,5 +75,22 @@ public interface IExpressionFactory {
 	 * @return
 	 */
 	IExpression createOperator(String op, IDescription context, EObject currentEObject, IExpression ... args);
+
+	/**
+	 * @param type
+	 * @param keyType
+	 * @param contentsType
+	 * @return
+	 */
+	IExpression createTypeExpression(IType type);
+
+	public abstract boolean isInitialized();
+
+	/**
+	 * @param symbolDescription
+	 * @param facet
+	 * @return
+	 */
+	public EObject getFacetExpression(IDescription context, EObject facet);
 
 }

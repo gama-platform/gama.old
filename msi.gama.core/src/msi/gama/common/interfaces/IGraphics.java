@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
@@ -43,17 +42,16 @@ public interface IGraphics {
 	public abstract int getDisplayHeightInPixels();
 
 	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
-		Double z, final double cellSize, String name);
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, Color gridColor,
+		final Double angle, final double cellSize, String name);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
-		Double z, boolean isDynamic, String name);
+		boolean isDynamic, String name);
 
 	public abstract Rectangle2D drawString(final String string, final Color stringColor,
 		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
-		final Double angle, final Double z, final Boolean bitmap);
+		final Double angle, final Boolean bitmap);
 
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final boolean rounded);
@@ -92,7 +90,7 @@ public interface IGraphics {
 
 	public interface OpenGL extends IGraphics {
 
-		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env,
+		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName,
 			final Double z_factor);
 
 	}

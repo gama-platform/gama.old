@@ -22,7 +22,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -239,5 +239,12 @@ public interface IScope {
 	 * @return the current statement or null if none
 	 */
 	public abstract IStatement getStatement();
+
+	public abstract void setTrace(boolean trace);
+
+	/**
+	 * @param abstractStatement
+	 */
+	public abstract void setStatement(IStatement abstractStatement);
 
 }

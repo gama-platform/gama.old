@@ -7,11 +7,11 @@ package msi.gama.metamodel.topology.projection;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
-
+import org.opengis.referencing.*;
+import org.opengis.referencing.crs.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -31,16 +31,17 @@ public class ProjectionFactory {
 	private IProjection world;
 	public CoordinateReferenceSystem targetCRS;
 
-	void computeTargetCRS(final CoordinateReferenceSystem crs,final double longitude, final double latitude) {
+	void computeTargetCRS(final CoordinateReferenceSystem crs, final double longitude, final double latitude) {
 		// If we already know in which CRS we project the data in GAMA, no need to recompute it. This information is
 		// normally wiped when an experiment is disposed
 		if ( targetCRS != null ) { return; }
 		try {
 			if ( !GamaPreferences.LIB_TARGETED.getValue() ) {
 				targetCRS = computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
-			} else { 
-				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution can be found 
-                    targetCRS = crs;
+			} else {
+				if ( crs != null && crs instanceof ProjectedCRS ) { // Temporary fix of issue 766... a better solution
+																	// can be found
+					targetCRS = crs;
 				} else {
 					int index = (int) (0.5 + (longitude + 186.0) / 6);
 					boolean north = latitude > 0;
@@ -48,13 +49,24 @@ public class ProjectionFactory {
 					targetCRS = getCRS(newCode);
 				}
 			}
-		} catch (Exception e) {
-			GuiUtils.debug("An error prevented GAMA from computing a correct Coordinate System: " + e);
+		} catch (GamaRuntimeException e) {
+			e.addContext("The cause could be that you try to re-project already projected data (see Gama > Preferences... > External for turning the option to true)");
+			throw e;
 		}
 	}
 
 	CoordinateReferenceSystem getTargetCRS() {
-		if ( targetCRS == null ) { return computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true); }
+		if ( targetCRS == null ) {
+
+			try {
+				return computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
+
+			} catch (GamaRuntimeException e) {
+				e.addContext("The cause could be that you try to re-project already projected data (see Gama > Preferences... > External for turning the option to true)");
+				throw e;
+			}
+
+		}
 		return targetCRS;
 	}
 
@@ -90,18 +102,24 @@ public class ProjectionFactory {
 				CRSCache.put(code, crs);
 			}
 			return crs;
-		} catch (Exception e) {
+		} catch (NoSuchAuthorityCodeException e) {
 			e.printStackTrace();
-			return null;
+			throw GamaRuntimeException.error("The EPSG code " + code +
+				" cannot be found. GAMA may be unable to load or save any GIS data");
+		} catch (FactoryException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("An exception occured in trying to decode GIS data:" + e.getMessage());
 		}
 	}
+
 	/*
 	 * Thai.truongming@gmail.com ---------------begin
 	 * date: 03-01-2014
 	 */
-	public IProjection getWorld(){
+	public IProjection getWorld() {
 		return world;
 	}
+
 	/*
 	 * thai.truongming@gmail.com -----------------end
 	 */
@@ -134,33 +152,44 @@ public class ProjectionFactory {
 		}
 	}
 
-	public IProjection forSavingWith(final Integer epsgCode) {
+	public IProjection forSavingWith(final Integer epsgCode) throws FactoryException {
 		return forSavingWith(epsgCode, true);
 	}
 
-	public IProjection forSavingWith(final Integer epsgCode, final boolean lonFirst) {
+	public IProjection forSavingWith(final Integer epsgCode, final boolean lonFirst) throws FactoryException {
 		return forSavingWith(EPSGPrefix + epsgCode, lonFirst);
 	}
 
-	public IProjection forSavingWith(final String code) {
+	public IProjection forSavingWith(final String code) throws FactoryException {
 		return forSavingWith(code, true);
 	}
 
-	public IProjection forSavingWith(final String code, final boolean lonFirst) {
-		CoordinateReferenceSystem crs = getCRS(code, lonFirst);
+	public IProjection forSavingWith(final String code, final boolean lonFirst) throws FactoryException {
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = getCRS(code, lonFirst);
+		} catch (Exception e) {
+			crs = null;
+			GuiUtils.debug("Exception: " + e.getMessage());
+		}
 		if ( crs == null ) {
 			crs = getSaveCRS();
 		}
 		Projection gis = new Projection(world, this);
 		gis.initialCRS = crs;
-		//gis.computeProjection();
+		// gis.computeProjection();
 		gis.createTransformation(gis.computeProjection());
 		return gis;
 	}
 
 	public CoordinateReferenceSystem getDefaultInitialCRS() {
 		if ( !GamaPreferences.LIB_PROJECTED.getValue() ) {
-			return getCRS(GamaPreferences.LIB_INITIAL_CRS.getValue());
+			try {
+				return getCRS(GamaPreferences.LIB_INITIAL_CRS.getValue());
+			} catch (GamaRuntimeException e) {
+				throw GamaRuntimeException.error("The code " + GamaPreferences.LIB_INITIAL_CRS.getValue() +
+					" does not correspond to a known EPSG code. Try to change it in Gama > Preferences... > External");
+			}
 		} else {
 			return getTargetCRS();
 		}

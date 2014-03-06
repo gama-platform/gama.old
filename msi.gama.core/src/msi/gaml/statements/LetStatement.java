@@ -53,8 +53,6 @@ combinations = { /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */
 @validator(LetValidator.class)
 public class LetStatement extends SetStatement {
 
-	
-
 	public static class LetValidator extends AssignmentValidator {
 
 		/**

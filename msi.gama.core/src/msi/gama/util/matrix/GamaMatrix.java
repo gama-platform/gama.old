@@ -27,6 +27,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -39,6 +40,31 @@ import org.apache.commons.lang.ArrayUtils;
  */
 
 public abstract class GamaMatrix<T> implements IMatrix<T> {
+
+	@Override
+	public IContainer<?, ILocation> buildIndexes(final IScope scope, final IContainer value,
+		final IContainerType containerType) {
+		IList<ILocation> result = new GamaList();
+		for ( Object o : value.iterable(scope) ) {
+			result.add(buildIndex(scope, o, containerType));
+		}
+		return result;
+	}
+
+	@Override
+	public T buildValue(final IScope scope, final Object object, final IContainerType containerType) {
+		return (T) containerType.getContentType().cast(scope, object, null);
+	}
+
+	@Override
+	public IContainer<?, T> buildValues(final IScope scope, final IContainer objects, final IContainerType containerType) {
+		return containerType.cast(scope, objects, null);
+	}
+
+	@Override
+	public ILocation buildIndex(final IScope scope, final Object object, final IContainerType containerType) {
+		return GamaPointType.staticCast(scope, object);
+	}
 
 	public static IList getLines(final IScope scope, final IMatrix m) {
 		final GamaList result = new GamaList();
@@ -213,8 +239,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public abstract Object remove(IScope scope, final int col, final int row);
 
 	@Override
-	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		return matrixValue(scope, null);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		return matrixValue(scope, contentsType, null);
 	}
 
 	@Override
@@ -244,11 +270,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// }
 
 	@Override
-	public GamaMap mapValue(final IScope scope) {
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType) {
 		final GamaMap result = new GamaMap();
 		for ( int i = 0; i < numRows; i++ ) {
 			// in case the matrix rows < 2, put null in value
-			result.put(get(scope, 0, i), get(scope, 1, i));
+			result.put(GamaType.toType(scope, get(scope, 0, i), keyType),
+				GamaType.toType(scope, get(scope, 1, i), contentsType));
 		}
 		return result;
 
@@ -268,7 +295,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// }
 	//
 	@Override
-	public abstract IMatrix copy(IScope scope) throws GamaRuntimeException;
+	public final IMatrix copy(final IScope scope) {
+		return copy(scope, getDimensions());
+	}
+
+	@Override
+	public abstract IMatrix copy(IScope scope, ILocation size);
 
 	public static boolean isFlat(final List val) {
 		for ( int i = 0; i < val.size(); i++ ) {
@@ -283,10 +315,18 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
 	@Override
-	public final boolean checkBounds(final ILocation index, final boolean forAdding) {
-		final int x = (int) index.getX();
-		final int y = (int) index.getY();
-		return x >= 0 && x < numCols && y >= 0 && y < numRows;
+	public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
+		if ( object instanceof ILocation ) {
+			ILocation index = (ILocation) object;
+			final int x = (int) index.getX();
+			final int y = (int) index.getY();
+			return x >= 0 && x < numCols && y >= 0 && y < numRows;
+		} else if ( object instanceof IContainer ) {
+			for ( Object o : ((IContainer) object).iterable(scope) ) {
+				if ( !checkBounds(scope, o, forAdding) ) { return false; }
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -305,7 +345,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public final T first(final IScope scope) throws GamaRuntimeException {
+	public final T firstValue(final IScope scope) throws GamaRuntimeException {
 		return (T) _first(scope);
 	}
 
@@ -315,7 +355,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#last()
 	 */
 	@Override
-	public final T last(final IScope scope) throws GamaRuntimeException {
+	public final T lastValue(final IScope scope) throws GamaRuntimeException {
 		return (T) _last(scope);
 	}
 
@@ -389,88 +429,51 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return _reverse(scope);
 	}
 
+	// 09/01/14:Trying to keep the interface simple.
+	// Three methods for add and put operations:
+	// The simple method, that simply contains the object to add
 	@Override
-	public final void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-		if ( index == null ) {
-			if ( all ) {
-				if ( value instanceof IContainer ) {
-					_removeAll(scope, (IContainer) value);
-				} else if ( value != null ) {
-					_removeAll(scope, GamaList.with(value));
-				} else {
-					_clear();
-				}
-			} else {
-				_removeFirst(scope, (T) value);
-			}
-		} else {
-			final ILocation p = Cast.asPoint(scope, index);
-			remove(scope, (int) p.getX(), (int) p.getY());
-		}
-	}
+	public void addValue(final IScope scope, final T value) {}
 
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
-	// */
-	// @Override
-	// public final boolean removeFirst(IScope scope, final T value) throws GamaRuntimeException {
-	// return _removeFirst(scope, value);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
-	// */
-	// @Override
-	// public final boolean removeAll(IScope scope, final IContainer value)
-	// throws GamaRuntimeException {
-	// return _removeAll(scope, value);
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
-	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
-	 */
+	// The same but with an index (this index represents the old notion of parameter where it is needed.
 	@Override
-	public void add(final IScope scope, final ILocation index, final Object value, final Object param,
-		final boolean all, final boolean add) {
-		if ( add ) { return; }
-		if ( all ) {
-			_putAll(scope, value, param);
-		} else {
-			set(scope, (int) index.getX(), (int) index.getY(), value);
+	public void addValueAtIndex(final IScope scope, final ILocation index, final T value) {}
+
+	// Put, that takes a mandatory index (also replaces the parameter)
+	@Override
+	public void setValueAtIndex(final IScope scope, final ILocation index, final T value) {
+		if ( index instanceof ILocation ) {
+			ILocation p = index;
+			set(scope, (int) p.getX(), (int) p.getY(), value);
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public final void putAll(IScope scope, final T value, final Object param)
-	// throws GamaRuntimeException {
-	// _putAll(scope, value, param);
-	//
-	// }
+	// Then, methods for "all" operations
+	// Adds the values if possible, without replacing existing ones
+	@Override
+	public void addVallues(final IScope scope, final IContainer values) {}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#clear()
-	 */
-	// @Override
-	// public final void clear() throws GamaRuntimeException {
-	// _clear();
-	//
-	// }
+	// Adds this value to all slots (if this operation is available), otherwise replaces the values with this one
+	@Override
+	public void setAllValues(final IScope scope, final T value) {
+		_putAll(scope, value, null);
+	}
+
+	@Override
+	public void removeValue(final IScope scope, final Object value) {};
+
+	@Override
+	public void removeIndex(final IScope scope, final Object index) {};
+
+	@Override
+	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {}
+
+	@Override
+	public void removeValues(final IScope scope, final IContainer<?, ?> values) {};
+
+	@Override
+	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {};
 
 	/*
 	 * (non-Javadoc)
@@ -478,8 +481,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IValue#listValue(msi.gama.interfaces.IScope)
 	 */
 	@Override
-	public final IList listValue(final IScope scope) {
-		return _listValue(scope);
+	public final IList listValue(final IScope scope, final IType contentsType) {
+		// WARNING : Double copy of the list
+		return _listValue(scope).listValue(scope, contentsType);
 	}
 
 	/*
@@ -489,8 +493,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public final IMatrix matrixValue(final IScope scope, final ILocation size) throws GamaRuntimeException {
-		return _matrixValue(scope, size);
+	public final IMatrix matrixValue(final IScope scope, final IType type, final ILocation size)
+		throws GamaRuntimeException {
+		return _matrixValue(scope, size, type);
 	}
 
 	/**
@@ -573,7 +578,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public T any(final IScope scope) {
+	public T anyValue(final IScope scope) {
 		final RandomUtils r = GAMA.getRandom();
 		final int x = r.between(0, numCols - 1);
 		final int y = r.between(0, numRows - 1);
@@ -586,7 +591,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract IList _listValue(IScope scope);
 
-	protected abstract IMatrix _matrixValue(IScope scope, ILocation size);
+	protected abstract IMatrix _matrixValue(IScope scope, ILocation size, IType type);
 
 	protected abstract void _clear();
 
@@ -601,15 +606,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	protected abstract boolean _isEmpty(IScope scope);
 
 	protected abstract boolean _contains(IScope scope, Object o);
-
-	//
-	// protected abstract Object _min(IScope scope);
-	//
-	// protected abstract Object _max(IScope scope);
-	//
-	// protected abstract Object _sum(IScope scope) throws GamaRuntimeException;
-	//
-	// protected abstract Object _product(IScope scope) throws GamaRuntimeException;
 
 	protected abstract Integer _length(IScope scope);
 

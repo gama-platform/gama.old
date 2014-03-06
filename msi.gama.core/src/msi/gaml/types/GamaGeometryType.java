@@ -44,15 +44,15 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override
-	public IShape cast(final IScope scope, final Object obj, final Object param, final IType contentsType)
-		throws GamaRuntimeException {
+	public IShape cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
 	public static IShape staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		if ( obj instanceof GamaPoint ) { return createPoint((GamaPoint) obj); }
-		if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
+		if ( obj instanceof IShape ) { return (IShape) obj; }
+		// if ( obj instanceof GamaPoint ) { return createPoint((GamaPoint) obj); }
+		// if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
 		if ( obj instanceof ISpecies ) { return geometriesToGeometry(scope,
 			scope.getAgentScope().getPopulationFor((ISpecies) obj)); }
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
@@ -83,14 +83,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(IType.STRING);
 	}
 
-	@Override
-	public boolean hasContents() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean hasContents() {
+	// return true;
+	// }
 
 	@Override
 	public boolean isFixedLength() {
@@ -107,7 +108,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @param points
 	 * @return
 	 */
-	public static IShape buildPolygon(final List<IShape> points) {
+	public static IShape buildPolygon(final List<? extends IShape> points) {
 		final CoordinateSequenceFactory fact = GeometryUtils.coordFactory;
 		final int size = points.size();
 		// AD 12/05/13 The dimensions of the points to create have been changed to 3, otherwise the z coordinates could
@@ -122,12 +123,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		cs = CoordinateSequences.ensureValidRing(fact, cs);
 		final LinearRing geom = GeometryUtils.FACTORY.createLinearRing(cs);
 		final Polygon p = GeometryUtils.FACTORY.createPolygon(geom, null);
-		return new GamaShape(p.buffer(0.0));
-
 		// Commented out, see Issue 760, comment #15.
+		// return new GamaShape(p.isValid() ? p.buffer(0.0) : p);
 		// if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); } // Why buffer (0.0) ???
 		// return buildPolyline(points);
 		// / ???
+		return new GamaShape(p);
 	}
 
 	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
@@ -143,13 +144,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
 		return buildPolygon(points);
 	}
-	
+
 	// Maybe a bit overkill, but the list of points is created *and* validated by the call to buildPolygon()
-		public static IShape buildRGBTriangle(final double side_size, final ILocation location) {
-			final IShape g = buildTriangle(side_size,location);
-			g.setAttribute(IShape.TYPE_ATTRIBUTE, RGBTRIANGLE);
-			return g;
-		}
+	public static IShape buildRGBTriangle(final double side_size, final ILocation location) {
+		final IShape g = buildTriangle(side_size, location);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, RGBTRIANGLE);
+		return g;
+	}
 
 	public static IShape buildRectangle(final double width, final double height, final ILocation location) {
 		final Coordinate[] points = new Coordinate[5];
@@ -195,7 +196,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if ( coordinates[0].equals(coordinates[1]) ) { return createPoint((GamaPoint) coordinates[0]); }
 		return new GamaShape(GeometryUtils.FACTORY.createLineString(coordinates));
 	}
-	
+
 	public static IShape buildLineCylinder(final IShape location1, final IShape location2, final double radius) {
 		final IShape g = buildLine(location1, location2);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
@@ -217,7 +218,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		return new GamaShape(GeometryUtils.FACTORY.createLineString(coordinates.toArray(new Coordinate[0])));
 	}
-	
+
 	public static IShape buildPolylineCylinder(final List<IShape> points, final double radius) {
 		final IShape g = buildPolyline(points);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
@@ -249,7 +250,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 
 	}
-	
+
 	public static IShape buildRGBCube(final double side_size, final ILocation location) {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
@@ -349,7 +350,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
 		return g;
 	}
-	
+
 	public static IShape buildHemiSphere(final double radius, final ILocation location, final double ratio) {
 		final IShape g = buildCircle(radius, location);
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
@@ -377,6 +378,34 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, PYRAMID);
 		return g;
+	}
+
+	private static double theta = Math.tan(0.423d);
+
+	public static IShape buildArrow(final GamaPoint tail, final GamaPoint head, final double arrowWidth,
+		final double arrowLength, final boolean closed) {
+		IList points = GamaList.with(head);
+		// build the line vector
+		GamaPoint vecLine = head.minus(tail);
+		// build the arrow base vector - normal to the line
+		GamaPoint vecLeft = new GamaPoint(-vecLine.y, vecLine.x);
+		if ( vecLine.y == 0 && vecLine.x == 0 ) {
+			vecLeft = new GamaPoint(-vecLine.z, 0, 0);
+		}
+		// setup length parameters
+		double fLength = vecLine.norm();
+		double th = arrowWidth / (2.0d * fLength);
+		double ta = arrowLength / (2.0d * theta * fLength);
+		// find the base of the arrow
+		GamaPoint base = head.minus(vecLine.times(ta));
+		// build the points on the sides of the arrow
+		if ( closed ) {
+			points.add(base.plus(vecLeft.times(th)));
+		} else {
+			points.add(0, base.plus(vecLeft.times(th)));
+		}
+		points.add(base.minus(vecLeft.times(th)));
+		return closed ? buildPolygon(points) : buildPolyline(points);
 	}
 
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
@@ -423,7 +452,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		throws GamaRuntimeException {
 		if ( coordinates != null && !coordinates.isEmpty(scope) ) {
 			final List<List<ILocation>> geoSimp = new GamaList();
-			geoSimp.add(coordinates.listValue(scope));
+			geoSimp.add(coordinates.listValue(scope, Types.NO_TYPE));
 			final List<List<List<ILocation>>> geomG = new GamaList();
 			geomG.add(geoSimp);
 			final Geometry geom = GeometryUtils.buildGeometryJTS(geomG);

@@ -21,6 +21,7 @@ package msi.gaml.variables;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -93,7 +94,7 @@ import msi.gaml.variables.SignalVariable.SignalValidator;
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.FLOAT, optional = false),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = true),
@@ -122,8 +123,8 @@ public class SignalVariable extends NumberVariable {
 			if ( env == null ) {
 				env = on;
 			} else if ( on != null ) {
-				IType tenv = env.getExpression().getContentType();
-				IType ton = on.getExpression().getContentType();
+				IType tenv = env.getExpression().getType().getContentType();
+				IType ton = on.getExpression().getType().getContentType();
 				if ( !tenv.isAssignableFrom(ton) ) {
 					d.warning("'environment:' and 'on:' should be of the same type", IGamlIssue.UNMATCHED_TYPES);
 				}
@@ -135,7 +136,7 @@ public class SignalVariable extends NumberVariable {
 				return;
 			}
 
-			SpeciesDescription s = env.getExpression().getContentType().getSpecies();
+			SpeciesDescription s = env.getExpression().getType().getContentType().getSpecies();
 
 			if ( !s.isGrid() ) {
 				d.error(s.getName() + " is not a grid. Signals can only be diffused on grids");
@@ -166,7 +167,7 @@ public class SignalVariable extends NumberVariable {
 						f.createConst(0.0, Types.get(IType.FLOAT)),
 						f.createOperator("*", s, null, v,
 							f.createOperator("-", s, null, f.createConst(1.0, Types.get(IType.FLOAT)), decay))));
-			vd.getFacets().put(VALUE, value);
+			vd.getFacets().put(UPDATE, value);
 			vd.setUpdatable(true);
 			s.resortVarName(vd);
 		}
@@ -175,7 +176,6 @@ public class SignalVariable extends NumberVariable {
 	private final Short signalType;
 	private final Double prop, range, variation;
 	private String envName;
-	// private IGrid environment; // Lazily built
 	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr, onExpr;
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
@@ -188,7 +188,7 @@ public class SignalVariable extends NumberVariable {
 		onExpr = getFacet(IKeyword.ON);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
 		if ( envName == null ) {
-			SpeciesDescription s = onExpr.getContentType().getSpecies();
+			SpeciesDescription s = onExpr.getType().getContentType().getSpecies();
 			envName = s.getName();
 		}
 		signalType = typeExpr == null ? IGrid.DIFFUSION : null;

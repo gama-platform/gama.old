@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -27,11 +27,11 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.uncommons.maths.number.NumberGenerator;
 
 /**
- * Written by drogoul Modified on 10 dŽc. 2010
+ * Written by drogoul Modified on 10 dï¿½c. 2010
  * 
  * @todo Description
  * 
@@ -116,7 +116,7 @@ public class Random {
 	@doc(value = "The elements of the operand in random order.", special_cases = { "if the operand is empty, returns an empty list (or string, matrix)" }, examples = { "shuffle ([12, 13, 14]) --: [14,12,13];" }, see = { "reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if ( target == null || target.isEmpty(scope) ) { return new GamaList(); }
-		final IList list = (IList) target.listValue(scope).copy(scope);
+		final IList list = (IList) target.listValue(scope, Types.NO_TYPE).copy(scope);
 		RANDOM(scope).shuffle(list);
 		return list;
 	}

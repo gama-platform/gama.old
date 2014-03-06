@@ -46,26 +46,30 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public IExpression getFacet(final String key) {
+	public final IExpression getFacet(final String ... keys) {
 		if ( description == null ) { return null; }
-		if ( !description.getFacets().containsKey(key) ) { return null; }
-		IExpression result = description.getFacets().getExpr(key);
-		if ( result == null ) { throw GamaRuntimeException.error("Facet " + key + " could not be compiled."); }
+		IExpression result = null;
+		for ( String key : keys ) {
+			if ( description.getFacets().containsKey(key) ) {
+				result = description.getFacets().getExpr(key);
+				break;
+			}
+		}
+		// if ( result == null ) { throw GamaRuntimeException.error("Facet " + key + " could not be compiled."); }
 		return result;
 	}
 
-	public IExpression getFacet(final String key, final IExpression ifAbsent) {
-		return description == null ? ifAbsent : description.getFacets().getExpr(key, ifAbsent);
-	}
+//	 public IExpression getFacet(final String key, final IExpression ifAbsent) {
+//	 return description == null ? ifAbsent : description.getFacets().getExpr(key, ifAbsent);
+//	 }
 
 	public Object getFacetValue(final IScope scope, final String key) throws GamaRuntimeException {
 		return getFacetValue(scope, key, null);
 	}
 
-	public Object getFacetValue(final IScope scope, final String key, final Object defaultValue)
-		throws GamaRuntimeException {
+	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue) throws GamaRuntimeException {
 		IExpression exp = getFacet(key);
-		return exp == null ? defaultValue : exp.value(scope);
+		return (T) (exp == null ? defaultValue : exp.value(scope));
 	}
 
 	public String getLiteral(final String key) {

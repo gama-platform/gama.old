@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.StatementDescription.StatementWithChildrenDescription;
 import msi.gaml.statements.Facets;
 import org.eclipse.emf.ecore.EObject;
 
@@ -33,7 +34,7 @@ import org.eclipse.emf.ecore.EObject;
  * 
  */
 @factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR,
-	ISymbolKind.ACTION, ISymbolKind.LAYER })
+	ISymbolKind.ACTION, ISymbolKind.LAYER, ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	public StatementFactory(final List<Integer> handles) {
@@ -45,6 +46,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
 		if ( keyword.equals(PRIMITIVE) ) { return new PrimitiveDescription(keyword, enclosing, children,
 			proto.hasScope(), proto.hasArgs(), element, facets); }
+		if ( DescriptionFactory.getProto(keyword).hasSequence() && !children.getChildren().isEmpty() ) { return new StatementWithChildrenDescription(
+			keyword, enclosing, children, proto.hasScope(), proto.hasArgs(), element, facets); }
 		return new StatementDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(), element,
 			facets);
 	}

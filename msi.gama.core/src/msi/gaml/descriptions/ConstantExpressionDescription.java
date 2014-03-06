@@ -58,4 +58,9 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 		return new ConstantExpressionDescription(b, Types.get(IType.BOOL));
 	}
 
+	@Override
+	public IType getDenotedType(final IDescription context) {
+		return context.getTypeNamed(expression.literalValue());
+	}
+
 }

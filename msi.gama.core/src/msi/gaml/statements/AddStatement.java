@@ -18,21 +18,24 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
+
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.IType;
+import msi.gaml.statements.AddStatement.AddValidator;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -42,59 +45,136 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = {
-	@facet(name = IKeyword.TO, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
-		IType.GEOMETRY }, optional = false, doc = {@doc("an expression that evaluates to a container")}),
-	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true, doc = {@doc("any expression to add in the container")}),
+	@facet(name = IKeyword.TO, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY }, optional = false, doc = { @doc("an expression that evaluates to a container") }),
+	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true, doc = { @doc("any expression to add in the container") }),
 	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.AT, type = IType.NONE, optional = true, doc = {@doc("position in the container of element added")}),
+	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true, doc = { @doc(deprecated = "Use 'node' instead") }),
+	@facet(name = IKeyword.NODE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.AT, type = IType.NONE, optional = true, doc = { @doc("position in the container of element added") }),
 	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true) }, omissible = IKeyword.ITEM)
 @doc(value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).", usages = {
-	@usage(value = "The new element can be added either at the end of the container or at a particular position.",
-		examples = {@example("add expr to: expr_container;    // Add at the end"),
-					@example("add expr at: expr to: expr_container;   // Add at position expr")}),
-	@usage(value = "Case of a list, the expression in the attribute at: should be an integer.", 
-		examples = {@example("let emptyList type: list <- [];"),
-					@example(value="add 0 at: 0 to: emptyList ;", var="emptyList", equals="[0]"),      // emptyList now equals [0]
-					@example(value="add 10 at: 0 to: emptyList ;", var="emptyList", equals="[10,0]"),   // emptyList now equals [10,0]
-					@example(value="add 25 at: 2 to: emptyList ;", var="emptyList", equals="[10,0,20]"),   // emptyList now equals [10,0,20]
-					@example(value="add 50 to: emptyList;", var="emptyList", equals="[10,0,20,50]")}),          // emptyList now equals [10,0,20,50]
+	@usage(value = "The new element can be added either at the end of the container or at a particular position.", examples = {@example(
+		"add expr to: expr_container;    // Add at the end"),
+		@example("add expr at: expr to: expr_container;   // Add at position expr") }),
+	@usage(value = "Case of a list, the expression in the attribute at: should be an integer.", examples = {@example(
+		"let emptyList type: list <- [];"), @example("add 0 at: 0 to: emptyList ;    // emptyList now equals [0]"), @example(
+		"add 10 at: 0 to: emptyList ;   // emptyList now equals [10,0]"),
+		@example("add 25 at: 2 to: emptyList ;   // emptyList now equals [10,0,20]"),
+		@example("add 50 to: emptyList;          // emptyList now equals [10,0,20,50]") }),
 	@usage(value = "Case of a matrix: this statement can not be used on matrix. Please refer to the statement put."),
-	@usage(value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. " +
-			"It is important to note that the behavior of the statement is slightly different, in particular in the use of the at attribute.", 
-		examples = {@example("let emptyMap type: map <- [];"),
-					@example(value="add \"val1\" at: \"x\" to: emptyMap", var="emptyList", equals="[x::val1]")}),  // emptyList now equals [x::val1]";
-	@usage(value = "If the at: attribute is ommitted, a pair null::expr_item will be added to the map. " +
-			"An important exception is the case where the is a pair expression: in this case the pair is added.",
-		examples = {@example(value="add \"val2\" to: emptyMap;", var="emptyList", equals= "[null::val2, x::val1]"),	// emptyList now equals [null::val2, x::val1]
-					@example(value="add 5::\"val4\" to: emptyMap; ", var="emptyList", equals= "[null::val2, x::val1]")}),   // emptyList now equals [null::val2, 5::val4, x::val1]
-	@usage(value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) " +
-			"will only modify the value associated with the given key.",
-		examples = {@example(value="add \"val3\" at: \"x\" to: emptyMap;", var="emptyMap", equals="[null::value2, 5::val4, x::val3]")})   // emptyList now equals [null::value2, 5::val4, x::val3]
-	})
+	@usage(value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. "
+		+ "It is important to note that the behavior of the statement is slightly different, in particular in the use of the at attribute.", examples = {@example(
+		"let emptyMap type: map <- [];"), @example("add \"val1\" at: \"x\" to: emptyMap;   // emptyList now equals [x::val1]" )}),
+	@usage(value = "If the at: attribute is ommitted, a pair expr_item::expr_item will be added to the map. "
+		+ "An important exception is the case where the is a pair expression: in this case the pair is added.", examples = {@example(
+		"add \"val2\" to: emptyMap;      // emptyList now equals [val2::val2, x::val1]"),
+		@example("add 5::\"val4\" to: emptyMap;   // emptyList now equals [val2::val2, 5::val4, x::val1]") }),
+	@usage(value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) "
+		+ "will only modify the value associated with the given key.", examples = { @example("add \"val3\" at: \"x\" to: emptyMap;   // emptyList now equals [value2::value2, 5::val4, x::val3]") }) })
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
+@validator(AddValidator.class)
 public class AddStatement extends AbstractContainerStatement {
 
-	private final IExpression weight;
+	public static class AddValidator extends ContainerValidator {
+
+		@Override
+		public void validateIndexAndContentTypes(final String keyword, final IDescription cd, final boolean all) {
+			IExpression item = cd.getFacets().getExpr(ITEM);
+			IExpression list = cd.getFacets().getExpr(TO);
+			IExpression whole = cd.getFacets().getExpr(ALL);
+			IExpression index = cd.getFacets().getExpr(AT);
+			if ( list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR ) {
+				final IType contentType = list.getType().getContentType();
+				final IType valueType = item.getType().getContentType();
+				final IType mapKeyType = list.getType().getKeyType();
+				final IType pairKeyType = item.getType().getKeyType();
+				if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
+					cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
+						") does not match with the type of the value of " + item.toGaml(), IGamlIssue.SHOULD_CAST,
+						IKeyword.ITEM, contentType.toString());
+				}
+				if ( mapKeyType != Types.NO_TYPE && !mapKeyType.isTranslatableInto(pairKeyType) ) {
+					cd.warning("The type of the index of " + list.toGaml() + " (" + mapKeyType +
+						") does not match with that of the key of " + item.toGaml() + " (" + pairKeyType + ")",
+						IGamlIssue.SHOULD_CAST, IKeyword.ITEM, mapKeyType.toString());
+				}
+			} else {
+				super.validateIndexAndContentTypes(keyword, cd, all);
+			}
+		}
+
+	}
+
+	// private final IExpression weight;
 
 	public AddStatement(final IDescription desc) {
 		super(desc);
-		weight = getFacet(IKeyword.WEIGHT);
+		// weight = getFacet(IKeyword.WEIGHT);
 		setName("add to " + list.toGaml());
 	}
 
 	@Override
-	protected void apply(final IScope scope, final Object toAdd, final Object position,
-		final Boolean whole, final IContainer container) throws GamaRuntimeException {
-		// AD 29/02/13 : Normally taken in charge by the parser, now.
-		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
-		// list.toGaml(), true); }
-		Object param = weight == null ? null : weight.value(scope);
-		if ( position != null && !container.checkBounds(position, true) ) { throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + list.toGaml()); }
-		container.add(scope, position, toAdd, param, whole, true);
-
+	protected void apply(final IScope scope, final Object object, final Object position,
+		final IContainer.Modifiable container) throws GamaRuntimeException {
+		if ( position != null && !container.checkBounds(scope, position, true) ) { throw GamaRuntimeException
+			.warning("Index " + position + " out of bounds of " + list.toGaml()); }
+		if ( !asAll ) {
+			// Object toAdd = container.buildValue(scope, object, containerType);
+			if ( position == null ) {
+				container.addValue(scope, object);
+			} else {
+				container.addValueAtIndex(scope, position, object);
+			}
+		} else {
+			if ( object instanceof IContainer ) {
+				// IContainer toAdd = container.buildValues(scope, (IContainer) object, containerType);
+				container.addVallues(scope, (IContainer) object);
+			} else {
+				// Object toAdd = container.buildValue(scope, object, containerType);
+				container.setAllValues(scope, object);
+			}
+		}
 	}
+
+	/**
+	 * @param object
+	 * @param position
+	 * @param container
+	 * @return
+	 */
+	// protected Object buildObjectToAdd(final IScope scope, final Object object, final Object position,
+	// final Modifiable container) {
+	// // Case of list and matrix: the object is casted to the content type of the container
+	// // if ( container instanceof IList || container instanceof IMatrix ) { return castToContentType(scope, object);
+	// // }
+	// // if ( container instanceof GamaMap ) {
+	// // if ( position == null ) {
+	// // if ( object instanceof GamaPair ) { return new GamaPair(castToKeyType(scope, ((GamaPair) object).key),
+	// // castToContentType(scope, ((GamaPair) object).value)); }
+	// // Object value = castToContentType(scope, object);
+	// // Object key = castToKeyType(scope, value);
+	// // return new GamaPair(key, value);
+	// // } else {
+	// // Object value = castToContentType(scope, object);
+	// // Object key = castToKeyType(scope, position);
+	// // return new GamaPair(key, value);
+	// // }
+	// // }
+	// if ( container instanceof IGraph ) {
+	// if ( object instanceof NodeToAdd ) { return new NodeToAdd(
+	// castToKeyType(scope, ((NodeToAdd) object).object), ((NodeToAdd) object).weight); }
+	// if ( object instanceof EdgeToAdd ) { return new EdgeToAdd(
+	// castToKeyType(scope, ((EdgeToAdd) object).source), castToKeyType(scope, ((EdgeToAdd) object).target),
+	// castToContentType(scope, ((EdgeToAdd) object).object), ((EdgeToAdd) object).weight); }
+	// }
+	// Double weight = this.weight == null ? null : Cast.asFloat(scope, this.weight.value(scope));
+	// boolean isNode = getFacet(IKeyword.VERTEX) != null;
+	// if ( isNode ) { return new NodeToAdd(castToKeyType(scope, object), weight); }
+	// if ( object instanceof GamaPair ) { return new EdgeToAdd(castToKeyType(scope, ((GamaPair) object).key),
+	// castToKeyType(scope, ((GamaPair) object).value), null, weight); }
+	// return new EdgeToAdd(null, null, castToContentType(scope, object), weight);
+	// }
 
 }

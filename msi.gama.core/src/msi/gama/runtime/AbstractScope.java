@@ -8,6 +8,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
@@ -42,6 +43,8 @@ public abstract class AbstractScope implements IScope {
 	private Object each = null;
 	private final int number = ScopeNumber++;
 	private IStatement currentStatement;
+	private int tabLevel = -1;
+	private boolean trace;
 
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
@@ -56,6 +59,11 @@ public abstract class AbstractScope implements IScope {
 			simulation = null;
 		}
 		statements.push(new NullRecord());
+	}
+
+	@Override
+	public void setTrace(final boolean t) {
+		trace = t;
 	}
 
 	final class NullRecord implements IRecord {
@@ -258,8 +266,29 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void push(final IStatement statement) {
-		currentStatement = statement;
+		tabLevel++;
+		setStatement(statement);
 		statements.push(new Record(statements.peek()));
+	}
+
+	@Override
+	public void setStatement(final IStatement statement) {
+		currentStatement = statement;
+		if ( trace ) {
+			writeTrace();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void writeTrace() {
+		StringBuilder sb = new StringBuilder();
+		for ( int i = 0; i < tabLevel; i++ ) {
+			sb.append('\t');
+		}
+		sb.append(currentStatement.getTrace(this));
+		GuiUtils.informConsole(sb.toString());
 	}
 
 	/**
@@ -294,6 +323,9 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void pop(final IStatement statement) {
 		statements.pop();
+		if ( trace ) {
+			tabLevel--;
+		}
 	}
 
 	@Override
@@ -332,32 +364,6 @@ public abstract class AbstractScope implements IScope {
 		return true;
 
 	}
-
-	//
-	// /**
-	// * Method execute()
-	// * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement.WithArgs, msi.gama.metamodel.agent.IAgent,
-	// * msi.gaml.statements.Arguments)
-	// */
-	// @Override
-	// public Object execute(final WithArgs statement, final IAgent agent, final Arguments args) {
-	// if ( interrupted() ) { return INTERRUPTED; }
-	// Object result;
-	// final boolean pushed = push(agent);
-	// try {
-	// if ( args != null ) {
-	// args.setCaller(agent);
-	// statement.setRuntimeArgs(args);
-	// }
-	// result = statement.executeOn(this);
-	// } finally {
-	// if ( pushed ) {
-	// pop(agent);
-	// }
-	// }
-	// return result;
-	//
-	// }
 
 	@Override
 	public void stackArguments(final Arguments actualArgs) {
@@ -531,7 +537,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, statements.peek().get(string), null, Types.NO_TYPE);
+		return Types.get(type).cast(this, statements.peek().get(string), null, Types.NO_TYPE, Types.NO_TYPE);
 	}
 
 	@Override

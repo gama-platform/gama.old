@@ -37,8 +37,7 @@ import msi.gama.util.IContainer;
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override
-	public Boolean cast(final IScope scope, final Object obj, final Object param, IType contentsType)
-		throws GamaRuntimeException {
+	public Boolean cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 

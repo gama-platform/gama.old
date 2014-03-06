@@ -18,12 +18,16 @@
  */
 package msi.gaml.descriptions;
 
+import java.util.*;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 public class ExperimentDescription extends SpeciesDescription {
+
+	private Map<String, VariableDescription> parameters;
 
 	// final ModelDescription model;
 
@@ -46,6 +50,11 @@ public class ExperimentDescription extends SpeciesDescription {
 				var.setType(t);
 			}
 			super.addVariable(var);
+		} else {
+			if ( parameters == null ) {
+				parameters = new LinkedHashMap();
+			}
+			parameters.put(var.getName(), var);
 		}
 	}
 
@@ -58,6 +67,76 @@ public class ExperimentDescription extends SpeciesDescription {
 	public boolean isExperiment() {
 		return true;
 	}
+
+	@Override
+	public List<IDescription> getChildren() {
+		List<IDescription> result = super.getChildren();
+		if ( parameters != null ) {
+			result.addAll(parameters.values());
+		}
+		return result;
+	}
+
+	// @Override
+	// protected void sortVars() {
+	// super.sortVars();
+	// reinsertPathVariables();
+	// }
+
+	/**
+	 * @param projectPath
+	 */
+	// private void reinsertPathVariables() {
+	// String pp = ExperimentAgent.PROJECT_PATH;
+	// String mp = ExperimentAgent.MODEL_PATH;
+	// if ( variables == null ) { return; }
+	// VariableDescription vp = variables.remove(ExperimentAgent.PROJECT_PATH);
+	// VariableDescription vm = variables.remove(ExperimentAgent.MODEL_PATH);
+	// Map<String, VariableDescription> temp = new LinkedHashMap();
+	// if ( vp != null ) {
+	// temp.put(ExperimentAgent.MODEL_PATH, vp);
+	// }
+	// if ( vm != null ) {
+	// temp.put(ExperimentAgent.MODEL_PATH, vm);
+	// }
+	// temp.putAll(variables);
+	// variables = temp;
+	// }
+
+	@Override
+	public Map<String, VariableDescription> getVariables() {
+		if ( variables == null ) {
+			variables = new LinkedHashMap<String, VariableDescription>();
+			// Trick to have these two variables always at the beginning.
+			variables.put(ExperimentAgent.PROJECT_PATH, null);
+			variables.put(ExperimentAgent.MODEL_PATH, null);
+		}
+		return variables;
+	}
+
+	// @Override
+	// public void resortVarName(final VariableDescription var) {
+	// var.usedVariablesIn(getVariables());
+	// var.expandDependencies(new GamaList());
+	// sortedVariableNames.remove(var.getName());
+	// int index = 0;
+	// for ( int j = 0, n = sortedVariableNames.size(); j < n; j++ ) {
+	// final VariableDescription vd = getVariable(sortedVariableNames.get(j));
+	// if ( var.getDependencies().contains(vd) ) {
+	// index = j;
+	// };
+	// }
+	// if ( index == sortedVariableNames.size() ) {
+	// sortedVariableNames.add(var.getName());
+	// } else {
+	// sortedVariableNames.add(index + 1, var.getName());
+	// }
+	// // FIXME March 2013: Hack to have the paths always at the beginning
+	// // TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
+	// // TO THE EXPERIMENTATOR
+	//
+	// reinsertPathVariables();
+	// }
 	//
 	// @Override
 	// public void inheritFromParent() {

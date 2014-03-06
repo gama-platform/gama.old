@@ -2,7 +2,6 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.*;
@@ -10,7 +9,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
-
+import org.opengis.referencing.FactoryException;
 import com.vividsolutions.jts.geom.*;
 
 /*
@@ -28,8 +27,8 @@ import com.vividsolutions.jts.geom.*;
  * 18-July-2013:
  * Add load extension library for SQLITE case.
  * 15-Jan-2014:
- *    Add datetime type.
- *    Add NULL VALUE 
+ * Add datetime type.
+ * Add NULL VALUE
  * Last Modified: 15-Jan-2014
  */
 public abstract class SqlConnection {
@@ -46,14 +45,13 @@ public abstract class SqlConnection {
 	public static final String NVARCHAR = "NVARCHAR";
 	public static final String TEXT = "TEXT";
 	public static final String BLOB = "BLOB";
-	public static final String TIMESTAMP="TIMESTAMP"; //MSSQL (number);Postgres,MySQL ('YYYY-MM-DD HH:MM:SS') 
-	public static final String DATETIME="DATETIME";  //MSSQL,Postgres, MySQL, SQLite ( "YYYY-MM-DD HH:MM:SS.SSS")
-	public static final String SMALLDATETIME="SMALLDATETIME"; //MSSQL
-	public static final String DATE="DATE"; //MSSQL,Postgres, MySQL, SQlite
-	public static final String YEAR="YEAR"; //Postgres, MySQL(yyyy)
-	public static final String TIME="TIME"; // MySQL ('00:00:00')	
-	public static final String NULLVALUE= "NULL";
-	
+	public static final String TIMESTAMP = "TIMESTAMP"; // MSSQL (number);Postgres,MySQL ('YYYY-MM-DD HH:MM:SS')
+	public static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL, SQLite ( "YYYY-MM-DD HH:MM:SS.SSS")
+	public static final String SMALLDATETIME = "SMALLDATETIME"; // MSSQL
+	public static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
+	public static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
+	public static final String TIME = "TIME"; // MySQL ('00:00:00')
+	public static final String NULLVALUE = "NULL";
 
 	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 	// static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -80,23 +78,52 @@ public abstract class SqlConnection {
 	public void setGis(final Projection gis) {
 		this.gis = gis;
 	}
+
 	public IProjection getGis() {
 		return this.gis;
 	}
+
 	public boolean getTransform() {
 		return transformed;
 	}
+
 	protected IProjection getSavingGisProjection(final IScope scope) {
 		Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		String crs = (String) params.get("crs");
-		if ( crs != null ) { return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs); }
+		if ( crs != null ) {
+			try {
+				return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs);
+			} catch (FactoryException e) {
+
+				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + crs +
+					" code. GAMA may be unable to save any GIS data", scope);
+
+			}
+		}
 		String srid = (String) params.get("srid");
 		if ( srid != null ) {
-			return scope.getSimulationScope().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid), longitudeFirst);
-			//return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
+			try {
+				return scope.getSimulationScope().getProjectionFactory()
+					.forSavingWith(Cast.asInt(scope, srid), longitudeFirst);
+			} catch (FactoryException e) {
+
+				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + srid +
+					" code. GAMA may be unable to save any GIS data", scope);
+
+			}
+			// return scope.getSimulationScope().getProjectionFactory().forSavingWith(srid, longitudeFirst);
 		} else {
-			//return scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer) null);
-			return scope.getSimulationScope().getProjectionFactory().forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
+			// return scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer) null);
+			try {
+				return scope.getSimulationScope().getProjectionFactory()
+					.forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
+			} catch (FactoryException e) {
+
+				throw GamaRuntimeException
+					.error("No factory found for decoding the EPSG " + GamaPreferences.LIB_OUTPUT_CRS.getValue() +
+						" code. GAMA may be unable to save any GIS data", scope);
+
+			}
 		}
 
 	}
@@ -257,28 +284,28 @@ public abstract class SqlConnection {
 			/**
 			 * AD: Added to transform Geometries
 			 */
-//			if ( columns.contains(GEOMETRYTYPE) && transformed) {
-//			if ( gis == null ) {
-//				// we have at least one geometry type and we compute the envelope if no gis is present
-//				// Envelope env = getBounds(repRequest);
-//				Envelope env = getBounds(result);
-//				// we now compute the GisUtils instance for our case (based on params and env)
-//				gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-//			}
-//			// and we transform the geometries using its projection
-//			// repRequest = SqlUtils.transform(gis, repRequest, false);
-//			result = SqlUtils.transform(gis, result, false);
-//		}
-		
-		if ( columns.contains(GEOMETRYTYPE) && transformed ) {
-			gis=scope.getSimulationScope().getProjectionFactory().getWorld();
-			if ( gis != null ) // create envelope for environment
-			{
-				Envelope env = scope.getSimulationScope().getEnvelope();
-				gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-				result = SqlUtils.transform(gis, result, false);	
+			// if ( columns.contains(GEOMETRYTYPE) && transformed) {
+			// if ( gis == null ) {
+			// // we have at least one geometry type and we compute the envelope if no gis is present
+			// // Envelope env = getBounds(repRequest);
+			// Envelope env = getBounds(result);
+			// // we now compute the GisUtils instance for our case (based on params and env)
+			// gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+			// }
+			// // and we transform the geometries using its projection
+			// // repRequest = SqlUtils.transform(gis, repRequest, false);
+			// result = SqlUtils.transform(gis, result, false);
+			// }
+
+			if ( columns.contains(GEOMETRYTYPE) && transformed ) {
+				gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+				if ( gis != null ) // create envelope for environment
+				{
+					Envelope env = scope.getSimulationScope().getEnvelope();
+					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+					result = SqlUtils.transform(gis, result, false);
+				}
 			}
-		}
 			/**
 			 * AD
 			 */
@@ -295,7 +322,7 @@ public abstract class SqlConnection {
 
 			rs.close();
 		} catch (SQLException e) {
-			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
 		// return repRequest;
 		return result;
@@ -524,7 +551,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 *  Insert a reccord into table
+	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
 		final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
@@ -535,7 +562,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 *  Insert a reccord into table
+	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> values) throws GamaRuntimeException {
@@ -567,7 +594,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 *  Insert a reccord into table
+	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values)
 		throws GamaRuntimeException {
@@ -584,7 +611,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 *  Insert a reccord into table
+	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values,
 		final Boolean transformed) throws GamaRuntimeException {
@@ -639,24 +666,24 @@ public abstract class SqlConnection {
 			/**
 			 * AD: Added to transform Geometries
 			 */
-//			if ( columns.contains(GEOMETRYTYPE) && transformed) {
-//				if ( gis == null ) {
-//					// we have at least one geometry type and we compute the envelope if no gis is present
-//					// Envelope env = getBounds(repRequest);
-//					Envelope env = getBounds(result);
-//					// we now compute the GisUtils instance for our case (based on params and env)
-//					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-//				}
-//				// and we transform the geometries using its projection
-//				// repRequest = SqlUtils.transform(gis, repRequest, false);
-//				result = SqlUtils.transform(gis, result, false);
-//			}
+			// if ( columns.contains(GEOMETRYTYPE) && transformed) {
+			// if ( gis == null ) {
+			// // we have at least one geometry type and we compute the envelope if no gis is present
+			// // Envelope env = getBounds(repRequest);
+			// Envelope env = getBounds(result);
+			// // we now compute the GisUtils instance for our case (based on params and env)
+			// gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+			// }
+			// // and we transform the geometries using its projection
+			// // repRequest = SqlUtils.transform(gis, repRequest, false);
+			// result = SqlUtils.transform(gis, result, false);
+			// }
 			if ( columns.contains(GEOMETRYTYPE) && transformed ) {
-				gis=scope.getSimulationScope().getProjectionFactory().getWorld();
+				gis = scope.getSimulationScope().getProjectionFactory().getWorld();
 				if ( gis != null ) {
 					Envelope env = scope.getSimulationScope().getEnvelope();
 					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
-					result = SqlUtils.transform(gis, result, false);	
+					result = SqlUtils.transform(gis, result, false);
 				}
 			}
 

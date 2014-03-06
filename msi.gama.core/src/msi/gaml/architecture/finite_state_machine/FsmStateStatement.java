@@ -98,8 +98,8 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		private void assertNoOther(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
-			if ( sd == null ) { return; }
-			for ( final IDescription child : sd.getChildren() ) {
+			if ( !(sd instanceof SpeciesDescription) ) { return; }
+			for ( final IDescription child : ((SpeciesDescription) sd).getBehaviors() ) {
 				if ( child.equals(desc) || !child.getKeyword().equals(STATE) ) {
 					continue;
 				}
@@ -113,8 +113,8 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		private void assertAtLeastOne(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
-			if ( sd == null ) { return; }
-			for ( final IDescription child : sd.getChildren() ) {
+			if ( !(sd instanceof SpeciesDescription) ) { return; }
+			for ( final IDescription child : ((SpeciesDescription) sd).getBehaviors() ) {
 				String s = child.getKeyword();
 				if ( s.equals(STATE) || s.equals(USER_PANEL) ) {
 					final IExpression expr = child.getFacets().getExpr(facet);

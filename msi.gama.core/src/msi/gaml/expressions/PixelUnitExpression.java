@@ -25,7 +25,7 @@ import msi.gaml.types.*;
 public class PixelUnitExpression extends ConstantExpression {
 
 	public PixelUnitExpression() {
-		super("px", Types.get(IType.FLOAT), Types.get(IType.FLOAT));
+		super("px", Types.get(IType.FLOAT));
 	}
 
 	@Override

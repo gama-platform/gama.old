@@ -7,6 +7,8 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.util.GAML;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -73,6 +75,12 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		if ( s.equals(IKeyword.TRUE) ) { return ConstantExpressionDescription.create(true); }
 		if ( StringUtils.isGamaString(s) ) { return LabelExpressionDescription.create(StringUtils.toJavaString(s)); }
 		return new StringBasedExpressionDescription(string);
+	}
+
+	@Override
+	public IType getDenotedType(final IDescription context) {
+		if ( GAML.getExpressionFactory().isInitialized() ) { return super.getDenotedType(context); }
+		return context.getTypeNamed(string);
 	}
 
 }

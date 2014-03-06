@@ -21,7 +21,7 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -141,15 +141,9 @@ public class ModelDescription extends SpeciesDescription {
 			experiments.put(s, (ExperimentDescription) child);
 			s = child.getFacets().getLabel(TITLE);
 			titledExperiments.put(s, (ExperimentDescription) child);
-			// GuiUtils.debug("Adding experiment" + s + " to " + this + "...");
+			GuiUtils.debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
+				"...");
 			addSpeciesType((TypeDescription) child);
-			// return child;
-			// FIXME: Experiments are not disposed ?
-			// If the experiment is not the "default" one, we return the child directly without
-			// adding it to the children
-			// if ( !DEFAULT_EXP.equals(s) ) { return child; }
-			// FIXME Verify this
-			children.add(child);
 		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
@@ -201,7 +195,14 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentTitles() {
-		return new LinkedHashSet(titledExperiments.keySet());
+		Set<String> strings = new LinkedHashSet();
+		for ( String s : titledExperiments.keySet() ) {
+			ExperimentDescription ed = titledExperiments.get(s);
+			if ( ed.getOriginName().equals(getName()) ) {
+				strings.add(s);
+			}
+		}
+		return strings;
 	}
 
 	@Override
@@ -215,6 +216,13 @@ public class ModelDescription extends SpeciesDescription {
 			desc = titledExperiments.get(name);
 		}
 		return desc;
+	}
+
+	@Override
+	public List<IDescription> getChildren() {
+		List<IDescription> result = super.getChildren();
+		result.addAll(experiments.values());
+		return result;
 	}
 
 	@Override

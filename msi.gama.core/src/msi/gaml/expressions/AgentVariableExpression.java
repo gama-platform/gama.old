@@ -25,9 +25,9 @@ import msi.gaml.types.IType;
 
 public class AgentVariableExpression extends VariableExpression {
 
-	protected AgentVariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
-		final boolean notModifiable, final IDescription def) {
-		super(n, type, contentType, keyType, notModifiable, def);
+	protected AgentVariableExpression(final String n, final IType type, final boolean notModifiable,
+		final IDescription def) {
+		super(n, type, notModifiable, def);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class AgentVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Type " + type.toString() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		return "Type " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 }

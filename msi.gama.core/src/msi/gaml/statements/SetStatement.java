@@ -18,7 +18,7 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -29,10 +29,11 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.SetStatement.AssignmentValidator;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -50,8 +51,6 @@ import msi.gaml.types.*;
 @validator(AssignmentValidator.class)
 public class SetStatement extends AbstractStatement {
 
-	
-
 	public static class AssignmentValidator implements IDescriptionValidator {
 
 		/**
@@ -60,28 +59,17 @@ public class SetStatement extends AbstractStatement {
 		 */
 		@Override
 		public void validate(final IDescription cd) {
-
-			final IExpression expr = cd.getFacets().getExpr(NAME);
+			final IExpressionDescription receiver = cd.getFacets().get(NAME);
+			String name = cd.getName();
+			final IExpression expr = receiver.getExpression();
 			if ( !(expr instanceof IVarExpression) ) {
 				cd.error("The expression " + cd.getFacets().getLabel(NAME) + " is not a reference to a variable ", NAME);
 				return;
 			}
-			final IExpression value = cd.getFacets().getExpr(VALUE);
-			if ( value != null ) {
-				IType tv = value.getType();
-				if ( tv != Types.NO_TYPE ) {
-					IType te = expr.getType();
-					if ( !tv.isTranslatableInto(te) ) {
-						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
-							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
-							.getType().toString());
-					} else if ( Types.intFloatCase(tv, te) ) {
-						// AD: 6/9/13 special case for int and float (see Issue 590)
-						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
-							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
-							.getType().toString());
-					}
-				}
+			final IExpressionDescription assigned = cd.getFacets().get(VALUE);
+			if ( assigned != null ) {
+				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getType(), /* expr.getContentType(), */
+					assigned);
 			}
 
 			// AD 19/1/13: test of the constants

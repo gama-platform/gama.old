@@ -50,8 +50,6 @@ import msi.gaml.types.*;
 @validator(ActionValidator.class)
 public class ActionStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	
-
 	public static class ActionValidator implements IDescriptionValidator {
 
 		/**
@@ -84,15 +82,16 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 				}
 				if ( ie.equals(IExpressionFactory.NIL_EXPR) ) {
 					if ( at.getDefault() != null ) {
-						ret.error("'nil' is not an acceptable " + at);
+						ret.error("'nil' is not an acceptable return value. A valid " + at + " is expected instead.",
+							IGamlIssue.WRONG_TYPE, VALUE);
 					} else {
 						continue;
 					}
 				} else {
 					final IType rt = ie.getType();
 					if ( !rt.isTranslatableInto(at) ) {
-						ret.error("Cannot convert from " + rt + " to " + at, IGamlIssue.SHOULD_CAST, VALUE,
-							at.toString());
+						ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not " + rt +
+							")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());
 					}
 				}
 			}

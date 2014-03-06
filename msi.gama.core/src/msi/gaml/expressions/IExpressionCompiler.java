@@ -33,8 +33,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IExpressionCompiler<T> {
 
-	public static final String INTERNAL_POINT = "<->";
-	public static final String INTERNAL_Z = "add_z";
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
 		IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
 		IKeyword.USER_LOCATION);
@@ -48,16 +46,23 @@ public interface IExpressionCompiler<T> {
 	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
 		IDescription context);
 
-	
-	// hqnghi 11/Oct/13 two method for compiling models directly from files 
-	public abstract ModelDescription createModelDescriptionFromFile(
-			String filepath);
+	// hqnghi 11/Oct/13 two method for compiling models directly from files
+	public abstract ModelDescription createModelDescriptionFromFile(String filepath);
+
 	public abstract IModel createModelFromFile(String filepath);
-	//end-hqnghi
-	
+
+	// end-hqnghi
+
 	/*
 	 * Remove context-dependant information from the parser
 	 */
 	public abstract void reset();
+
+	/**
+	 * @param context
+	 * @param facet
+	 * @return
+	 */
+	public abstract EObject getFacetExpression(IDescription context, EObject facet);
 
 }

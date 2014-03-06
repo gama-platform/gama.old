@@ -42,7 +42,7 @@ public class SimulationPopulation extends GamaPopulation {
 		getHost().setSimulation(world);
 		if ( scope.interrupted() ) { return null; }
 		GuiUtils.waitStatus("Instantiating agents");
-		createVariablesFor(world.getScope(), this, initialValues);
+		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
 			world.schedule();
 		}

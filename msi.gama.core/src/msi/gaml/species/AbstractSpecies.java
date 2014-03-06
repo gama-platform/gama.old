@@ -34,6 +34,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
+import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -62,8 +63,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Iterable<IAgent> iterable(final IScope scope) {
-		return getPopulation(scope);
+	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
+		return getPopulation(scope).iterable(scope);
 	}
 
 	@Override
@@ -83,8 +84,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList listValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).listValue(scope);
+	public IList listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		return getPopulation(scope).listValue(scope, contentsType);
 	}
 
 	@Override
@@ -93,8 +94,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
-		final IList<IAgent> agents = listValue(scope);
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+		throws GamaRuntimeException {
+		final IList<IAgent> agents = listValue(scope, contentsType);
 		// Default behavior : Returns a map containing the names of agents as keys and the agents themselves as values
 		final GamaMap result = new GamaMap();
 		for ( final IAgent agent : agents.iterable(scope) ) {
@@ -289,6 +291,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return new GamaList<String>(aspects.keySet());
 	}
 
+	@Override
 	public IList<IStatement> getBehaviors() {
 		return behaviors;
 	}
@@ -311,9 +314,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			} else if ( s instanceof ActionStatement ) {
 				if ( !s.getDescription().isBuiltIn() ) {
 					String name = s.getName();
-					if ( name.equals("__init__") ) {
+					if ( name.equals(initActionName) ) {
 						isInitOverriden = true;
-					} else if ( name.equals("__step__") ) {
+					} else if ( name.equals(stepActionName) ) {
 						isStepOverriden = true;
 					}
 				}
@@ -423,13 +426,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IAgent first(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).first(scope);
+	public IAgent firstValue(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).firstValue(scope);
 	}
 
 	@Override
-	public IAgent last(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).last(scope);
+	public IAgent lastValue(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).lastValue(scope);
 	}
 
 	@Override
@@ -448,40 +451,43 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IAgent any(final IScope scope) {
-		return getPopulation(scope).any(scope);
+	public IAgent anyValue(final IScope scope) {
+		return getPopulation(scope).anyValue(scope);
+	}
+
+	//
+	// @Override
+	// public boolean checkBounds(final Integer index, final boolean forAdding) {
+	// return false;
+	// }
+
+	// @Override
+	// public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean
+	// all,
+	// final boolean add) throws GamaRuntimeException {
+	// // NOT ALLOWED
+	// }
+	//
+	// @Override
+	// public void remove(final IScope scope, final Object index, final Object value, final boolean all)
+	// throws GamaRuntimeException {
+	// // NOT ALLOWED
+	// }
+
+	@Override
+	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		return getPopulation(scope).matrixValue(scope, contentsType);
 	}
 
 	@Override
-	public boolean checkBounds(final Integer index, final boolean forAdding) {
-		return false;
-	}
-
-	@Override
-	public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean all,
-		final boolean add) throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void remove(final IScope scope, final Object index, final Object value, final boolean all)
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
 		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope);
-	}
-
-	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, preferredSize);
+		return getPopulation(scope).matrixValue(scope, contentsType, preferredSize);
 	}
 
 	@Override
 	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
+		return getPopulation(scope).getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -493,5 +499,68 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return Collections.singleton(getPopulation(scope));
 	}
+
+	/**
+	 * Method add()
+	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	// @Override
+	// public void add(final IScope scope, final IAgent value) {}
+
+	/**
+	 * Method add()
+	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
+	 */
+	// @Override
+	// public void add(final IScope scope, final Integer index, final IAgent value) {}
+
+	/**
+	 * Method put()
+	 * @see msi.gama.util.IContainer#put(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
+	 */
+	// @Override
+	// public void put(final IScope scope, final Integer index, final IAgent value) {}
+
+	/**
+	 * Method addAll()
+	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
+	 */
+	// @Override
+	// public void addAll(final IScope scope, final IContainer values) {}
+
+	/**
+	 * Method setAll()
+	 * @see msi.gama.util.IContainer#setAll(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	// @Override
+	// public void setAll(final IScope scope, final IAgent value) {}
+
+	/**
+	 * Method remove()
+	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	// @Override
+	// public void remove(final IScope scope, final Object value) {}
+
+	/**
+	 * Method removeAt()
+	 * @see msi.gama.util.IContainer#removeAt(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	// @Override
+	// public void removeAt(final IScope scope, final Integer index) {}
+
+	/**
+	 * Method removeAll()
+	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
+	 */
+	// @Override
+	// public void removeAll(final IScope scope, final IContainer values) {}
+
+	/**
+	 * Method removeAll()
+	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, java.lang.Object)
+	 */
+	// @Override
+	// public void removeAll(final IScope scope, final Object value) {}
 
 }

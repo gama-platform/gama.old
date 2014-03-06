@@ -56,7 +56,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
 	String varName, title, category, unitLabel;
-	IType type = Types.NO_TYPE, contentType = Types.NO_TYPE;
+	IType type = Types.NO_TYPE/* , contentType = Types.NO_TYPE */;
 	boolean isEditable/* , isLabel */;
 	boolean canBeNull;
 	final IExpression init, among, min, max, step;
@@ -66,7 +66,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		VariableDescription desc = (VariableDescription) sd;
 		setName(desc.getFacets().getLabel(IKeyword.VAR));
 		type = desc.getType();
-		contentType = desc.getContentType();
+		// contentType = desc.getContentType();
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
 		ModelDescription wd = desc.getModelDescription();
@@ -453,9 +453,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 * Method getContentType()
 	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
 	 */
-	@Override
-	public IType getContentType() {
-		return contentType;
-	}
+	// @Override
+	// public IType getContentType() {
+	// return contentType;
+	// }
 
 }

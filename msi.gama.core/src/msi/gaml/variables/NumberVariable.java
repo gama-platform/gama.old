@@ -20,6 +20,7 @@ package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -35,10 +36,11 @@ import msi.gaml.types.IType;
 /**
  * The Class IntVariable.
  */
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.INT, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),

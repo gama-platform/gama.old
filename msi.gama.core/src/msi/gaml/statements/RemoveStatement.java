@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,6 +19,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -39,9 +40,11 @@ import msi.gaml.types.IType;
 
 @facets(value = {
 	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.FROM, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
-		IType.GEOMETRY }, optional = false),
+	@facet(name = IKeyword.FROM, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY }, optional = false),
 	@facet(name = IKeyword.INDEX, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true, doc = { @doc(deprecated = "Use 'node' instead") }),
+	@facet(name = IKeyword.NODE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.KEY, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
@@ -55,13 +58,48 @@ public class RemoveStatement extends AbstractContainerStatement {
 
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
-		final Boolean whole, final IContainer container) throws GamaRuntimeException {
-		// AD 29/02/13 : Normally taken in charge by the parser, now.
-		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
-		// list.toGaml(), true); }
-		if ( position != null ) {
-			if ( !container.checkBounds(position, false) ) { throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + item.toGaml()); }
+		final IContainer.Modifiable container) throws GamaRuntimeException {
+		// if ( position != null ) {
+		// if ( !container.checkBounds(position, false) ) { throw GamaRuntimeException.warning("Index " + position +
+		// " out of bounds of " + item.toGaml()); }
+		// }
+
+		if ( position == null ) {
+			// If key/at/index/node is not mentioned
+			if ( asAll ) {
+				// if we "remove all"
+				if ( asAllValues ) {
+					// if a container is passed
+					container.removeValues(scope, (IContainer) object);
+				} else {
+					// otherwise if it is a simple value
+					container.removeAllOccurencesOfValue(scope, object);
+				}
+			} else {
+				// if it is a simple remove
+				container.removeValue(scope, object);
+			}
+		} else {
+			if ( asAllIndexes ) {
+				container.removeIndexes(scope, (IContainer) position);
+			} else {
+				// If a key/index/at/node is mentioned
+				// simply remove the index.
+				container.removeIndex(scope, position);
+			}
 		}
-		container.remove(scope, position, object, whole);
+
+	}
+
+	@Override
+	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+		return this.item.value(scope);
+	}
+
+	@Override
+	protected Object buildIndex(final IScope scope, final IContainer.Modifiable container) {
+		Object o = this.index.value(scope);
+		// if ( asAllIndexes && o instanceof IContainer ) { return ((IContainer) o).reverse(scope); }
+		return o;
 	}
 }

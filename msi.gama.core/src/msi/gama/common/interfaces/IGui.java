@@ -43,7 +43,7 @@ public interface IGui {
 	public static final int INFORM = 2;
 	public static final int NEUTRAL = 3;
 	public static final String PLUGIN_ID = "msi.gama.application";
-	public static final Map<String, IDisplayCreator> displays = new HashMap();
+	public static final Map<String, IDisplayCreator> DISPLAYS = new HashMap();
 
 	void setStatus(String error, int code);
 

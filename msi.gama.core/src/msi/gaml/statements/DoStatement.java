@@ -33,7 +33,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.DoStatement.DoValidator;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -49,8 +49,6 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)
 @validator(DoValidator.class)
 public class DoStatement extends AbstractStatementSequence implements IStatement.WithArgs {
-
-	
 
 	public static class DoValidator implements IDescriptionValidator {
 
@@ -116,32 +114,32 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	@Override
 	public void setRuntimeArgs(final Arguments args) {}
 
-	@Override
-	public IType getType() {
-		final StatementDescription executer = description.getSpeciesContext().getAction(name);
-		if ( executer != null ) {
-			return executer.getType();
-		} else if ( function != null ) { return function.getType(); }
-		return Types.NO_TYPE;
-	}
+	// @Override
+	// public IType getType() {
+	// final StatementDescription executer = description.getSpeciesContext().getAction(name);
+	// if ( executer != null ) {
+	// return executer.getType();
+	// } else if ( function != null ) { return function.getType(); }
+	// return Types.NO_TYPE;
+	// }
 
-	@Override
-	public IType getContentType() {
-		final StatementDescription executer = description.getSpeciesContext().getAction(name);
-		if ( executer != null ) {
-			return executer.getContentType();
-		} else if ( function != null ) { return function.getContentType(); }
-		return Types.NO_TYPE;
-	}
-
-	@Override
-	public IType getKeyType() {
-		final StatementDescription executer = description.getSpeciesContext().getAction(name);
-		if ( executer != null ) {
-			return executer.getKeyType();
-		} else if ( function != null ) { return function.getKeyType(); }
-		return Types.NO_TYPE;
-	}
+	// @Override
+	// public IType getContentType() {
+	// final StatementDescription executer = description.getSpeciesContext().getAction(name);
+	// if ( executer != null ) {
+	// return executer.getContentType();
+	// } else if ( function != null ) { return function.getContentType(); }
+	// return Types.NO_TYPE;
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// final StatementDescription executer = description.getSpeciesContext().getAction(name);
+	// if ( executer != null ) {
+	// return executer.getKeyType();
+	// } else if ( function != null ) { return function.getKeyType(); }
+	// return Types.NO_TYPE;
+	// }
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {

@@ -6,6 +6,7 @@ package msi.gaml.descriptions;
 
 import java.util.Set;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -38,5 +39,7 @@ public interface IExpressionDescription {
 	public Set<String> getStrings(IDescription context, boolean skills);
 
 	public abstract IExpressionDescription cleanCopy();
+
+	public abstract IType getDenotedType(IDescription context);
 
 }

@@ -16,7 +16,7 @@
  */
 package msi.gama.metamodel.shape;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gaml.types.GamaGeometryType;
 import org.opengis.geometry.MismatchedDimensionException;
 import com.vividsolutions.jts.geom.*;
 
@@ -45,25 +45,22 @@ public class Envelope3D extends Envelope {
 		return env;
 	}
 
-	/*public static Envelope3D of(final GamaShape s) {
-		return of(s.getInnerGeometry());
-	}*/
-	
-	
-	 public static Envelope3D of(final GamaShape s) {
-         Envelope3D env = of(s.getInnerGeometry());
-         if (s.hasAttribute("depth")) {
-                 Double d = (Double) s.getAttribute("depth");
-                 GamaPoint center = (GamaPoint) s.getLocation();
-                 center.setZ(d);
-                 env.expandToInclude(center);
-         }
-         return env;
-     }
-	
+	public static Envelope3D of(final GamaShape s) {
+		Envelope3D env = of(s.getInnerGeometry());
+		if ( s.hasAttribute("depth") ) {
+			Double d = (Double) s.getAttribute("depth");
+			GamaPoint center = env.centre();
+			center.setZ(d);
+			env.expandToInclude(center);
+		}
+		return env;
+	}
 
-	public static Envelope3D of(final GamaPoint p) {
-		return of(p.getInnerGeometry());
+	public static Envelope3D of(final Coordinate p) {
+		Envelope3D env = new Envelope3D();
+		env.init(p);
+		return env;
+		// return of(p.getInnerGeometry());
 	}
 
 	/**
@@ -205,6 +202,7 @@ public class Envelope3D extends Envelope {
 	 * @return 0.0 if the envelope is null
 	 */
 	public double getVolume() {
+		if ( isNull() ) { return 0.0; }
 		return getWidth() * getHeight() * getDepth();
 	}
 
@@ -266,7 +264,6 @@ public class Envelope3D extends Envelope {
 	 */
 	public void expandBy(final double deltaX, final double deltaY, final double deltaZ) {
 		if ( isNull() ) { return; }
-
 		minz -= deltaZ;
 		maxz += deltaZ;
 		expandBy(deltaX, deltaY);
@@ -331,9 +328,9 @@ public class Envelope3D extends Envelope {
 	 *         envelope is null
 	 */
 	@Override
-	public Coordinate centre() {
+	public GamaPoint centre() {
 		if ( isNull() ) { return null; }
-		return new Coordinate((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
+		return new GamaPoint((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
 			(getMinZ() + getMaxZ()) / 2.0);
 	}
 
@@ -546,7 +543,6 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public void expandToInclude(final Envelope other) {
-
 		if ( other.isNull() ) { return; }
 		double otherMinZ = getMinZOf(other);
 		double otherMaxZ = getMaxZOf(other);
@@ -612,14 +608,18 @@ public class Envelope3D extends Envelope {
 		return false;
 	}
 
+	public boolean isFlat() {
+		return minz == 0d && maxz == 0d;
+	}
+
 	public Geometry toGeometry() {
+		if ( isFlat() ) { return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry(); }
+		return GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
 
-		// WARNING For the moment only in 2D
-
-		return GeometryUtils.FACTORY.createPolygon(
-			GeometryUtils.FACTORY.createLinearRing(new Coordinate[] { new Coordinate(getMinX(), getMinY()),
-				new Coordinate(getMaxX(), getMinY()), new Coordinate(getMaxX(), getMaxY()),
-				new Coordinate(getMinX(), getMaxY()), new Coordinate(getMinX(), getMinY()) }), null);
+		// return GeometryUtils.FACTORY.createPolygon(
+		// GeometryUtils.FACTORY.createLinearRing(new Coordinate[] { new Coordinate(getMinX(), getMinY()),
+		// new Coordinate(getMaxX(), getMinY()), new Coordinate(getMaxX(), getMaxY()),
+		// new Coordinate(getMinX(), getMaxY()), new Coordinate(getMinX(), getMinY()) }), null);
 
 	}
 

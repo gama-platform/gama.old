@@ -63,6 +63,8 @@ import msi.gaml.types.*;
 	@facet(name = FONT, type = IType.STRING, optional = true),
 	@facet(name = BITMAP, type = IType.BOOL, optional = true),
 	@facet(name = DEPTH, type = IType.FLOAT, optional = true),
+	@facet(name = DrawStatement.BEGIN_ARROW, type = { IType.INT, IType.FLOAT }, optional = true),
+	@facet(name = DrawStatement.END_ARROW, type = { IType.INT, IType.FLOAT }, optional = true),
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
 combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
@@ -72,6 +74,9 @@ combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }), @combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 public class DrawStatement extends AbstractStatementSequence {
+
+	public static final String END_ARROW = "end_arrow";
+	public static final String BEGIN_ARROW = "begin_arrow";
 
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
 	public static final Map<String, Integer> CONSTANTS = new HashMap();
@@ -94,13 +99,13 @@ public class DrawStatement extends AbstractStatementSequence {
 	private final DrawExecuter executer;
 
 	private final IExpression getShapeExpression(final IDescription desc) {
-		return GAML.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), Types.get(IType.NONE),
-			Types.get(IType.STRING), false, IVarExpression.AGENT, desc);
+		return GAML.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), false, IVarExpression.AGENT,
+			desc);
 	}
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		item = getFacet(IKeyword.GEOMETRY, getFacet(SHAPE, getFacet(IMAGE, getFacet(TEXT))));
+		item = getFacet(IKeyword.GEOMETRY, SHAPE, IMAGE, TEXT);
 		color = getFacet(IKeyword.COLOR);
 		if ( item == null ) {
 			executer = null;
@@ -159,8 +164,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					final IExpression to = getFacet(TO);
 					if ( at == null ) {
 						at =
-							GAML.getExpressionFactory().createVar("location", Types.get(IType.POINT),
-								Types.get(IType.FLOAT), Types.get(IType.INT), false, IVarExpression.AGENT, desc);
+							GAML.getExpressionFactory().createVar("location", Types.get(IType.POINT), false,
+								IVarExpression.AGENT, desc);
 					}
 					final List<IExpression> elements = new ArrayList();
 					elements.add(at);
@@ -287,13 +292,16 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private class ShapeExecuter extends DrawExecuter {
 
+		final IExpression endArrow, beginArrow;
+
 		private ShapeExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
+			endArrow = desc.getFacets().getExpr(END_ARROW);
+			beginArrow = desc.getFacets().getExpr(BEGIN_ARROW);
 		}
 
 		ILocation getLocation(final IScope scope, final IShape shape) {
-			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : null
-				: constLoc;
+			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : null : constLoc;
 		}
 
 		@Override
@@ -308,8 +316,40 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( textures != null ) {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
 			}
-			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRounded(scope));
+			Color color = getColor(scope);
+			Color border = getBorder(scope);
+			Boolean fill = !getEmpty(scope);
 
+			drawArrows(scope, gr, g2, color, border, fill);
+			return gr.drawGamaShape(scope, g2, color, fill, border, getRounded(scope));
+
+		}
+
+		/**
+		 * @param g2
+		 */
+		private void drawArrows(final IScope scope, final IGraphics gr, final IShape g2, final Color color,
+			final Color border, final Boolean fill) {
+
+			if ( endArrow != null ) {
+				IList<? extends ILocation> points = g2.getPoints();
+				int size = points.size();
+				if ( size < 2 ) { return; }
+				double width = Cast.asFloat(scope, endArrow.value(scope));
+				IShape geometry =
+					GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)),
+						new GamaPoint(points.get(size - 1)), width, width + width / 3, fill);
+				gr.drawGamaShape(scope, geometry, color, fill, border, false);
+			}
+			if ( beginArrow != null ) {
+				IList<? extends ILocation> points = g2.getPoints();
+				int size = points.size();
+				if ( size < 2 ) { return; }
+				double width = Cast.asFloat(scope, beginArrow.value(scope));
+				IShape geometry =
+					GamaGeometryType.buildArrow(new GamaPoint(points.get(1)), new GamaPoint(points.get(0)), width,
+						width + width / 3, fill);
+			}
 		}
 	}
 
@@ -360,13 +400,13 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.fillRect(0, 0, image_width, image_height);
 
 				final Rectangle2D result =
-					g.drawImage(scope, workImage, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight),
-						null, getRotation(scope), agent.getLocation().getZ(), false, null);
+					g.drawImage(scope, workImage, new GamaPoint(x, y, from.getZ()), new GamaPoint(displayWidth,
+						displayHeight), null, getRotation(scope), false, null);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(scope, img, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight), null,
-				getRotation(scope), agent.getLocation().getZ(), false, null);
+			return g.drawImage(scope, img, new GamaPoint(x, y, from.getZ()),
+				new GamaPoint(displayWidth, displayHeight), null, getRotation(scope), false, null);
 		}
 
 	}
@@ -407,7 +447,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
 			final Boolean fBitmap = constBitmap == null ? true : constBitmap;
 			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
-				getRotation(scope), agent.getLocation().getZ(), fBitmap);
+				getRotation(scope), fBitmap);
 
 		}
 	}

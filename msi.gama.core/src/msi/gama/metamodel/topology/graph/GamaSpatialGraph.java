@@ -270,7 +270,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		ag.setAttribute("target_node", v2);
 		addVertex(v1);
 		addVertex(v2);
-		_Edge<IShape> edge;
+		_Edge<IShape, IShape> edge;
 		try {
 			edge = newEdge(e, v1, v2);
 		} catch (final GamaRuntimeException e1) {

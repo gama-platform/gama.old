@@ -20,7 +20,6 @@ package msi.gama.kernel.batch;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
@@ -73,7 +72,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
 		super(desc);
 		testedSolutions = new HashMap<ParametersSet, Double>();
-		fitnessExpression = getFacet(IKeyword.MAXIMIZE, getFacet(IKeyword.MINIMIZE));
+		fitnessExpression = getFacet(IKeyword.MAXIMIZE, IKeyword.MINIMIZE);
 		isMaximize = hasFacet(IKeyword.MAXIMIZE);
 		String ag = getLiteral(IKeyword.AGGREGATION);
 		combination = IKeyword.MAX.equals(ag) ? C_MAX : IKeyword.MIN.equals(ag) ? C_MIN : C_MEAN;
@@ -145,12 +144,12 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	protected void setBestSolution(final ParametersSet bestSolution) {
-		//GuiUtils.debug("ParamSpaceExploAlgorithm.setBestSolution : " + bestSolution);
+		// GuiUtils.debug("ParamSpaceExploAlgorithm.setBestSolution : " + bestSolution);
 		this.bestSolution = new ParametersSet(bestSolution);
 	}
 
 	protected void setBestFitness(final Double bestFitness) {
-		//GuiUtils.debug("ParamSpaceExploAlgorithm.setBestFitness : " + bestFitness);
+		// GuiUtils.debug("ParamSpaceExploAlgorithm.setBestFitness : " + bestFitness);
 		this.bestFitness = bestFitness;
 	}
 }

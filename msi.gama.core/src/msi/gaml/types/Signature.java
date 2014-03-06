@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -45,6 +45,15 @@ public class Signature {
 		}
 	}
 
+	public Signature simplified() {
+		// returns a signature that does not contain any parametric types
+		IType[] copy = Arrays.copyOf(list, list.length);
+		for ( int i = 0; i < copy.length; i++ ) {
+			copy[i] = copy[i].getType();
+		}
+		return new Signature(copy);
+	}
+
 	public boolean isCompatibleWith(final IType ... types) {
 		if ( types.length != list.length ) { return false; }
 		for ( int i = 0; i < list.length; i++ ) {
@@ -61,7 +70,12 @@ public class Signature {
 		if ( types.length != list.length ) { return Integer.MAX_VALUE; }
 		int dist = 0;
 		for ( int i = 0; i < list.length; i++ ) {
-			dist += types[i].distanceTo(list[i]);
+			// 19/02/14 Now using the maximum distance between two types of the signature instead of addition.
+			int d = types[i].distanceTo(list[i]);
+			if ( d > dist ) {
+				dist = d;
+			}
+			// dist += types[i].distanceTo(list[i]);
 		}
 		return dist;
 	}
@@ -91,7 +105,7 @@ public class Signature {
 
 	@Override
 	public String toString() {
-		String s = "[";
+		String s = (list.length < 2 ? "type " : "types") + "[";
 		for ( int i = 0; i < list.length; i++ ) {
 			s += list[i].toString();
 			if ( i != list.length - 1 ) {

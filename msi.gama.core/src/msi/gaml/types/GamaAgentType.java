@@ -47,11 +47,13 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType contentsType)
-		throws GamaRuntimeException {
-		final ISpecies species = (ISpecies) param;
+	public IAgent cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
-		if ( species == null ) { return (IAgent) Types.get(IType.AGENT).cast(scope, obj, param, Types.NO_TYPE); }
+		ISpecies species = (ISpecies) param;
+		if ( species == null ) {
+			species = scope.getModel().getSpecies(this.species.getName());
+		}
+		if ( species == null ) { return (IAgent) Types.get(IType.AGENT).cast(scope, obj, param); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
@@ -67,7 +69,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public boolean isSpeciesType() {
+	public boolean isAgentType() {
 		return true;
 	}
 
@@ -106,14 +108,15 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(IType.STRING);
 	}
 
-	@Override
-	public boolean hasContents() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean hasContents() {
+	// return true;
+	// }
 
 	@Override
 	public boolean isFixedLength() {

@@ -35,7 +35,11 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface ISpecies extends ISymbol, IContainer<Integer, IAgent>, IPopulationSet {
+public interface ISpecies extends ISymbol, IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>,
+	IPopulationSet {
+
+	public static final String stepActionName = "_step_";
+	public static final String initActionName = "_init_";
 
 	public abstract IExpression getFrequency();
 

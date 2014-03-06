@@ -51,13 +51,14 @@ public class TypeFieldExpression extends UnaryOperator {
 
 	@Override
 	public String getDocumentation() {
-		if ( child != null ) { return "Available for objects of type " + child.getType(); }
-		return "Available for objects of type " + signature.get(0);
+		if ( child != null ) { return "Defined on objects of type " + child.getType().getTitle(); }
+		// return "Available for objects of type " + signature.get(0);
+		return "";
 	}
 
 	@Override
 	public String getTitle() {
-		return "field " + getName() + " of type " + typeToString();
+		return "field " + getName() + " of type " + getType().getTitle();
 	}
 
 	public void setSignature(final IType t) {

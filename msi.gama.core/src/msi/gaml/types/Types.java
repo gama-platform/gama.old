@@ -21,7 +21,7 @@ package msi.gaml.types;
 import java.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.TypeFieldExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.TypeTree.Order;
 
@@ -122,5 +122,22 @@ public class Types {
 	 */
 	public static boolean intFloatCase(final IType t1, final IType t2) {
 		return t1.id() == IType.FLOAT && t2.id() == IType.INT || t2.id() == IType.FLOAT && t1.id() == IType.INT;
+	}
+
+	/**
+	 * @param receiverType
+	 * @param assignedType
+	 * @param expr2
+	 * @return
+	 */
+	public static boolean mapListCase(final IType receiverType, final IType assignedType, final IExpression expr2) {
+		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.LIST ) {
+			if ( expr2 instanceof ListExpression && ((ListExpression) expr2).isEmpty() ) { return true; }
+			if ( expr2.isConst() && ((List) expr2.value(null)).isEmpty() ) { return true; }
+		}
+		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.MAP ) {
+			if ( expr2.isConst() && ((Map) expr2.value(null)).isEmpty() ) { return true; }
+		}
+		return false;
 	}
 }

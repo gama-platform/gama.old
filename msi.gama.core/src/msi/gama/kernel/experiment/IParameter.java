@@ -49,7 +49,7 @@ public interface IParameter {
 
 	public abstract IType getType();
 
-	public abstract IType getContentType();
+	// public abstract IType getContentType();
 
 	public String toGaml();
 

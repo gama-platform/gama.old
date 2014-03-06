@@ -19,8 +19,6 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 import org.eclipse.emf.ecore.EObject;
@@ -31,8 +29,8 @@ import org.eclipse.emf.ecore.EObject;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
-public class SymbolFactory {
+// @factory(handles = { ISymbolKind.ENVIRONMENT })
+public abstract class SymbolFactory {
 
 	protected final Set<Integer> kindsHandled;
 
@@ -44,9 +42,10 @@ public class SymbolFactory {
 		return kindsHandled;
 	}
 
-	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
-		return new SymbolDescription(keyword, enclosing, children, element, facets);
-	}
+	protected abstract IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
+		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto);
+	// {
+	// return new SymbolDescription(keyword, enclosing, children, element, facets);
+	// }
 
 }

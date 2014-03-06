@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -32,15 +32,15 @@ public class ConstantExpression extends AbstractExpression {
 
 	Object value;
 
-	public ConstantExpression(final Object val, final IType t, final IType ct) {
+	public ConstantExpression(final Object val, final IType t) {
 		value = val;
 		type = t;
-		contentType = ct;
+		// contentType = ct;
 		setName(value == null ? "nil" : value.toString());
 	}
 
 	public ConstantExpression(final Object val) {
-		this(val, val == null ? Types.NO_TYPE : Types.get(val.getClass()), Types.NO_TYPE);
+		this(val, val == null ? Types.NO_TYPE : Types.get(val.getClass()));
 	}
 
 	@Override
@@ -48,10 +48,11 @@ public class ConstantExpression extends AbstractExpression {
 		return value;
 	}
 
-	@Override
-	public IType getContentType() {
-		return contentType;
-	}
+	//
+	// @Override
+	// public IType getContentType() {
+	// return type.getContentType();
+	// }
 
 	@Override
 	public boolean isConst() {
@@ -78,7 +79,7 @@ public class ConstantExpression extends AbstractExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Literal expression of type " + typeToString();
+		return "Literal expression of type " + getType().getTitle();
 	}
 
 	@Override

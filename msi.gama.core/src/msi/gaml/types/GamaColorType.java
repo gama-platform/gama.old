@@ -38,7 +38,7 @@ import msi.gaml.operators.Cast;
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
-	public GamaColor cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public GamaColor cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -65,7 +65,8 @@ public class GamaColorType extends GamaType<GamaColor> {
 				Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3))); }
 			/* To allow constructions like rgb [255,255,255] */
 		}
-		if ( obj instanceof IContainer ) { return staticCast(scope, ((IContainer) obj).listValue(scope), param); }
+		if ( obj instanceof IContainer ) { return staticCast(scope, ((IContainer) obj).listValue(scope, Types.NO_TYPE),
+			param); }
 		if ( obj instanceof String ) {
 			String s = ((String) obj).toLowerCase();
 			GamaColor c = GamaColor.colors.get(s);
@@ -100,18 +101,18 @@ public class GamaColorType extends GamaType<GamaColor> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.get(INT);
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(INT);
 	}
-
-	@Override
-	public boolean hasContents() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean hasContents() {
+	// return true;
+	// }
 
 }

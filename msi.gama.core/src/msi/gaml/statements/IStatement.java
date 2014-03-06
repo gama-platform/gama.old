@@ -18,7 +18,7 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlable;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -30,7 +30,7 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  * 
  */
-public interface IStatement extends ISymbol, IGamlable, ITyped, IExecutable {
+public interface IStatement extends ISymbol, IGamlable, IExecutable {
 
 	public abstract Double computePertinence(final IScope scope) throws GamaRuntimeException;
 
@@ -43,5 +43,7 @@ public interface IStatement extends ISymbol, IGamlable, ITyped, IExecutable {
 		public abstract void setRuntimeArgs(Arguments args);
 
 	}
+
+	public abstract String getTrace(IScope scope);
 
 }

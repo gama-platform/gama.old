@@ -38,11 +38,11 @@ import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
 
-	private Map<String, StatementDescription> behaviors, aspects;
-	private List<StatementDescription> inits;
+	private Map<String, StatementDescription> behaviors;
+	private Map<String, StatementDescription> aspects;
+	private Map<String, SpeciesDescription> microSpecies;
 	protected final Map<Class, ISkill> skills = new HashMap();
 	protected IArchitecture control;
-	private Map<String, SpeciesDescription> microSpecies;
 	private IAgentConstructor agentConstructor;
 
 	public SpeciesDescription(final String keyword, final IDescription macroDesc, final ChildrenProvider cp,
@@ -89,9 +89,9 @@ public class SpeciesDescription extends TypeDescription {
 		if ( microSpecies != null ) {
 			microSpecies.clear();
 		}
-		if ( inits != null ) {
-			inits.clear();
-		}
+		// if ( inits != null ) {
+		// inits.clear();
+		// }
 		super.dispose();
 		// isDisposed = true;
 	}
@@ -156,6 +156,8 @@ public class SpeciesDescription extends TypeDescription {
 				if ( clazz.isAssignableFrom(entry.getKey()) ) { return entry.getValue(); }
 			}
 		}
+		// We go and try to find the skill in the parent
+		if ( skill == null && parent != null && parent != this ) { return getParent().getSkillFor(clazz); }
 		return skill;
 	}
 
@@ -191,15 +193,19 @@ public class SpeciesDescription extends TypeDescription {
 			// FIXME Move this to TypeDescription !
 			final StatementDescription statement = (StatementDescription) desc;
 			final String kw = desc.getKeyword();
-			if ( PRIMITIVE.equals(kw) ) {
-				addPrimitive(statement);
-			} else if ( ACTION.equals(kw) ) {
-				addAction(statement);
-			} else if ( ASPECT.equals(kw) ) {
+			if ( PRIMITIVE.equals(kw) || ACTION.equals(kw) ) {
+				addAction(this, statement);
+			}
+			// else if ( ACTION.equals(kw) ) {
+			// addAction(statement);
+			// }
+			else if ( ASPECT.equals(kw) ) {
 				addAspect(statement);
-			} else if ( INIT.equals(kw) ) {
-				addInit(statement);
-			} else {
+			}
+			// else if ( INIT.equals(kw) ) {
+			// addInit(statement);
+			// }
+			else {
 				addBehavior(statement);
 			}
 		} else if ( desc instanceof VariableDescription ) {
@@ -214,12 +220,13 @@ public class SpeciesDescription extends TypeDescription {
 		return desc;
 	}
 
-	private void addInit(final StatementDescription init) {
-		if ( inits == null ) {
-			inits = new ArrayList<StatementDescription>();
-		}
-		inits.add(0, init); // Added at the beginning
-	}
+	//
+	// private void addInit(final StatementDescription init) {
+	// if ( inits == null ) {
+	// inits = new ArrayList<StatementDescription>();
+	// }
+	// inits.add(0, init); // Added at the beginning
+	// }
 
 	private void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
@@ -229,8 +236,8 @@ public class SpeciesDescription extends TypeDescription {
 		final StatementDescription existing = behaviors.get(behaviorName);
 		if ( existing != null ) {
 			if ( existing.getKeyword().equals(r.getKeyword()) ) {
-				duplicateError(r, existing);
-				children.remove(existing);
+				duplicateInfo(r, existing);
+				// children.remove(existing);
 			}
 		}
 		behaviors.put(behaviorName, r);
@@ -238,6 +245,9 @@ public class SpeciesDescription extends TypeDescription {
 
 	public boolean hasBehavior(final String a) {
 		return behaviors != null && behaviors.containsKey(a);
+
+		// || parent != null &&
+		// ((SpeciesDescription) parent).hasBehavior(a);
 	}
 
 	private void addAspect(final StatementDescription ce) {
@@ -247,7 +257,7 @@ public class SpeciesDescription extends TypeDescription {
 			ce.getFacets().putAsLabel(NAME, aspectName);
 		}
 		if ( !aspectName.equals(DEFAULT) && hasAspect(aspectName) ) {
-			duplicateError(ce, getAspect(aspectName));
+			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if ( aspects == null ) {
 			aspects = new LinkedHashMap<String, StatementDescription>();
@@ -256,10 +266,20 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public StatementDescription getAspect(final String aName) {
+		// if ( aspects != null && aspects.containsKey(aName) ) { return aspects.get(aName); }
+		// return parent == null ? null : ((SpeciesDescription) parent).getAspect(aName);
 		return aspects == null ? null : aspects.get(aName);
 	}
 
 	public Collection<String> getAspectNames() {
+		// Set<String> names = new HashSet();
+		// if ( aspects != null ) {
+		// names.addAll(aspects.keySet());
+		// }
+		// if ( parent != null ) {
+		// names.addAll(((SpeciesDescription) parent).getAspectNames());
+		// }
+		// return names;
 		return aspects == null ? Collections.EMPTY_LIST : aspects.keySet();
 	}
 
@@ -287,6 +307,8 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	protected boolean hasAspect(final String a) {
 		return aspects != null && aspects.containsKey(a);
+
+		// || parent != null && parent.hasAspect(a);
 	}
 
 	@Override
@@ -360,7 +382,8 @@ public class SpeciesDescription extends TypeDescription {
 	public void inheritFromParent() {
 		final SpeciesDescription parent = getParent();
 		// Takes care of invalid species (see Issue 711)
-		if ( parent != null && parent != this ) {
+		// built-in parents are not considered as their actions/variables are normally already copied as java additions
+		if ( parent != null && parent != this && !parent.isBuiltIn() ) {
 			if ( !parent.getJavaBase().isAssignableFrom(getJavaBase()) ) {
 				error("Species " + getName() + " Java base class (" + getJavaBase().getSimpleName() +
 					") is not a subclass of its parent species " + parent.getName() + " base class (" +
@@ -369,9 +392,9 @@ public class SpeciesDescription extends TypeDescription {
 			}
 			// GuiUtils.debug(" **** " + getName() + " inherits from " + parent.getName());
 			inheritMicroSpecies(parent);
-			inheritSkills(parent);
+			// inheritSkills(parent);
 			inheritBehaviors(parent);
-			inheritInits(parent);
+			// inheritInits(parent);
 			inheritAspects(parent);
 			super.inheritFromParent();
 		}
@@ -385,7 +408,7 @@ public class SpeciesDescription extends TypeDescription {
 		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {
 			if ( !getMicroSpecies().containsKey(entry.getKey()) ) {
 				getMicroSpecies().put(entry.getKey(), entry.getValue());
-				children.add(entry.getValue());
+				// children.add(entry.getValue());
 			}
 		}
 	}
@@ -401,14 +424,14 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
-	private void inheritInits(final SpeciesDescription parent) {
-		// Takes care of invalid species (see Issue 711)
-		if ( parent != null && parent != this && parent.inits != null ) {
-			for ( final StatementDescription init : parent.inits ) {
-				addChild(init.copy(this));
-			}
-		}
-	}
+	// private void inheritInits(final SpeciesDescription parent) {
+	// // Takes care of invalid species (see Issue 711)
+	// if ( parent != null && parent != this && parent.inits != null ) {
+	// for ( final StatementDescription init : parent.inits ) {
+	// addChild(init.copy(this));
+	// }
+	// }
+	// }
 
 	private void inheritBehaviors(final SpeciesDescription parent) {
 		// We only copy the behaviors that are not redefined in this species
@@ -422,13 +445,14 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
-	private void inheritSkills(final SpeciesDescription parent) {
-		for ( final Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
-			if ( !skills.containsKey(entry.getKey()) ) {
-				skills.put(entry.getKey(), entry.getValue());
-			}
-		}
-	}
+	//
+	// private void inheritSkills(final SpeciesDescription parent) {
+	// for ( final Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
+	// if ( !skills.containsKey(entry.getKey()) ) {
+	// skills.put(entry.getKey(), entry.getValue());
+	// }
+	// }
+	// }
 
 	/**
 	 * @return
@@ -644,9 +668,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * @throws GamlException
 	 */
 	public void finalizeDescription() {
-		// super.finalizeDescription();
 		if ( isMirror() ) {
-			// TODO Try to find automatically the type given the "MIRROR" expression
 			IExpression expr = facets.getExpr(MIRRORS);
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
@@ -660,8 +682,6 @@ public class SpeciesDescription extends TypeDescription {
 				final VariableDescription var =
 					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName(), OF,
 						microSpec.getName()); // CONST = TRUE ?
-				// FIXME : OF, microSpec.getName() ??
-				// var.setContentType(microSpec.getType());
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
 				final IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);
@@ -672,8 +692,6 @@ public class SpeciesDescription extends TypeDescription {
 				dependencies.add(SHAPE);
 				dependencies.add(LOCATION);
 				var.getFacets().put(DEPENDS_ON, new StringListExpressionDescription(dependencies));
-				// GuiUtils.debug("The population of " + microSpec.getName() + " depends on: " + dependencies + " in " +
-				// getName());
 				final GamaHelper get = new GamaHelper() {
 
 					@Override
@@ -715,8 +733,8 @@ public class SpeciesDescription extends TypeDescription {
 		if ( mirrors != null ) {
 			// We try to change the type of the 'target' variable if the expression contains only agents from the
 			// same species
-			IType t = mirrors.getContentType();
-			if ( t.isSpeciesType() && t.id() != IType.AGENT ) {
+			IType t = mirrors.getType().getContentType();
+			if ( t.isAgentType() && t.id() != IType.AGENT ) {
 				VariableDescription v = getVariable(TARGET);
 				if ( v != null ) {
 					// In case, but should not be null
@@ -804,6 +822,28 @@ public class SpeciesDescription extends TypeDescription {
 		if ( sd == null || sd == this ) { return false; }
 		if ( sd.equals(p) ) { return true; }
 		return sd.hasMacroSpecies(p);
+	}
+
+	@Override
+	public List<IDescription> getChildren() {
+		List<IDescription> result = super.getChildren();
+		if ( aspects != null ) {
+			result.addAll(aspects.values());
+		}
+		if ( behaviors != null ) {
+			result.addAll(behaviors.values());
+		}
+		if ( microSpecies != null ) {
+			result.addAll(microSpecies.values());
+		}
+		return result;
+	}
+
+	/**
+	 * @return
+	 */
+	public Collection<IDescription> getBehaviors() {
+		return behaviors == null ? Collections.EMPTY_LIST : behaviors.values();
 	}
 
 }

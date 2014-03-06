@@ -108,6 +108,13 @@ public class TypesManager {
 		return false;
 	}
 
+	public boolean containsType(final String s) {
+		IType t = stringToIType.get(s);
+		if ( t != null ) { return true; }
+		if ( parent == null ) { return false; }
+		return parent.containsType(s);
+	}
+
 	public List<String> getTypeNames() {
 		List<String> result = parent == null ? new ArrayList() : parent.getTypeNames();
 		for ( String s : stringToIType.keySet() ) {
@@ -193,14 +200,6 @@ public class TypesManager {
 			}
 		}
 	}
-
-	// public TypeTree<IType> getTypeHierarchy() {
-	// return hierarchy;
-	// }
-
-	// public TypeTree<IType> getTypeHierarchyFrom(IType t) {
-	// return new TypeTree(hierarchy.find(t));
-	// }
 
 	public TypeTree<SpeciesDescription> getSpeciesHierarchy() {
 		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(msi.gaml.types.IType.AGENT))));

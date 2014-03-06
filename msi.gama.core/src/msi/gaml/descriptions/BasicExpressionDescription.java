@@ -21,7 +21,8 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.util.GAML;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
+import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
 public class BasicExpressionDescription implements IExpressionDescription {
@@ -130,6 +131,14 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		IExpressionDescription result = new BasicExpressionDescription(expression);
 		result.setTarget(target);
 		return result;
+	}
+
+	@Override
+	public IType getDenotedType(final IDescription context) {
+		compile(context);
+		if ( expression instanceof CastingExpression ) { return expression.getType(); }
+		if ( expression instanceof ConstantExpression ) { return context.getTypeNamed(expression.literalValue()); }
+		return Types.NO_TYPE;
 	}
 
 }

@@ -26,7 +26,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -49,6 +48,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
 		try {
+			scope.setStatement(this);
 			result = privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			e.addContext(this);
@@ -62,24 +62,25 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {}
 
-	@Override
-	public IType getType() {
-		return null;
-	}
+	//
+	// @Override
+	// public IType getType() {
+	// return null;
+	// }
 
-	@Override
-	public IType getContentType() {
-		final IType t = getType();
-		if ( t != null ) { return t.defaultContentType(); }
-		return null;
-	}
-
-	@Override
-	public IType getKeyType() {
-		final IType t = getType();
-		if ( t != null ) { return t.defaultKeyType(); }
-		return null;
-	}
+	// @Override
+	// public IType getContentType() {
+	// final IType t = getType();
+	// if ( t != null ) { return t.getContentType(); }
+	// return null;
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// final IType t = getType();
+	// if ( t != null ) { return t.getKeyType(); }
+	// return null;
+	// }
 
 	@Override
 	public String toString() {
@@ -88,6 +89,35 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public String toGaml() {
+		return firstLineToGaml() + ";";
+	}
+
+	@Override
+	public String getTrace(final IScope scope) {
+		final String n = getLiteral(IKeyword.NAME);
+		final String k = getLiteral(IKeyword.KEYWORD);
+		final StringBuilder sb = new StringBuilder(100);
+		// if ( n != null ) {
+		// sb.append('[').append(' ').append(n).append(' ').append(']').append(' ');
+		// }
+		sb.append(k).append(' ');
+		for ( final Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
+			if ( e == null ) {
+				continue;
+			}
+			if ( e.getKey().equals(IKeyword.KEYWORD) ) {
+				continue;
+			}
+			if ( e.getKey().equals(IKeyword.NAME) && n.startsWith("internal_") ) {
+				continue;
+			}
+			sb.append(e.getKey()).append(": [ ").append(e.getValue().getExpression().toGaml()).append(" ] ")
+				.append(Cast.toGaml(e.getValue().getExpression().value(scope))).append(" ");
+		}
+		return sb.toString();
+	}
+
+	protected String firstLineToGaml() {
 		final String k = getLiteral(IKeyword.KEYWORD);
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append(k).append(' ');
@@ -96,7 +126,6 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml()).append(" ");
 			}
 		}
-		// FIXME Add ";" / Consider the case of blocks.
 		return sb.toString();
 	}
 

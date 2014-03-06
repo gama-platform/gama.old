@@ -9,7 +9,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.skills.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
 
 public abstract class AbstractArchitecture extends Skill implements IArchitecture {
 
@@ -37,24 +36,29 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 		return (IArchitecture) duplicate;
 	}
 
-	@Override
-	public IType getType() {
-		return null;
-	}
+	// @Override
+	// public IType getType() {
+	// return null;
+	// }
 
-	@Override
-	public IType getContentType() {
-		return null;
-	}
-
-	@Override
-	public IType getKeyType() {
-		return null;
-	}
+	// @Override
+	// public IType getContentType() {
+	// return null;
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// return null;
+	// }
 
 	@Override
 	public String toGaml() {
 		return "'" + getName() + " architecture'";
+	}
+
+	@Override
+	public String getTrace(final IScope scope) {
+		return "";
 	}
 
 	@Override
@@ -63,7 +67,7 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public IExpression getFacet(final String key) {
+	public IExpression getFacet(final String ... key) {
 		return null;
 	}
 

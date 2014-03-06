@@ -23,11 +23,11 @@ import java.util.Properties;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+import msi.gama.util.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "property", extensions = { "properties" })
-public class GamaPropertyFile extends GamaFile<String, String> {
+public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, GamaPair<String, String>, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -50,7 +50,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 			throw GamaRuntimeException.create(e);
 		}
 		m.putAll(p);
-		buffer = m;
+		setBuffer(m);
 	}
 
 	@Override

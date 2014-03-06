@@ -109,8 +109,26 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
+
 		if ( type == null ) {
-			type = getTypeNamed(facets.getLabel(TYPE));
+			IType tt = facets.getTypeDenotedBy(TYPE, this);
+			IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
+			IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());
+
+			if ( tt.isContainer() && (kt == Types.NO_TYPE || ct == Types.NO_TYPE) ) {
+				compileTypeProviderFacets();
+				IExpression expr = facets.getExpr(INIT, VALUE, UPDATE, FUNCTION);
+				if ( expr != null ) {
+					IType exprType = expr.getType();
+					if ( kt == Types.NO_TYPE ) {
+						kt = exprType.getKeyType();
+					}
+					if ( ct == Types.NO_TYPE ) {
+						ct = exprType.getContentType();
+					}
+				}
+			}
+			type = GamaType.from(tt, kt, ct);
 		}
 		return type;
 	}
@@ -176,62 +194,16 @@ public class VariableDescription extends SymbolDescription {
 		return _isParameter;
 	}
 
-	@Override
-	public IType getContentType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		String of = facets.getLabel(OF);
-		if ( of != null ) { return getTypeNamed(of); }
-		IExpression expr =
-			facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE, facets.getExpr(FUNCTION))));
-		if ( expr != null ) { return expr.getContentType(); }
-		return getType().defaultContentType();
-
-		// if ( contentType == null ) {
-		// String of = facets.getLabel(OF);
-		// if ( of != null ) {
-		// contentType = getTypeNamed(of);
-		// } else {
-		// IExpression expr = facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE,
-		// facets.getExpr(FUNCTION))));
-		// contentType = expr != null getType().defaultContentType();
-		// }
-		// }
-		// return contentType;
-	}
-
-	@Override
-	public IType getKeyType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		String index = facets.getLabel(INDEX);
-		if ( index != null ) { return getTypeNamed(index); }
-		IExpression expr =
-			facets.getExpr(INIT, facets.getExpr(VALUE, facets.getExpr(UPDATE, facets.getExpr(FUNCTION))));
-		if ( expr != null ) { return expr.getKeyType(); }
-		return getType().defaultKeyType();
-	}
-
-	// @Override
-	// public IType getKeyType() {
-	// if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-	// if ( keyType == null ) {
-	// String index = facets.getLabel(INDEX);
-	// if ( index != null ) {
-	// keyType = getTypeNamed(index);
-	// }
-	// if ( keyType == null || keyType == Types.NO_TYPE ) {
-	// keyType = getType().defaultKeyType();
-	// }
-	// }
-	// return keyType;
-	// }
-
 	public IVarExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
 		//
+		// IType t = getType();
+		// if ( t.isContainer() ) {
+		// t = ParametricType.from(t, getKeyType(), getContentType());
+		// }
 		varExpr =
-			msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), getContentType(), getKeyType(),
-				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
-				this.getEnclosingDescription());
+			msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
+				_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
 
@@ -263,7 +235,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public String getTitle() {
 		String title = isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ";
-		return title + " " + getName() + " of type " + typeToString();
+		return title + " " + getName() /* + " of type " + getType().toString() */;
 	}
 
 	public void addHelpers(final GamaHelper get, final GamaHelper init, final GamaHelper set) {
@@ -293,6 +265,15 @@ public class VariableDescription extends SymbolDescription {
 	 */
 	public boolean isGlobal() {
 		return _isGlobal;
+	}
+
+	/**
+	 * Method getChildren()
+	 * @see msi.gaml.descriptions.SymbolDescription#getChildren()
+	 */
+	@Override
+	public List<IDescription> getChildren() {
+		return Collections.EMPTY_LIST;
 	}
 
 }

@@ -26,7 +26,7 @@ import msi.gama.precompiler.*;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
@@ -57,14 +57,13 @@ public class ModelFactory extends SymbolFactory {
 		}
 	}
 
-	private void addExperiment(final ModelDescription model, final ISyntacticElement experiment) {
+	private void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment) {
 		// Create the experiment description
 		IDescription desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
-		if ( !(desc instanceof ExperimentDescription) ) {
-			desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
-		}
-		final ExperimentDescription eDesc = (ExperimentDescription) desc;
-		model.addChild(eDesc);
+		// final ExperimentDescription eDesc = (ExperimentDescription) desc;
+		((SymbolDescription) desc).resetOriginName();
+		desc.setOriginName(buildModelName(origin));
+		model.addChild(desc);
 	}
 
 	/**
@@ -147,11 +146,38 @@ public class ModelFactory extends SymbolFactory {
 		speciesNodes.put(element.getName(), element);
 	}
 
+	public void addExperimentNode(final ISyntacticElement element, final String modelName,
+		final Map<String, Map<String, ISyntacticElement>> experimentNodes, final ErrorCollector collector) {
+		// First we verify that this experiment has not been declared previously
+		String experimentName = element.getName();
+		for ( String otherModel : experimentNodes.keySet() ) {
+			if ( !otherModel.equals(modelName) ) {
+				Map<String, ISyntacticElement> otherExperiments = experimentNodes.get(otherModel);
+				if ( otherExperiments.containsKey(experimentName) ) {
+					collector.add(new GamlCompilationError("Experiment " + experimentName +
+						" supersedes the one declared in " + otherModel, IGamlIssue.DUPLICATE_DEFINITION, element
+						.getElement(), false, true));
+					// We remove the old one
+					otherExperiments.remove(experimentName);
+				}
+			}
+		}
+
+		if ( !experimentNodes.containsKey(modelName) ) {
+			experimentNodes.put(modelName, new LinkedHashMap());
+		}
+		Map<String, ISyntacticElement> nodes = experimentNodes.get(modelName);
+		if ( nodes.containsKey(experimentName) ) {
+			collector.add(new GamlCompilationError("Experiment " + element.getName() + " is declared twice",
+				IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, false));
+		}
+		nodes.put(experimentName, element);
+	}
+
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 		final List<ISyntacticElement> models) {
-		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
 		final Map<String, ISyntacticElement> speciesNodes = new LinkedHashMap();
-		final List<ISyntacticElement> experimentNodes = new ArrayList();
+		final Map<String, Map<String, ISyntacticElement>> experimentNodes = new LinkedHashMap();
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		ErrorCollector collector = new ErrorCollector();
 		final Facets globalFacets = new Facets();
@@ -159,9 +185,9 @@ public class ModelFactory extends SymbolFactory {
 		final ISyntacticElement source = models.get(0);
 		ISyntacticElement lastGlobalNode = source;
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
-			final ISyntacticElement e = models.get(i);
-			if ( e != null ) {
-				for ( final ISyntacticElement se : e.getChildren() ) {
+			final ISyntacticElement currentModel = models.get(i);
+			if ( currentModel != null ) {
+				for ( final ISyntacticElement se : currentModel.getChildren() ) {
 					if ( se.isGlobal() ) {
 						// We build the facets resulting from the different arguments
 						globalFacets.putAll(se.copyFacets(null));
@@ -169,11 +195,9 @@ public class ModelFactory extends SymbolFactory {
 							if ( ge.isSpecies() ) {
 								addSpeciesNode(ge, speciesNodes, collector);
 							} else if ( ge.isExperiment() ) {
-								experimentNodes.add(ge);
+								addExperimentNode(ge, currentModel.getName(), experimentNodes, collector);
 							} else {
-								// if ( i == 0 ) {
 								lastGlobalNode = ge;
-								// }
 								globalNodes.addChild(ge);
 							}
 						}
@@ -181,7 +205,7 @@ public class ModelFactory extends SymbolFactory {
 					} else if ( se.isSpecies() ) {
 						addSpeciesNode(se, speciesNodes, collector);
 					} else if ( se.isExperiment() ) {
-						experimentNodes.add(se);
+						addExperimentNode(se, currentModel.getName(), experimentNodes, collector);
 					} else {
 						if ( !ENVIRONMENT.equals(se.getKeyword()) ) {
 							collector.add(new GamlCompilationError("This " + se.getKeyword() +
@@ -194,7 +218,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		final String modelName = source.getName().replace(' ', '_') + "_model";
+		final String modelName = buildModelName(source.getName());
 		globalFacets.putAsLabel(NAME, modelName);
 
 		// We first sort the species so that grids are always the last ones (see SignalVariable)
@@ -216,17 +240,20 @@ public class ModelFactory extends SymbolFactory {
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			addMicroSpecies(model, speciesNode);
 		}
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
-			addExperiment(model, experimentNode);
+		for ( String s : experimentNodes.keySet() ) {
+			for ( final ISyntacticElement experimentNode : experimentNodes.get(s).values() ) {
+				addExperiment(s, model, experimentNode);
+			}
 		}
 
 		// Parent the species and the experiments of the model (all are now known).
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			parentSpecies(model, speciesNode, model);
 		}
-
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
-			parentExperiment(model, experimentNode, model);
+		for ( String s : experimentNodes.keySet() ) {
+			for ( final ISyntacticElement experimentNode : experimentNodes.get(s).values() ) {
+				parentExperiment(model, experimentNode, model);
+			}
 		}
 		// Initialize the hierarchy of types
 		model.buildTypes();
@@ -236,8 +263,10 @@ public class ModelFactory extends SymbolFactory {
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		}
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
-			complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+		for ( String s : experimentNodes.keySet() ) {
+			for ( final ISyntacticElement experimentNode : experimentNodes.get(s).values() ) {
+				complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+			}
 		}
 
 		// Complement recursively the different species (incl. the world). The recursion is hierarchical
@@ -297,6 +326,11 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
+	protected String buildModelName(final String source) {
+		final String modelName = source.replace(' ', '_') + "_model";
+		return modelName;
+	}
+
 	private boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {
 		final boolean environmentDefined = true;
 		final ISyntacticElement shape = SyntacticFactory.create(GEOMETRY, new Facets(NAME, SHAPE), false);
@@ -305,7 +339,7 @@ public class ModelFactory extends SymbolFactory {
 			final IExpressionDescription width = e.getExpressionAt(WIDTH);
 			final IExpressionDescription height = e.getExpressionAt(HEIGHT);
 			if ( width != null && height != null ) {
-				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
+				bounds = new OperatorExpressionDescription(POINT, width, height);
 			} else {
 				bounds = ConstantExpressionDescription.create(100);
 			}
@@ -332,6 +366,13 @@ public class ModelFactory extends SymbolFactory {
 		final Facets f = new Facets(NAME, name, KEYWORD, MODEL);
 		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, f);
 		return ModelDescription.ROOT;
+	}
+
+	@Override
+	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
+		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+		// This method is actually never called.
+		return null;
 	}
 
 }

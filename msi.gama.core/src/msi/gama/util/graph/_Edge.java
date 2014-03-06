@@ -19,26 +19,29 @@
 package msi.gama.util.graph;
 
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-
 import org.jgrapht.WeightedGraph;
 
-public class _Edge<V> {
+public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 
 	/**
 	 * 
 	 */
-	protected final GamaGraph<V, ?> graph;
-	private double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
+	// protected final GamaGraph<V, ?> graph;
+	// private double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
 	private Object source, target;
 
-	public _Edge(final GamaGraph<V, ?> gamaGraph, final Object edge, final Object source,
-		final Object target) throws GamaRuntimeException {
-		graph = gamaGraph;
+	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target)
+		throws GamaRuntimeException {
+		this(gamaGraph, edge, source, target, WeightedGraph.DEFAULT_EDGE_WEIGHT);
+	}
+
+	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target,
+		final double weight) throws GamaRuntimeException {
+		super(gamaGraph, weight);
 		init(edge, source, target);
 	}
 
-	protected void init(final Object edge, final Object source, final Object target)
-		throws GamaRuntimeException {
+	protected void init(final Object edge, final Object source, final Object target) throws GamaRuntimeException {
 		buildSource(edge, source);
 		buildTarget(edge, target);
 	}
@@ -58,11 +61,8 @@ public class _Edge<V> {
 		graph.getVertex(target).removeInEdge(edge);
 	}
 
-	public void setWeight(final double w) {
-		weight = w;
-	}
-
-	public double getWeight(final Object storedObject) {
+	@Override
+	public double getWeight() {
 		// Syst�matique ??
 		//Double na = graph.getVertexWeight(source);
 		//Double nb = graph.getVertexWeight(target);
@@ -80,13 +80,14 @@ public class _Edge<V> {
 	public Object getTarget() {
 		return target;
 	}
-	
+
 	@Override
 	public String toString() {
-		return (new StringBuffer())
-			.append(source.toString())
-			.append(" -> ")
-			.append(target.toString())
-			.toString();
+		return new StringBuffer().append(source.toString()).append(" -> ").append(target.toString()).toString();
+	}
+
+	@Override
+	public boolean isEdge() {
+		return true;
 	}
 }

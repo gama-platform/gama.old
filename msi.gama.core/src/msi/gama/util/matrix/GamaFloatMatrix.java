@@ -27,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
@@ -134,11 +135,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	public GamaFloatMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
 		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
-			matrix[i] = Cast.asFloat(null, objects[i]);
+			matrix[i] = Cast.asFloat(scope, objects[i]);
 		}
 	}
 
-	public GamaFloatMatrix(final IScope scope, final List objects, final boolean flat, final GamaPoint preferredSize)
+	public GamaFloatMatrix(final IScope scope, final List objects, final boolean flat, final ILocation preferredSize)
 		throws GamaRuntimeException {
 		super(scope, objects, flat, preferredSize);
 		setMatrix(new double[numRows * numCols]);
@@ -162,7 +163,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	public GamaFloatMatrix(final IScope scope, final Object[] mat) {
 		this(1, mat.length);
 		for ( int i = 0; i < mat.length; i++ ) {
-			getMatrix()[i] = Cast.asFloat(null, mat[i]);
+			getMatrix()[i] = Cast.asFloat(scope, mat[i]);
 		}
 	}
 
@@ -253,11 +254,8 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) {
-		if ( preferredSize == null ) { return this; }
-		final int cols = (int) preferredSize.getX();
-		final int rows = (int) preferredSize.getY();
-		return new GamaFloatMatrix(cols, rows, getMatrix());
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type) {
+		return GamaMatrixType.from(scope, this, type, Types.get(IType.FLOAT), preferredSize);
 	}
 
 	@Override
@@ -273,8 +271,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public GamaFloatMatrix copy(final IScope scope) {
-		return new GamaFloatMatrix(numCols, numRows, getMatrix());
+	public GamaFloatMatrix copy(final IScope scope, final ILocation size) {
+		if ( size == null ) { return new GamaFloatMatrix(numCols, numRows, Arrays.copyOf(getMatrix(), matrix.length)); }
+		return new GamaFloatMatrix((int) size.getX(), (int) size.getY(), Arrays.copyOf(getMatrix(), matrix.length));
 	}
 
 	@Override
@@ -403,7 +402,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	// }
 
 	@Override
-	public Iterable<Double> iterable(final IScope scope) {
+	public java.lang.Iterable<Double> iterable(final IScope scope) {
 		return Doubles.asList(getMatrix());
 	}
 

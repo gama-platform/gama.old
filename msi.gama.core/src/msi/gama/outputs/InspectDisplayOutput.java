@@ -37,7 +37,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * The Class AbstractInspectOutput.
@@ -229,13 +229,13 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }
 		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
 			.getMicroPopulation((ISpecies) lastValue); }
-		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope()); }
+		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope(), Types.NO_TYPE); }
 		return null;
 	}
 
 	public ISpecies getSpecies() {
 		if ( getValue() == null ) { return null; }
-		return GAMA.getModel().getSpecies(getValue().getContentType().getSpeciesName());
+		return GAMA.getModel().getSpecies(getValue().getType().getContentType().getSpeciesName());
 	}
 
 	public List<String> getAttributes() {

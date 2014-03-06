@@ -25,7 +25,7 @@ import msi.gaml.types.*;
 public class DisplayHeightUnitExpression extends ConstantExpression {
 
 	public DisplayHeightUnitExpression() {
-		super("display_height", Types.get(IType.FLOAT), Types.get(IType.FLOAT));
+		super("display_height", Types.get(IType.FLOAT));
 	}
 
 	@Override

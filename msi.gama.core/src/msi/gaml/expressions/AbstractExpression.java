@@ -31,11 +31,7 @@ import msi.gaml.types.*;
 public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
-	protected IType contentType = null;
-	protected IType keyType = null;
 	protected String name = null;
-	protected IType elementsContentType = Types.NO_TYPE;
-	protected IType elementsKeyType = Types.NO_TYPE;
 
 	protected static final int _type = 0;
 	protected static final int _content = 1;
@@ -56,55 +52,12 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public IType getContentType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		return contentType == null ? getType().defaultContentType() : contentType;
-	}
-
-	@Override
-	public IType getKeyType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		return keyType == null ? getType().defaultKeyType() : keyType;
-	}
-
-	protected String typeToString() {
-		IType tt = getType();
-		String t = tt.toString();
-		if ( tt.hasContents() ) {
-			t += "&lt;" + getKeyType().toString() + ", " + getContentType().toString() + "&gt;";
-		}
-		return t;
-	}
-
-	@Override
 	public String literalValue() {
 		return getName();
 	}
 
 	@Override
 	public void dispose() {}
-
-	//
-	// @Override
-	// public void notifyChanged(final Notification notification) {}
-	//
-	// @Override
-	// public Notifier getTarget() {
-	// return null;
-	// }
-	//
-	// @Override
-	// public void setTarget(final Notifier newTarget) {}
-	//
-	// @Override
-	// public boolean isAdapterForType(final Object type) {
-	// return false;
-	// }
-	//
-	// @Override
-	// public void unsetTarget(final Notifier object) {
-	//
-	// }
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
@@ -121,36 +74,24 @@ public abstract class AbstractExpression implements IExpression {
 			if ( e == null ) {
 				continue;
 			}
-			types.add(kind == _type ? e.getType() : kind == _content ? e.getContentType() : e.getKeyType());
+			IType eType = e.getType();
+			types.add(kind == _type ? eType : kind == _content ? eType.getContentType() : eType.getKeyType());
 		}
 		final IType[] array = types.toArray(new IType[types.size()]);
 		if ( array.length == 0 ) { return result; }
 		result = array[0];
 		if ( array.length == 1 ) { return result; }
 		for ( int i = 1; i < array.length; i++ ) {
-			result = result.findCommonSupertypeWith(array[i]);
+			IType currentType = array[i];
+			if ( currentType == Types.NO_TYPE ) {
+				if ( result.getDefault() != null ) {
+					result = Types.NO_TYPE;
+				}
+			} else {
+				result = result.findCommonSupertypeWith(array[i]);
+			}
 		}
 		return result;
-	}
-
-	@Override
-	public IType getElementsContentType() {
-		return elementsContentType == Types.NO_TYPE ? getContentType().defaultContentType() : elementsContentType;
-	}
-
-	@Override
-	public IType getElementsKeyType() {
-		return elementsKeyType == Types.NO_TYPE ? getContentType().defaultKeyType() : elementsKeyType;
-	}
-
-	@Override
-	public void setElementsContentType(final IType t) {
-		elementsContentType = t;
-	}
-
-	@Override
-	public void setElementsKeyType(final IType t) {
-		elementsKeyType = t;
 	}
 
 	protected String parenthesize(final IExpression ... exp) {

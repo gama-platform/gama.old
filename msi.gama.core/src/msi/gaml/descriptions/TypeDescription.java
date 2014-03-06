@@ -2,7 +2,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.IExpression;
@@ -19,15 +18,13 @@ import org.eclipse.emf.ecore.EObject;
  * @since 23 f�vr. 2013
  * 
  */
-public class TypeDescription extends SymbolDescription {
+public abstract class TypeDescription extends SymbolDescription {
 
 	protected Map<String, StatementDescription> actions;
-	private Map<String, VariableDescription> variables;
+	protected Map<String, VariableDescription> variables;
 	protected Class javaBase;
 	protected TypeDescription parent;
 	private static int varCount = 0;
-	private List<String> sortedVariableNames;
-	private List<String> updatableVariableNames;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
 		final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
@@ -57,133 +54,129 @@ public class TypeDescription extends SymbolDescription {
 		return Collections.EMPTY_SET;
 	}
 
-	protected void duplicateError(final IDescription one, final IDescription two) {
+	protected void duplicateInfo(final IDescription one, final IDescription two) {
 		final String name = one.getFacets().getLabel(NAME);
 		final String key = one.getKeyword();
-		final String error = key + " " + name + " is declared twice. Only this one will be kept.";
+		final String error =
+			key + " " + name + " is declared twice. This definition supersedes the previous in " + two.getOriginName();
 		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
-	protected void addPrimitive(final StatementDescription primitive) {
-		final String actionName = primitive.getName();
+	// protected void addPrimitive(final StatementDescription newAction) {
+	// final String actionName = newAction.getName();
+	// final StatementDescription existing = getAction(actionName);
+	// TypeDescription.assertActionsAreCompatible(existing, newAction, newAction.getOriginName());
+	// if ( actions == null ) {
+	// actions = new LinkedHashMap<String, StatementDescription>();
+	// }
+	// actions.put(actionName, newAction);
+	//
+	// }
+
+	protected void addAction(final TypeDescription from, final StatementDescription newAction) {
+		final String actionName = newAction.getName();
 		final StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
-			// FIXME This block is never executed (to verify)
-			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
-				existing.info(
-					"Action " + actionName + " replaces a primitive of the same name defined in " +
-						primitive.getOriginName() + ". If it was not your intention, consider renaming it.",
-					IGamlIssue.GENERAL);
+			if ( newAction.isBuiltIn() && existing.isBuiltIn() ) { return; }
+			TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
+			if ( !existing.isAbstract() ) {
+				if ( existing.isBuiltIn() ) {
+					newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in " +
+						existing.getOriginName() + ". If it was not your intention, consider renaming it.",
+						IGamlIssue.GENERAL);
+				} else if ( from == this ) {
+					duplicateInfo(newAction, existing);
+				} else {
+					existing.info(
+						"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
+						IGamlIssue.REDEFINES);
+				}
+			} else if ( newAction.isAbstract() && from != this ) {
+				this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
+					", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+				return;
 			}
-			TypeDescription.assertActionsAreCompatible(existing, primitive, primitive.getOriginName());
-			children.remove(existing);
-		}
-		if ( actions == null ) {
-			actions = new LinkedHashMap<String, StatementDescription>();
-		}
-		actions.put(actionName, primitive);
-
-	}
-
-	protected void addAction(final StatementDescription redeclaredAction) {
-
-		// TODO VERIFIER LES PARENTS RESPECTIFS ET COMPRENDRE POURQUOI ERREUR SUR L'AJOUT D'ACTIONS ABSTRAITES
-		final String actionName = redeclaredAction.getName();
-		final StatementDescription existingAction = getAction(actionName);
-		if ( existingAction != null ) {
-			// Skills primitives are added first
-			// if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
-			// redeclaredAction.error("Action " + actionName + " replaces a primitive of the same name defined in " +
-			// existingAction.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
-			// return;
-			// }
-			TypeDescription
-				.assertActionsAreCompatible(redeclaredAction, existingAction, existingAction.getOriginName());
-			if ( !existingAction.isAbstract() ) {
-				duplicateError(redeclaredAction, existingAction);
-			}
-			children.remove(existingAction);
-		}
-		if ( actions == null ) {
-			actions = new LinkedHashMap<String, StatementDescription>();
-		}
-		actions.put(actionName, redeclaredAction);
-	}
-
-	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
-		final String actionName = parentAction.getName();
-		final StatementDescription existingAction = getAction(actionName);
-		if ( existingAction == null ) {
-			// The action does not replace any. Just proceed.
-			addChild(parentAction);
-			return;
-		}
-		if ( existingAction.isAbstract() && parentAction.isAbstract() ) {
-			this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+		} else if ( newAction.isAbstract() && from != this ) {
+			this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
 				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
 			return;
 		}
-		TypeDescription.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
-		if ( existingAction.isBuiltIn() ) {
-			addChild(parentAction);
-			return;
+		if ( actions == null ) {
+			actions = new LinkedHashMap<String, StatementDescription>();
 		}
-		existingAction.info(
-			"Redefinition of the action " + actionName + " defined in  " + parentAction.getOriginName(),
-			IGamlIssue.REDEFINES);
-
-		// addChild(parentAction);
-
-		// if ( actionName.equals("related_to") ) {
-		// GuiUtils.debug("TypeDescription.addAction related_to");
-		// }
-		// if ( !hasAction(actionName) || getAction(actionName).isAbstract() ) {
-		// // WARNING : the actions inherited from Java species are actually copied two times !
-		// // The current species does not define such an action. If it is abstract in
-		// // the super species, we issue an error
-		// if ( parentAction.isAbstract() ) {
-		// this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
-		// ", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-		// } else {
-		// // Otherwise we add it.
-		// addChild(parentAction);
-		// }
-		// return;
-		// }
-		//
-		// // The action has already been defined in the current species. Just need to check
-		// // if it coherent with the inherited action
-		// final StatementDescription myAction = getAction(actionName);
-		//
-		// DescriptionValidator.assertActionsAreCompatible(myAction, parentAction, parent.getName());
+		actions.put(actionName, newAction);
 	}
+
+	// protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
+	// final String actionName = parentAction.getName();
+	// final StatementDescription existingAction = getAction(actionName);
+	// if ( existingAction == null ) {
+	// // The action does not replace any. Just proceed.
+	// // addChild(parentAction);
+	// return;
+	// }
+	// if ( existingAction.isAbstract() && parentAction.isAbstract() ) {
+	// this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+	// ", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+	// return;
+	// }
+	// TypeDescription.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
+	// if ( existingAction.isBuiltIn() ) {
+	// // addChild(parentAction);
+	// return;
+	// }
+	// existingAction.info(
+	// "Redefinition of the action " + actionName + " defined in  " + parentAction.getOriginName(),
+	// IGamlIssue.REDEFINES);
+	// }
 
 	@Override
 	public StatementDescription getAction(final String aName) {
 		return actions == null ? null : actions.get(aName);
+		// if ( actions != null && actions.containsKey(aName) ) { return actions.get(aName); }
+
+		// return parent == null ? null : parent.getAction(aName);
 	}
 
 	public Collection<String> getActionNames() {
 		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
+		// Set<String> names = new HashSet();
+		// if ( actions != null ) {
+		// names.addAll(actions.keySet());
+		// }
+		// if ( parent != null ) {
+		// names.addAll(parent.getActionNames());
+		// }
+		// return names;
 	}
 
-	public Collection<IDescription> getActions() {
+	public Collection<StatementDescription> getActions() {
 		return actions == null ? Collections.EMPTY_LIST : actions.values();
+
+		// Set<StatementDescription> allActions = new HashSet();
+		// if ( actions != null ) {
+		// allActions.addAll(actions.values());
+		// }
+		// if ( parent != null ) {
+		// allActions.addAll(parent.getActions());
+		// }
+		// return allActions;
 	}
 
 	@Override
 	public boolean hasAction(final String a) {
 		return actions != null && actions.containsKey(a);
+		// return actions != null && actions.containsKey(a) || parent != null && parent != this && parent.hasAction(a);
 	}
 
 	public VariableDescription getVariable(final String name) {
-		return variables == null ? null : getVariables().get(name);
+		return variables == null ? null : variables.get(name);
 	}
 
 	@Override
 	public boolean hasVar(final String a) {
-		return variables != null && getVariables().containsKey(a);
+		return variables != null && variables.containsKey(a);
 	}
 
 	@Override
@@ -193,12 +186,14 @@ public class TypeDescription extends SymbolDescription {
 		return vd.getVarExpr();
 	}
 
-	public Class getJavaBase() {
-		if ( javaBase == null && parent != null ) {
-			javaBase = parent.getJavaBase();
-		}
-		return javaBase;
-	}
+	public abstract Class getJavaBase();
+
+	// {
+	// if ( javaBase == null && parent != null ) {
+	// javaBase = parent.getJavaBase();
+	// }
+	// return javaBase;
+	// }
 
 	protected void setJavaBase(final Class javaBase) {
 		this.javaBase = javaBase;
@@ -206,6 +201,10 @@ public class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
+
+		// WARNING: this leads to numerous computations. Could we cache the type somehow ?
+		// WARNING: Before, we should count how many invocations are made
+
 		return getTypeNamed(getName());
 	}
 
@@ -232,19 +231,25 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean isAbstract() {
-		if ( actions == null ) { return false; }
-		for ( final StatementDescription a : actions.values() ) {
+		for ( final StatementDescription a : getActions() ) {
 			if ( a.isAbstract() ) { return true; }
 		}
 		return false;
 	}
 
 	public IList<String> getVarNames() {
-		return sortedVariableNames == null ? GamaList.EMPTY_LIST : new GamaList(sortedVariableNames);
+		return new GamaList(variables.keySet());
 	}
 
 	public List<String> getUpdatableVarNames() {
-		return updatableVariableNames == null ? GamaList.EMPTY_LIST : updatableVariableNames;
+		if ( variables == null ) { return Collections.EMPTY_LIST; }
+		List<String> result = new ArrayList();
+		for ( Map.Entry<String, VariableDescription> entry : variables.entrySet() ) {
+			if ( entry.getValue().isUpdatable() ) {
+				result.add(entry.getKey());
+			}
+		}
+		return result;
 	}
 
 	protected void sortVars() {
@@ -253,10 +258,14 @@ public class TypeDescription extends SymbolDescription {
 		final List<VariableDescription> result = new GamaList();
 		final Collection<VariableDescription> vars = getVariables().values();
 		for ( final VariableDescription var : vars ) {
-			var.usedVariablesIn(getVariables());
+			if ( var != null ) {
+				var.usedVariablesIn(getVariables());
+			}
 		}
 		for ( final VariableDescription var : vars ) {
-			var.expandDependencies(new GamaList());
+			if ( var != null ) {
+				var.expandDependencies(new GamaList());
+			}
 		}
 		for ( final VariableDescription toBePlaced : vars ) {
 			boolean found = false;
@@ -275,67 +284,36 @@ public class TypeDescription extends SymbolDescription {
 				result.add(toBePlaced);
 			}
 		}
-		if ( sortedVariableNames == null ) {
-			sortedVariableNames = new GamaList();
-		} else {
-			sortedVariableNames.clear();
-		}
+		variables.clear();
 		for ( int i = 0; i < result.size(); i++ ) {
 			final VariableDescription v = result.get(i);
 			final String s = v.getName();
-			sortedVariableNames.add(s);
-			if ( v.isUpdatable() ) {
-				if ( updatableVariableNames == null ) {
-					updatableVariableNames = new GamaList();
-				}
-				updatableVariableNames.add(s);
-			}
+			variables.put(s, v);
 		}
-		// FIXME March 2013: Hack to have the paths always at the beginning
-		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
-		// TO THE EXPERIMENTATOR
 
-		if ( sortedVariableNames.remove(ExperimentAgent.PROJECT_PATH) ) {
-			sortedVariableNames.add(0, ExperimentAgent.PROJECT_PATH);
-		}
-		if ( sortedVariableNames.remove(ExperimentAgent.MODEL_PATH) ) {
-			sortedVariableNames.add(0, ExperimentAgent.MODEL_PATH);
-		}
 	}
 
 	public void resortVarName(final VariableDescription var) {
 		var.usedVariablesIn(getVariables());
 		var.expandDependencies(new GamaList());
-		sortedVariableNames.remove(var.getName());
-		int index = 0;
-		for ( int j = 0, n = sortedVariableNames.size(); j < n; j++ ) {
-			final VariableDescription vd = getVariable(sortedVariableNames.get(j));
+		variables.remove(var.getName());
+		List<VariableDescription> vl = new ArrayList(variables.values());
+		ListIterator<VariableDescription> li = vl.listIterator(vl.size());
+		boolean added = false;
+		while (li.hasPrevious() && !added) {
+			VariableDescription vd = li.previous();
 			if ( var.getDependencies().contains(vd) ) {
-				index = j;
+				li.next();
+				li.add(var);
+				added = true;
 			};
 		}
-		if ( index == sortedVariableNames.size() ) {
-			sortedVariableNames.add(var.getName());
-		} else {
-			sortedVariableNames.add(index + 1, var.getName());
+		if ( !added ) {
+			vl.add(0, var);
 		}
-		// FIXME March 2013: Hack to have the paths always at the beginning
-		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
-		// TO THE EXPERIMENTATOR
-
-		if ( sortedVariableNames.remove(ExperimentAgent.PROJECT_PATH) ) {
-			sortedVariableNames.add(0, ExperimentAgent.PROJECT_PATH);
-		}
-		if ( sortedVariableNames.remove(ExperimentAgent.MODEL_PATH) ) {
-			sortedVariableNames.add(0, ExperimentAgent.MODEL_PATH);
-		}
-		if ( var.isUpdatable() ) {
-			if ( updatableVariableNames == null ) {
-				updatableVariableNames = new GamaList();
-			}
-			if ( !updatableVariableNames.contains(var.getName()) ) {
-				updatableVariableNames.add(var.getName());
-			}
+		variables.clear();
+		for ( VariableDescription vd : vl ) {
+			variables.put(vd.getName(), vd);
 		}
 	}
 
@@ -354,7 +332,7 @@ public class TypeDescription extends SymbolDescription {
 
 	protected void inheritFromParent() {
 		// Takes care of invalid species (see Issue 711)
-		if ( parent != null && parent != this ) {
+		if ( parent != null && parent != this && !parent.isBuiltIn() ) {
 			inheritActions();
 			inheritVariables();
 		}
@@ -373,15 +351,13 @@ public class TypeDescription extends SymbolDescription {
 		// We only copy the actions that are not redefined in this species
 		if ( parent.actions != null ) {
 			for ( final StatementDescription action : parent.actions.values() ) {
-				inheritAction(parent, action);
+				addAction(parent, action);
 			}
 		}
 	}
 
 	protected void inheritVariable(final VariableDescription parentVariable) {
 		final String varName = parentVariable.getName();
-		// GuiUtils.debug("       **** " + getName() + " receives " + " var " + varName + " from " + parent.getName());
-
 		if ( !hasVar(varName) ) {
 			addChild(parentVariable.copy(this)); // TODO Verify the copy(...)
 			return;
@@ -400,13 +376,6 @@ public class TypeDescription extends SymbolDescription {
 		if ( !myType.isTranslatableInto(parentType) ) {
 			myVar.error("Type (" + myType + ") differs from that (" + parentType + ") of the implementation of  " +
 				varName + " in " + parent.getName());
-		} else if ( myType.hasContents() ) {
-			myType = myVar.getContentType();
-			parentType = parentVariable.getContentType();
-			if ( !myType.isTranslatableInto(parentType) ) {
-				myVar.error("Content type (" + myType + ") differs from that (" + parentType +
-					") of the implementation of  " + varName + " in " + parent.getName());
-			}
 		}
 		if ( !myVar.isBuiltIn() ) {
 			myVar.info("Redefinition of the variable " + varName + " defined in  " + parentVariable.getOriginName(),
@@ -417,30 +386,22 @@ public class TypeDescription extends SymbolDescription {
 
 	protected void addVariable(final VariableDescription v) {
 		final String vName = v.getName();
-
-		if ( hasVar(vName) ) {
-			final IDescription builtIn = getVariables().get(vName);
+		final IDescription builtIn = getVariables().get(vName);
+		if ( builtIn != null ) {
 			if ( !builtIn.isBuiltIn() ) {
-				duplicateError(v, builtIn);
-				getChildren().remove(builtIn);
+				duplicateInfo(v, builtIn);
+				// getChildren().remove(builtIn);
 			}
-			final IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
-			final IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
-			if ( bType != vType ) {
-				final String builtInType = bType.toString();
-				final String varType = vType.toString();
-				v.error(
-					"variable " + vName + " is of type " + builtInType + " and cannot be redefined as a " + varType,
+			final IType bType = builtIn.getType();
+			final IType vType = v.getType();
+			if ( !vType.isTranslatableInto(bType) ) {
+				v.error("variable " + vName + " is of type " + bType + " and cannot be redefined as a " + vType,
 					IGamlIssue.WRONG_REDEFINITION);
 			}
 			v.copyFrom((VariableDescription) builtIn);
 		}
-
 		v.setDefinitionOrder(varCount++);
-		if ( variables == null ) {
-			variables = new LinkedHashMap<String, VariableDescription>();
-		}
-		variables.put(vName, v);
+		getVariables().put(vName, v);
 	}
 
 	public static void assertActionsAreCompatible(final StatementDescription myAction,
@@ -448,16 +409,9 @@ public class TypeDescription extends SymbolDescription {
 		final String actionName = parentAction.getName();
 		IType myType = myAction.getType();
 		IType parentType = parentAction.getType();
-		if ( parentType != myType ) {
+		if ( !parentType.isAssignableFrom(myType) ) {
 			myAction.error("Return type (" + myType + ") differs from that (" + parentType +
 				") of the implementation of  " + actionName + " in " + parentName);
-		} else if ( myType.hasContents() ) {
-			myType = myAction.getContentType();
-			parentType = parentAction.getContentType();
-			if ( parentType != myType ) {
-				myAction.error("Content type (" + myType + ") differs from that (" + parentType +
-					") of the implementation of  " + actionName + " in " + parentName);
-			}
 		}
 		if ( !new HashSet(parentAction.getArgNames()).equals(new HashSet(myAction.getArgNames())) ) {
 			final String error =
@@ -468,13 +422,16 @@ public class TypeDescription extends SymbolDescription {
 
 	}
 
-	// public void finalizeDescription() {
-	// for ( StatementDescription action : actions.values() ) {
-	// if ( action.isAbstract() && !this.isBuiltIn() ) {
-	// this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName() +
-	// ", should be redefined.", IGamlIssue.MISSING_ACTION);
-	// }
-	// }
-	// }
+	@Override
+	public List<IDescription> getChildren() {
+		List<IDescription> result = new ArrayList();
+		if ( variables != null ) {
+			result.addAll(variables.values());
+		}
+		if ( actions != null ) {
+			result.addAll(actions.values());
+		}
+		return result;
+	}
 
 }

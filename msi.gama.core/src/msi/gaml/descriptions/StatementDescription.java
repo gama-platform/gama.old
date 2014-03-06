@@ -38,8 +38,62 @@ import org.eclipse.emf.ecore.EObject;
 
 public class StatementDescription extends SymbolDescription {
 
+	public static class StatementWithChildrenDescription extends StatementDescription {
+
+		protected List<IDescription> children;
+
+		public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
+			final ChildrenProvider cp, final boolean hasScope, final boolean hasArgs, final EObject source,
+			final Facets facets) {
+			super(keyword, superDesc, cp, hasScope, hasArgs, source, facets);
+		}
+
+		@Override
+		public List<IDescription> getChildren() {
+			if ( children == null ) {
+				children = new ArrayList();
+			}
+			return children;
+		}
+
+		@Override
+		public void dispose() {
+			if ( children != null ) {
+				for ( IDescription c : children ) {
+					c.dispose();
+				}
+				children.clear();
+			}
+		}
+
+		@Override
+		public IDescription addChild(final IDescription child) {
+			getChildren().add(child);
+			return super.addChild(child);
+		}
+
+		@Override
+		public StatementDescription copy(final IDescription into) {
+			List<IDescription> children = new ArrayList();
+			for ( IDescription child : getChildren() ) {
+				children.add(child.copy(into));
+			}
+			if ( args != null ) {
+				for ( IDescription child : args.values() ) {
+					children.add(child.copy(into));
+				}
+			}
+			StatementDescription desc =
+				new StatementWithChildrenDescription(getKeyword(), into, new ChildrenProvider(children), temps != null,
+					args != null, element, facets);
+			desc.originName = originName;
+			return desc;
+		}
+
+	}
+
 	protected final Map<String, IVarExpression> temps;
-	protected final Map<String, IDescription> args;
+	protected final Map<String, StatementDescription> args;
 	private final static String INTERNAL = "internal_";
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
@@ -64,6 +118,7 @@ public class StatementDescription extends SymbolDescription {
 		if ( args != null ) {
 			args.clear();
 		}
+		previousDescription = null;
 		super.dispose();
 		// isDisposed = true;
 	}
@@ -83,7 +138,7 @@ public class StatementDescription extends SymbolDescription {
 		for ( Iterator<IDescription> it = getChildren().iterator(); it.hasNext(); ) {
 			IDescription c = it.next();
 			if ( c.getKeyword().equals(ARG) ) {
-				args.put(c.getName(), c);
+				args.put(c.getName(), (StatementDescription) c);
 				it.remove();
 			}
 		}
@@ -105,10 +160,10 @@ public class StatementDescription extends SymbolDescription {
 		});
 	}
 
-	private IDescription createArg(final String n, final IExpressionDescription v) {
+	private StatementDescription createArg(final String n, final IExpressionDescription v) {
 		Facets f = new Facets(NAME, n);
 		f.put(VALUE, v);
-		IDescription a = DescriptionFactory.create(ARG, this, ChildrenProvider.NONE, f);
+		StatementDescription a = (StatementDescription) DescriptionFactory.create(ARG, this, ChildrenProvider.NONE, f);
 		return a;
 	}
 
@@ -134,12 +189,11 @@ public class StatementDescription extends SymbolDescription {
 		return executer;
 	}
 
-	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type, final IType contentType,
-		final IType keyType) {
+	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
 		String varName = facets.getLabel(facetName);
 		if ( getKeyword().equals(LOOP) && facetName.equals(NAME) ) {
 			// Case of loops: the variable is inside the loop (not outside)
-			return (IVarExpression) addTemp(varName, type, contentType, keyType);
+			return (IVarExpression) addTemp(this, varName, type);
 		}
 
 		IDescription sup = getEnclosingDescription();
@@ -147,7 +201,7 @@ public class StatementDescription extends SymbolDescription {
 			error("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
-		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType, keyType);
+		return (IVarExpression) ((StatementDescription) sup).addTemp(this, varName, type);
 	}
 
 	@Override
@@ -174,22 +228,30 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType, final IType keyType) {
+	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
 		if ( temps == null ) {
 			if ( getEnclosingDescription() == null ) { return null; }
 			if ( !(getEnclosingDescription() instanceof StatementDescription) ) { return null; }
-			return ((StatementDescription) getEnclosingDescription()).addTemp(name, type, contentType, keyType);
+			return ((StatementDescription) getEnclosingDescription()).addTemp(declaration, name, type);
+		}
+
+		// if ( !name.equals(MYSELF) ) {
+		// GuiUtils.debug("StatementDescription.addTemp " + name + " in " + this + ", declared by " + declaration);
+		// }
+
+		if ( temps.containsKey(name) && !name.equals(MYSELF) ) {
+			declaration.warning("This declaration of " + name + " shadows a previous declaration",
+				IGamlIssue.SHADOWS_NAME);
 		}
 		IVarExpression result =
-			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, contentType, keyType, false,
-				IVarExpression.TEMP, this);
+			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
 	}
 
 	@Override
 	public IExpression getVarExpr(final String name) {
-		if ( temps != null && temps.containsKey(name) ) { return temps.get(name); }
+		if ( temps != null ) { return temps.get(name); }
 		return null;
 	}
 
@@ -251,14 +313,15 @@ public class StatementDescription extends SymbolDescription {
 					if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
 						caller
 							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
-					} else if ( formalType.hasContents() ) {
-						formalType = args.get(name).getContentType();
-						callerType = arg.getValue().getExpression().getContentType();
-						if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
-							caller.error("The content type of argument " + name + " should be " + formalType,
-								IGamlIssue.WRONG_TYPE);
-						}
 					}
+					// else if ( formalType.hasContents() ) {
+					// formalType = args.get(name).getContentType();
+					// callerType = arg.getValue().getExpression().getContentType();
+					// if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
+					// caller.error("The content type of argument " + name + " should be " + formalType,
+					// IGamlIssue.WRONG_TYPE);
+					// }
+					// }
 				}
 			}
 		}
@@ -309,22 +372,29 @@ public class StatementDescription extends SymbolDescription {
 		return s;
 	}
 
-	@Override
-	public IType getType() {
-		return getTypeNamed(facets.getLabel(TYPE));
-	}
+	//
+	// @Override
+	// public IType getType() {
+	// IType type = facets.getTypeDenotedBy(TYPE, this);
+	// IType keyType = facets.getTypeDenotedBy(INDEX, this, type.getKeyType());
+	// IType contentType = facets.getTypeDenotedBy(OF, this, type.getContentType());
+	// // IExpression expr = facets.getExpr(TYPE);
+	// // if ( expr == null ) { return Types.NO_TYPE; }
+	// return GamaType.from(type, keyType, contentType);
+	// }
 
-	@Override
-	public IType getContentType() {
-		if ( facets.containsKey(OF) ) { return getTypeNamed(facets.getLabel(OF)); }
-		return getType().defaultContentType();
-	}
-
-	@Override
-	public IType getKeyType() {
-		if ( facets.containsKey(INDEX) ) { return getTypeNamed(facets.getLabel(INDEX)); }
-		return getType().defaultKeyType();
-	}
+	//
+	// @Override
+	// public IType getContentType() {
+	// if ( facets.containsKey(OF) ) { return getTypeNamed(facets.getLabel(OF)); }
+	// return getType().getContentType();
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// if ( facets.containsKey(INDEX) ) { return getTypeNamed(facets.getLabel(INDEX)); }
+	// return getType().getKeyType();
+	// }
 
 	@Override
 	public String toString() {
@@ -372,8 +442,8 @@ public class StatementDescription extends SymbolDescription {
 	public void collectChildren(final String keyword, final Set<StatementDescription> returns) {
 		if ( getKeyword().equals(keyword) ) {
 			returns.add(this);
-		} else if ( children != null ) {
-			for ( IDescription child : children ) {
+		} else/* if ( children != null ) */{
+			for ( IDescription child : getChildren() ) {
 				if ( child instanceof StatementDescription ) {
 					((StatementDescription) child).collectChildren(keyword, returns);
 				}
@@ -426,7 +496,7 @@ public class StatementDescription extends SymbolDescription {
 				final SpeciesDescription s = getSpeciesContext();
 				if ( s != null ) {
 					final IType t = s.getType();
-					addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
+					addTemp(this, MYSELF, t);
 					previousEnclosingDescription = getEnclosingDescription();
 					setEnclosingDescription(actualSpecies);
 
@@ -446,7 +516,7 @@ public class StatementDescription extends SymbolDescription {
 			final SpeciesDescription actualSpecies = computeSpecies();
 			if ( actualSpecies != null ) {
 				final IType t = getSpeciesContext().getType();
-				addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
+				addTemp(this, MYSELF, t);
 				setEnclosingDescription(actualSpecies);
 			}
 		}
@@ -480,10 +550,10 @@ public class StatementDescription extends SymbolDescription {
 			result = getSpeciesDescription(facet.literalValue());
 		} else if ( t.id() == IType.STRING && facet.isConst() ) {
 			result = getSpeciesDescription(facet.literalValue());
-		} else if ( t.isSpeciesType() ) {
+		} else if ( t.isAgentType() ) {
 			result = t.getSpecies();
 		} else {
-			result = facet.getContentType().getSpecies();
+			result = facet.getType().getContentType().getSpecies();
 		}
 		return result;
 
@@ -509,38 +579,55 @@ public class StatementDescription extends SymbolDescription {
 			}
 			ca.put(name, e);
 			if ( !isCalling ) {
-				List<String> typeNames = getModelDescription().getTypesManager().getTypeNames();
+				IType type = sd.getType();
+				// IType type = argFacets.getTypeDenotedBy(TYPE, this);
+				// if ( type == Types.NO_TYPE && e != null ) {
+				// type = e.getType();
+				// }
+				// IType keyType = argFacets.getTypeDenotedBy(INDEX, this, type.getKeyType());
+				// if ( keyType == Types.NO_TYPE && e != null ) {
+				// keyType = e.getKeyType();
+				// }
+				// IType contentType = argFacets.getTypeDenotedBy(OF, this, type.getContentType());
+				// if ( contentType == Types.NO_TYPE && e != null ) {
+				// contentType = e.getContentType();
+				// }
+				addTemp(this, name, type);
+
+				// FIXME These calls should now use the new definition of parametric types
+
+				// List<String> typeNames = getModelDescription().getTypesManager().getTypeNames();
 				// Special case for the calls (create, do, but also primitives) as the "arguments"
 				// passed should not be part of the context
-				String typeName = argFacets.getLabel(TYPE);
+				// String typeName = argFacets.getLabel(TYPE);
 				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				if ( !isCalling && !typeNames.contains(typeName) ) {
-					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
-				}
-				IType type = sd.getTypeNamed(typeName);
-				if ( type == Types.NO_TYPE && e != null ) {
-					type = e.getType();
-				}
-				typeName = argFacets.getLabel(OF);
+				// if ( !typeNames.contains(typeName) ) {
+				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+				// }
+				// IType type = sd.getTypeNamed(typeName);
+				// if ( type == Types.NO_TYPE && e != null ) {
+				// type = e.getType();
+				// }
+				// typeName = argFacets.getLabel(OF);
 				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
-					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
-				}
-				IType contents = sd.getTypeNamed(typeName);
-				if ( contents == Types.NO_TYPE && e != null ) {
-					contents = e.getContentType();
-				}
-				typeName = argFacets.getLabel(INDEX);
-				if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
-					error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
-				}
-
-				IType index = sd.getTypeNamed(typeName);
-				if ( index == Types.NO_TYPE && e != null ) {
-					index = e.getKeyType();
-				}
-
-				addTemp(name, type, contents, index);
+				// if ( typeName != null && !typeNames.contains(typeName) ) {
+				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
+				// }
+				// IType contents = sd.getTypeNamed(typeName);
+				// if ( contents == Types.NO_TYPE && e != null ) {
+				// contents = e.getContentType();
+				// }
+				// typeName = argFacets.getLabel(INDEX);
+				// if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
+				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
+				// }
+				//
+				// IType index = sd.getTypeNamed(typeName);
+				// if ( index == Types.NO_TYPE && e != null ) {
+				// index = e.getKeyType();
+				// }
+				//
+				// addTemp(name, type, contents, index);
 			}
 
 		}
@@ -586,46 +673,41 @@ public class StatementDescription extends SymbolDescription {
 				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
 					warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST, arg
 						.getFacets().get(VALUE).getTarget(), varType.toString());
-				} else {
-					varType = sd.getVariable(name).getContentType();
-					initType = ca.get(name).getExpression().getContentType();
-					if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-						warning("The content type of attribute " + name + " should be " + varType,
-							IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
-					}
 				}
+				// else {
+				// varType = sd.getVariable(name).getContentType();
+				// initType = ca.get(name).getExpression().getContentType();
+				// if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+				// warning("The content type of attribute " + name + " should be " + varType,
+				// IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
+				// }
+				// }
 			}
 
 		}
 	}
 
-	static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX);
-
 	@Override
 	protected IExpression createVarWithTypes(final String tag) {
-		final TypesManager types = getModelDescription().getTypesManager();
-		for ( String s : typeProviderFacets ) {
-			IExpressionDescription expr = facets.get(s);
-			if ( expr != null ) {
-				expr.compile(this);
-			}
-		}
-		IExpression value = facets.getExpr(VALUE);
-		IType t = Types.NO_TYPE;
-		IType ct = Types.NO_TYPE;
-		IType kt = Types.NO_TYPE;
+
+		compileTypeProviderFacets();
+		// IExpression value = facets.getExpr(VALUE);
 
 		// Definition of the type
+		IType t = super.getType();
 
-		if ( !facets.contains(TYPE) ) {
+		if ( t == Types.NO_TYPE ) {
 			if ( keyword.equals(CREATE) || keyword.equals(CAPTURE) || keyword.equals(RELEASE) ) {
 				t = Types.get(IType.LIST);
-			} else if ( value != null ) {
-				t = value.getType();
+			} else if ( facets.contains(VALUE) ) {
+				IExpression value = facets.getExpr(VALUE);
+				if ( value != null ) {
+					t = value.getType();
+				}
 			} else if ( facets.contains(OVER) ) {
 				IExpression expr = facets.getExpr(OVER);
 				if ( expr != null ) {
-					t = expr.getContentType();
+					t = expr.getType().getContentType();
 				}
 			} else if ( facets.contains(FROM) && facets.contains(TO) ) {
 				IExpression expr = facets.getExpr(FROM);
@@ -633,31 +715,44 @@ public class StatementDescription extends SymbolDescription {
 					t = expr.getType();
 				}
 			}
-		} else {
-			t = types.get(facets.getLabel(TYPE));
 		}
-
+		IType ct = t.getContentType();
+		IType kt = t.getKeyType();
 		// Definition of the content type and key type
-		if ( t.hasContents() ) {
-			ct = t.defaultContentType();
-			kt = t.defaultKeyType();
-			if ( facets.contains(AS) ) {
-				ct = types.get(facets.getLabel(AS));
-			} else if ( facets.contains(SPECIES) ) {
-				IExpression expr = facets.getExpr(SPECIES);
-				if ( expr != null ) {
-					ct = expr.getContentType();
+		if ( facets.contains(AS) ) {
+			ct = facets.getTypeDenotedBy(AS, this);
+		} else if ( facets.contains(SPECIES) ) {
+			IExpression expr = facets.getExpr(SPECIES);
+			if ( expr != null ) {
+				ct = expr.getType().getContentType();
+				kt = expr.getType().getKeyType();
+			}
+		}
+		// Last chance: grab the content and key from the value
+		if ( t.isContainer() && (ct == Types.NO_TYPE || kt == Types.NO_TYPE) ) {
+			IExpression value = facets.getExpr(VALUE);
+			if ( value != null ) {
+				IType tt = t.typeIfCasting(value);
+				if ( ct == Types.NO_TYPE ) {
+					ct = tt.getContentType();
 				}
-			} else if ( facets.contains(OF) ) {
-				ct = types.get(facets.getLabel(OF));
-			} else if ( value != null ) {
-				ct = value.getContentType();
-				kt = value.getKeyType();
+				if ( kt == Types.NO_TYPE ) {
+					kt = tt.getKeyType();
+				}
 			}
 		}
 
-		return addNewTempIfNecessary(tag, t, ct, kt);
+		return addNewTempIfNecessary(tag, GamaType.from(t, kt, ct));
 
+	}
+
+	/**
+	 * Method getChildren()
+	 * @see msi.gaml.descriptions.SymbolDescription#getChildren()
+	 */
+	@Override
+	public List<IDescription> getChildren() {
+		return Collections.EMPTY_LIST;
 	}
 
 }

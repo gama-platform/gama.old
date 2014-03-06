@@ -28,6 +28,7 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
@@ -135,21 +136,21 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		matrix = mat;
 	}
 
-	public GamaIntMatrix(final IScope scope, final List objects, final boolean flat, final GamaPoint preferredSize) {
+	public GamaIntMatrix(final IScope scope, final List objects, final boolean flat, final ILocation preferredSize) {
 		super(scope, objects, flat, preferredSize);
 		matrix = new int[numRows * numCols];
 		if ( preferredSize != null ) {
 			for ( int i = 0, stop = Math.min(matrix.length, objects.size()); i < stop; i++ ) {
-				matrix[i] = Cast.asInt(null, objects.get(i));
+				matrix[i] = Cast.asInt(scope, objects.get(i));
 			}
 		} else if ( flat || GamaMatrix.isFlat(objects) ) {
 			for ( int i = 0, stop = objects.size(); i < stop; i++ ) {
-				matrix[i] = Cast.asInt(null, objects.get(i));
+				matrix[i] = Cast.asInt(scope, objects.get(i));
 			}
 		} else {
 			for ( int i = 0; i < numRows; i++ ) {
 				for ( int j = 0; j < numCols; j++ ) {
-					set(scope, j, i, Cast.asInt(null, ((List) objects.get(j)).get(i)));
+					set(scope, j, i, Cast.asInt(scope, ((List) objects.get(j)).get(i)));
 				}
 			}
 		}
@@ -264,11 +265,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) {
-		if ( preferredSize == null ) { return this; }
-		final int cols = (int) preferredSize.getX();
-		final int rows = (int) preferredSize.getY();
-		return new GamaIntMatrix(cols, rows, matrix);
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type) {
+		return GamaMatrixType.from(scope, this, type, Types.get(IType.INT), preferredSize);
 	}
 
 	@Override
@@ -285,8 +283,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public GamaIntMatrix copy(final IScope scope) {
-		return new GamaIntMatrix(numCols, numRows, matrix);
+	public GamaIntMatrix copy(final IScope scope, final ILocation preferredSize) {
+		if ( preferredSize == null ) {
+			return new GamaIntMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length));
+		} else {
+			return new GamaIntMatrix((int) preferredSize.getX(), (int) preferredSize.getX(), Arrays.copyOf(matrix,
+				matrix.length));
+		}
 	}
 
 	@Override
@@ -417,7 +420,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
 	@Override
-	public Iterable<Integer> iterable(final IScope scope) {
+	public java.lang.Iterable<Integer> iterable(final IScope scope) {
 		return Ints.asList(matrix);
 	}
 
@@ -438,7 +441,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 			}
 		}
 	}
-	
+
 	void fillMatrix(final GamaMatrix matrix) {
 		for ( int i = 0; i < this.numRows; i++ ) {
 			for ( int j = 0; j < this.numCols; j++ ) {

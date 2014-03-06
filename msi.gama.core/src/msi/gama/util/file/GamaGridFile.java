@@ -69,7 +69,7 @@ public class GamaGridFile extends GamaGisFile {
 		IShape geom;
 
 		GamaGridReader(final IScope scope, final InputStream fis) throws GamaRuntimeException {
-			buffer = new GamaList();
+			setBuffer(new GamaList());
 			ArcGridReader store = null;
 			try {
 				// Necessary to compute it here, because it needs to be passed to the Hints
@@ -112,7 +112,7 @@ public class GamaGridFile extends GamaGisFile {
 					rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
 					rect.getOrCreateAttributes();
 					rect.getAttributes().put("grid_value", vals[0]);
-					((IList) buffer).add(rect);
+					((IList) getBuffer()).add(rect);
 				}
 			} catch (final Exception e) {
 				final GamaRuntimeException ex =
@@ -144,7 +144,7 @@ public class GamaGridFile extends GamaGisFile {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
+		if ( getBuffer() != null ) { return; }
 		createReader(scope);
 	}
 

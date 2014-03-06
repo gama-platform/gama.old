@@ -28,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -55,21 +55,20 @@ public class ReturnStatement extends AbstractStatement {
 		scope.interruptAction();
 		return result;
 	}
-
-	@Override
-	public IType getType() {
-		// FIXME Verify the return type against the action return type
-		return value == null ? Types.NO_TYPE : value.getType();
-	}
-
-	@Override
-	public IType getContentType() {
-		return value == null ? Types.NO_TYPE : value.getContentType();
-	}
-
-	@Override
-	public IType getKeyType() {
-		return value == null ? Types.NO_TYPE : value.getKeyType();
-	}
+	//
+	// @Override
+	// public IType getType() {
+	// return value == null ? Types.NO_TYPE : value.getType();
+	// }
+	//
+	// @Override
+	// public IType getContentType() {
+	// return value == null ? Types.NO_TYPE : value.getContentType();
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// return value == null ? Types.NO_TYPE : value.getKeyType();
+	// }
 
 }

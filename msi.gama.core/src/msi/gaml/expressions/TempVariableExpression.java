@@ -26,9 +26,8 @@ import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
 
-	protected TempVariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
-		final IDescription definitionDescription) {
-		super(n, type, contentType, keyType, false, definitionDescription);
+	protected TempVariableExpression(final String n, final IType type, final IDescription definitionDescription) {
+		super(n, type, false, definitionDescription);
 	}
 
 	@Override
@@ -38,9 +37,7 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		// TODO No casting made here on the contents type. This prevents, for instance, matrices to be implemented using
-		// their correct type
-		Object val = type.cast(scope, v, null, contentType);
+		Object val = type.cast(scope, v, null);
 		if ( create ) {
 			scope.addVarWithValue(getName(), val);
 		} else {
@@ -50,7 +47,7 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "temporary variable " + getName() + " of type " + typeToString();
+		return "temporary variable " + getName() + " of type " + getType().getTitle();
 	}
 
 	/**
@@ -59,12 +56,12 @@ public class TempVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "temporary variable " + getName() + " of type " + typeToString() +
+		return "temporary variable " + getName() + " of type " + getType().getTitle() +
 			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return GAML.getExpressionFactory().createConst(value(scope), type, contentType);
+		return GAML.getExpressionFactory().createConst(value(scope), type);
 	}
 }

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -36,10 +37,11 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
@@ -57,10 +59,13 @@ public class ContainerVariable extends Variable {
 	private final IExpression sizeExpr;
 	private final IExpression fillExpr;
 
+	// private final IType keyType;
+
 	public ContainerVariable(final IDescription sd) {
 		super(sd);
 		sizeExpr = getFacet(IKeyword.SIZE);
 		fillExpr = getFacet(IKeyword.FILL_WITH);
+		// keyType = sd.getKeyType();
 	}
 
 	@Override
@@ -75,39 +80,67 @@ public class ContainerVariable extends Variable {
 	private void setSize(final IScope scope, final IAgent owner, final Object value) throws GamaRuntimeException {
 		IContainer result = null;
 		size = value instanceof ILocation ? (GamaPoint) value : new GamaPoint(Cast.asInt(scope, value), 1);
-		switch (this.getType().id()) {
+		switch (type.id()) {
 			case IType.MATRIX: {
 				Object v = value(scope, owner);
 				if ( !(v instanceof IMatrix) ) {
 					v = null;
 				}
-				switch (description.getContentType().id()) {
+				// FIXME See if all of this is still necessary.
+				switch (type.getContentType().id()) {
 
 					case IType.FLOAT:
 						result =
 							v == null ? new GamaFloatMatrix(size) : GamaFloatMatrix.from(scope, (int) size.x,
 								(int) size.y, (IMatrix) v);
+						if ( fillExpr != null ) {
+							double[] contents = ((GamaFloatMatrix) result).getMatrix();
+							// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
+							for ( int i = 0; i < contents.length; i++ ) {
+								contents[i] = Cast.asFloat(scope, scope.evaluate(fillExpr, owner));
+							}
+						}
 						break;
 					case IType.INT:
 						result =
 							v == null ? new GamaIntMatrix(size) : GamaIntMatrix.from(scope, (int) size.x, (int) size.y,
 								(IMatrix) v);
+						if ( fillExpr != null ) {
+							int[] contents = ((GamaIntMatrix) result).getMatrix();
+							// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
+							for ( int i = 0; i < contents.length; i++ ) {
+								contents[i] = Cast.asInt(scope, scope.evaluate(fillExpr, owner));
+							}
+						}
 						break;
 					default:
 						result =
 							v == null ? new GamaObjectMatrix(size) : GamaObjectMatrix.from((int) size.x, (int) size.y,
 								(IMatrix) v);
+						if ( fillExpr == null ) {
+							((GamaObjectMatrix) result)._putAll(scope, type.getContentType().getDefault(), null);
+						} else {
+							Object[] contents = ((GamaObjectMatrix) result).getInnerMatrix();
+							// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
+							for ( int i = 0; i < contents.length; i++ ) {
+								contents[i] = scope.evaluate(fillExpr, owner);
+							}
+						}
+
 				}
-				final Object o =
-					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
-				((IMatrix) result).add(scope, null, o, null, true, false);
+
 				break;
 			}
 			case IType.LIST: {
 				final Object[] contents = new Object[Cast.asInt(scope, value)];
-				final Object o =
-					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
-				Arrays.fill(contents, o);
+				if ( fillExpr == null ) {
+					Arrays.fill(contents, type.getContentType().getDefault());
+				} else {
+					// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
+					for ( int i = 0; i < contents.length; i++ ) {
+						contents[i] = scope.evaluate(fillExpr, owner);
+					}
+				}
 				result = new GamaList(contents);
 			}
 		}
@@ -117,7 +150,7 @@ public class ContainerVariable extends Variable {
 
 	@Override
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		final Object result = type.cast(scope, v, size, contentType);
+		final Object result = type.cast(scope, v, size);
 		return result;
 	}
 

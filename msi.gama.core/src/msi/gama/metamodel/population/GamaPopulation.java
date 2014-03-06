@@ -20,12 +20,11 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
-import msi.gama.metamodel.topology.filter.In;
+import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.*;
 import msi.gama.runtime.IScope;
@@ -225,7 +224,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public Iterable<IAgent> iterable(final IScope scope) {
+	public java.lang.Iterable<IAgent> iterable(final IScope scope) {
 		return GAML.allLivingAgents(this);
 	}
 
@@ -382,7 +381,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public IAgent getAgent(final IScope scope, final ILocation coord) {
-		return topology.getAgentClosestTo(scope, coord, In.list(scope, this));
+		IAgentFilter filter = In.list(scope, this);
+		if ( filter == null ) { return null; }
+		return topology.getAgentClosestTo(scope, coord, filter);
 	}
 
 	/**
@@ -397,7 +398,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final boolean fixed = species.isGraph() || species.isGrid();
 		if ( expr != null ) {
 			if ( !fixed ) {
-				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), null);
+				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host));
 				return;
 			}
 			throw GamaRuntimeException.warning("Impossible to assign a topology to " + species.getName() +
@@ -499,50 +500,100 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	/**
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
-	@Override
-	public GamaList<IAgent> listValue(final IScope scope) throws GamaRuntimeException {
-		// TODO Is the copy necessary ?
-		return new GamaList(this);
-		// return this;
-	}
+	// @Override
+	// public GamaList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+	// // TODO Is the copy necessary ?
+	// return new GamaList(this);
+	// // return this;
+	// }
 
-	/**
-	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object)
-	 */
 	@Override
-	public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean all,
-		final boolean add) {
-		if ( all && add && value instanceof IContainer ) {
-			for ( final Object o : ((IContainer) value).iterable(scope) ) {
-				add(scope, null, o, null, false, true);
-			}
-		} else if ( value instanceof IAgent ) {
-			fireAgentAdded((IAgent) value);
-			/* agents. */add((IAgent) value);
+	public void addValue(final IScope scope, final IAgent value) {
+		if ( value instanceof IAgent ) {
+			fireAgentAdded(value);
+			add(value);
 		}
 	}
 
-	/**
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.util.IContainer)
-	 */
 	@Override
-	public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-		if ( getSpecies().getName().equals("flock") ) {
-			GuiUtils.debug("GamaPopulation.remove " + value);
+	public void addValueAtIndex(final IScope scope, final Integer index, final IAgent value) {
+		addValue(scope, value);
+	}
+
+	public void addAll(final IScope scope, final IAgent value) {
+		addValue(scope, value);
+	}
+
+	@Override
+	public void addVallues(final IScope scope, final IContainer values) {
+		for ( final IAgent o : (java.lang.Iterable<IAgent>) values.iterable(scope) ) {
+			addValue(scope, o);
 		}
-		if ( all && value instanceof IContainer ) {
-			for ( final Object o : ((IContainer) value).iterable(scope) ) {
-				remove(scope, null, o, false);
-			}
-		} else if ( value instanceof IAgent && super.remove(value) ) {
+	}
+
+	@Override
+	public void removeValue(final IScope scope, final Object value) {
+		if ( value instanceof IAgent && super.remove(value) ) {
 			topology.removeAgent((IAgent) value);
 			fireAgentRemoved((IAgent) value);
 		}
 	}
 
 	@Override
+	public void removeValues(final IScope scope, final IContainer values) {
+		for ( final Object o : values.iterable(scope) ) {
+			removeValue(scope, o);
+		}
+	}
+
+	@Override
+	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+		removeValue(scope, value);
+	}
+
+	//
+	// public void removeAt(IScope scope, Integer index) {
+	//
+	// }
+
+	/**
+	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object)
+	 */
+	// @Override
+	// public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean
+	// all,
+	// final boolean add) {
+	// if ( all && add && value instanceof IContainer ) {
+	// for ( final Object o : ((IContainer) value).iterable(scope) ) {
+	// add(scope, null, o, null, false, true);
+	// }
+	// } else if ( value instanceof IAgent ) {
+	// fireAgentAdded((IAgent) value);
+	// /* agents. */add((IAgent) value);
+	// }
+	// }
+
+	/**
+	 * @see msi.gama.util.IContainer#removeAll(msi.gama.util.IContainer)
+	 */
+	// @Override
+	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
+	// if ( getSpecies().getName().equals("flock") ) {
+	// GuiUtils.debug("GamaPopulation.remove " + value);
+	// }
+	// if ( all && value instanceof IContainer ) {
+	// for ( final Object o : ((IContainer) value).iterable(scope) ) {
+	// remove(scope, null, o, false);
+	// }
+	// } else if ( value instanceof IAgent && super.remove(value) ) {
+	// topology.removeAgent((IAgent) value);
+	// fireAgentRemoved((IAgent) value);
+	// }
+	// }
+
+	@Override
 	public boolean remove(final Object a) {
-		remove(null, null, a, false);
+		removeValue(null, a);
 		return true;
 	}
 
@@ -650,7 +701,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 */
 	@Override
 	public IContainer<?, ? extends IShape> getAgents() {
-		return this;
+		return new GamaList(GAML.allLivingAgents(this));
 	}
 
 	/**
@@ -663,6 +714,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final IAgent agent = a.getAgent();
 		if ( agent == null ) { return false; }
 		if ( agent.getPopulation() != this ) { return false; }
+		if ( agent.dead() ) { return false; }
 		final IAgent as = source.getAgent();
 		// if ( as != null && as.getPopulation() != pop ) {
 		if ( agent == as ) { return false; }
@@ -683,7 +735,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			IAgent a = s.getAgent();
-			if ( a == null || a.getPopulation() != this ) {
+			if ( a == null || a.getPopulation() != this || a.dead() ) {
 				it.remove();
 			}
 
@@ -695,10 +747,29 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return Collections.singleton(this);
 	}
+
 	//
 	// @Override
 	// public IPopulation getPopulation(final IScope scope, final String name) {
 	// return getName().equals(name) ? this : null;
 	// }
 
+	@Override
+	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+		if ( indices == null ) { return null; }
+		int size = indices.size();
+		switch (size) {
+			case 0:
+				return null;
+			case 1:
+				return super.getFromIndicesList(scope, indices);
+			case 2:
+				return this.getAgent(scope,
+					new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
+			default:
+				throw GamaRuntimeException.error("Populations cannot be accessed with 3 or more indexes");
+
+		}
+
+	}
 }

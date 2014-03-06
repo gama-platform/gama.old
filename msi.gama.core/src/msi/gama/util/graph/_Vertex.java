@@ -18,38 +18,33 @@
  */
 package msi.gama.util.graph;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
-public class _Vertex<V> {
+public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
+
+	Set inEdges = new ArrayUnenforcedSet(1);
+	Set outEdges = new ArrayUnenforcedSet(1);
+	// Double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
+	int edgesCount = 0;
+	int index = -1;
 
 	/**
 	 * The graph to which this vertex belongs
 	 */
-	protected final GamaGraph<?, V> graph;
+	// protected final GamaGraph<?, V> graph;
 
 	/**
 	 * @param gamaGraph
 	 */
-	protected _Vertex(final GamaGraph<?, V> gamaGraph) {
-		graph = gamaGraph;
+	protected _Vertex(final GamaGraph<E, V> gamaGraph) {
+		super(gamaGraph, WeightedGraph.DEFAULT_EDGE_WEIGHT);
 	}
 
-	Set inEdges = new ArrayUnenforcedSet(1);
-	Set outEdges = new ArrayUnenforcedSet(1);
-	Double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
-	int edgesCount = 0;
-	int index = -1;
-
-	public Double getWeight(final Object storedObject) {
+	@Override
+	public double getWeight() {
 		return weight;
-	}
-
-	public void setWeight(final Double w) {
-		weight = w;
 	}
 
 	public void addOutEdge(final Object e) {
@@ -74,7 +69,7 @@ public class _Vertex<V> {
 
 	public Object edgeTo(final Object v2) {
 		for ( Object e : outEdges ) {
-			_Edge<V> edge = (_Edge<V>) graph.edgeMap.get(e);
+			_Edge<V, E> edge = (_Edge<V, E>) graph.edgeMap.get(e);
 			if ( edge.getTarget().equals(v2) ) { return e; }
 		}
 		return null;
@@ -83,7 +78,7 @@ public class _Vertex<V> {
 	public Set edgesTo(final Object v2) {
 		Set result = new HashSet();
 		for ( Object e : outEdges ) {
-			_Edge<V> edge = (_Edge<V>) graph.edgeMap.get(e);
+			_Edge<V, E> edge = (_Edge<V, E>) graph.edgeMap.get(e);
 			if ( edge.getTarget().equals(v2) ) {
 				result.add(e);
 			}
@@ -113,6 +108,11 @@ public class _Vertex<V> {
 
 	public int getIndex() {
 		return index;
+	}
+
+	@Override
+	public boolean isNode() {
+		return true;
 	}
 
 	public Set getInEdges() {

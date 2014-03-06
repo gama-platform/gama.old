@@ -20,6 +20,7 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gaml.compilation.ISymbol;
 
 /**
  * The class ILayerStatement. Supports the GAML definition of layers in a display
@@ -28,7 +29,7 @@ import msi.gama.outputs.IDisplayOutput;
  * @since 14 d�c. 2011
  * 
  */
-public interface ILayerStatement extends INamed, IStepable {
+public interface ILayerStatement extends INamed, IStepable, ISymbol {
 
 	public final static short GRID = 1;
 	public final static short AGENTS = 2;
@@ -51,6 +52,10 @@ public interface ILayerStatement extends INamed, IStepable {
 	public abstract Boolean getRefresh();
 
 	public abstract IDisplayLayerBox getBox();
+
+	public Integer getTrace();
+
+	public Boolean getFading();
 
 	// public abstract void setElevation(Double elevation);
 

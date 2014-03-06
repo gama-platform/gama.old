@@ -30,7 +30,7 @@ import msi.gaml.expressions.*;
  * @todo Description
  * 
  */
-public interface IType<Support> {
+public interface IType<Support> extends IGamlDescription {
 
 	/** Constant fields to indicate the types of facets */
 	public static final int LABEL = -200;
@@ -60,7 +60,10 @@ public interface IType<Support> {
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
-	public Support cast(IScope scope, Object obj, Object param, IType contentsType) throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
+
+	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType)
+		throws GamaRuntimeException;
 
 	public int id();
 
@@ -74,13 +77,9 @@ public interface IType<Support> {
 
 	public Map<String, ? extends IGamlDescription> getFieldDescriptions(ModelDescription model);
 
-	public boolean isSpeciesType();
+	public boolean isAgentType();
 
 	public boolean isSkillType();
-
-	public abstract IType defaultContentType();
-
-	public abstract IType defaultKeyType();
 
 	public String getSpeciesName();
 
@@ -122,7 +121,9 @@ public interface IType<Support> {
 	 * special types (like rgb, species, etc.)
 	 * @return
 	 */
-	public abstract boolean hasContents();
+	// public abstract boolean hasContents();
+
+	public abstract boolean isContainer();
 
 	/**
 	 * Whether or not this type can be used in add or remove statements
@@ -140,5 +141,25 @@ public interface IType<Support> {
 	public boolean isParented();
 
 	public void setSupport(Class clazz);
+
+	/**
+	 * @param context
+	 *            When casting an expression, the type returned is usually that of this type. However, some types will
+	 *            compute
+	 *            another type based on the type of the expressoin to cast (for instance, species or agent)
+	 * @param exp
+	 * @return
+	 */
+	public IType typeIfCasting(final IExpression exp);
+
+	public IType getContentType();
+
+	public IType getKeyType();
+
+	/**
+	 * @param context
+	 * @param toCast
+	 * @return
+	 */
 
 }

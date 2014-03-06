@@ -23,6 +23,11 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	static Map<String, StringConstantExpression> cache = new HashMap();
 
+	@Override
+	public IType getDenotedType(final IDescription context) {
+		return context.getTypeNamed(value);
+	}
+
 	// StringConstantExpression get(final String s) {
 	// StringConstantExpression sc = cache.get(s);
 	// if ( sc == null ) {
@@ -37,7 +42,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		StringConstantExpression(final String constant) {
 			setName(constant);
 			type = Types.get(IType.STRING);
-			contentType = Types.get(IType.STRING);
+			// contentType = Types.get(IType.STRING);
 		}
 
 		@Override

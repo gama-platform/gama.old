@@ -11,6 +11,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+import org.geotools.referencing.CRS;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -217,10 +218,10 @@ public class GamaPreferences {
 			return value;
 		}
 
-		@Override
-		public IType getContentType() {
-			return Types.NO_TYPE;
-		}
+		// @Override
+		// public IType getContentType() {
+		// return Types.NO_TYPE;
+		// }
 
 		@Override
 		public String toGaml() {
@@ -365,10 +366,10 @@ public class GamaPreferences {
 		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normal by default", false,
-			IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals by default", false,
+		IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Cube Display by default", false,
-			IType.BOOL).in(DISPLAY).group("OpenGL");
+		IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
@@ -394,73 +395,52 @@ public class GamaPreferences {
 	public static final Entry<Boolean> LIB_TARGETED = create("core.lib_targeted",
 		"Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL).deactivates("core.lib_target_crs")
 		.in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-	// .onChange(new IPreferenceChange<Boolean>() {
-	//
-	// @Override
-	// public boolean valueChange(final Boolean newValue) {
-	// if ( newValue ) {
-	// ProjectionFactory.reset();
-	// } else {
-	// ProjectionFactory.computeDefaultCRS(LIB_TARGET_CRS.getValue(), true);
-	// }
-	// return true;
-	// }
-	//
-	// });
-	;
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_TARGET_CRS = create("core.lib_target_crs",
-		"...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES).group(
-		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-	// .onChange(new IPreferenceChange<Integer>() {
-	//
-	// @Override
-	// public boolean valueChange(final Integer newValue) {
-	// ProjectionFactory.computeDefaultCRS(newValue, true);
-	// // TODO return false if there is an error ?
-	// return true;
-	// }
-	// });
-	;
+		"...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Integer>() {
+
+			@Override
+			public boolean valueChange(final Integer newValue) {
+				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+				if ( codes.isEmpty() ) { return false; }
+				return true;
+			}
+		});
 	public static final Entry<Boolean> LIB_PROJECTED =
 		create("core.lib_projected",
 			"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true,
 			IType.BOOL).deactivates("core.lib_initial_crs").in(LIBRARIES)
 			.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
-		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES).group(
-		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
+		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Integer>() {
+
+			@Override
+			public boolean valueChange(final Integer newValue) {
+				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+				if ( codes.isEmpty() ) { return false; }
+				return true;
+			}
+		});
 	public static final Entry<Boolean> LIB_USE_DEFAULT = create("core.lib_use_default",
 		"When no CRS is provided, save the GIS data with the current CRS", true, IType.BOOL)
 		.deactivates("core.lib_output_crs").in(LIBRARIES)
-		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-	// .onChange(new IPreferenceChange<Boolean>() {
-	//
-	// @Override
-	// public boolean valueChange(final Boolean newValue) {
-	// if ( newValue ) {
-	// ProjectionFactory.forgetSaveCRS();
-	// } else {
-	// ProjectionFactory.computeDefaultCRS(LIB_OUTPUT_CRS.getValue(), true);
-	// }
-	// return true;
-	// }
-	//
-	// });
-	;
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)");
 	public static final Entry<Integer> LIB_OUTPUT_CRS = create("core.lib_output_crs",
-		"... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES).group(
-		"GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-	// .onChange(new IPreferenceChange<Integer>() {
-	//
-	// @Override
-	// public boolean valueChange(final Integer newValue) {
-	// ProjectionFactory.computeDefaultCRS(newValue, false);
-	// // TODO return false if there is an error ?
-	// return true;
-	// }
-	// });
-	;
+		"... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
+		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
+		.onChange(new IPreferenceChange<Integer>() {
+
+			@Override
+			public boolean valueChange(final Integer newValue) {
+				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+				if ( codes.isEmpty() ) { return false; }
+				return true;
+			}
+		});
 
 	private static String getDefaultRPath() {
 		String os = System.getProperty("os.name");

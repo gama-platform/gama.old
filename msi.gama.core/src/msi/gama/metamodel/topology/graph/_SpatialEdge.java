@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -24,16 +24,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph._Edge;
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class _SpatialEdge extends _Edge<IShape> {
+public class _SpatialEdge extends _Edge<IShape, IShape> {
 
-	public _SpatialEdge(final GamaSpatialGraph graph, final Object edge, final Object source,
-		final Object target) throws GamaRuntimeException {
+	public _SpatialEdge(final GamaSpatialGraph graph, final Object edge, final Object source, final Object target)
+		throws GamaRuntimeException {
 		super(graph, edge, source, target);
 	}
 
 	@Override
-	protected void init(final Object edge, final Object source, final Object target)
-		throws GamaRuntimeException {
+	protected void init(final Object edge, final Object source, final Object target) throws GamaRuntimeException {
 		if ( !(edge instanceof IShape) ) { throw GamaRuntimeException.error(StringUtils.toGaml(edge) +
 			" is not a geometry"); }
 		super.init(edge, source, target);
@@ -66,17 +65,9 @@ public class _SpatialEdge extends _Edge<IShape> {
 		IShape vertex = ((GamaSpatialGraph) graph).getBuiltVertex(c);
 		if ( vertex != null ) { return vertex; }
 		vertex = new GamaPoint(c);
-		graph.addVertex(vertex); 
+		graph.addVertex(vertex);
 		((GamaSpatialGraph) graph).addBuiltVertex(vertex);
 		return vertex;
 	}
 
-	@Override
-	public double getWeight(final Object storedObject) {
-		double w = super.getWeight(storedObject);
-		/*if ( storedObject instanceof IShape ) {
-			w *= ((IShape) storedObject).getInnerGeometry().getLength(); // A voir...
-		}*/
-		return w;
-	}
 }

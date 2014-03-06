@@ -130,7 +130,7 @@ public class GamaOsmFile extends GamaGisFile {
 		};
 		readFile(sinkImplementation, getFile());
 		if ( returnIt ) {
-			buffer = buildGeometries(nodes, ways, intersectionNodes, nodesPt);
+			setBuffer(buildGeometries(nodes, ways, intersectionNodes, nodesPt));
 		}
 	}
 
@@ -139,8 +139,8 @@ public class GamaOsmFile extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = new GamaList();
+		if ( getBuffer() != null ) { return; }
+		setBuffer(new GamaList());
 		getFeatureIterator(scope, true);
 	}
 

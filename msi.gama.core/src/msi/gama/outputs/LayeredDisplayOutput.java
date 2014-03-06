@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
-	@facet(name = IKeyword.TRACE, type = { IType.BOOL, IType.INT }, optional = true, doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
+	@facet(name = IKeyword.TRACE, type = { IType.BOOL, IType.INT }, optional = true, doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
@@ -66,9 +66,9 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width*2}")),
 	@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
-	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true,doc = @doc("Allows to define the position of the camera")),
-	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true,doc = @doc("Allows to define the direction of the camera")),
-	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true,doc = @doc("Allows to define the orientation of the camera")),
+	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
+	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
+	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true, doc = @doc("Allows to define the orientation of the camera")),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
@@ -84,16 +84,25 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		 */
 		@Override
 		public void validate(final IDescription d) {
-			IExpressionDescription auto = d.getFacets().get(IKeyword.AUTOSAVE);
-			if ( auto != null && auto.getExpression().isConst() &&
-				auto.getExpression().literalValue().equals(IKeyword.TRUE) ) {
+
+			IExpressionDescription auto = d.getFacets().get(AUTOSAVE);
+			if ( auto != null && auto.getExpression().isConst() && auto.getExpression().literalValue().equals(TRUE) ) {
 				d.info(
 					"With autosave enabled, GAMA must remain the frontmost window and the display must not be covered or obscured by other windows",
-					IGamlIssue.GENERAL, auto.getTarget(), IKeyword.AUTOSAVE);
+					IGamlIssue.GENERAL, auto.getTarget(), AUTOSAVE);
 			}
 			// Are we in OpenGL world ?
-			IExpressionDescription type = d.getFacets().get(IKeyword.TYPE);
-			Boolean isOpenGLDefault = GamaPreferences.CORE_DISPLAY.getValue().equals("OpenGL");
+			IExpressionDescription type = d.getFacets().get(TYPE);
+			if ( type != null ) {
+				// Addresses and fixes Issue 833.
+				String s = type.getExpression().literalValue();
+				if ( !IGui.DISPLAYS.containsKey(s) ) {
+					d.error(s + " is not a valid display type. Valid types are:" + IGui.DISPLAYS.keySet(),
+						IGamlIssue.UNKNOWN_KEYWORD, TYPE);
+					return;
+				};
+			}
+			Boolean isOpenGLDefault = !GamaPreferences.CORE_DISPLAY.getValue().equals("Java2D");
 			Boolean isOpenGLWanted =
 				type == null ? isOpenGLDefault : type.getExpression().literalValue()
 					.equals(LayeredDisplayOutput.OPENGL);
@@ -104,13 +113,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 			Boolean gridDisplayed = false;
 			for ( IDescription desc : d.getChildren() ) {
-				if ( desc.getKeyword().equals(IKeyword.GRID_POPULATION) ) {
+				if ( desc.getKeyword().equals(GRID_POPULATION) ) {
 					gridDisplayed = true;
 					break;
 				}
 			}
 			if ( !gridDisplayed ) { return; }
-			IExpressionDescription zfight = d.getFacets().get(IKeyword.ZFIGHTING);
+			IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
 			Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
 			Boolean zFightWanted =
 				zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
@@ -127,7 +136,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public static final String OPENGL = "opengl";
 	public static final String WEB = "web";
 	public static final String THREED = "3D";
-	// public static final String SWT = "swt";
 
 	private List<AbstractLayerStatement> layers;
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
@@ -181,14 +189,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
-			
+
 			if ( color.isConst() ) {
 				constantBackground = true;
 			} else {
 				constantBackground = false;
 			}
 		}
-		
 
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
@@ -240,7 +247,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( denv != null ) {
 			setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
 		}
-		
+
 		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
 		if ( ddiff != null ) {
 			setDrawDiffuseLight(Cast.asBool(getScope(), ddiff.value(getScope())));
@@ -281,7 +288,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
-		
+
 		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 		if ( light3 != null ) {
 			setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
@@ -355,16 +362,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void update() throws GamaRuntimeException {
 		if ( surface == null ) { return; }
 		// /////////////// dynamic Lighting ///////////////////
-		
-		if(!constantBackground){
-			
+
+		if ( !constantBackground ) {
+
 			final IExpression color = getFacet(IKeyword.BACKGROUND);
 			if ( color != null ) {
 				setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
 			}
-			
+
 		}
-		
+
 		if ( !constantAmbientLight ) {
 			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
@@ -388,12 +395,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 			}
 		}
-		
+
 		if ( !constantDiffusePos ) {
 			final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 			if ( light3 != null ) {
-					setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
-	
+				setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+
 			}
 		}
 
@@ -570,7 +577,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setZFighting(final boolean z) {
 		this.z_fighting = z;
 	}
-	
+
 	public boolean getDrawNorm() {
 		return draw_norm;
 	}
@@ -578,7 +585,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDrawNorm(final boolean draw_norm) {
 		this.draw_norm = draw_norm;
 	}
-	
+
 	public boolean getCubeDisplay() {
 		return cubeDisplay;
 	}
@@ -610,7 +617,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDrawEnv(final boolean drawEnv) {
 		this.drawEnv = drawEnv;
 	}
-	
+
 	public boolean getDrawDiffuseLight() {
 		return drawDiffLight;
 	}
@@ -666,7 +673,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDiffuseLightColor(final Color diffuseLightColor) {
 		this.diffuseLightColor = diffuseLightColor;
 	}
-	
+
 	public GamaPoint getDiffuseLightPosition() {
 		return diffuseLightPosition;
 	}

@@ -27,6 +27,7 @@ import java.util.List;
  * @since 14 d�c. 2011
  * 
  */
-public interface IList<E> extends IContainer<Integer, E>, List<E> {
+public interface IList<E> extends IContainer<Integer, E>, IModifiableContainer<Integer, E, Integer, E>,
+	IAddressableContainer<Integer, E, Integer, E>, List<E> {
 
 }

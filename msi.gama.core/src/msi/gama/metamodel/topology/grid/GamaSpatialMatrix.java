@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -40,7 +40,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.google.common.base.Function;
 import com.google.common.collect.*;
@@ -449,13 +449,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	// }
 
 	@Override
-	public Iterable<IShape> iterable(final IScope scope) {
+	public java.lang.Iterable<IShape> iterable(final IScope scope) {
 		return Arrays.asList(matrix);
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) {
-		return this;
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type) {
+		return GamaMatrixType.from(scope, this, type, Types.get(IType.GEOMETRY), preferredSize);
 	}
 
 	@Override
@@ -482,7 +482,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public IMatrix copy(final IScope scope) throws GamaRuntimeException {
+	public IMatrix copy(final IScope scope, final ILocation size) throws GamaRuntimeException {
 		final IGrid result =
 			new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN, useIndividualShapes,
 				useNeighboursCache);
@@ -848,7 +848,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		while (it.hasNext()) {
 			IShape s = it.next();
 			Envelope3D e = s.getEnvelope();
-			if (s.getAgent() == null ||  !( covered ?  env.covers(e) : env.intersects(e) )) {
+			if ( s.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e)) ) {
 				it.remove();
 			}
 		}
@@ -856,16 +856,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			f.filter(scope, source, shapes);
 		}
 		return shapes;
-		// return Iterables.filter(inEnvelope(env), new Predicate<IShape>() {
-		//
-		// @Override
-		// public boolean apply(final IShape input) {
-		// if ( input.getAgent() == null ) { return false; }
-		// final Envelope e = input.getEnvelope();
-		// return (f == null || f.accept(scope, source, input)) &&
-		// (covered && env.covers(e) || !covered && env.intersects(e));
-		// }
-		// }).iterator();
 	}
 
 	@Override
@@ -1054,12 +1044,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// }
 
 		@Override
-		public IAgent first(final IScope scope) throws GamaRuntimeException {
+		public IAgent firstValue(final IScope scope) throws GamaRuntimeException {
 			return (IAgent) _first(scope);
 		}
 
 		@Override
-		public IAgent last(final IScope scope) throws GamaRuntimeException {
+		public IAgent lastValue(final IScope scope) throws GamaRuntimeException {
 			return (IAgent) _last(scope);
 		}
 
@@ -1069,8 +1059,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public IAgent any(final IScope scope) {
-			return (IAgent) GamaSpatialMatrix.this.any(scope);
+		public IAgent anyValue(final IScope scope) {
+			return (IAgent) GamaSpatialMatrix.this.anyValue(scope);
 		}
 
 		@Override
@@ -1079,8 +1069,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public Iterable<IAgent> iterable(final IScope scope) {
-			return listValue(scope);
+		public java.lang.Iterable<IAgent> iterable(final IScope scope) {
+			return listValue(scope, Types.NO_TYPE); // TODO Types.get(IType.AGENT) ??
 		}
 
 		@Override
@@ -1094,18 +1084,24 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public GamaList<IAgent> listValue(final IScope scope) throws GamaRuntimeException {
-			return _listValue(scope);
+		public GamaList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+			// WARNING Double copy of the list
+			return _listValue(scope).listValue(scope, contentsType);
 		}
 
 		@Override
-		public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-			return GamaSpatialMatrix.this;
+		public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+			if ( contentsType == null || contentsType.id() == IType.NONE ||
+				contentsType.getSpeciesName() == getSpecies().getName() ) { return GamaSpatialMatrix.this; }
+			return GamaSpatialMatrix.this.matrixValue(scope, contentsType);
 		}
 
 		@Override
-		public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-			return GamaSpatialMatrix.this;
+		public IMatrix matrixValue(final IScope scope, final IType type, final ILocation size)
+			throws GamaRuntimeException {
+
+			if ( type == null || type.id() == IType.NONE || type.getSpeciesName() == getSpecies().getName() ) { return GamaSpatialMatrix.this; }
+			return GamaSpatialMatrix.this.matrixValue(scope, type);
 		}
 
 		public class GamlGridAgent extends GamlAgent implements IGridAgent {
@@ -1237,20 +1233,29 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return geometry;
 			}
 
+			/**
+			 * Method getPoints()
+			 * @see msi.gama.metamodel.shape.IShape#getPoints()
+			 */
+			@Override
+			public IList<? extends ILocation> getPoints() {
+				return geometry.getPoints();
+			}
+
 		}
 
 	}
 
-	private class IntToAgents implements Function<Integer, IAgent> {
-
-		@Override
-		public IAgent apply(final Integer input) {
-			return matrix[input].getAgent();
-		}
-
-	}
-
-	private final Function<Integer, IAgent> intToAgents = new IntToAgents();
+	// private class IntToAgents implements Function<Integer, IAgent> {
+	//
+	// @Override
+	// public IAgent apply(final Integer input) {
+	// return matrix[input].getAgent();
+	// }
+	//
+	// }
+	//
+	// private final Function<Integer, IAgent> intToAgents = new IntToAgents();
 
 	public class NoCacheNeighbourhood implements INeighbourhood {
 

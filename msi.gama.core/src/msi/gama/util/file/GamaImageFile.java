@@ -28,11 +28,11 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
-import msi.gaml.types.GamaMatrixType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "image", extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" })
-public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
+public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
 	@file(name = "pgm", extensions = { "pgm" })
 	public static class GamaPgmFile extends GamaImageFile {
@@ -59,10 +59,14 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		super(scope, pathName);
 	}
 
+	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
+		super(scope, pathName, image);
+	}
+
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = isPgmFile() ? matrixValueFromPgm(scope, null) : matrixValueFromImage(scope, null);
+		if ( getBuffer() != null ) { return; }
+		setBuffer(isPgmFile() ? matrixValueFromPgm(scope, null) : matrixValueFromImage(scope, null));
 	}
 
 	protected boolean isPgmFile() {
@@ -81,10 +85,12 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
+		throws GamaRuntimeException {
 		getContents(scope);
-		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize); }
-		return (IMatrix) buffer;
+		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize).matrixValue(scope,
+			contentsType); }
+		return getBuffer().matrixValue(scope, contentsType);
 	}
 
 	private void loadImage(final IScope scope) {

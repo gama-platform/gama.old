@@ -25,13 +25,15 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.Types;
 import com.google.common.collect.Sets;
 
 public abstract class In implements IAgentFilter {
 
 	public static IAgentFilter list(final IScope scope, final IContainer<?, ? extends IShape> targets) {
+		if ( targets.isEmpty(scope) ) { return null; }
 		if ( targets instanceof IPopulationSet ) { return (IPopulationSet) targets; }
-		return new InList(targets.listValue(scope));
+		return new InList(targets.listValue(scope, Types.NO_TYPE));
 	}
 
 	public static IAgentFilter edgesOf(final ISpatialGraph graph) {

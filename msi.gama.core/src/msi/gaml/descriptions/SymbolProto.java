@@ -54,7 +54,7 @@ public class SymbolProto {
 	final SymbolFactory factory;
 
 	static final TIntHashSet ids = new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
-		IType.NEW_VAR_ID, IType.TYPE_ID });
+		IType.NEW_VAR_ID /* , IType.TYPE_ID */});
 
 	static {
 		nonTypeStatements.add(IKeyword.EXPERIMENT);

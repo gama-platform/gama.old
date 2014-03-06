@@ -70,8 +70,7 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract SpeciesDescription getSpeciesContext();
 
-	public abstract IExpression addTemp(final String name, final IType type, final IType contentType,
-		final IType keyType);
+	public abstract IExpression addTemp(IDescription declaration, final String name, final IType type);
 
 	public abstract List<IDescription> getChildren();
 
@@ -89,17 +88,11 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract ErrorCollector getErrorCollector();
 
-	// public abstract List<GamlCompilationError> getWarnings();
-
 	public abstract List<GamlCompilationError> getErrors();
 
 	public abstract IDescription copy(IDescription into);
 
 	public abstract IDescription validate();
-
-	// public abstract void validateChildren();
-
-	// public List<? extends ISymbol> compileChildren();
 
 	public abstract ISymbol compile();
 

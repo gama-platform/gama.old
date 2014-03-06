@@ -40,9 +40,10 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
-		keyType = Types.get(IType.INT);
-		type = Types.get(IType.LIST);
-		contentType = findCommonType(elements, _type);
+		// keyType = Types.get(IType.INT);
+		// type = Types.get(IType.LIST);
+		type = GamaType.from(Types.get(IType.LIST), Types.get(IType.INT), findCommonType(elements, _type));
+		// contentType = findCommonType(elements, _type);
 		isConst();
 	}
 
@@ -94,17 +95,24 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public String getTitle() {
-		return "literal list of type " + typeToString();
+		return "literal list of type " + getType().getTitle();
 	}
 
-	@Override
-	public IType getKeyType() {
-		return keyType;
-	}
+	// @Override
+	// public IType getKeyType() {
+	// return keyType;
+	// }
 
 	@Override
 	public String getDocumentation() {
-		return "Constant " + isConst() + "<br>Contains elements of type " + contentType;
+		return "Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle();
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return elements.length == 0;
 	}
 
 }

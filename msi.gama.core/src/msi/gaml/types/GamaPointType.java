@@ -38,32 +38,33 @@ import msi.gaml.operators.Cast;
 public class GamaPointType extends GamaType<ILocation> {
 
 	@Override
-	public ILocation cast(final IScope scope, final Object obj, final Object param, IType contentsType)
-		throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public ILocation cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+		return staticCast(scope, obj);
 	}
 
-	public static ILocation staticCast(final IScope scope, final Object obj, final Object param) {
+	public static ILocation staticCast(final IScope scope, final Object obj) {
 		if ( obj instanceof ILocation ) { return (ILocation) obj; }
 		if ( obj instanceof IShape ) { return ((IShape) obj).getLocation(); }
 		if ( obj instanceof List ) {
 			List l = (List) obj;
-			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(
-				scope, l.get(1))); }
-			return null;
+			if ( l.size() > 2 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
+				Cast.asFloat(scope, l.get(2))); }
+			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1))); }
+			if ( l.size() > 0 ) { return staticCast(scope, l.get(0)); }
+			return new GamaPoint(0, 0, 0);
 		}
 		if ( obj instanceof Map ) {
 			Map m = (Map) obj;
 			final double x = Cast.asFloat(scope, m.get("x"));
 			final double y = Cast.asFloat(scope, m.get("y"));
-			// double z = TypeManager.asFloat(get("z"));
-			return new GamaPoint(x, y);
+			double z = Cast.asFloat(scope, m.get("z"));
+			return new GamaPoint(x, y, z);
 		}
-		if ( obj instanceof GamaPair ) { return new GamaPoint(Cast.asFloat(null,
-			((GamaPair) obj).first()), Cast.asFloat(null, ((GamaPair) obj).last())); }
+		if ( obj instanceof GamaPair ) { return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
+			Cast.asFloat(scope, ((GamaPair) obj).last())); }
 		if ( obj == null ) { return null; }
 		final double dval = Cast.asFloat(scope, obj);
-		return new GamaPoint(dval, dval);
+		return new GamaPoint(dval, dval, dval);
 	}
 
 	@Override
@@ -72,18 +73,18 @@ public class GamaPointType extends GamaType<ILocation> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.get(FLOAT);
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(INT);
 	}
-
-	@Override
-	public boolean hasContents() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean hasContents() {
+	// return true;
+	// }
 
 }

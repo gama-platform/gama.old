@@ -23,7 +23,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpressionCompiler;
 
 /**
  * Written by drogoul Modified on 11 d�c. 2010
@@ -33,42 +32,77 @@ import msi.gaml.expressions.IExpressionCompiler;
  */
 public class Points {
 
-	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
+	@operator(value = IKeyword.POINT, can_be_const = true)
 	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
+	@operator(value = IKeyword.POINT, can_be_const = true)
 	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
+	@operator(value = IKeyword.POINT, can_be_const = true)
 	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Integer b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionCompiler.INTERNAL_POINT, can_be_const = true)
+	@operator(value = IKeyword.POINT, can_be_const = true)
 	@doc(value = "internal use only. Use the standard construction {x,y} instead.")
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Integer b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionCompiler.INTERNAL_Z, can_be_const = true)
-	@doc(value = "internal use only. Use the standard construction {x,y,z} instead. ")
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Double x, final Double y, final Double z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Integer x, final Double y, final Double z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Integer x, final Integer y, final Double z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Integer x, final Integer y, final Integer z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Double x, final Integer y, final Double z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Double x, final Integer y, final Integer z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = IKeyword.POINT, can_be_const = true)
+	public static ILocation toPoint(final Double x, final Double y, final Integer z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = "add_z", can_be_const = true)
+	@doc(deprecated = "This idiom is deprecated. Use the standard construction {x,y,z} instead. ")
 	public static ILocation add_z(final GamaPoint p, final Double z) {
 		return new GamaPoint(p.x, p.y, z);
 	}
 
-	@operator(value = IExpressionCompiler.INTERNAL_Z, can_be_const = true)
-	@doc(value = "internal use only. Use the standard construction {x,y,z} instead. ")
+	@operator(value = "add_z", can_be_const = true)
+	@doc(deprecated = "This idiom is deprecated. Use the standard construction {x,y,z} instead. ")
 	public static ILocation add_z(final GamaPoint p, final Integer z) {
 		return new GamaPoint(p.x, p.y, z);
 	}

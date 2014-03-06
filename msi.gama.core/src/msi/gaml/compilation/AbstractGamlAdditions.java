@@ -65,7 +65,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public final static Map<Integer, Set<String>> VARTYPE2KEYWORDS = new LinkedHashMap();
 
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
-		IGui.displays.put(string, d);
+		CONSTANTS.add(string);
+		IGui.DISPLAYS.put(string, d);
 	}
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String ... skills) {
@@ -273,7 +274,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 						new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
 							IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
-					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isSpeciesType() ) {
+					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType() ) {
 						exp =
 							new BinaryVarOperator(rt, helper, c, t, content, index,
 								IExpression.class.equals(classes[1]), expectedContentTypes, signature);
@@ -408,7 +409,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Set<IDescription> getAllChildrenOf(final Class base, final Set<Class> skills) {
 		Set<Class> key = new HashSet();
-		key.add(base);
+		if ( base != null ) {
+			key.add(base);
+		}
 		key.addAll(skills);
 		Set<IDescription> children = ALL_ADDITIONS.get(key);
 		if ( children == null ) {

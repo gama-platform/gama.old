@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -21,7 +21,7 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -138,11 +138,11 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public static class GisLayer {
 
-		private final IContainer<Integer, GamaShape> objects;
+		private final IContainer<Integer, IShape> objects;
 		private String type;
 		private Color color = Color.black;
 
-		public GisLayer(final IContainer<Integer, GamaShape> objects, final Color color, final String type) {
+		public GisLayer(final IList<IShape> objects, final Color color, final String type) {
 			super();
 			this.objects = objects;
 			if ( color != null ) {
@@ -151,7 +151,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 			this.type = type;
 		}
 
-		public IContainer<Integer, GamaShape> getObjects() {
+		public IContainer<Integer, IShape> getObjects() {
 			return objects;
 		}
 

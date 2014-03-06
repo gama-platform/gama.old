@@ -46,6 +46,7 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.*;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -192,13 +193,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if ( type.equals("text") ) {
 					fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 				} else if ( type.equals("csv") ) {
-					item.getContentType();
+					// item.getContentType();
 					if ( item.getType().id() == IType.LIST ) {
 						final IList values = Cast.asList(scope, item.value(scope));
 						for ( int i = 0; i < values.size() - 1; i++ ) {
 							fw.write(Cast.asString(scope, values.get(i)) + ",");
 						}
-						fw.write(Cast.asString(scope, values.last(scope)) + System.getProperty("line.separator"));
+						fw.write(Cast.asString(scope, values.lastValue(scope)) + System.getProperty("line.separator"));
 					} else {
 						fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 					}
@@ -233,7 +234,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 		final Integer code = epsgCode == null ? null : Cast.asInt(scope, epsgCode.value(scope));
-		final IProjection gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+		IProjection gis;
+		try {
+			gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+		} catch (FactoryException e1) {
+			throw GamaRuntimeException.error("The code " + code +
+				" does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+		}
 
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);

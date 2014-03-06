@@ -25,7 +25,7 @@ import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import com.vividsolutions.jts.geom.Envelope;
 
-public class GamaFolderFile extends GamaFile<Integer, String> {
+public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaFolderFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -54,8 +54,8 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = new GamaList(getFile().list());
+		if ( getBuffer() != null ) { return; }
+		setBuffer(new GamaList(getFile().list()));
 	}
 
 	/*

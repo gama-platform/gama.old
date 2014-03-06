@@ -41,7 +41,8 @@ import msi.gaml.types.IType;
  */
 @vars({ @var(name = IMatrix.DIMENSION, type = IType.POINT), @var(name = IMatrix.ROWS, type = IType.INT),
 	@var(name = IMatrix.COLUMNS, type = IType.INT) })
-public interface IMatrix<T> extends IContainer<ILocation, T> {
+public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation, T>,
+	IAddressableContainer<ILocation, T, ILocation, T> {
 
 	/**
 	 * Cols, rows instead of row cols because inte nded to work with xSize and ySize dimensions.
@@ -137,5 +138,10 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	public abstract Object remove(IScope scope, final int col, final int row) throws GamaRuntimeException;
 
 	public abstract void shuffleWith(RandomUtils randomAgent);
+
+	@Override
+	public abstract IMatrix copy(IScope scope) throws GamaRuntimeException;
+
+	public abstract IMatrix copy(IScope scope, ILocation preferredSize);
 
 }

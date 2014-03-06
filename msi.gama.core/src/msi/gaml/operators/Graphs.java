@@ -18,43 +18,26 @@
  */
 package msi.gaml.operators;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
-import msi.gama.util.IContainer;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
-import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.GraphAlgorithmsHandmade;
-import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.*;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
 import msi.gama.util.graph.loader.GraphLoader;
-import msi.gama.util.matrix.GamaIntMatrix;
-import msi.gama.util.matrix.GamaMatrix;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.IPath;
+import msi.gama.util.matrix.*;
+import msi.gama.util.path.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGraphType;
-import msi.gaml.types.GamaPathType;
-import msi.gaml.types.IType;
-
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
+import msi.gaml.types.*;
+import org.jgrapht.*;
 import org.jgrapht.alg.ConnectivityInspector;
 
 /**
@@ -187,7 +170,7 @@ public class Graphs {
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
-	@operator(value = "source_of", type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "source_of", type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "returns the source of the edge (right-hand operand) contained in the graph given in left-hand operand.", special_cases = "if the lef-hand operand (the graph) is nil, throws an Exception", examples = {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio source_of(edge(3)) 				--:  node1",
@@ -200,7 +183,7 @@ public class Graphs {
 		return null;
 	}
 
-	@operator(value = "target_of", type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "target_of", type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "returns the target of the edge (right-hand operand) contained in the graph given in left-hand operand.", special_cases = "if the lef-hand operand (the graph) is nil, returns nil", examples = {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio source_of(edge(3)) 				--:  node1",
@@ -287,71 +270,79 @@ public class Graphs {
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }
 		return 0;
 	}
-	
+
 	@operator(value = "connected_components_of")
 	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = { "list<list> <- connected_components_of (my_graph)" }, see = {
-			"alpha_index","connectivity_index", "nb_cycles" })
+		"alpha_index", "connectivity_index", "nb_cycles" })
 	public static List<List> connectedComponentOf(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the nb_connected_components_of operator, the graph should not be null!"); }
 
 		ConnectivityInspector ci;
-		if (graph.isDirected())
-			ci= new ConnectivityInspector((DirectedGraph) graph);
-		else 
-			ci= new ConnectivityInspector((UndirectedGraph) graph);
+		if ( graph.isDirected() ) {
+			ci = new ConnectivityInspector((DirectedGraph) graph);
+		} else {
+			ci = new ConnectivityInspector((UndirectedGraph) graph);
+		}
 		List<List> results = new GamaList<List>();
-		for (Object obj : ci.connectedSets()) {
+		for ( Object obj : ci.connectedSets() ) {
 			results.add(new GamaList((Set) obj));
 			
 		}
 		return results;
 	}
-	
-	@operator(value = "beta_index")
-	@doc(value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.", examples = { "beta_index(graphEpidemio)" }, see = {
-		"alpha_index","gamma_index","nb_cycles","connectivity_index" })
-	public static double betaIndex(final IGraph graph) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the beta_index operator, the graph should not be null!"); }
-		return (graph.getEdges().size() + 0.0) / graph.getVertices().size();
-	}
-	
-	@operator(value = "gamma_index")
-	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.", examples = { "gamma_index(graphEpidemio)" }, see = {
-		"alpha_index","beta_index","nb_cycles","connectivity_index" })
-	public static double gammaIndex(final IGraph graph) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the gamma_index operator, the graph should not be null!"); }
-		return graph.getEdges().size() / (2.0 * graph.getVertices().size() - 5);
-	}
-	
-	@operator(value = "connectivity_index")
-	@doc(value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).", examples = { "connectivity_index(graphEpidemio)" }, see = {
-		"alpha_index","beta_index","gamma_index","nb_cycles" })
-	public static double connectivityIndex(final IGraph graph) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the connectivity_index operator, the graph should not be null!"); }
-		int S = graph.getVertices().size();
-		int C = connectedComponentOf(graph).size();
-		return (S-C)/(S-1.0);
-	}
-
-	
 
 	@operator(value = "nb_cycles")
 	@doc(value = "returns the maximum number of independent cycles in a graph. This number (u) is estimated through the number of nodes (v), links (e) and of sub-graphs (p): u = e - v + p.", examples = { "nb_cycles(graphEpidemio)" }, see = {
-		"alpha_index","beta_index","gamma_index","connectivity_index" })
+		"alpha_index", "beta_index", "gamma_index", "connectivity_index" })
 	public static int nbCycles(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the nb_cycles operator, the graph should not be null!"); }
 		int S = graph.getVertices().size();
 		int C = connectedComponentOf(graph).size();
 		int L = graph.getEdges().size();
-		return (L-S+C);
+		return L - S + C;
 	}
 
-	
+	@operator(value = "alpha_index")
+	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = { "alpha_index(graphEpidemio)" }, see = {
+		"beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
+	public static double alphaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the alpha_index operator, the graph should not be null!"); }
+		int S = graph.getVertices().size();
+		return nbCycles(graph) / (2.0 * S - 5);
+	}
+
+	@operator(value = "beta_index")
+	@doc(value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.", examples = { "beta_index(graphEpidemio)" }, see = {
+		"alpha_index", "gamma_index", "nb_cycles", "connectivity_index" })
+	public static double betaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the beta_index operator, the graph should not be null!"); }
+		return (graph.getEdges().size() + 0.0) / graph.getVertices().size();
+	}
+
+	@operator(value = "gamma_index")
+	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.", examples = { "gamma_index(graphEpidemio)" }, see = {
+		"alpha_index", "beta_index", "nb_cycles", "connectivity_index" })
+	public static double gammaIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the gamma_index operator, the graph should not be null!"); }
+		return graph.getEdges().size() / (2.0 * graph.getVertices().size() - 5);
+	}
+
+	@operator(value = "connectivity_index")
+	@doc(value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).", examples = { "connectivity_index(graphEpidemio)" }, see = {
+		"alpha_index", "beta_index", "gamma_index", "nb_cycles" })
+	public static double connectivityIndex(final IGraph graph) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the connectivity_index operator, the graph should not be null!"); }
+		int S = graph.getVertices().size();
+		int C = connectedComponentOf(graph).size();
+		return (S - C) / (S - 1.0);
+	}
+
 	@operator(value = "betweenness_centrality")
 	@doc(value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ", examples = { "betweenness_centrality(graphEpidemio)" }, see = {
 		 })
@@ -380,19 +371,10 @@ public class Graphs {
 		}
 		return mapResult;
 	}
-	
-	@operator(value = "alpha_index")
-	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = { "alpha_index(graphEpidemio)" }, see = {
-		"beta_index","gamma_index","nb_cycles","connectivity_index" })
-	public static double alphaIndex(final IGraph graph) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the alpha_index operator, the graph should not be null!"); }
-		int S = graph.getVertices().size();
-		return nbCycles(graph) / (2.0 * S-5);
-	}
 
 	
-	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	
+	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",
 		"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]" }, see = { "predecessors_of",
@@ -404,7 +386,7 @@ public class Graphs {
 		return new GamaList();
 	}
 
-	@operator(value = "predecessors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "predecessors_of", content_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio predecessors_of (node(3)) 		--: [node0,node2]",
 		"graphFromMap predecessors_of node({12,45}) 	--:	[{1.0;5.0}]" }, see = { "neighbours_of", "successors_of" })
@@ -413,7 +395,7 @@ public class Graphs {
 		return new GamaList();
 	}
 
-	@operator(value = "successors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "successors_of", content_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio successors_of (node(3)) 		--: []", "graphFromMap successors_of node({12,45}) 	--: [{34.0;56.0}]" }, see = {
 		"predecessors_of", "neighbours_of" })
@@ -427,7 +409,7 @@ public class Graphs {
 	// return new GamaGraph(edges, true, false);
 	// }
 
-	@operator(value = "as_edge_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
+	@operator(value = "as_edge_graph", content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from the list/map of edges given as operand", special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices", examples = { "as_edge_graph([{1,5},{12,45},{34,56}])  --:  build a graph with these three vertices and reflexive links on each vertices" }, see = {
 		"as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
@@ -440,7 +422,7 @@ public class Graphs {
 	// return GamaGraphType.from(edges, false);
 	// }
 
-	@operator(value = "as_edge_graph")
+	@operator(value = "as_edge_graph", index_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(special_cases = "if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])  --:  build a graph with these three vertices and two edges")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
@@ -453,7 +435,7 @@ public class Graphs {
 	// return new GamaGraph(vertices, false, false);
 	// }
 
-	@operator(value = "as_intersection_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
+	@operator(value = "as_intersection_graph", content_type = IType.GEOMETRY, index_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).", comment = "as_intersection_graph is more efficient for a list of geometries (but less accurate) than as_distance_graph.", examples = "list(ant) as_intersection_graph 0.5;", see = {
 		"as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
@@ -464,7 +446,7 @@ public class Graphs {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null, scope);
 	}
 
-	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
+	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
@@ -488,7 +470,7 @@ public class Graphs {
 		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
 	}
 
-	@operator(value = "spatial_graph")
+	@operator(value = "spatial_graph", index_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents", see = { "graph" })
 	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
 		return new GamaSpatialGraph(vertices, false, false, null, null, scope);
@@ -509,7 +491,7 @@ public class Graphs {
 	public static IGraph useCacheForShortestPaths(final IGraph g, final boolean useCache) {
 		return GamaGraphType.useChacheForShortestPath(g, useCache);
 	}
-	
+
 	@operator(value = "directed")
 	@doc(value = "the operand graph becomes a directed graph.", comment = "the operator alters the operand graph, it does not create a new one.", see = { "undirected" })
 	public static IGraph asDirectedGraph(final IGraph g) {
@@ -608,22 +590,33 @@ public class Graphs {
 	}
 
 	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "The shortest path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
-	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
+	@doc(value = "The shortest path between a list of two objects in a graph", examples = { " path_between (my_graph, ag1, ag2) --: A path between ag1 and ag2" })
+	public static IPath path_between(final IScope scope, final GamaGraph graph, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
+		return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 
 	}
-	
-	@operator(value = "paths_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "The K shortest paths between a list of two objects in a graph", examples = { "paths_between(my_graph, ag1:: ag2, 2) --: the 2 shortest paths (ordered by length) between ag1 and ag2" })
-	public static List<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg, final int k)
+
+	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "The shortest path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" }, deprecated = "use 'path_between(graph, geometry, geometry)' instead")
+	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value,k);
+		return path_between(scope, graph, (IShape) sourTarg.key, (IShape) sourTarg.value);
+
+		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+
+	}
+
+	@operator(value = "paths_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "The K shortest paths between a list of two objects in a graph", examples = { "paths_between(my_graph, ag1:: ag2, 2) --: the 2 shortest paths (ordered by length) between ag1 and ag2" })
+	public static List<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
+		final GamaPair sourTarg, final int k) throws GamaRuntimeException {
+		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
+		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
 
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 
@@ -706,7 +699,7 @@ public class Graphs {
 		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices" }, examples = {
 		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
 		"			\"example_of_Pajek_file\",", "			myVertexSpecy,", "			myEdgeSpecy );" }, see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile<?, ?> gamaFile,
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile,
 		final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
 		return primLoadGraphFromFile(scope, gamaFile.getPath(), vertex_specy, edge_specy);
 
@@ -731,7 +724,7 @@ public class Graphs {
 	@doc(special_cases = { "\"format\": the format of the file", "\"file\": the file containing the network", }, examples = {
 		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
 		"			\"example_of_Pajek_file\");" }, see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile<?, ?> gamaFile)
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile)
 		throws GamaRuntimeException {
 		// AD 29/09/13 : Simply called the previous method with the path of the file. Not efficient, but should work.
 		return primLoadGraphFromFile(scope, format, gamaFile.getPath());
@@ -753,7 +746,7 @@ public class Graphs {
 	 * return g;
 	 * }
 	 */
-	
+
 	@operator(value = "load_shortest_paths")
 	@doc(value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)", examples = { "my_graph load_shortest_paths(shortest_paths_matrix) --: return my_graph with all the shortest paths computed" })
 	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
@@ -767,7 +760,6 @@ public class Graphs {
 		// throw GamaRuntimeException.error("not implemented: loading from gama file");
 
 	}
-	
 
 	@operator(value = "all_pairs_shortest_path")
 	@doc(value = "return a matrix containing all pairs of shortest paths (rows: source, columns: target)", examples = { "matrix shortest_paths_matrix <- all_pairs_shortest_paths(my_graph); --: shortest_paths_matrix will contain all pairs of shortest paths" })
@@ -777,8 +769,7 @@ public class Graphs {
 			.error("In the all_pairs_shortest_paths operator, the graph should not be null!"); }
 		return graph.saveShortestPaths();
 	}
-	
-	
+
 	@operator(value = "layout")
 	@doc(value = "layouts a GAMA graph.", comment = "TODO", special_cases = { "TODO." }, examples = { "TODO;" }, see = { "TODO" })
 	// TODO desc

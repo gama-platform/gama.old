@@ -59,8 +59,8 @@ public class GamaShapeFile extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = new GamaList();
+		if ( getBuffer() != null ) { return; }
+		setBuffer(new GamaList());
 		getFeatureIterator(scope, true);
 	}
 
@@ -120,7 +120,7 @@ public class GamaShapeFile extends GamaGisFile {
 					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
 						// Fix for Issue 677
 						g = gis.transform(g);
-						((IList) buffer).add(new GamaGisGeometry(g, feature));
+						((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
 					} else {
 						// See Issue 725
 						GAMA.reportError(

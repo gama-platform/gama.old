@@ -21,7 +21,7 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -51,15 +51,9 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	Point getSizeInPixels();
 
-	// double getXScale();
-
-	// double getYScale();
-
 	void setTransparency(Double value);
 
 	void setElevation(Double value);
-
-	// void updateEnvDimensions(double env_width, double env_height);
 
 	void setOrder(Integer i);
 
@@ -67,12 +61,24 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	public abstract boolean stayProportional();
 
-	void outputChanged();
+	void reloadOn(IDisplaySurface surface);
 
-	double getZPosition();
+	void firstLaunchOn(IDisplaySurface surface);
+
+	ILocation getExtent();
 
 	Boolean isDynamic();
 
 	public abstract String getType();
+
+	void enableOn(IDisplaySurface surface);
+
+	void disableOn(IDisplaySurface surface);
+
+	ILocation getPosition();
+
+	Integer getTrace();
+
+	Boolean getFading();
 
 }

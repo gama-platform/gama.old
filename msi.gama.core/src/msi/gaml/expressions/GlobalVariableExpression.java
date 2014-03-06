@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -25,9 +25,9 @@ import msi.gaml.types.IType;
 
 public class GlobalVariableExpression extends VariableExpression {
 
-	protected GlobalVariableExpression(final String n, final IType type, final IType contentType, IType keyType,
-		final boolean notModifiable, final IDescription world) {
-		super(n, type, contentType, keyType, notModifiable, world);
+	protected GlobalVariableExpression(final String n, final IType type, final boolean notModifiable,
+		final IDescription world) {
+		super(n, type, notModifiable, world);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class GlobalVariableExpression extends VariableExpression {
 		IDescription desc = getDefinitionDescription();
 		boolean isParameter = desc == null ? false : desc.getSpeciesContext().getVariable(getName()).isParameter();
 		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName() +
-			" of type " + typeToString();
+			" of type " + getType().getTitle();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class GlobalVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Of type: " + type.toString() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		return "Of type: " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 }

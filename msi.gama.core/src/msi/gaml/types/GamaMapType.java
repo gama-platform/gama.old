@@ -25,36 +25,73 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.species.ISpecies;
+import msi.gaml.expressions.IExpression;
 
 @type(name = IKeyword.MAP, id = IType.MAP, wraps = { GamaMap.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
-	public GamaMap cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public GamaMap cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentType) throws GamaRuntimeException {
+		GamaMap result = staticCast(scope, obj, keyType, contentType);
+		return result;
+	}
+
+	public static GamaMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType) {
 		if ( obj == null ) { return new GamaMap(); }
-		if ( obj instanceof GamaPair ) { return new GamaMap((GamaPair) obj); }
-		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).mapValue(scope); }
-		if ( obj instanceof IAgent ) { return ((IAgent) obj).getAttributes(); }
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope); }
+		// if ( obj instanceof GamaPair ) { return new GamaMap(GamaPairType.staticCast(scope, obj, keyType,
+		// contentsType)); }
+		if ( obj instanceof IAgent ) {
+			// We collect all the variables / attributes of the agent
+			IAgent agent = (IAgent) obj;
+			GamaMap<String, Object> map = new GamaMap();
+			for ( String s : agent.getSpecies().getVarNames() ) {
+				map.put(s, agent.getDirectVarValue(scope, s));
+			}
+			map.putAll(agent.getAttributes());
+			GamaMap shapeAttr = agent.getGeometry().getAttributes();
+			if ( shapeAttr != null ) {
+				map.putAll(shapeAttr);
+			}
+			return map.mapValue(scope, keyType, contentsType);
+		}
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope, keyType, contentsType); }
 		final GamaMap result = new GamaMap();
-		result.put(obj, obj);
+		result.put(GamaType.toType(scope, obj, keyType), GamaType.toType(scope, obj, contentsType));
 		return result;
 	}
 
 	@Override
-	public GamaMap getDefault() {
-		return null;
+	public IType keyTypeIfCasting(final IExpression exp) {
+		IType itemType = exp.getType();
+		if ( itemType.isAgentType() ) { return Types.get(STRING); }
+		switch (itemType.id()) {
+			case PAIR:
+			case MAP:
+				return itemType.getKeyType();
+			case LIST:
+			case MATRIX:
+				return itemType.getContentType();
+			case GRAPH:
+				return Types.get(PAIR);
+		}
+		return itemType;
 	}
 
 	@Override
-	public IType defaultContentType() {
-		return Types.NO_TYPE;
-	}
+	public IType contentsTypeIfCasting(final IExpression exp) {
+		IType itemType = exp.getType();
+		if ( itemType.isAgentType() ) { return Types.NO_TYPE; }
+		switch (itemType.id()) {
+			case PAIR:
+			case GRAPH:
+			case MAP:
+			case LIST:
+			case MATRIX:
+				return itemType.getContentType();
 
-	@Override
-	public boolean hasContents() {
-		return true;
+		}
+		return itemType;
 	}
 
 }

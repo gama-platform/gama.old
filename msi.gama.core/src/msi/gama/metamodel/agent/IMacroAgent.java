@@ -12,7 +12,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -57,7 +57,7 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	@getter(IKeyword.MEMBERS)
-	public abstract IList<IAgent> getMembers(IScope scope);
+	public abstract IContainer<?, IAgent> getMembers(IScope scope);
 
 	/**
 	 * Returns the population of the specified (direct) micro-species.

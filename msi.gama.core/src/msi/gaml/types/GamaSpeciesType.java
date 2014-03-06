@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -35,10 +36,10 @@ import msi.gaml.species.ISpecies;
  * 
  */
 @type(name = IKeyword.SPECIES, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
-public class GamaSpeciesType extends GamaType<ISpecies> {
+public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
-	public ISpecies cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public ISpecies cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		// TODO Add a more general cast with list of agents to find a common species.
 		ISpecies species =
 			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent
@@ -47,24 +48,48 @@ public class GamaSpeciesType extends GamaType<ISpecies> {
 		return species;
 	}
 
+	// TODO Verify that we dont need to declare the other cast method
+
 	@Override
 	public ISpecies getDefault() {
 		return null;
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.get(AGENT);
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(IType.INT);
 	}
 
+	// @Override
+	// public IType typeIfCasting(final IDescription context, final IExpression exp) {
+	// IType itemType = exp.getType();
+	// if ( itemType.isSpeciesType() ) { return itemType; }
+	// switch (exp.getType().id()) {
+	// case SPECIES:
+	// return exp.getContentType();
+	// case STRING:
+	// if ( exp.isConst() ) {
+	// SpeciesDescription spec = context.getModelDescription().getSpeciesDescription(exp.literalValue());
+	// if ( spec != null ) { return spec.getType(); }
+	// }
+	// }
+	// return Types.NO_TYPE;
+	// }
+
 	@Override
-	public boolean hasContents() {
-		return true;
+	public IType contentsTypeIfCasting(final IExpression exp) {
+		IType itemType = exp.getType();
+		if ( itemType.isAgentType() ) { return itemType; }
+		switch (exp.getType().id()) {
+			case SPECIES:
+				return itemType.getContentType();
+		}
+		return exp.getType();
 	}
 
 }

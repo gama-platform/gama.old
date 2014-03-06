@@ -70,10 +70,11 @@ public abstract class ParameterWrapper implements IParameter {
 		return wrapped.getType();
 	}
 
-	@Override
-	public IType getContentType() {
-		return wrapped.getContentType();
-	}
+	//
+	// @Override
+	// public IType getContentType() {
+	// return wrapped.getContentType();
+	// }
 
 	@Override
 	public String toGaml() {

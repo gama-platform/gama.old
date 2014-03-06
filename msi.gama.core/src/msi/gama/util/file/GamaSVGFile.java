@@ -42,7 +42,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
-		return ((IList<IShape>) buffer).get(0);
+		return ((IList<IShape>) getBuffer()).get(0);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			if ( size != null ) {
 				gs = Spatial.Transformations.scaled_to(scope, gs, size);
 			}
-			buffer = GamaList.with(gs);
+			setBuffer(GamaList.with(gs));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

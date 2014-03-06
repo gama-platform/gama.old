@@ -76,8 +76,6 @@ public class BinaryOperator extends AbstractNAryOperator {
 		setName(operator);
 		this.exprs = args;
 		computeType(context);
-		computeContentType(context);
-		computeKeyType(context);
 		verifyExpectedTypes(context);
 		return this;
 	}
@@ -96,15 +94,17 @@ public class BinaryOperator extends AbstractNAryOperator {
 				return;
 			}
 		}
-		// TODO : Complete the check for the other operators expecting a list
 	}
 
-	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "<", ">", "<=", ">=", "?", ":", ".", "where",
-		"select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside", "with_max_of",
-		"with_min_of", "of_species", "of_generic_species", "sort_by", "or", "and");
+	static List<String> symbols = Arrays.asList("=", "+", "-", "/", "*", "^", "<", ">", "<=", ">=", "?", ":", ".",
+		"where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside", "among",
+		"contains", "contains_any", "contains_all", "min_of", "max_of", "with_max_of", "with_min_of", "of_species",
+		"of_generic_species", "sort_by", "or", "and", "at", "is", "as", "group_by", "index_of", "last_index_of",
+		"index_by", "count", "sort", "::", "as_map");
 
 	@Override
 	public String toGaml() {
+		if ( name.equals("internal_at") ) { return left().toGaml() + right().toGaml(); } // '[' and ']' already included
 		if ( symbols.contains(name) ) { return parenthesize(left()) + name + parenthesize(right()); }
 		return name + parenthesize(left(), right());
 	}
@@ -121,8 +121,6 @@ public class BinaryOperator extends AbstractNAryOperator {
 		} catch (final RuntimeException ex) {
 			final GamaRuntimeException e1 = GamaRuntimeException.create(ex);
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
-			// GAMA.reportAndThrowIfNeeded(e1, true);
-			// return null;
 			throw e1;
 		}
 	}
@@ -137,23 +135,25 @@ public class BinaryOperator extends AbstractNAryOperator {
 			case FIRST_TYPE:
 				return left().getType();
 			case FIRST_CONTENT_TYPE_OR_TYPE:
-				final IType t2 = left().getContentType();
-				if ( t2 == Types.NO_TYPE ) { return left().getType(); }
+				IType leftType = left().getType();
+				final IType t2 = leftType.getContentType();
+				if ( t2 == Types.NO_TYPE ) { return leftType; }
 				return t2;
 			case SECOND_TYPE:
 				return right().getType();
 			case FIRST_CONTENT_TYPE:
-				return left().getContentType();
+				return left().getType().getContentType();
 			case FIRST_KEY_TYPE:
-				return left().getKeyType();
+				return left().getType().getKeyType();
 			case SECOND_CONTENT_TYPE:
-				return right().getContentType();
+				return right().getType().getContentType();
 			case SECOND_CONTENT_TYPE_OR_TYPE:
-				final IType t3 = right().getContentType();
-				if ( t3 == Types.NO_TYPE ) { return right().getType(); }
+				final IType rightType = right().getType();
+				final IType t3 = rightType.getContentType();
+				if ( t3 == Types.NO_TYPE ) { return rightType; }
 				return t3;
 			case SECOND_KEY_TYPE:
-				return right().getKeyType();
+				return right().getType().getKeyType();
 			default:
 				return t >= 0 ? Types.get(t) : def;
 		}
@@ -161,14 +161,11 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 	public void computeType(final IDescription context) {
 		type = computeType(context, typeProvider, type, _type);
-	}
-
-	public void computeContentType(final IDescription context) {
-		contentType = computeType(context, contentTypeProvider, type.defaultContentType(), _content);
-	}
-
-	public void computeKeyType(final IDescription context) {
-		keyType = computeType(context, keyTypeProvider, type.defaultKeyType(), _key);
+		if ( type.isContainer() ) {
+			IType contentType = computeType(context, contentTypeProvider, type.getContentType(), _content);
+			IType keyType = computeType(context, keyTypeProvider, type.getKeyType(), _key);
+			type = GamaType.from(type, keyType, contentType);
+		}
 	}
 
 	@Override

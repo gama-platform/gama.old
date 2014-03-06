@@ -22,7 +22,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
+import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
@@ -34,6 +34,12 @@ import com.vividsolutions.jts.geom.*;
  */
 
 public class GamaPoint extends Coordinate implements ILocation {
+
+	public GamaPoint() {
+		x = 0;
+		y = 0;
+		z = 0;
+	}
 
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
@@ -58,6 +64,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public GamaPoint(final ILocation point) {
+		this();
+		if ( point == null ) { return; }
 		x = point.getX();
 		y = point.getY();
 		final double zz = point.getZ();
@@ -238,7 +246,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
 		// FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use
-		// this.distance(p.toCoordinate());
+		// return this.distance(p.toCoordinate());
 		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
 	}
 
@@ -358,6 +366,22 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	}
+
+	/**
+	 * Method getPoints()
+	 * @see msi.gama.metamodel.shape.IShape#getPoints()
+	 */
+	@Override
+	public IList<? extends ILocation> getPoints() {
+		return GamaList.with(this);
+	}
+
+	/**
+	 * @return the point with y negated (for OpenGL, for example), without side effect on the point.
+	 */
+	public GamaPoint yNegated() {
+		return new GamaPoint(x, -y, z);
 	}
 
 }

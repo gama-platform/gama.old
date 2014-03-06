@@ -21,6 +21,4 @@ public interface IPopulationSet extends IContainer<Integer, IAgent>, IAgentFilte
 
 	Collection<? extends IPopulation> getPopulations(IScope scope);
 
-	// IPopulation getPopulation(IScope scope, String name);
-
 }

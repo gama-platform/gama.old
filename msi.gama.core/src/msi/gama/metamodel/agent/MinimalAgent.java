@@ -190,7 +190,7 @@ public abstract class MinimalAgent implements IAgent {
 			// GuiUtils.debug("MinimalAgent.dispose " + this);
 			final IPopulation p = getPopulation();
 			if ( p != null ) {
-				p.remove(null, null, this, false);
+				p.removeValue(null, this);
 			}
 
 			final IShape s = getGeometry();

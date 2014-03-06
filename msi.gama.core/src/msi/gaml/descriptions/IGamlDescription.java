@@ -13,7 +13,7 @@ import msi.gama.common.interfaces.ITyped;
  * @since 27 avr. 2012
  * 
  */
-public interface IGamlDescription extends /* Adapter.Internal, */ITyped {
+public interface IGamlDescription extends ITyped {
 
 	public void dispose();
 

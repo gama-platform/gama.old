@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  */
 @file(name = "gaml", extensions = { "gaml" })
-public class GAMLFile extends GamaFile<Integer, IModel> {
+public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	private final IModel mymodel;
 	/**
@@ -139,10 +139,10 @@ public class GAMLFile extends GamaFile<Integer, IModel> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = new GamaList();
+		if ( getBuffer() != null ) { return; }
+		setBuffer(new GamaList());
 
-		((IList) buffer).add(mymodel);
+		((IList) getBuffer()).add(mymodel);
 
 	}
 

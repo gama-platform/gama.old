@@ -103,9 +103,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator <b>").append(getName()).append("</b> (");
-		sb.append(child == null ? signature : child.getType());
+		sb.append(child == null ? signature : child.getType().getTitle());
 		sb.append(") returns ");
-		sb.append(typeToString());
+		sb.append(getType().getTitle());
 		return sb.toString();
 	}
 
@@ -128,34 +128,39 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		if ( t == NONE ) { return def; }
 		if ( t == FIRST_ELEMENT_CONTENT_TYPE ) {
 			if ( child instanceof ListExpression ) {
-				final IExpression[] array = ((ListExpression) child).elements;
+				final IExpression[] array = ((ListExpression) child).getElements();
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
-				return array[0].getContentType();
+				return array[0].getType().getContentType();
 			} else if ( child instanceof MapExpression ) {
 				final IExpression[] array = ((MapExpression) child).valuesArray();
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
-				return array[0].getContentType();
+				return array[0].getType().getContentType();
 			}
 			return def;
 		} else if ( t == FIRST_CONTENT_TYPE_OR_TYPE ) {
-			final IType t2 = child.getContentType();
-			if ( t2 == Types.NO_TYPE ) { return child.getType(); }
+			IType firstType = child.getType();
+			final IType t2 = firstType.getContentType();
+			if ( t2 == Types.NO_TYPE ) { return firstType; }
 			return t2;
 		}
-		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getContentType()
-			: t == FIRST_KEY_TYPE ? child.getKeyType() : t >= 0 ? Types.get(t) : def;
+		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getType().getContentType()
+			: t == FIRST_KEY_TYPE ? child.getType().getKeyType() : t >= 0 ? Types.get(t) : def;
 	}
 
-	public void computeType() {
+	protected void computeType() {
 		type = computeType(typeProvider, type);
-	}
+		if ( type.isContainer() ) {
+			IType contentType = computeType(contentTypeProvider, type.getContentType());
+			// WARNING Special case for pairs of map. See if it works for other fields as well
+			if ( contentType.isContainer() && contentType.getKeyType() == Types.NO_TYPE &&
+				contentType.getContentType() == Types.NO_TYPE ) {
+				contentType =
+					GamaType.from(contentType, child.getType().getKeyType(), child.getType().getContentType());
+			}
+			IType keyType = computeType(keyTypeProvider, type.getKeyType());
+			type = GamaType.from(type, keyType, contentType);
+		}
 
-	public void computeContentType() {
-		contentType = computeType(contentTypeProvider, type.defaultContentType());
-	}
-
-	public void computeKeyType() {
-		keyType = computeType(keyTypeProvider, type.defaultKeyType());
 	}
 
 	@Override
@@ -163,15 +168,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		setName(name);
 		setChild(context, args[0]);
 		computeType();
-		computeContentType();
-		computeKeyType();
 		return this;
 	}
 
 	private void setChild(final IDescription context, final IExpression c) {
 		child = c;
 		if ( expectedContentType.length == 0 ) { return; }
-		final IType ct = c.getContentType();
+		final IType ct = c.getType().getContentType();
 		for ( int i = 0; i < expectedContentType.length; i++ ) {
 			if ( ct.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
 		}
@@ -195,24 +198,25 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return i == 0 ? child : null;
 	}
 
-	// FIXME: need to create sometime an operator prototype from which to derive operators instead
+	// FIXME: need to create at some point an operator prototype from which to derive operators instead
 	// of copying them
 	@Override
 	public void setDoc(final GamlElementDocumentation doc) {
 		this.doc = doc;
 	}
 
-	@Override
-	public IType getElementsContentType() {
-		if ( contentType.hasContents() ) { return child.getContentType(); }
-		return contentType.defaultContentType();
-	}
-
-	@Override
-	public IType getElementsKeyType() {
-		if ( contentType.hasContents() ) { return child.getKeyType(); }
-		return contentType.defaultKeyType();
-	}
+	//
+	// @Override
+	// public IType getElementsContentType() {
+	// if ( contentType.hasContents() ) { return child.getContentType(); }
+	// return contentType.getContentType();
+	// }
+	//
+	// @Override
+	// public IType getElementsKeyType() {
+	// if ( contentType.hasContents() ) { return child.getKeyType(); }
+	// return contentType.getKeyType();
+	// }
 
 	/**
 	 * Method getDocumentationObject()

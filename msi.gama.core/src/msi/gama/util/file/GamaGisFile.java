@@ -33,7 +33,14 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	 * @return
 	 */
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
-		if ( initialCRSCode != null ) { return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCode); }
+		if ( initialCRSCode != null ) {
+			try {
+				return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCode);
+			} catch (GamaRuntimeException e) {
+				throw GamaRuntimeException.error("The code " + initialCRSCode +
+					" does not correspond to a known EPSG code. GAMA is unable to load " + getPath(), scope);
+			}
+		}
 		CoordinateReferenceSystem crs = getOwnCRS();
 		if ( crs == null ) {
 			crs = scope.getSimulationScope().getProjectionFactory().getDefaultInitialCRS();
@@ -74,7 +81,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
-		return GamaGeometryType.geometriesToGeometry(scope, buffer);
+		return GamaGeometryType.geometriesToGeometry(scope, getBuffer());
 	}
 
 }

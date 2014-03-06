@@ -23,7 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.types.*;
+import msi.gaml.operators.Strings;
 
 public class AbstractStatementSequence extends AbstractStatement {
 
@@ -31,6 +31,18 @@ public class AbstractStatementSequence extends AbstractStatement {
 
 	public AbstractStatementSequence(final IDescription desc) {
 		super(desc);
+	}
+
+	@Override
+	public String toGaml() {
+		StringBuilder sb = new StringBuilder(firstLineToGaml());
+		sb.append(' ').append('{').append(Strings.LN);
+		for ( IStatement s : commands ) {
+			sb.append('\t');
+			sb.append(s.toGaml()).append(Strings.LN);
+		}
+		sb.append('}');
+		return sb.toString();
 	}
 
 	@Override
@@ -72,33 +84,33 @@ public class AbstractStatementSequence extends AbstractStatement {
 		scope.push(this);
 	}
 
-	@Override
-	public IType getType() {
-		IType result = null;
-		for ( int i = 0; i < commands.length; i++ ) {
-			final IStatement c = commands[i];
-			final IType rt = c.getType();
-			if ( rt == null ) {
-				continue;
-			}
-			if ( result == null ) {
-				result = rt;
-			} else {
-				final IType ft = result;
-				final IType nt = rt;
-				if ( ft != nt ) {
-					if ( ft.id() == IType.INT && nt.id() == IType.FLOAT || nt.id() == IType.INT &&
-						rt.id() == IType.FLOAT ) {
-						result = Types.get(IType.FLOAT);
-					} else {
-						result = Types.NO_TYPE;
-					}
-				}
-			}
-
-		}
-		return result;
-	}
+	// @Override
+	// public IType getType() {
+	// IType result = null;
+	// for ( int i = 0; i < commands.length; i++ ) {
+	// final IStatement c = commands[i];
+	// final IType rt = c.getType();
+	// if ( rt == null ) {
+	// continue;
+	// }
+	// if ( result == null ) {
+	// result = rt;
+	// } else {
+	// final IType ft = result;
+	// final IType nt = rt;
+	// if ( ft != nt ) {
+	// if ( ft.id() == IType.INT && nt.id() == IType.FLOAT || nt.id() == IType.INT &&
+	// rt.id() == IType.FLOAT ) {
+	// result = Types.get(IType.FLOAT);
+	// } else {
+	// result = Types.NO_TYPE;
+	// }
+	// }
+	// }
+	//
+	// }
+	// return result;
+	// }
 
 	public IStatement[] getCommands() {
 		return commands;

@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.util.*;
 import msi.gama.util.path.IPath;
+import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
 import msi.gaml.types.IType;
 import org.jgrapht.*;
 
@@ -39,8 +40,9 @@ import org.jgrapht.*;
 @vars({ @var(name = "spanning_tree", type = IType.LIST), @var(name = "circuit", type = IType.PATH),
 	@var(name = "connected", type = IType.BOOL), @var(name = "edges", type = IType.LIST),
 	@var(name = "vertices", type = IType.LIST) })
-public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, DirectedGraph<V, E>,
-	UndirectedGraph<V, E>, IGraphEventProvider {
+public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>,
+	IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>, DirectedGraph<Node, Edge>,
+	UndirectedGraph<Node, Edge>, IGraphEventProvider {
 
 	public abstract double getVertexWeight(final Object v);
 
@@ -54,21 +56,21 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 
 	public Collection _internalNodesSet();
 
-	public Map<E, _Edge<V>> _internalEdgeMap();
+	public Map<Edge, _Edge<Node, Edge>> _internalEdgeMap();
 
-	public Map<V, _Vertex<E>> _internalVertexMap();
+	public Map<Node, _Vertex<Node, Edge>> _internalVertexMap();
 
 	@getter("edges")
-	public abstract IList<E> getEdges();
+	public abstract IList<Edge> getEdges();
 
 	@getter("vertices")
-	public abstract IList<V> getVertices();
+	public abstract IList<Node> getVertices();
 
 	@getter("spanning_tree")
-	public abstract IList<E> getSpanningTree();
+	public abstract IList<Edge> getSpanningTree();
 
 	@getter("circuit")
-	public abstract IPath<V, E, IGraph<V, E>> getCircuit();
+	public abstract IPath<Node, Edge, IGraph<Node, Edge>> getCircuit();
 
 	@getter("connected")
 	public abstract Boolean getConnected();
@@ -81,9 +83,9 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 
 	public abstract void setOptimizerType(String optiType);
 	
-	public FloydWarshallShortestPathsGAMA<V, E> getOptimizer();
+	public FloydWarshallShortestPathsGAMA<Node, Edge> getOptimizer();
 
-	public void setOptimizer(FloydWarshallShortestPathsGAMA<V, E> optimizer);
+	public void setOptimizer(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
 
 	public int getVersion();
 
@@ -95,11 +97,11 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	// public abstract IPath<V,E> computeShortestPathBetween(final Object source, final Object target);
 	// public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);
 
-	public abstract IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final V source, final V target);
+	public abstract IPath<Node, Edge, IGraph<Node, Edge>> computeShortestPathBetween(final Node source, final Node target);
 
-	public abstract IList<E> computeBestRouteBetween(final V source, final V target);
+	public abstract IList<Edge> computeBestRouteBetween(final Node source, final Node target);
 
-	public double computeWeight(final IPath<V, E, ? extends IGraph<V, E>> gamaPath);
+	public double computeWeight(final IPath<Node, Edge, ? extends IGraph<Node, Edge>> gamaPath);
 
 	public double computeTotalWeight();
 	
@@ -107,8 +109,8 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 
 	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths) ;
 
-	public abstract List<IPath<V, E, IGraph<V, E>>> computeKShortestPathsBetween(V source, V target, int k);
+	public abstract List<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(Node source, Node target, int k);
 	
-	public abstract IList<IList<E>> computeKBestRoutesBetween(final V source, final V target,int k);
+	public abstract IList<IList<Edge>> computeKBestRoutesBetween(final Node source, final Node target,int k);
 
 }

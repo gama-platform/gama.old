@@ -25,6 +25,7 @@ import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
@@ -72,14 +73,27 @@ public class Facets extends THashMap<String, IExpressionDescription> {
 		return StringUtils.toJavaString(f.toString());
 	}
 
-	public IExpression getExpr(final String key) {
-		return getExpr(key, null);
+	public IExpression getExpr(final String ... keys) {
+		IExpressionDescription desc = getDescr(keys);
+		return desc == null ? null : desc.getExpression();
 	}
 
-	public IExpression getExpr(final String key, final IExpression ifAbsent) {
+	public IExpressionDescription getDescr(final String ... keys) {
+		for ( String s : keys ) {
+			IExpressionDescription f = get(s);
+			if ( f != null ) { return f; }
+		}
+		return null;
+	}
+
+	public IType getTypeDenotedBy(final String key, final IDescription context) {
+		return getTypeDenotedBy(key, context, Types.NO_TYPE);
+	}
+
+	public IType getTypeDenotedBy(final String key, final IDescription context, final IType noType) {
 		IExpressionDescription f = get(key);
-		if ( f == null ) { return ifAbsent; }
-		return f.getExpression();
+		if ( f == null ) { return noType; }
+		return f.getDenotedType(context);
 	}
 
 	public IExpressionDescription putAsLabel(final String key, final String desc) {
@@ -151,6 +165,7 @@ public class Facets extends THashMap<String, IExpressionDescription> {
 		clear();
 	}
 
+	@Override
 	public Set<Map.Entry<String, IExpressionDescription>> entrySet() {
 		return super.entrySet();
 	}

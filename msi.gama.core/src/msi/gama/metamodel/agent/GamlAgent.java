@@ -32,7 +32,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.google.common.collect.Iterables;
 
@@ -103,7 +103,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( !getSpecies().isInitOverriden() ) {
 			_init_(scope);
 		} else {
-			executeCallbackAction(scope, getSpecies().getAction("_init_"));
+			executeCallbackAction(scope, getSpecies().getAction(ISpecies.initActionName));
 		}
 		return !scope.interrupted();
 	}
@@ -121,7 +121,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( !getSpecies().isStepOverriden() ) {
 			_step_(scope);
 		} else {
-			executeCallbackAction(scope, getSpecies().getAction("_step_"));
+			executeCallbackAction(scope, getSpecies().getAction(ISpecies.stepActionName));
 		}
 		return !scope.interrupted();
 	}
@@ -137,13 +137,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		return callbackResult[0];
 	}
 
-	@action(name = "_init_")
+	@action(name = ISpecies.initActionName)
 	public Object _init_(final IScope scope) {
 		getSpecies().getArchitecture().init(scope);
 		return this;
 	}
 
-	@action(name = "_step_")
+	@action(name = ISpecies.stepActionName)
 	public Object _step_(final IScope scope) {
 		scope.update(this);
 		// getPopulation().updateVariables(scope, this);
@@ -449,12 +449,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public Envelope3D getEnvelope() {
 		// Explicitely redefined here in order to address Issue 709. Having a lock on getGeometry() would prevent the
 		// QuadTree from working in a multi-thread environment.
+		if ( geometry == null ) { return null; }
 		return geometry.getEnvelope();
 	}
 
 	@Override
 	public/* synchronized */void setGeometry(final IShape newGeometry) {
-		if ( newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
+		// Addition to address Issue 817: if the new geometry is exactly the one possessed by the agent, no need to
+		// change anything.
+		if ( newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
 
 		final ITopology topology = population.getTopology();
 		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
@@ -585,7 +588,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public IList<IAgent> getMembers(final IScope scope) {
+	public IContainer<?, IAgent> getMembers(final IScope scope) {
 		if ( dead() ) { return GamaList.EMPTY_LIST; }
 		return new MetaPopulation(getMicroPopulations());
 	}
@@ -604,10 +607,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> getAgents(final IScope scope) {
 		if ( !hasMembers() ) { return GamaList.EMPTY_LIST; }
 
-		final List<IAgent> members = getMembers(scope);
+		final IContainer<?, IAgent> members = getMembers(scope);
 		final IList<IAgent> agents = new GamaList<IAgent>();
-		agents.addAll(members);
-		for ( final IAgent m : members ) {
+		agents.addAll(members.listValue(scope, Types.NO_TYPE));
+		for ( final IAgent m : members.iterable(scope) ) {
 			if ( m != null && m instanceof IMacroAgent ) {
 				agents.addAll(((IMacroAgent) m).getAgents(scope));
 			}
@@ -688,6 +691,16 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			return new Scope();
 		}
 
+	}
+
+	/**
+	 * Method getPoints()
+	 * @see msi.gama.metamodel.shape.IShape#getPoints()
+	 */
+	@Override
+	public IList<? extends ILocation> getPoints() {
+		if ( geometry == null ) { return GamaList.EMPTY_LIST; }
+		return geometry.getPoints();
 	}
 
 }

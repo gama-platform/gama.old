@@ -84,7 +84,7 @@ public class GamaDynamicLink extends GamaShape {
 	}
 
 	@Override
-	public ILocation getLocation() {
+	public GamaPoint getLocation() {
 		refresh();
 		return super.getLocation();
 	}
@@ -95,7 +95,7 @@ public class GamaDynamicLink extends GamaShape {
 	}
 
 	@Override
-	public GamaDynamicLink copy(IScope scope) {
+	public GamaDynamicLink copy(final IScope scope) {
 		return new GamaDynamicLink(source, target);
 	}
 }

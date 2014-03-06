@@ -20,7 +20,8 @@ package msi.gaml.expressions;
 
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gaml.compilation.GamlElementDocumentation;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.IUnits;
@@ -45,16 +46,16 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createConst(final Object val, final IType type) {
-		return createConst(val, type, type.defaultContentType());
+	public boolean isInitialized() {
+		return parser != null;
 	}
 
 	@Override
-	public IExpression createConst(final Object val, final IType type, final IType contentType) {
-		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression((String) val, type, contentType); }
+	public IExpression createConst(final Object val, final IType type) {
+		if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
 		if ( val == null ) { return NIL_EXPR; }
 		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
-		return new ConstantExpression(val, type, contentType);
+		return new ConstantExpression(val, type);
 	}
 
 	@Override
@@ -92,23 +93,24 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IVarExpression createVar(final String name, final IType type, final IType contentType, final IType keyType,
-		final boolean isConst, final int scope, final IDescription definitionDescription) {
+	public IVarExpression createVar(final String name, final IType type, final boolean isConst, final int scope,
+		final IDescription definitionDescription) {
+		if ( name.equals("possible_nests") ) {
+			GuiUtils.debug("GamlExpressionFactory.createVar");
+		}
 		switch (scope) {
 			case IVarExpression.GLOBAL:
-				return new GlobalVariableExpression(name, type, contentType, keyType, isConst,
-					definitionDescription.getModelDescription()/* .getWorldSpecies() */);
+				return new GlobalVariableExpression(name, type, isConst, definitionDescription.getModelDescription());
 			case IVarExpression.AGENT:
-				return new AgentVariableExpression(name, type, contentType, keyType, isConst, definitionDescription);
+				return new AgentVariableExpression(name, type, isConst, definitionDescription);
 			case IVarExpression.TEMP:
-				return new TempVariableExpression(name, type, contentType, keyType, definitionDescription);
+				return new TempVariableExpression(name, type, definitionDescription);
 			case IVarExpression.EACH:
-				return new EachExpression(type, contentType, keyType);
+				return new EachExpression(type);
 			case IVarExpression.WORLD:
-				return new WorldExpression(name, type, contentType, keyType,
-					definitionDescription.getModelDescription());
+				return new WorldExpression(name, type, definitionDescription.getModelDescription());
 			case IVarExpression.SELF:
-				return new SelfExpression(type, contentType, keyType);
+				return new SelfExpression(type);
 			default:
 				return null;
 		}
@@ -124,8 +126,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return new MapExpression(elements);
 	}
 
-	private final List<Signature> temp_types = new ArrayList(10);
-
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject currentEObject,
 		final IExpression ... args) {
@@ -133,15 +133,20 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		for ( IExpression exp : args ) {
 			if ( exp == null ) { return null; }
 		}
+		if ( op.equals("-") ) {
+			GuiUtils.debug("GamlExpressionFactory.createOperator");
+		}
 		if ( OPERATORS.containsKey(op) ) {
 			// We get the possible sets of types registered in OPERATORS
 			Map<Signature, IOperator> ops = OPERATORS.get(op);
 			// We create the signature corresponding to the arguments
-			Signature signature = new Signature(args);
+			// 19/02/14 Only the simplified signature is used now
+			Signature signature = new Signature(args).simplified();
 			Signature originalSignature = signature;
 			// If the signature is not present in the registry
 			if ( !ops.containsKey(signature) ) {
-				temp_types.clear();
+				final List<Signature> temp_types = new ArrayList(10);
+				// temp_types.clear();
 				// We collect all the signatures that are compatible
 				for ( Map.Entry<Signature, IOperator> entry : ops.entrySet() ) {
 					if ( signature.isCompatibleWith(entry.getKey()) ) {
@@ -173,10 +178,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					if ( t != null ) {
 						// Emits a warning when a float is truncated. See Issue 735.
 						if ( t.id() == IType.INT ) {
-							context.warning(t.toString() + " expected. '" + args[i].toGaml() +
-								"' will be automatically truncated.", IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
+							// 20/1/14 Changed to info to avoid having too many harmless warnings
+							context.info(t.toString() + " expected. '" + args[i].toGaml() +
+								"' will be  truncated to int.", IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 						}
-						args[i] = createOperator(t.toString(), context, currentEObject, args[i]);
+						args[i] =
+							createOperator(IKeyword.AS, context, currentEObject, args[i], createTypeExpression(t));
+						// args[i] = createOperator(t.toString(), context, currentEObject, args[i]);
 					}
 				}
 			}
@@ -220,8 +228,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 * @see msi.gaml.expressions.IExpressionFactory#createCastingExpression(msi.gaml.types.IType)
 	 */
 	@Override
-	public IExpression createCastingExpression(final IType type) {
+	public IExpression createTypeExpression(final IType type) {
 		return new CastingExpression(type);
+	}
+
+	/**
+	 * Method getFacetExpression()
+	 * @see msi.gaml.expressions.IExpressionFactory#getFacetExpression(msi.gaml.descriptions.IDescription,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public EObject getFacetExpression(final IDescription context, final EObject facet) {
+		return parser.getFacetExpression(context, facet);
 	}
 
 }

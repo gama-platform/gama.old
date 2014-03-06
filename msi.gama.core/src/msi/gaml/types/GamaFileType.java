@@ -18,7 +18,9 @@
  */
 package msi.gaml.types;
 
+import java.io.File;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,7 +29,8 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.IGamaFile;
+import msi.gama.util.*;
+import msi.gama.util.file.*;
 import msi.gaml.compilation.GamaHelper;
 import org.eclipse.core.runtime.*;
 
@@ -95,18 +98,37 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	}
 
 	public static IGamaFile createFile(final IScope scope, final String path) {
+		if ( new File(path).isDirectory() ) { return new GamaFolderFile(scope, path); }
 		IPath p = new Path(path);
 		String ext = p.getFileExtension();
 		GamaHelper<IGamaFile> builder = extensionsToFiles.get(ext);
 		if ( builder != null ) { return builder.run(scope, path); }
-		return null;
+		return new GamaPreferences.GenericFile(path);
+	}
+
+	public static IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
+
+		// TODO USE THE BUILDER INSTEAD (NEED TO REGISTER IT TO TAKE TWO PARAMETERS INTO ACCOUNT)
+
+		IGamaFile f = createFile(scope, path);
+		if ( f == null ) { return null; }
+		f.setWritable(true);
+		f.setContents(contents);
+		return f;
 	}
 
 	@Override
-	public IGamaFile cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentType) throws GamaRuntimeException {
 		if ( obj == null ) { return getDefault(); }
+		// 04/03/14 Problem of initialization of files. See if it works or not. No copy of the file is done.
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }
-		if ( obj instanceof String ) { return createFile(scope, (String) obj); }
+		// if ( obj instanceof IGamaFile ) { return createFile(scope, ((IGamaFile) obj).getPath(), (IGamaFile) obj); }
+		if ( obj instanceof String ) {
+			if ( param == null ) { return createFile(scope, (String) obj); }
+			if ( param instanceof IContainer.Modifiable ) { return createFile(scope, (String) obj,
+				(IModifiableContainer) param); }
+		}
 		return getDefault();
 	}
 

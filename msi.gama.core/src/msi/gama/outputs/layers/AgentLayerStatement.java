@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -44,7 +45,10 @@ import msi.gaml.types.*;
  */
 @symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false),
+	@facet(name = IKeyword.TRACE, type = { IType.BOOL, IType.INT }, optional = true, doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
+	@facet(name = IKeyword.FADING, type = { IType.BOOL }, optional = true, doc = @doc("Used in conjunction with 'trace:', allows to apply a fading effect to the previous traces. Default is false")),
 	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
@@ -54,8 +58,6 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 @validator(AgentLayerValidator.class)
 public class AgentLayerStatement extends AbstractLayerStatement {
-
-	
 
 	public static class AgentLayerValidator implements IDescriptionValidator {
 

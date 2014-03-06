@@ -1,11 +1,12 @@
 package msi.gaml.descriptions;
 
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.descriptions.StatementDescription.StatementWithChildrenDescription;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import org.eclipse.emf.ecore.EObject;
 
-public class PrimitiveDescription extends StatementDescription {
+public class PrimitiveDescription extends StatementWithChildrenDescription {
 
 	private GamaHelper helper;
 

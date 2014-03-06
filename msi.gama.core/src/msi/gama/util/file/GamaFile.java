@@ -25,7 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.GamaFileType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 7 août 2010
@@ -34,7 +34,34 @@ import msi.gaml.types.GamaFileType;
  * 
  */
 
-public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
+public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
+	implements IGamaFile<C, ValueToAdd, K, V> {
+
+	@Override
+	public IContainer<?, K> buildIndexes(final IScope scope, final IContainer value, final IContainerType containerType) {
+		fillBuffer(scope);
+		return getBuffer().buildIndexes(scope, value, containerType);
+	}
+
+	@Override
+	public ValueToAdd buildValue(final IScope scope, final Object object, final IContainerType containerType) {
+		fillBuffer(scope);
+		return getBuffer().buildValue(scope, object, containerType);
+	}
+
+	@Override
+	public IContainer<?, ValueToAdd> buildValues(final IScope scope, final IContainer objects,
+		final IContainerType containerType) {
+		fillBuffer(scope);
+		return getBuffer().buildValues(scope, objects, containerType);
+
+	}
+
+	@Override
+	public K buildIndex(final IScope scope, final Object object, final IContainerType containerType) {
+		fillBuffer(scope);
+		return getBuffer().buildIndex(scope, object, containerType);
+	}
 
 	private File file;
 
@@ -42,7 +69,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	protected boolean writable = false;
 
-	protected IContainer<K, V> buffer;
+	private C buffer;
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		if ( pathName == null ) { throw GamaRuntimeException.error("Attempt to create a null file"); }
@@ -57,11 +84,19 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		}
 	}
 
+	public GamaFile(final IScope scope, final String pathName, final C container) {
+		this(scope, pathName);
+		setWritable(true);
+		setContents(container);
+	}
+
 	protected void checkValidity() throws GamaRuntimeException {
 		if ( getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
 			" is a folder. Files can not overwrite folders"); }
-		if ( !GamaFileType.verifyExtension(this, getPath()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for this type of file"); }
+		// For the moment, the verification is disabled, so as to allow "forcing" the loading of a file in a different
+		// way (for instance, a .asc file into a text file).
+		// if ( !GamaFileType.verifyExtension(this, getPath()) ) { throw GamaRuntimeException.warning("The extension " +
+		// this.getExtension() + " is not recognized for this type of file"); }
 	}
 
 	@Override
@@ -75,15 +110,15 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	protected abstract void flushBuffer() throws GamaRuntimeException;
 
 	@Override
-	public final void setContents(final IContainer<K, V> cont) throws GamaRuntimeException {
+	public final void setContents(final C cont) throws GamaRuntimeException {
 		if ( writable ) {
-			buffer = cont;
+			setBuffer(cont);
 		}
 	}
 
 	protected String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.stringValue(scope);
+		return getBuffer().stringValue(scope);
 	}
 
 	/*
@@ -92,12 +127,80 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object,
 	 * java.lang.Object)
 	 */
+	// @Override
+	// public void add(final IScope scope, final K index, final Object value, final Object param, final boolean all,
+	// final boolean add) throws GamaRuntimeException {
+	// getContents(scope);
+	// buffer.add(scope, index, value, param, all, add);
+	// flushBuffer();
+	// }
+
+	// 09/01/14:Trying to keep the interface simple.
+	// Three methods for add and put operations:
+	// The simple method, that simply contains the object to add
 	@Override
-	public void add(final IScope scope, final K index, final Object value, final Object param, final boolean all,
-		final boolean add) throws GamaRuntimeException {
-		getContents(scope);
-		buffer.add(scope, index, value, param, all, add);
-		flushBuffer();
+	public void addValue(final IScope scope, final ValueToAdd value) {
+		fillBuffer(scope);
+		getBuffer().addValue(scope, value);
+	}
+
+	// The same but with an index (this index represents the old notion of parameter where it is needed.
+	@Override
+	public void addValueAtIndex(final IScope scope, final K index, final ValueToAdd value) {
+		fillBuffer(scope);
+		getBuffer().addValueAtIndex(scope, index, value);
+	}
+
+	// Put, that takes a mandatory index (also replaces the parameter)
+	@Override
+	public void setValueAtIndex(final IScope scope, final K index, final ValueToAdd value) {
+		fillBuffer(scope);
+		getBuffer().setValueAtIndex(scope, index, value);
+	}
+
+	// Then, methods for "all" operations
+	// Adds the values if possible, without replacing existing ones
+	@Override
+	public void addVallues(final IScope scope, final IContainer values) {
+		fillBuffer(scope);
+		getBuffer().addVallues(scope, values);
+	}
+
+	// Adds this value to all slots (if this operation is available), otherwise replaces the values with this one
+	@Override
+	public void setAllValues(final IScope scope, final ValueToAdd value) {
+		fillBuffer(scope);
+		getBuffer().setAllValues(scope, value);
+	}
+
+	@Override
+	public void removeValue(final IScope scope, final Object value) {
+		fillBuffer(scope);
+		getBuffer().removeValue(scope, value);
+	}
+
+	@Override
+	public void removeIndex(final IScope scope, final Object index) {
+		fillBuffer(scope);
+		getBuffer().removeIndex(scope, index);
+	}
+
+	@Override
+	public void removeValues(final IScope scope, final IContainer values) {
+		fillBuffer(scope);
+		getBuffer().removeValues(scope, values);
+	}
+
+	@Override
+	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
+		fillBuffer(scope);
+		getBuffer().removeAllOccurencesOfValue(scope, value);
+	}
+
+	@Override
+	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {
+		fillBuffer(scope);
+		getBuffer().removeIndexes(scope, indexes);
 	}
 
 	/*
@@ -106,9 +209,9 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	@Override
-	public boolean checkBounds(final K index, final boolean forAdding) {
+	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
 		getContents(null);
-		return buffer.checkBounds(index, forAdding);
+		return getBuffer().checkBounds(scope, index, forAdding);
 
 	}
 
@@ -120,7 +223,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.contains(scope, o);
+		return getBuffer().contains(scope, o);
 
 	}
 
@@ -139,9 +242,9 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public V first(final IScope scope) throws GamaRuntimeException {
+	public V firstValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.first(scope);
+		return getBuffer().firstValue(scope);
 	}
 
 	/*
@@ -150,13 +253,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public V get(final IScope scope, final K index) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.get(scope, index);
+		return getBuffer().get(scope, index);
 	}
 
 	@Override
 	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return (V) buffer.getFromIndicesList(scope, indices);
+		return getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -180,18 +283,18 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public IContainer getContents(final IScope scope) throws GamaRuntimeException {
+	public C getContents(final IScope scope) throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
 		if ( !getFile().exists() ) { throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() +
 			" does not exist"); }
 		fillBuffer(scope);
-		return buffer;
+		return getBuffer();
 	}
 
 	@Override
 	public boolean isEmpty(final IScope scope) {
 		getContents(scope);
-		return buffer.isEmpty(scope);
+		return getBuffer().isEmpty(scope);
 	}
 
 	@Override
@@ -209,68 +312,65 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return getFile().canWrite();
 	}
 
-	//
-	// @Override
-	// public Iterator iterator() {
-	// getContents(null);
-	// return buffer.iterator();
-	// }
-
 	@Override
-	public Iterable<V> iterable(final IScope scope) {
+	public java.lang.Iterable<? extends V> iterable(final IScope scope) {
 		return getContents(scope).iterable(scope);
 	}
 
 	@Override
-	public V last(final IScope scope) throws GamaRuntimeException {
+	public V lastValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.last(scope);
+		return getBuffer().lastValue(scope);
 	}
 
 	@Override
 	public int length(final IScope scope) {
 		getContents(scope);
-		return buffer.length(scope);
+		return getBuffer().length(scope);
 	}
 
 	@Override
-	public IList listValue(final IScope scope) throws GamaRuntimeException {
+	public IList listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.listValue(scope);
+		return getBuffer().listValue(scope, contentsType);
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+		throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.mapValue(scope);
+		return getBuffer().mapValue(scope, keyType, contentsType);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		return matrixValue(scope, null);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		return matrixValue(scope, contentsType, null);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		return _matrixValue(scope, preferredSize);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
+		throws GamaRuntimeException {
+		return _matrixValue(scope, contentsType, preferredSize);
 	}
 
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
+		throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.matrixValue(scope, preferredSize);
+		return getBuffer().matrixValue(scope, contentsType, preferredSize);
 	}
 
-	@Override
-	public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-		getContents(scope);
-		buffer.remove(scope, index, value, all);
-		flushBuffer();
-	}
+	//
+	// @Override
+	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
+	// getContents(scope);
+	// buffer.remove(scope, index, value, all);
+	// flushBuffer();
+	// }
 
 	@Override
 	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return buffer.reverse(scope);
+		return getBuffer().reverse(scope);
 		// No side effect
 	}
 
@@ -285,9 +385,9 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public V any(final IScope scope) {
+	public V anyValue(final IScope scope) {
 		getContents(scope);
-		return buffer.any(scope);
+		return getBuffer().anyValue(scope);
 	}
 
 	public File getFile() {
@@ -295,5 +395,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 			file = new File(path);
 		}
 		return file;
+	}
+
+	protected C getBuffer() {
+		return buffer;
+	}
+
+	protected void setBuffer(C buffer) {
+		this.buffer = buffer;
 	}
 }

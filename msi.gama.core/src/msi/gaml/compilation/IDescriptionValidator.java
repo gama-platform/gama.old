@@ -6,7 +6,7 @@ package msi.gaml.compilation;
 
 import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
 /**
@@ -31,6 +31,44 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 
 	public static class Assert {
 
+		public static void typesAreCompatibleForAssignment(final IDescription context,
+			final String receiverDescription, final IType receiverType, final IExpressionDescription assigned) {
+			if ( assigned == null ) { return; }
+			// IExpression expr1 = receiver.getExpression();
+			IExpression expr2 = assigned.getExpression();
+			if ( expr2 == null ) { return; }
+			// IType receiverType = expr1.getType();
+			IType assignedType = expr2.getType();
+
+			// AD: 6/9/13 special case for int and float (see Issue 590)
+			if ( expr2 != IExpressionFactory.NIL_EXPR &&
+				!assignedType.getType().isTranslatableInto(receiverType.getType()) ||
+				Types.intFloatCase(receiverType, assignedType) ) {
+				if ( !Types.mapListCase(receiverType, assignedType, expr2) ) {
+					context.warning(receiverDescription + " of type " + receiverType.getType() +
+						" is assigned a value of type " + assignedType.getType() + ", which will be casted to " +
+						receiverType.getType(), IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
+				}
+			}
+			// Contents Type
+			if ( receiverType.isContainer() && assignedType.isContainer() ) {
+				IType receiverContentType = receiverType.getContentType();
+				// receiverType = expr1.getContentType();
+				assignedType = assignedType.getContentType();
+				// Special cases for the empty lists and maps
+				if ( assignedType == Types.NO_TYPE ) {
+					if ( expr2 instanceof ListExpression && ((ListExpression) expr2).getElements().length == 0 ) { return; }
+					if ( expr2 instanceof MapExpression && ((MapExpression) expr2).keysArray().length == 0 ) { return; }
+				}
+				if ( !assignedType.isTranslatableInto(receiverContentType) ||
+					Types.intFloatCase(receiverContentType, assignedType) ) {
+					context.warning("Elements of " + receiverDescription + " are of type " + receiverContentType +
+						" but are assigned elements of type " + assignedType + ", which will be casted to " +
+						receiverContentType, IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
+				}
+			}
+		}
+
 		public static boolean nameIsValid(final IDescription cd) {
 			String name = cd.getName();
 			if ( name == null ) {
@@ -44,12 +82,12 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 					IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
 				return false;
 			} else {
-				IType t = cd.getTypeNamed(name);
+				IType t = cd.getModelDescription().getTypesManager().get(name);
 				if ( t != Types.NO_TYPE ) {
 					String type =
 						"It cannot be used as a " + (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) +
 							" name.";
-					String species = t.isSpeciesType() ? "species" : "type";
+					String species = t.isAgentType() ? "species" : "type";
 					cd.error(name + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE, NAME, name);
 					return false;
 				}

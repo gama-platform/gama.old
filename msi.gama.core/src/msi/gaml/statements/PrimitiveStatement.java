@@ -50,7 +50,6 @@ import msi.gaml.types.IType;
 public class PrimitiveStatement extends ActionStatement {
 
 	// Declaring a null validator because primites dont need to be checked
-	
 
 	private ISkill skill = null;
 	private final GamaHelper helper;
@@ -87,21 +86,21 @@ public class PrimitiveStatement extends ActionStatement {
 	public void setRuntimeArgs(final Arguments args) {
 		actualArgs = args;
 	}
-
-	@Override
-	public IType getType() {
-		return helper.getReturnType();
-	}
+	//
+	// @Override
+	// public IType getType() {
+	// return helper.getReturnType();
+	// }
 
 	// FIXME for the moment, only scarce information about primitives
-	@Override
-	public IType getContentType() {
-		return getType().defaultContentType();
-	}
-
-	@Override
-	public IType getKeyType() {
-		return getType().defaultKeyType();
-	}
+	// @Override
+	// public IType getContentType() {
+	// return getType().getContentType();
+	// }
+	//
+	// @Override
+	// public IType getKeyType() {
+	// return getType().getKeyType();
+	// }
 
 }

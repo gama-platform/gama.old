@@ -21,7 +21,6 @@ package msi.gaml.expressions;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 25 d�c. 2010
@@ -52,13 +51,13 @@ public interface IExpression extends IGamlDescription {
 	 * return the key and content types of the elements themselves when they are available.
 	 */
 
-	public abstract IType getElementsContentType();
+	// public abstract IType getElementsContentType();
 
-	public abstract IType getElementsKeyType();
+	// public abstract IType getElementsKeyType();
 
-	public abstract void setElementsContentType(IType t);
+	// public abstract void setElementsContentType(IType t);
 
-	public abstract void setElementsKeyType(IType t);
+	// public abstract void setElementsKeyType(IType t);
 
 	public abstract boolean shouldBeParenthesized();
 

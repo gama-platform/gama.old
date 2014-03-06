@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
+import msi.gama.util.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -41,11 +41,12 @@ import com.vividsolutions.jts.geom.Envelope;
 	@var(name = IKeyword.PATH, type = IType.STRING), @var(name = IKeyword.EXISTS, type = IType.BOOL),
 	@var(name = IKeyword.ISFOLDER, type = IType.BOOL), @var(name = IKeyword.READABLE, type = IType.BOOL),
 	@var(name = IKeyword.WRITABLE, type = IType.BOOL), @var(name = IKeyword.CONTENTS, type = IType.CONTAINER) })
-public interface IGamaFile<K, V> extends IContainer<K, V> {
+public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> extends
+	IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 
 	public abstract void setWritable(final boolean w);
 
-	public abstract void setContents(final IContainer<K, V> cont) throws GamaRuntimeException;
+	public abstract void setContents(final C cont) throws GamaRuntimeException;
 
 	@Override
 	public abstract IGamaFile copy(IScope scope);
@@ -63,7 +64,7 @@ public interface IGamaFile<K, V> extends IContainer<K, V> {
 	public abstract String getPath();
 
 	@getter(IKeyword.CONTENTS)
-	public abstract IContainer getContents(IScope scope) throws GamaRuntimeException;
+	public abstract C getContents(IScope scope) throws GamaRuntimeException;
 
 	@getter(value = IKeyword.ISFOLDER, initializer = true)
 	public abstract Boolean isFolder();

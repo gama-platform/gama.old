@@ -18,9 +18,7 @@
  */
 package msi.gama.outputs.layers;
 
-import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -28,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -41,38 +38,23 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, values = { "mouse_up", "mouse_down" }, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.ID, values = { "mouse_up", "mouse_down", "mouse_drag" }, optional = false),
 	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false) }, omissible = IKeyword.NAME)
-public class EventLayerStatement extends AgentLayerStatement {
+public class EventLayerStatement extends AbstractLayerStatement {
 
 	public static int MOUSE_PRESSED = 0;
 	public static int MOUSE_RELEASED = 1;
+	public static int MOUSE_DRAGGED = 2;
 
-	// private final int actionType = -1;
-
-	public EventLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
+	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 	}
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
-		super._init(scope);
 		IExpression eventType = getFacet(IKeyword.NAME);
 		IExpression actionName = getFacet(IKeyword.ACTION);
-		if ( eventType == null || actionName == null ) { throw GamaRuntimeException.error("Missing properties " +
-			IKeyword.NAME + " and " + IKeyword.ACTION); }
 		return true;
-	}
-
-	@Override
-	public boolean agentsHaveChanged() {
-		return true;
-		// return population.populationHasChanged();
-	}
-
-	@Override
-	public List<? extends IAgent> computeAgents(final IScope sim) {
-		return GamaList.EMPTY_LIST;
 	}
 
 	@Override
@@ -83,6 +65,15 @@ public class EventLayerStatement extends AgentLayerStatement {
 	@Override
 	public String toString() {
 		// StringBuffer sb = new StringBuffer();
-		return "SpeciesDisplayLayer species: " + this.getFacet(IKeyword.NAME).literalValue();
+		return "Event layer: " + this.getFacet(IKeyword.NAME).literalValue();
+	}
+
+	/**
+	 * Method _step()
+	 * @see msi.gama.outputs.layers.AbstractLayerStatement#_step(msi.gama.runtime.IScope)
+	 */
+	@Override
+	protected boolean _step(final IScope scope) {
+		return true;
 	}
 }

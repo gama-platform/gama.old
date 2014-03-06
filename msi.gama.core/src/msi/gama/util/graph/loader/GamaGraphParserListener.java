@@ -42,8 +42,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	private Map<String, String> edgeGraphAttribute2AgentAttribute = null;
 
 	// TODO
-	private final boolean detectedUndirectedEdges = false;
-	private final boolean detectedDirectedEdges = false;
+	// private final boolean detectedUndirectedEdges = false;
+	// private final boolean detectedDirectedEdges = false;
 
 	public GamaGraphParserListener(final IScope scope, final ISpecies nodeSpecies, final ISpecies edgeSpecies,
 		final Map<String, String> nodeGraphAttribute2AgentAttribute,

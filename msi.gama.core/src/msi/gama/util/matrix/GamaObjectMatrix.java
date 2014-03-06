@@ -27,6 +27,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.types.*;
 import org.apache.commons.lang.ArrayUtils;
 import com.google.common.collect.ImmutableList;
 
@@ -41,6 +42,10 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	/** The matrix. */
 	private Object[] matrix;
+
+	public Object[] getInnerMatrix() {
+		return matrix;
+	}
 
 	public GamaObjectMatrix(final ILocation p) {
 		this((int) p.getX(), (int) p.getY());
@@ -229,11 +234,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) {
-		if ( preferredSize == null ) { return this; }
-		final int cols = (int) preferredSize.getX();
-		final int rows = (int) preferredSize.getY();
-		return new GamaObjectMatrix(cols, rows, getMatrix());
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type) {
+		return GamaMatrixType.from(scope, this, type, Types.get(IType.NONE), preferredSize);
 	}
 
 	@Override
@@ -248,8 +250,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	public GamaObjectMatrix copy(final IScope scope) {
-		return new GamaObjectMatrix(numCols, numRows, getMatrix());
+	public GamaObjectMatrix copy(final IScope scope, final ILocation size) {
+		if ( size == null ) { return new GamaObjectMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length)); }
+		return new GamaObjectMatrix((int) size.getX(), (int) size.getX(), Arrays.copyOf(matrix, matrix.length));
 	}
 
 	@Override
@@ -355,7 +358,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
 	@Override
-	public Iterable<Object> iterable(final IScope scope) {
+	public java.lang.Iterable<Object> iterable(final IScope scope) {
 		return ImmutableList.copyOf(getMatrix());
 	}
 

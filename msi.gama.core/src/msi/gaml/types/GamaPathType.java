@@ -29,17 +29,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
-import msi.gama.util.path.GamaPath;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.operators.Cast;
 
 @type(name = IKeyword.PATH, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override
-	public IPath cast(final IScope scope, final Object obj, final Object param, IType contentsType)
-		throws GamaRuntimeException {
+	public IPath cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -48,8 +45,8 @@ public class GamaPathType extends GamaType<IPath> {
 		return null;
 	}
 
-	public static IPath pathBetween(final IScope scope, final ILocation source,
-		final ILocation target, final IGraph graph) {
+	public static IPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
+		final IGraph graph) {
 		if ( graph == null ) { return null; }
 		Collection<IShape> nodes = graph.vertexSet();
 		ITopology m = scope.getTopology();
@@ -87,11 +84,11 @@ public class GamaPathType extends GamaType<IPath> {
 				break;
 			}
 		}
-		return (GamaPath) graph.computeShortestPathBetween(s, t);
+		return graph.computeShortestPathBetween(s, t);
 	}
 
-	public static IPath pathBetweenPoints(final IScope scope, final ILocation source,
-		final ILocation target, final GamaSpatialGraph graph) throws GamaRuntimeException {
+	public static IPath pathBetweenPoints(final IScope scope, final ILocation source, final ILocation target,
+		final GamaSpatialGraph graph) throws GamaRuntimeException {
 		if ( graph == null ) { return null; }
 		ITopology m = scope.getTopology();
 		Collection<IShape> edges = graph.edgeSet();
@@ -130,7 +127,7 @@ public class GamaPathType extends GamaType<IPath> {
 			path = PathFactory.newInstance(m, source, target, GamaList.with(edgeS));
 			return path;
 		}
-		path = graph.computeShortestPathBetween((IShape)s1, (IShape)t1);
+		path = graph.computeShortestPathBetween((IShape) s1, (IShape) t1);
 		if ( path == null ) { return null; }
 
 		return path;
@@ -142,15 +139,15 @@ public class GamaPathType extends GamaType<IPath> {
 			// List<ILocation> list = new GamaList();
 			List<IShape> list = new GamaList<IShape>();
 			boolean isEdges = true;
-					
+
 			for ( Object p : (List) obj ) {
 				list.add(Cast.asPoint(scope, p));
-				if (isEdges && !((p instanceof IShape) && ((IShape) p).isLine())){
+				if ( isEdges && !(p instanceof IShape && ((IShape) p).isLine()) ) {
 					isEdges = false;
 				}
 			}
 			// return new GamaPath(scope.getTopology(), list);
-			return PathFactory.newInstance(isEdges ? (IList<IShape>)obj : (IList<IShape>)list, isEdges);
+			return PathFactory.newInstance(isEdges ? (IList<IShape>) obj : (IList<IShape>) list, isEdges);
 		}
 		return null;
 	}

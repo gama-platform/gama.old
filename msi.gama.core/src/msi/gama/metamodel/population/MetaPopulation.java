@@ -15,6 +15,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.*;
 import com.google.common.collect.Iterables;
 
 /**
@@ -25,7 +26,8 @@ import com.google.common.collect.Iterables;
  * @since 8 déc. 2013
  * 
  */
-public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationSet {
+public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>,
+	IAgentFilter, IPopulationSet {
 
 	protected final List<IPopulationSet> populationSets;
 	// We cache the value in case.
@@ -118,7 +120,7 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 */
 	@Override
 	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
-		return listValue(scope).get(scope, index);
+		return listValue(scope, Types.NO_TYPE).get(scope, index);
 	}
 
 	/**
@@ -126,8 +128,8 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
 	 */
 	@Override
-	public Object getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		return listValue(scope).getFromIndicesList(scope, indices);
+	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+		return listValue(scope, Types.NO_TYPE).getFromIndicesList(scope, indices);
 	}
 
 	/**
@@ -148,9 +150,9 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#first(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IAgent first(final IScope scope) throws GamaRuntimeException {
+	public IAgent firstValue(final IScope scope) throws GamaRuntimeException {
 		if ( populationSets.size() == 0 ) { return null; }
-		return populationSets.get(0).first(scope);
+		return populationSets.get(0).firstValue(scope);
 	}
 
 	/**
@@ -158,9 +160,9 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#last(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IAgent last(final IScope scope) throws GamaRuntimeException {
+	public IAgent lastValue(final IScope scope) throws GamaRuntimeException {
 		if ( populationSets.size() == 0 ) { return null; }
-		return populationSets.get(populationSets.size() - 1).last(scope);
+		return populationSets.get(populationSets.size() - 1).lastValue(scope);
 	}
 
 	/**
@@ -194,7 +196,7 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 */
 	@Override
 	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).reverse(scope);
+		return listValue(scope, Types.NO_TYPE).reverse(scope);
 	}
 
 	/**
@@ -202,49 +204,50 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#any(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IAgent any(final IScope scope) {
+	public IAgent anyValue(final IScope scope) {
 		if ( populationSets.size() == 0 ) { return null; }
 		RandomUtils r = scope.getSimulationScope().getExperiment().getRandomGenerator();
 		final int i = r.between(0, populationSets.size() - 1);
-		return populationSets.get(i).any(scope);
+		return populationSets.get(i).anyValue(scope);
 	}
 
 	/**
 	 * Method checkBounds()
 	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
 	 */
-	@Override
-	public boolean checkBounds(final Integer index, final boolean forAdding) {
-		return false;
-	}
+	// @Override
+	// public boolean checkBounds(final Integer index, final boolean forAdding) {
+	// return false;
+	// }
 
 	/**
 	 * Method add()
 	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, java.lang.Object,
 	 *      boolean, boolean)
 	 */
-	@Override
-	public void add(final IScope scope, final Integer index, final Object value, final Object parameter,
-		final boolean all, final boolean add) {
-		// Not allowed
-	}
+	// @Override
+	// public void add(final IScope scope, final Integer index, final Object value, final Object parameter,
+	// final boolean all, final boolean add) {
+	// // Not allowed
+	// }
 
 	/**
 	 * Method remove()
 	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, boolean)
 	 */
-	@Override
-	public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-		// Not allowed
-	}
+	// @Override
+	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
+	// // Not allowed
+	// }
 
 	/**
 	 * Method listValue()
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IList<IAgent> listValue(final IScope scope) throws GamaRuntimeException {
-		return new GamaList(iterable(scope));
+	public IList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		// WARNING: Double copy of the list
+		return new GamaList(iterable(scope)).listValue(scope, contentsType);
 	}
 
 	/**
@@ -252,8 +255,8 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).matrixValue(scope);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+		return listValue(scope, contentsType).matrixValue(scope, contentsType);
 	}
 
 	/**
@@ -261,8 +264,9 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		return listValue(scope).matrixValue(scope, preferredSize);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
+		throws GamaRuntimeException {
+		return listValue(scope, contentsType).matrixValue(scope, contentsType, preferredSize);
 	}
 
 	/**
@@ -270,8 +274,9 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).mapValue(scope);
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+		throws GamaRuntimeException {
+		return listValue(scope, contentsType).mapValue(scope, keyType, contentsType);
 	}
 
 	/**
@@ -279,8 +284,8 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	 * @see msi.gama.util.IContainer#iterable(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public Iterable<? extends IAgent> iterable(final IScope scope) {
-		List<Iterable<? extends IAgent>> result = new ArrayList();
+	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
+		List<java.lang.Iterable<? extends IAgent>> result = new ArrayList();
 		for ( IPopulationSet p : populationSets ) {
 			result.add(p.iterable(scope));
 		}
@@ -294,213 +299,6 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	@Override
 	public ISpecies getSpecies() {
 		return null; // We dont know what to return here.
-	}
-
-	/**
-	 * Method size()
-	 * @see java.util.List#size()
-	 */
-	@Override
-	public int size() {
-		return length(null);
-	}
-
-	/**
-	 * Method isEmpty()
-	 * @see java.util.List#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		return isEmpty(null);
-	}
-
-	/**
-	 * Method contains()
-	 * @see java.util.List#contains(java.lang.Object)
-	 */
-	@Override
-	public boolean contains(final Object o) {
-		return contains(null, o);
-	}
-
-	/**
-	 * Method iterator()
-	 * @see java.util.List#iterator()
-	 */
-	@Override
-	public Iterator<IAgent> iterator() {
-		return listValue(null).iterator();
-	}
-
-	/**
-	 * Method toArray()
-	 * @see java.util.List#toArray()
-	 */
-	@Override
-	public Object[] toArray() {
-		return listValue(null).toArray();
-	}
-
-	/**
-	 * Method toArray()
-	 * @see java.util.List#toArray(T[])
-	 */
-	@Override
-	public <T> T[] toArray(final T[] a) {
-		return listValue(null).toArray(a);
-	}
-
-	/**
-	 * Method add()
-	 * @see java.util.List#add(java.lang.Object)
-	 */
-	@Override
-	public boolean add(final IAgent e) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method remove()
-	 * @see java.util.List#remove(java.lang.Object)
-	 */
-	@Override
-	public boolean remove(final Object o) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method containsAll()
-	 * @see java.util.List#containsAll(java.util.Collection)
-	 */
-	@Override
-	public boolean containsAll(final Collection<?> c) {
-		return listValue(null).containsAll(c);
-	}
-
-	/**
-	 * Method addAll()
-	 * @see java.util.List#addAll(java.util.Collection)
-	 */
-	@Override
-	public boolean addAll(final Collection<? extends IAgent> c) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method addAll()
-	 * @see java.util.List#addAll(int, java.util.Collection)
-	 */
-	@Override
-	public boolean addAll(final int index, final Collection<? extends IAgent> c) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method removeAll()
-	 * @see java.util.List#removeAll(java.util.Collection)
-	 */
-	@Override
-	public boolean removeAll(final Collection<?> c) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method retainAll()
-	 * @see java.util.List#retainAll(java.util.Collection)
-	 */
-	@Override
-	public boolean retainAll(final Collection<?> c) {
-		return false; // Not allowed
-	}
-
-	/**
-	 * Method clear()
-	 * @see java.util.List#clear()
-	 */
-	@Override
-	public void clear() {
-		// Not allowed
-	}
-
-	/**
-	 * Method get()
-	 * @see java.util.List#get(int)
-	 */
-	@Override
-	public IAgent get(final int index) {
-		return listValue(null).get(index);
-	}
-
-	/**
-	 * Method set()
-	 * @see java.util.List#set(int, java.lang.Object)
-	 */
-	@Override
-	public IAgent set(final int index, final IAgent element) {
-		return null; // not allowed
-	}
-
-	/**
-	 * Method add()
-	 * @see java.util.List#add(int, java.lang.Object)
-	 */
-	@Override
-	public void add(final int index, final IAgent element) {
-		// not allowed
-	}
-
-	/**
-	 * Method remove()
-	 * @see java.util.List#remove(int)
-	 */
-	@Override
-	public IAgent remove(final int index) {
-		return null; // not allowed
-	}
-
-	/**
-	 * Method indexOf()
-	 * @see java.util.List#indexOf(java.lang.Object)
-	 */
-	@Override
-	public int indexOf(final Object o) {
-		return listValue(null).indexOf(o);
-	}
-
-	/**
-	 * Method lastIndexOf()
-	 * @see java.util.List#lastIndexOf(java.lang.Object)
-	 */
-	@Override
-	public int lastIndexOf(final Object o) {
-		return listValue(null).lastIndexOf(o);
-	}
-
-	/**
-	 * Method listIterator()
-	 * @see java.util.List#listIterator()
-	 */
-	@Override
-	public ListIterator<IAgent> listIterator() {
-		return listValue(null).listIterator();
-	}
-
-	/**
-	 * Method listIterator()
-	 * @see java.util.List#listIterator(int)
-	 */
-	@Override
-	public ListIterator<IAgent> listIterator(final int index) {
-		return listValue(null).listIterator(index);
-	}
-
-	/**
-	 * Method subList()
-	 * @see java.util.List#subList(int, int)
-	 */
-	@Override
-	public List<IAgent> subList(final int fromIndex, final int toIndex) {
-		return listValue(null).subList(fromIndex, toIndex);
 	}
 
 	private Map<String, IPopulation> getMapOfPopulations(final IScope scope) {
@@ -528,14 +326,5 @@ public class MetaPopulation implements IList<IAgent>, IAgentFilter, IPopulationS
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return getMapOfPopulations(scope).values();
 	}
-
-	/**
-	 * Method getPopulation()
-	 * @see msi.gama.metamodel.population.IPopulationSet#getPopulation(msi.gama.runtime.IScope, java.lang.String)
-	 */
-	// @Override
-	// public IPopulation getPopulation(final IScope scope, final String name) {
-	// return getMapOfPopulations(scope).get(name);
-	// }
 
 }

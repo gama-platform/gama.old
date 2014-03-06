@@ -72,7 +72,8 @@ public class LoopStatement extends AbstractStatementSequence {
 
 	@Override
 	public void enterScope(final IScope scope) {
-		super.enterScope(scope);
+		// 25/02/14: Suppressed because already done in loopBody() : super.enterScope(scope);
+
 		if ( varName != null ) {
 			scope.addVarWithValue(varName, null);
 		}
@@ -82,7 +83,7 @@ public class LoopStatement extends AbstractStatementSequence {
 	public void leaveScope(final IScope scope) {
 		// Should clear any _loop_halted status present
 		scope.popLoop();
-		super.leaveScope(scope);
+		// 25/02/14: Suppressed because already done in loopBody() : super.leaveScope(scope);
 	}
 
 	@Override
