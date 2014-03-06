@@ -25,10 +25,10 @@ global{
 		//from the OSM file, creation of the selected agents
 		loop geom over: osmfile {
 			if (shape covers geom) {
-				string highway_str <- geom get ("highway");
+				string highway_str <- string(geom get ("highway"));
 				if (length(geom.points) = 1 ) {
 					if ( highway_str != nil ) {
-						string crossing <- geom get ("crossing");
+						string crossing <- string(geom get ("crossing"));
 						create node with: [shape ::geom, type:: highway_str, crossing::crossing] {
 							nodes_map[location] <- self;
 						}
