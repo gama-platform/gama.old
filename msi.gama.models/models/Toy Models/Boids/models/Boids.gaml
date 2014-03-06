@@ -67,29 +67,28 @@ entities {
 			
 		reflex separation when: apply_separation {
 			point acc <- {0,0};
-			loop boid over: (boids overlapping (circle(minimal_distance)))  {
-				acc <- acc - ((location of boid) - location);
+			ask (boids overlapping (circle(minimal_distance)))  {
+				acc <- acc - ((location) - myself.location);
 			}  
 			velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
-			list<boids> others  <- ((boids overlapping (circle (range)))  - self);
-
-			point acc <- (mean (others collect (each.velocity)) as point) - velocity;
+			list others  <- ((boids overlapping (circle (range)))  - self);
+			point acc <- mean (others collect (each.velocity)) - velocity;
 			velocity <- velocity + (acc / alignment_factor);
 		}
 		 
 		reflex cohesion when: apply_cohesion {
 			list others <- ((boids overlapping (circle (range)))  - self);
-			point mass_center <- (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
+			point mass_center <- (length(others) > 0) ? mean (others collect (each.location)) : location;
 
 			point acc <- mass_center - location;
-			acc <- acc / cohesion_factor;
-			velocity <- velocity + acc; 
+			acc <- acc / cohesion_factor; 
+			velocity <- velocity + acc;   
 		}
 		
-		reflex avoid when: apply_avoid {
+		reflex avoid when: apply_avoid { 
 			let acc <- {0,0};
 			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
@@ -139,6 +138,9 @@ entities {
 		aspect image {
 			draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
 		}
+		aspect circle { 
+			draw circle(15) rotate: 90 + heading color: rgb('red');
+		}
 		
 		aspect default { 
 			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
@@ -169,7 +171,7 @@ entities {
 	}
 }
 
-experiment Boids type: gui {
+experiment Boids2 type: gui {
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
