@@ -3,6 +3,8 @@ package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 import java.util.Arrays;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
+import msi.gama.metamodel.topology.grid.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -212,11 +214,11 @@ public class DiffusionStatement extends AbstractStatementSequence {
 	private void initialize(final IScope scope) {
 		initialized = true;
 		cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		IPopulation pop = scope.getAgentScope().getPopulationFor(species_diffu);
+		GridPopulation pop = (GridPopulation) scope.getAgentScope().getPopulationFor(species_diffu);
 		input = new double[pop.length(scope)];
 		output = new double[pop.length(scope)];
-		nbRows = pop.matrixValue(scope).getRows(scope);
-		nbCols = pop.matrixValue(scope).getCols(scope);
+		nbRows = ((IGrid) pop.getTopology().getPlaces()).getRows(scope);
+		nbCols = ((IGrid) pop.getTopology().getPlaces()).getCols(scope);
 		is_torus = pop.getTopology().isTorus();
 		mask = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK)));
 		mat_diffu = translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu")));

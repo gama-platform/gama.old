@@ -20,7 +20,7 @@ import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.*;
@@ -147,7 +147,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			final Object t = simultan.value(scope);
 			if ( t != null ) {
 				if ( t instanceof GamaList ) {
-					final GamaList lst = ((GamaList) t).listValue(scope);
+					final GamaList lst = ((GamaList) t).listValue(scope, Types.NO_TYPE);
 					for ( int i = 0; i < lst.size(); i++ ) {
 						final Object o = lst.get(i);
 
@@ -157,7 +157,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 								equations_ext.add(remoteAgent);
 							}
 						} else if ( o instanceof GamlSpecies ) {
-							final Iterator<IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
+							final Iterator<? extends IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
 							while (ia.hasNext()) {
 								final IAgent remoteAgent = ia.next();
 								if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
@@ -233,7 +233,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 						removeEquationsExtern(remoteAgent, eqName);
 					}
 				} else if ( o instanceof GamlSpecies ) {
-					final Iterator<IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
+					final Iterator<? extends IAgent> ia = ((GamlSpecies) o).iterable(scope).iterator();
 					while (ia.hasNext()) {
 						final IAgent remoteAgent = ia.next();
 						if ( !remoteAgent.dead() ) {
