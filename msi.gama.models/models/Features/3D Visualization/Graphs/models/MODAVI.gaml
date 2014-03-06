@@ -18,7 +18,7 @@ model modavi
  
 global {
 	
-	graph my_graph ;
+	graph<node,edge> my_graph ;
 	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
@@ -35,7 +35,7 @@ global {
 	int zoomFactor <- nbTypeOfClass;
 
 			
-    list<matrix> interactionMatrix size:nbTypeOfClass;	
+    list<matrix<int>> interactionMatrix size:nbTypeOfClass;	
     int nbEdgeMax;
     
     reflex updateInteractionMatrix{
@@ -43,7 +43,7 @@ global {
 			loop i from:0 to: nbTypeOfClass-1{															
 				set src <- my_graph source_of(self);
 				set dest <- my_graph target_of(self);
-				int tmp <- int(interactionMatrix[i]  at {(src.classVector[i]-1),(dest.classVector[i]-1)});
+				int tmp <- (interactionMatrix[i]  at {(src.classVector[i]-1),(dest.classVector[i]-1)});
 				interactionMatrix[i][src.classVector[i]-1,dest.classVector[i]-1] <- (tmp+1);
 			}
 		}
@@ -65,7 +65,7 @@ global {
 		
 		if(spatialGraph){
 			create node number:nbAgent;
-			my_graph <- as_distance_graph(node, map(["distance"::distance, "species"::edge]));
+			my_graph <- as_distance_graph(node, (["distance"::distance, "species"::edge]));
 			
 		}
         else{
@@ -82,7 +82,7 @@ global {
 		let i<-1;
 		create macroNode number: nbValuePerClass{	 
 			class <-i;
-			location <- {(cos (float((class-1)/nbValuePerClass)*360)*50 +50),(sin (float((class-1)/nbValuePerClass)*360)*50+50),0};
+			location <- {(cos (((class-1)/nbValuePerClass)*360)*50 +50),(sin (((class-1)/nbValuePerClass)*360)*50+50),0};
 			color <- hsb (i/nbValuePerClass,1.0,1.0);
 			do updatemyNodes;
 			set i<-i+1;	
@@ -116,14 +116,14 @@ entities {
 		}
  		
 		aspect real {			 
-			draw sphere(nodeSize) color: rgb(colorList[0]);
+			draw sphere(nodeSize) color: colorList[0];
 		} 
 								
 		aspect coloredByClass{
 			loop i from:0 to: nbTypeOfClass-1{
 			    colorList[i]<- hsb (classVector[i]/nbValuePerClass,1.0,1.0);					
 			    posVector[i] <- {(location.x+i*110)*(1/zoomFactor),(location.y)*(1/zoomFactor),0};  
-			    draw sphere(nodeSize/zoomFactor) color: rgb(colorList[i]) at: point(posVector[i]) ;   
+			    draw sphere(nodeSize/zoomFactor) color: colorList[i] at: posVector[i] ;   
 			}
 		}
 	
@@ -142,7 +142,7 @@ entities {
 		aspect edgeGenericSpatialized{
 			loop i from:0 to: nbTypeOfClass-1{
 			  if ((src != nil) and (dest !=nil) ){
-				draw line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:rgb(125,125,125);
+				draw line( [ (src.posVector[i]) , (dest.posVector[i])] ) color:rgb(125,125,125);
 			  }
 			}
 		}
@@ -176,7 +176,7 @@ entities {
 			loop i from:0 to: nbTypeOfClass-1
 			{
 			posVector[i] <- {(location.x+i*150)*(1/zoomFactor),(location.y)*(1/zoomFactor),0};	
-			draw sphere((nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor)) color: color at: point(posVector[i]) ;
+			draw sphere((nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor)) color: color at: posVector[i] ;
 			}
 		}
 		
@@ -230,13 +230,13 @@ entities {
 	 	loop h from:0 to: nbTypeOfClass-1{
 		 	loop i from: 0 to: nbValuePerClass-1{
 		      loop j from: 0 to: nbValuePerClass-1{
-		        int tmp <- interactionMatrix[h]  at {i,j}; 
+		        int tmp <- interactionMatrix[h] at {i,j}; 
 
 		        if(i!=j){
 		            create macroEdge{
 		              nbAggregatedLinkList[h] <- tmp;
-		              set src <- macroNode(list(macroNode) at (i));
-				      set dest <- macroNode(list(macroNode) at (j));	
+		              set src <- macroNode[i];
+				      set dest <- macroNode[j];
 		            }	  
 		        }      
 		      }
