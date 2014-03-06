@@ -5,10 +5,10 @@ global {
 	float evaporation_rate <- 0.1 min: 0.01 max: float(1) ;
 	const diffusion_rate type: float <- 0.7 min: 0.0 max: float(1) ;
 	const gridsize type: int <- 75; 
-	const ants_number type: int <- 50 min: 1 max: 200 ;
+	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
-	const types type: matrix of: int <- matrix (file ( '../images/environment75x75_scarce.pgm' )); 
+	const types type: matrix of: int <- matrix<int> (image_file ( '../images/environment75x75_scarce.pgm' )); 
 	
 	geometry shape <- square(gridsize);
 	
@@ -50,7 +50,7 @@ entities {
 		bool isNestLocation  <- ( self distance_to center ) < 4;
 		bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
 		list<ant_grid> neighbours <- self neighbours_at 1;  
-		rgb color <- rgb([ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,road * 30 , road > 15 ? 255 : food * 50 ]) update: rgb([ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,road * 30 , road > 15 ? 255 : food * 50 ]); 
+		rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 		int food <- isFoodLocation ? 5 : 0; 
 		const nest type: int <- int(300 - ( self distance_to center ));
 	}
@@ -58,7 +58,7 @@ entities {
 		rgb color <- rgb('red');
 		ant_grid place function: {ant_grid ( location )};
 		bool hasFood <- false;
-		signal road value: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 
+		signal road update: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 
 		bool hasRoad <- false update: place . road > 0.05;
 		reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0) {
 			do wander amplitude: 120 speed: 1.0;
