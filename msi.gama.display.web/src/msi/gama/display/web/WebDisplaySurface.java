@@ -3,27 +3,17 @@ package msi.gama.display.web;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.interfaces.*;
 import msi.gama.display.web.utils.Logger;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView.WebDisplayView;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
-
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
-
+import org.eclipse.ui.*;
 
 @display("web")
 public class WebDisplaySurface implements IDisplaySurface {
@@ -60,15 +50,15 @@ public class WebDisplaySurface implements IDisplaySurface {
 	public void updateDisplay() {
 		Logger.mlog(TAG, "updateDisplay");
 
-		if (isWebDisplayViewNotFound()) {
+		if ( isWebDisplayViewNotFound() ) {
 			Logger.mlog("Finding view...");
 			findWebDisplayView();
 		}
 
-		if (false == isJavascriptInitialized) {
+		if ( false == isJavascriptInitialized ) {
 			isJavascriptInitialized = true;
 
-			if (internalBrowser != null) {
+			if ( internalBrowser != null ) {
 				Logger.elog("NO ERROR HERE!");
 				testInternalBrowser();
 			} else {
@@ -80,7 +70,9 @@ public class WebDisplaySurface implements IDisplaySurface {
 	private void testInternalBrowser() {
 
 		SwtGui.getDisplay().syncExec(new Runnable() {
+
 			static final String webUrl = "http://get.webgl.org/";
+
 			@Override
 			public void run() {
 				try {
@@ -305,8 +297,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h,
-			final LayeredDisplayOutput output) {
+	public void initialize(final double w, final double h, final LayeredDisplayOutput output) {
 
 		final String viewId = output.getViewId();
 		String viewName = output.getViewName();
@@ -330,7 +321,6 @@ public class WebDisplaySurface implements IDisplaySurface {
 		//
 		// }
 		// });
-
 
 		// final IViewReference ref = SwtGui.getPage(
 		// SwtGui.PERSPECTIVE_SIMULATION_ID)
@@ -492,17 +482,17 @@ public class WebDisplaySurface implements IDisplaySurface {
 		traceViews();
 
 		final IWorkbenchPage page = SwtGui.getPage();
-		if (page == null) {
+		if ( page == null ) {
 			Logger.elog(TAG, "Page null");
 			return;
 		} // Closing the workbench
 		final IViewReference ref = page.findViewReference(WebDisplayView.ID);
-		if (ref == null) {
+		if ( ref == null ) {
 			Logger.elog(TAG, "View Ref null");
 			return;
 		}
 		final IViewPart part = ref.getView(true);
-		if (!(part instanceof IGamaView)) {
+		if ( !(part instanceof IGamaView) ) {
 			Logger.elog(TAG, "Not view display");
 			return;
 		}
@@ -512,13 +502,13 @@ public class WebDisplaySurface implements IDisplaySurface {
 
 	public void traceViews() {
 		SwtGui.getDisplay().syncExec(new Runnable() {
+
 			@Override
 			public void run() {
 				try {
-					IViewReference[] result = SwtGui.getPage()
-							.getViewReferences();
+					IViewReference[] result = SwtGui.getPage().getViewReferences();
 
-					for (IViewReference view : result) {
+					for ( IViewReference view : result ) {
 						Logger.mlog(view.getId());
 					}
 				} catch (final Exception e) {
@@ -528,7 +518,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 			}
 		});
 	}
-	
+
 	private WebDisplayView webDisplayView = null;
 	private Browser internalBrowser = null;
 
@@ -538,21 +528,17 @@ public class WebDisplaySurface implements IDisplaySurface {
 
 	public void findWebDisplayView() {
 		SwtGui.getDisplay().syncExec(new Runnable() {
+
 			@Override
 			public void run() {
 				try {
-					IViewReference[] listViews = SwtGui.getPage()
-							.getViewReferences();
+					IViewReference[] listViews = SwtGui.getPage().getViewReferences();
 
-					for (IViewReference viewRef : listViews) {
-						if (viewRef.getId().equals(WebDisplayView.ID)) {
-							webDisplayView = (WebDisplayView) viewRef
-									.getView(true);
-							internalBrowser = (Browser) webDisplayView
-									.getComponent();
-							Logger.mlog(
-									"Create browser OK grace a View found: ",
-									viewRef.getId());
+					for ( IViewReference viewRef : listViews ) {
+						if ( viewRef.getId().equals(WebDisplayView.ID) ) {
+							webDisplayView = (WebDisplayView) viewRef.getView(true);
+							internalBrowser = (Browser) webDisplayView.getComponent();
+							Logger.mlog("Create browser OK grace a View found: ", viewRef.getId());
 						}
 					}
 				} catch (final Exception e) {
@@ -562,4 +548,11 @@ public class WebDisplaySurface implements IDisplaySurface {
 			}
 		});
 	}
+
+	/**
+	 * Method removeMouseListener()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
+	 */
+	@Override
+	public void removeMouseListener(final MouseListener e) {}
 }
