@@ -18,7 +18,7 @@ global {
 		create buildings from: buildings_shapefile;
 		create people number:1000 {
 			buildings init_place <- one_of(buildings);
-			location <- any_location_in(init_place) add_z init_place.height;
+			location <- any_location_in(init_place) + {0,0, init_place.height};
 			target <- any_location_in(one_of(buildings));
 		}
 	}
@@ -56,8 +56,8 @@ species buildings {
 	float height <- 10.0+ rnd(10);
 	int nb_I -> {members count (people_in_building(each).is_infected)};
 	int nbInhabitants update: length(members);				
-	list<people_in_building> membersS <- [] update: members where (!(each as people_in_building).is_infected);
-	list<people_in_building> membersI <- [] update: members where ((each as people_in_building).is_infected);
+	list<people_in_building> membersS <- [] update: list<people_in_building>(members) where (!each.is_infected);
+	list<people_in_building> membersI <- [] update: list<people_in_building>(members) where (each.is_infected);
 	float t;    
 	float S update: length(membersS) as float; 
    	float I update: length(membersI) as float;
@@ -81,7 +81,7 @@ species buildings {
  		}
 	}
 	reflex let_people_leave  {
-		list<people_in_building> leaving_people <- (list (members)) where (time >= (people_in_building (each)).leaving_time);
+		list<people_in_building> leaving_people <- list<people_in_building>(members) where (time >= each.leaving_time);
 		if !(empty (leaving_people)) {
 			release leaving_people as: people in: world;
 		}

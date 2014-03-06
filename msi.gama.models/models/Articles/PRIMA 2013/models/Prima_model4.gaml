@@ -15,7 +15,7 @@ global {
 		create buildings from: buildings_shapefile;
 		create people number:1000 {
 			buildings init_place <- one_of(buildings);
-			location <- any_location_in(init_place) add_z init_place.height;
+			location <- any_location_in(init_place) + {0,0, init_place.height};
 			target <- any_location_in(one_of(buildings));
 		}
 	}
