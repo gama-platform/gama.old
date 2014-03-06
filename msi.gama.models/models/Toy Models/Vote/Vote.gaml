@@ -119,8 +119,8 @@ global {
 		 	ask Group_electors as list {
 		 		do die;
 		 	}
-			list<list> Groups<- [];
-			geometry geoms <- union(elector collect ((each.shape) buffer map(["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
+			list<list<elector>> Groups<- [];
+			geometry geoms <- union(elector collect ((each.shape) buffer (["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
 			loop geom over: geoms.geometries { 
 				if (geom != nil and !empty(geom.points)) {
 					geom <- geom simplification 0.1;
@@ -205,8 +205,8 @@ entities {
 					if dist < threshold_attraction_candidates {
 						do goto target: the_candidate speed: distance_traveled;
 					} else if dist > threshold_repulsion_candidates {
-						do goto target: point(location + location - the_candidate.location) speed: distance_traveled;
-					}	
+						do goto target: location + location - the_candidate.location speed: distance_traveled;
+					}
 				}
 			}
 			
@@ -269,7 +269,7 @@ entities {
 			remove self from: cands;
 			candidate the_candidate <- one_of(cands) ;
 			if (the_candidate != nil) {
-				do goto target: point(location + location - the_candidate.location) speed: distance_traveled;	
+				do goto target: (location + location - the_candidate.location) speed: distance_traveled;	
 			}
 		}
 		
