@@ -1,6 +1,6 @@
 package irit.gaml.extensions.test.statements;
 
-import java.util.List;
+import java.util.Collection;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -36,7 +36,7 @@ public class AssertStatement extends AbstractStatement {
 		super(desc);
 		setName("assert");
 
-		List<IDescription> statements = desc.getSpeciesContext().getChildren();
+		Collection<IDescription> statements = desc.getSpeciesContext().getBehaviors();
 		for ( IDescription s : statements ) {
 			if ( "setup".equals(s.getName()) ) {
 				setUpStatement = (StatementDescription) s;
@@ -82,14 +82,12 @@ public class AssertStatement extends AbstractStatement {
 				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() + 
-							", it raises " + (isWarning ? "a warning." : "an error.")); }
+					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() +
+						", it raises " + (isWarning ? "a warning." : "an error.")); }
 				return null;
 			} catch (Exception e) {
-				if(!IKeyword.ERROR.equals(raises.getName())) {
-					throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA.");
-				}
+				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
+					.error("Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA."); }
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
