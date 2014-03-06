@@ -50,15 +50,15 @@ species myCircle skills:[moving]{
 	  draw circle(1) color:rgb("red") ;	
 	  if (cycle < 100) {
 	  	loop seg over: path_to_follow1.edges {
-	  		draw seg color: rgb(rgb("green"));
+	  		draw seg color: °green;
 	 	 }
 	  } else if ( cycle > 100 and cycle < 200) {
 	  	loop seg over: path_to_follow2.edges {
-	  		draw seg color: rgb(rgb("blue"));
+	  		draw seg color: °blue;
 	 	 }
 	  } else {
 	  	loop seg over: path_to_follow3.edges {
-	  		draw seg color: rgb(rgb("pink"));
+	  		draw seg color: °pink;
 	 	 }
 	  }
 	  
