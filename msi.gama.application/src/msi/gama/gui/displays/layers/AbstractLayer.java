@@ -52,7 +52,16 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void outputChanged() {}
+	public void reloadOn(final IDisplaySurface surface) {}
+
+	@Override
+	public void firstLaunchOn(final IDisplaySurface surface) {}
+
+	@Override
+	public void enableOn(final IDisplaySurface surface) {}
+
+	@Override
+	public void disableOn(final IDisplaySurface surface) {}
 
 	@Override
 	public void setOrder(final Integer o) {
@@ -138,8 +147,7 @@ public abstract class AbstractLayer implements ILayer {
 	public void dispose() {}
 
 	@Override
-	public final void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		// if ( scope.interrupted() ) { return; }
+	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		if ( definition != null ) {
 			definition.getBox().compute(scope);
 			g.setOpacity(definition.getTransparency());
@@ -159,6 +167,7 @@ public abstract class AbstractLayer implements ILayer {
 		definition.getBox().setPosition(p);
 	}
 
+	@Override
 	public ILocation getPosition() {
 		return definition.getBox().getPosition();
 	}
@@ -167,6 +176,7 @@ public abstract class AbstractLayer implements ILayer {
 		definition.getBox().setSize(p);
 	}
 
+	@Override
 	public ILocation getExtent() {
 		return definition.getBox().getSize();
 	}
@@ -178,11 +188,6 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public double getZPosition() {
-		return definition.getBox().getPosition().getZ();
-	}
-
-	@Override
 	public Boolean isDynamic() {
 		return definition.getRefresh();
 	}
@@ -191,7 +196,7 @@ public abstract class AbstractLayer implements ILayer {
 	 * @param boundingBox
 	 * @param g
 	 */
-	private void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
+	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		// Voir comment conserver cette information
 		final int pixelWidth = g.getDisplayWidthInPixels();
 		final int pixelHeight = g.getDisplayHeightInPixels();
@@ -227,6 +232,16 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public Point getPositionInPixels() {
 		return positionInPixels;
+	}
+
+	@Override
+	public Integer getTrace() {
+		return definition.getBox().getTrace();
+	}
+
+	@Override
+	public Boolean getFading() {
+		return definition.getBox().getFading();
 	}
 
 	@Override

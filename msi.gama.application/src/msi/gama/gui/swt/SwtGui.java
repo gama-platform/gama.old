@@ -790,7 +790,7 @@ public class SwtGui implements IGui {
 		final double w, final double h, final Object ... args) {
 
 		IDisplaySurface surface = null;
-		final IDisplayCreator creator = displays.get(keyword);
+		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(args);
 			surface.initialize(w, h, layerDisplayOutput);

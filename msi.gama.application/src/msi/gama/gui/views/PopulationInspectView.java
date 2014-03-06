@@ -111,7 +111,7 @@ public class PopulationInspectView extends GamaViewPart {
 		super.setOutput(output);
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
-			final String name = expr.getContentType().getSpeciesName();
+			final String name = expr.getType().getContentType().getSpeciesName();
 			if ( expr.literalValue().equals(name) ) {
 				setSpeciesName(name, true);
 			} else {
@@ -143,7 +143,7 @@ public class PopulationInspectView extends GamaViewPart {
 				selectedColumns.get(name).addAll(names);
 			} else if ( getOutput().getValue() != null ) {
 				final IExpression expr = getOutput().getValue();
-				final SpeciesDescription realSpecies = expr.getContentType().getSpecies();
+				final SpeciesDescription realSpecies = expr.getType().getContentType().getSpecies();
 				// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
 				if ( realSpecies == null ) { return; }
 				selectedColumns.get(name).addAll(realSpecies.getVarNames());
@@ -260,7 +260,7 @@ public class PopulationInspectView extends GamaViewPart {
 		attributesMenu.setToolTipText(tooltipText);
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
-			final SpeciesDescription realSpecies = expr.getContentType().getSpecies();
+			final SpeciesDescription realSpecies = expr.getType().getContentType().getSpecies();
 			// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
 			if ( realSpecies != null ) {
 				final List<String> names = new GamaList(realSpecies.getVarNames());

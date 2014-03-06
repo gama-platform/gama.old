@@ -486,4 +486,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return true;
 	}
 
+	/**
+	 * Method removeMouseListener()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
+	 */
+	@Override
+	public void removeMouseListener(final MouseListener e) {}
+
 }

@@ -82,7 +82,7 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
 		if ( image == null ) { return; }
-		dg.drawImage(scope, image, null, null, null, null, 0.0, false, null);
+		dg.drawImage(scope, image, null, null, null, null, false, null);
 	}
 
 	@Override

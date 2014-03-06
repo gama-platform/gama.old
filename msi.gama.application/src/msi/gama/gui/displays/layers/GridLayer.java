@@ -54,8 +54,8 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	public void outputChanged() {
-		super.outputChanged();
+	public void reloadOn(final IDisplaySurface surface) {
+		super.reloadOn(surface);
 		if ( image != null ) {
 			image.flush();
 			image = null;
@@ -141,15 +141,15 @@ public class GridLayer extends ImageLayer {
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
-				dg.drawGrid(scope, texture, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, cellSize, this.getName());
+				dg.drawGrid(scope, texture, gridValueMatrix, isTextured, isTriangulated, isShowText, lineColor, null,
+					cellSize, this.getName());
 			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, cellSize, this.getName());
+				dg.drawGrid(scope, image, gridValueMatrix, isTextured, isTriangulated, isShowText, lineColor, null,
+					cellSize, this.getName());
 			}
 
 		} else {
-			dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true, this.getName());
+			dg.drawImage(scope, image, null, null, lineColor, null, true, this.getName());
 		}
 	}
 

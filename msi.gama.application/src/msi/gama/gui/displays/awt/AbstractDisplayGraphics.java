@@ -68,10 +68,6 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		currentAlpha = alpha;
 	}
 
-	public double getCurrentAlpha() {
-		return currentAlpha;
-	}
-
 	protected final int xFromModelUnitsToPixels(final double mu) {
 		return xOffsetInPixels + (int) (xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
 	}

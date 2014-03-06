@@ -38,7 +38,7 @@ public class QuadTreeLayer extends AbstractLayer {
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		BufferedImage image = ((QuadTreeLayerStatement) definition).getSupportImage();
-		dg.drawImage(scope, image, null, null, null, null, 0.0, true, null);
+		dg.drawImage(scope, image, null, null, null, null, true, null);
 	}
 
 	@Override

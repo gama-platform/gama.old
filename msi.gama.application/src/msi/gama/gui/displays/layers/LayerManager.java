@@ -33,12 +33,9 @@ import msi.gama.util.GamaList;
  */
 public class LayerManager implements ILayerManager {
 
-	// public final ILayer[] layers = new ILayer[20];
-	// public final boolean[] enabled = new boolean[20];
 	private final List<ILayer> enabledLayers = new GamaList();
 	private final List<ILayer> disabledLayers = new GamaList();
 	private final IDisplaySurface surface;
-	// private final PauseLayer pd = new PauseLayer();
 	private int count = 0;
 
 	public LayerManager(final IDisplaySurface surface) {
@@ -53,7 +50,6 @@ public class LayerManager implements ILayerManager {
 		for ( final ILayer d : disabledLayers ) {
 			d.dispose();
 		}
-		// pd.dispose();
 		enabledLayers.clear();
 		disabledLayers.clear();
 	}
@@ -69,7 +65,6 @@ public class LayerManager implements ILayerManager {
 			enabledLayers.remove(found);
 		}
 		Collections.sort(enabledLayers);
-		// GuiUtils.debug("Enabled layers (ordered):" + enabledLayers);
 		return found;
 	}
 
@@ -85,10 +80,10 @@ public class LayerManager implements ILayerManager {
 	}
 
 	private void enable(final ILayer found) {
+		found.enableOn(surface);
 		enabledLayers.add(found);
 		disabledLayers.remove(found);
 		Collections.sort(enabledLayers);
-		// GuiUtils.debug("Enabled layers (ordered):" + enabledLayers);
 	}
 
 	@Override
@@ -99,6 +94,7 @@ public class LayerManager implements ILayerManager {
 	private void disable(final ILayer found) {
 		final ILayer ff = removeLayer(found);
 		if ( ff != null ) {
+			ff.disableOn(surface);
 			disabledLayers.add(ff);
 		}
 	}
@@ -179,6 +175,7 @@ public class LayerManager implements ILayerManager {
 		obj.setOrder(count++);
 		enabledLayers.add(obj);
 		Collections.sort(enabledLayers);
+		obj.firstLaunchOn(surface);
 		return true;
 	}
 
@@ -230,10 +227,10 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void outputChanged() {
 		for ( final ILayer i : enabledLayers ) {
-			i.outputChanged();
+			i.reloadOn(surface);
 		}
 		for ( final ILayer i : disabledLayers ) {
-			i.outputChanged();
+			i.reloadOn(surface);
 		}
 	}
 
