@@ -65,7 +65,7 @@ global {
 		}
 		//left wall
 		create wall{
-			location <- {0,height_of_environment/2,0};
+			location <- {0.0,height_of_environment/2,0.0};
 			height <- float(width_of_environment);
 			shape <- rectangle(2,height_of_environment);
 			collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
