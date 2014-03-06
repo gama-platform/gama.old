@@ -24,7 +24,7 @@ global {
 			location<-{width_of_environment/2,4*height_of_environment/5, 5.0} ;
 			mass <- 3.0;
 			//a random velocity between 500 and 1000
-			velocity <- list([0.0, - float(500 + rnd(500)), 0.0]);
+			velocity <- [0.0, - float(500 + rnd(500)), 0.0];
 			collisionBound <-  ["shape"::"sphere","radius"::5];
 		}
 		
