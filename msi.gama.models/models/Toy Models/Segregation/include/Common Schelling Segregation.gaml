@@ -17,9 +17,9 @@ global {
 	int dimensions <- 80 max: 400 min: 10 parameter: "Width and height of the environment:" category: "Environment";
 	int neighbours_distance <- 2 max: 10 min: 1 parameter: "Distance of perception:" category: "Population";
 	int number_of_people <- 0;
-	int sum_happy_people <- 0 value: all_people count (each.is_happy);
-	int sum_similar_neighbours <- 0 value: sum (all_people collect each.similar_nearby);
-	int sum_total_neighbours <- 1 value: sum (all_people collect each.total_nearby) min: 1;
+	int sum_happy_people <- 0 update: all_people count (each.is_happy);
+	int sum_similar_neighbours <- 0 update: sum (all_people collect each.similar_nearby);
+	int sum_total_neighbours <- 1 update: sum (all_people collect each.total_nearby) min: 1;
 	list<agent> all_places <- [];
 	list<base> all_people <- [];  
 	action description {
