@@ -8,15 +8,15 @@ global {
 	bool display_state <- true;
 	int gridsize <- 75 ;
 	const center type: point <- { (gridsize / 2),  (gridsize / 2)} ;
-	const types type: file <- file('../images/environment75x75.pgm') ;
+	const types type: file <- (file('../images/environment75x75.pgm')) ;
 	const ant_shape_empty type: string <- '../icons/ant.png' ;
 	const ant_shape_full type: string <- '../icons/full_ant.png'  ;
 	const C00CC00 type: rgb <- rgb('#00CC00') ;    
 	const C009900 type: rgb <- rgb('#009900') ; 
 	const C005500 type: rgb <- rgb('#005500') ; 
-	int food_gathered <- 0 ;
+	int food_gathered <- 0 ;   
 	geometry shape <- square(gridsize);
-	init{ 
+	init{  
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
 	}
 
@@ -24,11 +24,11 @@ global {
 
 entities {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
-		const neighbours <- self neighbours_at 1 type: list of: ant_grid ;
-		const multiagent type: bool <- true ;
-		const type type: int <- int(types at {grid_x,grid_y}) ;
-		const isNestLocation type: bool <- (self distance_to center) < 4 ;
-		const isFoodLocation type: bool <- type = 2 ; 
+		list<ant_grid> neighbours <- self neighbours_at 1;
+		bool multiagent <- true ;
+		int type <- int(types at {grid_x,grid_y}) ;
+		bool isNestLocation <- (self distance_to center) < 4 ;
+		bool isFoodLocation <- type = 2 ; 
 		rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
 		int food <- isFoodLocation ? 5 : 0 ;
 		const nest type: int <- 300 - int(self distance_to center) ;
@@ -39,7 +39,7 @@ entities {
 		ant_grid place update: ant_grid (location ); 
 		string im <- 'ant_shape_empty' ;
 		bool hasFood <- false ;
-		signal road value: hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
+		signal road update: hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
 		action pick {
 			im <- ant_shape_full ;
 			hasFood <- true ;
@@ -102,7 +102,7 @@ experiment Ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants type: opengl{
+		display Ants type: opengl {
 			grid ant_grid ;
 			species ant aspect: text ;
 		}
