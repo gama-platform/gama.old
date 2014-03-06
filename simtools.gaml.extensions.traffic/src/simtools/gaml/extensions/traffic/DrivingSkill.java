@@ -1,18 +1,13 @@
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.In;
-import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.metamodel.topology.graph.GraphTopology;
+import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -23,28 +18,19 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.IList;
-import msi.gama.util.path.GamaPath;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.*;
+import msi.gama.util.path.*;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.IType;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import msi.gaml.types.*;
+import com.vividsolutions.jts.geom.*;
 
 @vars({
 	@var(name = "living_space", type = IType.FLOAT, init = "1.0", doc = @doc("the min distance between the agent and an obstacle (in meter)")),
 	@var(name = "lanes_attribute", type = IType.STRING, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes")),
 	@var(name = "tolerance", type = IType.FLOAT, init = "0.1", doc = @doc("the tolerance distance used for the computation (in meter)")),
 	@var(name = "obstacle_species", type = IType.LIST, init = "[]", doc = @doc("the list of species that are considered as obstacles")),
-	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)"))})
+	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")) })
 @skill(name = "driving")
 public class DrivingSkill extends MovingSkill {
 
@@ -57,7 +43,7 @@ public class DrivingSkill extends MovingSkill {
 	public double getLivingSpace(final IAgent agent) {
 		return (Double) agent.getAttribute(LIVING_SPACE);
 	}
-	
+
 	@setter(LANES_ATTRIBUTE)
 	public void setLanesAttribute(final IAgent agent, final String latt) {
 		agent.setAttribute(LANES_ATTRIBUTE, latt);
@@ -282,9 +268,10 @@ public class DrivingSkill extends MovingSkill {
 			if ( currentDistance > tolerance ) {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
+				IAgentFilter filter = In.list(scope, result);
 				final List<IAgent> ns =
-					new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0,
-						In.list(scope, result)));
+					filter == null ? new GamaList() : new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope,
+						ia, livingSpace / 2.0, filter));
 				int nbAg = 1;
 				for ( IAgent ag : ns ) {
 					if ( ag != agent ) {
@@ -520,47 +507,46 @@ public class DrivingSkill extends MovingSkill {
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}
-	
-	
-		
-		protected GamaList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,final GamaPoint falseTarget, final IAgent currentRoad) {
-			final GamaList initVals = new GamaList();
-			Integer indexSegment = 0;
-			Integer endIndexSegment = 0;
-			final IList<IShape> edges = path.getEdgeGeometry();
-			if (edges.isEmpty()) return null;
-			final int nb = edges.size();
-			if ( currentRoad.getInnerGeometry().getNumPoints() == 2 ) {
-				indexSegment = 0;
-				endIndexSegment = 0;
-				
-			} else {
-				double distanceS = Double.MAX_VALUE;
-				double distanceT = Double.MAX_VALUE;
-				IShape line = currentRoad.getGeometry();
-				final Point pointS = (Point) currentLocation.getInnerGeometry();
-				final Point pointT = (Point) falseTarget.getInnerGeometry();
-				final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-				final int nbSp = coords.length;
-				final Coordinate[] temp = new Coordinate[2];
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					temp[0] = coords[i];
-					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
-					final double distS = segment.distance(pointS);
-					if ( distS < distanceS ) {
-						distanceS = distS;
-						indexSegment = i + 1;
-					}
-					final double distT = segment.distance(pointT);
-					if ( distT < distanceT ) {
-						distanceT = distT;
-						endIndexSegment = i + 1;
-					}
+
+	protected GamaList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,
+		final GamaPoint falseTarget, final IAgent currentRoad) {
+		final GamaList initVals = new GamaList();
+		Integer indexSegment = 0;
+		Integer endIndexSegment = 0;
+		final IList<IShape> edges = path.getEdgeGeometry();
+		if ( edges.isEmpty() ) { return null; }
+		final int nb = edges.size();
+		if ( currentRoad.getInnerGeometry().getNumPoints() == 2 ) {
+			indexSegment = 0;
+			endIndexSegment = 0;
+
+		} else {
+			double distanceS = Double.MAX_VALUE;
+			double distanceT = Double.MAX_VALUE;
+			IShape line = currentRoad.getGeometry();
+			final Point pointS = (Point) currentLocation.getInnerGeometry();
+			final Point pointT = (Point) falseTarget.getInnerGeometry();
+			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+			final int nbSp = coords.length;
+			final Coordinate[] temp = new Coordinate[2];
+			for ( int i = 0; i < nbSp - 1; i++ ) {
+				temp[0] = coords[i];
+				temp[1] = coords[i + 1];
+				final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+				final double distS = segment.distance(pointS);
+				if ( distS < distanceS ) {
+					distanceS = distS;
+					indexSegment = i + 1;
+				}
+				final double distT = segment.distance(pointT);
+				if ( distT < distanceT ) {
+					distanceT = distT;
+					endIndexSegment = i + 1;
 				}
 			}
-			initVals.add(indexSegment);
-			initVals.add(endIndexSegment);
-			return initVals;
 		}
+		initVals.add(indexSegment);
+		initVals.add(endIndexSegment);
+		return initVals;
+	}
 }
