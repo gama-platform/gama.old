@@ -45,14 +45,14 @@ entities {
 		reflex reply_hello when: (time = 2) {
 			loop m over: informs {
 				write name + ' receives message with content: ' + (string(m.content));
-				do reply with: [ message :: m, performative :: 'inform', content :: [ ('Rebound hello from ' + string(name)) ] ];
+				do reply with: [ message :: m, performative :: 'inform', content :: [ ('Rebound hello from ' + name) ] ];
 			}
 		}
 		
 		reflex read_goodbye when: (time = 4) {
 			loop i over: informs {
 				write name + ' receives message with content: ' + (string(i.content));
-				do reply with: [ message :: i, performative :: 'end_conversation', content :: [ ('Rebound goobye from' + string(name)) ] ];
+				do reply with: [ message :: i, performative :: 'end_conversation', content :: [ ('Rebound goobye from' + name) ] ];
 			}
 		}
 	}
