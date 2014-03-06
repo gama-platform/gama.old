@@ -49,11 +49,11 @@ species bug schedules: bug sort_by ( - each.size){
     	do die;
     }
 	reflex reproduce when: size >= 10 {
-		list<cell> possible_nests <- my_place.neighbours3 where empty(each.agents);
+		list possible_nests <- my_place.neighbours3 where empty(each.agents);
        	create bug number: 5 {
             cell nest <- one_of(possible_nests);
             if condition: nest != nil {
-            	remove nest from: possible_nests;
+            	possible_nests >- nest;
             	my_place <- nest;
             	location <- nest.location;
             	size <- 0.0;

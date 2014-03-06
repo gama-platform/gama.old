@@ -1,14 +1,14 @@
 model StupidModel16
 
 global {
-	int numberBugs <- 100;
+	int numberBugs <- 100; 
     float globalMaxConsumption <- 1.0;
     float globalMaxFoodProdRate <- 0.01;
     float initialBugSizeMean <- 0.1;
 	float initialBugSizeSD <- 0.03;
-	matrix<int> init_data <- matrix(file("../data/Stupid_Cell.Data"));
-    int width <- int(max (copy_between ((init_data column_at 0),3, init_data.rows - 1)));
-    int height  <- int(max( copy_between ((init_data column_at 1),3,init_data.rows - 1)));
+	matrix<int> init_data <- matrix<int>(file("../data/Stupid_Cell.Data"));
+    int width <- (max(copy_between(init_data column_at 0, 3, init_data.rows - 1)));
+    int height  <- (max(copy_between(init_data column_at 1,3,init_data.rows - 1)));
     geometry shape <- rectangle(width,height);
 	init {
 		create bug number: numberBugs {
