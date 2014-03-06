@@ -32,7 +32,7 @@ global {
 	int gridSize <- 1; //size of the grid
 	float neighbourhoodSize <- 1.0; // average size of the neighbourhood (in number of cells)	
 	float adjust <- 0.721; // to adjust math model to ABM when using random walk
-	bool computeInfectionFromS <- bool(initial_S < initial_I); // if true, use the S list to compute infections. If false, use I list.
+	bool computeInfectionFromS <- initial_S < initial_I; // if true, use the S list to compute infections. If false, use I list.
 	// the purpose is to minimize the number of evaluation by using the smallest list.
 	
 	init {
@@ -91,7 +91,7 @@ global {
 	 * computing infection from I has a complexity of I*ngb.
 	 * this reflex determine which method has the lowest cost.
 	 * */
-		computeInfectionFromS <- bool((Host as list) count (each.is_susceptible) < (Host as list) count (each.is_infected));
+		computeInfectionFromS <- (Host count (each.is_susceptible)) < (Host count (each.is_infected));
 	}
 
 }
@@ -286,8 +286,8 @@ entities {
 
 		reflex infecte_others when: (is_infected and not (computeInfectionFromS)) {
 		//          		loop hst over: ((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host{
-			loop hst over: ((self) neighbours_at (2)) of_species Host {
-				if (Host(hst).is_susceptible) {
+			loop hst over: ((self) neighbours_at (2)) {
+				if (hst.is_susceptible) {
 					if (flip(beta)) {
 						hst.is_susceptible <- false;
 						hst.is_infected <- true;
