@@ -68,9 +68,8 @@ entities {
 				
 				int z1_noise <-   (-rnd(noise));
 				int z2_noise <-   (-rnd(noise));         
-                point tmpzPoint <- {(i/nbPointOnSection)*width_of_environment,location.y} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise);
-                
-                point tmpzPoint2 <- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise);
+                point tmpzPoint <- {(i/nbPointOnSection)*width_of_environment,location.y} +{0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise)};
+                point tmpzPoint2 <- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} + {0,0, ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise)};
                 
                 add tmpzPoint to: zPoints;
                 add tmpzPoint2 to: zPoints2;
