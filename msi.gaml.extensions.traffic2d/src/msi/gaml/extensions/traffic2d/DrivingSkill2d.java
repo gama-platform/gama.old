@@ -181,7 +181,7 @@ public class DrivingSkill2d extends MovingSkill {
 		}
 
 		final IList<IShape> edges = path.getEdgeGeometry();
-		final IShape lineEnd = edges.last(scope);
+		final IShape lineEnd = edges.lastValue(scope);
 		final GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape) path.getEndVertex(), lineEnd);
 
 		final Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
@@ -307,7 +307,7 @@ public class DrivingSkill2d extends MovingSkill {
 			}
 
 			if ( chosenCandidate == null ) {
-				chosenCandidate = candidateEntries.any(scope);
+				chosenCandidate = candidateEntries.anyValue(scope);
 			}
 			// System.out.println("distance: "+ minDistance + ", location: " +
 			// chosenCandidate.toString());
@@ -387,7 +387,7 @@ public class DrivingSkill2d extends MovingSkill {
 		}
 
 		final IList<IShape> edges = path.getEdgeGeometry();
-		final IShape lineEnd = edges.last(scope);
+		final IShape lineEnd = edges.lastValue(scope);
 		final GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape) path.getEndVertex(), lineEnd);
 
 		final Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
@@ -514,7 +514,7 @@ public class DrivingSkill2d extends MovingSkill {
 				}
 
 				if ( chosenCandidate == null ) {
-					chosenCandidate = candidateEntries.any(scope);
+					chosenCandidate = candidateEntries.anyValue(scope);
 				}
 				// System.out.println("distance: "+ minDistance + ", location: " +
 				// chosenCandidate.toString());
