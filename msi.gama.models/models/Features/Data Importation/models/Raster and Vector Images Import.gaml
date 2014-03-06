@@ -20,7 +20,7 @@ global {
 	geometry shape <- envelope(boundsMNT);
 	
 	// Global variables related to the MNT
-	file mntImageRaster <- file('../images/mnt/testAG.jpg') ;
+	file<point,int> mntImageRaster <- file('../images/mnt/testAG.jpg') ;
 	int factorDiscret  <- 20;
 	
 	// Global variables  related to the Management units	
@@ -41,9 +41,9 @@ global {
 				
 		create river from: waterShape.path;
 				
-		matrix mapColor <- mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
+		matrix<int> mapColor <- mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
 		ask cell {		
-			color <- mapColor at {grid_x,grid_y} ;
+			color <- rgb( mapColor at {grid_x,grid_y} );
 		}
 		create izard number: nbIzard; 			
     }
