@@ -5,7 +5,7 @@ global torus: torus_environment{
 	int number_of_obstacles parameter: 'Number of obstacles' <- 4 min: 0;
 	int boids_size parameter: 'Boids size' <- 20 min: 1;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
-	int  radius_speed parameter: 'radius speed' <- 1 min: 1;
+	float  radius_speed parameter: 'radius speed' <- 0.5 min: 0.1;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
 	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
@@ -21,7 +21,7 @@ global torus: torus_environment{
 	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';    
 	int bounds <- int(width_and_height_of_environment / 20); 
 	point wind_vector <- {0,0} parameter: 'Direction of the wind';  
-	int goal_duration <- 30 value: (goal_duration - 1); 
+	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds;    
@@ -55,10 +55,10 @@ global torus: torus_environment{
 		
 	 reflex create_flocks {
 	 	if create_flock {
-	 		let potentialBoidsNeighboursMap type: map value: ([] as map);
+	 		map<boids, list<boids>> potentialBoidsNeighboursMap <- [];
 	 		
 	 		loop one_boids over: boids {
-	 			list<boids> free_neighbours <- boids overlapping (one_boids.shape + (float (two_boids_distance)));
+	 			list<boids> free_neighbours <- boids overlapping (one_boids.shape + (two_boids_distance));
 	 			remove one_boids from: free_neighbours;  
 
 	 			if !(empty (free_neighbours)) {
@@ -66,9 +66,9 @@ global torus: torus_environment{
 	 			} 
 	 		}
 	 		
-	 		list<boids> sorted_free_boids <- (potentialBoidsNeighboursMap.keys) sort_by (length (list (potentialBoidsNeighboursMap at (boids (each)))));
+	 		list<boids> sorted_free_boids <- (potentialBoidsNeighboursMap.keys) sort_by (length (potentialBoidsNeighboursMap at each));
 	 		loop one_boids over: sorted_free_boids {
-	 			list<boids> one_boids_neighbours <- list(potentialBoidsNeighboursMap at one_boids);
+	 			list<boids> one_boids_neighbours <- potentialBoidsNeighboursMap at one_boids;
 	 			
 	 			if  (one_boids_neighbours != nil) {
 	 				loop one_neighbour over: one_boids_neighbours {
@@ -79,11 +79,11 @@ global torus: torus_environment{
 	 		
 		 	list<boids> boids_neighbours <- (potentialBoidsNeighboursMap.keys);
 		 	loop one_key over: boids_neighbours {
-		 		put (remove_duplicates ((list (potentialBoidsNeighboursMap at (one_key))) + one_key)) at: one_key in: potentialBoidsNeighboursMap;
+		 		put (remove_duplicates (( potentialBoidsNeighboursMap at (one_key)) + one_key)) at: one_key in: potentialBoidsNeighboursMap;
 		 	}
 		 	
 		 	loop one_key over: (potentialBoidsNeighboursMap.keys) {
-		 		list<boids> micro_agents <- list(potentialBoidsNeighboursMap at one_key);
+		 		list<boids> micro_agents <- potentialBoidsNeighboursMap at one_key;
 		 			
 		 		if ( (length (micro_agents)) > 1 ) {
 		 			create flock number: 1 with: [ color::rgb([rnd (255), rnd (255), rnd (255)]) ] { 
@@ -130,7 +130,7 @@ entities {
  
 		species boids_delegation parent: boids topology: topology(world.shape)  {
 			list<boids> others -> {( (boids_delegation overlapping (shape + range))) - self};
-
+ 
 			action compute_mass_center type: point {
 				loop o over: others {
 					if condition: dead(o) { // �a peut faire lever un message "warning" dans la vue "Errors" 
@@ -138,7 +138,7 @@ entities {
 					} 
 				}
 				 
-				return (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
+				return (length(others) > 0) ? (mean (others collect (each.location)) ) : location;
 			}
 
 			reflex separation when: apply_separation {
@@ -148,7 +148,7 @@ entities {
 			}
 			
 			reflex cohesion when: apply_cohesion {
-				point acc <- ((self compute_mass_center []) as point) - location;
+				point acc <- (self compute_mass_center []) - location;
 				acc <- acc / cohesion_factor;
 				velocity <- velocity + acc;
 			}
@@ -186,7 +186,7 @@ entities {
 			 	loop one_flock over: nearby_flocks {
 			 		release one_flock.members returns: released_boids; 
 			 		
-			 		loop rb over: list(released_boids) {
+			 		loop rb over: released_boids {
 			 			add boids(rb) to: added_components;
 			 		}
 			 	}
@@ -207,7 +207,7 @@ entities {
 	
 	species aggregatedboids{
 		aspect base{   
-			point loc <- (mean (boids collect (each.location)) ) as point;
+			point loc <- mean (boids collect (each.location));
 			draw sphere(10) color: rgb('red') at:loc;
 		}
 	}
@@ -218,10 +218,11 @@ entities {
 		int heading max: heading + maximal_turn min: heading - maximal_turn;
 		point velocity <- {0,0};
 		int size <- 5;
+		float hue <- rnd(360) / 360;
 		
 		list<boids> others update: ((boids overlapping (circle (range)))  - self);
 		
-		point mass_center update:  (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
+		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
 		
 		reflex separation when: apply_separation {
 			point acc <- {0,0}; 
@@ -232,7 +233,7 @@ entities {
 		}
 		
 		reflex alignment when: apply_alignment {
-			point acc <- (mean (others collect (each.velocity)) as point) - velocity;
+			point acc <- mean (others collect (each.velocity)) - velocity;
 			velocity <- velocity + (acc / alignment_factor);
 		}
 		 
@@ -243,7 +244,7 @@ entities {
 		}
 		
 		reflex avoid when: apply_avoid {
-			let acc <- {0,0};
+			point acc <- {0,0};
 			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
 				acc <- acc - ((location of obs) - my (location));
@@ -278,11 +279,11 @@ entities {
 		  
 		action do_move {  
 			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
-				velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
+				velocity <- {(rnd(4)) -2, (rnd(4)) - 2}; 
 			}
-			point old_location <- location;
+			point old_location <- location; 
 			do goto target: location + velocity;
-			velocity <- location - old_location;
+			velocity <- location - old_location; 
 		}
 		
 		reflex movement {
@@ -298,7 +299,7 @@ entities {
 		}
 				
 		aspect dynamicColor{
-			float hue <- heading/360;
+			//float hue <- heading/360;
 			rgb cc <- hsb (hue,1.0,1.0);
 			draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
 			draw name;
@@ -316,10 +317,10 @@ entities {
 
 experiment start type: gui {
 	output {
-		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false trace: 30{
 			image name:'background' file:'../images/ocean.jpg';
-			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
-			species boids aspect: image transparency:0.5 position:{0,0,0.11};
+			species boids aspect: dynamicColor  position:{0,0,0.1};
+			//species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
