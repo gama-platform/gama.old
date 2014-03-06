@@ -32,7 +32,7 @@ global {
 	int new_pedestian_generate_frequency <- 1;
 	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
 	
-	list<pedestrian> pedestrians <- [] value: list(pedestrian); 
+	list<pedestrian> pedestrians <- [] update: list(pedestrian); 
 	float start_time <- machine_time;
 	
 	init {
@@ -128,7 +128,7 @@ entities {
 		}
 		
 		reflex disaggregate  {
-			list tobe_released_pedestrians <- (list (members)) where (time >= (captured_pedestrian (each)).released_time);
+			list tobe_released_pedestrians <- members where (time >= (captured_pedestrian (each)).released_time);
 			if !(empty (tobe_released_pedestrians)) {
 				release tobe_released_pedestrians as: pedestrian in: world {
 					location <- {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
