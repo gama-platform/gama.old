@@ -60,8 +60,10 @@ entities {
 experiment Display  type: gui {
 	output {
 		display Poincare refresh_every: 1  type:opengl ambient_light:50 {
+			
 			image imageRaster.path ;
-			species mySquare aspect:RoundCorner;										
+			species mySquare aspect:RoundCorner transparency: 0.5 position: {0,0,0.1} ;	
+												
 		}
 	}
 }
