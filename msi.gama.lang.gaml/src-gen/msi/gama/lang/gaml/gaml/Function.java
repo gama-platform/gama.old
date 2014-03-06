@@ -17,6 +17,7 @@ package msi.gama.lang.gaml.gaml;
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Function#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -103,5 +104,31 @@ public interface Function extends Expression
    * @generated
    */
   void setArgs(ExpressionList value);
+
+  /**
+   * Returns the value of the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Type</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Type</em>' containment reference.
+   * @see #setType(TypeInfo)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Type()
+   * @model containment="true"
+   * @generated
+   */
+  TypeInfo getType();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getType <em>Type</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Type</em>' containment reference.
+   * @see #getType()
+   * @generated
+   */
+  void setType(TypeInfo value);
 
 } // Function

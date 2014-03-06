@@ -313,6 +313,14 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = caseExpression(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.EXPRESSION_LIST:
       {
         ExpressionList expressionList = (ExpressionList)theEObject;
@@ -326,6 +334,13 @@ public class GamlSwitch<T> extends Switch<T>
         VariableRef variableRef = (VariableRef)theEObject;
         T result = caseVariableRef(variableRef);
         if (result == null) result = caseExpression(variableRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.TYPE_INFO:
+      {
+        TypeInfo typeInfo = (TypeInfo)theEObject;
+        T result = caseTypeInfo(typeInfo);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -543,14 +558,6 @@ public class GamlSwitch<T> extends Switch<T>
         Point point = (Point)theEObject;
         T result = casePoint(point);
         if (result == null) result = caseExpression(point);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FUNCTION:
-      {
-        Function function = (Function)theEObject;
-        T result = caseFunction(function);
-        if (result == null) result = caseExpression(function);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1093,6 +1100,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Expression List</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1120,6 +1143,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseVariableRef(VariableRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Type Info</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Type Info</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTypeInfo(TypeInfo object)
   {
     return null;
   }
@@ -1520,22 +1559,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T casePoint(Point object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunction(Function object)
   {
     return null;
   }

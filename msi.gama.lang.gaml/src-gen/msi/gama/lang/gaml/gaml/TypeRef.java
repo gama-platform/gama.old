@@ -15,8 +15,7 @@ package msi.gama.lang.gaml.gaml;
  * The following features are supported:
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getRef <em>Ref</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getFirst <em>First</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getSecond <em>Second</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.TypeRef#getParameter <em>Parameter</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,55 +52,29 @@ public interface TypeRef extends Expression
   void setRef(TypeDefinition value);
 
   /**
-   * Returns the value of the '<em><b>First</b></em>' containment reference.
+   * Returns the value of the '<em><b>Parameter</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>First</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Parameter</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>First</em>' containment reference.
-   * @see #setFirst(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getTypeRef_First()
+   * @return the value of the '<em>Parameter</em>' containment reference.
+   * @see #setParameter(TypeInfo)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getTypeRef_Parameter()
    * @model containment="true"
    * @generated
    */
-  Expression getFirst();
+  TypeInfo getParameter();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.TypeRef#getFirst <em>First</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.TypeRef#getParameter <em>Parameter</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>First</em>' containment reference.
-   * @see #getFirst()
+   * @param value the new value of the '<em>Parameter</em>' containment reference.
+   * @see #getParameter()
    * @generated
    */
-  void setFirst(Expression value);
-
-  /**
-   * Returns the value of the '<em><b>Second</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Second</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Second</em>' containment reference.
-   * @see #setSecond(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getTypeRef_Second()
-   * @model containment="true"
-   * @generated
-   */
-  Expression getSecond();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.TypeRef#getSecond <em>Second</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Second</em>' containment reference.
-   * @see #getSecond()
-   * @generated
-   */
-  void setSecond(Expression value);
+  void setParameter(TypeInfo value);
 
 } // TypeRef

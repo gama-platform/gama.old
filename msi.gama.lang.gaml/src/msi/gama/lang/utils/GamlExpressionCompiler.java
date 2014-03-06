@@ -50,7 +50,7 @@ import org.eclipse.xtext.resource.*;
  * The Class ExpressionParser.
  */
 
-public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
+public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
 	public IVarExpression each_expr;
 	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -95,6 +95,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return result;
 		} finally {
 			setContext(previous);
+			currentExpressionDescription = null;
 			synthetic = false;
 		}
 
@@ -106,16 +107,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			// errors and not from the parser itself.
 			return null;
 		}
-		IExpression expr = compiler.doSwitch(s);
+		IExpression expr = doSwitch(s);
 		if ( !synthetic ) {
 			DescriptionFactory.setGamlDocumentation(s, expr);
 		}
 		return expr;
-	}
-
-	// KEEP
-	private IExpression species(final String name) {
-		return factory.createConst(name, Types.get(IType.SPECIES), getSpeciesContext(name).getType());
 	}
 
 	private IExpression skill(final String name) {
@@ -141,9 +137,89 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 		// The unary "unit" operator should let the value of its child pass through
 		if ( op.equals("°") || op.equals("#") ) { return expr; }
-		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, e, expr, species(op)); }
-		if ( isSkillName(op) ) { return factory.createOperator(AS, context, e, expr, skill(op)); }
+		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, e, expr,
+			factory.createConst(op, GamaType.from(getSpeciesContext(op)))); }
+		// if ( isSkillName(op) ) { return factory.createOperator(AS, context, e, expr, skill(op)); }
 		return factory.createOperator(op, context, e, expr);
+	}
+
+	private IExpression casting(final String type, final IExpression toCast, final Expression typeObject) {
+		if ( toCast == null ) { return null; }
+		IType castingType = context.getModelDescription().getTypeNamed(type).typeIfCasting(toCast);
+
+		boolean isSuperType = castingType.isAssignableFrom(toCast.getType());
+		TypeInfo typeInfo = null;
+		if ( typeObject instanceof TypeRef ) {
+			typeInfo = ((TypeRef) typeObject).getParameter();
+		} else if ( typeObject instanceof Function ) {
+			typeInfo = ((Function) typeObject).getType();
+		}
+		if ( isSuperType && typeInfo == null ) {
+			context.info("Unneeded casting: '" + toCast.toGaml() + "' is already of type " + type, IGamlIssue.UNUSED,
+				typeObject);
+			return toCast;
+		}
+		IType keyType = castingType.getKeyType();
+		IType contentsType = castingType.getContentType();
+		if ( typeInfo != null ) {
+			// if ( "people_in_building".equals(EGaml.getKeyOf(typeInfo.getFirst())) ) {
+			// GuiUtils.debug("GamlExpressionCompiler.casting");
+			// }
+			// IExpression kt = compile(typeInfo.getFirst());
+			// IExpression ct = compile(typeInfo.getSecond());
+			IType kt = fromTypeRef((TypeRef) typeInfo.getFirst());
+			IType ct = fromTypeRef((TypeRef) typeInfo.getSecond());
+			if ( ct == null || ct == Types.NO_TYPE ) {
+				ct = kt;
+				kt = null;
+			}
+			if ( ct != null && ct != Types.NO_TYPE ) {
+				contentsType = ct;
+			}
+			if ( kt != null && kt != Types.NO_TYPE ) {
+				keyType = kt;
+			}
+		}
+		IType result = GamaType.from(castingType, keyType, contentsType);
+		// If there is no casting to do, just return the expression unchanged.
+		if ( result.isAssignableFrom(toCast.getType()) ) {
+			context.info("Unneeded casting: '" + toCast.toGaml() + "' is already of type " + type, IGamlIssue.UNUSED,
+				typeObject);
+			return toCast;
+		}
+
+		return factory.createOperator(AS, context.getSpeciesContext(), typeObject, toCast,
+			factory.createTypeExpression(result));
+	}
+
+	IType fromTypeRef(final TypeRef object) {
+		if ( object == null ) { return null; }
+		String primary = EGaml.getKeyOf(object);
+
+		if ( primary == null ) {
+			primary = object.getRef().getName();
+		}
+
+		IType t = context.getTypeNamed(primary);
+
+		if ( t == Types.NO_TYPE && !UNKNOWN.equals(primary) && !SIGNAL.equals(primary) ) {
+			context.error(primary + " is not a valid type name", IGamlIssue.NOT_A_TYPE, object, primary);
+			return t;
+		}
+
+		// / SEE IF IT WORKS
+
+		if ( t.isAgentType() ) { return t; }
+
+		// /
+
+		TypeInfo parameter = object.getParameter();
+		if ( parameter == null || !t.isContainer() ) { return t; }
+		TypeRef first = (TypeRef) parameter.getFirst();
+		if ( first == null ) { return t; }
+		TypeRef second = (TypeRef) parameter.getSecond();
+		if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
+		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
 	}
 
 	private IExpression binary(final String op, final IExpression left, final Expression e2) {
@@ -151,9 +227,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// if the operator is "as", the right-hand expression should be a casting type
 		if ( AS.equals(op) ) {
 			String type = EGaml.getKeyOf(e2);
-			if ( isSpeciesName(type) ) { return factory.createOperator(op, context, e2, left, species(type)); }
-			if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, e2, left, skill(type)); }
-			if ( isTypeName(type) ) { return factory.createOperator(type, context, e2, left); }
+			// if ( isSpeciesName(type) ) { return factory.createOperator(op, context, e2, left, species(type)); }
+			// if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, e2, left, skill(type)); }
+			if ( isTypeName(type) ) { return casting(type, left, e2); }
 			getContext().error(
 				"'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
@@ -192,10 +268,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// if the operator is an iterator, we must initialize the context sensitive "each" variable
 		if ( ITERATORS.contains(op) ) {
 
-			IType t = left.getContentType();
-			IType ct = left.getElementsContentType();
-			IType kt = left.getElementsKeyType();
-			each_expr = new EachExpression(t, ct, kt);
+			IType t = left.getType().getContentType();
+			// IType ct = t.getContentType();
+			// IType kt = t.getKeyType();
+			each_expr = new EachExpression(t /* ct, kt */);
 		}
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
@@ -212,6 +288,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	// KEEP
 	private IExpression binary(final String op, final Expression e1, final Expression right) {
+
 		// if the expression is " var of agents ", we must compile it apart
 		if ( OF.equals(op) ) { return compileFieldExpr(right, e1); }
 		// we can now safely compile the left-hand expression
@@ -235,7 +312,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	}
 
 	private boolean isTypeName(final String s) {
-		return getContext().getModelDescription().getTypeNamed(s) != null;
+		return getContext().getModelDescription().getTypesManager().containsType(s);
 	}
 
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
@@ -248,6 +325,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			// can also represent the dot product
 			String var = EGaml.getKeyOf(fieldExpr);
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
+
+			// Special case for matrices
 			if ( type.id() == IType.MATRIX && expr == null ) { return binary(".", owner, fieldExpr); }
 
 			if ( expr == null ) {
@@ -266,7 +345,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			String var = EGaml.getKeyOf(fieldExpr);
 			IVarExpression expr = (IVarExpression) species.getVarExpr(var);
 			if ( expr == null ) {
-				context.error("Unknown variable :" + var + " in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
+				context.error("Unknown variable: '" + var + "' in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
 					leftExpr, var, species.getName());
 			}
 			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
@@ -290,15 +369,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	private IExpression getWorldExpr() {
 		if ( world == null ) {
 			IType tt = getContext().getModelDescription()./* getWorldSpecies(). */getType();
-			world =
-				factory.createVar(WORLD_AGENT_NAME, tt, Types.NO_TYPE, Types.get(IType.STRING), true,
-					IVarExpression.WORLD, context.getModelDescription());
+			world = factory.createVar(WORLD_AGENT_NAME, tt, true, IVarExpression.WORLD, context.getModelDescription());
 		}
 		return world;
 	}
 
 	private IDescription setContext(final IDescription context) {
-		IDescription previous = context;
+		// GuiUtils.debug("GamlExpressionCompiler.setContext : Replacing " + );
+		IDescription previous = this.context;
 		this.context = context;
 		return previous;
 	}
@@ -374,329 +452,316 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return argMap;
 	}
 
-	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
+	@Override
+	public IExpression caseCast(final Cast object) {
+		return binary(AS, object.getLeft(), object.getRight());
+	}
 
-		@Override
-		public IExpression caseCast(final Cast object) {
-			Expression type = object.getRight();
-			IExpression simpleType = binary(AS, compile(object.getLeft()), type);
-			if ( simpleType == null ) { return null; }
-			if ( type instanceof TypeRef ) {
-				Expression first = ((TypeRef) type).getFirst();
-				Expression second = ((TypeRef) type).getSecond();
-				// No content type, we return the simple expression
-				if ( first == null ) { return simpleType; }
-				// We compute the content type
-				String contentType;
-				Expression contentTypeExpression = second == null ? first : second;
-				contentType = EGaml.getKeyOf(contentTypeExpression);
-				if ( contentType == null || !isTypeName(contentType) ) {
-					getContext().error(
-						"A type can only contain another type, species or skill name. " + contentType +
-							" is neither of these.", IGamlIssue.NOT_A_TYPE, contentTypeExpression, contentType);
-					return simpleType;
-				}
-				return factory.createOperator("containing", context, object, simpleType,
-					factory.createCastingExpression(context.getModelDescription().getTypeNamed(contentType)));
-			}
-			getContext().error(EGaml.toString(type) + " is not a type name. ", IGamlIssue.NOT_A_TYPE, type);
-			return null;
+	@Override
+	public IExpression caseSkillRef(final SkillRef object) {
+		return skill(EGaml.getKey.caseSkillRef(object));
+	}
+
+	@Override
+	public IExpression caseActionRef(final ActionRef object) {
+		return factory.createConst(EGaml.getKey.caseActionRef(object), Types.get(IType.STRING));
+	}
+
+	@Override
+	public IExpression caseExpression(final Expression object) {
+		// in the general case, we try to return a binary expression
+		IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+		return result;
+	}
+
+	@Override
+	public IExpression caseVariableRef(final VariableRef object) {
+		String s = EGaml.getKey.caseVariableRef(object);
+		if ( s == null ) { return caseVarDefinition(object.getRef()); }
+		return caseVar(s, object);
+	}
+
+	@Override
+	public IExpression caseTypeRef(final TypeRef object) {
+		IType t = fromTypeRef(object);
+
+		// / SEE IF IT WORKS
+
+		// 2 erreurs :
+		// - type inconnu n'est pas mentionné (electors ??)
+		// - lors d'une affectation de nil warning sur le type (candidate)
+
+		if ( t.isAgentType() ) { return factory.createConst(t.getSpeciesName(), GamaType.from(t.getSpecies())); }
+		return factory.createTypeExpression(t);
+	}
+
+	@Override
+	public IExpression caseEquationRef(final EquationRef object) {
+		return factory.createConst(EGaml.getKey.caseEquationRef(object), Types.get(IType.STRING));
+	}
+
+	@Override
+	public IExpression caseUnitName(final UnitName object) {
+		String s = EGaml.getKeyOf(object);
+		if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, context); }
+		// If it is a unit, we return its float value
+		context.error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+		return null;
+	}
+
+	@Override
+	public IExpression caseVarDefinition(final VarDefinition object) {
+		return skill(object.getName());
+	}
+
+	@Override
+	public IExpression caseTypeDefinition(final TypeDefinition object) {
+		return caseVar(object.getName(), object);
+	}
+
+	@Override
+	public IExpression caseSkillFakeDefinition(final SkillFakeDefinition object) {
+		return caseVar(object.getName(), object);
+	}
+
+	@Override
+	public IExpression caseReservedLiteral(final ReservedLiteral object) {
+		return caseVar(EGaml.getKeyOf(object), object);
+	}
+
+	@Override
+	public IExpression caseIf(final If object) {
+		IExpression ifFalse = compile(object.getIfFalse());
+		IExpression alt = factory.createOperator(":", context, object, compile(object.getRight()), ifFalse);
+		return factory.createOperator("?", context, object, compile(object.getLeft()), alt);
+	}
+
+	@Override
+	public IExpression caseArgumentPair(final ArgumentPair object) {
+		IExpression result = binary("::", caseVar(EGaml.getKeyOf(object), object), object.getRight());
+		return result;
+	}
+
+	@Override
+	public IExpression casePair(final Pair object) {
+		IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+		return result;
+	}
+
+	@Override
+	public IExpression caseBinary(final Binary object) {
+		IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+		return result;
+	}
+
+	@Override
+	public IExpression caseUnit(final Unit object) {
+		// We simply return a multiplication, since the right member (the "unit") will be
+		// translated into its float value
+
+		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to the whole expression.
+		IExpression right = compile(object.getRight());
+		IExpression result = binary("*", object.getLeft(), object.getRight());
+		if ( result != null && ((BinaryOperator) result).right() instanceof PixelUnitExpression ) {
+			result = factory.createOperator("+", context, object, factory.createConst(1, Types.get(IType.INT)), result);
 		}
+		return result;
+	}
 
-		@Override
-		public IExpression caseSkillRef(final SkillRef object) {
-			return skill(EGaml.getKey.caseSkillRef(object));
-		}
+	@Override
+	public IExpression caseUnary(final Unary object) {
+		return unary(EGaml.getKeyOf(object), object.getRight());
+	}
 
-		@Override
-		public IExpression caseActionRef(final ActionRef object) {
-			return factory.createConst(EGaml.getKey.caseActionRef(object), Types.get(IType.STRING));
-		}
+	@Override
+	public IExpression caseDot(final Dot object) {
+		return compileFieldExpr(object.getLeft(), object.getRight());
+	}
 
-		@Override
-		public IExpression caseExpression(final Expression object) {
-			// in the general case, we try to return a binary expression
-			IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-			return result;
-		}
-
-		@Override
-		public IExpression caseVariableRef(final VariableRef object) {
-			String s = EGaml.getKey.caseVariableRef(object);
-			if ( s == null ) { return caseVarDefinition(object.getRef()); }
-			return caseVar(s, object);
-		}
-
-		@Override
-		public IExpression caseTypeRef(final TypeRef object) {
-			String s = EGaml.getKeyOf(object);
-			if ( s == null ) {
-				// we delegate to the referenced TypeDefinition
-				return caseTypeDefinition(object.getRef());
-			}
-			return caseVar(s, object);
-		}
-
-		@Override
-		public IExpression caseEquationRef(final EquationRef object) {
-			return factory.createConst(EGaml.getKey.caseEquationRef(object), Types.get(IType.STRING));
-		}
-
-		@Override
-		public IExpression caseUnitName(final UnitName object) {
-			String s = EGaml.getKeyOf(object);
-			if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, context); }
-			// If it is a unit, we return its float value
-			context.error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
-			return null;
-		}
-
-		@Override
-		public IExpression caseVarDefinition(final VarDefinition object) {
-			return skill(object.getName());
-		}
-
-		@Override
-		public IExpression caseTypeDefinition(final TypeDefinition object) {
-			return caseVar(object.getName(), object);
-		}
-
-		@Override
-		public IExpression caseSkillFakeDefinition(final SkillFakeDefinition object) {
-			return caseVar(object.getName(), object);
-		}
-
-		@Override
-		public IExpression caseReservedLiteral(final ReservedLiteral object) {
-			return caseVar(EGaml.getKeyOf(object), object);
-		}
-
-		@Override
-		public IExpression caseIf(final If object) {
-			IExpression ifFalse = compile(object.getIfFalse());
-			IExpression alt = factory.createOperator(":", context, object, compile(object.getRight()), ifFalse);
-			return factory.createOperator("?", context, object, compile(object.getLeft()), alt);
-		}
-
-		@Override
-		public IExpression caseArgumentPair(final ArgumentPair object) {
-			IExpression result = binary("::", caseVar(EGaml.getKeyOf(object), object), object.getRight());
-			return result;
-		}
-
-		@Override
-		public IExpression casePair(final Pair object) {
-			IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-			return result;
-		}
-
-		@Override
-		public IExpression caseBinary(final Binary object) {
-			IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-			return result;
-		}
-
-		@Override
-		public IExpression caseUnit(final Unit object) {
-			// We simply return a multiplication, since the right member (the "unit") will be
-			// translated into its float value
-
-			// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to the whole expression.
-			IExpression right = compile(object.getRight());
-			IExpression result = binary("*", object.getLeft(), object.getRight());
-			if ( result != null && ((BinaryOperator) result).right() instanceof PixelUnitExpression ) {
-				result =
-					factory.createOperator("+", context, object, factory.createConst(1, Types.get(IType.INT)), result);
-			}
-			return result;
-		}
-
-		@Override
-		public IExpression caseUnary(final Unary object) {
-			IExpression result = unary(EGaml.getKeyOf(object), object.getRight());
-			return result;
-		}
-
-		@Override
-		public IExpression caseDot(final Dot object) {
-			return compileFieldExpr(object.getLeft(), object.getRight());
-		}
-
-		@Override
-		public IExpression caseAccess(final Access object) {
-			IExpression container = compile(object.getLeft());
-			// If no container is defined, return a null expression
-			if ( container == null ) { return null; }
-			IType contType = container.getType();
-			boolean isMatrix = contType.id() == IType.MATRIX;
-			IType keyType = container.getKeyType();
-			List<? extends Expression> list = EGaml.getExprsOf(object.getArgs());
-			List<IExpression> result = new ArrayList();
-			int size = list.size();
-			for ( int i = 0; i < size; i++ ) {
-				Expression eExpr = list.get(i);
-				IExpression e = compile(eExpr);
-				if ( e != null ) {
-					IType elementType = e.getType();
-					if ( keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getType()) ) {
-						if ( !(isMatrix && elementType.id() == IType.INT && size > 1) ) {
-							context.warning(
-								"a " + contType.toString() + " cannot be accessed using a " + elementType.toString() +
-									" index", IGamlIssue.WRONG_TYPE, eExpr);
-						}
+	@Override
+	public IExpression caseAccess(final Access object) {
+		IExpression container = compile(object.getLeft());
+		// If no container is defined, return a null expression
+		if ( container == null ) { return null; }
+		IType contType = container.getType();
+		boolean isMatrix = contType.id() == IType.MATRIX;
+		IType keyType = contType.getKeyType();
+		List<? extends Expression> list = EGaml.getExprsOf(object.getArgs());
+		List<IExpression> result = new ArrayList();
+		int size = list.size();
+		for ( int i = 0; i < size; i++ ) {
+			Expression eExpr = list.get(i);
+			IExpression e = compile(eExpr);
+			if ( e != null ) {
+				IType elementType = e.getType();
+				if ( keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getType()) ) {
+					if ( !(isMatrix && elementType.id() == IType.INT && size > 1) ) {
+						context.warning(
+							"a " + contType.toString() + " cannot be accessed using a " + elementType.toString() +
+								" index", IGamlIssue.WRONG_TYPE, eExpr);
 					}
-					result.add(e);
 				}
-			}
-			if ( size > 2 ) {
-				int expected = isMatrix ? 2 : 1;
-				String end = expected == 1 ? " only 1 index" : " 1 or 2 indices";
-				context.warning("a " + contType.toString() + " should be accessed using" + end,
-					IGamlIssue.DIFFERENT_ARGUMENTS, object);
-			}
-
-			IExpression indices = factory.createList(result);
-			return factory.createOperator("internal_at", context, object, container, indices);
-		}
-
-		@Override
-		public IExpression caseArray(final Array object) {
-			List<? extends Expression> list = EGaml.getExprsOf(object.getExprs());
-			List<IExpression> result = new ArrayList();
-			boolean allPairs = true;
-			for ( int i = 0, n = list.size(); i < n; i++ ) {
-				Expression eExpr = list.get(i);
-				allPairs = allPairs && eExpr instanceof Pair;
-				IExpression e = compile(eExpr);
 				result.add(e);
 			}
-			if ( allPairs && !list.isEmpty() ) { return factory.createMap(result); }
-			return factory.createList(result);
+		}
+		if ( size > 2 ) {
+			int expected = isMatrix ? 2 : 1;
+			String end = expected == 1 ? " only 1 index" : " 1 or 2 indices";
+			context.warning("a " + contType.toString() + " should be accessed using" + end,
+				IGamlIssue.DIFFERENT_ARGUMENTS, object);
 		}
 
-		@Override
-		public IExpression casePoint(final Point object) {
-			IExpression point2d = binary(IExpressionCompiler.INTERNAL_POINT, object.getLeft(), object.getRight());
-			Expression z = object.getZ();
-			return z == null ? point2d : binary(IExpressionCompiler.INTERNAL_Z, point2d, z);
+		IExpression indices = factory.createList(result);
+		return factory.createOperator("internal_at", context, object, container, indices);
+	}
+
+	@Override
+	public IExpression caseArray(final Array object) {
+		List<? extends Expression> list = EGaml.getExprsOf(object.getExprs());
+		List<IExpression> result = new ArrayList();
+		boolean allPairs = true;
+		for ( int i = 0, n = list.size(); i < n; i++ ) {
+			Expression eExpr = list.get(i);
+			allPairs = allPairs && eExpr instanceof Pair;
+			IExpression e = compile(eExpr);
+			result.add(e);
 		}
-		
-		@Override
-		public IExpression caseParameters(final Parameters object) {
-			IList<IExpression> list = new GamaList();
-			for ( Expression p : EGaml.getExprsOf(object.getParams()) ) {
-				list.add(binary("::", factory.createConst(EGaml.getKeyOf(p.getLeft()), Types.get(IType.STRING)),
-					p.getRight()));
+		if ( allPairs && !list.isEmpty() ) { return factory.createMap(result); }
+		return factory.createList(result);
+	}
+
+	@Override
+	public IExpression casePoint(final Point object) {
+		Expression z = object.getZ();
+		if ( z == null ) { return binary(POINT, object.getLeft(), object.getRight()); }
+		IExpression[] exprs = new IExpression[3];
+		exprs[0] = compile(object.getLeft());
+		exprs[1] = compile(object.getRight());
+		exprs[2] = compile(z);
+		return factory.createOperator(POINT, context, object, exprs);
+	}
+
+	@Override
+	public IExpression caseParameters(final Parameters object) {
+		IList<IExpression> list = new GamaList();
+		for ( Expression p : EGaml.getExprsOf(object.getParams()) ) {
+			list.add(binary("::", factory.createConst(EGaml.getKeyOf(p.getLeft()), Types.get(IType.STRING)),
+				p.getRight()));
+		}
+		return factory.createMap(list);
+	}
+
+	@Override
+	public IExpression caseExpressionList(final ExpressionList object) {
+		List<Expression> list = EGaml.getExprsOf(object);
+		if ( list.isEmpty() ) { return null; }
+		if ( list.size() > 1 ) {
+			context.warning(
+				"A sequence of expressions is not expected here. Only the first expression will be evaluated",
+				IGamlIssue.UNKNOWN_ARGUMENT, object);
+		}
+		IExpression expr = compile(list.get(0));
+		return expr;
+	}
+
+	@Override
+	public IExpression caseFunction(final Function object) {
+		String op = EGaml.getKeyOf(object);
+
+		SpeciesDescription sd = context.getSpeciesContext();
+		if ( sd != null ) {
+			StatementDescription action = sd.getAction(op);
+			if ( action != null ) {
+				EObject params = object.getParameters();
+				if ( params == null ) {
+					params = object.getArgs();
+				}
+				IExpression call = action(op, caseVar(SELF, object), params, action);
+				if ( call != null ) { return call; }
 			}
-			return factory.createMap(list);
 		}
 
-		@Override
-		public IExpression caseExpressionList(final ExpressionList object) {
-			List<Expression> list = EGaml.getExprsOf(object);
-			if ( list.isEmpty() ) { return null; }
-			if ( list.size() > 1 ) {
-				context.warning(
-					"A sequence of expressions is not expected here. Only the first expression will be evaluated",
+		List<Expression> args = EGaml.getExprsOf(object.getArgs());
+		int size = args.size();
+		if ( size == 1 ) {
+			if ( isTypeName(op) ) { return binary(AS, args.get(0), object); }
+			// Not a type name, but type information present
+			TypeInfo type = object.getType();
+			if ( type != null ) {
+				context.warning("Key and contents types are not expected here and will not be evaluated",
 					IGamlIssue.UNKNOWN_ARGUMENT, object);
 			}
-			IExpression expr = compile(list.get(0));
-			return expr;
+			return unary(op, args.get(0));
+
 		}
-
-		@Override
-		public IExpression caseFunction(final Function object) {
-			String op = EGaml.getKeyOf(object);
-
-			SpeciesDescription sd = context.getSpeciesContext();
-			if ( sd != null ) {
-				StatementDescription action = sd.getAction(op);
-				if ( action != null ) {
-					EObject params = object.getParameters();
-					if ( params == null ) {
-						params = object.getArgs();
-					}
-					IExpression call = action(op, caseVar(SELF, object), params, action);
-					if ( call != null ) { return call; }
-				}
-			}
-
-			List<Expression> args = EGaml.getExprsOf(object.getArgs());
-			int size = args.size();
-			if ( size == 1 ) {
-				IExpression result = unary(op, args.get(0));
-				return result;
-			}
-			if ( size == 2 ) {
-				IExpression result = binary(op, args.get(0), args.get(1));
-				return result;
-			}
-			IExpression[] compiledArgs = new IExpression[size];
-			for ( int i = 0; i < size; i++ ) {
-				compiledArgs[i] = compile(args.get(i));
-			}
-			IExpression result = factory.createOperator(op, context, object, compiledArgs);
+		if ( size == 2 ) {
+			IExpression result = binary(op, args.get(0), args.get(1));
 			return result;
 		}
-
-		@Override
-		public IExpression caseIntLiteral(final IntLiteral object) {
-			try {
-				Integer val = Integer.parseInt(EGaml.getKeyOf(object), 10);
-				return factory.createConst(val, Types.get(IType.INT));
-			} catch (NumberFormatException e) {
-				context.error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
-				return null;
-			}
+		IExpression[] compiledArgs = new IExpression[size];
+		for ( int i = 0; i < size; i++ ) {
+			compiledArgs[i] = compile(args.get(i));
 		}
+		IExpression result = factory.createOperator(op, context, object, compiledArgs);
+		return result;
+	}
 
-		@Override
-		public IExpression caseDoubleLiteral(final DoubleLiteral object) {
-			try {
-				String s = EGaml.getKeyOf(object);
-				if ( s == null ) { return null; }
-				Number val = nf.parse(s);
-				return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
-			} catch (ParseException e) {
-				context.error("Malformed float: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
-				return null;
-			}
-
+	@Override
+	public IExpression caseIntLiteral(final IntLiteral object) {
+		try {
+			Integer val = Integer.parseInt(EGaml.getKeyOf(object), 10);
+			return factory.createConst(val, Types.get(IType.INT));
+		} catch (NumberFormatException e) {
+			context.error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
+			return null;
 		}
+	}
 
-		@Override
-		public IExpression caseColorLiteral(final ColorLiteral object) {
-			try {
-				Integer val = Integer.parseInt(EGaml.getKeyOf(object).substring(1), 16);
-				return factory.createConst(val, Types.get(IType.INT));
-			} catch (NumberFormatException e) {
-				context.error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
-				return null;
-			}
-		}
-
-		@Override
-		public IExpression caseStringLiteral(final StringLiteral object) {
-			return factory.createConst(StringUtils.unescapeJava(EGaml.getKeyOf(object)), Types.get(IType.STRING));
-		}
-
-		@Override
-		public IExpression caseBooleanLiteral(final BooleanLiteral object) {
+	@Override
+	public IExpression caseDoubleLiteral(final DoubleLiteral object) {
+		try {
 			String s = EGaml.getKeyOf(object);
 			if ( s == null ) { return null; }
-			return s.equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
-		}
-
-		@Override
-		public IExpression defaultCase(final EObject object) {
-			if ( !getContext().hasErrors() ) {
-				// In order to avoid too many "useless errors"
-				getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
-			}
+			Number val = nf.parse(s);
+			return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
+		} catch (ParseException e) {
+			context.error("Malformed float: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
 			return null;
 		}
 
-	};
+	}
+
+	@Override
+	public IExpression caseColorLiteral(final ColorLiteral object) {
+		try {
+			Integer val = Integer.parseInt(EGaml.getKeyOf(object).substring(1), 16);
+			return factory.createConst(val, Types.get(IType.INT));
+		} catch (NumberFormatException e) {
+			context.error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
+			return null;
+		}
+	}
+
+	@Override
+	public IExpression caseStringLiteral(final StringLiteral object) {
+		return factory.createConst(StringUtils.unescapeJava(EGaml.getKeyOf(object)), Types.get(IType.STRING));
+	}
+
+	@Override
+	public IExpression caseBooleanLiteral(final BooleanLiteral object) {
+		String s = EGaml.getKeyOf(object);
+		if ( s == null ) { return null; }
+		return s.equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
+	}
+
+	@Override
+	public IExpression defaultCase(final EObject object) {
+		if ( !getContext().hasErrors() ) {
+			// In order to avoid too many "useless errors"
+			getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
+		}
+		return null;
+	}
 
 	private IExpression caseVar(final String s, final EObject object) {
 		if ( s == null ) {
@@ -705,30 +770,25 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		// HACK
-		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.get(IType.POINT),
-			Types.get(IType.FLOAT), Types.get(IType.INT), true, IVarExpression.TEMP, context); }
-
+		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.get(IType.POINT), true,
+			IVarExpression.TEMP, context); }
 		// HACK
 		if ( s.equals(EACH) ) { return each_expr; }
 		if ( s.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
-		// We try to find a species name from the name
-		IDescription temp_sd = null;
-		if ( context != null ) {
-			temp_sd = getContext().getSpeciesDescription(s);
-		}
-		if ( temp_sd != null ) { return factory.createConst(s, Types.get(IType.SPECIES), temp_sd.getType()); }
+		if ( isSpeciesName(s) ) { return factory.createConst(s, GamaType.from(getSpeciesContext(s))); }
+		if ( isTypeName(s) ) { return factory.createTypeExpression(context.getTypeNamed(s)); }
 		if ( s.equals(SELF) ) {
-			temp_sd = getContext().getSpeciesContext();
+			IDescription temp_sd = getContext().getSpeciesContext();
 			if ( temp_sd == null ) {
 				context.error("Unable to determine the species of self", IGamlIssue.GENERAL, object);
 				return null;
 			}
 			IType tt = temp_sd.getType();
-			return factory.createVar(SELF, tt, Types.NO_TYPE, Types.get(IType.STRING), true, IVarExpression.SELF, null);
+			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
 
-		temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
+		IDescription temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
 		if ( temp_sd != null ) {
 			if ( temp_sd instanceof SpeciesDescription ) {
 				SpeciesDescription remote_sd = context.getSpeciesContext();
@@ -736,8 +796,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 					SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
 
 					if ( remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd) ) {
-						// GuiUtils.debug("GamlExpressionCompiler.caseVar : var " + s + " used in " + remote_sd +
-						// " declared in " + temp_sd);
 						context.error(
 							"The variable " + s + " is not accessible in this context (" + remote_sd.getName() +
 								"), but in the context of " + found_sd.getName() +
@@ -923,6 +981,16 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return lastModel;
 	}
 
+	/**
+	 * Method getFacetExpression()
+	 * @see msi.gaml.expressions.IExpressionCompiler#getFacetExpression(msi.gaml.descriptions.IDescription,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public EObject getFacetExpression(final IDescription context, final EObject target) {
+		if ( target.eContainer() instanceof Facet ) { return target.eContainer(); }
+		return target;
+	}
 	//
 	// end-hqnghi
 	//

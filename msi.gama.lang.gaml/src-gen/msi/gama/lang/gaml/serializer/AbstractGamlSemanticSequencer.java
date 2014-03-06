@@ -55,6 +55,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringEvaluator;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeFakeDefinition;
+import msi.gama.lang.gaml.gaml.TypeInfo;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.Unary;
 import msi.gama.lang.gaml.gaml.Unit;
@@ -516,7 +517,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getExponentiationRule() ||
 				   context == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getFunctionRule() ||
 				   context == grammarAccess.getIfRule() ||
 				   context == grammarAccess.getIfAccess().getIfLeftAction_1_0() ||
 				   context == grammarAccess.getMultiplicationRule() ||
@@ -529,6 +529,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getUnaryRule() ||
 				   context == grammarAccess.getUnitRule() ||
 				   context == grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0()) {
+					sequence_AbstractRef_CastingFunction_Function(context, (Function) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getCastingFunctionRule()) {
+					sequence_CastingFunction(context, (Function) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getFunctionRule()) {
 					sequence_Function(context, (Function) semanticObject); 
 					return; 
 				}
@@ -931,6 +939,12 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 					return; 
 				}
 				else break;
+			case GamlPackage.TYPE_INFO:
+				if(context == grammarAccess.getTypeInfoRule()) {
+					sequence_TypeInfo(context, (TypeInfo) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.TYPE_REF:
 				if(context == grammarAccess.getTypeRefRule()) {
 					sequence_TypeRef(context, (TypeRef) semanticObject); 
@@ -1063,7 +1077,16 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (left=Access_Access_1_0_0 args=ExpressionList)
+	 *     ((action=ActionRef (parameters=Parameters | args=ExpressionList)) | (action=ActionRef type=TypeInfo args=ExpressionList))
+	 */
+	protected void sequence_AbstractRef_CastingFunction_Function(EObject context, Function semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     ((left=Access_Access_1_0_0 args=ExpressionList?) | left=Access_Access_1_0_0)
 	 */
 	protected void sequence_Access(EObject context, Access semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1298,6 +1321,15 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 		feeder.accept(grammarAccess.getCastAccess().getOpAsKeyword_1_0_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getCastAccess().getRightTypeRefParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (action=ActionRef type=TypeInfo args=ExpressionList)
+	 */
+	protected void sequence_CastingFunction(EObject context, Function semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1838,7 +1870,16 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (ref=[TypeDefinition|ID] (first=TypeRef second=TypeRef?)?)
+	 *     (first=TypeRef second=TypeRef?)
+	 */
+	protected void sequence_TypeInfo(EObject context, TypeInfo semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (ref=[TypeDefinition|ID] parameter=TypeInfo?)
 	 */
 	protected void sequence_TypeRef(EObject context, TypeRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

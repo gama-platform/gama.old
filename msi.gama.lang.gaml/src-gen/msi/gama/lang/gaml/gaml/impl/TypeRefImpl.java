@@ -5,9 +5,9 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.TypeDefinition;
+import msi.gama.lang.gaml.gaml.TypeInfo;
 import msi.gama.lang.gaml.gaml.TypeRef;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -26,8 +26,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getRef <em>Ref</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getFirst <em>First</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getSecond <em>Second</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.TypeRefImpl#getParameter <em>Parameter</em>}</li>
  * </ul>
  * </p>
  *
@@ -46,24 +45,14 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
   protected TypeDefinition ref;
 
   /**
-   * The cached value of the '{@link #getFirst() <em>First</em>}' containment reference.
+   * The cached value of the '{@link #getParameter() <em>Parameter</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getFirst()
+   * @see #getParameter()
    * @generated
    * @ordered
    */
-  protected Expression first;
-
-  /**
-   * The cached value of the '{@link #getSecond() <em>Second</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getSecond()
-   * @generated
-   * @ordered
-   */
-  protected Expression second;
+  protected TypeInfo parameter;
 
   /**
    * <!-- begin-user-doc -->
@@ -134,9 +123,9 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public Expression getFirst()
+  public TypeInfo getParameter()
   {
-    return first;
+    return parameter;
   }
 
   /**
@@ -144,13 +133,13 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetFirst(Expression newFirst, NotificationChain msgs)
+  public NotificationChain basicSetParameter(TypeInfo newParameter, NotificationChain msgs)
   {
-    Expression oldFirst = first;
-    first = newFirst;
+    TypeInfo oldParameter = parameter;
+    parameter = newParameter;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__FIRST, oldFirst, newFirst);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__PARAMETER, oldParameter, newParameter);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -161,68 +150,20 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setFirst(Expression newFirst)
+  public void setParameter(TypeInfo newParameter)
   {
-    if (newFirst != first)
+    if (newParameter != parameter)
     {
       NotificationChain msgs = null;
-      if (first != null)
-        msgs = ((InternalEObject)first).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__FIRST, null, msgs);
-      if (newFirst != null)
-        msgs = ((InternalEObject)newFirst).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__FIRST, null, msgs);
-      msgs = basicSetFirst(newFirst, msgs);
+      if (parameter != null)
+        msgs = ((InternalEObject)parameter).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__PARAMETER, null, msgs);
+      if (newParameter != null)
+        msgs = ((InternalEObject)newParameter).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__PARAMETER, null, msgs);
+      msgs = basicSetParameter(newParameter, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__FIRST, newFirst, newFirst));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Expression getSecond()
-  {
-    return second;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetSecond(Expression newSecond, NotificationChain msgs)
-  {
-    Expression oldSecond = second;
-    second = newSecond;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__SECOND, oldSecond, newSecond);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setSecond(Expression newSecond)
-  {
-    if (newSecond != second)
-    {
-      NotificationChain msgs = null;
-      if (second != null)
-        msgs = ((InternalEObject)second).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__SECOND, null, msgs);
-      if (newSecond != null)
-        msgs = ((InternalEObject)newSecond).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TYPE_REF__SECOND, null, msgs);
-      msgs = basicSetSecond(newSecond, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__SECOND, newSecond, newSecond));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.TYPE_REF__PARAMETER, newParameter, newParameter));
   }
 
   /**
@@ -235,10 +176,8 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
   {
     switch (featureID)
     {
-      case GamlPackage.TYPE_REF__FIRST:
-        return basicSetFirst(null, msgs);
-      case GamlPackage.TYPE_REF__SECOND:
-        return basicSetSecond(null, msgs);
+      case GamlPackage.TYPE_REF__PARAMETER:
+        return basicSetParameter(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -256,10 +195,8 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
       case GamlPackage.TYPE_REF__REF:
         if (resolve) return getRef();
         return basicGetRef();
-      case GamlPackage.TYPE_REF__FIRST:
-        return getFirst();
-      case GamlPackage.TYPE_REF__SECOND:
-        return getSecond();
+      case GamlPackage.TYPE_REF__PARAMETER:
+        return getParameter();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -277,11 +214,8 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
       case GamlPackage.TYPE_REF__REF:
         setRef((TypeDefinition)newValue);
         return;
-      case GamlPackage.TYPE_REF__FIRST:
-        setFirst((Expression)newValue);
-        return;
-      case GamlPackage.TYPE_REF__SECOND:
-        setSecond((Expression)newValue);
+      case GamlPackage.TYPE_REF__PARAMETER:
+        setParameter((TypeInfo)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -300,11 +234,8 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
       case GamlPackage.TYPE_REF__REF:
         setRef((TypeDefinition)null);
         return;
-      case GamlPackage.TYPE_REF__FIRST:
-        setFirst((Expression)null);
-        return;
-      case GamlPackage.TYPE_REF__SECOND:
-        setSecond((Expression)null);
+      case GamlPackage.TYPE_REF__PARAMETER:
+        setParameter((TypeInfo)null);
         return;
     }
     super.eUnset(featureID);
@@ -322,10 +253,8 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
     {
       case GamlPackage.TYPE_REF__REF:
         return ref != null;
-      case GamlPackage.TYPE_REF__FIRST:
-        return first != null;
-      case GamlPackage.TYPE_REF__SECOND:
-        return second != null;
+      case GamlPackage.TYPE_REF__PARAMETER:
+        return parameter != null;
     }
     return super.eIsSet(featureID);
   }

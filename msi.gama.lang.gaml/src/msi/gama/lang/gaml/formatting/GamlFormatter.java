@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,14 +18,10 @@
  */
 package msi.gama.lang.gaml.formatting;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
-
 import org.eclipse.xtext.Keyword;
-import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
-import org.eclipse.xtext.formatting.impl.FormattingConfig;
+import org.eclipse.xtext.formatting.impl.*;
 
 /**
  * This class contains custom formatting description.
@@ -42,7 +38,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 	 */
 
 	@Override
-	protected void configureFormatting(FormattingConfig c) {
+	protected void configureFormatting(final FormattingConfig c) {
 		GamlGrammarAccess g = getGrammarAccess();
 
 		// c.setLinewrap(0, 1, 2).before(g.getSL_COMMENTRule());
@@ -51,13 +47,12 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(1).after(g.getImportRule());
 
 		Set<Keyword> handled = new HashSet();
-		handled.add(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
-		handled.add(g.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
+		handled.add(g.getTypeInfoAccess().getLessThanSignKeyword_0());
+		handled.add(g.getTypeInfoAccess().getGreaterThanSignKeyword_3());
 		handled.add(g.getUnaryAccess().getOpHyphenMinusKeyword_1_1_1_0_0_0());
 
 		// Operators are surrounded by a space
-		for ( Keyword k : g.findKeywords(">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+",
-			"-", "/", "*") ) {
+		for ( Keyword k : g.findKeywords(">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-", "/", "*") ) {
 			if ( handled.contains(k) ) {
 				continue;
 			}
@@ -65,7 +60,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		}
 
 		// No space after these elements
-		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "¡", "!") ) {
+		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "ï¿½", "!") ) {
 			c.setNoSpace().after(k);
 		}
 		// No space before these ones
@@ -85,9 +80,9 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		c.setNoSpace().after(g.getUnaryAccess().getOpHyphenMinusKeyword_1_1_1_0_0_0());
 
 		// The "<" and ">" part of the type references must alse be handled differently (no space)
-		c.setNoSpace().after(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
-		c.setNoSpace().before(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
-		c.setNoSpace().before(g.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
+		c.setNoSpace().after(g.getTypeInfoAccess().getLessThanSignKeyword_0());
+		c.setNoSpace().before(g.getTypeInfoAccess().getLessThanSignKeyword_0());
+		c.setNoSpace().before(g.getTypeInfoAccess().getGreaterThanSignKeyword_3());
 
 		// And the ":" in ternary if should be surrounded by spaces
 		c.setSpace(" ").before(g.getIfAccess().getColonKeyword_1_3_0());
@@ -108,20 +103,13 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		// Functions
 		c.setLinewrap(1).after(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
 		c.setLinewrap(1).before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
-		c.setIndentationDecrement()
-			.before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
+		c.setIndentationDecrement().before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
 		// Equation blocks are defined differently (of course ! It would be too simple...)
-		c.setLinewrap().after(
-				g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
-		c.setIndentationIncrement().after(
-				g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
-		c.setLinewrap(2).after(
-				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
-		c.setLinewrap(1).before(
-				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
-		c.setIndentationDecrement()
-.before(
-				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
+		c.setLinewrap().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
+		c.setIndentationIncrement().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
+		c.setLinewrap(2).after(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
+		c.setLinewrap(1).before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
+		c.setIndentationDecrement().before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
 
@@ -136,7 +124,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		return (GamlGrammarAccess) super.getGrammarAccess();
 	}
 
-	private void handleComments(FormattingConfig c, GamlGrammarAccess f) {
+	private void handleComments(final FormattingConfig c, final GamlGrammarAccess f) {
 		c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule());
 		c.setLinewrap(0, 1, 2).before(f.getML_COMMENTRule());
 		c.setLinewrap(0, 1, 1).after(f.getML_COMMENTRule());

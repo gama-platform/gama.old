@@ -42,8 +42,13 @@ import org.eclipse.xtext.validation.Check;
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	static {
+		GuiUtils.debug(">> Registering GAML expression compiler.");
 		GAML.getExpressionFactory().registerParser(new GamlExpressionCompiler());
 	}
+
+	// static {
+	// GAML.getExpressionFactory().registerParser(new GamlExpressionCompiler());
+	// }
 
 	private final static XtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
 
@@ -153,14 +158,15 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			final URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			try {
 				final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
-				imports.add(ir);
+				if ( !ir.getErrors().isEmpty() ) {
+					add(new GamlCompilationError("Imported file " + ir.getURI().lastSegment() +
+						" has errors. Fix them first.", IGamlIssue.IMPORT_ERROR, imp, false, false));
+				} else {
+					imports.add(ir);
+				}
 			} catch (Exception e) {
 				GuiUtils.debug("Error in validation: XText cannot load " + iu);
 			}
-			// if ( !ir.getErrors().isEmpty() ) {
-			// resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
-			// new SyntacticElement(IKeyword.INCLUDE, imp), true);
-			// }
 
 		}
 		return imports;

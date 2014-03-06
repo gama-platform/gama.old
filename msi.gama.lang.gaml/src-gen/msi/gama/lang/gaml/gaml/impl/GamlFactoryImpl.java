@@ -94,8 +94,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FACET: return createFacet();
       case GamlPackage.EXPRESSION: return createExpression();
       case GamlPackage.ARGUMENT_PAIR: return createArgumentPair();
+      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
+      case GamlPackage.TYPE_INFO: return createTypeInfo();
       case GamlPackage.GAML_DEFINITION: return createGamlDefinition();
       case GamlPackage.EQUATION_DEFINITION: return createEquationDefinition();
       case GamlPackage.TYPE_DEFINITION: return createTypeDefinition();
@@ -121,7 +123,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.DOT: return createDot();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
-      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.PARAMETER: return createParameter();
       case GamlPackage.UNIT_NAME: return createUnitName();
       case GamlPackage.TYPE_REF: return createTypeRef();
@@ -441,6 +442,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Function createFunction()
+  {
+    FunctionImpl function = new FunctionImpl();
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ExpressionList createExpressionList()
   {
     ExpressionListImpl expressionList = new ExpressionListImpl();
@@ -456,6 +468,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     VariableRefImpl variableRef = new VariableRefImpl();
     return variableRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TypeInfo createTypeInfo()
+  {
+    TypeInfoImpl typeInfo = new TypeInfoImpl();
+    return typeInfo;
   }
 
   /**
@@ -731,17 +754,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     PointImpl point = new PointImpl();
     return point;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Function createFunction()
-  {
-    FunctionImpl function = new FunctionImpl();
-    return function;
   }
 
   /**

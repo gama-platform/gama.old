@@ -65,6 +65,7 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TerminalExpression;
 import msi.gama.lang.gaml.gaml.TypeDefinition;
 import msi.gama.lang.gaml.gaml.TypeFakeDefinition;
+import msi.gama.lang.gaml.gaml.TypeInfo;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.Unary;
 import msi.gama.lang.gaml.gaml.Unit;
@@ -284,6 +285,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass functionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass expressionListEClass = null;
 
   /**
@@ -292,6 +300,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass variableRefEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass typeInfoEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -467,13 +482,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass pointEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass functionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1147,6 +1155,56 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getFunction()
+  {
+    return functionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Action()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Parameters()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Args()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Type()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getExpressionList()
   {
     return expressionListEClass;
@@ -1180,6 +1238,36 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EReference getVariableRef_Ref()
   {
     return (EReference)variableRefEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTypeInfo()
+  {
+    return typeInfoEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTypeInfo_First()
+  {
+    return (EReference)typeInfoEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTypeInfo_Second()
+  {
+    return (EReference)typeInfoEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1507,46 +1595,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getFunction()
-  {
-    return functionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getFunction_Action()
-  {
-    return (EReference)functionEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getFunction_Parameters()
-  {
-    return (EReference)functionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getFunction_Args()
-  {
-    return (EReference)functionEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getParameter()
   {
     return parameterEClass;
@@ -1607,19 +1655,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getTypeRef_First()
+  public EReference getTypeRef_Parameter()
   {
     return (EReference)typeRefEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getTypeRef_Second()
-  {
-    return (EReference)typeRefEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1851,11 +1889,21 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     argumentPairEClass = createEClass(ARGUMENT_PAIR);
 
+    functionEClass = createEClass(FUNCTION);
+    createEReference(functionEClass, FUNCTION__ACTION);
+    createEReference(functionEClass, FUNCTION__PARAMETERS);
+    createEReference(functionEClass, FUNCTION__ARGS);
+    createEReference(functionEClass, FUNCTION__TYPE);
+
     expressionListEClass = createEClass(EXPRESSION_LIST);
     createEReference(expressionListEClass, EXPRESSION_LIST__EXPRS);
 
     variableRefEClass = createEClass(VARIABLE_REF);
     createEReference(variableRefEClass, VARIABLE_REF__REF);
+
+    typeInfoEClass = createEClass(TYPE_INFO);
+    createEReference(typeInfoEClass, TYPE_INFO__FIRST);
+    createEReference(typeInfoEClass, TYPE_INFO__SECOND);
 
     gamlDefinitionEClass = createEClass(GAML_DEFINITION);
     createEAttribute(gamlDefinitionEClass, GAML_DEFINITION__NAME);
@@ -1914,11 +1962,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     pointEClass = createEClass(POINT);
     createEReference(pointEClass, POINT__Z);
 
-    functionEClass = createEClass(FUNCTION);
-    createEReference(functionEClass, FUNCTION__ACTION);
-    createEReference(functionEClass, FUNCTION__PARAMETERS);
-    createEReference(functionEClass, FUNCTION__ARGS);
-
     parameterEClass = createEClass(PARAMETER);
     createEAttribute(parameterEClass, PARAMETER__BUILT_IN_FACET_KEY);
 
@@ -1927,8 +1970,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     typeRefEClass = createEClass(TYPE_REF);
     createEReference(typeRefEClass, TYPE_REF__REF);
-    createEReference(typeRefEClass, TYPE_REF__FIRST);
-    createEReference(typeRefEClass, TYPE_REF__SECOND);
+    createEReference(typeRefEClass, TYPE_REF__PARAMETER);
 
     skillRefEClass = createEClass(SKILL_REF);
     createEReference(skillRefEClass, SKILL_REF__REF);
@@ -2007,6 +2049,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     argumentDefinitionEClass.getESuperTypes().add(this.getVarDefinition());
     facetEClass.getESuperTypes().add(this.getVarDefinition());
     argumentPairEClass.getESuperTypes().add(this.getExpression());
+    functionEClass.getESuperTypes().add(this.getExpression());
     expressionListEClass.getESuperTypes().add(this.getExpression());
     variableRefEClass.getESuperTypes().add(this.getExpression());
     equationDefinitionEClass.getESuperTypes().add(this.getGamlDefinition());
@@ -2034,7 +2077,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     dotEClass.getESuperTypes().add(this.getExpression());
     arrayEClass.getESuperTypes().add(this.getExpression());
     pointEClass.getESuperTypes().add(this.getExpression());
-    functionEClass.getESuperTypes().add(this.getExpression());
     parameterEClass.getESuperTypes().add(this.getExpression());
     unitNameEClass.getESuperTypes().add(this.getExpression());
     typeRefEClass.getESuperTypes().add(this.getExpression());
@@ -2128,11 +2170,21 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(argumentPairEClass, ArgumentPair.class, "ArgumentPair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+    initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getFunction_Action(), this.getExpression(), null, "action", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFunction_Parameters(), this.getParameters(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFunction_Args(), this.getExpressionList(), null, "args", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFunction_Type(), this.getTypeInfo(), null, "type", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(expressionListEClass, ExpressionList.class, "ExpressionList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExpressionList_Exprs(), this.getExpression(), null, "exprs", null, 0, -1, ExpressionList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(variableRefEClass, VariableRef.class, "VariableRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getVariableRef_Ref(), this.getVarDefinition(), null, "ref", null, 0, 1, VariableRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(typeInfoEClass, TypeInfo.class, "TypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getTypeInfo_First(), this.getExpression(), null, "first", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTypeInfo_Second(), this.getExpression(), null, "second", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(gamlDefinitionEClass, GamlDefinition.class, "GamlDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getGamlDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, GamlDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2191,11 +2243,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(pointEClass, Point.class, "Point", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getPoint_Z(), this.getExpression(), null, "z", null, 0, 1, Point.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getFunction_Action(), this.getExpression(), null, "action", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFunction_Parameters(), this.getParameters(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFunction_Args(), this.getExpressionList(), null, "args", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getParameter_BuiltInFacetKey(), ecorePackage.getEString(), "builtInFacetKey", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -2204,8 +2251,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(typeRefEClass, TypeRef.class, "TypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getTypeRef_Ref(), this.getTypeDefinition(), null, "ref", null, 0, 1, TypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getTypeRef_First(), this.getExpression(), null, "first", null, 0, 1, TypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getTypeRef_Second(), this.getExpression(), null, "second", null, 0, 1, TypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTypeRef_Parameter(), this.getTypeInfo(), null, "parameter", null, 0, 1, TypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(skillRefEClass, SkillRef.class, "SkillRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSkillRef_Ref(), this.getSkillFakeDefinition(), null, "ref", null, 0, 1, SkillRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

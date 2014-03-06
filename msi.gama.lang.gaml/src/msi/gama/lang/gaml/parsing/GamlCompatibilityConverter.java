@@ -28,13 +28,8 @@ public class GamlCompatibilityConverter {
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	public static ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
-		if ( !(root instanceof Model) ) {
-			// GuiUtils.debug("GamlCompatibilityConverter.buildSyntacticContents : root is not a Model");
-			return null;
-		}
+		if ( !(root instanceof Model) ) { return null; }
 		Model m = (Model) root;
-		// if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
-		// " appears to be null. Please debug to understand the cause."); }
 		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m));
 		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
@@ -50,6 +45,11 @@ public class GamlCompatibilityConverter {
 
 	private static void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
 		Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
+		errors.add(d);
+	}
+
+	private static void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
+		Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "", message, object, null, 0, null);
 		errors.add(d);
 	}
 
@@ -76,12 +76,17 @@ public class GamlCompatibilityConverter {
 			S_Definition def = (S_Definition) stm;
 			// If we define a variable with this statement
 			TypeRef t = (TypeRef) def.getTkey();
-			convertType(elt, t, errors);
+
+			// 20/01/14: The type is now passed plainly
+			if ( t != null ) {
+				addFacet(elt, TYPE, convExpr(t, errors), errors);
+			}
+			// convertType(elt, t, errors);
 			if ( t != null && doesNotDefineAttributes(upper.getKeyword()) ) {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
-				addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
+				// addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
 				keyword = LET;
 			} else {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
@@ -89,7 +94,7 @@ public class GamlCompatibilityConverter {
 				Block b = def.getBlock();
 				if ( b != null && b.getFunction() == null ) {
 					elt.setKeyword(ACTION);
-					addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
+					// addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
 					keyword = ACTION;
 				}
 				convertArgs(def.getArgs(), elt, errors);
@@ -138,6 +143,8 @@ public class GamlCompatibilityConverter {
 				addWarning("Facet 'type' is missing, set by default to 'unknown'", stm, errors);
 				elt.setKeyword(UNKNOWN);
 			} else {
+
+				// WARNING FALSE (type is now more TypeRef)
 				elt.setKeyword(type.toString());
 			}
 			if ( keyword.equals(CONST) ) {
@@ -149,7 +156,11 @@ public class GamlCompatibilityConverter {
 			}
 		} else if ( stm instanceof S_Experiment ) {
 			// We do it also for experiments, and change their name
-			// String type = elt.getLabel(TYPE);
+			IExpressionDescription type = elt.getExpressionAt(TYPE);
+			if ( type == null ) {
+				addInfo("Facet 'type' is missing, set by default to 'gui'", stm, errors);
+				elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
+			}
 			// if ( type == null ) {
 			// addWarning("Facet 'type' is missing, set by default to 'gui'", stm, errors);
 			// elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
@@ -173,38 +184,12 @@ public class GamlCompatibilityConverter {
 		} else if ( stm instanceof S_Equations ) {
 			convStatements(elt, EGaml.getEquationsOf((S_Equations) stm), errors);
 		}
-
 		// We add the dependencies (only for variable declarations)
 		assignDependencies(stm, keyword, elt, errors);
 		// We convert the block of statements (if any)
 		convertBlock(stm, elt, errors);
 
 		return elt;
-	}
-
-	private static void convertType(final ISyntacticElement elt, final TypeRef t, final Set<Diagnostic> errors) {
-		if ( t != null ) {
-			TypeRef first = (TypeRef) t.getFirst();
-			if ( first == null ) { return; }
-			TypeRef second = (TypeRef) t.getSecond();
-			// Translation of "type<contents> ..." to "type of: contents..."
-			if ( second == null ) {
-				String type = EGaml.getKey.caseTypeRef(first);
-				if ( type != null ) {
-					addFacet(elt, OF, convertToConstantString(null, type), errors);
-				}
-			} else {
-				String type = EGaml.getKey.caseTypeRef(second);
-				if ( type != null ) {
-					addFacet(elt, OF, convertToConstantString(null, type), errors);
-					// Translation of "type<i, c> ..." to "type of: c index: i..."
-					type = EGaml.getKey.caseTypeRef(first);
-					if ( type != null ) {
-						addFacet(elt, INDEX, convertToConstantString(null, type), errors);
-					}
-				}
-			}
-		}
 	}
 
 	private static void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
@@ -223,6 +208,9 @@ public class GamlCompatibilityConverter {
 	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 		final Set<Diagnostic> errors) {
 		if ( e.hasFacet(key) ) {
+			// if ( key.equals(TYPE) ) {
+			// GuiUtils.debug("GamlCompatibilityConverter.addFacet:");
+			// }
 			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
 				errors);
 		}
@@ -237,17 +225,19 @@ public class GamlCompatibilityConverter {
 			if ( s != null && !s.isEmpty() ) {
 				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
 			}
-			if ( !(stm instanceof S_Var) ) {
-				IExpressionDescription type = elt.getExpressionAt(TYPE);
-				if ( type != null ) {
-					if ( type.toString().equals(keyword) ) {
-						addWarning("Duplicate declaration of type", stm, errors);
-					} else {
-						addWarning("Conflicting declaration of type (" + type + " and " + keyword +
-							"), only the last one will be considered", stm, errors);
-					}
-				}
-			}
+			// 25/01/14: this test is cancelled for the moment, as the facet type is now defined earlier when dealing
+			// with type var_name;
+			// if ( !(stm instanceof S_Var) ) {
+			// IExpressionDescription type = elt.getExpressionAt(TYPE);
+			// if ( type != null ) {
+			// if ( type.toString().equals(keyword) ) {
+			// addWarning("Duplicate declaration of type", stm, errors);
+			// } else {
+			// addWarning("Conflicting declaration of type (" + type + " and " + keyword +
+			// "), only the last one will be considered", stm, errors);
+			// }
+			// }
+			// }
 		}
 	}
 
@@ -271,8 +261,9 @@ public class GamlCompatibilityConverter {
 				ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
 				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
 				TypeRef type = (TypeRef) def.getType();
-				addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
-				convertType(arg, type, errors);
+				addFacet(arg, TYPE, convExpr(type, errors), errors);
+				// addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
+				// convertType(arg, type, errors);
 				Expression e = def.getDefault();
 				if ( e != null ) {
 					addFacet(arg, DEFAULT, convExpr(e, errors), errors);
@@ -285,45 +276,64 @@ public class GamlCompatibilityConverter {
 	private static String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
 		final Expression expr, final Set<Diagnostic> errors) {
 		IExpressionDescription value = convExpr(stm.getValue(), errors);
-		if ( keyword.equals("<-") || keyword.equals(SET) ) {
+		if ( keyword.endsWith("<-") || keyword.equals(SET) ) {
 			// Translation of "container[index] <- value" to
 			// "put item: value in: container at: index"
+			// 20/1/14: Translation of container[index] +<- value" to
+			// "add item: value in: container at: index"
 			if ( expr instanceof Access ) {
-				elt.setKeyword(PUT);
+				String kw = keyword.equals("+<-") ? ADD : PUT;
+				String to = keyword.equals("+<-") ? TO : IN;
+				elt.setKeyword(kw);
 				addFacet(elt, ITEM, value, errors);
-				addFacet(elt, IN, convExpr(expr.getLeft(), errors), errors);
+				addFacet(elt, to, convExpr(expr.getLeft(), errors), errors);
 				List<Expression> args = EGaml.getExprsOf(((Access) expr).getArgs());
-				int size = args.size();
-				if ( size == 1 ) { // Integer index
-					addFacet(elt, AT, convExpr(args.get(0), errors), errors);
-				} else if ( size > 1 ) { // Point index
-					IExpressionDescription p =
-						new OperatorExpressionDescription("<->", convExpr(args.get(0), errors), convExpr(args.get(1),
-							errors));
-					addFacet(elt, AT, p, errors);
-				} else {// size = 0 ? maybe "all: true" by default
+				if ( args.size() == 0 ) {
+					// Add facet all: true when no index is provided
 					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
+				} else {
+					if ( args.size() == 1 ) { // Integer index
+						addFacet(elt, AT, convExpr(args.get(0), errors), errors);
+					} else { // Point index
+						IExpressionDescription p =
+							new OperatorExpressionDescription(POINT, convExpr(args.get(0), errors), convExpr(
+								args.get(1), errors));
+						addFacet(elt, AT, p, errors);
+					}
 				}
-				keyword = PUT;
+				keyword = kw;
 			} else {
 				// Translation of "var <- value" to "set var value: value"
 				elt.setKeyword(SET);
 				addFacet(elt, VALUE, value, errors);
 				keyword = SET;
 			}
-		} else if ( keyword.equals("<<") || keyword.equals("+=") || keyword.equals("++") ) {
-			// Translation of "container << item" or "container ++ item" to
-			// "add item: item to: container"
+		} else if ( keyword.startsWith("<<") || keyword.equals("<+") ) {
+			// Translation of "container <+ item" or "container << item" to "add item: item to: container"
+			// 08/01/14: Addition of the "<<+" (add all)
 			elt.setKeyword(ADD);
 			addFacet(elt, TO, convExpr(expr, errors), errors);
 			addFacet(elt, ITEM, value, errors);
+			if ( keyword.equals("<<+") ) {
+				addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
+			}
 			keyword = ADD;
-		} else if ( keyword.equals("-=") || keyword.equals(">>") || keyword.equals("--") ) {
-			// Translation of "container >> item" or "container -- item" to
+		} else if ( keyword.startsWith(">>") || keyword.equals(">-") ) {
+			// Translation of "container >> item" or "container >- item" to
 			// "remove item: item from: container"
+			// 08/01/14: Addition of the ">>-" keyword (remove all)
 			elt.setKeyword(REMOVE);
-			addFacet(elt, FROM, convExpr(expr, errors), errors);
-			addFacet(elt, ITEM, value, errors);
+			// 20/01/14: Addition of the access [] to remove from the index
+			if ( expr instanceof Access && EGaml.getExprsOf(((Access) expr).getArgs()).size() == 0 ) {
+				addFacet(elt, FROM, convExpr(expr.getLeft(), errors), errors);
+				addFacet(elt, INDEX, value, errors);
+			} else {
+				addFacet(elt, FROM, convExpr(expr, errors), errors);
+				addFacet(elt, ITEM, value, errors);
+			}
+			if ( keyword.equals(">>-") ) {
+				addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
+			}
 			keyword = REMOVE;
 		} else if ( keyword.equals(EQUATION_OP) ) {
 			// conversion of left member (either a var or a function)
@@ -351,12 +361,8 @@ public class GamlCompatibilityConverter {
 				fname = keyword.equals(LET) || keyword.equals(SET) ? VALUE : INIT;
 			} else if ( fname.equals("->") ) {
 				fname = FUNCTION;
-			} else if ( fname.equals(TYPE) ) {
-				// We convert type: ss<tt> to type: ss of: tt
-				if ( f.getExpr() instanceof TypeRef ) {
-					convertType(elt, (TypeRef) f.getExpr(), errors);
-				}
 			}
+
 			// We compute (and convert) the expression attached to the facet
 			FacetProto fp = p == null ? null : p.getPossibleFacets().get(fname);
 			boolean label = fp == null ? false : fp.isLabel;
@@ -398,8 +404,9 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
-		if ( expr != null ) { return EcoreBasedExpressionDescription.create(expr, errors); }
-		return null;
+		if ( expr == null ) { return null; }
+		IExpressionDescription result = EcoreBasedExpressionDescription.create(expr, errors);
+		return result;
 	}
 
 	private static final IExpressionDescription convExpr(final Facet facet, final boolean label,

@@ -303,4 +303,12 @@ public class EGaml {
 		return injector.get(c);
 	}
 
+	public static Statement getStatement(final EObject o) {
+		if ( o instanceof Statement ) { return (Statement) o; }
+		if ( o instanceof TypeRef && o.eContainer() instanceof S_Definition &&
+			((S_Definition) o.eContainer()).getTkey() == o ) { return (Statement) o.eContainer(); }
+		return null;
+
+	}
+
 }
