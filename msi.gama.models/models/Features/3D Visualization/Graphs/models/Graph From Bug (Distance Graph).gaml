@@ -16,7 +16,7 @@ global {
 		ask edge {
 			do die;
 		}
-		myGraph <- as_distance_graph(node, map(["distance"::distance, "species"::edge]));
+		myGraph <- as_distance_graph(node, ["distance"::distance, "species"::edge]);
 	}
 }
 
