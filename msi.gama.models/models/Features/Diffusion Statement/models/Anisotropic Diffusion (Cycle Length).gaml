@@ -39,23 +39,23 @@ entities {
 	grid cells height: taille width: taille {
 		float phero  <- 0.0;
 		rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
-		float grid_value update: phero * 100;
+		//float grid_value update: phero * 100;
 	} 
 	
 	grid quick_cells height: taille width: taille {
 		float phero  <- 0.0;
 		rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
-		float grid_value update: phero * 100;
+		//float grid_value update: phero * 100;
 	} 
 }
 
 experiment diffusion type: gui {
 	output {
 		display a type: opengl {
-			grid cells elevation: true triangulation: true;
+			grid cells elevation: phero * 100 triangulation: true;
 		}
 		display quick type: opengl {
-			grid quick_cells elevation: true triangulation: true;
+			grid quick_cells elevation: phero * 100 triangulation: true;
 		}
 	}
 }
