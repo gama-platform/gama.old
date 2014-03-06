@@ -47,6 +47,12 @@ public class IUnits {
 
 	public final static double to_rad = Math.PI / 180d;
 
+	public final static double nan = Double.NaN;
+	public final static double infinity = Double.POSITIVE_INFINITY;
+	public final static double min_float = Double.MIN_VALUE;
+	public final static double max_float = Double.MAX_VALUE;
+	public final static double min_int = Integer.MIN_VALUE;
+	public final static double max_int = Integer.MAX_VALUE;
 	/*
 	 * 
 	 * Distance & size conversions
