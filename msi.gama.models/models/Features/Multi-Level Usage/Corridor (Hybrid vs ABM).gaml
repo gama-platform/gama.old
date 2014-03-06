@@ -74,7 +74,7 @@ entities {
 			
 			location <- loc;
 			target_location <- {environment_width, location.y};
-			heading <- (self) towards (target_location);
+			heading <- self towards (target_location);
 		}
 		
 		reflex move_left {
@@ -194,11 +194,11 @@ entities {
 				release tobe_released_pedestrians as: pedestrian in: world returns: released_pedestrians;
 				
 				loop rp over: released_pedestrians {
-					float outgoing_speed <- max_speed * ( 1 - ((pedestrian (rp)).outgoing_density / Pmax));
+					float outgoing_speed <- max_speed * ( 1 - (rp.outgoing_density / Pmax));
 					float sigma <- outgoing_speed / 10;
 					
-					(pedestrian (rp)).speed <- outgoing_speed + ( gauss({0, sigma}));
-					(pedestrian (rp)).location <- {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_1).location).y};
+					rp.speed <- outgoing_speed + ( gauss({0, sigma}));
+					rp.location <- {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_1).location).y};
 				}
 			}
 		}
