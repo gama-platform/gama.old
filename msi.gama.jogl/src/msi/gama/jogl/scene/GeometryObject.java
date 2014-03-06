@@ -3,7 +3,7 @@ package msi.gama.jogl.scene;
 import java.awt.Color;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -12,7 +12,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public Geometry geometry;
 	public IAgent agent;
 	public double z_layer;
-	public int layerId;
 	public IShape.Type type; // see IShape.Type constants
 	public Color border;
 	public Boolean isTextured;
@@ -20,12 +19,13 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public boolean rounded;
 	public double ratio;
+	private final MyTexture[] textures;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
-		final IList<String> textureFileNames, final int angle, final double height, final GamaPoint offset,
-		final GamaPoint scale, final boolean rounded, final IShape.Type type,final double ratio) {
-		super(color, offset, scale, alpha);
+		final IList<String> textureFileNames, final int angle, final double height, final boolean rounded,
+		final IShape.Type type, final double ratio) {
+		super(color, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
 			this.fill = false;
@@ -49,12 +49,16 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer = z_layer;
-		this.layerId = layerId;
 		this.type = type;
 		this.fill = fill;
 		this.border = border;
 		this.isTextured = isTextured;
 		this.textureFileNames = textureFileNames;
+		if ( textureFileNames == null || textureFileNames.isEmpty() ) {
+			textures = null;
+		} else {
+			textures = new MyTexture[textureFileNames.size()];
+		}
 		this.height = height;
 		this.rounded = rounded;
 		this.ratio = ratio;
@@ -97,7 +101,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgents(agent, layerId - 1);
+					renderer.displaySurface.selectAgents(agent);
 				}
 			}
 			super.draw(drawer, picking);
@@ -106,4 +110,27 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 			super.draw(drawer, picking);
 		}
 	}
+
+	@Override
+	protected MyTexture computeTexture(final JOGLAWTGLRenderer renderer) {
+		return getTexture(renderer, 0);
+	}
+
+	public MyTexture getTexture(final JOGLAWTGLRenderer renderer, final int order) {
+		if ( textures == null ) { return null; }
+		if ( order < 0 || order > textures.length - 1 ) { return null; }
+		if ( textures[order] == null ) {
+			textures[order] = computeTexture(renderer, order);
+		}
+		return textures[order];
+	}
+
+	private MyTexture computeTexture(final JOGLAWTGLRenderer renderer, final int order) {
+		return renderer.getScene().createTexture(textureFileNames.get(order), false);
+	}
+
+	public boolean hasTextures() {
+		return textures != null && textures.length > 1;
+	}
+
 }

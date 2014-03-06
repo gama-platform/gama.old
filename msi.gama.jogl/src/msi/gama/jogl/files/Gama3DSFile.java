@@ -67,7 +67,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	// Verified
 	@Override
 	public void fillBuffer(final IScope scope) {
-		buffer = new GamaList();
+		setBuffer(new GamaList());
 		try {
 			FileInputStream fileInputStream = new FileInputStream(getFile());
 			dataInputStream = new DataInputStream(fileInputStream);
@@ -83,7 +83,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		}
 		for ( Obj obj : objects ) {
 			Geometry g = GeometryUtils.FACTORY.buildGeometry(obj.faces);
-			((GamaList) buffer).add(new GamaShape(g));
+			((GamaList) getBuffer()).add(new GamaShape(g));
 		}
 		
 	}

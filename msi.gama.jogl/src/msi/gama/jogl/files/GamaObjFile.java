@@ -42,7 +42,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		try {
-			buffer = new GamaList();
+			setBuffer(new GamaList());
 			final BufferedReader br = new BufferedReader(new FileReader(getFile()));
 			IList<IShape> vertices = new GamaList();
 			String newline;
@@ -92,7 +92,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						for ( int i = 0; i < v.length; i++ ) {
 							face.add(vertices.get(v[i]-1)); // Correct only if all the vertices have been loaded before
 						}
-						((IList) buffer).add(GamaGeometryType.buildPolygon(face));
+						((IList) getBuffer()).add(GamaGeometryType.buildPolygon(face));
 					}
 				}
 			}

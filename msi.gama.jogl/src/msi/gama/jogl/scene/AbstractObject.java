@@ -1,7 +1,7 @@
 package msi.gama.jogl.scene;
 
 import java.awt.Color;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 
 public abstract class AbstractObject implements ISceneObject {
 
@@ -9,26 +9,38 @@ public abstract class AbstractObject implements ISceneObject {
 	static Color pickedColor = Color.red;
 
 	private Color color;
-	private GamaPoint offset = new GamaPoint(0, 0, 0);
-	private GamaPoint scale = new GamaPoint(1, 1, 1);
 	private Double z_fighting_id = 0.0;
 	private Double alpha = 1d;
 	public int pickingIndex = index++;
 	public boolean picked = false;
 	public boolean fill = true;
+	private MyTexture texture;
 
-	public AbstractObject(final Color c, final GamaPoint o, final GamaPoint s, final Double a) {
+	public AbstractObject(final Color c, final Double a) {
 		setColor(c);
-		if ( o != null ) {
-			setOffset(o);
-		}
-		if ( s != null ) {
-			setScale(s);
-		}
 		if ( a != null ) {
 			setAlpha(a);
 		}
 	}
+
+	public MyTexture getTexture(final JOGLAWTGLRenderer renderer) {
+		if ( texture == null ) {
+			setTexture(computeTexture(renderer));
+		}
+		return texture;
+	}
+
+	/**
+	 * @param computeTexture
+	 */
+	private void setTexture(final MyTexture computedTexture) {
+		texture = computedTexture;
+	}
+
+	/**
+	 * @return
+	 */
+	abstract protected MyTexture computeTexture(final JOGLAWTGLRenderer renderer);
 
 	@Override
 	public void draw(final ObjectDrawer drawer, final boolean picking) {
@@ -59,24 +71,15 @@ public abstract class AbstractObject implements ISceneObject {
 		return alpha;
 	}
 
-	public void setAlpha(Double alpha) {
+	public void setAlpha(final Double alpha) {
 		this.alpha = alpha;
 	}
 
-	public GamaPoint getScale() {
-		return scale;
-	}
-
-	public void setScale(GamaPoint scale) {
-		this.scale = scale;
-	}
-
-	public GamaPoint getOffset() {
-		return offset;
-	}
-
-	public void setOffset(GamaPoint offset) {
-		this.offset = offset;
+	public void dispose() {
+		if ( texture != null ) {
+			texture.dispose();
+			texture = null;
+		}
 	}
 
 }

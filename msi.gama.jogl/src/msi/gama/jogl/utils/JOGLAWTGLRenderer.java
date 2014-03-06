@@ -13,7 +13,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.*;
 
-
 public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public GLU glu;
@@ -41,7 +40,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private Color diffuseLightValue;
 	private GamaPoint diffuseLightPosition;
 
-
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
 
@@ -54,7 +52,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// facet "show_fps"
 	private boolean showFPS = false;
 	// facet "aggregated"
-	private int aggregated = 0;
+	// private int aggregated = 0;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
 	// preference "drawNormal"
@@ -63,9 +61,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean CubeDisplay = true;
 
 	public boolean triangulation = false;
-	
+
 	public boolean computeNormal = true;
-	
+
 	public boolean drawDiffuseLight = true;
 
 	public boolean drawAxes = true;
@@ -136,9 +134,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtilLight.enableDepthTest(gl);
 
 		// Set up the lighting for Light-1
-		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
-			ambientLightValue, diffuseLightValue);
-	
+		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(),
+			(float) displaySurface.getEnvHeight(), ambientLightValue, diffuseLightValue);
+
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -196,25 +194,21 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_LIGHTING);
 			}
 
-			
-			
-
 			GLUtilLight.UpdateAmbiantLightValue(gl, glu, ambientLightValue);
 			GLUtilLight.UpdateDiffuseLightValue(gl, glu, diffuseLightValue);
-			
+
 			float[] light0Position = new float[4];
 			light0Position[0] = (float) diffuseLightPosition.x;
 			light0Position[1] = -(float) diffuseLightPosition.y;
 			light0Position[2] = (float) diffuseLightPosition.z;
 			light0Position[3] = 0.0f;
-			
-			if(drawDiffuseLight){
-				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu,getMaxEnvDim()/10);
-			}
-			
-			//System.out.println("x:" + light0Position[0] + "y:" + light0Position[1] + "z:" + light0Position[2] );
-			GLUtilLight.UpdateDiffuseLightPosition(gl, glu, light0Position);
 
+			if ( drawDiffuseLight ) {
+				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu, getMaxEnvDim() / 10);
+			}
+
+			// System.out.println("x:" + light0Position[0] + "y:" + light0Position[1] + "z:" + light0Position[2] );
+			GLUtilLight.UpdateDiffuseLightPosition(gl, glu, light0Position);
 
 			// Blending control
 			if ( BLENDING_ENABLED ) {
@@ -293,7 +287,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * 
 	 */
 	public void drawModel() {
-		scene.draw(this, isPicking() || currentPickedObject != null, drawEnv);
+		scene.draw(isPicking() || currentPickedObject != null);
 	}
 
 	public void drawScene() {
@@ -302,14 +296,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
-				GLUtil.drawCubeDisplay(this,(float) displaySurface.getEnvWidth());
+				GLUtil.drawCubeDisplay(this, (float) displaySurface.getEnvWidth());
 
 			} else {
 				this.drawModel();
 			}
 		}
 	}
-	
+
 	public void switchCamera() {
 		canvas.removeKeyListener(camera);
 		canvas.removeMouseListener(camera);
@@ -329,15 +323,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 
-	int minAntiAliasing = GL_NEAREST; /* GL_NEAREST_MIPMAP_NEAREST; */
-	int magAntiAliasing = GL_NEAREST;
+	public int minAntiAliasing = GL_NEAREST; /* GL_NEAREST_MIPMAP_NEAREST; */
+	public int magAntiAliasing = GL_NEAREST;
 
 	public void setAntiAliasing(final boolean antialias) {
 		// antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
 		minAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST; /* GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST; */
 		magAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
-
 
 	public void drawPickableObjects() {
 		if ( camera.beginPicking(gl) ) {
@@ -361,6 +354,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setContext(final GLContext context) {
 		this.context = context;
+		context.makeCurrent();
 	}
 
 	public void setAmbientLightValue(final Color ambientLightValue) {
@@ -370,17 +364,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setDiffuseLightValue(final Color diffuseLightValue) {
 		this.diffuseLightValue = diffuseLightValue;
 	}
-	
+
 	public void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
 		if ( diffuseLightPosition.equals(new GamaPoint(-1, -1, -1)) ) {
-			this.diffuseLightPosition = new GamaPoint(0,0,0);
-			this.diffuseLightPosition.x = (float) displaySurface.getEnvWidth() /2;
+			this.diffuseLightPosition = new GamaPoint(0, 0, 0);
+			this.diffuseLightPosition.x = (float) displaySurface.getEnvWidth() / 2;
 			this.diffuseLightPosition.y = (float) displaySurface.getEnvHeight() / 2;
-			this.diffuseLightPosition.z = (float) displaySurface.getEnvWidth() *2;
+			this.diffuseLightPosition.z = (float) displaySurface.getEnvWidth() * 2;
 		} else {
 			this.diffuseLightPosition = diffuseLightPosition;
-			
-		}	
+
+		}
 	}
 
 	public void setPolygonMode(final boolean polygonMode) {
@@ -410,7 +404,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getZFighting() {
 		return z_fighting;
 	}
-	
+
 	public void setDrawNorm(final boolean d) {
 		this.drawNormal = d;
 	}
@@ -418,7 +412,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getDrawNorm() {
 		return drawNormal;
 	}
-	
+
 	public void setCubeDisplay(final boolean d) {
 		this.CubeDisplay = d;
 	}
@@ -435,13 +429,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return showFPS;
 	}
 
-	public void setTraceDisplay(final int agg) {
-		this.aggregated = agg;
-	}
-
-	public int getTraceDisplay() {
-		return aggregated;
-	}
+	// public void setTraceDisplay(final int agg) {
+	// this.aggregated = agg;
+	// }
+	//
+	// public int getTraceDisplay() {
+	// return aggregated;
+	// }
 
 	public void setDrawEnv(final boolean denv) {
 		this.drawEnv = denv;
@@ -450,7 +444,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getDrawDiffuseLight() {
 		return drawDiffuseLight;
 	}
-	
+
 	public void setDrawDiffuseLight(final boolean ddiff) {
 		this.drawDiffuseLight = ddiff;
 	}
@@ -492,12 +486,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( pickedObjectIndex == -1 ) {
 			setPicking(false);
 		} else if ( pickedObjectIndex == -2 ) {
-			displaySurface.selectAgents(null, 0);
+			displaySurface.selectAgents(null);
 			setPicking(false);
 		}
 	}
-
-
 
 	public ModelScene getScene() {
 		return scene;
@@ -522,7 +514,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
 		}
 	}
-	
+
 	public void CalculateFrameRate() {
 
 		frameCount++;
@@ -535,10 +527,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			frameCount = 0;
 		}
 	}
-	
-	public void ShowFPS(){
+
+	public void ShowFPS() {
 		CalculateFrameRate();
 		gl.glDisable(GL_BLEND);
+		getContext().makeCurrent();
 		gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
 		gl.glRasterPos3d(-this.getWidth() / 10, this.getHeight() / 10, 0);
 		gl.glScaled(8.0d, 8.0d, 8.0d);
@@ -546,35 +539,34 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glScaled(0.125d, 0.125d, 0.125d);
 		gl.glEnable(GL_BLEND);
 	}
-	
 
 	public double GetEnvWidthOnScreen() {
 		Point realWorld = new Point(0, 0);
-		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this,realWorld);
+		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this, realWorld);
 
 		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
-		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this,realWorld2);
+		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this, realWorld2);
 		if ( WindowPoint2 == null || WindowPoint == null ) { return 0.0; }
 		return WindowPoint2.x - WindowPoint.x;
 	}
 
 	public double GetEnvHeightOnScreen() {
 		Point realWorld = new Point(0, 0);
-		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this,realWorld);
+		Point2D.Double WindowPoint = GLUtil.getWindowPointPointFromRealWorld(this, realWorld);
 
 		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
-		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this,realWorld2);
+		Point2D.Double WindowPoint2 = GLUtil.getWindowPointPointFromRealWorld(this, realWorld2);
 
 		return WindowPoint2.y - WindowPoint.y;
 	}
-	
-	
+
 	public void drawROI() {
 		if ( camera.isEnableROIDrawing() ) {
-			GamaPoint realPressedPoint = GLUtil.getIntWorldPointFromWindowPoint(this,camera.getLastMousePressedPosition());
-			GamaPoint realMousePositionPoint = GLUtil.getIntWorldPointFromWindowPoint(this,camera.getMousePosition());
-			GLUtil.drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x, -realMousePositionPoint.y,
-				this.getZFighting(), this.getMaxEnvDim());
+			GamaPoint realPressedPoint =
+				GLUtil.getIntWorldPointFromWindowPoint(this, camera.getLastMousePressedPosition());
+			GamaPoint realMousePositionPoint = GLUtil.getIntWorldPointFromWindowPoint(this, camera.getMousePosition());
+			GLUtil.drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x,
+				-realMousePositionPoint.y, this.getZFighting(), this.getMaxEnvDim());
 			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint);
 		}
 
@@ -594,6 +586,5 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean isPicking() {
 		return picking;
 	}
-
 
 }

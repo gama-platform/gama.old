@@ -11,73 +11,61 @@
  */
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.*;
-
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.nio.DoubleBuffer;
-import java.nio.IntBuffer;
-
+import java.nio.*;
 import javax.media.opengl.GL;
-import javax.media.opengl.GLException;
-
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
-
-import msi.gama.jogl.scene.MyTexture;
 import msi.gama.metamodel.shape.GamaPoint;
-
 
 public class GLUtil {
 
 	static void drawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
-			final boolean z_fighting, final double maxEnvDim) {
+		final boolean z_fighting, final double maxEnvDim) {
 
-			if ( z_fighting ) {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-				gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-				// Draw on top of everything
-				gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
-				gl.glBegin(GL.GL_POLYGON);
+		if ( z_fighting ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			// Draw on top of everything
+			gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
+			gl.glBegin(GL.GL_POLYGON);
 
-				gl.glVertex3d(x1, -y1, 0.0f);
-				gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
 
-				gl.glVertex3d(x2, -y1, 0.0f);
-				gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
 
-				gl.glVertex3d(x2, -y2, 0.0f);
-				gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
 
-				gl.glVertex3d(x1, -y2, 0.0f);
-				gl.glVertex3d(x1, -y1, 0.0f);
-				gl.glEnd();
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-			} else {
-				gl.glBegin(GL.GL_LINES);
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		} else {
+			gl.glBegin(GL.GL_LINES);
 
-				gl.glVertex3d(x1, -y1, 0.0f);
-				gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
 
-				gl.glVertex3d(x2, -y1, 0.0f);
-				gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
 
-				gl.glVertex3d(x2, -y2, 0.0f);
-				gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
 
-				gl.glVertex3d(x1, -y2, 0.0f);
-				gl.glVertex3d(x1, -y1, 0.0f);
-				gl.glEnd();
-			}
-
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();
 		}
-	
-	public static GamaPoint getIntWorldPointFromWindowPoint(final JOGLAWTGLRenderer renderer,final Point windowPoint) {
-		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer,windowPoint);
+
+	}
+
+	public static GamaPoint getIntWorldPointFromWindowPoint(final JOGLAWTGLRenderer renderer, final Point windowPoint) {
+		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer, windowPoint);
 		return new GamaPoint((int) p.x, (int) p.y);
 	}
-	
+
 	public static GamaPoint getRealWorldPointFromWindowPoint(final JOGLAWTGLRenderer renderer, final Point windowPoint) {
 		if ( renderer.glu == null ) { return null; }
 		int realy = 0;// GL y coord pos
@@ -87,10 +75,12 @@ public class GLUtil {
 
 		realy = renderer.viewport[3] - y;
 
-		renderer.glu.gluUnProject(x, realy, 0.1,renderer. mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0, wcoord, 0);
+		renderer.glu.gluUnProject(x, realy, 0.1, renderer.mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0,
+			wcoord, 0);
 		GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
-		renderer.glu.gluUnProject(x, realy, 0.9, renderer.mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0, wcoord, 0);
+		renderer.glu.gluUnProject(x, realy, 0.9, renderer.mvmatrix, 0, renderer.projmatrix, 0, renderer.viewport, 0,
+			wcoord, 0);
 		GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
 		GamaPoint v3 = v2.minus(v1).normalized();
@@ -100,9 +90,9 @@ public class GLUtil {
 
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
-	
-	
-	public static Point2D.Double getWindowPointPointFromRealWorld(final JOGLAWTGLRenderer renderer,final Point realWorldPoint) {
+
+	public static Point2D.Double getWindowPointPointFromRealWorld(final JOGLAWTGLRenderer renderer,
+		final Point realWorldPoint) {
 		if ( renderer.glu == null ) { return null; }
 
 		DoubleBuffer model = DoubleBuffer.allocate(16);
@@ -120,31 +110,8 @@ public class GLUtil {
 		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), renderer.viewport[3] - winPos.get());
 		return WindowPoint;
 	}
-	
-	public static MyTexture createTexture(final JOGLAWTGLRenderer renderer,final BufferedImage image, final boolean isDynamic, final int index) {
-		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
-		// need to have an opengl context valide
-		renderer.getContext().makeCurrent();
-		Texture texture;
-		try {
-			texture = TextureIO.newTexture(image, false /* true for mipmapping */);
-		} catch (final GLException e) {
-			return null;
-		}
-		// FIXME:need to see the effect of this bending
-		renderer.gl.glBindTexture(GL.GL_TEXTURE_2D, index);
-		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, renderer.minAntiAliasing);
-		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, renderer.magAntiAliasing);
-		final MyTexture curTexture = new MyTexture();
-		curTexture.texture = texture;
-		curTexture.isDynamic = isDynamic;
-		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
-		renderer.getContext().release();
-		return curTexture;
-	}
-	
-	
-	static void drawCubeDisplay(final JOGLAWTGLRenderer renderer,final float width) {
+
+	static void drawCubeDisplay(final JOGLAWTGLRenderer renderer, final float width) {
 		final float envMaxDim = width;
 		renderer.drawModel();
 		renderer.gl.glTranslatef(envMaxDim, 0, 0);
@@ -169,7 +136,5 @@ public class GLUtil {
 		renderer.gl.glTranslatef(0, 0, -envMaxDim);
 		renderer.gl.glRotatef(-90, 1, 0, 0);
 	}
-	
 
-		
 }

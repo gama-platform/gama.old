@@ -552,8 +552,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
 					float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
 
-					boolean isTextured = true;
-					if ( isTextured ) {
+					if ( demObj.isTextured ) {
 						renderer.gl.glTexCoord2f(s, t);
 						renderer.gl.glVertex3f(vx, vy, alt1);
 						renderer.gl.glTexCoord2f(s, t - tt);
@@ -561,7 +560,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					} else {
 						float color = dem.getRGB(cols - x, y) & 255;
 						color = color / 255.0f;
-
 						renderer.gl.glColor3f(color, color, color);
 						renderer.gl.glVertex3f(vx, vy, alt1);
 						renderer.gl.glVertex3f(vx, vy + th, alt2);

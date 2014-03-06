@@ -124,11 +124,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures,ratio);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio);
 				}
 			}
 		} else {
-			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures, ratio);
+			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
+				ratio);
 		}
 
 		// Add a geometry with a depth and type coming from Attributes
@@ -140,8 +141,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final IList<String> textures, final double ratio) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, textures.isEmpty() ? false : true, textures, angle, depth.floatValue(), currentOffset,
-			currentScale, rounded, type, getCurrentAlpha(),ratio);
+			currentScale, rounded, type, getCurrentAlpha(), ratio);
 
+	}
+
+	private Double getCurrentAlpha() {
+		return currentAlpha;
 	}
 
 	/**
@@ -154,16 +159,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final Double z,
-		final boolean isDynamic, final String name) {
-		double curX, curY;
-		if ( locationInModelUnits == null ) {
-			curX = 0d;
-			curY = 0d;
-		} else {
-			curX = locationInModelUnits.getX();
-			curY = locationInModelUnits.getY();
-		}
+		final ILocation sizeInModelUnits, final Color gridColor, final Double angle, final boolean isDynamic,
+		final String name) {
+		GamaPoint location = new GamaPoint(locationInModelUnits);
 		double curWidth, curHeight;
 		if ( sizeInModelUnits == null ) {
 			curWidth = wFromPixelsToModelUnits(widthOfLayerInPixels);
@@ -181,8 +179,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}
 		}
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
-			curX, curY, z, curWidth, curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(),
-			texture, name);
+			location.x, location.y, location.z, curWidth, curHeight, angle, currentOffset, currentScale, isDynamic,
+			getCurrentAlpha(), texture, name);
 
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor/* , name */);
@@ -192,9 +190,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
-		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Double angle, final Double z, final double cellSize, final String name) {
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Color gridColor,
+		final Double angle, final double cellSize, final String name) {
 
 		MyTexture texture = null;
 		Envelope env = null;
@@ -236,15 +233,14 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
-					false, null, 0, 0, currentOffset, currentScale, false, IShape.Type.GRIDLINE, getCurrentAlpha(),0);
+					false, null, 0, 0, currentOffset, currentScale, false, IShape.Type.GRIDLINE, getCurrentAlpha(), 0);
 			}
 		}
 	}
 
 	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
-	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env,
-		final Double z_factor) {
+	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Double z_factor) {
 		BufferedImage dem = null;
 		BufferedImage texture = null;
 		try {
@@ -263,6 +259,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false, 0);
 		}
+		Envelope env = new Envelope(0, widthOfEnvironmentInModelUnits, 0, heightOfEnvironmentInModelUnits);
 
 		// getASCfromImg(dem);
 		// FIXME: alpha,scale,offset not taken in account when using the operator dem
@@ -288,7 +285,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
-		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, z, true, "chart");
+		return drawImage(scope, chart, new GamaPoint(0, 0), null, null, 0d, true, "chart");
 	}
 
 	/**
@@ -304,14 +301,16 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
-		final Double z, final Boolean bitmap) {
-		double curX, curY;
+		final Boolean bitmap) {
+		double curX, curY, curZ;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
 			curY = 0d;
+			curZ = 0d;
 		} else {
 			curX = locationInModelUnits.getX();
 			curY = locationInModelUnits.getY();
+			curZ = locationInModelUnits.getZ();
 		}
 		Integer size;
 		Double sizeInModelUnits;
@@ -324,7 +323,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			size =
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
-		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
+		renderer.getScene().addString(string, curX, -curY, curZ, size, sizeInModelUnits, currentOffset, currentScale,
 			stringColor, fontName, styleName, angle, getCurrentAlpha(), bitmap);
 		return null;
 	}
@@ -361,12 +360,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 
-		this.currentZLayer = (float) (getMaxEnvDim() * ((AbstractLayer) layer).getZPosition());
-		// get the value of the position
-		if ( this.currentZLayer == 0 ) {
-			this.currentZLayer = ((AbstractLayer) layer).getPosition().getZ();
-		}
-
+		this.currentZLayer = (float) (getMaxEnvDim() * layer.getPosition().getZ());
 		// get the value of the z scale if positive otherwise set it to 1.
 		float z_scale;
 		if ( ((AbstractLayer) layer).getExtent().getZ() > 0 ) {

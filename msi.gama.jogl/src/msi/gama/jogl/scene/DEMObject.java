@@ -1,51 +1,46 @@
 package msi.gama.jogl.scene;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import msi.gama.jogl.utils.GLUtil;
-import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import java.awt.image.*;
+import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class DEMObject extends AbstractObject {
 
-	public double[] dem;
-	public BufferedImage demTexture;
-	public BufferedImage demImg;
-	public IAgent agent;
-	public boolean isTextured;
-	public boolean isTriangulated;
-	public boolean isShowText;
-	public boolean fromImage;
-	public Envelope envelope;
-	public double cellSize;
-	public Double z_factor;
-	public MyTexture texture;
-	public String name;
-	public int layerId;
+	final public double[] dem;
+	final public BufferedImage textureImage;
+	final public BufferedImage demImg;
+	final public IAgent agent;
+	final public boolean isTextured, isTriangulated, isShowText, fromImage, isDynamic;
+	// The height of the envelope represents the z_factor (between 0 and 1).
+	final public Envelope3D envelope;
+	final public double cellSize;
+	final public String name;
+	final public int layerId;
 
 	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final Envelope env, final boolean isTextured, final boolean isTriangulated,
-		final boolean isShowText, final boolean fromImage, final Double z_factor, final Color c, final GamaPoint o,
-		final GamaPoint s, final Double a, final double cellSize, final MyTexture texture, final String name,
-		final int layerId) {
-		super(c, o, s, a);
+		final IAgent agent, final Envelope3D env, final boolean isTextured, final boolean isTriangulated,
+		final boolean isShowText, final boolean fromImage, final boolean isDynamic, final Color c, final Double a,
+		final double cellSize, final String name, final int layerId) {
+		super(c, a);
 		this.dem = dem;
-		this.demTexture = demTexture;
-		this.demImg = demImg;
+		this.textureImage = demTexture;
+		if ( demImg != null ) {
+			this.demImg = FlipRightSideLeftImage(FlipUpSideDownImage(demImg));
+		} else {
+			this.demImg = null;
+		}
 		this.agent = agent;
 		this.isTextured = isTextured;
 		this.isTriangulated = isTriangulated;
 		this.isShowText = isShowText;
 		this.fromImage = fromImage;
+		this.isDynamic = isDynamic;
 		this.envelope = env;
-		this.z_factor = z_factor;
 		this.cellSize = cellSize;
-		this.texture = texture;
 		this.name = name;
 		this.layerId = layerId;
 	}
@@ -69,7 +64,7 @@ public class DEMObject extends AbstractObject {
 	public void draw(final ObjectDrawer drawer, final boolean picking) {
 		if ( picking ) {
 			JOGLAWTGLRenderer renderer = drawer.renderer;
-			renderer.gl.glPushMatrix();
+			// renderer.gl.glPushMatrix();
 			renderer.gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
 				if ( agent != null ) {
@@ -79,8 +74,10 @@ public class DEMObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						final GamaPoint pickedPoint =
-							GLUtil.getIntWorldPointFromWindowPoint(renderer,new Point(renderer.camera
-								.getLastMousePressedPosition().x, renderer.camera.getLastMousePressedPosition().y));
+							GLUtil.getIntWorldPointFromWindowPoint(
+								renderer,
+								new Point(renderer.camera.getLastMousePressedPosition().x, renderer.camera
+									.getLastMousePressedPosition().y));
 						IAgent ag = GAMA.run(new InScope<IAgent>() {
 
 							@Override
@@ -90,18 +87,46 @@ public class DEMObject extends AbstractObject {
 							}
 						});
 						if ( ag != null ) {
-							renderer.displaySurface.selectAgents(ag, layerId - 1);
+							renderer.displaySurface.selectAgents(ag);
 						}
 
 					} else {
-						renderer.displaySurface.selectAgents(agent, layerId - 1);
+						renderer.displaySurface.selectAgents(agent);
 					}
 				}
 			}
 			super.draw(drawer, picking);
-			renderer.gl.glPopMatrix();
+			// renderer.gl.glPopMatrix();
 		} else {
 			super.draw(drawer, picking);
 		}
+	}
+
+	private BufferedImage FlipUpSideDownImage(BufferedImage img) {
+		java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(1, -1);
+		tx.translate(0, -img.getHeight(null));
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		img = op.filter(img, null);
+		return img;
+
+	}
+
+	private BufferedImage FlipRightSideLeftImage(BufferedImage img) {
+		java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
+		tx.translate(-img.getWidth(null), 0);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		img = op.filter(img, null);
+		return img;
+
+	}
+
+	/**
+	 * Method computeTexture()
+	 * @see msi.gama.jogl.scene.AbstractObject#computeTexture()
+	 */
+	@Override
+	protected MyTexture computeTexture(final JOGLAWTGLRenderer renderer) {
+		if ( textureImage == null ) { return null; }
+		return renderer.getScene().createTexture(textureImage, isDynamic);
 	}
 }

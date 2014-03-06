@@ -1,10 +1,8 @@
 package msi.gama.jogl.scene;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-
-import msi.gama.jogl.utils.GLUtil;
-import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.*;
@@ -12,37 +10,24 @@ import msi.gama.runtime.GAMA.InScope;
 
 public class ImageObject extends AbstractObject {
 
-	public BufferedImage image;
-	public IAgent agent;
-	public double z_layer;
-	public int layerId;
-	public double x;
-	public double y;
-	public double z;
-	public double width;
-	public double height;
-	public Double angle = 0d;
-	public boolean isDynamic;
-	public MyTexture texture;
-	public String name;
+	final public BufferedImage image;
+	final public IAgent agent;
+	final public int layerId;
+	final public GamaPoint location, dimensions;
+	final public Double angle;
+	final public boolean isDynamic;
+	final public String name;
 
-	public ImageObject(final BufferedImage image, final IAgent agent, final double z_layer, final int layerId,
-		final double x, final double y, final double z, final Double alpha, final double width, final double height,
-		final Double angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
-		final MyTexture texture, final String name) {
-		super(null, offset, scale, alpha);
+	public ImageObject(final BufferedImage image, final IAgent agent, final int layerId, final GamaPoint location,
+		final Double alpha, final GamaPoint dimensions, final Double angle, final boolean isDynamic, final String name) {
+		super(null, alpha);
 		setZ_fighting_id((double) layerId);
 		this.image = image;
 		this.agent = agent;
-		this.z_layer = z_layer;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.height = height;
+		this.location = location;
+		this.dimensions = dimensions;
 		this.angle = angle;
 		this.isDynamic = isDynamic;
-		this.texture = texture;
 		this.layerId = layerId;
 		this.name = name;
 	}
@@ -76,7 +61,8 @@ public class ImageObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						final GamaPoint pickedPoint =
-							GLUtil.getIntWorldPointFromWindowPoint(renderer,renderer.camera.getLastMousePressedPosition());
+							GLUtil.getIntWorldPointFromWindowPoint(renderer,
+								renderer.camera.getLastMousePressedPosition());
 						IAgent ag = GAMA.run(new InScope<IAgent>() {
 
 							@Override
@@ -85,9 +71,9 @@ public class ImageObject extends AbstractObject {
 									new GamaPoint(pickedPoint.x, -pickedPoint.y));
 							}
 						});
-						renderer.displaySurface.selectAgents(ag, layerId - 1);
+						renderer.displaySurface.selectAgents(ag);
 					} else {
-						renderer.displaySurface.selectAgents(agent, layerId - 1);
+						renderer.displaySurface.selectAgents(agent);
 					}
 				}
 			}
@@ -96,6 +82,16 @@ public class ImageObject extends AbstractObject {
 		} else {
 			super.draw(drawer, picking);
 		}
+	}
+
+	/**
+	 * Method computeTexture()
+	 * @see msi.gama.jogl.scene.AbstractObject#computeTexture(msi.gama.jogl.utils.JOGLAWTGLRenderer)
+	 */
+	@Override
+	protected MyTexture computeTexture(final JOGLAWTGLRenderer renderer) {
+		if ( image == null ) { return null; }
+		return renderer.getScene().createTexture(image, isDynamic);
 	}
 
 }

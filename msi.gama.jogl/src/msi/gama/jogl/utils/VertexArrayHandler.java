@@ -135,7 +135,7 @@ public class VertexArrayHandler {
 											// a face represented as 3 indices into
 											// the vertex buffer.
 
-	private int vertexCount, indexCount; // Number of values stored in the buffers.
+	private int vertexCount, indexCount; // Number of values stored in the BufferUtil.
 
 	private boolean createIcosphere = false;
 
@@ -165,9 +165,9 @@ public class VertexArrayHandler {
 
 	private IntBuffer planBorderIndicesBuffer;
 
-	private int planIndices;
+	// private int planIndices;
 
-	private final int planBorderIndices = 0;
+	// private final int planBorderIndices = 0;
 
 	private int planIndicesBufferID;
 
@@ -181,7 +181,7 @@ public class VertexArrayHandler {
 
 	private int pointIndicesBufferID;
 
-	private float planAlpha;
+	// private float planAlpha;
 
 	static { // Initialize the data for the icosahedron.
 		float t = (float) ((Math.sqrt(5) - 1) / 2);
@@ -292,12 +292,12 @@ public class VertexArrayHandler {
 			}
 		}
 
-		// fillPointBuffers();
-		// fillPolygonBuffers();
-		// fillContoursBuffers();
-		// fillFacesBuffers();
-		// fillFacesContoursBuffers();
-		// fillPlanBuffers();
+		// fillPointBufferUtil();
+		// fillPolygonBufferUtil();
+		// fillContoursBufferUtil();
+		// fillFacesBufferUtil();
+		// fillFacesContoursBufferUtil();
+		// fillPlanBufferUtil();
 		// fillLineBuffer();
 		// fillSphereVertexArray();
 
@@ -749,7 +749,7 @@ public class VertexArrayHandler {
 		}
 	}
 
-	// private void fillPointBuffers() {
+	// private void fillPointBufferUtil() {
 	// pointVertexBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
 	// pointColorBuffer = BufferUtil.newFloatBuffer(pointTriangles.size() * 3);
 	// pointIndicesBuffer = BufferUtil.newIntBuffer(pointTriangles.size());
@@ -773,16 +773,14 @@ public class VertexArrayHandler {
 	/**
 	 * 
 	 * Function that create a temporary ArrayList of MyTriangulated objects to be used later by the
-	 * fillVertexArrayTriangle() that will fill a vertex, color and indexes buffers.
+	 * fillVertexArrayTriangle() that will fill a vertex, color and indexes BufferUtil.
 	 * 
 	 * */
 	public void buildPolygonVertexArray(final Polygon polygon, final double z_layer, final Color c, final double alpha,
 		final boolean fill, final boolean isTextured, /* final Integer angle, */final boolean drawPolygonContour) {
 		if ( fill == true ) {
 			MyTriangulatedGeometry curTriangulatedGeometry = new MyTriangulatedGeometry();
-			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon); // VERIFY
-																							// NULL
-																							// SCOPE
+			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon);
 
 			// Add z value
 			double z = 0.0;
@@ -809,7 +807,7 @@ public class VertexArrayHandler {
 		if ( isTextured ) {}
 	}
 
-	public void fillPolygonBuffers() {
+	public void fillPolygonBufferUtil() {
 
 		vertexBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 3);
 		colorBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 4);
@@ -899,7 +897,7 @@ public class VertexArrayHandler {
 		tempArray = new ArrayList<Polygon>();
 	}
 
-	public void fillContoursBuffers() {
+	public void fillContoursBufferUtil() {
 		vertexBufferPolyContours = BufferUtil.newFloatBuffer(nbVerticesContours * 3);
 		colorBufferPolyContours = BufferUtil.newFloatBuffer(nbVerticesContours * 3);
 		IndicesBufferPolyContours = BufferUtil.newIntBuffer(nbVerticesContours);
@@ -999,7 +997,7 @@ public class VertexArrayHandler {
 		nbVerticesFaces = nbVerticesFaces + totalNumVertsQuads;
 	}
 
-	public void fillFacesBuffers() {
+	public void fillFacesBufferUtil() {
 		vertexBufferQuads = BufferUtil.newFloatBuffer(nbVerticesFaces * 6);
 
 		colorBufferQuads = BufferUtil.newFloatBuffer(nbVerticesFaces * 7);
@@ -1109,7 +1107,7 @@ public class VertexArrayHandler {
 		alphaFaces = new ArrayList<Float>();
 	}
 
-	public void fillFacesContoursBuffers() {
+	public void fillFacesContoursBufferUtil() {
 
 		vertexBufferContours = BufferUtil.newFloatBuffer(nbVerticesFaces * 8);
 
@@ -1222,7 +1220,7 @@ public class VertexArrayHandler {
 		buildLineStringVertexArray(l, z + height, c, alpha);
 
 		planColor = c;
-		planAlpha = (float) alpha2;
+		// planAlpha = (float) alpha2;
 		int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -1260,7 +1258,7 @@ public class VertexArrayHandler {
 		nbVerticesBorder = nbVerticesBorder + (numPoints - 1) * 8;
 	}
 
-	// private void fillPlanBuffers() {
+	// private void fillPlanBufferUtil() {
 	// this.planColorBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 4);
 	// this.planVertexBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan * 3);
 	// this.planBorderBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder * 3);

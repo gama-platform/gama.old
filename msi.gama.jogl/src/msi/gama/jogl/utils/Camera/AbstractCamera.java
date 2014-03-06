@@ -453,7 +453,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected void setEnableROIDrawing(final boolean enableROIDrawing) {
 		this.enableROIDrawing = enableROIDrawing;
 	}
-	
+
 	@Override
 	public void setRegionOfInterest(final GamaPoint origin, final GamaPoint end) {
 		region[0] = (int) origin.x;
@@ -535,7 +535,5 @@ public abstract class AbstractCamera implements ICamera {
 	protected Point getRoiCenter() {
 		return roiCenter;
 	}
-	
-	
 
 }

@@ -25,8 +25,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.jogl.scene.ModelScene;
-import msi.gama.jogl.utils.GLUtil;
-import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -86,12 +85,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			public void run() {
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
-					s.wipe(renderer);
+					s.wipe(getOutput().getTraceDisplay());
 					// FIXME: Why setting this at each run??
 					renderer.setTessellation(getOutput().getTesselation());
 					renderer.setShowFPS(getOutput().getShowFPS());
-					renderer.setTraceDisplay(getOutput().getTraceDisplay());
-					//renderer.setDrawEnv(getOutput().getDrawEnv());
+					// renderer.setTraceDisplay(getOutput().getTraceDisplay());
+					// renderer.setDrawEnv(getOutput().getDrawEnv());
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
 					renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());
@@ -133,7 +132,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setDrawNorm(getOutput().getDrawNorm());
 		renderer.setCubeDisplay(getOutput().getCubeDisplay());
 		renderer.setShowFPS(getOutput().getShowFPS());
-		renderer.setTraceDisplay(getOutput().getTraceDisplay());
+		// renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setDrawDiffuseLight(getOutput().getDrawDiffuseLight());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
@@ -199,9 +198,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		return dim;
 	}
 
-	public void selectAgents(final IAgent agent, final int layerId) {
+	public void selectAgents(final IAgent agent) {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
-
 	}
 
 	public void selectSeveralAgents(final Collection<IAgent> agents, final int layerId) {
@@ -407,7 +405,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public GamaPoint getModelCoordinates() {
 		Point mp = renderer.camera.getMousePosition();
 		if ( mp == null ) { return null; }
-		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer,mp);
+		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer, mp);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
 	}

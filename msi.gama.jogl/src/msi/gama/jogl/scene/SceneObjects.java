@@ -1,6 +1,5 @@
 package msi.gama.jogl.scene;
 
-import static javax.media.opengl.GL.GL_COMPILE;
 import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.util.*;
@@ -26,7 +25,7 @@ public class SceneObjects<T extends AbstractObject> {
 		}
 
 		@Override
-		public void clear(final JOGLAWTGLRenderer renderer, final int traceSize) {}
+		public void clear(final int traceSize, final boolean fading) {}
 	}
 
 	final ObjectDrawer<T> drawer;
@@ -34,6 +33,7 @@ public class SceneObjects<T extends AbstractObject> {
 	List<T> currentList;
 	Integer openGLListIndex;
 	final boolean drawAsList;
+	boolean isFading;
 	boolean drawAsVBO;
 	VertexArrayHandler vah = null;
 
@@ -45,12 +45,6 @@ public class SceneObjects<T extends AbstractObject> {
 		objects.add(currentList);
 	}
 
-	//
-	// @Override
-	// public Iterator<T> iterator() {
-	// return objects.iterator();
-	// }
-
 	protected void clearObjects(final int sizeLimit) {
 		while (objects.size() > sizeLimit) {
 			objects.removeFirst();
@@ -59,11 +53,12 @@ public class SceneObjects<T extends AbstractObject> {
 		objects.addLast(currentList);
 	}
 
-	public void clear(final JOGLAWTGLRenderer renderer, final int sizeLimit) {
+	public void clear(final int sizeLimit, final boolean fading) {
+		isFading = fading;
 		clearObjects(sizeLimit);
 		if ( openGLListIndex != null ) {
-			renderer.getContext().makeCurrent();
-			renderer.gl.glDeleteLists(openGLListIndex, 1);
+			drawer.getRenderer().getContext().makeCurrent();
+			drawer.getRenderer().gl.glDeleteLists(openGLListIndex, 1);
 			openGLListIndex = null;
 		}
 	}
@@ -84,52 +79,80 @@ public class SceneObjects<T extends AbstractObject> {
 		return Iterables.concat(objects);
 	}
 
-	public void draw(final boolean picking, final JOGLAWTGLRenderer renderer) {
-
+	public void draw(final boolean picking) {
+		JOGLAWTGLRenderer renderer = drawer.getRenderer();
+		GL gl = drawer.getGL();
 		if ( picking ) {
 			if ( renderer.colorPicking ) {
-				drawer.getGL().glDisable(GL.GL_DITHER);
-				drawer.getGL().glDisable(GL.GL_LIGHTING);
-				drawer.getGL().glDisable(GL.GL_TEXTURE);
+				gl.glDisable(GL.GL_DITHER);
+				gl.glDisable(GL.GL_LIGHTING);
+				gl.glDisable(GL.GL_TEXTURE);
 
 				int viewport[] = new int[4];
-				drawer.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+				gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
 				FloatBuffer pixels = FloatBuffer.allocate(4);
-				drawer.getGL().glReadPixels(drawer.renderer.camera.getLastMousePressedPosition().x,
-					viewport[3] - drawer.renderer.camera.getLastMousePressedPosition().y, 1, 1, GL.GL_RGBA,
-					GL.GL_FLOAT, pixels);
+				gl.glReadPixels(renderer.camera.getLastMousePressedPosition().x,
+					viewport[3] - renderer.camera.getLastMousePressedPosition().y, 1, 1, GL.GL_RGBA, GL.GL_FLOAT,
+					pixels);
 
-				drawer.getGL().glEnable(GL.GL_DITHER);
-				drawer.getGL().glEnable(GL.GL_LIGHTING);
-				drawer.getGL().glEnable(GL.GL_TEXTURE);
+				gl.glEnable(GL.GL_DITHER);
+				gl.glEnable(GL.GL_LIGHTING);
+				gl.glEnable(GL.GL_TEXTURE);
 
 				Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));
-				System.out.println("color picked " + index.toString());
+				// System.out.println("color picked " + index.toString());
 			} else {
-				drawer.getGL().glPushMatrix();
-				drawer.getGL().glInitNames();
-				drawer.getGL().glPushName(0);
-				for ( final T object : getObjects() ) {
-					object.draw(drawer, picking);
+				gl.glPushMatrix();
+				gl.glInitNames();
+				gl.glPushName(0);
+				double alpha = 0d;
+				int size = objects.size();
+				double delta = size == 0 ? 0 : 1d / size;
+				for ( final List<T> list : objects ) {
+					alpha = alpha + delta;
+					for ( T object : list ) {
+						if ( isFading ) {
+							double originalAlpha = object.getAlpha();
+							object.setAlpha(originalAlpha * alpha);
+							object.draw(drawer, picking);
+							object.setAlpha(originalAlpha);
+						} else {
+							object.draw(drawer, picking);
+						}
+					}
 				}
-				drawer.getGL().glPopName();
-				drawer.getGL().glPopMatrix();
+
+				gl.glPopName();
+				gl.glPopMatrix();
 			}
 		} else if ( drawAsList ) {
 			if ( openGLListIndex == null ) {
 
-				openGLListIndex = drawer.getGL().glGenLists(1);
-				drawer.getGL().glNewList(openGLListIndex, GL_COMPILE);
-				for ( final T object : getObjects() ) {
-					object.draw(drawer, picking);
+				openGLListIndex = gl.glGenLists(1);
+				gl.glNewList(openGLListIndex, GL.GL_COMPILE);
+				double alpha = 0d;
+				int size = objects.size();
+				double delta = size == 0 ? 0 : 1d / size;
+				for ( final List<T> list : objects ) {
+					alpha = alpha + delta;
+					for ( T object : list ) {
+						if ( isFading ) {
+							double originalAlpha = object.getAlpha();
+							object.setAlpha(originalAlpha * alpha);
+							object.draw(drawer, picking);
+							object.setAlpha(originalAlpha);
+						} else {
+							object.draw(drawer, picking);
+						}
+					}
 				}
-				drawer.getGL().glEndList();
+				gl.glEndList();
 			}
-			drawer.getGL().glCallList(openGLListIndex);
+			gl.glCallList(openGLListIndex);
 		} else if ( drawAsVBO ) {
 			if ( vah == null ) {
-				vah = new VertexArrayHandler(renderer.gl, renderer.glu, renderer);
+				vah = new VertexArrayHandler(gl, renderer.glu, renderer);
 				vah.buildVertexArray(getObjects());
 			} else {
 				vah.loadCollada(null);

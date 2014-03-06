@@ -40,7 +40,7 @@ public class Output3D {
 		}
 
 		// Update of the animations
-		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries().getObjects() ) {
+		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries() ) {
 			String animID = myGeom.agent.getName() + "anim";
 			// Find the Element with id = animID
 			// add a position
@@ -70,7 +70,7 @@ public class Output3D {
 		}
 	}
 
-	public void initGLGEModel(final JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public void initGLGEModel(final JOGLAWTGLRenderer renderer) {
 
 		Element root = doc.createElement("glge");
 
@@ -82,7 +82,7 @@ public class Output3D {
 
 		Element groupElt = doc.createElement("group");
 		groupElt.setAttribute("id", "objects");
-		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries().getObjects() ) {
+		for ( GeometryObject myGeom : renderer.getScene().getGeometries() ) {
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName() + "material";
 			// String animationID = myGeom.agent.getName()+"animation";
