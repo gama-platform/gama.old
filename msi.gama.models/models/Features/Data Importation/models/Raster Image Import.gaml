@@ -13,7 +13,7 @@ global {
 	  
 	// Global variables
 	int factorDiscret <- 30 ;
-	file mntImageRaster <- file('../images/mnt/testAG.jpg') ;
+	file<point, int> mntImageRaster <- image_file('../images/mnt/testAG.jpg') ;
 	
 	int nbIzard <- 250 ; 
 	file izardShape <- file('../images/icons/izard.gif');
@@ -25,7 +25,7 @@ global {
 	init {
 		// set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
 		ask cell {		
-			color <- mntImageRaster at {grid_x,grid_y} ;
+			color <-rgb( (mntImageRaster) at {grid_x,grid_y}) ;
 		}
 		create izard number: nbIzard; 
     }
