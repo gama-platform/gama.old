@@ -17,7 +17,7 @@ global torus: torus_environment{
 	bool apply_goal <- true parameter: 'Follow Goal ?'; 
 	bool apply_wind <- true parameter: 'Apply Wind ?';     
 	point wind_vector <- {0,0,0}  parameter: 'Direction of the wind';   
-	int goal_duration <- 30 value: (goal_duration - 1); 
+	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	geometry shape <- square(width_and_height_of_environment);
