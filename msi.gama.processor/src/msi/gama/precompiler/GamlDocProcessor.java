@@ -55,6 +55,8 @@ import org.w3c.dom.*;
 public class GamlDocProcessor {
 
 	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
+	
+	public static final Character[] cuttingLettersOperatorDoc = {'l'};
 
 	ProcessingEnvironment processingEnv;
 	Messager mes;
@@ -127,7 +129,7 @@ public class GamlDocProcessor {
 		Set<? extends Element> setTypes = env.getElementsAnnotatedWith(type.class);
 		ArrayList<org.w3c.dom.Element> listEltOperatorsFromTypes = this.processDocXMLOperatorsFromTypes(setTypes, doc);
 		
-		org.w3c.dom.Element eltOperators = (org.w3c.dom.Element) root.getElementsByTagName("operators").item(0);
+		org.w3c.dom.Element eltOperators = (org.w3c.dom.Element) root.getElementsByTagName(XMLElements.OPERATORS).item(0);
 		for(org.w3c.dom.Element eltOp : listEltOperatorsFromTypes){
 			eltOperators.appendChild(eltOp);
 		}
@@ -200,10 +202,11 @@ public class GamlDocProcessor {
 			// Operators to be created:
 			// - "is_"+name : test whether the operand parameter is of the given kind of file			
 			// - name+"_file": converts the parameter into the type name_type
-			Operator op_is = new Operator(doc, tc.getProperCategory("Files"), "is_" + e.getAnnotation(file.class).name());
+			Operator op_is = new Operator(doc, tc.getProperCategory("Files"), "is_" + e.getAnnotation(file.class).name(),
+					"Tests whether the operand is a "+ e.getAnnotation(file.class).name() + " file.");
 			op_is.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
 			op_is.addOperand(new Operand(doc,"val",0,"any"));
-			op_is.setDocumentation("Tests whether the operand is a "+ e.getAnnotation(file.class).name() + " file.");
+			// op_is.setDocumentation("Tests whether the operand is a "+ e.getAnnotation(file.class).name() + " file.");
 
 			Operator op_file = new Operator(doc, tc.getProperCategory("Files"), e.getAnnotation(file.class).name() + "_file");
 			op_file.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "file", "");
@@ -229,29 +232,36 @@ public class GamlDocProcessor {
 	}
 	
 	private org.w3c.dom.Element processDocXMLOperatorsCategories(
-		final Set<? extends ExecutableElement> set, final Document doc) {
-		org.w3c.dom.Element operatorsCategories = doc.createElement("operatorsCategories");
+											final Set<? extends ExecutableElement> set, final Document doc) {
+		org.w3c.dom.Element operatorsCategories = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
 		for ( ExecutableElement e : set ) {
-
-			String categoryName =
-				tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString());
-
-			NodeList nL = operatorsCategories.getElementsByTagName("category");
-			int i = 0;
-			boolean found = false;
-			while (!found && i < nL.getLength()) {
-				org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-				if ( categoryName.equals(tc.getProperCategory(elt.getAttribute("id"))) ) {
-					found = true;
-				}
-				i++;
+			String[] categoryNames = new String[1];
+			// String categoryName;
+			if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0) {
+				categoryNames =e.getAnnotation(operator.class).category();
+			} else {
+				categoryNames[0] = tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString());
 			}
-
-			if ( !found ) {
-				org.w3c.dom.Element category;
-				category = doc.createElement("category");
-				category.setAttribute("id", categoryName);
-				operatorsCategories.appendChild(category);
+			
+			NodeList nL = operatorsCategories.getElementsByTagName(XMLElements.CATEGORY);
+			
+			for(String categoryName : categoryNames) {
+				int i = 0;
+				boolean found = false;
+				while (!found && i < nL.getLength()) {
+					org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
+					if ( categoryName.equals(tc.getProperCategory(elt.getAttribute(XMLElements.ATT_CAT_ID))) ) {
+						found = true;
+					}
+					i++;
+				}
+	
+				if ( !found ) {
+					org.w3c.dom.Element category;
+					category = doc.createElement(XMLElements.CATEGORY);
+					category.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
+					operatorsCategories.appendChild(category);
+				}
 			}
 		}
 		return operatorsCategories;
@@ -259,7 +269,7 @@ public class GamlDocProcessor {
 
 	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set,
 		final Document doc) {
-		org.w3c.dom.Element operators = doc.createElement("operators");
+		org.w3c.dom.Element operators = doc.createElement(XMLElements.OPERATORS);
 
 		for ( ExecutableElement e : set ) {
 			nbrOperators++;
@@ -267,7 +277,7 @@ public class GamlDocProcessor {
 			Set<Modifier> m = e.getModifiers();
 			boolean isStatic = m.contains(Modifier.STATIC);
 			int arity = 0;
-			boolean firstInstanceOperator = false;
+			// boolean firstInstanceOperator = false;
 
 			if ( e.getAnnotation(doc.class) != null &&
 				!"".equals(e.getAnnotation(doc.class).deprecated()) ) {
@@ -279,20 +289,14 @@ public class GamlDocProcessor {
 				org.w3c.dom.Element operator =
 						DocProcessorAnnotations.getOperatorElement(operators, e.getAnnotation(operator.class).value()[0]);
 				if ( operator == null ) {
-					operator = doc.createElement("operator");
-					firstInstanceOperator = true;
-				}
-
-				if ( firstInstanceOperator ) {
-					// if("".equals(operator.getAttribute("id"))){
-					operator.setAttribute("id",
+					operator = doc.createElement(XMLElements.OPERATOR);
+					operator.setAttribute(XMLElements.ATT_OP_ID,
 						tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
-					operator.setAttribute("name",
+					operator.setAttribute(XMLElements.ATT_OP_NAME,
 						tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
-					// }
-					operator.setAttribute("category", tc.getProperCategory(e.getEnclosingElement()
-						.getSimpleName().toString()));
-				}
+					
+					operator.setAttribute(XMLElements.ATT_ALPHABET_ORDER, getAlphabetOrder(e.getAnnotation(operator.class).value()[0]));
+				} 
 				// Parse the alternative names of the operator
 				// we will create one operator markup per alternative name
 				for ( String name : e.getAnnotation(operator.class).value() ) {
@@ -301,13 +305,13 @@ public class GamlDocProcessor {
 						// Look for an already parsed operator with the same name
 						org.w3c.dom.Element altElt = DocProcessorAnnotations.getOperatorElement(operators, name);
 						if ( altElt == null ) {
-							altElt = doc.createElement("operator");
-							altElt.setAttribute("id", name);
-							altElt.setAttribute("name", name);
-							altElt.setAttribute("category", tc.getProperCategory(e
-								.getEnclosingElement().getSimpleName().toString()));
-							altElt.setAttribute("alternativeNameOf", e
-								.getAnnotation(operator.class).value()[0]);
+							altElt = doc.createElement(XMLElements.OPERATOR);
+							altElt.setAttribute(XMLElements.ATT_OP_ID, name);
+							altElt.setAttribute(XMLElements.ATT_OP_NAME, name);
+							altElt.setAttribute(XMLElements.ATT_OP_ALT_NAME, e.getAnnotation(operator.class).value()[0]);
+							altElt.setAttribute(XMLElements.ATT_ALPHABET_ORDER, getAlphabetOrder(name));
+							
+							altElt.appendChild(getOperatorCategory(e,doc));
 							operators.appendChild(altElt);
 						} else {
 							// Show an error in the case where two alternative names do not refer to
@@ -324,14 +328,27 @@ public class GamlDocProcessor {
 					}
 				}
 
+				// Parse of categories
+				
+				// Category
+				org.w3c.dom.Element categoriesElt;
+				if ( operator.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).getLength() == 0 ) {
+					categoriesElt = getOperatorCategory(e,doc,doc.createElement(XMLElements.OPERATORS_CATEGORIES));
+				} else {
+					categoriesElt = getOperatorCategory(e,doc,
+						(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).item(0));
+				}
+				operator.appendChild(categoriesElt);
+				
+				// operator.appendChild(getOperatorElement(e,doc,operator));
+				
 				// Parse the combinaison operands / result
 				org.w3c.dom.Element combinaisonOpResElt;
 				if ( operator.getElementsByTagName("combinaisonIO").getLength() == 0 ) {
 					combinaisonOpResElt = doc.createElement("combinaisonIO");
 				} else {
 					combinaisonOpResElt =
-						(org.w3c.dom.Element) operator.getElementsByTagName("combinaisonIO")
-							.item(0);
+						(org.w3c.dom.Element) operator.getElementsByTagName("combinaisonIO").item(0);
 				}
 
 				org.w3c.dom.Element operands = doc.createElement("operands");
@@ -352,7 +369,7 @@ public class GamlDocProcessor {
 				operands.setAttribute("class", pkgName);
 
 				if ( !isStatic ) {
-					org.w3c.dom.Element operand = doc.createElement("operand");
+					org.w3c.dom.Element operand = doc.createElement((XMLElements.OPERAND));
 					operand.setAttribute("type", tc.getProperType(e.getEnclosingElement().asType()
 						.toString()));
 					operand.setAttribute("position", "" + arity);
@@ -364,7 +381,7 @@ public class GamlDocProcessor {
 				if ( args.size() > 0 ) {
 					int first_index = args.get(0).asType().toString().contains("IScope") ? 1 : 0;
 					for ( int i = first_index; i <= args.size() - 1; i++ ) {
-						org.w3c.dom.Element operand = doc.createElement("operand");
+						org.w3c.dom.Element operand = doc.createElement((XMLElements.OPERAND));
 						operand
 							.setAttribute("type", tc.getProperType(args.get(i).asType().toString()));
 						operand.setAttribute("position", "" + arity);
@@ -566,4 +583,56 @@ public class GamlDocProcessor {
 		return statementsElt;
 	}
 
+	
+	private org.w3c.dom.Element getOperatorCategory(final ExecutableElement e, final Document doc, org.w3c.dom.Element categoriesElt){	
+		ArrayList<String> categories = new ArrayList<String>();
+		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
+		for(int i = 0; i < nL.getLength() ; i++){
+			categories.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
+		}
+		
+		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0) {
+			for(String categoryName : e.getAnnotation(operator.class).category()){
+				if(!categories.contains(categoryName)){
+					categories.add(categoryName);
+					
+					org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+					catElt.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
+					categoriesElt.appendChild(catElt);
+				}
+			}
+		} else {
+			if(!categories.contains(tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()))) {
+				org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+				catElt.setAttribute(XMLElements.ATT_CAT_ID, tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()));
+				categoriesElt.appendChild(catElt);
+			}
+		}		
+		return categoriesElt;
+	}
+	
+	private org.w3c.dom.Element getOperatorCategory(final ExecutableElement e, final Document doc){		
+		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
+		
+		return getOperatorCategory(e,doc,categoriesElt);
+	}
+	
+	public static String getAlphabetOrder(String name) {
+		String order = "";
+		String lastChar = "z";
+		
+		for(int i = 0; i < cuttingLettersOperatorDoc.length ; i++){
+			Character previousChar = (i==0) ? 'a' : cuttingLettersOperatorDoc[i-1];
+			Character c = cuttingLettersOperatorDoc[i];
+			
+			if((i==0 && name.compareTo(c.toString()) < 0) 
+					|| (name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0)){   // name is < to cutting letter
+				order = previousChar.toString() + ((Character)(Character.toChars(c-1))[0]).toString();
+			} 
+		}
+		if ("".equals(order)) order = cuttingLettersOperatorDoc[cuttingLettersOperatorDoc.length-1].toString() + lastChar;
+		
+		return order;
+	}
+	
 }

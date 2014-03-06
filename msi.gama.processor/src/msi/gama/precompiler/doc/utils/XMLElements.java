@@ -15,14 +15,18 @@ public class XMLElements {
 	public static final String USAGE = "usage";
 	public static final String EXAMPLES = "examples";
 	public static final String EXAMPLE = "example";
-
+	public static final String FACETS = "facets";
+	public static final String FACET = "facet";
+	
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
 
 	// Attributes of OPERATOR element
-	public static final String ATT_OP_CATEGORY = "category";
+//	public static final String ATT_OP_CATEGORY = "category";
 	public static final String ATT_OP_NAME = "name";
 	public static final String ATT_OP_ID = "id";
+	public static final String ATT_OP_ALT_NAME = "alternativeNameOf";
+	public static final String ATT_ALPHABET_ORDER = "alphabetOrder";
 	
 	// Attributes of OPERANDS element
 	public static final String ATT_OPERANDS_CLASS = "class";
@@ -48,4 +52,12 @@ public class XMLElements {
 	public static final String ATT_EXAMPLE_RAISES = "raises";	
 	
 	public static final String ATT_EXAMPLE_TYPE = "type";	
+	
+	// Attributes of FACET element
+	public static final String ATT_FACET_NAME = "name";
+	public static final String ATT_FACET_TYPE = "type";
+	public static final String ATT_FACET_OPTIONAL = "optional";
+	public static final String ATT_FACET_OMISSIBLE = "omissible";
+
+	
 }

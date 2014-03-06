@@ -78,38 +78,7 @@ public class DocProcessorAnnotations {
 					docElt.appendChild(commentElt);
 				}
 			}
-	
-//			// Parse specialCases
-//			org.w3c.dom.Element specialCasesElt;
-//			if(docElt.getElementsByTagName("specialCases").getLength() != 0){
-//				specialCasesElt = (org.w3c.dom.Element) docElt.getElementsByTagName("specialCases").item(0);				
-//			} else {
-//				specialCasesElt = doc.createElement("specialCases");
-//			}
-//			for ( String cases : docAnnot.special_cases() ) {
-//				if ( !"".equals(cases) ) {
-//					org.w3c.dom.Element caseElt = doc.createElement("case");
-//					caseElt.setAttribute("item", cases);
-//					specialCasesElt.appendChild(caseElt);
-//				}
-//			}
-//			if(docAnnot.special_cases().length != 0) {docElt.appendChild(specialCasesElt);}
-	
-			// Examples are now integrated into usages
-//			// Parse examples
-//			org.w3c.dom.Element examplesElt;
-//			if(docElt.getElementsByTagName("examples").getLength() != 0){
-//				examplesElt = (org.w3c.dom.Element) docElt.getElementsByTagName("examples").item(0);				
-//			} else {
-//				examplesElt = doc.createElement("examples");
-//			}	
-//			for ( String example : docAnnot.examples() ) {
-//				org.w3c.dom.Element exampleElt = doc.createElement("example");
-//				exampleElt.setAttribute("code", example);
-//				examplesElt.appendChild(exampleElt);
-//			}
-//			if(docAnnot.examples().length != 0) {docElt.appendChild(examplesElt);}
-			
+		
 			// Parse: seeAlso
 			org.w3c.dom.Element seeAlsoElt;
 			if(docElt.getElementsByTagName("seeAlso").getLength() != 0){
@@ -136,7 +105,6 @@ public class DocProcessorAnnotations {
 			if(docAnnot.see().length != 0) {docElt.appendChild(seeAlsoElt);}
 			
 			// Parse: usages
-			// FIXME: should replace specialCases & examples
 			
 			org.w3c.dom.Element usagesElt;
 			org.w3c.dom.Element usagesExampleElt;
@@ -187,6 +155,7 @@ public class DocProcessorAnnotations {
 					usagesElt.appendChild(usageElt);					
 				}
 			}
+			
 			// Let's continue with examples and special cases
 			//  - special cases are equivalent to usage without examples
 			//  - examples are equivalent to usage with only examples
@@ -311,15 +280,15 @@ public class DocProcessorAnnotations {
 			return null;
 		}
 		
-		org.w3c.dom.Element facetsElt = doc.createElement("facets");
+		org.w3c.dom.Element facetsElt = doc.createElement(XMLElements.FACETS);
 
 		for ( facet f : facetsAnnot.value() ) {
-			org.w3c.dom.Element facetElt = doc.createElement("facet");
-			facetElt.setAttribute("name", f.name());
+			org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
+			facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
 			// TODO : check several types
-			facetElt.setAttribute("type", String.valueOf(f.type()[0]));
-			facetElt.setAttribute("optional", "" + f.optional());
-			facetElt.setAttribute("omissible",
+			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, String.valueOf(f.type()[0]));
+			facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
+			facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
 				f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
 			org.w3c.dom.Element docFacetElt = 
 					DocProcessorAnnotations.getDocElt(f.doc(), doc, mes, "Facet " + f.name() + " from Statement" + statName, tc, null);
@@ -360,12 +329,12 @@ public class DocProcessorAnnotations {
 	}
 
 	public static org.w3c.dom.Element getOperatorElement(final org.w3c.dom.Element operators, final String eltName) {
-			NodeList nL = operators.getElementsByTagName("operator");
+			NodeList nL = operators.getElementsByTagName(XMLElements.OPERATOR);
 			int i = 0;
 			boolean found = false;
 			while (!found && i < nL.getLength()) {
 				org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-				if ( eltName.equals(elt.getAttribute("id")) ) { return elt; }
+				if ( eltName.equals(elt.getAttribute(XMLElements.ATT_OP_ID)) ) { return elt; }
 				i++;
 			}
 			return null;

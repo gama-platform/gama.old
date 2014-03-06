@@ -2,6 +2,8 @@ package msi.gama.precompiler.doc.utils;
 
 import java.util.HashMap;
 
+import msi.gama.precompiler.IOperatorCategory;
+
 public class TypeConverter {
 	
 	HashMap<String, String> properNameTypeMap;
@@ -91,42 +93,42 @@ public class TypeConverter {
 	
 	private HashMap<String, String> initProperNameCategoriesMap() {
 		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("Cast", "Casting operators");
-		hm.put("Colors", "Mathematics operators");
-		hm.put("Comparison", "Comparison operators");
-		hm.put("IContainer", "Containers-related operators");
-		hm.put("Containers", "Containers-related operators");
-		hm.put("GamaMap", "Containers-related operators");
-		hm.put("Files", "Files-related operators");
-		hm.put("GamaFileType", "Files-related operators");
-		hm.put("MessageType","FIPA-related operators");
-		hm.put("ConversationType", "FIPA-related operators");
-		hm.put("Graphs", "Graphs-related operators");
-		hm.put("GraphsGraphstream", "Graphs-related operators");
-		hm.put("Logic", "Logical operators");
-		hm.put("Maths", "Mathematics operators");
-		hm.put("GamaFloatMatrix", 	"Matrix-related operators");
-		hm.put("GamaIntMatrix", 	"Matrix-related operators");
-		hm.put("GamaMatrix", 		"Matrix-related operators");
-		hm.put("GamaObjectMatrix", 	"Matrix-related operators");
-		hm.put("IMatrix", 			"Matrix-related operators");
-		hm.put("SingleEquationStatement", "EDP-related operators");
-		hm.put("Creation", "Spatial operators");
-		hm.put("Operators", "Spatial operators");
-		hm.put("Points", "Spatial operators");
-		hm.put("Properties", "Spatial operators");
-		hm.put("Punctal", "Spatial operators");
-		hm.put("Queries", "Spatial operators");
-		hm.put("ThreeD", "Spatial operators");
-		hm.put("Random", "Random operators");
-		hm.put("Statistics", "Spatial operators");
-		hm.put("Transformations", "Spatial operators");
-		hm.put("Relations", "Spatial operators");
-		hm.put("Stats", "Statistical operators");
-		hm.put("Strings", "Strings-related operators");		
-		hm.put("System", "System");
-		hm.put("Types", "Types-related operators");
-		hm.put("WaterLevel", "Water level operators");
+		hm.put("Cast", 					IOperatorCategory.CASTING);
+		hm.put("Colors", 			IOperatorCategory.COLOR);
+		hm.put("Comparison", 			IOperatorCategory.COMPARISON);
+		hm.put("IContainer", 		IOperatorCategory.CONTAINER);
+		hm.put("Containers", 		IOperatorCategory.CONTAINER);
+		hm.put("GamaMap", 			IOperatorCategory.CONTAINER);
+		hm.put("Files", 				IOperatorCategory.FILE);
+		hm.put("GamaFileType", 			IOperatorCategory.FILE);
+		hm.put("MessageType",		IOperatorCategory.FIPA);
+		hm.put("ConversationType", 	IOperatorCategory.FIPA);
+		hm.put("Graphs", 				IOperatorCategory.GRAPH);
+		hm.put("GraphsGraphstream", 	IOperatorCategory.GRAPH);
+		hm.put("Logic", 			IOperatorCategory.LOGIC);
+		hm.put("Maths", 				IOperatorCategory.MATHEMATIC);
+		hm.put("GamaFloatMatrix", 	IOperatorCategory.MATRIX);
+		hm.put("GamaIntMatrix", 	IOperatorCategory.MATRIX);
+		hm.put("GamaMatrix", 		IOperatorCategory.MATRIX);
+		hm.put("GamaObjectMatrix", 	IOperatorCategory.MATRIX);
+		hm.put("IMatrix", 			IOperatorCategory.MATRIX);
+		hm.put("SingleEquationStatement", IOperatorCategory.EDP);
+		hm.put("Creation", 			IOperatorCategory.SPATIAL);
+		hm.put("Operators", 		IOperatorCategory.SPATIAL);
+		hm.put("Points", 			IOperatorCategory.SPATIAL);
+		hm.put("Properties", 		IOperatorCategory.SPATIAL);
+		hm.put("Punctal", 			IOperatorCategory.SPATIAL);
+		hm.put("Queries", 			IOperatorCategory.SPATIAL);
+		hm.put("ThreeD", 			IOperatorCategory.SPATIAL);
+		hm.put("Statistics", 		IOperatorCategory.SPATIAL);
+		hm.put("Transformations", 	IOperatorCategory.SPATIAL);
+		hm.put("Relations", 		IOperatorCategory.SPATIAL);
+		hm.put("Random", 				IOperatorCategory.RANDOM);
+		hm.put("Stats", 			IOperatorCategory.STATISTICAL);
+		hm.put("Strings", 				IOperatorCategory.STRING);		
+		hm.put("System", 			IOperatorCategory.SYSTEM);
+		hm.put("Types", 				IOperatorCategory.TYPE);
+		hm.put("WaterLevel", 		IOperatorCategory.WATER);
 		return hm;
 	}
 	

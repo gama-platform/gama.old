@@ -1,5 +1,6 @@
 package msi.gama.precompiler.doc.Element;
 
+import msi.gama.precompiler.GamlDocProcessor;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
@@ -48,10 +49,19 @@ public class Operator implements IElement {
 	public Element getElementDOM() {
 		// TODO to finish
 		org.w3c.dom.Element eltOp = doc.createElement(XMLElements.OPERATOR);
-		eltOp.setAttribute(XMLElements.ATT_OP_CATEGORY, category);
+		// eltOp.setAttribute(XMLElements.ATT_OP_CATEGORY, category);
 		eltOp.setAttribute(XMLElements.ATT_OP_ID, name);
-		eltOp.setAttribute(XMLElements.ATT_OP_NAME, name);			
+		eltOp.setAttribute(XMLElements.ATT_OP_NAME, name);	
+		eltOp.setAttribute(XMLElements.ATT_ALPHABET_ORDER, GamlDocProcessor.getAlphabetOrder(name));
 
+		// Categories
+		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
+		org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+		catElt.setAttribute(XMLElements.ATT_CAT_ID, category);
+		categoriesElt.appendChild(catElt);
+		
+		eltOp.appendChild(categoriesElt);
+		
 		// Combinaison IO
 		org.w3c.dom.Element combiElt = doc.createElement(XMLElements.COMBINAISON_IO);
 		combiElt.appendChild(operands.getElementDOM());
