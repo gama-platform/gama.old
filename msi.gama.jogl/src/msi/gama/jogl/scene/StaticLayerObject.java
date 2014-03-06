@@ -4,11 +4,14 @@
  */
 package msi.gama.jogl.scene;
 
+import static javax.media.opengl.GL.GL_BLEND;
 import java.awt.*;
+import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.types.GamaGeometryType;
+import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class StaticLayerObject extends LayerObject {
@@ -33,34 +36,56 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final int traceSize) {
-		// if ( reloaded ) {
-		// super.clear(reloaded, traceSize);
-		// }
-	}
+	public void clear(final int traceSize) {}
 
 	public static class WordLayerObject extends StaticLayerObject {
 
+		private final double startTime;
+		private int frameCount = 0;
+		private double currentTime = 0;
+		private double previousTime = 0;
+		public float fps = 00.00f;
+
 		public WordLayerObject(final JOGLAWTGLRenderer renderer) {
 			super(renderer, 0);
+			startTime = System.currentTimeMillis();
 			setTrace(0);
 			setFading(false);
 			setAlpha(WORLD_ALPHA);
 			setOffset(WORLD_OFFSET);
 			setScale(WORLD_SCALE);
-
 			if ( renderer.getDrawEnv() ) {
 				drawAxes(renderer.displaySurface.getEnvWidth(), renderer.displaySurface.getEnvHeight());
 			}
-			// addGeometry(NULL_GEOM, null, Color.white, true, Color.white, false, null, 0, 0, false,
-			// IShape.Type.POLYGON,
-			// 0);
+		}
+
+		public void computeFrameRate() {
+			frameCount++;
+			currentTime = System.currentTimeMillis() - startTime;
+			int timeInterval = (int) (currentTime - previousTime);
+			if ( timeInterval > 1000 ) {
+				fps = frameCount / (timeInterval / 1000.0f);
+				previousTime = currentTime;
+				frameCount = 0;
+			}
 		}
 
 		@Override
 		public void draw(final JOGLAWTGLRenderer renderer, final boolean picking) {
 			super.draw(renderer, picking);
-			renderer.gl.glColor4d(1, 1, 1, 1);
+			GL gl = renderer.gl;
+			if ( renderer.getShowFPS() ) {
+				computeFrameRate();
+				gl.glDisable(GL_BLEND);
+				renderer.getContext().makeCurrent();
+				gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+				gl.glRasterPos3d(-renderer.getWidth() / 10, renderer.getHeight() / 10, 0);
+				gl.glScaled(8.0d, 8.0d, 8.0d);
+				renderer.glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
+				gl.glScaled(0.125d, 0.125d, 0.125d);
+				gl.glEnable(GL_BLEND);
+			}
+			gl.glColor4d(1, 1, 1, 1);
 		}
 
 		public void drawAxes(final double w, final double h) {

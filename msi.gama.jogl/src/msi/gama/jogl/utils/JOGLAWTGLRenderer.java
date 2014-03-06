@@ -42,7 +42,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
-
+	public int frame = 0;
 	// facet "tesselation"
 	private boolean useTessellation = true;
 	// facet "inertia"
@@ -51,14 +51,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean drawEnv = false;
 	// facet "show_fps"
 	private boolean showFPS = false;
-	// facet "aggregated"
-	// private int aggregated = 0;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
 	// preference "drawNormal"
 	private boolean drawNormal = false;
 	// Display model a a 3D Cube
-	private boolean CubeDisplay = true;
+	private boolean cubeDisplay = true;
 
 	public boolean triangulation = false;
 
@@ -77,17 +75,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
 
-	public int frame = 0;
-
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
-
-	private double startTime = 0;
-	private int frameCount = 0;
-	private double currentTime = 0;
-	private double previousTime = 0;
-	public float fps = 00.00f;
 
 	public boolean autoSwapBuffers = false;
 	public boolean disableManualBufferSwapping;
@@ -115,7 +105,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		startTime = System.currentTimeMillis();
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
@@ -234,14 +223,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.drawScene();
 
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-			gl.glPopMatrix();
 
 			if ( this.displaySurface.selectRectangle ) {
 				drawROI();
-			}
-
-			if ( this.getShowFPS() ) {
-				ShowFPS();
 			}
 
 			if ( !autoSwapBuffers ) {
@@ -295,7 +279,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( isPicking() ) {
 			this.drawPickableObjects();
 		} else {
-			if ( CubeDisplay ) {
+			if ( cubeDisplay ) {
 				GLUtil.drawCubeDisplay(this, (float) displaySurface.getEnvWidth());
 
 			} else {
@@ -354,7 +338,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setContext(final GLContext context) {
 		this.context = context;
-		context.makeCurrent();
+		// context.makeCurrent();
 	}
 
 	public void setAmbientLightValue(final Color ambientLightValue) {
@@ -414,11 +398,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void setCubeDisplay(final boolean d) {
-		this.CubeDisplay = d;
+		this.cubeDisplay = d;
 	}
 
 	public boolean getCubeDisplay() {
-		return this.CubeDisplay;
+		return this.cubeDisplay;
 	}
 
 	public void setShowFPS(final boolean fps) {
@@ -428,14 +412,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getShowFPS() {
 		return showFPS;
 	}
-
-	// public void setTraceDisplay(final int agg) {
-	// this.aggregated = agg;
-	// }
-	//
-	// public int getTraceDisplay() {
-	// return aggregated;
-	// }
 
 	public void setDrawEnv(final boolean denv) {
 		this.drawEnv = denv;
@@ -509,35 +485,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( frame != 0 ) {
 			double env_width = displaySurface.getEnvWidth();
 			double env_height = displaySurface.getEnvHeight();
+			gl.glPushMatrix();
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotatef(frame, 0, 0, 1);
-			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
+			gl.glPopMatrix();
 		}
-	}
-
-	public void CalculateFrameRate() {
-
-		frameCount++;
-		currentTime = System.currentTimeMillis() - startTime;
-
-		int timeInterval = (int) (currentTime - previousTime);
-		if ( timeInterval > 1000 ) {
-			fps = frameCount / (timeInterval / 1000.0f);
-			previousTime = currentTime;
-			frameCount = 0;
-		}
-	}
-
-	public void ShowFPS() {
-		CalculateFrameRate();
-		gl.glDisable(GL_BLEND);
-		getContext().makeCurrent();
-		gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-		gl.glRasterPos3d(-this.getWidth() / 10, this.getHeight() / 10, 0);
-		gl.glScaled(8.0d, 8.0d, 8.0d);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
-		gl.glScaled(0.125d, 0.125d, 0.125d);
-		gl.glEnable(GL_BLEND);
 	}
 
 	public double GetEnvWidthOnScreen() {
