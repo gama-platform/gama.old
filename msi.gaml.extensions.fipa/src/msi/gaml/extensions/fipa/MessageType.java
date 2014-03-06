@@ -17,8 +17,7 @@ public class MessageType extends GamaType<Message> {
 	public MessageType() {}
 
 	@Override
-	public Message cast(final IScope scope, final Object obj, final Object param, IType contentsType)
-		throws GamaRuntimeException {
+	public Message cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -28,7 +27,7 @@ public class MessageType extends GamaType<Message> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.NO_TYPE;
 	}
 
@@ -39,13 +38,12 @@ public class MessageType extends GamaType<Message> {
 
 	@operator(value = MessageType.MESSAGE_STR, can_be_const = true)
 	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = { "" })
-	public static Message asMessage(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	public static Message asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return MessageType.staticCast(scope, val, null);
 	}
 
 	private static Message staticCast(final IScope scope, final Object val, final Object object) {
-		if ( val instanceof Conversation ) { return ((Conversation) val).last(scope); }
+		if ( val instanceof Conversation ) { return ((Conversation) val).lastValue(scope); }
 		if ( val instanceof Message ) { return (Message) val; }
 		// ???
 		return null;

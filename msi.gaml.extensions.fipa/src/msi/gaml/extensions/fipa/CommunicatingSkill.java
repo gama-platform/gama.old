@@ -97,7 +97,7 @@ public class CommunicatingSkill extends Skill {
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final Message m =
 			(Message) Types.get(MessageType.MESSAGE_STR).cast(scope,
-				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null, Types.NO_TYPE);
+				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null, Types.NO_TYPE, Types.NO_TYPE);
 		Message message;
 		message = m == null ? new Message() : m;
 

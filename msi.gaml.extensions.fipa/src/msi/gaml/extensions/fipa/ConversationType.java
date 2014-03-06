@@ -17,7 +17,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 	public ConversationType() {}
 
 	@Override
-	public Conversation cast(final IScope scope, final Object obj, final Object param, IType contentsType)
+	public Conversation cast(final IScope scope, final Object obj, final Object param, IType keyType, IType contentsType)
 		throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
 		// if ( obj instanceof Message ) { return new
@@ -26,12 +26,12 @@ public class ConversationType extends GamaContainerType<Conversation> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.get(Message.class);
 	}
 
 	@Override
-	public IType defaultKeyType() {
+	public IType getKeyType() {
 		return Types.get(IType.INT);
 	}
 
