@@ -22,6 +22,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
+
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -44,7 +47,13 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.WRITE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.NONE, optional = false) }, omissible = IKeyword.MESSAGE)
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.NONE, optional = false, 
+		doc =@doc("the message to display. Modelers can add some formatting characters to the message (carriage returns, tabs, or Unicode characters), which will be used accordingly in the console."))
+		}, omissible = IKeyword.MESSAGE)
+@doc(value = "The statement makes the agent output an arbitrary message in the console.", 
+usages = {@usage(examples = {@example("write 'This is a message from ' + self;")})})
+
+
 public class WriteStatement extends AbstractStatement {
 
 	@Override

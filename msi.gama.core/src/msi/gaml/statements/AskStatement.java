@@ -27,6 +27,8 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -38,12 +40,15 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed on remote agents.
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
-@facets(value = { @facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true) }, omissible = IKeyword.TARGET)
+@facets(value = { 
+	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false, doc = @doc("an expression that evaluates to an agent or a list of agents")),
+	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("an expression that evaluates to a species")) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@doc(value = "Allows an agent, the sender agent (that can be the [Sections151#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
-	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
-	"ask receiver_agent(s) {", "     [statements]", "}" })
+@doc(value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements.", usages = {
+	@usage(value = "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {@example("ask receiver_agent(s) {"),@example("     [statements]"),@example("}")}),
+	@usage(value = "If the value of the target attribute is nil or empty, the statement is ignored. The species of the receiver agents must be known in advance for this statement to compile. If not, it is possible to cast them using the as attribute, like:", examples = {@example("ask receiver_agent(s) as: a_species_expression {"),@example("     [statement_set]"),@example("}")})}
+
+		)
 public class AskStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;

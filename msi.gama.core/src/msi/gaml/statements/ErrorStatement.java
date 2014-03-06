@@ -20,6 +20,9 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -42,6 +45,8 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false) }, omissible = IKeyword.MESSAGE)
+@doc(value = "The statement makes the agent output an error dialog (if the simulation contains a user interface). Otherwise displays the error in the console.", 
+	usages = {@usage(examples = {@example("error 'This is an error raised by ' + self;")})})
 public class ErrorStatement extends AbstractStatement {
 
 	final IExpression message;
