@@ -100,7 +100,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
-			// type = "JTS";
 		}
 		if ( shape.hasAttribute(IShape.TEXTURE_ATTRIBUTE) ) {
 			textures = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
@@ -108,9 +107,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
 			ratio = Cast.asFloat(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
 		}
-		// if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
-		// type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
-		// }
 		final Color color = highlight ? highlightColor : c;
 		if ( topo != null && topo.isTorus() ) {
 			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());

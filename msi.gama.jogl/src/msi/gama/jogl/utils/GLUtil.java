@@ -111,6 +111,7 @@ public class GLUtil {
 		return WindowPoint;
 	}
 
+
 	static void drawCubeDisplay(final JOGLAWTGLRenderer renderer, final float width) {
 		final float envMaxDim = width;
 		renderer.drawModel();

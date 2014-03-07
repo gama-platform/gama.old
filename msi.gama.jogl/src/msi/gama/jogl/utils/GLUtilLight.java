@@ -498,25 +498,25 @@ public class GLUtilLight {
 
 	public static void setAmbiantLight(final GL gl, final Color ambientLightValue) {
 		float[] lightAmbientValue =
-			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
-				(float) ambientLightValue.getBlue() / 255, 1.0f };
+			{ (float) ambientLightValue.getRed() / 255.0f, (float) ambientLightValue.getGreen() / 255.0f,
+				(float) ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
 	public static void setDiffuseLight(final GL gl, final Color ambientLightValue, final GamaPoint pos) {
 		// Diffuse light 0
 		float[] light1DiffuseValue =
-			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
-				(float) ambientLightValue.getBlue() / 255, 1.0f };;
+			{ (float) ambientLightValue.getRed() / 255.0f, (float) ambientLightValue.getGreen() / 255.0f,
+				(float) ambientLightValue.getBlue() / 255.0f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float light1Position[] = { (float) pos.getX(), (float) pos.getY(), (float) pos.getZ() };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, light1DiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
 	}
 
-	public static void DrawDiffuseLight0(float[] light0Position, final GL gl, final GLU glu, final double radius) {
+	public static void DrawDiffuseLight0(float[] light0Position, final GL gl, final GLU glu, final double radius , Color diffuseLightValue) {
 		gl.glTranslatef(light0Position[0], light0Position[1], light0Position[2]);
-		gl.glColor3f(1.0f, 1.0f, 0.0f);
+		gl.glColor3d(diffuseLightValue.getRed() / 255.0, diffuseLightValue.getGreen()/ 255.0, diffuseLightValue.getBlue() / 255.0);
 		DrawSphere(gl, glu, radius);
 		gl.glTranslatef(-light0Position[0], -light0Position[1], -light0Position[2]);
 	}
@@ -557,14 +557,15 @@ public class GLUtilLight {
 
 		// ambient
 		float[] lightAmbientValue =
-			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
-				(float) ambientLightValue.getBlue() / 255, 1.0f };
+			{ (float) ambientLightValue.getRed() / 255.0f, (float) ambientLightValue.getGreen() / 255.0f,
+				(float) ambientLightValue.getBlue() / 255.0f, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbientValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 
 		// Diffuse
 		float[] lightDiffuseValue =
-			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
-				(float) diffuseLightValue.getBlue() / 255, 1.0f };
+			{ (float) diffuseLightValue.getRed() / 255.0f, (float) diffuseLightValue.getGreen() / 255.0f,
+				(float) diffuseLightValue.getBlue() / 255.0f, 1.0f };
 
 		boolean use2light = false;
 		//use Two lights
@@ -593,14 +594,11 @@ public class GLUtilLight {
 			light0Position[3] = 0.0f;
 			gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
-			gl.glEnable(GL.GL_LIGHT0);
 			
-			light1Position[0] = widthEnv / 2;
-			light1Position[1] = -heightEnv / 2;
-			light1Position[2] = 2 * widthEnv;
-			light1Position[3] = 0.0f;
 			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light0Position, 0);
+			
+			gl.glEnable(GL.GL_LIGHT0);
 			gl.glEnable(GL.GL_LIGHT1);
 		}
 
@@ -612,37 +610,35 @@ public class GLUtilLight {
 
 		
 
-		// enable color tracking
-		gl.glEnable(GL_COLOR_MATERIAL);
+		
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		// enable color tracking
+		gl.glEnable(GL_COLOR_MATERIAL);
 
-		float[] rgba = { 0.2f, 0.2f, 0.2f, 1f };
+		
+		//FIXME: Arno 02/03/2014 glMaterial is deprecated http://www.felixgers.de/teaching/jogl/glColorMaterial.html
+		/*float[] rgba = { 0.5f, 0.5f, 0.5f, 1.0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
-		gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
-	}
-
-	public static void SetAmbiantLightFromValue(final GL gl, final GLU glu, final Color c) {
-		float[] lightAmbientValue =
-			{ (float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255, 1.0f };
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
+		gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);*/
 	}
 
 	public static void UpdateAmbiantLightValue(final GL gl, final GLU glu, final Color ambiantLightValue) {
 
 		float[] lightAmbientValue =
-			{ (float) ambiantLightValue.getRed() / 255, (float) ambiantLightValue.getGreen() / 255,
-				(float) ambiantLightValue.getBlue() / 255, 1.0f };
+			{ (float) ambiantLightValue.getRed() / 255.0f, (float) ambiantLightValue.getGreen() / 255.0f,
+				(float) ambiantLightValue.getBlue() / 255.0f, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbientValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
 	public static void UpdateDiffuseLightValue(final GL gl, final GLU glu, final Color diffuseLightValue) {
 
 		float[] lightDiffuseValue =
-			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
-				(float) diffuseLightValue.getBlue() / 255, 1.0f };
+			{ (float) diffuseLightValue.getRed() / 255.0f, (float) diffuseLightValue.getGreen() / 255.0f,
+				(float) diffuseLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 	}
@@ -666,29 +662,6 @@ public class GLUtilLight {
 		glu.gluSphere(quad, 1.0f, slices, stacks);
 		glu.gluDeleteQuadric(quad);
 		gl.glTranslated(-light1Position[0], light1Position[1], -light1Position[2]);
-	}
-
-	public static void InitializeLighting2(final GL gl) {
-		// Prepare light parameters.
-		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0, 0, -10, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient = { 1f, 1f, 1f, 1f };
-		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
-
-		// Set light parameters.
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPos, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightColorAmbient, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightColorSpecular, 0);
-
-		// Enable lighting in GL.
-		gl.glEnable(GL.GL_LIGHT1);
-		gl.glEnable(GL.GL_LIGHTING);
-
-		// Set material properties.
-		float[] rgba = { 1f, 1f, 1f };
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
-		gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
 	}
 
 	public static void setPointSize(final GL gl, final float size, final boolean smooth) {

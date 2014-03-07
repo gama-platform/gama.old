@@ -106,7 +106,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				case POLYHEDRON:
 				case CUBE:
 				case BOX:
-				case CIRCLE:
 				case CYLINDER:
 				case GRIDLINE:
 					if ( geometry.height > 0 ) {
@@ -610,11 +609,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			} else {
 				renderer.gl.glPushMatrix();
 				renderer.gl.glDisable(GL_LIGHTING);
+
 				renderer.gl.glDisable(GL_BLEND);
 
 				renderer.gl.glColor4d(s.getColor().getRed() / 255, s.getColor().getGreen() / 255, s.getColor()
 					.getBlue() / 255, s.getColor().getAlpha() / 255 * s.getAlpha());
 				renderer.gl.glRasterPos3d(x, y, z);
+
 				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
 				// FIXME We go back to the white ??
 				renderer.gl.glColor4d(1, 1, 1, 1);

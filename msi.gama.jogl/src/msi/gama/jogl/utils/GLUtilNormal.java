@@ -108,8 +108,8 @@ public class GLUtilNormal {
 			renderer.gl.glEnd();
 			
 			if(c != null){
-				renderer.gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-						alpha * c.getAlpha() / 255);
+				renderer.gl.glColor4d((double) c.getRed() / 255.0, (double) c.getGreen() / 255.0, (double) c.getBlue() / 255.0,
+						alpha * c.getAlpha() / 255.0);
 			}
 						
 		}

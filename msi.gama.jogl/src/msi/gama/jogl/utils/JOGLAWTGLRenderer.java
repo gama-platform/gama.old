@@ -134,6 +134,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		// Blending control
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		
+		//gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
 		gl.glEnable(GL_BLEND);
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
@@ -192,8 +194,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			light0Position[2] = (float) diffuseLightPosition.z;
 			light0Position[3] = 0.0f;
 
-			if ( drawDiffuseLight ) {
-				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu, getMaxEnvDim() / 10);
+			
+			if(drawDiffuseLight){
+				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu,getMaxEnvDim()/10, diffuseLightValue);
 			}
 
 			// System.out.println("x:" + light0Position[0] + "y:" + light0Position[1] + "z:" + light0Position[2] );
