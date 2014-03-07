@@ -8,13 +8,17 @@ model shape
 
 global {
 	
+	file gamaRaster <- file('images/Gama.png');
+	
 	int size <- 10;
 	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size/2),triangle(size),rgbtriangle(size),polygon([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}])];
-	list<geometry> geometries3D <-[sphere(size/5),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),rgbcube(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
-
-	geometry shape <- rectangle(length(geometries3D)*size*2,size*8);
+	list<geometry> geometries3D <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),rgbcube(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
+    list<geometry> texturedGeometries <-[square(size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),sphere(size)];
+   
 	
-	file imageRaster <- file('images/Gama.png');
+	geometry shape <- rectangle(length(geometries3D)*size*2,size*8);
+
+	
 
 	init { 
 		
@@ -32,13 +36,21 @@ global {
 			curGeom3D <- curGeom3D+1;
 		} 
 		
-		create texture2D number:1 {
+		int curTextGeom <-0;
+		create TexturedGeometry3D number: length(texturedGeometries){ 
+			location <- {curTextGeom*size*2, size*4, 0};	
+			myGeometry <- texturedGeometries[curTextGeom];
+			myTexture <- gamaRaster;
+			curTextGeom <- curTextGeom+1;
+		}
+		
+		/*create texture2D number:1 {
 			location <- {0,size*4,0};
 		}
 		
 		create texture3D number:1 {
 			location <- {0,size*6,0};
-		}
+		}*/
 	}  
 } 
  
@@ -47,7 +59,7 @@ species Geometry2D{
 	geometry myGeometry;
 	
 	aspect default {
-		draw myGeometry color:rgb('white') at:location;
+		draw myGeometry color:°orange at:location;
     }
 } 
     
@@ -56,32 +68,29 @@ species Geometry3D{
 	geometry myGeometry;
 
 	aspect default {
-		draw myGeometry color:rgb('white') at:location;
+		draw myGeometry color:°orange at:location;
     }
 }
 
-species texture2D{	
-	aspect default{
-		draw imageRaster size:size;
-	}
-}
-    	
-species texture3D{
-	aspect default{
-		draw cube(size) texture:imageRaster.path;
-	}
-}
+species TexturedGeometry3D{  
 
+	geometry myGeometry;
+	file myTexture;
+
+	aspect default {
+		draw myGeometry texture:myTexture.path at:location;
+    }
+}
 
 
 experiment Display  type: gui {
 	output {
-		display View1 type:opengl  diffuse_light:(100) background:rgb(10,40,55) {
-			species Geometry2D;
-			species Geometry3D;
-			species texture2D;
-			species texture3D;
+		display View1 type:opengl diffuse_light:time background:rgb(10,40,55) {
+			species Geometry2D aspect:default;
+			species Geometry3D aspect:default;
+			species TexturedGeometry3D aspect:default;
 		}
+
 	}
 }
 
