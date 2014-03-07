@@ -9,7 +9,6 @@ import java.awt.*;
 import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.GAMA;
 import msi.gaml.types.GamaGeometryType;
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
@@ -91,12 +90,21 @@ public class StaticLayerObject extends LayerObject {
 		public void drawAxes(final double w, final double h) {
 			double size = (w > h ? w : h) / 10;
 			// add the world
-			Geometry g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2)).getInnerGeometry();
+			// Geometry g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2)).getInnerGeometry();
 			Color c = new Color(150, 150, 150);
-			addGeometry(g, GAMA.getSimulation().getAgent(), c, false, c, false, null, 0, size / 20, false,
-				IShape.Type.ENVIRONMENT, 0);
-			// build the lines
 			GamaPoint origin = new GamaPoint();
+			Geometry g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0)).getInnerGeometry();
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, 0);
+			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h)).getInnerGeometry();
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, 0);
+			g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h)).getInnerGeometry();
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, 0);
+			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin).getInnerGeometry();
+			addGeometry(g, null, c, false, c, false, null, 0, 0, false, IShape.Type.LINESTRING, 0);
+			// addGeometry(g, GAMA.getSimulation().getAgent(), c, false, c, false, null, 0, size / 20, false,
+			// IShape.Type.ENVIRONMENT, 0);
+			// build the lines
+
 			g = GamaGeometryType.buildLine(origin, new GamaPoint(size, 0, 0)).getInnerGeometry();
 			addGeometry(g, null, Color.red, true, Color.red, false, null, 0, size / 20, false,
 				IShape.Type.LINECYLINDER, 0);
@@ -127,7 +135,6 @@ public class StaticLayerObject extends LayerObject {
 			addGeometry(g, null, Color.blue, true, Color.blue, false, null, 0, 0, false, IShape.Type.POLYGON, 0);
 
 		}
-
 	}
 
 }
