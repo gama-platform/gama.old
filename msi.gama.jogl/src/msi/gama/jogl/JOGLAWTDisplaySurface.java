@@ -154,7 +154,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.canvas.setSize(getWidth(), getHeight());
 				}
 				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
-				updateDisplay();
+				// updateDisplay();
 				previousPanelSize = getSize();
 			}
 		});
