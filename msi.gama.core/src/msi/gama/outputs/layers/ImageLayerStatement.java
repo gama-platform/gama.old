@@ -34,7 +34,7 @@ import msi.gama.util.file.GamaShapeFile;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -44,33 +44,43 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING, optional = true),
+@facets(value = { @facet(name = IKeyword.FILE, type = { IType.STRING, IType.FILE }, optional = true),
 	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
-	@facet(name = IKeyword.GIS, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.GIS, type = { IType.FILE, IType.STRING }, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+		imageFileExpression = getFacet(IKeyword.FILE, IKeyword.NAME);
+		gisExpression = getFacet(IKeyword.GIS);
+		colorExpression = getFacet(IKeyword.COLOR);
 	}
 
-	IExpression imageFileExpression = null;
+	final IExpression imageFileExpression;
+	IExpression gisExpression;
+	final IExpression colorExpression;
 	String constantImage = null;
 	String currentImage = null;
+	Color color = null;
 
-	private GisLayer gisLayer = null;
+	private IList<IShape> shapes = null;
 
-	public GisLayer getGisLayer() {
-		return gisLayer;
+	public IList<IShape> getShapes() {
+		return shapes;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 
 	@Override
 	public short getType() {
-		if ( getFacet(IKeyword.GIS) == null ) { return ILayerStatement.IMAGE; }
+		if ( gisExpression == null ) { return ILayerStatement.IMAGE; }
 		return ILayerStatement.GIS;
 	}
 
@@ -81,7 +91,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	// FIXME Use GamaImageFile
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
-		if ( getFacet(IKeyword.GIS) != null ) {
+		if ( gisExpression != null ) {
 			buildGisLayer(scope);
 		} else {
 			if ( constantImage == null ) {
@@ -97,12 +107,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				} else {
 					setName(tag.toGaml());
 				}
-				imageFileExpression = getFacet(IKeyword.FILE);
-				if ( imageFileExpression == null ) {
-					imageFileExpression = getFacet(IKeyword.NAME);
-				}
 				if ( imageFileExpression == null ) { throw GamaRuntimeException.error("Image file not defined"); }
-				// setFacet(IKeyword.FILE, imageFileExpression);
 				if ( imageFileExpression.isConst() ) {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
 					currentImage = constantImage;
@@ -118,65 +123,40 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
-	public void buildGisLayer(final IScope scope) throws GamaRuntimeException {
-		String fileName =
-			getFacet(IKeyword.GIS) != null ? Cast.asString(scope, getFacet(IKeyword.GIS).value(scope)) : name;
-		GamaShapeFile file = new GamaShapeFile(scope, fileName);
-		GamaColor c = null;
-		IExpression colorExpr = getFacet(IKeyword.COLOR);
-		if ( colorExpr != null ) {
-			c = Cast.asColor(scope, getFacet(IKeyword.COLOR).value(scope));
+	private GamaShapeFile getShapeFile(final IScope scope) {
+		if ( gisExpression == null ) { return null; }
+		if ( gisExpression.getType().id() == IType.STRING ) {
+			String fileName = Cast.asString(scope, gisExpression.value(scope));
+			return new GamaShapeFile(scope, fileName);
 		}
-		gisLayer = new GisLayer(file.getContents(scope), c, "");
+		Object o = gisExpression.value(scope);
+		if ( o instanceof GamaShapeFile ) { return (GamaShapeFile) o; }
+		return null;
+	}
+
+	public void buildGisLayer(final IScope scope) throws GamaRuntimeException {
+		GamaShapeFile file = getShapeFile(scope);
+		if ( colorExpression != null ) {
+			color = Cast.asColor(scope, colorExpression.value(scope));
+		}
+		shapes = file.getContents(scope);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		gisLayer = null;
-	}
-
-	public static class GisLayer {
-
-		private final IContainer<Integer, IShape> objects;
-		private String type;
-		private Color color = Color.black;
-
-		public GisLayer(final IList<IShape> objects, final Color color, final String type) {
-			super();
-			this.objects = objects;
-			if ( color != null ) {
-				this.color = color;
-			}
-			this.type = type;
-		}
-
-		public IContainer<Integer, IShape> getObjects() {
-			return objects;
-		}
-
-		public void dipose() {
-			type = null;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(final String type) {
-			this.type = type;
-		}
-
-		public Color getColor() {
-			return color;
-		}
+		shapes = null;
 	}
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
-		if ( gisLayer == null ) {
+		if ( gisExpression == null ) {
 			currentImage =
 				constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));
+		} else {
+			if ( shapes == null ) {
+				buildGisLayer(scope);
+			}
 		}
 		return true;
 	}
@@ -187,7 +167,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	 * @param newValue
 	 */
 	public void setGisLayerName(final String newValue) throws GamaRuntimeException {
-		setName(newValue);
+		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.get(IType.STRING));
 		IScope scope = GAMA.obtainNewScope();
 		try {
 			buildGisLayer(scope);
@@ -202,6 +182,13 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	 */
 	public void setImageFileName(final String newValue) {
 		constantImage = newValue;
+	}
+
+	/**
+	 * 
+	 */
+	public void resetShapes() {
+		shapes = null;
 	}
 
 }

@@ -219,9 +219,7 @@ public abstract class AbstractLayer implements ILayer {
 		final double h = point.getY();
 		double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
-		// GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
 		positionInPixels.setLocation(absolute_x, absolute_y);
-		// GuiUtils.debug("AbstractLayer.setPosition : " + positionInPixels);
 	}
 
 	@Override
