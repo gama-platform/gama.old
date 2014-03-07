@@ -859,26 +859,18 @@ public class JTSDrawer {
 			setColor(c,g.getAlpha());
 		}
 		
-		if(g.isTextured){		
-			/*try {
-				image = ImageUtils.getInstance().getImageFromFile(g.textureFileNames.get(0));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(g.isTextured){	
+				
+			if ( g.hasTextures() ) {
+				g.getTexture(renderer, 1).bindTo(renderer);
+			} else {
+				g.getTexture(renderer, 0).bindTo(renderer);
 			}
 
-			texture = renderer.getScene().getTextures().get(image);
-			if ( texture == null ) { // If the texture has not been created yet we created it and push it.
-				texture = GLUtil.createTexture(myGLRender,image, false, 0);
-				myGLRender.getScene().getTextures().put(image, texture);
-			}
-
-			gl.glEnable(GL.GL_TEXTURE_2D);
+			//gl.glEnable(GL.GL_TEXTURE_2D);
 			
-			myGLRender.getContext().makeCurrent();
-			texture.texture.enable();
-			texture.texture.bind();
-			gl.glColor3d(1.0, 1.0, 1.0);*/
+	
+			gl.glColor3d(1.0, 1.0, 1.0);
 		}
 			
 		GLUquadric quad = myGlu.gluNewQuadric();
