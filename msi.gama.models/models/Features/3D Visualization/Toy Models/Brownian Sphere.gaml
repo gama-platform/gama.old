@@ -4,8 +4,6 @@ global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 category: 'Initialization';
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 category: 'Initialization';  
 	int radius parameter: 'Radius' min: 10 <- 10 ;
-	bool wander3D <- true parameter: 'Wander 3D';
-	bool sphere <- true parameter: 'sphere';
 	
 	list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
 	geometry shape <- square(width_and_height_of_environment);
@@ -18,31 +16,37 @@ global {
 	}  
 } 
     
-entities { 
-	species cells skills: [moving] {  
-		rgb color;
-		reflex move {
-			if(wander3D){
-			  do wander_3D;
-			}else{
-			  do wander;
-			}
-			
-		}		
-		aspect default {
-			if(sphere){
-			  draw sphere(radius) ;	
-			}else{
-			  draw circle(radius) ;	
-	      }
-	    }
-	}
+species cells skills: [moving] {  
+	rgb color;
+	list<cells> neighbours update: neighbours(width_and_height_of_environment/10);
+	reflex move {
+		  do wander_3D z_max:width_and_height_of_environment;
+	}	
 	
+	list<cells> neighbours(int dist) {
+                return cells select ((each distance_to self) < dist);
+    }
+     	
+	aspect default {
+		  draw sphere(radius);	
+    }
+    
+    aspect neighbours {
+		draw sphere(radius);
+		loop pp over: neighbours {
+			draw line([self.location,pp.location]);
+		}	
+    }
 }
+	
+
 experiment Display  type: gui {
 	output {
-		display WanderingSphere type:opengl ambient_light:100 background: rgb('white') show_fps:true{
+		display WanderingSphere type:opengl  background:rgb(10,40,55){
 			species cells;
+		}
+		display WanderingSphereWithNeighbourgs type:opengl  background:rgb(10,40,55){
+			species cells aspect:neighbours;
 		}
 	}
 }
