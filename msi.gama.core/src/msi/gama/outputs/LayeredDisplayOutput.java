@@ -152,8 +152,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private boolean drawDiffLight = false;
-	private Color ambientLightColor = new GamaColor(125, 125, 125, 255);
-	private Color diffuseLightColor = new GamaColor(125, 125, 125, 255);
+	private Color ambientLightColor = new GamaColor(100, 100, 100, 255);
+	private Color diffuseLightColor = new GamaColor(10, 10, 10, 255);
 	private GamaPoint diffuseLightPosition = new GamaPoint(-1, -1, -1);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
