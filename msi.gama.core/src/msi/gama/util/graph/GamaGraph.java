@@ -607,7 +607,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public void setOptimizerType(final String s) {
 		if ( "AStar".equals(s) ) {
 			optimizerType = 4;
-		} else if ( "Djikstra".equals(s) ) {
+		} else if ( "Dijkstra".equals(s) ) {
 			optimizerType = 3;
 		} else if ( "Bellmann".equals(s) ) {
 			optimizerType = 2;
