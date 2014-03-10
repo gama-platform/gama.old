@@ -34,6 +34,7 @@ public class DormandPrince853Solver extends Solver {
 		integrated_val = iV;
 		this.minStep = minStep;
 		this.maxStep = maxStep;
+		this.step = (minStep + maxStep) / 2;
 		this.scalAbsoluteTolerance = scalAbsoluteTolerance;
 		this.scalRelativeTolerance = scalRelativeTolerance;
 		integrator = new DormandPrince853Integrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance);
@@ -51,7 +52,6 @@ public class DormandPrince853Solver extends Solver {
 				for ( int i = 0; i < integrated_val.size(); i++ ) {
 					((GamaList) integrated_val.get(i)).add(y[i]);
 				}
-				// GuiUtils.informConsole("time="+time);
 			}
 		};
 		integrator.addStepHandler(stepHandler);
@@ -67,6 +67,7 @@ public class DormandPrince853Solver extends Solver {
 		// Just a trial
 		this.minStep = minStep;
 		this.maxStep = maxStep;
+		this.step = (minStep + maxStep) / 2;
 		this.scalAbsoluteTolerance = scalAbsoluteTolerance;
 		this.scalRelativeTolerance = scalRelativeTolerance;
 		integrator = new DormandPrince853Integrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance);
@@ -75,6 +76,7 @@ public class DormandPrince853Solver extends Solver {
 	@Override
 	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double time_initial,
 		final double time_final, final double cycle_length) {
+
 		if ( eq instanceof SystemOfEquationsStatement ) {
 			// add all equations externe to have one complete systemofequation
 			//
@@ -89,11 +91,11 @@ public class DormandPrince853Solver extends Solver {
 			integrated_val.clear();
 
 			final double[] y = new double[eq.variables_diff.size()];
-			// System.out.println(eq.variables + " " + eq.currentScope);
+
 			for (int i = 0, n = eq.variables_diff.size(); i < n; i++) {
 				final IExpression v = eq.variables_diff.get(i);
 				boolean pushed = false;
-				if ( eq.equaAgents.size() > 0 ) {
+				if (eq.equaAgents.size() > 0) {
 					pushed = scope.push(eq.equaAgents.get(i));
 				}
 				try {
@@ -104,34 +106,26 @@ public class DormandPrince853Solver extends Solver {
 				} catch (final Exception ex1) {
 					GuiUtils.debug(ex1.getMessage());
 				} finally {
-					if ( eq.equaAgents.size() > 0 ) {
-						if ( pushed ) {
+					if (eq.equaAgents.size() > 0) {
+						if (pushed) {
 							scope.pop(eq.equaAgents.get(i));
 						}
 					}
 				}
 
 			}
-
-			// GuiUtils.informConsole(""+y);
-			// double[] y = new double[] { 0.0, 1.0 };
+			if (y.length > 0)
 			try {
-				
+
 				integrator.integrate(eq, (time_initial)
 						* (step / cycle_length / step), y, time_final
 						* (step / cycle_length / step), y);
-				eq.assignValue(time_final * (step / cycle_length / step), y);
-				// GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
-//				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
-//				eq.assignValue(time_final * cycle_length, y);
-				// GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
 			} catch (final Exception ex) {
-				System.out.println(ex);
+					System.out.println(ex);
 			}
+			eq.assignValue(time_final * (step / cycle_length / step), y);
 
-			// remove external equations
 		}
 
 	}
-
 }
