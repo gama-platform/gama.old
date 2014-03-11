@@ -159,7 +159,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
 			final ISpecies s = Cast.asSpecies(scope, species.value(scope));
-			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.literalValue() +
+			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.toGaml() +
 				" is accessible in the context of " + executor + "."); }
 			pop = executor.getPopulationFor(s);
 		}

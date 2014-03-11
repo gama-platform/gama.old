@@ -48,6 +48,13 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 		return species;
 	}
 
+	@Override
+	public ISpecies cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentType) {
+		if ( contentType.isAgentType() ) { return scope.getModel().getSpecies(contentType.getName()); }
+		return cast(scope, obj, param);
+	}
+
 	// TODO Verify that we dont need to declare the other cast method
 
 	@Override
