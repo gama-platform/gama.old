@@ -653,6 +653,7 @@
       <elements xsi:type="xtext:Keyword" value="display_grid"/>
       <elements xsi:type="xtext:Keyword" value="quadtree"/>
       <elements xsi:type="xtext:Keyword" value="event"/>
+      <elements xsi:type="xtext:Keyword" value="overlay"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="_DoKey">

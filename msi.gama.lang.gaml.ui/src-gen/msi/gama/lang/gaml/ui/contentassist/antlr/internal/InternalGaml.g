@@ -3571,6 +3571,14 @@ rule___LayerKey__Alternatives
 { after(grammarAccess.get_LayerKeyAccess().getEventKeyword_9()); }
 )
 
+    |(
+{ before(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); }
+
+	'overlay' 
+
+{ after(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
