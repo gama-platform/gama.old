@@ -748,8 +748,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		if (chart.getLegend()==null)	chart.addLegend(new LegendTitle(chart.getPlot()));
 		LegendTitle legend = chart.getLegend();
-		GuiUtils.debug("dyncateg:"+defaultnames);
-		GuiUtils.debug("legend:"+legend);		
+//		GuiUtils.debug("dyncateg:"+defaultnames);
+//		GuiUtils.debug("legend:"+legend);		
 		for (int i=0; i<values.size(); i++)
 		{
 			first=datas.get(i);
@@ -903,6 +903,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if ( datas.isEmpty() ) { return; }
 		GamaList x = new GamaList();
 		Object obj = datas.get(0).getValue(scope);
+		boolean cumulative=false;
 		if ( obj instanceof GamaList ) {
 			x = (GamaList) obj;
 		} else {
@@ -923,16 +924,33 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			if ( o instanceof GamaList ) {
 				n = (GamaList) o;
 			} else {
+				cumulative=true;
 				n.add(o);
 			}
 			if ((type==XY_CHART))
 				serie.clear();
-			java.lang.System.out.println("gr"+n);
+//			java.lang.System.out.println("gr"+n);
 			for ( int j = 0; j < n.size(); j++ ) {
 				if ((type==SERIES_CHART))
-				serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
+					if (cumulative)
+				{
+					serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));					
+				}
+				else
+				{
+					serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));					
+					
+				}
 				if ((type==XY_CHART))
-					serie.addOrUpdate(Double.parseDouble("" + ((GamaList)n.get(j)).get(0)), Double.parseDouble("" + ((GamaList)n.get(j)).get(1)));
+					if (cumulative)
+					{
+						serie.addOrUpdate(Double.parseDouble("" + ((GamaList)n.get(j)).get(0)), Double.parseDouble("" + ((GamaList)n.get(j)).get(1)));						
+					}
+					else
+					{
+						serie.addOrUpdate(Double.parseDouble("" + ((GamaList)n.get(j)).get(0)), Double.parseDouble("" + ((GamaList)n.get(j)).get(1)));						
+						
+					}
 				history.append(n.get(j));
 				history.append(',');
 			}

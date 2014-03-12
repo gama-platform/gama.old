@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -45,18 +46,18 @@ import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.xy.*;
 
-@symbol(name = "datalist", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = "datalist", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, doc = @doc("add a list of series to a chart. The number of series can be dynamic (the size of the list changes each step). See Ant Foraging (Charts) model in ChartTest for examples."))
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false),
-	@facet(name = IKeyword.NAME, type =  IType.LIST, optional = true),
-	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true),
-	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true),
-	@facet(name = "inverse_series_categories", type =  IType.BOOL, optional = true),
-	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false, doc = @doc("the values to display. Has to be a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
+//	@facet(name = IKeyword.NAME, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
+	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
+	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true, doc = @doc("the name of categories (can be a variable with dynamic names)")),
+	@facet(name = "inverse_series_categories", type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
+	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-		IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
+		IKeyword.EXPLODED }, optional = true, doc = @doc("series style")) }, omissible = IKeyword.LEGEND)
 public class ChartDataListStatement extends AbstractStatement {
 
 	
@@ -158,7 +159,7 @@ public class ChartDataListStatement extends AbstractStatement {
 			}
 		}
 		}
-		GuiUtils.debug("dyncateg:"+defaultnames);
+//		GuiUtils.debug("dyncateg:"+defaultnames);
 		
 //		names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
 		colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));
