@@ -84,7 +84,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void updateCamera(final GL gl, final GLU glu, final int width, final int height) {
 		float aspect = (float) width / (height == 0 ? 1 : height);
-		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
+		glu.gluPerspective(45.0f, aspect, getMaxDim() / 100, getMaxDim() * 100);
 		makeGluLookAt(glu);
 		animate();
 	}
