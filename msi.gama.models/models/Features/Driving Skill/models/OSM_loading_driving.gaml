@@ -11,7 +11,7 @@ global{
 	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"]]);
 	
 	//OSM file to load
-	file<geometry> osmfile <-  osm_file("../includes/rouen.gz", filtering)  ;
+	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/rouen.gz", filtering))  ;
 	
 	geometry shape <- envelope(osmfile);
 	graph the_graph; 
@@ -34,8 +34,8 @@ global{
 						}
 					}
 				} else {
-					string oneway <- geom get ("oneway");
-					float maxspeed_val <- geom get ("maxspeed");
+					string oneway <- string(geom get ("oneway"));
+					float maxspeed_val <- float(geom get ("maxspeed"));
 					string lanes_str <- string(geom get ("lanes"));
 					int lanes_val <- empty(lanes_str) ? 1 : ((length(lanes_str) > 1) ? int(first(lanes_str)) : int(lanes_str));
 					create road with: [shape ::geom, type:: highway_str, oneway::oneway, maxspeed::maxspeed_val, lanes::lanes_val] {

@@ -11,7 +11,7 @@ global {
 	file shape_file_roads  <- simple_data ? file("../includes/RoadCircleLanes.shp"): file("../includes/ManhattanRoads.shp") ;
 	file shape_file_nodes  <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
 	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") :file("../includes/ManhattanRoads.shp");
-	geometry shape <- envelope(shape_file_bounds);
+	geometry shape <- envelope(shape_file_bounds) + 50.0;
 	
 	graph road_network;  
 	int nb_people <- simple_data ? 20 : 500;
@@ -42,7 +42,7 @@ global {
 		road_network <-  (as_driving_graph(road, node))  with_weights general_speed_map;
 		create people number: nb_people { 
 			max_speed <- 160 °km/°h;
-			vehicle_length <- 3.0 °m;
+			vehicle_length <- 5.0 °m;
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
 			proba_lane_change_down <- 0.5+ (rnd(500) / 500);
@@ -141,9 +141,8 @@ species node skills: [skill_road_node] {
 species road skills: [skill_road] { 
 	geometry geom_display;
 	string oneway;
-	list<people> people_dessus update: agents_on accumulate each;
 	aspect base {    
-		draw shape color: rgb("black") ;
+		draw shape color: rgb("gray") end_arrow: 10;
 	} 
 	aspect base3D {    
 		draw geom_display color: rgb("gray") ;
@@ -181,7 +180,7 @@ species people skills: [advanced_driving] {
 	}
 
 	aspect base { 
-		draw breakdown ? square(8) : triangle(8) color: color rotate:heading + 90;
+		draw breakdown ? square(15) : triangle(15) color: color rotate:heading + 90;
 	} 
 	aspect base3D {
 		point loc <- calcul_loc();
