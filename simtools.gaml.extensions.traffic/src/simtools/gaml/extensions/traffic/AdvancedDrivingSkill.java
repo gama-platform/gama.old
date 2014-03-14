@@ -1,5 +1,6 @@
 package simtools.gaml.extensions.traffic;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -755,8 +756,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane, final int segmentIndex,boolean onLinkedRoad,
 		final IAgent currentRoad, final boolean changeLane) {
 	//	long t = System.currentTimeMillis();
-		
-		IList<IAgent> agents = (IList<IAgent>) ((IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane)).get(segmentIndex);
+		IList aglanes = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+		IList<IAgent> agents = new GamaList<IAgent>((IList<IAgent>) aglanes.get(segmentIndex));
+		if (segmentIndex < aglanes.size() - 2 ) {
+			agents.addAll((Collection<IAgent>) aglanes.get(segmentIndex + 1));
+		}
 		double vL = getVehiculeLength(agent);
 		if ( agents.size() < 2 ) {
 			if ( changeLane && distance < vL ) { return 0; }
