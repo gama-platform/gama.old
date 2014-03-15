@@ -15,7 +15,7 @@ global {
 		the_graph <- as_distance_graph(people, 20);
 		
 		//compute the betweenness_centrality of each vertice
-		map<people,float> bc <- betweenness_centrality(the_graph);
+		map<people,float> bc <- map<people, float>(betweenness_centrality(the_graph));
 		float max_centrality <- max(bc.values);
 		float min_centrality <- min(bc.values);
 		ask people {

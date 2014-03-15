@@ -39,10 +39,12 @@ global {
 	}
 	
 	reflex compute_shortest_paths {
-		source <- one_of(road_graph.vertices);
-		target <- one_of(road_graph.vertices);
-		shortest_path <- road_graph path_between (source::target);
-		k_shortest_paths <- paths_between(road_graph,source::target,k);
+		source <- point(one_of(road_graph.vertices));
+		target <- point(one_of(road_graph.vertices));
+		if (source != target) {
+			shortest_path <- path_between (road_graph, source,target);
+			k_shortest_paths <- list<path>(paths_between(road_graph,source::target,k));	
+		}
 	}
 }
 

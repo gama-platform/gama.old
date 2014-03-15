@@ -20,7 +20,7 @@ global {
 	geometry shape <- envelope(boundsMNT);
 	
 	// Global variables related to the MNT
-	file<point,int> mntImageRaster <- file('../images/mnt/testAG.jpg') ;
+	file mntImageRaster <- image_file('../images/mnt/testAG.jpg') ;
 	int factorDiscret  <- 20;
 	
 	// Global variables  related to the Management units	
@@ -41,7 +41,7 @@ global {
 				
 		create river from: waterShape.path;
 				
-		matrix<int> mapColor <- mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
+		matrix<int> mapColor <- matrix<int>(mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret}) ;
 		ask cell {		
 			color <- rgb( mapColor at {grid_x,grid_y} );
 		}

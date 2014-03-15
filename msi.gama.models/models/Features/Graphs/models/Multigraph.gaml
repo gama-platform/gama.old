@@ -17,7 +17,7 @@ global {
 		create road from: shape_file_in;
 		road_graph <- as_edge_graph(road);
 		create people number: 50 {
-			add vertex: self to: friendship_graph;
+			friendship_graph << self;
 		}
 		loop times: 50 {
 			people p1 <- one_of(people);
@@ -36,7 +36,7 @@ species people skills: [moving]{
 	float size <- 3.0;
 	
 	action updateSize {
-		path friendship_path <- friendship_graph path_between(self::target);
+		path friendship_path <- path_between(friendship_graph,self,target);
 		if (friendship_path != nil) {
 			size <-max([2,length( friendship_path.segments)]) as float;
 		}
