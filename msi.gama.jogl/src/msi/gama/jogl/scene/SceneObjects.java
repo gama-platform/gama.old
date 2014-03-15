@@ -82,6 +82,7 @@ public class SceneObjects<T extends AbstractObject> {
 	public void draw(final boolean picking) {
 		JOGLAWTGLRenderer renderer = drawer.getRenderer();
 		GL gl = drawer.getGL();
+		gl.glColor3d(1.0,1.0,1.0);
 		if ( picking ) {
 			if ( renderer.colorPicking ) {
 				gl.glDisable(GL.GL_DITHER);
