@@ -384,12 +384,12 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static List<Geometry> discretisation(final Geometry geom, final double size, final boolean complex) {
-		final List<Geometry> geoms = new ArrayList<Geometry>();
+	public static GamaList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y, final boolean overlaps) {
+		final GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(discretisation(gc.getGeometryN(i), size, complex));
+				geoms.addAll(discretisation(gc.getGeometryN(i), size_x, size_y, overlaps));
 			}
 		} else {
 			final Envelope env = geom.getEnvelopeInternal();
@@ -401,40 +401,19 @@ public class GeometryUtils {
 				y = env.getMinY();
 				while (y < yMax) {
 					final Coordinate c1 = new Coordinate(x, y);
-					final Coordinate c2 = new Coordinate(x + size, y);
-					final Coordinate c3 = new Coordinate(x + size, y + size);
-					final Coordinate c4 = new Coordinate(x, y + size);
+					final Coordinate c2 = new Coordinate(x + size_x, y);
+					final Coordinate c3 = new Coordinate(x + size_x, y + size_y);
+					final Coordinate c4 = new Coordinate(x, y + size_y);
 					final Coordinate[] cc = { c1, c2, c3, c4, c1 };
 					final Geometry square = FACTORY.createPolygon(FACTORY.createLinearRing(cc), null);
-					y += size;
-					try {
-						Geometry g = null;
-						try {
-							g = square.intersection(geom);
-						} catch (final Exception e) {
-							final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-							g =
-								GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(
-									GeometryPrecisionReducer.reducePointwise(square, pm));
-						}
-						// geoms.add(g);
-						if ( complex ) {
-							geoms.add(g);
-						} else {
-							if ( g instanceof Polygon ) {
-								geoms.add(g);
-							} else if ( g instanceof MultiPolygon ) {
-								final MultiPolygon mp = (MultiPolygon) g;
-								for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
-									if ( mp.getGeometryN(i) instanceof Polygon ) {
-										geoms.add(mp.getGeometryN(i));
-									}
-								}
-							}
-						}
-					} catch (final TopologyException e) {}
+					y += size_y;
+					if (! overlaps) {
+						if (square.coveredBy(geom)) geoms.add(new GamaShape(square));
+					} else {
+						if (square.intersects(geom)) geoms.add(new GamaShape(square));
+					}
 				}
-				x += size;
+				x += size_x;
 			}
 		}
 		return geoms;
