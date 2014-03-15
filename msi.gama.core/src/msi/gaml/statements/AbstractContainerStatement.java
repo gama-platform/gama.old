@@ -80,7 +80,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					f.remove(NODE);
 					f.remove(WEIGHT);
 				}
-				f.put(ITEM, itemDesc);
+				// itemDesc.setExpression(item);
+				f.put(ITEM, item);
 			}
 			final IExpressionDescription listDesc = f.getDescr(TO, FROM, IN);
 			IExpression list = listDesc == null ? null : listDesc.getExpression();

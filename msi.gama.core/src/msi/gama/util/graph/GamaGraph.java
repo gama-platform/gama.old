@@ -1237,8 +1237,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			((EdgeToAdd) object).source, null), containerType.getKeyType().cast(scope, ((EdgeToAdd) object).target,
 			null), containerType.getContentType().cast(scope, ((EdgeToAdd) object).object, null),
 			((EdgeToAdd) object).weight); }
-		return new EdgeToAdd(null, null, containerType.getContentType().cast(scope, ((EdgeToAdd) object).object, null),
-			0.0);
+		return new EdgeToAdd(null, null, containerType.getContentType().cast(scope, object, null), 0.0);
 	}
 
 	/**
