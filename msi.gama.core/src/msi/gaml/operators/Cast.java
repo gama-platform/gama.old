@@ -372,6 +372,18 @@ public class Cast {
 		return asMatrix(scope, val, null);
 	}
 
+	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true)
+	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand", comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.", see = {
+		"matrix", "as_matrix" })
+	public static IMatrix matrix_with(final IScope scope, final ILocation size, final Object init) {
+		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices"); }
+		if ( init instanceof Integer ) { return GamaMatrixType.with(scope, ((Integer) init).intValue(),
+			(GamaPoint) size); }
+		if ( init instanceof Double ) { return GamaMatrixType.with(scope, ((Double) init).doubleValue(),
+			(GamaPoint) size); }
+		return GamaMatrixType.with(scope, init, (GamaPoint) size);
+	}
+
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
 	// @doc(value = "casts the list (left operand) into a one-row matrix", examples = {
 	// " as_matrix [1, 2, 3] --: [ [1, 2, 3] ] " })

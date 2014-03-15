@@ -59,12 +59,19 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	public GamaObjectMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
+		int n = Math.min(objects.length, rows * cols);
+		for ( int i = 0; i < n; i++ ) {
+			matrix[i] = objects[i];
+		}
+		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
 	public GamaObjectMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
+		int n = Math.min(objects.length, rows * cols);
+		for ( int i = 0; i < n; i++ ) {
+			matrix[i] = objects[i];
+		}
 	}
 
 	public GamaObjectMatrix(final int cols, final int rows, final Object[] objects) {

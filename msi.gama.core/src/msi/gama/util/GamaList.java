@@ -19,6 +19,7 @@
 package msi.gama.util;
 
 import java.util.*;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
@@ -303,8 +304,15 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public void setAllValues(final IScope scope, final E value) {
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			set(i, value);
+		if ( value instanceof IValue ) {
+			IValue v = (IValue) value;
+			for ( int i = 0, n = size(); i < n; i++ ) {
+				set(i, (E) v.copy(scope));
+			}
+		} else {
+			for ( int i = 0, n = size(); i < n; i++ ) {
+				set(i, value);
+			}
 		}
 	}
 

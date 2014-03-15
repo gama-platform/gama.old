@@ -205,7 +205,12 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			case IType.FLOAT:
 				return GamaFloatMatrix.from(scope, cols, rows, matrix);
 			default:
-				return GamaObjectMatrix.from(cols, rows, matrix);
+				GamaObjectMatrix m = GamaObjectMatrix.from(cols, rows, matrix);
+				Object[] array = m.getInnerMatrix();
+				for ( int i = 0; i < array.length; i++ ) {
+					array[i] = desiredType.cast(scope, array[i], null);
+				}
+				return m;
 		}
 
 	}
