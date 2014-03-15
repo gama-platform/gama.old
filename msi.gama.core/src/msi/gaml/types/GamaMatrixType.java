@@ -37,7 +37,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType) {
 
-		if ( obj == null ) { return null; }
+		if ( obj == null && param == null ) { return null; }
 		if ( param == null || !(param instanceof ILocation) ) {
 			if ( obj instanceof IList ) { return GamaMatrixType.from(scope, (IList) obj); }
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType); }
@@ -52,7 +52,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		if ( obj instanceof String ) { return from(scope, (String) obj, (GamaPoint) param); }
 		if ( obj instanceof Double ) { return with(scope, ((Double) obj).doubleValue(), (GamaPoint) param); }
 		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(), (GamaPoint) param); }
-		return with(scope, obj);
+		return with(scope, obj, (GamaPoint) param);
 
 	}
 
@@ -218,7 +218,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaObjectMatrix((int) p.x, (int) p.y);
-		matrix.set(scope, 0, 0, val);
+		((GamaObjectMatrix) matrix).fillWith(scope, val);
 		return matrix;
 	}
 

@@ -158,7 +158,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				final IType contentType = list.getType().getContentType();
 				boolean isAll = false;
 				IType valueType = Types.NO_TYPE;
-				if ( all && item.getType().isTranslatableInto(Types.get(IType.CONTAINER)) ) {
+				if ( !keyword.equals(PUT) && all && item.getType().isTranslatableInto(Types.get(IType.CONTAINER)) ) {
 					isAll = true;
 					valueType = item.getType().getContentType();
 				} else {

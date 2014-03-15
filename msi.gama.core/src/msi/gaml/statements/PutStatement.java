@@ -82,6 +82,13 @@ public class PutStatement extends AddStatement {
 	}
 
 	@Override
+	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+		// if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType);
+		// }
+		return container.buildValue(scope, this.item.value(scope), containerType);
+	}
+
+	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final IContainer.Modifiable container) throws GamaRuntimeException {
 		// Object toPut = container.buildValue(scope, object, containerType);

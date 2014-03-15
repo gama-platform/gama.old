@@ -19,6 +19,7 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -270,7 +271,19 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public void _putAll(final IScope scope, final Object o, final Object param) {
-		Arrays.fill(getMatrix(), o);
+		fillWith(scope, o);
+	}
+
+	public void fillWith(final IScope scope, final Object o) {
+		// We copy the element with which to fill the matrix if it is a (possibly) complex value
+		if ( o instanceof IValue ) {
+			IValue v = (IValue) o;
+			for ( int i = 0; i < matrix.length; i++ ) {
+				matrix[i] = v.copy(scope);
+			}
+		} else {
+			Arrays.fill(getMatrix(), o);
+		}
 	}
 
 	@Override
