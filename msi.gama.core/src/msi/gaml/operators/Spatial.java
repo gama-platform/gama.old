@@ -1745,14 +1745,39 @@ public abstract class Spatial {
 			return geom;
 		}
 
+		
 		@operator("dem")
-		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "", examples = { "dem(dem) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		public static IShape dem(final IScope scope, final GamaFile demFileName) {
+			return dem(scope, demFileName, demFileName, 1.0);
+		}
+		
+		@operator("dem")
+		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
 			return dem(scope, demFileName, textureFileName, 1.0);
 		}
+		
+		@operator("dem")
+		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "", examples = { "dem(dem,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		public static IShape dem(final IScope scope, final GamaFile demFileName,
+			final Double z_factor) {
+			final IGraphics graphics = scope.getGraphics();
+			if ( graphics instanceof IGraphics.OpenGL ) {
+				((IGraphics.OpenGL) graphics).drawDEM(demFileName, demFileName, z_factor);
+			}
+			// ILocation location;
+			// final IAgent a = scope.getAgentScope();
+			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
+		}
 
 		@operator("dem")
-		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "", examples = { "dem(dem,texture,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName,
 			final Double z_factor) {
 			final IGraphics graphics = scope.getGraphics();
