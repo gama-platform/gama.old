@@ -45,7 +45,7 @@ entities {
 	species ant skills: [moving] control: fsm {
 		float speed <- 1.0;
 		bool has_food <- false;
-		signal road value: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+		signal road update: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
 		
 		action pick (int amount) {
 			has_food <- true;

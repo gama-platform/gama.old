@@ -16,7 +16,7 @@ global {
 	// Environment
 	geometry shape <- rectangle(50, 50);
 		
-	const types type: file <- file('../images/sugarscape.pgm');
+	const types type: file<int> <- file<int>('../images/sugarscape.pgm');
 	const red type: rgb <- rgb('red');
 	const white type: rgb <- rgb('white');
 	const FFFFAA type: rgb <- rgb('#FFFFAA');
@@ -45,7 +45,7 @@ entities {
 		map<int,list<sugar_cell>> neighbours;
 		init {
 			loop i from: 1 to: maxRange {
-				put (self neighbours_at i) at: i in: neighbours; 
+				neighbours[i] <- self neighbours_at i; 
 			}
 		}
 	}	
@@ -59,12 +59,16 @@ entities {
 		const size type: float <- 0.5;
 		int sugar min: 0 <- (rnd (maxInitialSugar - minInitialSugar)) + minInitialSugar update: sugar - metabolism;
 		int age max: maxAge <- 0 update: int(age + step);
-		sugar_cell place <- location as sugar_cell; 
+		sugar_cell place ; 
 		
+		init {
+			place <- one_of(sugar_cell);
+			location <- place.location;
+		}
 		reflex basic_move { 
 			sugar <- sugar + place.sugar;
 			place.sugar <- 0;
-			list<sugar_cell> neighbours <- place.neighbours at vision;
+			list<sugar_cell> neighbours <- place.neighbours[vision];
 			list<sugar_cell> poss_targets <- (neighbours) where (each.sugar > 0);
 			place <- empty(poss_targets) ? one_of (neighbours) : one_of (poss_targets);
 			location <- place.location;
@@ -76,7 +80,7 @@ entities {
 			do die;
 		}
 		aspect default {
-			draw circle(1) color: red;
+			draw circle(0.5) color: red;
 		}
 	}
 }
