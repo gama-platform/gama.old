@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.shape;
 
+import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -107,7 +108,7 @@ public class GamaShape implements IShape /* , IContainer */{
 			setLocation(newLocation);
 		}
 	}
-
+	
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
 	 * coefficients.
@@ -121,18 +122,24 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final GamaPoint bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
-		if ( bounds != null && !isPoint() ) {
-			GamaPoint previous = getLocation();
-			Envelope3D envelope = getEnvelope();
-			boolean flat = envelope.isFlat();
-			if ( isBoundingBox ) {
-				geometry.apply(AffineTransform3D.createScaling(bounds.x / envelope.getWidth(),
-					bounds.y / envelope.getHeight(), flat ? 1.0 : bounds.z / envelope.getDepth()));
+		if ( bounds != null && !isPoint()) {
+			if(getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
+				GamaPoint previous = getLocation();
+				Envelope3D envelope = getEnvelope();
+				boolean flat = envelope.isFlat();
+				if ( isBoundingBox ) {
+					geometry.apply(AffineTransform3D.createScaling(bounds.x / envelope.getWidth(),
+						bounds.y / envelope.getHeight(), flat ? 1.0 : bounds.z / envelope.getDepth()));
+				} else {
+					geometry.apply(AffineTransform3D.createScaling(bounds.x, bounds.y, bounds.z));
+				}
+				envelope = null;
+				setLocation(previous);
 			} else {
-				geometry.apply(AffineTransform3D.createScaling(bounds.x, bounds.y, bounds.z));
+				Double scaling = Math.min(Math.min(bounds.x, bounds.y), bounds.z);
+				Double box = Math.max(Math.max(bounds.x, bounds.y), bounds.z);
+				setAttribute(IShape.DEPTH_ATTRIBUTE, isBoundingBox ? box : ((Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling));
 			}
-			envelope = null;
-			setLocation(previous);
 		}
 	}
 
@@ -146,11 +153,15 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final Double scaling) {
 		this(source, geom, rotation, newLocation);
-		if ( scaling != null && !isPoint() ) {
-			GamaPoint previous = getLocation();
-			geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
-			envelope = null;
-			setLocation(previous);
+		if ( scaling != null && !isPoint()) {
+			if(getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE) {
+				GamaPoint previous = getLocation();
+				geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
+				envelope = null;
+				setLocation(previous);
+			} else {
+				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
+			}
 		}
 	}
 
