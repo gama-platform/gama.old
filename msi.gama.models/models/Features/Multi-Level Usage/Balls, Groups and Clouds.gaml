@@ -81,7 +81,6 @@ global {
 	}
 }
 
-entities {
 	species base skills: [moving] ;
 	
 	species ball parent: base control: fsm  { 
@@ -241,7 +240,7 @@ entities {
 				
 				if target in nearby_groups {
 					if (rnd(10)) < (merge_possibility * 10) {
-						list<ball_in_group> target_coms <- target.members ;
+						list<ball_in_group> target_coms <- list<ball_in_group>(target.members) ;
 						list<ball> released_balls <- [];
 						ask target {
 							release target_coms as: ball in: world returns: released_coms;
@@ -430,7 +429,7 @@ entities {
 			draw text: 'Number of clouds: ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('green') size: 40 style: bold;
 		}
 	} 
-}
+
 
 experiment group_experiment type: gui {
 	parameter 'Create groups?' var: create_group <- true;
