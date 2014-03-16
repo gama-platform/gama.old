@@ -64,7 +64,15 @@ public class GamaIntegerType extends GamaType<Integer> {
 				// for ( Character c : n.toCharArray() ) {
 				// System.out.printf("U+%04x ", (int) c);
 				// }
-				throw GamaRuntimeException.create(e);
+				// throw GamaRuntimeException.create(e);
+				// Addresses Issue 846 by providing a way to continue the casting into an int
+				Double d = 0d;
+				try {
+					d = Double.parseDouble(n);
+				} catch (NumberFormatException e1) {
+					return 0;
+				}
+				return d.intValue();
 			}
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1 : 0; }
