@@ -69,11 +69,16 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 			case PAIR:
 			case MAP:
 				return itemType.getKeyType();
-			case LIST:
 			case MATRIX:
 				return itemType.getContentType();
 			case GRAPH:
 				return Types.get(PAIR);
+			case LIST:
+				if ( itemType.getContentType().id() == IType.PAIR ) {
+					return itemType.getContentType().getKeyType();
+				} else {
+					return itemType.getContentType();
+				}
 		}
 		return itemType;
 	}
@@ -83,10 +88,15 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 		IType itemType = exp.getType();
 		if ( itemType.isAgentType() ) { return Types.NO_TYPE; }
 		switch (itemType.id()) {
+			case LIST:
+				if ( itemType.getContentType().id() == IType.PAIR ) {
+					return itemType.getContentType().getContentType();
+				} else {
+					return itemType.getContentType();
+				}
 			case PAIR:
 			case GRAPH:
 			case MAP:
-			case LIST:
 			case MATRIX:
 				return itemType.getContentType();
 

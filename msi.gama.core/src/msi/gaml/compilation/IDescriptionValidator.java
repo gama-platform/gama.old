@@ -67,6 +67,11 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 					// if ( expr2 instanceof MapExpression && ((MapExpression) expr2).keysArray().length == 0 ) {
 					// return; }
 				}
+				// Special case for maps and lists of pairs (Issue 846)
+				if ( receiverType.id() == IType.MAP && assignedType.id() == IType.LIST &&
+					contentType.id() == IType.PAIR ) {
+					contentType = contentType.getContentType();
+				}
 				if ( !contentType.isTranslatableInto(receiverContentType) ||
 					Types.intFloatCase(receiverContentType, contentType) ) {
 					context.warning("Elements of " + receiverDescription + " are of type " + receiverContentType +
