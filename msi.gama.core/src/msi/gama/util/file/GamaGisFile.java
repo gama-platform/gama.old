@@ -6,6 +6,7 @@ package msi.gama.util.file;
 
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaGeometryType;
@@ -55,7 +56,8 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	protected void computeProjection(final IScope scope, final Envelope env) {
 		CoordinateReferenceSystem crs = getExistingCRS(scope);
-		gis = scope.getSimulationScope().getProjectionFactory().fromCRS(crs, env);
+		ProjectionFactory pf = scope.getSimulationScope().getProjectionFactory();
+		gis = pf.fromCRS(crs, env);
 	}
 
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code) {

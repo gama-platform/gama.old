@@ -12,6 +12,7 @@ import msi.gama.util.file.GamaGisFile;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -141,6 +142,7 @@ public class ProjectionFactory {
 	}
 
 	public IProjection fromCRS(final CoordinateReferenceSystem crs, final Envelope env) {
+		if (env != null)testConsistency(crs, env);
 		if ( world == null ) {
 			if ( env != null ) {
 				computeTargetCRS(crs, env.centre().x, env.centre().y);
@@ -192,6 +194,15 @@ public class ProjectionFactory {
 			}
 		} else {
 			return getTargetCRS();
+		}
+	}
+	
+	public void testConsistency(CoordinateReferenceSystem crs, final Envelope env) {
+		if (! (crs instanceof ProjectedCRS)) {
+			if (env.getHeight() > 180 || env.getWidth() >180) {
+				throw GamaRuntimeException.error("Inconsistency between the data and the CRS: The CRS " + crs +
+							" corresponds to a not projected one, whereas the data seem to be already projected.");
+			}
 		}
 	}
 }
