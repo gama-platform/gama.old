@@ -64,6 +64,7 @@ public interface IKeyword {
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
 	public static final String CELLULAR = "cellular";
+	public static final String CENTER = "center";
 	public static final String CHAIN = "chain";
 	public static final String CHART = "chart";
 	public static final String CHOOSE = "choose";
@@ -211,6 +212,8 @@ public interface IKeyword {
 	public static final String KEY = "key";
 	public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
+	public static final String OVERLAY = "overlay";
+	public static final String LEFT = "left";
 	public static final String LEGEND = "legend";
 	public static final String LET = "let";
 	public static final String LINE = "line";
@@ -297,6 +300,7 @@ public interface IKeyword {
 	public static final String RETURN = "return";
 	public static final String RETURNS = "returns";
 	public static final String REWRITE = "rewrite";
+	public static final String RIGHT = "right";
 	public static final String RING = "ring";
 	public static final String RNG = "rng";
 	public static final String ROUNDED = "rounded";
