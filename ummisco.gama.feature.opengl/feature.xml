@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ummisco.gama.feature.opengl"
-      label="OpenGL"
+      id="ummisco.gama.feature.opengl.jogl1"
+      label="OpenGL for GAMA with JOGL1.1"
       version="1.6.1.qualifier">
 
    <description>
@@ -25,14 +25,10 @@
    </requires>
 
    <plugin
-         id="com.jogamp.jogl-windows-i586"
-         os="win32"
-         ws="win32"
-         arch="x86"
+         id="simtools.gaml.extensions.physics"
          download-size="0"
          install-size="0"
-         version="2.0.0.b365"
-         fragment="true"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
@@ -40,17 +36,6 @@
          download-size="0"
          install-size="0"
          version="2.0.0.b365"/>
-
-   <plugin
-         id="com.jogamp.jogl-windows-amd64"
-         os="win32"
-         ws="win32"
-         arch="x86_64"
-         download-size="0"
-         install-size="0"
-         version="2.0.0.b365"
-         fragment="true"
-         unpack="false"/>
 
    <plugin
          id="com.jogamp.jogl-linux-amd64"
@@ -64,17 +49,43 @@
          unpack="false"/>
 
    <plugin
-         id="simtools.gaml.extensions.physics"
+         id="com.jogamp.jogl-linux-i586"
+         os="linux"
+         ws="gtk"
+         arch="x86"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.0.0"
+         fragment="true"
          unpack="false"/>
 
    <plugin
          id="com.jogamp.jogl-macosx-universal"
          os="macosx"
          ws="cocoa"
-         arch="x86,x86_64"
+         arch="x86, x86_64"
+         download-size="0"
+         install-size="0"
+         version="2.0.0.b365"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="com.jogamp.jogl-windows-amd64"
+         os="win32"
+         ws="win32"
+         arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="2.0.0.b365"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="com.jogamp.jogl-windows-i586"
+         os="win32"
+         ws="win32"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="2.0.0.b365"
@@ -85,18 +96,7 @@
          id="msi.gama.jogl"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.jogamp.jogl-linux-i586"
-         os="linux"
-         ws="gtk"
-         arch="x86"
-         download-size="0"
-         install-size="0"
-         version="2.0.0"
-         fragment="true"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
 </feature>
