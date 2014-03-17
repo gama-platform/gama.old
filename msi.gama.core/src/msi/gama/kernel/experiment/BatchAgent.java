@@ -26,7 +26,7 @@ import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -66,7 +66,12 @@ public class BatchAgent extends ExperimentAgent {
 		// }
 		// }
 
-		stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
+		if ( getSpecies().hasFacet(IKeyword.UNTIL) ) {
+			stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
+		} else {
+			stopCondition = IExpressionFactory.FALSE_EXPR;
+		}
+
 	}
 
 	@Override

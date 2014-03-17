@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.*;
+import msi.gama.kernel.experiment.ExperimentSpecies.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -30,10 +31,11 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies;
@@ -67,7 +69,26 @@ import msi.gaml.variables.IVariable;
 	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@validator(BatchValidator.class)
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
+
+	public static class BatchValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription desc) {
+			String type = desc.getFacets().getLabel(IKeyword.TYPE);
+			if ( !type.equals(IKeyword.BATCH) ) { return; }
+			if ( !desc.getFacets().containsKey(IKeyword.UNTIL) ) {
+				desc.warning(
+					"No stop condition have been defined (facet 'until:'). This may result in an endless run of the simulation",
+					IGamlIssue.MISSING_FACET);
+			}
+		}
+	}
 
 	protected IOutputManager simulationOutputs;
 	protected IOutputManager experimentOutputs;
