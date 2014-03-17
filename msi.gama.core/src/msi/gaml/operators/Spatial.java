@@ -942,6 +942,14 @@ public abstract class Spatial {
 		public static GamaList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
+		
+		@operator(value = "to_rectangles", content_type = IType.GEOMETRY)
+		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangle that overlaps the border of the geometry", examples = { "to_rectangles(self, {10.0, 15.0}, true) --: returns the list of rectangles of size {10.0, 15.0} corresponding to the discretisation into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept" })
+		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, GamaPoint dimension, boolean overlaps) {
+			if (geom == null || geom.getInnerGeometry().getArea()<= 0) return new GamaList<IShape>();
+			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
+		}
+		
 
 		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
