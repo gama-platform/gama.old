@@ -13,11 +13,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.outputs.*;
-import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -73,9 +72,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		}
 		if ( manager == null ) {
 			manager = new LayerManager(this);
-			final List<? extends ISymbol> layers = output.getChildren();
-			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer));
+			final List<AbstractLayerStatement> layers = output.getLayers();
+			for ( final AbstractLayerStatement layer : layers ) {
+				manager.addLayer(LayerManager.createLayer(layer));
 			}
 		} else {
 			manager.outputChanged();
