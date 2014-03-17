@@ -567,19 +567,10 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return nm;
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// return "GamaMatrixType.from(" + Cast.toJava(new GamaList(this.matrix)) + ", false)";
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// return value instanceof Double;
-	// }
+	@Override
+	protected Double getNthElement(final Integer index) {
+		if ( index == null ) { return 0d; }
+		if ( index > getMatrix().length ) { return 0d; }
+		return getMatrix()[index];
+	}
 }

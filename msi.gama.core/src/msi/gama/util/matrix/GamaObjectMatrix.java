@@ -44,10 +44,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	/** The matrix. */
 	private Object[] matrix;
 
-	public Object[] getInnerMatrix() {
-		return matrix;
-	}
-
 	public GamaObjectMatrix(final ILocation p) {
 		this((int) p.getX(), (int) p.getY());
 	}
@@ -382,12 +378,23 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return ImmutableList.copyOf(getMatrix());
 	}
 
-	protected Object[] getMatrix() {
+	public Object[] getMatrix() {
 		return matrix;
 	}
 
 	protected void setMatrix(final Object[] matrix) {
 		this.matrix = matrix;
+	}
+
+	/**
+	 * Method getNthElement()
+	 * @see msi.gama.util.matrix.GamaMatrix#getNthElement(java.lang.Integer)
+	 */
+	@Override
+	protected Object getNthElement(final Integer index) {
+		if ( index == null ) { return null; }
+		if ( index > getMatrix().length ) { return null; }
+		return getMatrix()[index];
 	}
 
 }

@@ -120,7 +120,7 @@ public class ContainerVariable extends Variable {
 						if ( fillExpr == null ) {
 							((GamaObjectMatrix) result)._putAll(scope, type.getContentType().getDefault(), null);
 						} else {
-							Object[] contents = ((GamaObjectMatrix) result).getInnerMatrix();
+							Object[] contents = ((GamaObjectMatrix) result).getMatrix();
 							// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 							for ( int i = 0; i < contents.length; i++ ) {
 								contents[i] = scope.evaluate(fillExpr, owner);

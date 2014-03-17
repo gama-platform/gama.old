@@ -221,13 +221,26 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public T getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if ( indices == null || indices.isEmpty() ) { return null; }
 		final int size = indices.size();
-		if ( size == 1 ) { return get(scope, Cast.asPoint(scope, indices.get(0))); }
+		if ( size == 1 ) {
+			Object index = indices.get(0);
+			if ( index instanceof GamaPoint ) {
+				return get(scope, (GamaPoint) index);
+			} else {
+				return this.getNthElement(Cast.asInt(scope, index));
+			}
+		}
 		final int px = Cast.asInt(scope, indices.get(0));
 		final int py = Cast.asInt(scope, indices.get(1));
 		if ( px > numCols - 1 || px < 0 ) { return null; }
 		if ( py > numRows - 1 || py < 0 ) { return null; }
 		return get(scope, px, py);
 	}
+
+	/**
+	 * @param asInt
+	 * @return
+	 */
+	protected abstract T getNthElement(Integer index);
 
 	@Override
 	public abstract T get(IScope scope, final int col, final int row);

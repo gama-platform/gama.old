@@ -174,7 +174,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		matrix = new int[rm.numCols * rm.numRows];
 		fillMatrix(rm);
 	}
-	
+
 	@Override
 	public void _clear() {
 		Arrays.fill(matrix, 0);
@@ -585,19 +585,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return nm;
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// return "GamaMatrixType.from(" + Cast.toJava(new GamaList(this.matrix)) + ", false)";
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// return value instanceof Integer;
-	// }
+	@Override
+	protected Integer getNthElement(final Integer index) {
+		if ( index == null ) { return 0; }
+		if ( index > getMatrix().length ) { return 0; }
+		return getMatrix()[index];
+	}
 }
