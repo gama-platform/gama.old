@@ -56,11 +56,11 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 
 		MyTexture curTexture = demObj.getTexture(renderer);
 		if ( curTexture == null ) { return; }
-		// Enable the texture
-		// renderer.gl.glPushMatrix();
-		// renderer.gl.glEnable(GL_TEXTURE_2D);
 
-		curTexture.bindTo(renderer);
+		if(demObj.isTextured){
+			curTexture.bindTo(renderer);	
+		}
+		
 		renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.getAlpha());
 
 		// Draw Grid with square
