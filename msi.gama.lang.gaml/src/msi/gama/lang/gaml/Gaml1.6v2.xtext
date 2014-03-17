@@ -111,7 +111,7 @@ _1Expr_Facets_BlockOrEnd_Key:
 	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one";
 
 _LayerKey:
-	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay"
+	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
 ;
 _DoKey:
 	"do";

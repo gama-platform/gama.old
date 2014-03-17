@@ -2995,6 +2995,13 @@ rule_LayerKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); 
     }
+
+    |
+	kw='datalist' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); 
+    }
 )
     ;
 

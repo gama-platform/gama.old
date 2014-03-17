@@ -3579,6 +3579,14 @@ rule___LayerKey__Alternatives
 { after(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); }
 )
 
+    |(
+{ before(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); }
+
+	'datalist' 
+
+{ after(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);

@@ -654,6 +654,7 @@
       <elements xsi:type="xtext:Keyword" value="quadtree"/>
       <elements xsi:type="xtext:Keyword" value="event"/>
       <elements xsi:type="xtext:Keyword" value="overlay"/>
+      <elements xsi:type="xtext:Keyword" value="datalist"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="_DoKey">

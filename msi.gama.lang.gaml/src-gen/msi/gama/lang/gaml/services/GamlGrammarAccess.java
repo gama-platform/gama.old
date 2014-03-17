@@ -1573,14 +1573,15 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cQuadtreeKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
 		private final Keyword cEventKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
 		private final Keyword cOverlayKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cDatalistKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
 		
 		//_LayerKey:
 		//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-		//	"event" | "overlay";
+		//	"event" | "overlay" | "datalist";
 		public ParserRule getRule() { return rule; }
 
 		//"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-		//"event" | "overlay"
+		//"event" | "overlay" | "datalist"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"text"
@@ -1615,6 +1616,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"overlay"
 		public Keyword getOverlayKeyword_10() { return cOverlayKeyword_10; }
+
+		//"datalist"
+		public Keyword getDatalistKeyword_11() { return cDatalistKeyword_11; }
 	}
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
@@ -4724,7 +4728,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//_LayerKey:
 	//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-	//	"event" | "overlay";
+	//	"event" | "overlay" | "datalist";
 	public _LayerKeyElements get_LayerKeyAccess() {
 		return (p_LayerKey != null) ? p_LayerKey : (p_LayerKey = new _LayerKeyElements());
 	}
