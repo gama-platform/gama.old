@@ -171,6 +171,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private ILocation output3DNbCycles = new GamaPoint(0, 0);
 	private double envWidth;
 	private double envHeight;
+	// Specific to overlays
+	OverlayStatement overlayInfo;
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -179,7 +181,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
 		layers = new GamaList<AbstractLayerStatement>();
+	}
 
+	public IOverlayProvider getOverlayProvider() {
+		return overlayInfo;
 	}
 
 	@Override
@@ -422,6 +427,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		computeTrace(getScope());
 
 		// GuiUtils.debug("LayeredDisplayOutput.update");
+		if ( overlayInfo != null ) {
+			getScope().step(overlayInfo);
+		}
+
 		surface.updateDisplay();
 
 	}
@@ -519,7 +528,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		setLayers((List<AbstractLayerStatement>) commands);
+		GamaList<AbstractLayerStatement> list = new GamaList();
+		for ( ISymbol s : commands ) {
+			if ( s instanceof OverlayStatement ) {
+				overlayInfo = (OverlayStatement) s;
+			} else if ( s instanceof AbstractLayerStatement ) {
+				list.add((AbstractLayerStatement) s);
+			}
+		}
+		setLayers(list);
 	}
 
 	public Color getBackgroundColor() {
@@ -541,7 +558,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.layers = layers;
 	}
 
-	List<AbstractLayerStatement> getLayers() {
+	public List<AbstractLayerStatement> getLayers() {
 		return layers;
 	}
 
