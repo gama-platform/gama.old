@@ -101,13 +101,12 @@ public class ModelScene {
 		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, true, false, bounds, 1, null);
 	}
 
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
-		final boolean isFromImage, final boolean isDynamic, final Envelope3D env, final double cellSize,
-		final String name) {
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Envelope3D env,
+		final double cellSize, final String name) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(dem, demTexture, demImg, agent, isTextured, isTriangulated, isShowText, isFromImage,
-			isDynamic, env, cellSize, name);
+		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isShowText, false, true, env,
+			cellSize, name);
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,

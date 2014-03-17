@@ -3,10 +3,6 @@ package msi.gama.jogl.scene;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
-import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
-import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
-import msi.gama.jogl.scene.ObjectDrawer.ImageDrawer;
-import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -64,7 +60,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		dems.draw(picking);
 		strings.draw(picking);
 		renderer.gl.glPopMatrix();
-		renderer.gl.glFlush();
+		// renderer.gl.glFlush();
 	}
 
 	public boolean isStatic() {
@@ -110,7 +106,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		final boolean isFromImage, final boolean isDynamic, final Envelope3D env, final double cellSize,
 		final String name) {
 		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText,
-			isFromImage, isDynamic, null, alpha, cellSize, name, id));
+			isFromImage, isDynamic, null, alpha, cellSize, name/* , id */));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,

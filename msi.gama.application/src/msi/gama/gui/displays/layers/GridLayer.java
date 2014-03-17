@@ -20,7 +20,6 @@ package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -31,26 +30,17 @@ import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaImageFile;
 import org.eclipse.swt.widgets.Composite;
 
 public class GridLayer extends ImageLayer {
 
 	private boolean turnGridOn;
-	// private double[] gridValue;
-	private double[] gridValueMatrix;
-	private GamaFile textureFile;
-	private boolean isTextured;
-	// private boolean isTexturedWithImage;
-	private boolean isTriangulated;
-	private boolean isShowText;
-	// private boolean drawAsDEM;
 	private double cellSize;
 
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
-		// drawAsDEM = false;
 	}
 
 	@Override
@@ -92,60 +82,30 @@ public class GridLayer extends ImageLayer {
 			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 		}
 		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
-
-		gridValueMatrix = g.getElevationMatrix(scope);
-		if ( gridValueMatrix != null ) {
-			textureFile = g.textureFile();
-
-			if ( textureFile != null ) {
-				isTextured = true;
-			} else {
-				isTextured = g.isTextured();
-			}
-			isTriangulated = g.isTriangulated();
-			isShowText = g.isShowText();
-		}
-		// if ( m.getGridValue() != null ) {
-		// gridValueMatrix = m.getGridValue();
-		// textureFile = g.textureFile();
-		//
-		// if ( textureFile != null ) {
-		// isTextured = true;
-		// } else {
-		// isTextured = g.isTextured();
-		// }
-
-		isTriangulated = g.isTriangulated();
-		isShowText = g.isShowText();
-		// }
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
+		final GridLayerStatement g = (GridLayerStatement) definition;
 		if ( image == null ) { return; }
 		Color lineColor = null;
 		if ( turnGridOn ) {
-			lineColor = ((GridLayerStatement) definition).getLineColor();
+			lineColor = g.getLineColor();
 			if ( lineColor == null ) {
 				lineColor = Color.black;
 			}
 		}
-
+		double[] gridValueMatrix = g.getElevationMatrix(scope);
 		if ( gridValueMatrix != null ) {
-
+			GamaImageFile textureFile = g.textureFile();
 			if ( textureFile != null ) { // display grid dem:texturefile
-				BufferedImage texture = null;
-				try {
-					texture = ImageUtils.getInstance().getImageFromFile(textureFile.getPath());
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-				dg.drawGrid(scope, texture, gridValueMatrix, isTextured, isTriangulated, isShowText, lineColor, null,
+				BufferedImage texture = textureFile.getImage(scope);
+				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isShowText(), lineColor,
 					cellSize, this.getName());
 			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, isTextured, isTriangulated, isShowText, lineColor, null,
-					cellSize, this.getName());
+				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isShowText(),
+					lineColor, cellSize, this.getName());
 			}
 
 		} else {

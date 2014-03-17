@@ -47,7 +47,7 @@ public class WebDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Color gridColor,
-		final Double angle, final double cellSize, final String name) {
+		final double cellSize, final String name) {
 		return null;
 	}
 

@@ -21,10 +21,8 @@ package msi.gama.jogl;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.*;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.jogl.scene.*;
@@ -34,7 +32,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
@@ -191,7 +188,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Color gridColor,
-		final Double angle, final double cellSize, final String name) {
+		final double cellSize, final String name) {
 
 		MyTexture texture = null;
 		Envelope env = null;
@@ -240,41 +237,18 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
-	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Double z_factor) {
-		BufferedImage dem = null;
-		BufferedImage texture = null;
-		try {
-			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		// FIXME: Need to flip vertically the image (need excactly to know why)
-		texture = FlipRightSideLeftImage(texture);
+	public Rectangle2D drawDEM(final IScope scope, final BufferedImage dem, final BufferedImage texture,
+		final Double z_factor) {
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false, 0);
 		}
 		Envelope env = new Envelope(0, widthOfEnvironmentInModelUnits, 0, heightOfEnvironmentInModelUnits);
 
-		// getASCfromImg(dem);
 		// FIXME: alpha,scale,offset not taken in account when using the operator dem
 		renderer.getScene().addDEM(null, texture, dem, null, false, false, false, true, env, z_factor, null, null,
 			null, 1, null, null, 0);
 		return null;
-	}
-
-	private BufferedImage FlipRightSideLeftImage(BufferedImage img) {
-		final java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
-		tx.translate(-img.getWidth(null), 0);
-		final AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		img = op.filter(img, null);
-		return img;
-
 	}
 
 	/**

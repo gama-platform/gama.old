@@ -33,12 +33,12 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -70,8 +70,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	IGrid grid;
 	IExpression lineColor, elevation, textureExp, triExp, textExp;
-	Boolean isTextured = true;
-	GamaFile textureFile = null;
+	Boolean isTextured = false;
+	GamaImageFile textureFile = null;
 	Boolean isTriangulated = false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
@@ -86,25 +86,23 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			currentColor = constantColor;
 		}
 
-		elevation = getFacet(IKeyword.ELEVATION);
-		if ( elevation == null ) {
-			elevation = getFacet("dem");
-			if ( elevation == null ) {
-				elevation = getFacet("draw_as_dem");
-			}
-		}
-
+		elevation = getFacet(IKeyword.ELEVATION, "dem", "draw_as_dem");
 		textureExp = getFacet(IKeyword.TEXTURE);
 		if ( textureExp != null ) {
-
-			if ( textureExp.getType().equals(Types.get(IType.BOOL)) ) {
-				isTextured = Cast.asBool(scope, textureExp.value(scope));
+			switch (textureExp.getType().id()) {
+				case IType.BOOL:
+					isTextured = Cast.asBool(scope, textureExp.value(scope));
+					break;
+				case IType.FILE:
+					Object result = textureExp.value(scope);
+					if ( result instanceof GamaImageFile ) {
+						textureFile = (GamaImageFile) textureExp.value(scope);
+						isTextured = true;
+					} else {
+						throw GamaRuntimeException.error("The texture of grids must be an image file", scope);
+					}
+					break;
 			}
-
-			if ( textureExp.getType().equals(Types.get(IType.FILE)) ) {
-				textureFile = (GamaFile) textureExp.value(scope);
-			}
-
 		}
 
 		triExp = getFacet(IKeyword.TRIANGULATION);
@@ -119,8 +117,9 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 		final IPopulation gridPop = scope.getAgentScope().getPopulationFor(getName());
 		if ( gridPop == null ) {
-			throw GamaRuntimeException.error("missing environment for output " + getName());
-		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName()); }
+			throw GamaRuntimeException.error("missing environment for output " + getName(), scope);
+		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName(),
+			scope); }
 
 		grid = (IGrid) gridPop.getTopology().getPlaces();
 
@@ -167,7 +166,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	public synchronized Collection<IAgent> getAgentsToDisplay() {
-		return /* agentsForLayer; */grid.getAgents();
+		return grid.getAgents();
 	}
 
 	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {
@@ -207,7 +206,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		return isTextured;
 	}
 
-	public GamaFile textureFile() {
+	public GamaImageFile textureFile() {
 		return textureFile;
 	}
 

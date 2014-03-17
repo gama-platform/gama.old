@@ -1,5 +1,6 @@
 package msi.gama.jogl.scene;
 
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import com.sun.opengl.util.texture.Texture;
 
@@ -15,7 +16,8 @@ public class MyTexture {
 	}
 
 	public void bindTo(final JOGLAWTGLRenderer renderer) {
-		renderer.getContext().makeCurrent();
+		// renderer.getContext().makeCurrent();
+		renderer.gl.glEnable(GL_TEXTURE_2D);
 		texture.enable();
 		texture.bind();
 		// renderer.getContext().release();
@@ -23,6 +25,7 @@ public class MyTexture {
 
 	public void unbindFrom(final JOGLAWTGLRenderer renderer) {
 		// renderer.getContext().makeCurrent();
+		renderer.gl.glDisable(GL_TEXTURE_2D);
 		texture.disable();
 	}
 

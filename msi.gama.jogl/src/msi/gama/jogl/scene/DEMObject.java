@@ -19,12 +19,13 @@ public class DEMObject extends AbstractObject {
 	final public Envelope3D envelope;
 	final public double cellSize;
 	final public String name;
-	final public int layerId;
+
+	// final public int layerId;
 
 	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
 		final IAgent agent, final Envelope3D env, final boolean isTextured, final boolean isTriangulated,
 		final boolean isShowText, final boolean fromImage, final boolean isDynamic, final Color c, final Double a,
-		final double cellSize, final String name, final int layerId) {
+		final double cellSize, final String name/* , final int layerId */) {
 		super(c, a);
 		this.dem = dem;
 		this.textureImage = demTexture;
@@ -42,7 +43,7 @@ public class DEMObject extends AbstractObject {
 		this.envelope = env;
 		this.cellSize = cellSize;
 		this.name = name;
-		this.layerId = layerId;
+		// this.layerId = layerId;
 	}
 
 	@Override

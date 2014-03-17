@@ -21,19 +21,16 @@ package msi.gama.jogl;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.*;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -162,13 +159,17 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return rect;
 	}
 
+	private Envelope3D getWorldEnvelopeWithZ(final double z) {
+		return new Envelope3D(0, widthOfEnvironmentInModelUnits, 0, heightOfEnvironmentInModelUnits, 0, z);
+	}
+
 	@Override
-	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Color gridColor,
-		final Double angle, final double cellSize, final String name) {
-		Envelope3D env = new Envelope3D(0, widthOfEnvironmentInModelUnits, 0, heightOfEnvironmentInModelUnits, 0, 1);
-		renderer.getScene().addDEM(gridValueMatrix, img, null, scope == null ? null : scope.getAgentScope(),
-			isTextured, isTriangulated, isShowText, false, true, env, cellSize, name);
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
+		final boolean textured, final boolean triangulated, final boolean showText, final Color gridColor,
+		final double cellSize, final String name) {
+		Envelope3D env = getWorldEnvelopeWithZ(1);
+		IAgent a = scope.getAgentScope();
+		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, showText, env, cellSize, name);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
@@ -194,26 +195,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
-	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Double z_factor) {
-		BufferedImage dem = null;
-		BufferedImage texture = null;
-		try {
-			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
-			texture = flipRightSideLeftImage(ImageUtils.getInstance().getImageFromFile(textureFileName.getPath()));
-		} catch (final IOException e) {
-			GAMA.reportError(GamaRuntimeException.create(e), false);
-		}
-		renderer.getScene().addDEM(texture, dem,
-			new Envelope3D(0, widthOfEnvironmentInModelUnits, 0, heightOfEnvironmentInModelUnits, 0, z_factor));
+	public Rectangle2D drawDEM(final IScope scope, final BufferedImage dem, final BufferedImage texture,
+		final Double z_factor) {
+		renderer.getScene().addDEM(texture, dem, getWorldEnvelopeWithZ(z_factor));
 		return null;
-	}
-
-	private BufferedImage flipRightSideLeftImage(BufferedImage img) {
-		final java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
-		tx.translate(-img.getWidth(null), 0);
-		final AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		img = op.filter(img, null);
-		return img;
 	}
 
 	/**
