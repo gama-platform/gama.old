@@ -57,9 +57,9 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 		MyTexture curTexture = demObj.getTexture(renderer);
 		if ( curTexture == null ) { return; }
 
-		if(demObj.isTextured){
-			curTexture.bindTo(renderer);	
-		}
+	
+		curTexture.bindTo(renderer);	
+	    
 		
 		renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.getAlpha());
 
@@ -222,8 +222,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 			renderer.gl.glEnable(GL_BLEND);
 		}
 		curTexture.unbindFrom(renderer);
-		// renderer.gl.glDisable(GL_TEXTURE_2D);
-		// renderer.gl.glPopMatrix();
+
 	}
 
 	private double GetMaxValue(final double[] gridValue) {
