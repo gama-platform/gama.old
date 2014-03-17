@@ -41,7 +41,7 @@ public interface ILayerStatement extends INamed, IStepable, ISymbol {
 	public final static short QUADTREE = 8;
 	public final static short EVENT = 9;
 	public final static short GRAPHICS = 10;
-	public final static short LEGENDS = 11;
+	public final static short OVERLAY = 11;
 
 	public abstract short getType();
 
