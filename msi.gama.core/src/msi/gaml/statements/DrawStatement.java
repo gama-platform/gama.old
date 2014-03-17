@@ -199,6 +199,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		if ( g == null ) { return null; }
 		try {
 			return executer.executeOn(scope, g);
+		} catch (GamaRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			java.lang.System.err.println("Error when drawing in a display : " + e.getMessage());
 		}

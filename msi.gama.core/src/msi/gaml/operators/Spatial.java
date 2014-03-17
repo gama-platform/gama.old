@@ -942,14 +942,14 @@ public abstract class Spatial {
 		public static GamaList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
-		
+
 		@operator(value = "to_rectangles", content_type = IType.GEOMETRY)
 		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangle that overlaps the border of the geometry", examples = { "to_rectangles(self, {10.0, 15.0}, true) --: returns the list of rectangles of size {10.0, 15.0} corresponding to the discretisation into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept" })
-		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, GamaPoint dimension, boolean overlaps) {
-			if (geom == null || geom.getInnerGeometry().getArea()<= 0) return new GamaList<IShape>();
+		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
+			final boolean overlaps) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
 		}
-		
 
 		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
@@ -1753,25 +1753,21 @@ public abstract class Spatial {
 			return geom;
 		}
 
-		
 		@operator("dem")
-		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, 
-		comment = "", examples = { "dem(dem) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName) {
 			return dem(scope, demFileName, demFileName, 1.0);
 		}
-		
+
 		@operator("dem")
 		@doc(value = "A polygon equivalent to the surface of the texture", special_cases = {}, comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile) {
 			return dem(scope, demFile, textureFile, 1.0);
 		}
-		
+
 		@operator("dem")
-		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = {}, 
-		comment = "", examples = { "dem(dem,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
-		public static IShape dem(final IScope scope, final GamaFile demFileName,
-			final Double z_factor) {
+		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = {}, comment = "", examples = { "dem(dem,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		public static IShape dem(final IScope scope, final GamaFile demFileName, final Double z_factor) {
 			return dem(scope, demFileName, demFileName, z_factor);
 		}
 
@@ -1780,7 +1776,9 @@ public abstract class Spatial {
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile,
 			final Double z_factor) {
 			if ( !(demFile instanceof GamaImageFile) || !(textureFile instanceof GamaImageFile) ) { throw GamaRuntimeException
-				.error("'dem' operator requires image files", scope); }
+				.error(
+					"The 'dem' operator requires image files. Either " + demFile.getPath() + " or " +
+						textureFile.getPath() + " is not an image", scope); }
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
 				BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
