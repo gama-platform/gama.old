@@ -37,9 +37,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 	public String toGaml() {
 		StringBuilder sb = new StringBuilder(firstLineToGaml());
 		sb.append(' ').append('{').append(Strings.LN);
-		for ( IStatement s : commands ) {
-			sb.append('\t');
-			sb.append(s.toGaml()).append(Strings.LN);
+		if ( commands != null && !isEmpty() ) {
+			for ( IStatement s : commands ) {
+				sb.append('\t');
+				sb.append(s.toGaml()).append(Strings.LN);
+			}
 		}
 		sb.append('}');
 		return sb.toString();
