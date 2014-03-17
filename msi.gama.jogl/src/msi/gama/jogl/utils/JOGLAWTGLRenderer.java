@@ -488,10 +488,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( frame != 0 ) {
 			double env_width = displaySurface.getEnvWidth();
 			double env_height = displaySurface.getEnvHeight();
-			gl.glPushMatrix();
+			//gl.glPushMatrix();
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotatef(frame, 0, 0, 1);
-			gl.glPopMatrix();
+			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
+			//gl.glPopMatrix();
 		}
 	}
 
