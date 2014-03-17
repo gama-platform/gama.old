@@ -19,6 +19,7 @@
 package msi.gama.common.util;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -316,5 +317,14 @@ public class ImageUtils {
 	 */
 	public static BufferedImage createCompatibleImage(final double x, final double y) {
 		return createCompatibleImage((int) x, (int) y);
+	}
+
+	public static BufferedImage flipRightSideLeftImage(BufferedImage img) {
+		final AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+		tx.translate(-img.getWidth(null), 0);
+		final AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		img = op.filter(img, null);
+		return img;
+
 	}
 }
