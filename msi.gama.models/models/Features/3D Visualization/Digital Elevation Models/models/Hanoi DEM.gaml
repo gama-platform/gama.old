@@ -33,7 +33,7 @@ experiment Display type: gui {
 		//Display a DEM model with the original color of the DEM file.
 		display HanoiDEM  type: opengl ambient_light:255 draw_env: false{
 			graphics 'DEM' {
-				draw dem(dem, dem,z_factor);
+				draw dem(dem,z_factor);
 			}
 		}
 		

@@ -42,7 +42,7 @@ experiment gridloading type: gui {
 			grid cell texture:map_texture triangulation:false elevation:true;
 		}
 		
-		display gridTextureWithText type:opengl{
+		display gridWithText type:opengl{
 			grid cell text:true elevation:true;
 		}
 		
