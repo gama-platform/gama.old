@@ -62,23 +62,23 @@ entities {
 	}
 }
 
-experiment pyramid type: gui {
+experiment pyramidDisplay type: gui {
 	output {
-		display Pryramid refresh_every: 1  type:opengl ambient_light:0.2{
+		display Pyramid type:opengl ambient_light:100{
 			species cells aspect:pyramid;
 		}
 	}
 }
 
-experiment cone type: gui {
+experiment coneDisplay type: gui {
 	output {
-		display Cone refresh_every: 1  type:opengl ambient_light:0.2{
+		display Cone refresh_every: 1  type:opengl ambient_light:100{
 			species cells aspect:cone;
 		}
 	}
 }
 
-experiment cylinder type: gui {
+experiment cylinderDisplay type: gui {
 	output {
 		display Cylinder refresh_every: 1  type:opengl ambient_light:100{
 			species cells aspect:cylinder;
@@ -86,15 +86,15 @@ experiment cylinder type: gui {
 	}
 }
 
-experiment sphere type: gui {
+experiment sphereDisplay type: gui {
 	output {
-		display Sphere3 refresh_every: 1  type:opengl ambient_light:100 {
+		display sphere refresh_every: 1  type:opengl ambient_light:100 {
 			species cells aspect: sphere;
 		}
 	}
 }
 
-experiment teapot type: gui {
+experiment teapotDisplay type: gui {
 	output {
 		display teapot refresh_every: 1  type:opengl ambient_light:100 {
 			species cells aspect: teapot;
