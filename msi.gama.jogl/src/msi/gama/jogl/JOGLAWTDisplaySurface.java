@@ -334,7 +334,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void followAgent(final IAgent a) {
-
 		new Thread(new Runnable() {
 
 			@Override
@@ -343,17 +342,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 					@Override
 					public void run() {
-						ILocation l = agent.getGeometry().getLocation();
-						Envelope env = agent.getGeometry().getEnvelope();
-
-						double xPos = l.getX() - getEnvWidth() / 2;
-						double yPos = -(l.getY() - getEnvHeight() / 2);
-
-						double zPos = env.maxExtent() * 2 + l.getZ();
-						double zLPos = -(env.maxExtent() * 2);
-
-						renderer.camera.updatePosition(xPos, yPos, zPos);
-						renderer.camera.lookPosition(xPos, yPos, zLPos);
+						ILocation l = a.getGeometry().getLocation();
+						Envelope env = a.getGeometry().getEnvelope();						
+						renderer.camera.zoomFocus(l.getX(), l.getY(), l.getZ(), env.maxExtent());
 					}
 				});
 			}
