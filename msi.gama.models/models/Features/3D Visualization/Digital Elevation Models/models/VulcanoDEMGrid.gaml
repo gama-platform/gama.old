@@ -127,6 +127,10 @@ experiment GridDEMComplete type: gui {
 			grid cell texture:texture text:false triangulation:true elevation:true;
 			species people aspect:base;
 		}
+		
+		display gridWithText type:opengl{
+			grid cell text:true elevation:true grayscale:true;
+		}
 	}
 }
 
