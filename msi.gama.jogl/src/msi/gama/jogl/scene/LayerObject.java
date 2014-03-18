@@ -102,10 +102,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
 		final boolean isFromImage, final boolean isDynamic, final Envelope3D env, final double cellSize,
 		final String name) {
-		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText,
+		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isGrayScaled, isShowText,
 			isFromImage, isDynamic, null, alpha, cellSize, name/* , id */));
 	}
 

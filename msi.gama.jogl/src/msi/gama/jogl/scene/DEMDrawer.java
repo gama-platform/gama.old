@@ -28,6 +28,9 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 
 	@Override
 	protected void _draw(final DEMObject demObj) {
+		
+		System.out.println("demObj.isTextured" + demObj.isTextured);
+		System.out.println("demObj.isGrayScaled" + demObj.isGrayScaled);
 
 		if ( demObj.fromImage ) {
 			drawFromImage(demObj);
@@ -57,8 +60,10 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 		MyTexture curTexture = demObj.getTexture(renderer);
 		if ( curTexture == null ) { return; }
 
-	
-		curTexture.bindTo(renderer);	
+		if(!demObj.isGrayScaled){
+			curTexture.bindTo(renderer);	
+		}
+			
 	    
 		
 		renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.getAlpha());
@@ -79,7 +84,16 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 					if ( demObj.dem != null ) {
 						zValue = demObj.dem[(int) (j * envWidth + i)];
 					}
-					if ( demObj.isTextured ) {
+					if ( demObj.isGrayScaled ) {
+						renderer.gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
+						renderer.gl.glBegin(GL_QUADS);
+						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
+						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
+						renderer.gl.glEnd();
+						
+					} else {
 						renderer.gl.glBegin(GL_QUADS);
 						renderer.gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
 						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
@@ -89,15 +103,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
 						renderer.gl.glTexCoord2d(envWidthStep * i, envHeightStep * (j + 1));
 						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						renderer.gl.glEnd();
-					} else {
-						renderer.gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
-						renderer.gl.glBegin(GL_QUADS);
-						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, zValue * altFactor);
-						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, zValue * altFactor);
-						renderer.gl.glEnd();
+						renderer.gl.glEnd();					
 					}
 				}
 			}
@@ -175,7 +181,16 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						renderer.gl.glNormal3dv(normal, 0);
 					}
 
-					if ( demObj.isTextured ) {
+					if ( demObj.isGrayScaled ) {
+						renderer.gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
+						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
+						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, z1 * altFactor);
+						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, z2 * altFactor);
+						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, z4 * altFactor);
+						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
+						renderer.gl.glEnd();
+						
+					} else {
 						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
 						renderer.gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
 						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, z1 * altFactor);
@@ -185,16 +200,7 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, z4 * altFactor);
 						renderer.gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * (j + 1));
 						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
-						renderer.gl.glEnd();
-					} else {
-
-						renderer.gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
-						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
-						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y1 * demObj.cellSize, z1 * altFactor);
-						renderer.gl.glVertex3d(x1 * demObj.cellSize, -y2 * demObj.cellSize, z2 * altFactor);
-						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y1 * demObj.cellSize, z4 * altFactor);
-						renderer.gl.glVertex3d(x2 * demObj.cellSize, -y2 * demObj.cellSize, z3 * altFactor);
-						renderer.gl.glEnd();
+						renderer.gl.glEnd();				
 					}
 				}
 			}
@@ -221,7 +227,9 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 			}
 			renderer.gl.glEnable(GL_BLEND);
 		}
-		curTexture.unbindFrom(renderer);
+		if(!demObj.isGrayScaled){
+		  curTexture.unbindFrom(renderer);
+		}
 
 	}
 

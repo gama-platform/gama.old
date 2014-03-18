@@ -14,7 +14,7 @@ public class DEMObject extends AbstractObject {
 	final public BufferedImage textureImage;
 	final public BufferedImage demImg;
 	final public IAgent agent;
-	final public boolean isTextured, isTriangulated, isShowText, fromImage, isDynamic;
+	final public boolean isTextured, isTriangulated, isShowText, fromImage, isDynamic, isGrayScaled;
 	// The height of the envelope represents the z_factor (between 0 and 1).
 	final public Envelope3D envelope;
 	final public double cellSize;
@@ -23,7 +23,7 @@ public class DEMObject extends AbstractObject {
 	// final public int layerId;
 
 	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final Envelope3D env, final boolean isTextured, final boolean isTriangulated,
+		final IAgent agent, final Envelope3D env, final boolean isTextured, final boolean isTriangulated,final boolean isGrayScaled,
 		final boolean isShowText, final boolean fromImage, final boolean isDynamic, final Color c, final Double a,
 		final double cellSize, final String name/* , final int layerId */) {
 		super(c, a);
@@ -37,6 +37,7 @@ public class DEMObject extends AbstractObject {
 		this.agent = agent;
 		this.isTextured = isTextured;
 		this.isTriangulated = isTriangulated;
+		this.isGrayScaled = isGrayScaled;
 		this.isShowText = isShowText;
 		this.fromImage = fromImage;
 		this.isDynamic = isDynamic;

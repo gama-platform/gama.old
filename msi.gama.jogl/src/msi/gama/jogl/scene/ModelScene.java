@@ -96,16 +96,16 @@ public class ModelScene {
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
 
-	public void addDEM(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
+	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, true, false, bounds, 1, null);
+		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1, null);
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final Envelope3D env,
+		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
 		final double cellSize, final String name) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isShowText, false, true, env,
+		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false, true, env,
 			cellSize, name);
 	}
 

@@ -101,10 +101,10 @@ public class GridLayer extends ImageLayer {
 			GamaImageFile textureFile = g.textureFile();
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = textureFile.getImage(scope);
-				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isShowText(), lineColor,
+				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(),g.isShowText(), lineColor,
 					cellSize, this.getName());
 			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isShowText(),
+				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),g.isShowText(),
 					lineColor, cellSize, this.getName());
 			}
 

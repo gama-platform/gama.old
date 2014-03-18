@@ -174,6 +174,7 @@ public interface IKeyword {
 	public static final String GRAPH_SKILL = "graph_user";
 	public static final String GRAPHIC_SKILL = "graphic";
 	public static final String GRAPHICS = "graphics";
+	public static final String GRAYSCALE = "grayscale";
 	public static final String GRID = "grid";
 	public static final String GRID_POPULATION = "display_grid";
 	public static final String GRID_X = "grid_x";

@@ -165,11 +165,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
-		final boolean textured, final boolean triangulated, final boolean showText, final Color gridColor,
+		final boolean textured, final boolean triangulated, final boolean isGrayScaled,final boolean showText, final Color gridColor,
 		final double cellSize, final String name) {
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
-		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, showText, env, cellSize, name);
+		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env, cellSize, name);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
@@ -197,7 +197,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawDEM(final IScope scope, final BufferedImage dem, final BufferedImage texture,
 		final Double z_factor) {
-		renderer.getScene().addDEM(texture, dem, getWorldEnvelopeWithZ(z_factor));
+		renderer.getScene().addDEMFromPNG(texture, dem, getWorldEnvelopeWithZ(z_factor));
 		return null;
 	}
 

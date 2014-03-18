@@ -56,6 +56,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.ELEVATION, type = { IType.MATRIX, IType.FLOAT, IType.INT, IType.BOOL }, optional = true, doc = @doc("Allows to specify the elevation of each cell, if any. Can be a matrix of float (provided it is the same size as the grid), a int or float variable of the grid species, or simply true (in which case, the variable called 'grid_value' is used to compute the elevation of each cell)")),
 	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true),
+	@facet(name = IKeyword.GRAYSCALE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
 	@facet(name = "draw_as_dem", type = IType.BOOL, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
@@ -69,10 +70,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	IGrid grid;
-	IExpression lineColor, elevation, textureExp, triExp, textExp;
+	IExpression lineColor, elevation, textureExp, triExp, textExp, gsExp;
 	Boolean isTextured = false;
 	GamaImageFile textureFile = null;
 	Boolean isTriangulated = false;
+	Boolean isGrayScaled = false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
 	int cellSize;
@@ -108,6 +110,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		triExp = getFacet(IKeyword.TRIANGULATION);
 		if ( triExp != null ) {
 			isTriangulated = Cast.asBool(scope, triExp.value(scope));
+		}
+		
+		gsExp = getFacet(IKeyword.GRAYSCALE);
+		if ( gsExp != null ) {
+			isGrayScaled = Cast.asBool(scope, gsExp.value(scope));
 		}
 
 		textExp = getFacet(IKeyword.TEXT);
@@ -212,6 +219,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	public Boolean isTriangulated() {
 		return isTriangulated;
+	}
+	
+	public Boolean isGrayScaled() {
+		return isGrayScaled;
 	}
 
 	public Boolean isShowText() {
