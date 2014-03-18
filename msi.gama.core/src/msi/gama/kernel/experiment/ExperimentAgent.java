@@ -387,6 +387,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
+		public SimulationAgent getSimulationScope() {
+			return (SimulationAgent) getSimulation();
+		}
+
+		@Override
 		public Object getGlobalVarValue(final String name) {
 			if ( ExperimentAgent.this.hasAttribute(name) ) {
 				return super.getGlobalVarValue(name);
