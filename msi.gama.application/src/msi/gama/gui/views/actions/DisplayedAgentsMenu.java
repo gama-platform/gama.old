@@ -149,7 +149,6 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 					@Override
 					public void run() {
-
 						if ( !a.dead() ) {
 							surface.followAgent(a);
 						}
@@ -195,7 +194,8 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			final FocusOnSelection adapter = new FocusOnSelection(null, displaySurface);
 			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 			if ( view.getOutput().isOpenGL() ) {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus, follow);
+				//FIXME: 18/03/2014 a.g the follow item has been temporaly remove from opengl because not yet implemented but should be available in 1.7
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus/*, follow*/);
 			} else {
 				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
 			}
