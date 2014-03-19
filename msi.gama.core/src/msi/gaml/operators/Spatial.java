@@ -962,6 +962,19 @@ public abstract class Spatial {
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
 		}
 
+		@operator(value = "split_geometry", content_type = IType.GEOMETRY)
+		@doc(value = "A list of geometries that result from the decomposition of the geometry according to a grid", examples = { "split_geometry(self, {5, 5}) --: returns the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator" })
+		public static GamaList<IShape> geometryDecomposition(final IScope scope, final IShape geom, final GamaPoint dimension) {
+			if ( geom == null)
+				new GamaList<IShape>(); 
+			if (geom.getPerimeter() <= 0 ) { 
+				GamaList<IShape> shps =  new GamaList<IShape>(); 
+				shps.add(geom);
+			}
+			return GeometryUtils.geometryDecomposition(geom, (int) dimension.x, (int) dimension.y);
+		}
+
+		
 		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
 		public static GamaList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {

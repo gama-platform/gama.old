@@ -20,6 +20,9 @@ package msi.gama.common.util;
 
 import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
+
+import org.geotools.coverage.processing.Operations;
+
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.shape.IShape.Type;
@@ -30,6 +33,9 @@ import msi.gama.util.*;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
+import msi.gaml.operators.Spatial.Operators;
+import msi.gaml.operators.Spatial.ThreeD;
+import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
@@ -414,6 +420,29 @@ public class GeometryUtils {
 					}
 				}
 				x += size_x;
+			}
+		}
+		return geoms;
+	}
+	
+	public static GamaList<IShape> geometryDecomposition(final IShape geom, int nbCols, int nbRows) {
+		final GamaList<IShape> geoms = new GamaList<IShape>();
+		double x_size = geom.getEnvelope().getWidth() / nbCols;
+		double y_size = geom.getEnvelope().getHeight() / nbRows;
+		double zVal = geom.getLocation().getZ();
+		GamaList<IShape> rects =  discretisation(geom.getInnerGeometry(), x_size, y_size, true);
+		for (IShape shape : rects) {
+			IShape gg = Operators.inter(null, shape, geom);
+			if (gg != null && !gg.getInnerGeometry().isEmpty()){
+				GamaShape sp = new GamaShape(gg);
+				IList<ILocation> pts = (IList<ILocation>) sp.getPoints();
+				for (int i= 0; i< pts.size(); i++) {
+					ILocation gp = pts.get(i);
+					if (zVal != gp.getZ()) {
+						ThreeD.set_z(null, sp, i, zVal);
+					}
+				}
+				geoms.add(sp);
 			}
 		}
 		return geoms;
