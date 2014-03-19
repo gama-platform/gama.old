@@ -288,22 +288,6 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 	
 	
-	
-	public static IShape buildPentagon(final double size, final ILocation location) {	
-		final double x = location.getX();
-		final double y = location.getY();
-		final double width = size;// * (Math.sqrt(3) / 2.0);
-		final Coordinate[] coords = new Coordinate[6];
-		coords[0] = new GamaPoint(x + width * Math.cos(0 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(0 * 2 * Math.PI / 5 - Math.PI / 10));
-		coords[1] = new GamaPoint(x + width * Math.cos(1 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(1 * 2 * Math.PI / 5 - Math.PI / 10));
-		coords[2] = new GamaPoint(x + width * Math.cos(2 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(2 * 2 * Math.PI / 5 - Math.PI / 10));
-		coords[3] = new GamaPoint(x + width * Math.cos(3 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(3 * 2 * Math.PI / 5 - Math.PI / 10));
-		coords[4] = new GamaPoint(x + width * Math.cos(4 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(4 * 2 * Math.PI / 5 - Math.PI / 10));
-		coords[5] = new GamaPoint(x + width * Math.cos(5 * 2 * Math.PI / 5 - Math.PI / 10), y + width * Math.sin(5 * 2 * Math.PI / 5 - Math.PI / 10));
-		return new GamaShape(GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coords), null));
-
-	}
-	
 
 	public static IShape buildHexagon(final double size, final double x, final double y) {
 		return buildHexagon(size, new GamaPoint(x, y));

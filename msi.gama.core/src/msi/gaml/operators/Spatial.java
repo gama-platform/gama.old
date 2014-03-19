@@ -272,19 +272,6 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildPyramid(side_size, location);
 		}
-
-		
-		@operator("pentagon")
-		@doc(value = "A hexagon geometry which the given with and height", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon(10) --: returns a geometry as a hexagon of width of 10 and height of 10." }, see = {
-			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "triangle" })
-		public static IShape pentagon(final IScope scope, final Double size) {
-			ILocation location;
-			final IAgent a = scope.getAgentScope();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ( size <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildPentagon(size, location);
-		}
-		
 		
 		@operator("hexagon")
 		@doc(value = "A hexagon geometry which the given with and height", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon(10) --: returns a geometry as a hexagon of width of 10 and height of 10." }, see = {
