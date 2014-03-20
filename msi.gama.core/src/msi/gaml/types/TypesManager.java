@@ -102,11 +102,12 @@ public class TypesManager {
 		return td;
 	}
 
-	public boolean containsSpecies(final String name) {
-		if ( modelSpecies.containsKey(name) ) { return true; }
-		if ( parent != null ) { return parent.containsSpecies(name); }
-		return false;
-	}
+	//
+	// public boolean containsSpecies(final String name) {
+	// if ( modelSpecies.containsKey(name) ) { return true; }
+	// if ( parent != null ) { return parent.containsSpecies(name); }
+	// return false;
+	// }
 
 	public boolean containsType(final String s) {
 		IType t = stringToIType.get(s);
