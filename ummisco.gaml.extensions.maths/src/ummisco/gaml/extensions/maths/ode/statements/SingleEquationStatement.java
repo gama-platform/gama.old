@@ -39,8 +39,6 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 @validator(SingleEquationValidator.class)
 public class SingleEquationStatement extends AbstractStatement {
 
-	
-
 	public static final Map<String, Integer> orderNames = new LinkedHashMap();
 	static {
 		orderNames.put(ZERO, 0);
@@ -62,8 +60,7 @@ public class SingleEquationStatement extends AbstractStatement {
 			IExpression func = fDesc.getExpression();
 			IExpressionDescription eDesc = d.getFacets().get(EQUATION_RIGHT);
 			IExpression expr = eDesc.getExpression();
-			String n = func.getName();
-			boolean isFunction = func instanceof IOperator && orderNames.containsKey(n);
+			boolean isFunction = func instanceof IOperator && orderNames.containsKey(func.getName());
 			if ( !isFunction ) {
 				d.error(
 					"The left-hand member of an equation should be a variable or a call to the diff() or diff2() operators",
