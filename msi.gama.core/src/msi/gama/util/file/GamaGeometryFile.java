@@ -63,10 +63,12 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 		return geometry;
 	}
 
-	/**
-	 * @param scope
-	 * @return
-	 */
 	protected abstract IShape buildGeometry(IScope scope);
+
+	@Override
+	public void invalidateContents() {
+		super.invalidateContents();
+		geometry = null;
+	}
 
 }

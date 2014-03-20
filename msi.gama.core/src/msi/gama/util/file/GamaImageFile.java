@@ -171,7 +171,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			for ( int j = 0; j < ySize; j++ ) {
 				for ( int i = 0; i < xSize; i++ ) {
 					Integer val = Integer.valueOf(tok.nextToken());
-					matrix.set(scope,i, j, val);
+					matrix.set(scope, i, j, val);
 				}
 			}
 			return matrix;
@@ -237,6 +237,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	}
 
+	@Override
+	public void invalidateContents() {
+		super.invalidateContents();
+		image = null;
+	}
 	// @Override
 	// public String getKeyword() {
 	// return Files.IMAGE;

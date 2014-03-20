@@ -401,7 +401,11 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return buffer;
 	}
 
-	protected void setBuffer(C buffer) {
+	protected void setBuffer(final C buffer) {
 		this.buffer = buffer;
+	}
+
+	public void invalidateContents() {
+		buffer = null;
 	}
 }

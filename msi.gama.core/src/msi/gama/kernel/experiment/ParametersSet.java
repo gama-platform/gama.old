@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
 
 /**
  * The Class ParametersSet.
@@ -64,6 +65,16 @@ public class ParametersSet extends HashMap<String, Object> {
 
 	public ParametersSet(final ParametersSet solution) {
 		this.putAll(solution);
+	}
+
+	@Override
+	public Object put(final String s, final Object o) {
+		// Special case for files as they are not invariant. Their contents must be invalidated before they are loaded
+		// again in a simulation. See Issue 812.
+		if ( o instanceof GamaFile ) {
+			((GamaFile) o).invalidateContents();
+		}
+		return super.put(s, o);
 	}
 
 }
