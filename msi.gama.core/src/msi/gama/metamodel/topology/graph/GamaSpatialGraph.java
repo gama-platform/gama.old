@@ -247,19 +247,25 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
+		final Map<ILocation, IAgent> nodes = new GamaMap<ILocation, IAgent>();
+		for (IAgent ag : (IList<IAgent>) vertices) {
+			nodes.put(ag.getLocation(), ag);
+		}
 		for ( final Object p : edges.iterable(scope) ) {
-			addDrivingEdge(scope, (IShape) p, vertices);
+			addDrivingEdge(scope, (IShape) p, nodes);
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
 
-	public Object addDrivingEdge(final IScope scope, final IShape e, final IContainer vertices) {
+	public Object addDrivingEdge(final IScope scope, final IShape e, final Map<ILocation, IAgent> nodes) {
 		if ( containsEdge(e) ) { return false; }
 		Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		IShape ptS = new GamaPoint(coord[0]);
 		IShape ptT = new GamaPoint(coord[coord.length - 1]);
-		IAgent v1 = (IAgent) Queries.closest_to(scope, vertices, ptS);
-		IAgent v2 = (IAgent) Queries.closest_to(scope, vertices, ptT);
+		IAgent v1 = nodes.get(ptS);
+		if (v1 == null) v1 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
+		IAgent v2 = nodes.get(ptT);
+		if (v2 == null)  v2 = (IAgent) Queries.closest_to(scope,  (IContainer<?, ? extends IShape>) nodes.values(), ptT);
 
 		IAgent ag = e.getAgent();
 		List v1ro = (List) v1.getAttribute("roads_out");
