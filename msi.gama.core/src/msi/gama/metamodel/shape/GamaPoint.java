@@ -35,46 +35,86 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaPoint extends Coordinate implements ILocation {
 
-	public GamaPoint() {
-		x = 0;
-		y = 0;
-		z = 0;
-	}
+	private static final double[] EMPTY = new double[] {};
 
-	public GamaPoint(final double xx, final double yy) {
-		x = xx;
-		y = yy;
+	{
+		x = 0.0d;
+		y = 0.0d;
 		z = 0.0d;
 	}
 
-	public GamaPoint(final double xx, final double yy, final double zz) {
-		x = xx;
-		y = yy;
-		z = zz;
+	public GamaPoint(final double ... coords) {
+		setLocation(coords);
 	}
 
 	public GamaPoint(final Coordinate coord) {
-		x = coord.x;
-		y = coord.y;
-		if ( !Double.isNaN(coord.z) ) {
-			z = coord.z;
-		} else {
-			z = 0.0d;
-		}
+		this(coord.x, coord.y, coord.z);
 	}
 
 	public GamaPoint(final ILocation point) {
-		this();
-		if ( point == null ) { return; }
-		x = point.getX();
-		y = point.getY();
-		final double zz = point.getZ();
-		if ( !Double.isNaN(zz) ) {
-			z = zz;
-		} else {
-			z = 0.0d;
-		}
+		this(point == null ? EMPTY : new double[] { point.getX(), point.getY(), point.getZ() });
+	}
 
+	@Override
+	public void setLocation(final ILocation al) {
+		setLocation(al.getX(), al.getY(), al.getZ());
+	}
+
+	@Override
+	public void setLocation(final double ... coords) {
+		int n = coords.length;
+		switch (n) {
+			case 0:
+				return;
+			case 1:
+				setX(coords[0]);
+				setY(coords[0]);
+				setZ(coords[0]);
+				break;
+			case 2:
+				setX(coords[0]);
+				setY(coords[1]);
+				break;
+			default:
+				setX(coords[0]);
+				setY(coords[1]);
+				setZ(coords[2]);
+		}
+	}
+
+	@Override
+	public void setCoordinate(final Coordinate c) {
+		setLocation(c.x, c.y, c.z);
+	}
+
+	@Override
+	public void setOrdinate(final int i, final double v) {
+		switch (i) {
+			case X:
+				setX(v);
+				break;
+			case Y:
+				setY(v);
+				break;
+			case Z:
+				setZ(v);
+				break;
+		}
+	}
+
+	@Override
+	public void setX(final double xx) {
+		x = xx;
+	}
+
+	@Override
+	public void setY(final double yy) {
+		y = yy;
+	}
+
+	@Override
+	public void setZ(final double zz) {
+		z = Double.isNaN(zz) ? 0.0d : zz;
 	}
 
 	@Override
@@ -96,11 +136,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public void setLocation(final ILocation al) {
-		setLocation(al.getX(), al.getY(), al.getZ());
-	}
-
-	@Override
 	public boolean isPoint() {
 		return true;
 	}
@@ -108,43 +143,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public boolean isLine() {
 		return false;
-	}
-
-	@Override
-	public void setLocation(final double xx, final double yy) {
-		x = xx;
-		y = yy;
-		z = 0.0d;
-	}
-
-	@Override
-	public void setLocation(final double xx, final double yy, final double zz) {
-		x = xx;
-		y = yy;
-		if ( !Double.isNaN(zz) ) {
-			z = zz;
-		} else {
-			z = 0.0d;
-		}
-	}
-
-	@Override
-	public void setX(final double xx) {
-		x = xx;
-	}
-
-	@Override
-	public void setY(final double yy) {
-		y = yy;
-	}
-
-	@Override
-	public void setZ(final double zz) {
-		if ( !Double.isNaN(zz) ) {
-			z = zz;
-		} else {
-			z = 0.0d;
-		}
 	}
 
 	@Override
@@ -169,13 +167,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public void add(final ILocation loc) {
-		x = x + loc.getX();
-		y = y + loc.getY();
-
-		final double zz = loc.getZ();
-		if ( !Double.isNaN(zz) ) {
-			z = z + zz;
-		}
+		setX(x + loc.getX());
+		setY(y + loc.getY());
+		setZ(z + loc.getZ());
 	}
 
 	@Override

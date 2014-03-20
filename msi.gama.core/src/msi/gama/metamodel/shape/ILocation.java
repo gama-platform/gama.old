@@ -33,32 +33,27 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @since 15 d�c. 2011
  * 
  */
-@vars({ @var(name = IKeyword.X, type = IType.FLOAT),
-	@var(name = IKeyword.Y, type = IType.FLOAT),
+@vars({ @var(name = IKeyword.X, type = IType.FLOAT), @var(name = IKeyword.Y, type = IType.FLOAT),
 	@var(name = IKeyword.Z, type = IType.FLOAT) })
 public interface ILocation extends IShape, Comparable {
 
 	@getter(IKeyword.X)
 	public abstract double getX();
-	
+
 	public abstract void setX(double x);
 
 	@getter(IKeyword.Y)
 	public abstract double getY();
-	
-	public abstract void setY(double y);
 
+	public abstract void setY(double y);
 
 	// public abstract boolean equals(final Coordinate o);
 	@getter(IKeyword.Z)
 	public abstract double getZ();
-	
+
 	public abstract void setZ(double z);
 
-
-	public abstract void setLocation(final double xx, final double yy);
-
-	public abstract void setLocation(final double xx, final double yy, final double zz);
+	public abstract void setLocation(final double ... coords);
 
 	public abstract void add(ILocation p);
 
