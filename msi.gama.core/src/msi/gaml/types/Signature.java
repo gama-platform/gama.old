@@ -127,4 +127,11 @@ public class Signature {
 		}
 		return result;
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isUnary() {
+		return list.length == 1;
+	}
 }
