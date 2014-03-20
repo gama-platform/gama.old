@@ -164,21 +164,6 @@ public class GLUtilLight {
 		}
 	}// end of create Diffuse Light
 
-	public static void DrawColorTriangle(final GL gl, final float x, final float y, final float z, final float alpha,
-		final float size) {
-		// ----- Render a triangle -----
-		gl.glTranslatef(x, y, z); // translate left and into the screen
-		gl.glBegin(GL_TRIANGLES); // draw using triangles
-		gl.glNormal3f(0.0f, 0.0f, -1.0f);
-		gl.glColor4f(1.0f, 0.0f, 0.0f, alpha); // Red
-		gl.glVertex3f(0.0f, size, 0.0f);
-		gl.glColor4f(0.0f, 1.0f, 0.0f, alpha); // Green
-		gl.glVertex3f(-size, -size, 0.0f);
-		gl.glColor4f(0.0f, 0.0f, 1.0f, alpha); // Blue
-		gl.glVertex3f(size, -size, 0.0f);
-		gl.glEnd();
-		gl.glTranslatef(-x, -y, -z); // retranslate right and into the screen
-	}
 
 	/**
 	 * 
@@ -602,17 +587,9 @@ public class GLUtilLight {
 			gl.glEnable(GL.GL_LIGHT1);
 		}
 
-		// Specular
-		float specularMean = 0.1f;
-		float[] lightSpecularValue = { specularMean, specularMean, specularMean, 1f };
-
-		//gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
-
-		
-
 		
 		// set material properties which will be assigned by glColor
-		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		// enable color tracking
 		gl.glEnable(GL_COLOR_MATERIAL);
 
@@ -635,12 +612,12 @@ public class GLUtilLight {
 	}
 
 	public static void UpdateDiffuseLightValue(final GL gl, final GLU glu, final Color diffuseLightValue) {
-
 		float[] lightDiffuseValue =
 			{ (float) diffuseLightValue.getRed() / 255.0f, (float) diffuseLightValue.getGreen() / 255.0f,
 				(float) diffuseLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		
 	}
 	
 	public static void UpdateDiffuseLightPosition(final GL gl, final GLU glu, float[] lightDiffusePos) {

@@ -63,6 +63,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean computeNormal = true;
 
 	public boolean drawDiffuseLight = true;
+	
+	public boolean isLightOn = true;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -113,8 +115,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		setContext(drawable.getContext());
 
 		// Set background color
-
 		setBackground(displaySurface.getBackgroundColor());
+		
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtilLight.enableSmooth(gl);
 
@@ -125,7 +127,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Set up the lighting for Light-1
 		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(),
 			(float) displaySurface.getEnvHeight(), ambientLightValue, diffuseLightValue);
-
+	
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -141,7 +143,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
 		BLENDING_ENABLED = true;
-		IS_LIGHT_ON = true;
+		IS_LIGHT_ON = false;
 
 		camera.updateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
@@ -179,7 +181,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			camera.updateCamera(gl, glu, width, height);
 
-			if ( IS_LIGHT_ON ) {
+			if ( isLightOn ) {
 				gl.glEnable(GL_LIGHTING);
 			} else {
 				gl.glDisable(GL_LIGHTING);
@@ -426,6 +428,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setDrawDiffuseLight(final boolean ddiff) {
 		this.drawDiffuseLight = ddiff;
+	}
+	
+	public boolean getIsLightOn() {
+		return isLightOn;
+	}
+
+	public void setIsLightOn(final boolean islightOn) {
+		this.isLightOn = islightOn;
 	}
 
 	public boolean getDrawEnv() {

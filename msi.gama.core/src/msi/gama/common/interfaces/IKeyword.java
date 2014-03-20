@@ -203,6 +203,7 @@ public interface IKeyword {
 	public static final String INTERNAL_FUNCTION = "internal_function";
 	public static final String IS = "is";
 	public static final String ISFOLDER = "is_folder";
+	public static final String IS_LIGHT_ON = "light";
 	public static final String ISNOT = "is_not";
 	public static final String ITEM = "item";
 	public static final String ITS = "its";

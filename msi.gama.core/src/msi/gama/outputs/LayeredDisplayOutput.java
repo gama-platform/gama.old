@@ -65,6 +65,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width*2}")),
+	@facet(name = IKeyword.IS_LIGHT_ON, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the light. Default is true")),
 	@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
 	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
 	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
@@ -151,6 +152,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
+	private boolean isLightOn = GamaPreferences.CORE_IS_LIGHT_ON.getValue();
 	private boolean drawDiffLight = false;
 	private Color ambientLightColor = new GamaColor(100, 100, 100, 255);
 	private Color diffuseLightColor = new GamaColor(10, 10, 10, 255);
@@ -256,6 +258,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
 		if ( ddiff != null ) {
 			setDrawDiffuseLight(Cast.asBool(getScope(), ddiff.value(getScope())));
+		}
+		
+		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
+		if ( lightOn != null ) {
+			setIsLightOn(Cast.asBool(getScope(), lightOn.value(getScope())));
 		}
 
 		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
@@ -641,6 +648,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setDrawDiffuseLight(final boolean drawDiff) {
 		this.drawDiffLight = drawDiff;
+	}
+	
+	public boolean getIsLightOn() {
+		return isLightOn;
+	}
+
+	private void setIsLightOn(final boolean islight) {
+		this.isLightOn = islight;
 	}
 
 	public boolean getOutput3D() {

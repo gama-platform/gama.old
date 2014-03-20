@@ -135,6 +135,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setDrawDiffuseLight(getOutput().getDrawDiffuseLight());
+		renderer.setIsLightOn(getOutput().getIsLightOn());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
 		renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());

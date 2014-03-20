@@ -366,6 +366,8 @@ public class GamaPreferences {
 		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Lighting by default", true,
+			IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals by default", false,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Cube Display by default", false,
