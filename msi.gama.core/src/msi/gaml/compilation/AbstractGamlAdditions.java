@@ -513,4 +513,17 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	public static boolean isUnaryOperator(final String name) {
+		if ( !OPERATORS.containsKey(name) ) { return false; }
+		Map<Signature, IOperator> map = OPERATORS.get(name);
+		for ( Signature s : map.keySet() ) {
+			if ( s.isUnary() ) { return true; }
+		}
+		return false;
+	}
+
 }
