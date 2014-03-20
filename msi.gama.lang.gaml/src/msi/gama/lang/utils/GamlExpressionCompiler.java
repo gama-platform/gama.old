@@ -226,6 +226,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( left == null ) { return null; }
 		// if the operator is "as", the right-hand expression should be a casting type
 		if ( AS.equals(op) ) {
+
 			String type = EGaml.getKeyOf(e2);
 			// if ( isSpeciesName(type) ) { return factory.createOperator(op, context, e2, left, species(type)); }
 			// if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, e2, left, skill(type)); }
@@ -312,7 +313,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private boolean isTypeName(final String s) {
-		return getContext().getModelDescription().getTypesManager().containsType(s);
+		TypesManager tm = getContext().getModelDescription().getTypesManager();
+		if ( !tm.containsType(s) ) { return false; }
+		IType t = tm.get(s);
+		SpeciesDescription sd = t.getSpecies();
+		if ( sd != null && sd.isExperiment() ) { return false; }
+		return true;
 	}
 
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
@@ -775,8 +781,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// HACK
 		if ( s.equals(EACH) ) { return each_expr; }
 		if ( s.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
-		if ( isSpeciesName(s) ) { return factory.createConst(s, GamaType.from(getSpeciesContext(s))); }
-		if ( isTypeName(s) ) { return factory.createTypeExpression(context.getTypeNamed(s)); }
 		if ( s.equals(SELF) ) {
 			IDescription temp_sd = getContext().getSpeciesContext();
 			if ( temp_sd == null ) {
@@ -787,8 +791,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return factory.createVar(SELF, tt, true, IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-
+		if ( isSpeciesName(s) ) { return factory.createConst(s, GamaType.from(getSpeciesContext(s))); }
 		IDescription temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
+
 		if ( temp_sd != null ) {
 			if ( temp_sd instanceof SpeciesDescription ) {
 				SpeciesDescription remote_sd = context.getSpeciesContext();
@@ -806,6 +811,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 			return temp_sd.getVarExpr(s);
 		}
+
+		if ( isTypeName(s) ) { return factory.createTypeExpression(context.getTypeNamed(s)); }
 
 		if ( isSkillName(s) ) { return skill(s); }
 
