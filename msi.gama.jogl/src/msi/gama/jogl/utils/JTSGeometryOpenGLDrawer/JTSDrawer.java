@@ -55,6 +55,9 @@ public class JTSDrawer {
 	// MyTexture texture = null;
 
 	public boolean colorpicking = false;
+	
+	public boolean bigPolygonDecomposition = true;
+	public int nbPtsForDecomp = 2000;
 
 	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
@@ -105,7 +108,21 @@ public class JTSDrawer {
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final GeometryObject object,/* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value, final int norm_dir) {
-
+		if (bigPolygonDecomposition && p.getNumPoints() > nbPtsForDecomp) {
+			GamaList<IShape> shapes = GeometryUtils.geometryDecomposition(new GamaShape(p), 2, 2);
+			for (IShape shp : shapes) {
+				if (shp.getInnerGeometry().getNumGeometries() > 1) {
+					for (int i = 0; i < shp.getInnerGeometry().getNumGeometries(); i++) {
+						DrawPolygon((Polygon) (shp.getInnerGeometry().getGeometryN(i)), c,alpha, fill, border,isTextured, object,drawPolygonContour, rounded, z_fighting_value, norm_dir); 
+						
+					}
+					
+				} else 
+					DrawPolygon((Polygon) shp.getInnerGeometry(), c,alpha, fill, border,isTextured, object,drawPolygonContour, rounded, z_fighting_value, norm_dir); 
+			}
+			return;
+			
+		}
 		// calculate the normal vectors for each of the polygonal facets and then average the normal
 		if ( renderer.computeNormal ) {
 			Vertex[] vertices = getExteriorRingVertices(p);

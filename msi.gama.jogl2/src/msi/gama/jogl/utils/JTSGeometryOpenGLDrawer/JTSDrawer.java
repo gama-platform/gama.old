@@ -15,6 +15,7 @@ import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
+
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.*;
@@ -58,6 +59,8 @@ public class JTSDrawer {
 	MyTexture texture = null;
 
 	public boolean colorpicking = false;
+	public boolean bigPolygonDecomposition = true;
+	public int nbPtsForDecomp = 2000;
 
 	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
@@ -105,6 +108,22 @@ public class JTSDrawer {
 	public void drawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value, final int norm_dir) {
+		
+		if (bigPolygonDecomposition && p.getNumPoints() > nbPtsForDecomp) {
+			GamaList<IShape> shapes = GeometryUtils.geometryDecomposition(new GamaShape(p), 2, 2);
+			for (IShape shp : shapes) {
+				if (shp.getInnerGeometry().getNumGeometries() > 1) {
+					for (int i = 0; i < shp.getInnerGeometry().getNumGeometries(); i++) {
+						drawPolygon((Polygon) (shp.getInnerGeometry().getGeometryN(i)), c, alpha, fill,border,isTextured, textureFileNames,drawPolygonContour, rounded, z_fighting_value, norm_dir);
+					}
+					
+				} else 
+					drawPolygon((Polygon) shp.getInnerGeometry(), c, alpha, fill,border,isTextured, textureFileNames,drawPolygonContour, rounded, z_fighting_value, norm_dir);
+				
+			}
+			return;
+			
+		}
 		// calculate the normal vectors for each of the polygonal facets and then average the normal
 		if ( myGLRender.computeNormal ) {
 			Vertex[] vertices = getExteriorRingVertices(p);
