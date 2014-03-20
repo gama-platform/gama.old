@@ -30,7 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
-import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
@@ -80,6 +80,12 @@ public class GamlSpecies extends AbstractSpecies {
 					desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
 						IGamlIssue.WRONG_CONTEXT, TORUS);
 				}
+			}
+			String name = desc.getName();
+			if ( AbstractGamlAdditions.isUnaryOperator(name) ) {
+				desc.error("The name '" + name + "' cannot be used for naming this " + desc.getKeyword() +
+					", as the derived casting operator (" + name +
+					"(...)) would conflict with an existing unary operator");
 			}
 		}
 	}
