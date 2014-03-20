@@ -172,10 +172,6 @@ public class ModelDescription extends SpeciesDescription {
 		return (SpeciesDescription) types.getSpecies(spec);
 	}
 
-	public boolean hasSpeciesDescription(final String spec) {
-		return types.containsSpecies(spec);
-	}
-
 	@Override
 	public IType getTypeNamed(final String s) {
 		return types.get(s);
