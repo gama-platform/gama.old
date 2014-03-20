@@ -84,6 +84,34 @@ public class JTSDrawer {
 		// errorCallback)
 
 	}
+	
+	public void drawGeometryCollection(final GeometryCollection geoms, final Color c, final double alpha, final boolean fill,
+			final Color border, final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
+			final double height, final boolean rounded, final double z_fighting_value, final double z) {
+
+			numGeometries = geoms.getNumGeometries();
+
+			for ( int i = 0; i < numGeometries; i++ ) {
+				Geometry geom = geoms.getGeometryN(i);
+				if (geom instanceof Polygon) {
+					curPolygon = (Polygon) geom; 
+					if ( height > 0 ) {
+						drawPolyhedron(curPolygon, c, alpha, fill, height,/* angle, */false, border, isTextured,
+							textureFileNames, rounded, z_fighting_value);
+					} else {
+						drawPolygon(curPolygon, c, alpha, fill, border, isTextured, textureFileNames, /* angle, */true, rounded,
+							z_fighting_value, 1);
+					}
+				} else if (geom instanceof LineString) {
+					LineString l = (LineString) geom;
+					if ( height > 0 ) {
+						drawPlan(l, z, c, alpha, height, 0, true);
+					} else {
+						drawLineString(l, z, 1.2f, c, alpha);
+					}
+				}
+			}
+		}
 
 	public void drawMultiPolygon(final MultiPolygon polygons, final Color c, final double alpha, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */
@@ -104,6 +132,8 @@ public class JTSDrawer {
 			}
 		}
 	}
+	
+	
 
 	public void drawPolygon(final Polygon p, final Color c, final double alpha, final boolean fill, final Color border,
 		final boolean isTextured, final IList<String> textureFileNames,/* final Integer angle, */

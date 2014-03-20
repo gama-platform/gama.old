@@ -111,6 +111,12 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				jtsDrawer.DrawPoint((Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000,
 					geometry.getColor(), geometry.getAlpha());
 				break;
+			default: 
+				if (geometry.geometry instanceof GeometryCollection)
+					jtsDrawer.drawGeometryCollection((GeometryCollection) geometry.geometry, geometry.getColor(),
+							geometry.getAlpha(), geometry.fill, geometry.border, geometry.isTextured, geometry,
+							geometry.height, geometry.rounded, geometry.getZ_fighting_id(),0);
+			
 		}
 	}
 }

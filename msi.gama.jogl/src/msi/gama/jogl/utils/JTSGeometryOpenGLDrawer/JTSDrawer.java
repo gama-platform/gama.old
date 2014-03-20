@@ -100,6 +100,34 @@ public class JTSDrawer {
 			}
 		}
 	}
+	
+	public void drawGeometryCollection(final GeometryCollection geoms, final Color c, final double alpha, final boolean fill,
+		final Color border, final boolean isTextured, final GeometryObject object,/* final Integer angle, */
+		final double height, final boolean rounded, final double z_fighting_value, final double z) {
+
+		numGeometries = geoms.getNumGeometries();
+
+		for ( int i = 0; i < numGeometries; i++ ) {
+			Geometry geom = geoms.getGeometryN(i);
+			if (geom instanceof Polygon) {
+				curPolygon = (Polygon) geom; 
+				if ( height > 0 ) {
+					DrawPolyhedre(curPolygon, c, alpha, fill, height,/* angle, */false, border, isTextured, object, rounded,
+						z_fighting_value);
+				} else {
+					DrawPolygon(curPolygon, c, alpha, fill, border, isTextured, object, /* angle, */true, rounded,
+						z_fighting_value, 1);
+				}
+			} else if (geom instanceof LineString) {
+				LineString l = (LineString) geom;
+				if ( height > 0 ) {
+					drawPlan(l, z, c, alpha, height, 0, true);
+				} else {
+					drawLineString(l, z, 1.2f, c, alpha);
+				}
+			}
+		}
+	}
 
 	public void setColor(final Color c, final double alpha) {
 		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
