@@ -35,8 +35,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface ISpecies extends ISymbol, IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>,
-	IPopulationSet {
+public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet {
 
 	public static final String stepActionName = "_step_";
 	public static final String initActionName = "_init_";
