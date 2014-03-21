@@ -20,7 +20,7 @@ global{
 		//from the created generic agents, creation of the selected agents
 		ask osm_agent {
 			if (length(shape.points) = 1 and highway_str != nil ) {
-				create node with: [shape ::shape, type:: highway_str];
+				create node_agent with: [shape ::shape, type:: highway_str];
 			} else {
 				if (highway_str != nil ) {
 					create road with: [shape ::shape, type:: highway_str];
@@ -57,7 +57,7 @@ species road frequency: 0{
 	
 } 
 	
-species node {
+species node_agent {
 	string type;
 	aspect base { 
 		draw square(3) color: rgb("red") ;
@@ -87,7 +87,7 @@ experiment experiment_light type: gui {
 		display carte_principale type: opengl ambient_light: 100{
 			species building aspect: base refresh: false;
 			species road aspect: base_ligne  refresh: false  ;
-			species node aspect: base   refresh: false ;
+			species node_agent aspect: base   refresh: false ;
 			species people aspect: base  ;
 		}
 	}

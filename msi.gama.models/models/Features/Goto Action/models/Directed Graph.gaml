@@ -38,31 +38,28 @@ global {
 	}
 }
 
-entities {
-	species road {
-		int direction;
-		rgb color;
-		aspect geom {
-			draw shape color: color;
-		}
+species road {
+	int direction;
+	rgb color;
+	aspect geom {
+		draw shape color: color;
 	}
+}
 	
-	species people skills: [moving] {
-		point target;
-		path my_path; 
-		point source;
-		string r_s;
-		string r_t; 
-		aspect circle {
-			draw circle(10) color: rgb('green');
-		}
-		reflex movement {
-			my_path <- self goto (on:the_graph, target:target, speed:10, return_path: true);
-			if (target = location) {
-				
-				target <- any_location_in(one_of (road)) ;
-				source <- location;
-			}
+species people skills: [moving] {
+	point target;
+	path my_path; 
+	point source;
+	string r_s;
+	string r_t; 
+	aspect circle {
+		draw circle(10) color: rgb('green');
+	}
+	reflex movement {
+		my_path <- self goto (on:the_graph, target:target, speed:10, return_path: true);
+		if (target = location) {			
+			target <- any_location_in(one_of (road)) ;
+			source <- location;
 		}
 	}
 }

@@ -27,24 +27,24 @@ global {
 		}
 	}
 }
-entities {
-	species road  {
-		float destruction_coeff;
-		rgb color  ;
-		aspect base {
-			draw shape color: color ;
-		}
+
+species road  {
+	float destruction_coeff;
+	rgb color  ;
+	aspect base {
+		draw shape color: color ;
 	}
-	species people skills: [moving]{
-		rgb color <- rgb('yellow') ;
-		point target <- nil ;
+}
+
+species people skills: [moving]{
+	rgb color <- rgb('yellow') ;
+	point target <- nil ;
 		
-		reflex move  {
-			do goto target: target on: the_graph ;
-		}
-		aspect base {
-			draw circle(5) color: color;
-		}
+	reflex move  {
+		do goto target: target on: the_graph ;
+	}
+	aspect base {
+		draw circle(5) color: color;
 	}
 }
 

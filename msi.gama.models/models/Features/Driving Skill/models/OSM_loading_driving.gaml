@@ -15,7 +15,7 @@ global{
 	
 	geometry shape <- envelope(osmfile);
 	graph the_graph; 
-	map<point, node> nodes_map;
+	map<point, intersection> nodes_map;
 	
 	
 
@@ -29,7 +29,7 @@ global{
 				if (length(geom.points) = 1 ) {
 					if ( highway_str != nil ) {
 						string crossing <- string(geom get ("crossing"));
-						create node with: [shape ::geom, type:: highway_str, crossing::crossing] {
+						create intersection with: [shape ::geom, type:: highway_str, crossing::crossing] {
 							nodes_map[location] <- self;
 						}
 					}
@@ -50,20 +50,20 @@ global{
 		ask road {
 			point ptF <- first(shape.points);
 			if (not(ptF in nodes_map)) {
-				create node with:[location::ptF] {
+				create intersection with:[location::ptF] {
 					nodes_map[location] <- self;
 				}	
 			}
 			point ptL <- last(shape.points);
 			if (not(ptL in nodes_map)) {
-				create node with:[location::ptL] {
+				create intersection with:[location::ptL] {
 					nodes_map[location] <- self;
 				}
 			}
 		}
 			
 		write "Supplementary node agents created";
-		ask node {
+		ask intersection {
 			if (empty (road overlapping (self))) {
 				do die;
 			}
@@ -72,7 +72,7 @@ global{
 		write "node agents filtered";
 		
 		save road type:"shp" to:"../includes/roads.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
-		save node type:"shp" to:"../includes/nodes.shp" with:[type::"type", crossing::"crossing"] ;
+		save intersection type:"shp" to:"../includes/nodes.shp" with:[type::"type", crossing::"crossing"] ;
 		write "road and node shapefile saved";
 	}
 }
@@ -90,7 +90,7 @@ species road{
 	
 } 
 	
-species node {
+species intersection {
 	string type;
 	string crossing;
 	aspect base { 
@@ -106,7 +106,7 @@ experiment fromOSMtoShapefiles type: gui {
 				draw world.shape.contour;
 			}
 			species road aspect: base_ligne  refresh: false  ;
-			species node aspect: base   refresh: false ;
+			species intersection aspect: base   refresh: false ;
 		}
 	}
 }

@@ -37,34 +37,35 @@ global {
 		}  
 	}   
 } 
-entities {
-	species road  { 
-		int nbLanes; 
-		geometry geom_visu;
-		aspect base {    
-			draw geom_visu color: rgb("black") ;
-		} 
-	}
-	species people skills: [driving]{ 
-		float speed; 
-		rgb color <- rgb(rnd(255),rnd(255),rnd(255)) ; 
-		point target <- nil ; 
-		point source <- nil;
-		road currentRoad <- nil;
-		reflex move when: target != nil {
-			do goto_driving target: target on: the_graph speed: speed ; 
-			switch target { 
-				match location {
-					currentRoad <- (roadsList select (each != currentRoad)) with_min_of (each distance_to self);
-					source <- location;
-					list<point> rls <- (currentRoad.shape).points;
-					target <- first (rls) = source ? last(rls):first(rls);
-				}
+	
+species road  { 
+	int nbLanes; 
+	geometry geom_visu;
+	aspect base {    
+		draw geom_visu color: rgb("black") ;
+	} 
+}
+
+species people skills: [driving]{ 
+	float speed; 
+	rgb color <- rgb(rnd(255),rnd(255),rnd(255)) ; 
+	point target <- nil ; 
+	point source <- nil;
+	road currentRoad <- nil;
+	reflex move when: target != nil {
+		do goto_driving target: target on: the_graph speed: speed ; 
+		switch target { 
+			match location {
+				currentRoad <- (roadsList select (each != currentRoad)) with_min_of (each distance_to self);
+				source <- location;
+				list<point> rls <- (currentRoad.shape).points;
+				target <- first (rls) = source ? last(rls):first(rls);
 			}
 		}
-		aspect base {
-			draw circle(10) color: color;
-		}
+	}
+		
+	aspect base {
+		draw circle(10) color: color;
 	}
 }
 

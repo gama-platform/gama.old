@@ -47,35 +47,34 @@ global {
 	
 }
 
-entities {
-	species road {
-		bool slow;
-		aspect geom {
-			draw shape color: slow ? rgb("red") : rgb("green");
-		}
+species road {
+	bool slow;
+	aspect geom {
+		draw shape color: slow ? rgb("red") : rgb("green");
 	}
+}
 	
-	species people skills: [moving] {
-		map<road, float> roads_knowledge;
-		point the_target;
-		rgb color;
-		float size;
-		path path_to_follow;
-		init {
-			the_target <- {90,50};
-			location <- {10,50};
-		}
+species people skills: [moving] {
+	map<road, float> roads_knowledge;
+	point the_target;
+	rgb color;
+	float size;
+	path path_to_follow;
+	
+	init {
+		the_target <- {90,50};
+		location <- {10,50};
+	}
 		
-		reflex movement when: location != the_target{
-			if (path_to_follow = nil) {
-				path_to_follow <- path_between(road_network with_weights roads_knowledge, location,the_target);
-			}
-			do follow path:path_to_follow speed: 5 move_weights: roads_weight;
+	reflex movement when: location != the_target{
+		if (path_to_follow = nil) {
+			path_to_follow <- path_between(road_network with_weights roads_knowledge, location,the_target);
 		}
+		do follow path:path_to_follow speed: 5 move_weights: roads_weight;
+	}
 		
-		aspect base {
-			draw circle(size) color: color;
-		}
+	aspect base {
+		draw circle(size) color: color;
 	}
 }
 

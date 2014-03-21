@@ -31,7 +31,7 @@ global {
 			collisionBound <-  ["shape"::"sphere","radius"::radius];
 		}
 		
-		create floor 
+		create ground 
 		{   
 			location <- {width_of_environment/2,height_of_environment/2,0};
 			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
@@ -40,7 +40,7 @@ global {
 		}
 		
 		//Sky
-		create floor{
+		create ground{
 			location <- {width_of_environment/2,height_of_environment/2,width_of_environment};
 			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
 			shape <- rectangle(width_of_environment,height_of_environment);
@@ -86,7 +86,7 @@ global {
 			gravity <- false;
 		}
 		world2 <- first(Physical3DWorld as list);
-		ask world2 {registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
+		ask world2 {registeredAgents <-  (ball as list) + (ground as list) + (wall as list);}
 		
 	}
 	reflex computeForces  {
@@ -96,42 +96,41 @@ global {
 } 
 
 
-entities {
  
-    species floor skills: [physical3D]{
-    	aspect default {
-			draw shape color: rgb("black") empty:true;
-		}
-    }
-    species wall skills: [physical3D]{
-    	rgb color;
-    	float height;
-    	aspect default {
-			draw shape color: rgb("black") depth:height empty:true;
-		}
-    }
- 	
-	species ball skills: [physical3D] {  
-		rgb color;
-		int radius;
-		int size  <- size_of_agents;
-		int range  <- range_of_agents; 
-		float speed  <- speed_of_agents;  
-		int heading <- rnd(359);
+species ground skills: [physical3D]{
+	aspect default {
+		draw shape color: rgb("black") empty:true;
+	}
+}
 
-		aspect sphere{
-			draw sphere(radius) color: rgb(135,201,255) ;
-		}
-		
+species wall skills: [physical3D]{
+	rgb color;
+	float height;
+    aspect default {
+		draw shape color: rgb("black") depth:height empty:true;
 	}
 }
+ 	
+species ball skills: [physical3D] {  
+	rgb color;
+	int radius;
+	int size  <- size_of_agents;
+	int range  <- range_of_agents; 
+	float speed  <- speed_of_agents;  
+	int heading <- rnd(359);
+
+	aspect sphere{
+		draw sphere(radius) color: rgb(135,201,255) ;
+	}	
+}
+
 experiment perfect_gas type: gui {
-output {
-	display Cube type:opengl ambient_light:100 background:rgb(20,79,127) draw_env:false{
-		species floor transparency:0.5;
-		species wall transparency:0.5;
-	    species ball aspect:sphere;			
+	output {
+		display Cube type:opengl ambient_light:100 background:rgb(20,79,127) draw_env:false{
+			species ground transparency:0.5;
+			species wall transparency:0.5;
+	    	species ball aspect:sphere;			
+		}
 	}
-}
 }
 

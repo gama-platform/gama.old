@@ -14,7 +14,7 @@ global {
 	int layout_time <- 1000;
 	
 	init {
-		the_graph <- load_graph_from_file(barabasi_file, node, edge);
+		the_graph <- load_graph_from_file(barabasi_file, node_agent, edge_agent);
 		
 		
 	}
@@ -24,13 +24,13 @@ global {
 	}
 }
 
-species edge {
+species edge_agent {
 	aspect default {	
 		draw shape color: rgb("black");
 	}
 }
 
-species node {
+species node_agent {
 	aspect default {	
 		draw circle(2) color: rgb("red");
 	}
@@ -41,8 +41,8 @@ experiment loadgraph type: gui {
 	parameter "layout time" var: layout_time min: 1 max: 100000;
 	output {
 		display map type: opengl{
-			species edge ;
-			species node ;
+			species edge_agent ;
+			species node_agent ;
 		}
 	}
 }

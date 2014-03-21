@@ -48,12 +48,9 @@ global {
 	}
 }
 
-entities {
-	
-	species road  {
-		aspect base {
-			draw shape color: rgb('black') ;
-		}
+species road  {
+	aspect base {
+		draw shape color: rgb('black') ;
 	} 
 }
 

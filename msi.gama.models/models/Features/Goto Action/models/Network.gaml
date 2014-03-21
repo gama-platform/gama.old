@@ -47,30 +47,32 @@ global {
 		} 
 	}
 }
-entities {
-	species road  {
-		float speed_coef ;
-		aspect default {
-			draw shape color: rgb('black') ;
-		}
-	} 
-	species goal {
-		aspect default {
-			draw circle(50) color: rgb('red');
-		}
+
+species road  {
+	float speed_coef ;
+	aspect default {
+		draw shape color: rgb('black') ;
 	}
-	species people skills: [moving] {
-		goal target;
-		path my_path; 
+} 
 	
-		aspect default {
-			draw circle(50) color: rgb('green');
-		}
-		reflex movement {
-			do goto on:the_graph target:target speed:1;
-		}
+species goal {
+	aspect default {
+		draw circle(50) color: rgb('red');
 	}
 }
+	
+species people skills: [moving] {
+	goal target;
+	path my_path; 
+	
+	aspect default {
+		draw circle(50) color: rgb('green');
+	}
+	reflex movement {
+		do goto on:the_graph target:target speed:1;
+	}
+}
+
 
 experiment goto_network type: gui {
 	parameter "Type of optimizer" var: optimizer_type among: ["Djikstra", "AStar", "Bellmann", "Floyd Warshall"];

@@ -13,21 +13,21 @@ global {
 	graph myGraph;
 	float distance parameter: 'Distance' min: 1.0 <- 10.0 category: 'Model';
 	reflex updateGraph {
-		ask edge {
+		ask edge_agent {
 			do die;
 		}
-		myGraph <- as_distance_graph(node, ["distance"::distance, "species"::edge]);
+		myGraph <- as_distance_graph(node_agent, ["distance"::distance, "species"::edge_agent]);
 	}
 }
 
-species node mirrors: list(bug) {
+species node_agent mirrors: list(bug) {
 	point location <- target.location update: target.location;
 	aspect base {
 		draw sphere(1.1) color: rgb('green'); 
 	}
 }
 
-species edge {
+species edge_agent {
 	aspect base {
 		draw shape color: rgb('green');
 	}
@@ -37,8 +37,8 @@ experiment spatialGraph type: gui {
 	output {	
 	 display graph_view type: opengl {
 	 	    species bug aspect:base;
-			species node aspect: base;
-			species edge aspect: base;
+			species node_agent aspect: base;
+			species edge_agent aspect: base;
 		}
 	}
 }

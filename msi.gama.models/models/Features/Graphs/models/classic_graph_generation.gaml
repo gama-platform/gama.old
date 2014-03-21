@@ -17,26 +17,26 @@ global {
 	init {
 		switch graph_type {
 			match "scale-free" {
-				the_graph <- generate_barabasi_albert(node, edge, nb_nodes,m);	
+				the_graph <- generate_barabasi_albert(node_agent, edge_agent, nb_nodes,m);	
 			}
 			match "small-world" {
-				the_graph <- generate_watts_strogatz(node, edge, nb_nodes, p, k);	
+				the_graph <- generate_watts_strogatz(node_agent, edge_agent, nb_nodes, p, k);	
 			}
 			match "complete" {
-				the_graph <- generate_complete_graph(node, edge, nb_nodes);	
+				the_graph <- generate_complete_graph(node_agent, edge_agent, nb_nodes);	
 			}	
 		}
 	}
 	
 }
 
-species edge {
+species edge_agent {
 	aspect default {	
 		draw shape color: rgb("black");
 	}
 }
 
-species node {
+species node_agent {
 	aspect default {	
 		draw circle(1) color: rgb("red");
 	}
@@ -51,8 +51,8 @@ experiment loadgraph type: gui {
 	
 	output {
 		display map type: opengl{
-			species edge ;
-			species node ;
+			species edge_agent ;
+			species node_agent ;
 		}
 	}
 }

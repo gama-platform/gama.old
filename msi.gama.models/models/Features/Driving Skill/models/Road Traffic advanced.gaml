@@ -17,7 +17,7 @@ global {
 	int nb_people <- simple_data ? 20 : 500;
 	 
 	init {  
-		create node from: shape_file_nodes with:[is_traffic_signal::(read("type") = "traffic_signals")];
+		create intersection from: shape_file_nodes with:[is_traffic_signal::(read("type") = "traffic_signals")];
 		create road from: shape_file_roads with:[lanes::int(read("lanes")), oneway::string(read("oneway"))] {
 			geom_display <- shape + (2.5 * lanes);
 			maxspeed <- (lanes = 1 ? 30.0 : (lanes = 2 ? 50.0 : 70.0)) °km/°h;
@@ -39,14 +39,14 @@ global {
 			}
 		}	
 		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
-		road_network <-  (as_driving_graph(road, node))  with_weights general_speed_map;
+		road_network <-  (as_driving_graph(road, intersection))  with_weights general_speed_map;
 		create people number: nb_people { 
 			max_speed <- 160 °km/°h;
 			vehicle_length <- 5.0 °m;
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
 			proba_lane_change_down <- 0.5+ (rnd(500) / 500);
-			location <- one_of(node where empty(each.stop)).location;
+			location <- one_of(intersection where empty(each.stop)).location;
 			security_distance_coeff <- 5/9 * 3.6 * (1.5 - rnd(1000) / 1000);  
 			proba_respect_priorities <- 1.0 - rnd(200/1000);
 			proba_respect_stops <- [1.0];
@@ -61,7 +61,7 @@ global {
 	}
 	
 } 
-species node skills: [skill_road_node] {
+species intersection skills: [skill_road_node] {
 	bool is_traffic_signal;
 	list<list> stop <- [];
 	int time_to_change <- 100;
@@ -155,7 +155,7 @@ species people skills: [advanced_driving] {
 	int threshold_stucked;
 	bool breakdown <- false;
 	float proba_breakdown ;
-	node target;
+	intersection target;
 	
 	reflex breakdown when: flip(proba_breakdown){
 		breakdown <- true;
@@ -163,7 +163,7 @@ species people skills: [advanced_driving] {
 	}
 	
 	reflex time_to_go when: final_target = nil {
-		target <- one_of(node where not each.is_traffic_signal);
+		target <- one_of(intersection where not each.is_traffic_signal);
 		current_path <- compute_path(graph: road_network, target: target );
 	}
 	reflex move when: final_target != nil {
@@ -214,7 +214,7 @@ experiment experiment_2D type: gui {
 	output {
 		display city_display refresh_every: 1 {
 			species road aspect: base ;
-			species node aspect: base;
+			species intersection aspect: base;
 			species people aspect: base;
 		}
 	}
@@ -225,7 +225,7 @@ experiment experiment_3D type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
 			species road aspect: base3D refresh: true;
-			species node aspect: base3D;
+			species intersection aspect: base3D;
 			species people aspect: base3D ; 
 		}
 	}

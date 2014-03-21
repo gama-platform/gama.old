@@ -18,7 +18,7 @@ model modavi
  
 global {
 	
-	graph<node,edge> my_graph ;
+	graph<node_agent,edge_agent> my_graph ;
 	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
@@ -39,7 +39,7 @@ global {
     int nbEdgeMax;
     
     reflex updateInteractionMatrix{
-    	ask edge{
+    	ask edge_agent{
 			loop i from:0 to: nbTypeOfClass-1{															
 				set src <- my_graph source_of(self);
 				set dest <- my_graph target_of(self);
@@ -64,16 +64,16 @@ global {
 		do InitInteractionMatrix;
 		
 		if(spatialGraph){
-			create node number:nbAgent;
-			my_graph <- as_distance_graph(node, (["distance"::distance, "species"::edge]));
+			create node_agent number:nbAgent;
+			my_graph <- graph<node_agent, edge_agent>(as_distance_graph(node_agent, (["distance"::distance, "species"::edge_agent])));
 			
 		}
         else{
-          my_graph <- generate_barabasi_albert(node,edge,nbAgent,2);	
+          my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(node_agent,edge_agent,nbAgent,2));	
         }
         
 
-		ask node as list{
+		ask node_agent as list{
 			loop i from:0 to:nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
  			}		
@@ -99,9 +99,8 @@ global {
 }
 
 
-entities {
 
-	species node  {
+	species node_agent  {
 		
 		rgb color;
 		
@@ -130,10 +129,10 @@ entities {
 	}
 	
 
-	species edge { 
+	species edge_agent { 
 		rgb color;
-		node src;
-		node dest;
+		node_agent src;
+		node_agent dest;
 			 
 		aspect base {
 			draw shape color: rgb(125,125,125);
@@ -160,7 +159,7 @@ entities {
 		action updatemyNodes{
 			loop i from:0 to: nbTypeOfClass-1{			
 				nbAggregatedNodes[i]<-0;
-				ask node as list{
+				ask node_agent as list{
 				  if	(classVector[i] = myself.class) {
 					myself.nbAggregatedNodes[i] <- myself.nbAggregatedNodes[i]+1;
 				  }	 
@@ -182,7 +181,7 @@ entities {
 		
 		//This action only works when having nbTypeOfClass=1
 		action removeMicroNode{
-			ask node as list{
+			ask node_agent as list{
 				  if	(classVector[0] = myself.class) {
 				      do die;
 				  }	 
@@ -202,13 +201,13 @@ entities {
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
-				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i])/((length(edge)))*nbEdgeMax)) color: rgb(125,125,125) border:rgb(125,125,125); 	
+				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i])/((length(edge_agent)))*nbEdgeMax)) color: rgb(125,125,125) border:rgb(125,125,125); 	
 				}
 			}
 		}
 		
 		action removeMicroEdge{
-			ask edge as list{
+			ask edge_agent as list{
 				  if	((self.src.classVector[0] =  myself.src.class) and (self.dest.classVector[0] =  myself.dest.class)) {
 				      do die;
 				  }	 
@@ -250,7 +249,7 @@ entities {
   		}	
 	  }	
 	}
-}
+
 
 
 experiment MODAVI type: gui {
@@ -260,14 +259,14 @@ experiment MODAVI type: gui {
 				draw rectangle(100,100) at: {150,50,0} rounded:true color:rgb(230,230,230);
 				draw text:"Reference model" at:{200,50,0} size:5 color: rgb('black') bitmap:false;
 			}
-			species node aspect: real position:{100,0,0.01} ;
+			species node_agent aspect: real position:{100,0,0.01} ;
 			
 			graphics 'View1'{
 				draw rectangle(100,100) at: {50,150,0} rounded:true color:rgb(230,230,230);
 				draw text:"Advanced view" at:{50,210,0} size:5 color: rgb('black') bitmap:false;
 			}
-			species node aspect: coloredByClass position: {0,100,0.02};
-			species edge aspect: edgeGenericSpatialized position: {0,100,0.02};
+			species node_agent aspect: coloredByClass position: {0,100,0.02};
+			species edge_agent aspect: edgeGenericSpatialized position: {0,100,0.02};
 			
 			graphics 'AbstractView'{
 				draw rectangle(100,100) at: {250,150,0}  rounded:true color:rgb(230,230,230);

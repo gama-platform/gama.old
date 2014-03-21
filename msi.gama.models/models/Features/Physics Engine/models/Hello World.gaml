@@ -34,7 +34,7 @@ global {
 			mass <-1.0;
 		}
 		
-		create floor {
+		create ground {
 			location <- {environment_size/2,environment_size/2,0};
 			collisionBound <-  ["shape"::"floor","x"::environment_size/2, "y":: environment_size/2, "z"::0];
 			mass <-0.0;
@@ -43,7 +43,7 @@ global {
 		
 		create Physical3DWorld{
 		  world2 <- first(Physical3DWorld as list);
-		  ask world2 {registeredAgents <-  (ball as list) + (floor as list);}	
+		  ask world2 {registeredAgents <-  (ball as list) + (ground as list);}	
 		  world2.gravity <- true;
 		}
 	}
@@ -52,26 +52,25 @@ global {
 	  ask world2 {do computeForces timeStep : 0.0005;}
 	} 			
 } 
-entities {
-    species floor skills: [physical3D]{    	
-		aspect image{
-			draw imageRaster size: environment_size;
-		}
-    }
- 
-	species ball skills: [physical3D] {  
-		rgb color <- rgb (217,229,143); 
-		float radius;
 
-		aspect sphere{
-			draw sphere(radius) color: color ;
-		}	
+species ground skills: [physical3D]{    	
+	aspect image{
+		draw imageRaster size: environment_size;
 	}
+}
+ 
+species ball skills: [physical3D] {  
+	rgb color <- rgb (217,229,143); 
+	float radius;
+
+	aspect sphere{
+		draw sphere(radius) color: color ;
+	}	
 }
 experiment Falling_Hello_world type: gui {
 	output {
 		display Rain  type: opengl background:rgb(0,58,64) draw_env:false{
-			species floor aspect:image;
+			species ground aspect:image;
 		    species ball aspect:sphere;			
 		}
 	}

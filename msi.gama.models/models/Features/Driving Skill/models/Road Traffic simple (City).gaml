@@ -53,105 +53,110 @@ global {
 	}
 	
 } 
-entities {
-	species road  { 
-		int nbLanes;
-		int indexDirection; 
-		bool blocked <- false;
-		rgb color <- rgb("black");
-		float coeff_traffic <- 1.0 update: 1 + (float(length(people at_distance 1.0)) / shape.perimeter * 200 / nbLanes);
-		geometry visu_geom;
-		aspect base { 
-			draw shape color: rgb("black") ;
-		} 
+	
+species road  { 
+	int nbLanes;
+	int indexDirection; 
+	bool blocked <- false;
+	rgb color <- rgb("black");
+	float coeff_traffic <- 1.0 update: 1 + (float(length(people at_distance 1.0)) / shape.perimeter * 200 / nbLanes);
+	geometry visu_geom;
+	
+	aspect base { 
+		draw shape color: rgb("black") ;
+	} 
 		
-		user_command Remove_road action: remove;
-		user_command Add_road action: add;
+	user_command Remove_road action: remove;
+	user_command Add_road action: add;
 		 
-		action remove {
-			blocked <- true;
-			the_graph <-  (as_edge_graph(road where (!each.blocked))) ;
-			map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
-			the_graph <- the_graph  with_weights weights_map;
-			color <- rgb("magenta");
-		}
-		
-		action add {
-			blocked <- false;
-			the_graph <-  (as_edge_graph(road where (!each.blocked)));
-			map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
-			the_graph <- the_graph  with_weights weights_map;
-			color <- rgb("black");
-		}
-		aspect road_width {  
-			draw visu_geom color: color ;
-		}
-		aspect traffic_jam {  
-			if (coeff_traffic > 0.025) {
-				draw shape + (coeff_traffic / 4.0) color: rgb("red") ;
-			}
-		} 
-		
+	action remove {
+		blocked <- true;
+		the_graph <-  (as_edge_graph(road where (!each.blocked))) ;
+		map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
+		the_graph <- the_graph  with_weights weights_map;
+		color <- rgb("magenta");
 	}
-	species building  { 
-		rgb color <- rgb("gray");
-		aspect base { 
-			draw shape color: color ;
+		
+	action add {
+		blocked <- false;
+		the_graph <-  (as_edge_graph(road where (!each.blocked)));
+		map<road,float> weights_map <- road as_map (each:: each.coeff_traffic);
+		the_graph <- the_graph  with_weights weights_map;
+		color <- rgb("black");
+	}
+		
+	aspect road_width {  
+		draw visu_geom color: color ;
+	}
+	
+	aspect traffic_jam {  
+		if (coeff_traffic > 0.025) {
+			draw shape + (coeff_traffic / 4.0) color: rgb("red") ;
+		}
+	} 		
+}
+	
+species building  { 
+	rgb color <- rgb("gray");
+	aspect base { 
+		draw shape color: color ;
+	}
+}
+	
+species people skills: [driving]{ 
+	float speed; 
+	rgb color <- rgb([rnd(255),rnd(255),rnd(255)]) ;
+	point targetBis <- nil ; 
+	point previousLoc <- nil;
+	bool normalMove <- true;
+	float evadeDist <- 500.0;
+	building living_place <- nil ;
+	building working_place <- nil ;
+	int start_work ;
+	int end_work  ;
+	string objective ; 
+	point the_target <- nil ;
+		
+	reflex move when: the_target != nil and normalMove{
+		previousLoc <- copy(location);
+		do goto_driving target: the_target on: the_graph speed: speed ; 
+		switch location { 
+			match the_target {
+				the_target <- nil;
+				nbGoalsAchived <- nbGoalsAchived +1;
+			}
+			match previousLoc {
+				targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
+				normalMove <- false;
+			}
 		}
 	}
-	species people skills: [driving]{ 
-		float speed; 
-		rgb color <- rgb([rnd(255),rnd(255),rnd(255)]) ;
-		point targetBis <- nil ; 
-		point previousLoc <- nil;
-		bool normalMove <- true;
-		float evadeDist <- 500.0;
-		building living_place <- nil ;
-		building working_place <- nil ;
-		int start_work ;
-		int end_work  ;
-		string objective ; 
-		point the_target <- nil ;
-	
 		
-		reflex move when: the_target != nil and normalMove{
-			previousLoc <- copy(location);
-			do goto_driving target: the_target on: the_graph speed: speed ; 
-			switch location { 
-				match the_target {
-					the_target <- nil;
-					nbGoalsAchived <- nbGoalsAchived +1;
-				}
-				match previousLoc {
-					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
-					normalMove <- false;
-				}
+	reflex EvadeMove when: !(normalMove){
+		previousLoc <- copy(location);
+		do goto_driving target: targetBis on: the_graph speed: speed ; 
+		switch location { 
+			match targetBis {
+				normalMove <- true;
+			}
+			match previousLoc {
+				targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
 			}
 		}
-		reflex EvadeMove when: !(normalMove){
-			previousLoc <- copy(location);
-			do goto_driving target: targetBis on: the_graph speed: speed ; 
-			switch location { 
-				match targetBis {
-					normalMove <- true;
-				}
-				match previousLoc {
-					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
-				}
-			}
-		}
-		reflex time_to_work when: day_time = start_work {
-			objective <- "working" ;
-			the_target <- any_location_in (working_place);
-		}
-		reflex time_to_go_home when: day_time = end_work {
-			objective <- "go home" ;
-			the_target <- any_location_in (living_place); 
-		}  
+	}
+		
+	reflex time_to_work when: day_time = start_work {
+		objective <- "working" ;
+		the_target <- any_location_in (working_place);
+	}
 	
-		aspect base {
-			draw circle(20) color: color;
-		}
+	reflex time_to_go_home when: day_time = end_work {
+		objective <- "go home" ;
+		the_target <- any_location_in (living_place); 
+	}  
+	
+	aspect base {
+		draw circle(20) color: color;
 	}
 }
 

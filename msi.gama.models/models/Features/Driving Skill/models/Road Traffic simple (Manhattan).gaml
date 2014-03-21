@@ -30,53 +30,55 @@ global {
 	}
 	
 } 
-entities {
-	species road  { 
-		int nbLanes;
-		int indexDirection; 
-		geometry geom_visu;
-		aspect base {    
-			draw geom_visu color: rgb("black") ;
-		} 
-	}
+
+species road  { 		
+	int nbLanes;
+	int indexDirection; 
+	geometry geom_visu;
+	aspect base {    
+		draw geom_visu color: rgb("black") ;
+	} 
+}
 	
-	species people skills: [driving] { 
-		float speed; 
-		rgb color <- rgb(rnd(255),rnd(255),rnd(255)) ;
-		point target <- nil ; 
-		point targetBis <- nil ; 
-		point previousLoc <- nil;
-		bool normalMove <- true;
-		float evadeDist <- 300.0;
-		reflex move when: normalMove{
-			previousLoc <- copy(location);
-			do goto_driving target: target on: the_graph speed: speed ; 
-			switch location { 
-				match target {
-					target <- any_location_in (one_of(road));
-					nbGoalsAchived <- nbGoalsAchived +1;
-				}
-				match previousLoc {
-					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
-					normalMove <- false;
-				}
+species people skills: [driving] { 
+	float speed; 
+	rgb color <- rgb(rnd(255),rnd(255),rnd(255)) ;
+	point target <- nil ; 
+	point targetBis <- nil ; 
+	point previousLoc <- nil;
+	bool normalMove <- true;
+	float evadeDist <- 300.0;
+		
+	reflex move when: normalMove{
+		previousLoc <- copy(location);
+		do goto_driving target: target on: the_graph speed: speed ; 
+		switch location { 
+			match target {
+				target <- any_location_in (one_of(road));
+				nbGoalsAchived <- nbGoalsAchived +1;
+			}
+			match previousLoc {
+				targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
+				normalMove <- false;
 			}
 		}
-		reflex EvadeMove when: !(normalMove){
-			previousLoc <- copy(location);
-			do goto_driving target: targetBis on: the_graph speed: speed; 
-			switch location { 
-				match targetBis {
-					normalMove <- true;
-				}
-				match previousLoc {
-					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
-				}
+	}
+		
+	reflex EvadeMove when: !(normalMove){
+		previousLoc <- copy(location);
+		do goto_driving target: targetBis on: the_graph speed: speed; 
+		switch location { 
+			match targetBis {
+				normalMove <- true;
+			}
+			match previousLoc {
+				targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
 			}
 		}
-		aspect base {
-			draw circle(20) color: color;
-		}
+	}
+		
+	aspect base {
+		draw circle(20) color: color;
 	}
 } 
 
