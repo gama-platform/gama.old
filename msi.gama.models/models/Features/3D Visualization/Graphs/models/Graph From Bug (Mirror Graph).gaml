@@ -1,6 +1,6 @@
 model Graph
 
-import 'Common Bug Species.gaml'
+import '../includes/Common Bug Species.gaml'
 
 /**
  *  SpatialGraph

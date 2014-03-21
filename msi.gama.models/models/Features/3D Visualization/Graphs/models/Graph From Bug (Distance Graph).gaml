@@ -8,7 +8,7 @@ model SpatialGraph
  *  using as_distance_graph operator. 
  */
 
-import 'Common Bug Species.gaml'
+import '../includes/Common Bug Species.gaml'
 global { 
 	graph myGraph;
 	float distance parameter: 'Distance' min: 1.0 <- 10.0 category: 'Model';
