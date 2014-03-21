@@ -20,7 +20,8 @@ global {
 	int size_of_agents parameter: 'Size of Agents' min: 1 <- 1;
 	int wall_height parameter: 'Wall height' min: 1 <- 25;
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
-	Physical3DWorld world2;
+	physic_world world2;
+	
 	init {
 		create ball number: nb_balls {
 			location <- { rnd(width_of_environment - size_of_agents), rnd(height_of_environment - size_of_agents), rnd(height_of_environment - size_of_agents) };
@@ -63,8 +64,9 @@ global {
 			mass <- 0.0;
 		}
 
-		create Physical3DWorld;
-		world2 <- first(Physical3DWorld as list);
+		create physic_world {
+			world2 <- self;
+		}
 		ask world2 {
 			registeredAgents <- (ball as list) + (ground as list) + (wall as list);
 		}
@@ -80,6 +82,8 @@ global {
 	}
 
 }
+
+species physic_world parent: Physical3DWorld ;
 
 species ground skills: [physical3D] {
 	aspect default {

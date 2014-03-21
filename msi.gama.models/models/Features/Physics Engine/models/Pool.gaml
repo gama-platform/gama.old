@@ -13,7 +13,7 @@ global {
 	float speed_of_agents <- 2.0;
 	int size_of_agents <- 10;
 	rgb colorwood <- rgb([178, 112, 62]);
-	my_world world2;
+	physic_world world2;
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
 	init {
 		create ball {
@@ -149,11 +149,11 @@ global {
 			color <- colorwood;
 		}
 
-		create my_world {
+		create physic_world {
 			gravity <- true;
+			world2 <- self;
 		}
 
-		world2 <- first(my_world as list);
 		ask world2 {
 			registeredAgents <- (ball as list) + (ground as list) + (wall as list);
 		}
@@ -169,7 +169,7 @@ global {
 
 }
 
-species my_world parent: Physical3DWorld ;
+species physic_world parent: Physical3DWorld ;
 
 species ground skills: [physical3D] {
 	aspect default {

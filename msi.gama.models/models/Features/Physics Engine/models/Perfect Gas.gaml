@@ -22,7 +22,7 @@ global {
 	int offset<-10;
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
 
-	Physical3DWorld world2;
+	physic_world world2;
 	init {
 		create ball number: 1000{
 			radius <-2;
@@ -82,10 +82,11 @@ global {
 		}
 		
 		
-		create Physical3DWorld {
+		create physic_world {
 			gravity <- false;
+			world2 <- self;
 		}
-		world2 <- first(Physical3DWorld as list);
+		
 		ask world2 {registeredAgents <-  (ball as list) + (ground as list) + (wall as list);}
 		
 	}
@@ -95,7 +96,7 @@ global {
 			
 } 
 
-
+species physic_world parent: Physical3DWorld ;
  
 species ground skills: [physical3D]{
 	aspect default {

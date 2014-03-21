@@ -25,7 +25,7 @@ global {
 	file imageRaster <- file('./../images/wood-floor.jpg') ;
 	geometry shape <- square(environment_size);
 	
-	Physical3DWorld world2;
+	physic_world world2;
 	init {
 		create ball number: number_of_ball{
 			location <-  {rnd(environment_size),rnd(environment_size),rnd(environment_size)};
@@ -40,9 +40,8 @@ global {
 			mass <-0.0;
 		}
 
-		
-		create Physical3DWorld{
-		  world2 <- first(Physical3DWorld as list);
+		create physic_world{
+		  world2 <- self;
 		  ask world2 {registeredAgents <-  (ball as list) + (ground as list);}	
 		  world2.gravity <- true;
 		}
@@ -52,6 +51,9 @@ global {
 	  ask world2 {do computeForces timeStep : 0.0005;}
 	} 			
 } 
+
+
+species physic_world parent: Physical3DWorld ;
 
 species ground skills: [physical3D]{    	
 	aspect image{
