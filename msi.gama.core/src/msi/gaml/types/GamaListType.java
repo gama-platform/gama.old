@@ -79,4 +79,15 @@ public class GamaListType extends GamaContainerType<IList> {
 		}
 		return super.contentsTypeIfCasting(expr);
 	}
+
+	public static GamaList with(final IScope scope, final IExpression fillExpr, final Integer size) {
+		final Object[] contents = new Object[size];
+		if ( fillExpr != null ) {
+			// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
+			for ( int i = 0; i < contents.length; i++ ) {
+				contents[i] = fillExpr.value(scope);
+			}
+		}
+		return new GamaList(contents);
+	}
 }

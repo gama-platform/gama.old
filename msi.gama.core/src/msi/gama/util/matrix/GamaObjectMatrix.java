@@ -364,11 +364,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return sb.toString();
 	}
 
-	@Override
-	public String toGaml() {
-		return new GamaList(this.getMatrix()).toGaml() + " as matrix";
-	}
-
 	/**
 	 * Method iterator()
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()

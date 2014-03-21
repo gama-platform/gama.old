@@ -30,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.expressions.*;
+import msi.gaml.operators.Cast;
 
 @type(name = IKeyword.MATRIX, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class,
 	GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
@@ -42,10 +43,10 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			if ( obj instanceof IList ) { return GamaMatrixType.from(scope, (IList) obj); }
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType); }
 			if ( obj instanceof String ) { return from(scope, (String) obj, null); }
-			return with(scope, obj);
+			return with(scope, obj, new GamaPoint(1, 1));
 		}
 
-		if ( ((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0 ) { throw GamaRuntimeException
+		if ( ((GamaPoint) param).x <= 0 || ((GamaPoint) param).y < 0 ) { throw GamaRuntimeException
 			.error("Dimensions of a matrix should be positive."); }
 
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, (GamaPoint) param); }
@@ -215,26 +216,68 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	}
 
-	public static IMatrix with(final IScope scope, final Object val) throws GamaRuntimeException {
-		final IMatrix matrix = new GamaObjectMatrix(1, 1);
-		matrix.set(scope, 0, 0, val);
-		return matrix;
+	public static IMatrix with(final IScope scope, final IExpression val, final GamaPoint p)
+		throws GamaRuntimeException {
+		return with(scope, val, (int) p.x, (int) p.y);
+	}
+
+	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
+		IMatrix result;
+		if ( fillExpr == null ) { return new GamaObjectMatrix(cols, rows); }
+		switch (fillExpr.getType().id()) {
+			case IType.FLOAT:
+				result = new GamaFloatMatrix(cols, rows);
+				double[] dd = ((GamaFloatMatrix) result).getMatrix();
+				for ( int i = 0; i < dd.length; i++ ) {
+					dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
+				}
+				break;
+			case IType.INT:
+				result = new GamaIntMatrix(cols, rows);
+				int[] ii = ((GamaIntMatrix) result).getMatrix();
+				for ( int i = 0; i < ii.length; i++ ) {
+					ii[i] = Cast.asInt(scope, fillExpr.value(scope));
+				}
+				break;
+			default:
+				result = new GamaObjectMatrix(cols, rows);
+				Object[] contents = ((GamaObjectMatrix) result).getMatrix();
+				for ( int i = 0; i < contents.length; i++ ) {
+					contents[i] = fillExpr.value(scope);
+				}
+		}
+		return result;
 	}
 
 	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p) throws GamaRuntimeException {
-		final IMatrix matrix = new GamaObjectMatrix((int) p.x, (int) p.y);
+		return withObject(scope, val, (int) p.x, (int) p.y);
+	}
+
+	public static IMatrix withObject(final IScope scope, final Object val, final int cols, final int rows)
+		throws GamaRuntimeException {
+		final IMatrix matrix = new GamaObjectMatrix(cols, rows);
 		((GamaObjectMatrix) matrix).fillWith(scope, val);
 		return matrix;
 	}
 
 	public static IMatrix with(final IScope scope, final int val, final GamaPoint p) throws GamaRuntimeException {
-		final IMatrix matrix = new GamaIntMatrix((int) p.x, (int) p.y);
+		return withInt(scope, val, (int) p.x, (int) p.y);
+	}
+
+	public static IMatrix withInt(final IScope scope, final int val, final int cols, final int rows)
+		throws GamaRuntimeException {
+		final IMatrix matrix = new GamaIntMatrix(cols, rows);
 		((GamaIntMatrix) matrix).fillWith(val);
 		return matrix;
 	}
 
 	public static IMatrix with(final IScope scope, final double val, final GamaPoint p) throws GamaRuntimeException {
-		final IMatrix matrix = new GamaFloatMatrix((int) p.x, (int) p.y);
+		return withDouble(scope, val, (int) p.x, (int) p.y);
+	}
+
+	public static IMatrix withDouble(final IScope scope, final double val, final int cols, final int rows)
+		throws GamaRuntimeException {
+		final IMatrix matrix = new GamaFloatMatrix(cols, rows);
 		((GamaFloatMatrix) matrix)._putAll(scope, val, null);
 		return matrix;
 	}

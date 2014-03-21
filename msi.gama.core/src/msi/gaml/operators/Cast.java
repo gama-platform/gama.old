@@ -361,6 +361,12 @@ public class Cast {
 		return GamaListType.staticCast(scope, val, null);
 	}
 
+	@operator(value = "list_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true)
+	@doc(value = "creates a list with a size provided by the first operand, and filled with the second operand", comment = "Note that the right operand  should be positive, and that the second one is evaluated for each position  in the list.", see = { "list" })
+	public static IList list_with(final IScope scope, final Integer size, final IExpression init) {
+		return GamaListType.with(scope, init, size);
+	}
+
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	// @doc(value = "casts the operand into a matrix", special_cases = {
 	// "if the operand is a file, returns its content casted as a matrix",
@@ -373,15 +379,18 @@ public class Cast {
 	}
 
 	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true)
-	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand", comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.", see = {
+	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand", comment = "Note that both components of the right operand  should be positive, and that the second one is evaluated for each cell of the matrix.", see = {
 		"matrix", "as_matrix" })
-	public static IMatrix matrix_with(final IScope scope, final ILocation size, final Object init) {
+	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices"); }
-		if ( init instanceof Integer ) { return GamaMatrixType.with(scope, ((Integer) init).intValue(),
-			(GamaPoint) size); }
-		if ( init instanceof Double ) { return GamaMatrixType.with(scope, ((Double) init).doubleValue(),
-			(GamaPoint) size); }
-		return GamaMatrixType.with(scope, init, (GamaPoint) size);
+		return matrix_with(scope, (int) size.getX(), (int) size.getY(), init);
+	}
+
+	@operator(value = "matrix_with", content_type = ITypeProvider.TYPE_AT_INDEX + 2, can_be_const = true)
+	@doc(value = "creates a matrix with a size provided by the two first operands, and filled with the third one", comment = "Note that the first two operands must be positive and that the third one is evaluated for each cell of the matrix.", see = {
+		"matrix", "as_matrix" })
+	public static IMatrix matrix_with(final IScope scope, final Integer cols, final Integer rows, final IExpression init) {
+		return GamaMatrixType.with(scope, init, cols, rows);
 	}
 
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)

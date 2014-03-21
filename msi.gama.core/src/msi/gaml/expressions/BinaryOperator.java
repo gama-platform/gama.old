@@ -125,7 +125,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		}
 	}
 
-	private IType computeType(final IDescription context, final int t, final IType def, final int kind) {
+	protected IType computeType(final IDescription context, final int t, final IType def, final int kind) {
 		switch (t) {
 			case NONE:
 				return def;

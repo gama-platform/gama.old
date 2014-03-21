@@ -100,6 +100,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return result;
 	}
 
+	@Override
+	public final String toGaml() {
+		return getRowsList(null).toGaml() + " as matrix";
+	}
+
 	public static IMatrix opPlus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 	}

@@ -116,7 +116,9 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	public GamaIntMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
+		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
+			matrix[i] = (int) objects[i];
+		}
 	}
 
 	public GamaIntMatrix(final int cols, final int rows, final int[] objects) {
@@ -410,11 +412,6 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return sb.toString();
 	}
 
-	@Override
-	public String toGaml() {
-		return new GamaList(this.matrix).toGaml() + " as matrix";
-	}
-
 	/**
 	 * Method iterator()
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
@@ -452,7 +449,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null, other);
+		GamaIntMatrix matb = from(scope, other);
 		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
 			for ( int i = 0; i < matrix.length; i++ ) {
@@ -527,7 +524,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix divides(final IScope scope, final IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null, other);
+		GamaIntMatrix matb = from(scope, other);
 		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
 			for ( int i = 0; i < matrix.length; i++ ) {
@@ -540,7 +537,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix matrixMultiplication(final IScope scope, final IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null, other);
+		GamaIntMatrix matb = from(scope, other);
 		try {
 			if ( matb != null ) { return new GamaIntMatrix(getRealMatrix().multiply(matb.getRealMatrix())); }
 		} catch (DimensionMismatchException e) {

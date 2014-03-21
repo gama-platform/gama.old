@@ -517,11 +517,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public String toGaml() {
-		return new GamaList(this.matrix).toGaml() + " as_spatial_matrix";
-	}
-
-	@Override
 	public int manhattanDistanceBetween(final IShape g1, final IShape g2) {
 		// New algorithm : we get the cells at the nearest points and compute the distance between their centroids ?
 

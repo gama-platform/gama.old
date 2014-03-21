@@ -133,9 +133,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		for ( IExpression exp : args ) {
 			if ( exp == null ) { return null; }
 		}
-		if ( op.equals("-") ) {
-			GuiUtils.debug("GamlExpressionFactory.createOperator");
-		}
 		if ( OPERATORS.containsKey(op) ) {
 			// We get the possible sets of types registered in OPERATORS
 			Map<Signature, IOperator> ops = OPERATORS.get(op);
@@ -157,7 +154,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				if ( temp_types.size() == 0 ) {
 					context.error("No operator found for applying '" + op + "' to " + signature +
 						" (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
-						IGamlIssue.UNMATCHED_OPERANDS);
+						IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 					return null;
 				}
 				signature = temp_types.get(0);

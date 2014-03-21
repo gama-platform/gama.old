@@ -285,9 +285,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 					}
 				} else {
 					exp =
-						new NAryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
-							expectedContentTypes, signature);
-					// FIXME The lazy attribute is completely wrong here
+						new NAryOperator(rt, helper, c, t, content, index,
+							IExpression.class.equals(classes[classes.length - 1]), expectedContentTypes, signature);
+					// FIXME The lazy attribute is completely wrong here: it only applies to the last argument
 				}
 				// FIXME Need to create an operator description or prototype rather than copying
 				exp.setName(kw);
