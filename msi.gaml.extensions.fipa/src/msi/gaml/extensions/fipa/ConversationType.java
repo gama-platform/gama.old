@@ -16,8 +16,9 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	public ConversationType() {}
 
+	
 	@Override
-	public Conversation cast(final IScope scope, final Object obj, final Object param, IType contentsType) throws GamaRuntimeException {
+	public Conversation cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType) throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
 		// if ( obj instanceof Message ) { return new
 		// Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
@@ -25,7 +26,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 	}
 
 	@Override
-	public IType defaultContentType() {
+	public IType getContentType() {
 		return Types.get(Message.class);
 	}
 

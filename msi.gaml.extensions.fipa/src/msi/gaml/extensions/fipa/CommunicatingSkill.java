@@ -95,10 +95,9 @@ public class CommunicatingSkill extends Skill {
 		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("to be described")),
 		@arg(name = "conversation", type = ConversationType.CONV_ID, optional = true, doc = @doc("to be described")) })
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
-		// cast(final IScope scope, final Object obj, final Object param, IType contentsType)
+		// cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType)
 		final Message m =
-			(Message) Types.get(MessageType.MESSAGE_STR).cast(scope,
-				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null, Types.NO_TYPE);
+				(Message) Types.get(MessageType.MESSAGE_STR).cast(scope, scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null);
 		Message message;
 		message = m == null ? new Message() : m;
 

@@ -332,7 +332,8 @@ public class Conversation extends GamaList<Message> {
 
 	@Override
 	public String toGaml() {
-		return "message GAML to be implemented";
+		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
+				this.getParticipants();
 	}
 
 	//
