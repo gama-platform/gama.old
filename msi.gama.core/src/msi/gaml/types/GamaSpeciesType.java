@@ -20,6 +20,7 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -45,14 +46,21 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent
 				? ((IAgent) obj).getSpecies() : obj instanceof String ? scope.getModel().getSpecies((String) obj)
 					: getDefault();
+		if ( obj instanceof IPopulationSet ) {
+			species = ((IPopulationSet) obj).getSpecies();
+		}
 		return species;
 	}
 
 	@Override
 	public ISpecies cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 		final IType contentType) {
-		if ( contentType.isAgentType() ) { return scope.getModel().getSpecies(contentType.getName()); }
-		return cast(scope, obj, param);
+
+		ISpecies result = cast(scope, obj, param);
+		if ( result == null ) {
+			if ( contentType.isAgentType() ) { return scope.getModel().getSpecies(contentType.getName()); }
+		}
+		return result;
 	}
 
 	// TODO Verify that we dont need to declare the other cast method

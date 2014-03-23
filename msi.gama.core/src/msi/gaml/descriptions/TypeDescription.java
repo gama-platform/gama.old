@@ -76,6 +76,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	protected void addAction(final TypeDescription from, final StatementDescription newAction) {
 		final String actionName = newAction.getName();
+
 		final StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			if ( newAction.isBuiltIn() && existing.isBuiltIn() ) { return; }
@@ -91,6 +92,7 @@ public abstract class TypeDescription extends SymbolDescription {
 					existing.info(
 						"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
 						IGamlIssue.REDEFINES);
+					return;
 				}
 			} else if ( newAction.isAbstract() && from != this ) {
 				this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
