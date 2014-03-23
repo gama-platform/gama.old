@@ -181,4 +181,17 @@ public class Points {
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
+	@operator(value = "with_precision", can_be_const = true)
+	@doc(value = "Rounds off the ordinates of the left-hand point to the precision given by the value of right-hand operand", examples = { "point f <- (12345.78943,  12345.78943, 12345.78943) with_precision 2;	// f equals {12345.79, 12345.79, 12345.79]" }, see = "round")
+	public static ILocation round(final ILocation v, final Integer precision) {
+		return new GamaPoint(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision), Maths.round(v.getZ(),
+			precision));
+	}
+
+	@operator(value = "round", can_be_const = true)
+	@doc(value = "Rounds off the ordinates of the left-hand point to the precision given by the value of right-hand operand", examples = { "point f <- (12345.78943,  12345.78943, 12345.78943) with_precision 2;	// f equals {12345.79, 12345.79, 12345.79]" }, see = "round")
+	public static ILocation round(final ILocation v) {
+		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
+	}
+
 }
