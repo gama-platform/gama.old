@@ -85,7 +85,10 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		String ext = p.getFileExtension();
 		Set<String> extensions = typesExtensions.get(type);
 		if ( extensions == null ) { return false; }
-		return extensions.contains(ext);
+		for ( String s : extensions ) {
+			if ( s.equalsIgnoreCase(ext) ) { return true; }
+		}
+		return false;
 	}
 
 	public static boolean verifyExtension(final IGamaFile file, final String path) {
@@ -94,16 +97,26 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		Class type = file.getClass();
 		Set<String> extensions = classExtensions.get(type);
 		if ( extensions == null ) { return false; }
-		return extensions.contains(ext);
+		for ( String s : extensions ) {
+			if ( s.equalsIgnoreCase(ext) ) { return true; }
+		}
+		return false;
 	}
 
 	public static IGamaFile createFile(final IScope scope, final String path) {
 		if ( new File(path).isDirectory() ) { return new GamaFolderFile(scope, path); }
 		IPath p = new Path(path);
 		String ext = p.getFileExtension();
-		GamaHelper<IGamaFile> builder = extensionsToFiles.get(ext);
+		GamaHelper<IGamaFile> builder = getHelper(ext);
 		if ( builder != null ) { return builder.run(scope, path); }
 		return new GamaPreferences.GenericFile(path);
+	}
+
+	private static GamaHelper<IGamaFile> getHelper(final String extension) {
+		for ( String s : extensionsToFiles.keySet() ) {
+			if ( s.equalsIgnoreCase(extension) ) { return extensionsToFiles.get(s); }
+		}
+		return null;
 	}
 
 	public static IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
