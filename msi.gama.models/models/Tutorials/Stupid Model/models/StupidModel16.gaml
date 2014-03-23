@@ -6,7 +6,7 @@ global {
     float globalMaxFoodProdRate <- 0.01;
     float initialBugSizeMean <- 0.1;
 	float initialBugSizeSD <- 0.03;
-	matrix<int> init_data <- matrix<int>(file("../data/Stupid_Cell.Data"));
+	matrix<float> init_data <- matrix<float>(csv_file("../data/Stupid_Cell.Data", "\t"));
     int width <- (max(copy_between(init_data column_at 0, 3, init_data.rows - 1)));
     int height  <- (max(copy_between(init_data column_at 1,3,init_data.rows - 1)));
     geometry shape <- rectangle(width,height);
@@ -23,7 +23,7 @@ global {
 			int ind_i <- init_data[0,i]; 
 			int ind_j <- init_data[1,i];
 			ask cell [ind_i,ind_j] {
-				foodProd <- float(init_data[2,i]);
+				foodProd <- init_data[2,i];
 			}  
 		} 
 	}
