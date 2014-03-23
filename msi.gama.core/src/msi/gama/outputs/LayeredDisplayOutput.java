@@ -24,6 +24,7 @@ import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.*;
@@ -259,7 +260,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( ddiff != null ) {
 			setDrawDiffuseLight(Cast.asBool(getScope(), ddiff.value(getScope())));
 		}
-		
+
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
 		if ( lightOn != null ) {
 			setIsLightOn(Cast.asBool(getScope(), lightOn.value(getScope())));
@@ -355,7 +356,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
-		Envelope env = scope.getSimulationScope().getEnvelope();
+		SimulationAgent sim = scope.getSimulationScope();
+		Envelope env = null;
+		if ( sim != null ) {
+			env = scope.getSimulationScope().getEnvelope();
+		} else {
+			env = new Envelope3D(0, 100, 0, 100, 0, 0);
+		}
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
 		createSurface(env);
@@ -649,7 +656,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDrawDiffuseLight(final boolean drawDiff) {
 		this.drawDiffLight = drawDiff;
 	}
-	
+
 	public boolean getIsLightOn() {
 		return isLightOn;
 	}
