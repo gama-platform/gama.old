@@ -8,11 +8,14 @@ model simpleOSMLoading
  
 global{
 	
-	file osmfile <-  file("../includes/rouen.gz")  ;
+	//map used to filter the object to build from the OSM file according to attributes. for an exhaustive list, see: http://wiki.openstreetmap.org/wiki/Map_Features
+	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"], "building"::["yes"]]);
+	//OSM file to load
+	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/rouen.gz", filtering))  ;
+	
 	geometry shape <- envelope(osmfile);
 	graph the_graph; 
 	
-
 	init {
 		//possibility to load all of the attibutes of the OSM data: for an exhaustive list, see: http://wiki.openstreetmap.org/wiki/Map_Features
 		create osm_agent from:osmfile with: [highway_str::string(read("highway")), building_str::string(read("building"))];
@@ -82,7 +85,7 @@ species people skills: [moving] {
 		
 }
 
-experiment experiment_light type: gui {
+experiment load_OSM type: gui {
 	output {
 		display carte_principale type: opengl ambient_light: 100{
 			species building aspect: base refresh: false;
