@@ -248,8 +248,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
 		final Map<ILocation, IAgent> nodes = new GamaMap<ILocation, IAgent>();
-		for (IAgent ag : (IList<IAgent>) vertices) {
-			nodes.put(ag.getLocation(), ag);
+		for (Object ag : vertices.iterable(scope)) {
+			nodes.put(((IAgent)ag).getLocation(), (IAgent)ag);
 		}
 		for ( final Object p : edges.iterable(scope) ) {
 			addDrivingEdge(scope, (IShape) p, nodes);
