@@ -8,7 +8,7 @@ global {
 	int ants_number  <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
-	const types type: matrix of: int <- matrix<int> (image_file ( '../images/environment75x75_scarce.pgm' )); 
+	const types type: matrix of: int <- matrix<int> (pgm_file ( '../images/environment75x75_scarce.pgm' )); 
 	
 	geometry shape <- square(gridsize);
 	
