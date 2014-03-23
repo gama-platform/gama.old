@@ -124,7 +124,9 @@ public class ImageUtils {
 		BufferedImage image = get(file.getAbsolutePath());
 		if ( image != null ) { return image; }
 		image = ImageIO.read(file);
-		add(file.getAbsolutePath(), image);
+		if ( image != null ) {
+			add(file.getAbsolutePath(), image);
+		}
 		return image;
 	}
 
