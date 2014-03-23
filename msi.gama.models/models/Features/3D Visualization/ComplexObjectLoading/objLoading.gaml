@@ -1,25 +1,29 @@
 /**
  *  Complex Object Loading
  *  Author: Arnaud Grignard
- *  Description: Display complex object (obj)
+ *  Description: Display complex object (svg,obj and 3ds)
  */
 
 model complexobjectloading   
 
 global {
-	geometry geom_to_display;
-	geometry shape <- square(5);
+	geometry shape <- square(10);
+
 	init { 
-		geom_to_display <- geometry (file("./includes/teapot.obj"));
+		create ComplexObject;
 	}  
 } 
+
+species ComplexObject{
+	aspect obj {
+		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:rgb('blue') size:100;
+	}
+}	
 
 experiment Display  type: gui {
 	output {
 		display ComplexObject type:opengl {
-			graphics "geometry" refresh: false{
-				draw geom_to_display color: °green at:world.location ;
-			}	
+			species ComplexObject aspect:obj;				
 		}
 	}
 }
