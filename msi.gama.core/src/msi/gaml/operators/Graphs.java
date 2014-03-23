@@ -594,8 +594,9 @@ public class Graphs {
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
-
+		if(graph instanceof GamaSpatialGraph)
+			return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
+		return graph.computeShortestPathBetween(source, target);
 		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 
 	}
