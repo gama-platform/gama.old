@@ -66,7 +66,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-		setBuffer(isPgmFile() ? matrixValueFromPgm(scope, null) : matrixValueFromImage(scope, null));
+		// Temporary workaround for pgm files, which can be read by ImageIO but produce wrong results. See Issue 880.
+		// TODO change this behavior
+		setBuffer(isPgmFile() || getExtension().equals("pgm") ? matrixValueFromPgm(scope, null) : matrixValueFromImage(
+			scope, null));
 	}
 
 	protected boolean isPgmFile() {
@@ -97,6 +100,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		if ( image == null ) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(path);
+				if ( image == null ) { throw GamaRuntimeException
+					.error(
+						"This image format (." + getExtension() +
+							") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+						scope); }
 			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e);
 			}
