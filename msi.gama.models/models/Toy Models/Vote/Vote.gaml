@@ -94,20 +94,6 @@ global {
 		}
 	}
 	
-	reflex second_tour when: time = 52 {
-		do tell message: "The second turn begins !!!"; 
-		candidate finalist1 <- active_candidates with_max_of (each.percentage_vote);
-		candidate finalist2 <- (active_candidates - finalist1) with_max_of (each.percentage_vote);
-		ask (active_candidates) {
-			if (self != finalist1 and self != finalist2) {
-				active <- false;
-				percentage_vote <- 0.0;
-				remove self from: active_candidates;
-			}
-		}	
-		
-	}
-	
 	reflex resultats_finaux when: time = 72 {
 		candidate elected <- active_candidates with_max_of (each.percentage_vote);
 		do tell message: "The winner is " + elected.name; 
@@ -123,7 +109,6 @@ global {
 			geometry geoms <- union(elector collect ((each.shape) buffer (["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
 			loop geom over: geoms.geometries { 
 				if (geom != nil and !empty(geom.points)) {
-					geom <- geom simplification 0.1;
 					list<elector> els  <- (elector inside geom); 
 					add els to: Groups;
 				}
@@ -327,7 +312,7 @@ experiment vote type: gui {
 				data "entropy" value: entropy color: rgb('blue') ;
 			}
 			chart "Opinion distribution" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
-				data "Space area covered" value: (union(candidate collect (each.shape buffer threshold_attraction_candidates)) intersection world.shape).area / 40000 color: rgb('blue') ;
+				data "Space area covered" value: (union(candidate collect (each.shape buffer threshold_attraction_candidates))).area / 40000 color: rgb('blue') ;
 			}
 		}
 	}

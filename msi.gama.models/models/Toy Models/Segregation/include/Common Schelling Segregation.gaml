@@ -14,7 +14,7 @@ global {
 	int number_of_groups <- 2 max: 8 parameter: "Number of groups:" category: "Population";
 	float density_of_people <- 0.7 parameter: "Density of people:" category: "Population" min: 0.01 max: 0.99;
 	float percent_similar_wanted <- 0.5 min: float (0) max: float (1) parameter: "Desired percentage of similarity:" category: "Population";
-	int dimensions <- 80 max: 400 min: 10 parameter: "Width and height of the environment:" category: "Environment";
+	int dimensions <- 40 max: 400 min: 10 parameter: "Width and height of the environment:" category: "Environment";
 	int neighbours_distance <- 2 max: 10 min: 1 parameter: "Distance of perception:" category: "Population";
 	int number_of_people <- 0;
 	int sum_happy_people <- 0 update: all_people count (each.is_happy);

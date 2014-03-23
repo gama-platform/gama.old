@@ -7,7 +7,7 @@
 model GIS_visualization
 
 global {
-	file shape_file_buildings <- file("../includes/buildings_simple.shp");
+	file shape_file_buildings <- shape_file("../includes/buildings_simple.shp");
 	geometry shape <- envelope(shape_file_buildings);
 	string texture <- "../images/building_texture/texture1.jpg";
 	string roof_texture <- "../images/building_texture/roof_top.png";	
@@ -16,7 +16,7 @@ global {
 experiment GIS_visualization type: gui {
 	output {
 		// display of buildings in 3D with texture and with reading their HEIGHT attribute from the shapefile
-		display gis_displays_graphics type: opengl {
+		display gis_displays_graphics type: opengl light: true ambient_light: 50{
 			graphics "buildings" refresh: false {
 				loop bd over: shape_file_buildings {
 					draw bd depth: float(geometry(bd) get "HEIGHT") texture:[roof_texture,texture] ;
