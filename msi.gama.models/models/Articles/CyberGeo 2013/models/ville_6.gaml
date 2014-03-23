@@ -75,7 +75,6 @@ species batiment {
 	init {
 		loop bat over: batiment where (each.type = "Industrial") {
 			float dist <- topology(reseau_route) distance_between [self,bat];
-			write "distance between " + self + " and " + bat + ": " + dist;
 			put (topo_route distance_between [self,bat]) at: bat in: distances;
 		}
 	}
