@@ -228,8 +228,11 @@ public class AgentsMenu extends ContributionItem {
 				actionAgentMenuItem(menu, agent, c, null, "Apply");
 			}
 		}
-		separate(menu);
-		actionAgentMenuItem(menu, agent, killer, IGamaIcons.MENU_KILL.image(), "Kill");
+
+		if ( !topLevel ) {
+			separate(menu);
+			actionAgentMenuItem(menu, agent, killer, IGamaIcons.MENU_KILL.image(), "Kill");
+		}
 		if ( agent instanceof IMacroAgent ) {
 			final IMacroAgent macro = (IMacroAgent) agent;
 			if ( macro.hasMembers() ) {
