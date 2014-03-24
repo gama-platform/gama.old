@@ -22,6 +22,12 @@
 
    <requires>
       <import feature="ummisco.gama.feature.core" version="1.6.1.qualifier"/>
+      <import plugin="msi.gama.core" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.application" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="org.apache.commons.lang"/>
    </requires>
 
    <plugin
@@ -63,7 +69,7 @@
          id="com.jogamp.jogl-macosx-universal"
          os="macosx"
          ws="cocoa"
-         arch="x86, x86_64"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="2.0.0.b365"
