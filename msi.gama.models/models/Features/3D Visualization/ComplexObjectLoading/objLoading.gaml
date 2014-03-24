@@ -16,13 +16,13 @@ global {
 
 species ComplexObject{
 	aspect obj {
-		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:rgb('blue') size:100;
+		draw geometry (file("./includes/teapot.obj"))  at:{5.0,5.0,0} color:rgb('blue');
 	}
 }	
 
 experiment Display  type: gui {
 	output {
-		display ComplexObject type:opengl {
+		display ComplexObject type:opengl background:°orange{
 			species ComplexObject aspect:obj;				
 		}
 	}
