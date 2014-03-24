@@ -474,7 +474,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		Set<IAgent> agents = null;
 		IScope s =  GAMA.obtainNewScope();
 		try{			
-			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s, new GamaPoint(pp.x,pp.y), 1.0,Different.with());
+			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s, new GamaPoint(pp.x,pp.y), this.renderer.getMaxEnvDim()/100,Different.with());
 		}
 		finally {GAMA.releaseScope(s);}
 		return new GamaList<IAgent>(agents);
