@@ -571,7 +571,8 @@ public class JavaWriter {
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
 		sb.append(ln).append(ln).append(classDefinition()).append(" {");
 		sb.append(ln).append(tab);
-		sb.append("	protected static GamlElementDocumentation DOC(int i) { return GamlDocumentation.contents.get(i);}")
+		sb.append(
+			"	protected static GamlElementDocumentation DOC(int i) { return GamlDocumentation.getInstance().contents.get(i);}")
 			.append(ln).append(ln);
 
 		sb.append("public void initialize() {");
@@ -588,13 +589,16 @@ public class JavaWriter {
 		sb.append(
 			"protected static GamlElementDocumentation S(final String ... strings) { return new GamlElementDocumentation(strings);}")
 			.append(ln).append(ln);
-		sb.append("public static final List<GamlElementDocumentation> contents = new ArrayList();");
-		sb.append(ln).append(tab).append(" static {");
+		sb.append("public final List<GamlElementDocumentation> contents = new ArrayList();");
+		sb.append("static GamlDocumentation instance;");
+		sb.append("static GamlDocumentation getInstance() {if (instance == null) {	instance = new GamlDocumentation(); instance.initialize();} return instance;}");
+		sb.append(ln).append(tab).append(" void initialize() {");
 		sb.append(ln);
 	}
 
 	protected int addDoc(final StringBuilder sb, final String doc) {
 		// doc already formatted as a java array of strings
+		// sb.append("contents.add(").append("S(\"\") ").append(");");
 		sb.append("contents.add(").append(doc).append(");");
 		sb.append(ln);
 		return docCount++;

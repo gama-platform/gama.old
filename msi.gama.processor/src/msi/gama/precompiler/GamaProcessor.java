@@ -390,6 +390,8 @@ public class GamaProcessor extends AbstractProcessor {
 				}
 			} catch (MirroredTypeException e1) {
 				type = e1.getTypeMirror();
+			} catch (MirroredTypesException e1) {
+				type = e1.getTypeMirrors().get(0);
 			}
 			// prefix
 			sb.append(SYMBOL_PREFIX);
