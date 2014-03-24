@@ -3,6 +3,7 @@ package msi.gaml.descriptions;
 import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.JavaWriter;
 import msi.gaml.types.IType;
 
 public class FacetProto {
@@ -28,7 +29,7 @@ public class FacetProto {
 		isType = types[0] == IType.TYPE_ID;
 		this.values = new THashSet(Arrays.asList(values));
 		if ( doc != null ) {
-			String[] strings = doc.split("‚Ç¨", -1);
+			String[] strings = doc.split(JavaWriter.DOC_SEP, -1);
 			// int index = doc.indexOf(JavaWriter.DOC_SEP);
 			// if ( index == -1 ) {
 			this.doc = strings[0];
