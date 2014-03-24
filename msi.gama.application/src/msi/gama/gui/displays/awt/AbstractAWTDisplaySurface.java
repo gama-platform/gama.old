@@ -6,17 +6,22 @@ import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -463,6 +468,32 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void zoomFit() {
 		setZoomLevel(1d);
 		zoomFit = true;
+	}
+	
+	@Override
+	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen, Point sizeInPixels, Point positionInPixels) {
+		final double xScale = sizeInPixels.x / getEnvWidth();
+		final double yScale = sizeInPixels.y / getEnvHeight();
+		final int xInDisplay = xOnScreen - positionInPixels.x;
+		final int yInDisplay = yOnScreen - positionInPixels.y;
+		final double xInModel = xInDisplay / xScale;
+		final double yInModel = yInDisplay / yScale;
+		return new GamaPoint(xInModel, yInModel);
+	}
+	
+	@Override
+	public IList<IAgent> selectAgent(final int x, final int y) {
+		int xc = x -getOriginX();
+		int yc = y - getOriginY();
+		IList<IAgent> result = new GamaList<IAgent>();
+		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
+		for ( ILayer layer : layers ) {
+			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+			if ( !agents.isEmpty() ) {
+				result.addAll(agents);
+			}
+		}
+		return result;
 	}
 
 }

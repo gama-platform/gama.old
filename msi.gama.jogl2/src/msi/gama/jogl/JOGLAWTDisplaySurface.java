@@ -30,6 +30,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.util.IList;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -439,5 +440,18 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( iGraphics != null ) {
 			iGraphics.fillBackground(bgColor, 1);
 		}
+	}
+
+	@Override
+	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen,
+			Point sizeInPixels, Point positionInPixels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IList<IAgent> selectAgent(int x, int y) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

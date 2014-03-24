@@ -21,6 +21,8 @@ package msi.gama.jogl;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
@@ -28,8 +30,13 @@ import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -76,6 +83,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
+	
+	//USe to get the EventLayer mouselistener
+	private MouseListener eventMouse;
 
 	public JOGLAWTDisplaySurface(final Object ... args) {
 		displayBlock = new Runnable() {
@@ -365,7 +375,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public synchronized void addMouseListener(final MouseListener e) {
-		// renderer.canvas.addMouseListener(e);
+		setEventMouse(e);
+	}
+	
+	@Override
+	public synchronized void removeMouseListener(final MouseListener e) {
+		renderer.canvas.removeMouseListener(e);
 	}
 
 	@Override
@@ -433,5 +448,35 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( iGraphics != null ) {
 			iGraphics.fillBackground(bgColor, 1);
 		}
+	}
+
+	public MouseListener getEventMouse() {
+		return eventMouse;
+	}
+
+	public void setEventMouse(MouseListener eventMouse) {
+		this.eventMouse = eventMouse;
+	}
+
+	@Override
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen,final Point sizeInPixels, final Point  positionInPixels) {
+		// TODO Auto-generated method stub
+		Point mp = new Point(xOnScreen, yOnScreen);
+		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer, mp);
+		return new GamaPoint(p.x,-p.y);
+		
+		
+	}
+
+	@Override
+	public IList<IAgent> selectAgent(int x, int y) {		
+		final GamaPoint pp = getModelCoordinatesFrom(x, y, null,null);
+		Set<IAgent> agents = null;
+		IScope s =  GAMA.obtainNewScope();
+		try{			
+			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s, new GamaPoint(pp.x,pp.y), 1.0,Different.with());
+		}
+		finally {GAMA.releaseScope(s);}
+		return new GamaList<IAgent>(agents);
 	}
 }

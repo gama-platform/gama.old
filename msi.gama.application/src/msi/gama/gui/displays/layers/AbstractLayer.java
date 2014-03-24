@@ -250,13 +250,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		final double xScale = sizeInPixels.x / g.getEnvWidth();
-		final double yScale = sizeInPixels.y / g.getEnvHeight();
-		final int xInDisplay = xOnScreen - positionInPixels.x;
-		final int yInDisplay = yOnScreen - positionInPixels.y;
-		final double xInModel = xInDisplay / xScale;
-		final double yInModel = yInDisplay / yScale;
-		return new GamaPoint(xInModel, yInModel);
+		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen,sizeInPixels,positionInPixels);	
 	}
 
 	@Override

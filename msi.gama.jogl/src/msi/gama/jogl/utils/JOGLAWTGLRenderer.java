@@ -96,6 +96,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
+		canvas.addMouseListener(d.getEventMouse());
 		canvas.addMouseMotionListener(camera);
 		canvas.addMouseWheelListener(camera);
 		canvas.setVisible(true);

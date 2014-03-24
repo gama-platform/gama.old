@@ -142,25 +142,13 @@ public class EventLayer extends AbstractLayer {
 			}
 		}
 
-		private IList<IAgent> selectAgent(final int x, final int y) {
-			int xc = x - surface.getOriginX();
-			int yc = y - surface.getOriginY();
-			IList<IAgent> result = new GamaList<IAgent>();
-			final List<ILayer> layers = surface.getManager().getLayersIntersecting(xc, yc);
-			for ( ILayer layer : layers ) {
-				Set<IAgent> agents = layer.collectAgentsAt(xc, yc, surface);
-				if ( !agents.isEmpty() ) {
-					result.addAll(agents);
-				}
-			}
-			return result;
-		}
+		
 
 		private void executeEvent(final MouseEvent arg0) {
 			final GamaPoint pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
 			if ( pp.x < 0 || pp.getY() < 0 || pp.x >= surface.getEnvWidth() || pp.y >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
-			final IList<IAgent> agentset = selectAgent(arg0.getX(), arg0.getY());
+			final IList<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
 			args.put("location", ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
 			args.put("selected_agents", ConstantExpressionDescription.create(new GamaList(agentset)));
 			executer.setRuntimeArgs(args);

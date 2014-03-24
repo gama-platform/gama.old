@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.*;
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -34,6 +35,8 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 
@@ -492,5 +495,30 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void removeMouseListener(final MouseListener e) {}
-
+	
+	@Override
+	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen, Point sizeInPixels, Point positionInPixels) {
+		final double xScale = sizeInPixels.x / getEnvWidth();
+		final double yScale = sizeInPixels.y / getEnvHeight();
+		final int xInDisplay = xOnScreen - positionInPixels.x;
+		final int yInDisplay = yOnScreen - positionInPixels.y;
+		final double xInModel = xInDisplay / xScale;
+		final double yInModel = yInDisplay / yScale;
+		return new GamaPoint(xInModel, yInModel);
+	}
+	
+	@Override
+	public IList<IAgent> selectAgent(final int x, final int y) {
+		int xc = x -getOriginX();
+		int yc = y - getOriginY();
+		IList<IAgent> result = new GamaList<IAgent>();
+		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
+		for ( ILayer layer : layers ) {
+			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+			if ( !agents.isEmpty() ) {
+				result.addAll(agents);
+			}
+		}
+		return result;
+	}
 }

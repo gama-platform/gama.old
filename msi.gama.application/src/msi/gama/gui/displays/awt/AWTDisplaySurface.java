@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Set;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -30,6 +31,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
@@ -377,5 +380,4 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( r.width < 1 && r.height < 1 ) { return; }
 		super.setBounds(r);
 	}
-
 }
