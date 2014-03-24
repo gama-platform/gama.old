@@ -60,22 +60,14 @@ species edge_agent parent: base_edge {
 
 experiment AdvancedView type: gui {
 	output {
-		display graph_plus_bug_layered type: opengl ambient_light: 0.2 { species bug aspect: base;
-		species node_agent aspect: base position: { 0, 0, 0.2 };
-		species edge_agent aspect: base position: { 0, 0, 0.2 };
-		species node_agent aspect: dynamic position: { 0, 0, 0.4 };
-		species edge_agent aspect: dynamic position: { 0, 0, 0.4 };
+		display graph_plus_bug_layered type: opengl ambient_light: 10 diffuse_light:100{ 
+		  species bug aspect: base;
+		  species node_agent aspect: base position: { 0, 0, 0.2 };
+		  species edge_agent aspect: base position: { 0, 0, 0.2 };
+		  species node_agent aspect: dynamic position: { 0, 0, 0.4 };
+		  species edge_agent aspect: dynamic position: { 0, 0, 0.4 };
 		}
 	}
-
 }
 
-experiment AnimatedView type: gui {
-	output {
-		display animatedView type: opengl ambient_light: 0.2 { species bug aspect: base;
-		species node_agent aspect: dynamic position: { timeAnim, 0, timeAnim / 100 };
-		species edge_agent aspect: dynamic position: { timeAnim, 0, timeAnim / 100 };
-		}
-	}
 
-}
