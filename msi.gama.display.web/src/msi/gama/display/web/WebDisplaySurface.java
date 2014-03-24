@@ -1,6 +1,7 @@
 package msi.gama.display.web;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
@@ -12,6 +13,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.util.IList;
+
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.ui.*;
 
@@ -555,4 +558,17 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void removeMouseListener(final MouseListener e) {}
+
+	@Override
+	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen,
+			Point sizeInPixels, Point positionInPixels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IList<IAgent> selectAgent(int x, int y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
