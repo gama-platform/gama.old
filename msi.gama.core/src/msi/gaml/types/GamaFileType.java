@@ -145,25 +145,28 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		return getDefault();
 	}
 
+
+//	@doc(deprecated = "use 'is_property' instead", value = "the operator tests whether the operand represents the name of a supported properties file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
+//		"is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
+//		"is_properties(\"../includes/test.png\")            --:  false;",
+//		"is_properties(\"../includes/test.properties\")     --:  true;",
+//		"is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties", "is_text",
+//		"is_shape", "is_image" })
 	@operator(value = "is_properties")
-	@doc(deprecated = "use 'is_property' instead", value = "the operator tests whether the operand represents the name of a supported properties file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
-		"is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
-		"is_properties(\"../includes/test.png\")            --:  false;",
-		"is_properties(\"../includes/test.properties\")     --:  true;",
-		"is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties", "is_text",
-		"is_shape", "is_image" })
+	@doc(deprecated = "use 'is_property' instead")
 	@Deprecated
 	public static Boolean isProperties(final String f) {
 		return verifyExtension("property", f);
 	}
 
+//	@doc(deprecated = "use 'is_gaml' instead", value = "the operator tests whether the operand represents the name of a supported gamlfile", comment = "cf. file type definition for supported (espacially model) file extensions.", examples = {
+//		"is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
+//		"is_shape(\"../includes/test.png\")            --:  false;",
+//		"is_shape(\"../includes/test.properties\")     --:  false;",
+//		"is_shape(\"../includes/test.gaml\")            --:  true;" }, see = { "image", "is_text", "is_properties",
+//		"is_image" })
 	@operator(value = "is_GAML")
-	@doc(deprecated = "use 'is_gaml' instead", value = "the operator tests whether the operand represents the name of a supported gamlfile", comment = "cf. file type definition for supported (espacially model) file extensions.", examples = {
-		"is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
-		"is_shape(\"../includes/test.png\")            --:  false;",
-		"is_shape(\"../includes/test.properties\")     --:  false;",
-		"is_shape(\"../includes/test.gaml\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-		"is_image" })
+	@doc(deprecated = "use 'is_gaml' instead")
 	@Deprecated
 	public static Boolean isGAML(final String f) {
 		return verifyExtension("gaml", f);

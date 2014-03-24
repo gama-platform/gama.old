@@ -55,7 +55,7 @@ public class Operator implements IElement {
 		eltOp.setAttribute(XMLElements.ATT_ALPHABET_ORDER, GamlDocProcessor.getAlphabetOrder(name));
 
 		// Categories
-		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
+		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATOR_CATEGORIES);
 		org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
 		catElt.setAttribute(XMLElements.ATT_CAT_ID, category);
 		categoriesElt.appendChild(catElt);

@@ -33,6 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -164,7 +165,7 @@ public class MovingSkill extends Skill {
 	@action(name = "wander", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
-		@arg(name = IKeyword.BOUNDS, type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
+		@arg(name = IKeyword.BOUNDS, type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { @example("do wander speed: speed - 10 amplitude: 120 bounds: agentA;") }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -199,7 +200,7 @@ public class MovingSkill extends Skill {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = "z_max", type = IType.INT, optional = true, doc = @doc("the maximum alltitude (z) the geometry can reach")),
-		@arg(name = IKeyword.BOUNDS, type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
+		@arg(name = IKeyword.BOUNDS, type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { @example("do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;") }, value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
@@ -243,7 +244,7 @@ public class MovingSkill extends Skill {
 	@action(name = "move", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = IKeyword.HEADING, type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
-		@arg(name = IKeyword.BOUNDS, type = { IType.GEOMETRY, IType.AGENT }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do move speed: speed - 10 heading: heading + rnd (30) bounds: agentA;" }, value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
+		@arg(name = IKeyword.BOUNDS, type = { IType.GEOMETRY, IType.AGENT }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { @example("do move speed: speed - 10 heading: heading + rnd (30) bounds: agentA;") }, value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
 	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
@@ -273,7 +274,7 @@ public class MovingSkill extends Skill {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "path", type = IType.PATH, optional = false, doc = @doc("a path to be followed.")),
 		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")),
-		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
+		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { @example("do follow speed: speed * 2 path: road_path;") }))
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double dist = computeDistance(scope, agent);
@@ -304,7 +305,7 @@ public class MovingSkill extends Skill {
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
 		@arg(name = "recompute_path", type = IType.BOOL, optional = true, doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)")),
 		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
-		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do goto target: (one_of road).location speed: speed * 2 on: road_network;" }))
+		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }))
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);

@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -145,8 +146,11 @@ public class DrivingSkill2d extends MovingSkill {
 		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
-	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
+		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, 
+	doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
+		@example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	@args(names={"target_type"})
+	// @args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	public Integer primVehicleGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
@@ -351,8 +355,11 @@ public class DrivingSkill2d extends MovingSkill {
 		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
-	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
+		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, 
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
+			@example("do goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	// @args(names = { "target", IKeyword.SPEED, "on", "target_type" })
+	@args(names={"target_type"})
 	public Integer primPedestrianGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);

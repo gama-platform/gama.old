@@ -30,8 +30,8 @@ public class ConversationType extends GamaContainerType<Conversation> {
 		return Types.get(Message.class);
 	}
 
-	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true)
-	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = { "" })
+	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category={IOperatorCategory.FIPA})
+	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = {  })
 	public static Conversation asMessage(final IScope scope, final Object val)
 		throws GamaRuntimeException {
 		return ConversationType.staticCast(scope, val, null);

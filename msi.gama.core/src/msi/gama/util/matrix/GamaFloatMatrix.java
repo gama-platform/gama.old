@@ -21,8 +21,10 @@ package msi.gama.util.matrix;
 import java.util.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -62,8 +64,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendVertically" })
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", examples = { "opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3;4,5,6;7,8,9;10,11,12]" })
+	@operator(value = { "opAppendVertically" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", 
+		examples = { @example(value="opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3;4,5,6;7,8,9;10,11,12]" )})
 	public/* static */IMatrix opAppendVertically(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
 		double[] ma = a.getMatrix();
 		double[] mb = b.getMatrix();
@@ -82,8 +85,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendHorizontally" })
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", examples = { "opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12]) = [1,2,3,7,8,9;4,5,6,10,11,12]" })
+	@operator(value = { "opAppendHorizontally" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", 
+		examples = {@example(value= "opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3,7,8,9;4,5,6,10,11,12]" )})
 	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
 
 		IMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));

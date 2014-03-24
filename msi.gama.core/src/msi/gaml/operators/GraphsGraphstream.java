@@ -11,6 +11,8 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -179,11 +181,11 @@ public class GraphsGraphstream {
 	@doc(value = "returns a random scale-free network (following Barabasi-Albert (BA) model).", comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
 		+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
 		+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
-		+ "The map operand should includes following elements:", special_cases = {
-		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices",
-		"\"size\": the graph will contain (size + 1) nodes", "\"m\": the number of edges added per novel node" }, examples = {
-		"graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert(", "		yourNodeSpecy,",
-		"		yourEdgeSpecy,", "		3,", "		5);" }, see = { "generate_watts_strogatz" })
+		+ "The map operand should includes following elements:", usages = {
+		@usage("\"edges_specy\": the species of edges"), @usage("\"vertices_specy\": the species of vertices"),
+		@usage("\"size\": the graph will contain (size + 1) nodes"), @usage("\"m\": the number of edges added per novel node") }, examples = {
+		@example("graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert("), @example("		yourNodeSpecy,"),
+		@example("		yourEdgeSpecy,"), @example("		3,"), @example("		5);") }, see = { "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Integer m) {
 
@@ -196,14 +198,14 @@ public class GraphsGraphstream {
 	@operator(value = "generate_watts_strogatz")
 	@doc(value = "returns a random small-world network (following Watts-Strogatz model).", comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
 		+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
-		+ "The map operand should includes following elements:", special_cases = {
-		"\"vertices_specy\": the species of vertices",
-		"\"edges_specy\": the species of edges",
-		"\"size\": the graph will contain (size + 1) nodes. Size must be greater than k.",
-		"\"p\": probability to \"rewire\" an edge. So it must be between 0 and 1. The parameter is often called beta in the literature.",
-		"\"k\": the base degree of each node. k must be greater than 2 and even." }, examples = {
-		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(", "			myVertexSpecy,", "			myEdgeSpecy,",
-		"			2,", "			0.3,", "			2);" }, see = { "generate_barabasi_albert" })
+		+ "The map operand should includes following elements:", usages = {
+		@usage("\"vertices_specy\": the species of vertices"),
+		@usage("\"edges_specy\": the species of edges"),
+		@usage("\"size\": the graph will contain (size + 1) nodes. Size must be greater than k."),
+		@usage("\"p\": probability to \"rewire\" an edge. So it must be between 0 and 1. The parameter is often called beta in the literature."),
+		@usage("\"k\": the base degree of each node. k must be greater than 2 and even.") }, examples = {
+		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
+		@example("			2,"), @example("			0.3,"), @example("			2);") }, see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Double p, final Integer k) {
 
@@ -214,14 +216,14 @@ public class GraphsGraphstream {
 	@operator(value = "generate_complete_graph")
 	@doc(value = "returns a fully connected graph.", 
 		comment = "Arguments should include following elements:", 
-		special_cases = {
-		"\"vertices_specy\": the species of vertices",
-		"\"edges_specy\": the species of edges",
-		"\"size\": the graph will contain size nodes.",
-		"\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment."}, 
+		usages = {
+		@usage("\"vertices_specy\": the species of vertices"),
+		@usage("\"edges_specy\": the species of edges"),
+		@usage("\"size\": the graph will contain size nodes."),
+		@usage("\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment.")}, 
 		examples = {
-		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(", "			myVertexSpecy,", "			myEdgeSpecy,",
-		"			10, 25);" }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
+		@example("			10, 25);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final double layoutRadius) {
 		
@@ -245,13 +247,13 @@ public class GraphsGraphstream {
 	@operator(value = "generate_complete_graph")
 	@doc(value = "returns a fully connected graph.", 
 		comment = "Arguments should include following elements:", 
-		special_cases = {
-		"\"vertices_specy\": the species of vertices",
-		"\"edges_specy\": the species of edges",
-		"\"size\": the graph will contain size nodes."}, 
+		usages = {
+		@usage("\"vertices_specy\": the species of vertices"),
+		@usage("\"edges_specy\": the species of edges"),
+		@usage("\"size\": the graph will contain size nodes.")}, 
 		examples = {
-		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(", "			myVertexSpecy,", "			myEdgeSpecy,",
-		"			10);" }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
+		@example("			10);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size) {
 		

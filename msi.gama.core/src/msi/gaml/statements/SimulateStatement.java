@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
@@ -39,18 +40,18 @@ import msi.gaml.types.IType;
 
 @symbol(name = "simulate", kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
-		@facet(name = "comodel", type = { IType.FILE }, optional = false),
-		@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
+	@facet(name = "comodel", type = { IType.FILE }, optional = false),
+	@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
 	@facet(name = "with_input", type = { IType.MAP }, optional = true),
 	@facet(name = "with_output", type = { IType.MAP }, optional = true),
-		@facet(name = "reset", type = { IType.BOOL }, optional = true),
+	@facet(name = "reset", type = { IType.BOOL }, optional = true),
 	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
-		@facet(name = IKeyword.REPEAT, type = { IType.INT }, optional = true) }, omissible = "comodel")
+	@facet(name = IKeyword.REPEAT, type = { IType.INT }, optional = true) }, omissible = "comodel")
 @inside(kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES,
 		ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@doc(value = "Allows an agent, the sender agent (that can be the [Sections151#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
+@doc(value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
 	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
-	"ask receiver_agent(s) {", "     [statements]", "}" })
+	@example("ask receiver_agent(s) {"), @example("     // [statements]"), @example("}") })
 public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;

@@ -24,6 +24,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -83,32 +86,34 @@ public class Strings {
 		return chronology;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc(special_cases = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string")
+	@operator(value = IKeyword.PLUS, can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage("if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string"))
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc(examples = "\"hello \" + 12 	--: 	\"hello 12\"")
+	@operator(value = IKeyword.PLUS, can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages=@usage(value="if the left-operand is a string, concatenates both operands;", examples = @example(value="\"hello \" + 12",equals="\"hello 12\"")))
 	public static String opPlus(final IScope scope, final String a, final Object b) throws GamaRuntimeException {
 		return a + Cast.asString(scope, b);
 	}
 
-	@operator(value = "in", can_be_const = true)
-	@doc(special_cases = "if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;", examples = " 'bc' in 'abcded' 	--:  true")
+	@operator(value = "in", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;"), 
+		examples = @example(value=" 'bc' in 'abcded'",equals="true"))
 	public static Boolean opIn(final String pattern, final String target) {
 		return target.contains(pattern);
 	}
 
-	@operator(value = "contains", can_be_const = true)
-	@doc(special_cases = "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;", examples = "'abcded' contains 'bc' 	--:  true")
+	@operator(value = "contains", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value= "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;"), 
+		examples = @example(value="'abcded' contains 'bc'",equals="true"))
 	public static Boolean opContains(final String target, final String pattern) {
 		return opIn(pattern, target);
 	}
 
 	@operator(value = "contains_any", can_be_const = true, expected_content_type = { IType.STRING })
-	@doc(examples = "\"abcabcabc\" contains_any [\"ca\",\"xy\"] 	--: 	true")
+	@doc(examples = @example(value="\"abcabcabc\" contains_any [\"ca\",\"xy\"]",equals="true"))
 	public static Boolean opContainsAny(final String target, final List l) {
 		for ( Object o : l ) {
 			if ( o instanceof String && opContains(target, (String) o) ) { return true; }
@@ -117,7 +122,7 @@ public class Strings {
 	}
 
 	@operator(value = "contains_all", can_be_const = true, expected_content_type = { IType.STRING })
-	@doc(examples = "\"abcabcabc\" contains_all [\"ca\",\"xy\"] 	--: 	false")
+	@doc(usages=@usage(value="if the left-operand is a string, test whether the string contains all the element of the list;", examples = @example(value="\"abcabcabc\" contains_all [\"ca\",\"xy\"]",equals="false")))
 	public static Boolean opContainsAll(final String target, final List l) {
 		for ( Object o : l ) {
 			if ( !(o instanceof String && opContains(target, (String) o)) ) { return false; }
@@ -125,19 +130,19 @@ public class Strings {
 		return true;
 	}
 
-	@operator(value = "index_of", can_be_const = true)
-	@doc(special_cases = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string", examples = " \"abcabcabc\" index_of \"ca\" 	--: 	2")
+	@operator(value = "index_of", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string", examples = @example(value=" \"abcabcabc\" index_of \"ca\"", equals="2")))
 	public static Integer opIndexOf(final String target, final String pattern) {
 		return target.indexOf(pattern);
 	}
 
-	@operator(value = "last_index_of", can_be_const = true)
-	@doc(special_cases = "if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string", examples = "\"abcabcabc\" last_index_of \"ca\" 	--: 	5")
+	@operator(value = "last_index_of", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string", examples = @example(value="\"abcabcabc\" last_index_of \"ca\"", equals="5")))
 	public static Integer opLastIndexOf(final String target, final String pattern) {
 		return target.lastIndexOf(pattern);
 	}
 
-	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true)
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, category={IOperatorCategory.STRING})
 	@doc(deprecated = "Deprecated. Use copy_between(string, int, int) instead")
 	public static String opCopy(final String target, final GamaPoint p) {
 		final int beginIndex = (int) p.x;
@@ -145,8 +150,8 @@ public class Strings {
 		return opCopy(target, beginIndex, endIndex);
 	}
 
-	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true)
-	@doc(examples = "copy_between(\"abcabcabc\", 2,6) --: 	cabc")
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(examples = @example(value="copy_between(\"abcabcabc\", 2,6)",equals="cabc"))
 	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
 		int bIndex = beginIndex < 0 ? 0 : beginIndex;
 		int eIndex = endIndex > target.length() ? target.length() : endIndex;
@@ -154,18 +159,19 @@ public class Strings {
 		return target.substring(beginIndex, endIndex);
 	}
 
-	@operator(value = { "split_with", "tokenize" }, can_be_const = true)
-	@doc(value = "a list, containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.", comment = "delimiters themselves are excluded from the resulting list", examples = "'to be or not to be,that is the question' split_with ' ,'  --:  [to,be,or,not,to,be,that,is,the,question]")
+	@operator(value = { "split_with", "tokenize" }, can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.", comment = "Delimiters themselves are excluded from the resulting list.", 
+		examples = @example(value="'to be or not to be,that is the question' split_with ' ,'",equals="[to,be,or,not,to,be,that,is,the,question]"))
 	public static IList opTokenize(final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return new GamaList(Collections.list(st));
 	}
 
-	@operator(value = "is_number", can_be_const = true)
+	@operator(value = "is_number", can_be_const = true, category={IOperatorCategory.STRING})
 	@doc(value = "tests whether the operand represents a numerical value", comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
 		+ "Symbols e and E are also accepted. A hexadecimal value should begin with #.", examples = {
-		"is_number(\"test\") 	--: false", "is_number(\"123.56\") 	--: true", "is_number(\"-1.2e5\") 	--: true",
-		"is_number(\"1,2\") 	--: false", "is_number(\"#12FA\") 	--: true" })
+		@example(value="is_number(\"test\")",equals="false"), @example(value="is_number(\"123.56\")",equals="true"), @example(value="is_number(\"-1.2e5\")",equals="true"),
+		@example(value="is_number(\"1,2\")",equals="false"), @example(value="is_number(\"#12FA\")",equals="true") })
 	public static Boolean isGamaNumber(final String s) {
 		// copright notice:
 		// original code taken from org.apache.commons.lang.NumberUtils.isNumber(String)
@@ -252,56 +258,56 @@ public class Strings {
 		return !allowSigns && foundDigit;
 	}
 
-	@operator(value = "reverse", can_be_const = true)
-	@doc(special_cases = { "if it is a string, reverse returns a new string with caracters in the reversed order", }, examples = { "reverse ('abcd') 		--: 	'dcba';" })
+	@operator(value = "reverse", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if it is a string, reverse returns a new string with caracters in the reversed order", examples = @example(value="reverse ('abcd')",equals="'dcba'")))
 	static public String reverse(final String s) {
 		StringBuilder buf = new StringBuilder(s);
 		buf.reverse();
 		return buf.toString();
 	}
 
-	@operator(value = "empty", can_be_const = true)
-	@doc(special_cases = { "if it is a string, empty returns true if the string does not contain any character, and false otherwise" }, examples = { "empty ('abced') 	--: 	false" })
+	@operator(value = "empty", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if it is a string, empty returns true if the string does not contain any character, and false otherwise", examples = @example(value="empty ('abced')",equals="false")))
 	static public Boolean isEmpty(final String s) {
 		return s != null && s.isEmpty();
 	}
 
-	@operator(value = "first", can_be_const = true)
-	@doc(special_cases = { "if it is a string, first returns a string composed of its first character" }, examples = { "first ('abce')      	--:   'a'" })
+	@operator(value = "first", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if it is a string, first returns a string composed of its first character", examples = @example(value="first ('abce')",equals="'a'" )))
 	static public String first(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(0));
 	}
 
-	@operator(value = "last", can_be_const = true)
-	@doc(special_cases = { "if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty" }, examples = { "last ('abce') 		--:   'e'", })
+	@operator(value = "last", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty", examples = @example(value="last ('abce')",equals="'e'")))
 	static public String last(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
-	@operator(value = "length", can_be_const = true)
-	@doc(special_cases = { "if it is a string, length returns the number of characters" }, examples = { "length ('I am an agent') 		--: 	13" })
+	@operator(value = "length", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="if it is a string, length returns the number of characters", examples = @example(value="length ('I am an agent')",equals="13")))
 	static public Integer length(final String s) {
 		if ( s == null ) { return 0; }
 		return s.length();
 	}
 
-	@operator(value = { IKeyword.AT, "@" }, can_be_const = true)
-	@doc(examples = "'abcdef' at 0 	--: 'a';")
+	@operator(value = { IKeyword.AT, "@" }, can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(examples = @example(value="'abcdef' at 0", equals="'a'"))
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
 
-	@operator(value = "char", can_be_const = true)
-	@doc(special_cases = { "convert ACSII integer value to character" }, examples = { "char (34) 		--: 	\"" })
+	@operator(value = "char", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(usages = @usage(value="converts ACSII integer value to character", examples = @example(value="char (34)",equals="\"")))
 	static public String asChar(final Integer s) {
 		if ( s == null ) { return ""; }
 		return Character.toString((char) s.intValue());
 	}
 	
-	@operator(value = "toChar", can_be_const = true)
-	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { "toChar (34) 		--: 	\"" })
+	@operator(value = "toChar", can_be_const = true, category={IOperatorCategory.STRING})
+	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { @example("toChar (34) 		--: 	\"") })
 	static public String toChar(final Integer s) {
 		return asChar(s);
 	}
@@ -335,8 +341,10 @@ public class Strings {
 
 	}
 
-	@operator(value = "as_date", can_be_const = true)
-	@doc(value = "converts a number into a string with year, month, day, hour, minutes, second following a given pattern (right-hand operand)", comment = "Pattern should include : \"%Y %M %D %h %m %s\" for outputting years, months, days, hours, minutes, seconds", examples = "22324234 as_date \"%M m %D d %h h %m m %s seconds\" 	--: 8 m 18 d 9 h 10 m 34 seconds", see = { "as_time" })
+	@operator(value = "as_date", can_be_const = true, category={IOperatorCategory.STRING,IOperatorCategory.TIME})
+	@doc(value = "converts a number into a string with year, month, day, hour, minutes, second following a given pattern (right-hand operand)", masterDoc=true, 
+		usages = @usage(value="Pattern should include : \"%Y %M %D %h %m %s\" for outputting years, months, days, hours, minutes, seconds", 
+		examples = @example(value="22324234 as_date \"%M m %D d %h h %m m %s seconds\"",equals="\"8 m 18 d 9 h 10 m 34 seconds\"")), see = { "as_time" })
 	public static String asDate(final double time, final String pattern) {
 		// Pattern should include : "%Y %M %D %h %m %s" for outputting years, months, days, hours,
 		// minutes, seconds
@@ -393,16 +401,17 @@ public class Strings {
 
 	}
 
-	@operator(value = "as_date", can_be_const = true)
-	@doc(special_cases = "used as an unary operator, uses a defined pattern with years, months, days", examples = "as_date(22324234) 	--: 8 months, 18 days")
+	@operator(value = "as_date", can_be_const = true, category={IOperatorCategory.STRING,IOperatorCategory.TIME})
+	@doc(value = "converts a number into a string with year, month, day, hour, minutes, second following a standard pattern",
+		usages = @usage(value="used as an unary operator, uses a defined pattern with years, months, days", examples = @example(value="as_date(22324234)",equals="\"8 months, 18 days\"")))
 	public static String asDate(final double time) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
 		return getDateFormat().print(
 			new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
 	}
 
-	@operator(value = "as_time", can_be_const = true)
-	@doc(value = "converts the given number into a string with hours, minutes and seconds", comment = "as_time operator is a particular case (using a particular pattern) of the as_date operator.", examples = "as_time(22324234) 	--: 09:10:34", see = "as_date")
+	@operator(value = "as_time", can_be_const = true, category={IOperatorCategory.STRING,IOperatorCategory.TIME})
+	@doc(value = "converts the given number into a string with hours, minutes and seconds", comment = "as_time operator is a particular case (using a particular pattern) of the as_date operator.", examples = @example(value="as_time(22324234)",equals="\"09:10:34\""), see = "as_date")
 	public static String asTime(final double cycles) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
 		return getTimeFormat().print(

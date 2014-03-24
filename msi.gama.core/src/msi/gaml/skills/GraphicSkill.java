@@ -33,6 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -73,9 +74,10 @@ public class GraphicSkill extends Skill {
 	}
 
 
-	@action(name = "twinkle", args = {
-		@arg(name = "period", type = IType.INT, doc = @doc("make the agent twinkle with a given period")) }, doc = @doc(examples = { "do twinkle period: 10;" }, value = ""))
-	
+	@action(name = "twinkle", 
+		args = { @arg(name = "period", type = IType.INT, 
+					  doc = @doc("make the agent twinkle with a given period")) }, 
+		doc = @doc(examples = { @example("do twinkle period: 10;") } ))
 	public void twinkle(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		double curTrans = getTransparency(agent);

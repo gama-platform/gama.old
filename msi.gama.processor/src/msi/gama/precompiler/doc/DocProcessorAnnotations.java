@@ -162,10 +162,16 @@ public class DocProcessorAnnotations {
 			// Parse examples	
 			if (docAnnot.examples().length != 0) {
 				org.w3c.dom.Element usageExElt = doc.createElement(XMLElements.USAGE);
-				org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);	
+				// org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);	
 				
-				for ( String example : docAnnot.examples() ) {
+				org.w3c.dom.Element examplesElt = DocProcessorAnnotations.getExamplesElt(docAnnot.examples(), doc, e, tc);
+				// usageElt.appendChild(examplesUsageElt);
+				
+				/* for ( example example : docAnnot.examples() ) {
 					org.w3c.dom.Element exampleElt = doc.createElement(XMLElements.EXAMPLE);
+					// TODO: 
+					// org.w3c.dom.Element examplesUsageElt = DocProcessorAnnotations.getExamplesElt(usage.examples(), doc, e, tc);
+					// usageElt.appendChild(examplesUsageElt);
 					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_CODE, example);
 					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TEST_ONLY, "false");
 					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_EXECUTABLE, "true");
@@ -174,6 +180,8 @@ public class DocProcessorAnnotations {
 
 					numberOfUsagesWithExamplesOnly++;				
 				}
+				*/
+				numberOfUsagesWithExamplesOnly += docAnnot.examples().length; 
 				usageExElt.appendChild(examplesElt);
 				usagesExampleElt.appendChild(usageExElt);				
 			}

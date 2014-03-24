@@ -82,7 +82,7 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameOp" select="@name"/>
 			
-			<xsl:for-each select="operatorsCategories/category">
+			<xsl:for-each select="operatorCategories/category">
 				<xsl:variable name="catItem" select="@id"/>
 				<xsl:if test="$catItem = $categoryGlobal "> 
 					 <xsl:for-each select="/doc/operators/operator[@id = $nameOp]">

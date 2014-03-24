@@ -13,6 +13,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -186,7 +187,7 @@ public class RoadSkill extends MovingSkill {
 	@action(name = "register", args = {
 			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to register on the road.")),
 			@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road"))}, 
-			doc = @doc(value = "register the agent on the road at the given lane",examples = { "do register agent: the_driver lane: 0" }))
+			doc = @doc(value = "register the agent on the road at the given lane",examples = { @example("do register agent: the_driver lane: 0") }))
 	public void primRegister(final IScope scope) throws GamaRuntimeException {
 		IAgent road = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
@@ -255,7 +256,7 @@ public class RoadSkill extends MovingSkill {
 		
 	@action(name = "unregister", args = {
 			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to unregister on the road."))}, 
-			doc = @doc(value = "unregister the agent on the road",examples = { "do unregister agent: the_driver" }))
+			doc = @doc(value = "unregister the agent on the road",examples = { @example("do unregister agent: the_driver") }))
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);

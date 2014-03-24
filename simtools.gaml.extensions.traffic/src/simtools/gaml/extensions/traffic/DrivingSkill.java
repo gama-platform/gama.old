@@ -16,6 +16,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -108,7 +109,7 @@ public class DrivingSkill extends MovingSkill {
 		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
 		@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
 		@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
+		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = { @example("do follow speed: speed * 2 path: road_path;") }))
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double maxDist = computeDistance(scope, agent);
@@ -162,7 +163,7 @@ public class DrivingSkill extends MovingSkill {
 		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
 		@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
 		@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { "do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;" }))
+		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);

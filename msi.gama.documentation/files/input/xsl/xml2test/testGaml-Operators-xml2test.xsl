@@ -8,16 +8,16 @@
  *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>.
  */
 
-model Op</xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>Test
+model Op</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test
 
 global {
 	init {
-		create testOp</xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>Test number: 1;
+		create testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test number: 1;
 	}
 }
 
 entities {
-	species testOp</xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>Test {
+	species testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test {
 
 	</xsl:text>
 
@@ -27,7 +27,7 @@ entities {
 	}
 }
 
-experiment testOp</xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>Exp type: gui {}	
+experiment testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Exp type: gui {}	
 	</xsl:text>
 
 </xsl:template>

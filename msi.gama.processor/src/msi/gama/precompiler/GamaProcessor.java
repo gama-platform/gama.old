@@ -35,6 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -485,7 +486,9 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( int i = 0; i < cases.length; i++ ) {
 			sb.append(cases[i]).append(DOC_SEP);
 		}
-		String[] examples = doc.examples();
+		// TODO: check Ben modif
+//		String[] examples = doc.examples();
+		example[] examples = doc.examples();	
 		sb.append(examples.length).append(DOC_SEP);
 		for ( int i = 0; i < examples.length; i++ ) {
 			sb.append(examples[i]).append(DOC_SEP);

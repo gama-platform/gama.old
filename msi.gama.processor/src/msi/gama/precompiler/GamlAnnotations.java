@@ -850,7 +850,7 @@ public final class GamlAnnotations {
 		 * @return An array of String representing some examples or use-cases about how to use this
 		 *         element
 		 */
-		String[] examples() default {};
+		example[] examples() default {};
 
 		/**
 		 * See.

@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -63,66 +64,68 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	@getter(DIMENSION)
 	public abstract ILocation getDimensions();
 
-	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST)
+	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
 	@doc(value = "returns a list of the rows of the matrix, with each row as a list of elements", examples = {
-		"rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])   --: ",
-		" 		[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]" }, see = "columns_list")
+		@example(value="rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])",
+				 equals=" [[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") }, see = "columns_list")
 	public abstract IList<IList<T>> getRowsList(IScope scope);
 
-	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST)
+	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
 	@doc(value = "returns a list of the columns of the matrix, with each column as a list of elements", examples = {
-		"columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])  --: ",
-		"	  [[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]" }, see = "rows_list")
+		@example(value="columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])",
+				 equals="[[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]") }, see = "rows_list")
 	public abstract IList<IList<T>> getColumnsList(IScope scope);
 
-	@operator(value = "row_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
-	@doc(value = "returns the row at a num_line (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2  --:  [\"el13\",\"el23\",\"el33\"]" }, see = {
-		"column_at", "columns_list" })
+	@operator(value = "row_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true, category={IOperatorCategory.MATRIX})
+	@doc(value = "returns the row at a num_line (rigth-hand operand)", 
+		examples = { @example(value="matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2",equals= "[\"el13\",\"el23\",\"el33\"]") }, 
+		see = {"column_at", "columns_list" })
 	public abstract IList<T> getRow(IScope scope, Integer num_line);
 
-	@operator(value = "column_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
-	@doc(value = "returns the column at a num_col (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2  --:  [\"el31\",\"el32\",\"el33\"]" }, see = {
-		"row_at", "rows_list" })
+	@operator(value = "column_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true, category={IOperatorCategory.MATRIX})
+	@doc(value = "returns the column at a num_col (rigth-hand operand)", 
+		examples = { @example(value="matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2", equals="[\"el31\",\"el32\",\"el33\"]") }, 
+		see = {"row_at", "rows_list" })
 	public abstract IList<T> getColumn(IScope scope, Integer num_line);
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix plus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = ".", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = ".", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	@doc(value = "Matrix dot product.")
 	public abstract IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
 	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
 
 	public abstract T get(IScope scope, final int col, final int row);

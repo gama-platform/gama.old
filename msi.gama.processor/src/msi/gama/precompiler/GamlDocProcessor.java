@@ -277,7 +277,6 @@ public class GamlDocProcessor {
 			Set<Modifier> m = e.getModifiers();
 			boolean isStatic = m.contains(Modifier.STATIC);
 			int arity = 0;
-			// boolean firstInstanceOperator = false;
 
 			if ( e.getAnnotation(doc.class) != null &&
 				!"".equals(e.getAnnotation(doc.class).deprecated()) ) {
@@ -332,11 +331,11 @@ public class GamlDocProcessor {
 				
 				// Category
 				org.w3c.dom.Element categoriesElt;
-				if ( operator.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).getLength() == 0 ) {
-					categoriesElt = getOperatorCategory(e,doc,doc.createElement(XMLElements.OPERATORS_CATEGORIES));
+				if ( operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).getLength() == 0 ) {
+					categoriesElt = getOperatorCategory(e,doc,doc.createElement(XMLElements.OPERATOR_CATEGORIES));
 				} else {
 					categoriesElt = getOperatorCategory(e,doc,
-						(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).item(0));
+						(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0));
 				}
 				operator.appendChild(categoriesElt);
 				

@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import msi.gama.doc.Constants;
 import msi.gama.doc.util.DocTransformer;
 import msi.gama.doc.util.XMLUtils;
+import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -58,22 +59,37 @@ public class XmlToTestGAML {
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = fabriqueD.newDocumentBuilder();
 
-		NodeList nLCategories = document.getElementsByTagName("category");
-		NodeList nLOperators = document.getElementsByTagName("operator");
+		NodeList nLCategoriesOp = document.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES);
+		NodeList nLCategories = ((org.w3c.dom.Element) nLCategoriesOp.item(0)).getElementsByTagName(XMLElements.CATEGORY);
+		
+		NodeList nLOperators = document.getElementsByTagName(XMLElements.OPERATOR);
 		
 		for(int i =0; i< nLCategories.getLength() ; i++){
 			org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
 						
 			Document docTemp = builder.newDocument();
-			org.w3c.dom.Element root = docTemp.createElement("doc");	
-			org.w3c.dom.Element rootOperators = docTemp.createElement("operators");			
+			org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);	
+			org.w3c.dom.Element rootOperators = docTemp.createElement(XMLElements.OPERATORS);			
 		
 			for(int j = 0; j < nLOperators.getLength(); j++){
-				org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);				
-				if(eltCategory.getAttribute("id").equals(eltOperator.getAttribute("category"))){
-					Node importedOpElt = docTemp.importNode(eltOperator.cloneNode(true), true);
-					rootOperators.appendChild(importedOpElt);
+				org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);
+				NodeList nLOperatorCategories = eltOperator.getElementsByTagName(XMLElements.CATEGORY);
+				
+				int k = 0;
+				boolean categoryFound = false;
+				while(k < nLOperatorCategories.getLength() && !categoryFound) {
+					if(eltCategory.getAttribute(XMLElements.ATT_CAT_ID).equals(((org.w3c.dom.Element) nLOperatorCategories.item(k)).getAttribute("id"))){
+						Node importedOpElt = docTemp.importNode(eltOperator.cloneNode(true), true);
+						rootOperators.appendChild(importedOpElt);						
+						categoryFound = true;
+					}
+					k++;
 				}
+				
+				//if(eltCategory.getAttribute(XMLElements.ATT_CAT_ID).equals(eltOperator.getAttribute(XMLElements.CATEGORY))){
+				//	Node importedOpElt = docTemp.importNode(eltOperator.cloneNode(true), true);
+				//	rootOperators.appendChild(importedOpElt);
+				//}
 			}
 			root.appendChild(rootOperators);
 			docTemp.appendChild(root);
@@ -87,24 +103,25 @@ public class XmlToTestGAML {
 	// - Operators: replace special characters like +, -, *, /
 	public static Document cleanDocumentTest(Document doc){
 		NameOperatorConverter nameConverter = new NameOperatorConverter();
-		NodeList nLCategories = doc.getElementsByTagName("category");
-		NodeList nLOperators = doc.getElementsByTagName("operator");
+		NodeList nLCategories = doc.getElementsByTagName(XMLElements.CATEGORY);
+		NodeList nLOperators = doc.getElementsByTagName(XMLElements.OPERATOR);
 		
 		for(int i =0; i< nLCategories.getLength() ; i++){
 			org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
-			eltCategory.setAttribute("id",eltCategory.getAttribute("id").replaceAll(" ", "__").replaceAll("-", "_"));
+			eltCategory.setAttribute(XMLElements.ATT_CAT_ID,eltCategory.getAttribute(XMLElements.ATT_CAT_ID).replaceAll(" ", "__").replaceAll("-", "_"));
 		}		
 		
 		for(int j = 0; j < nLOperators.getLength(); j++){
 			org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);
-			eltOperator.setAttribute("category",eltOperator.getAttribute("category").replaceAll(" ", "__").replaceAll("-", "_"));
-			eltOperator.setAttribute("id", nameConverter.getProperOperatorName(eltOperator.getAttribute("id")));
-			eltOperator.setAttribute("name", nameConverter.getProperOperatorName(eltOperator.getAttribute("name")));
+			// eltOperator.setAttribute("category",eltOperator.getAttribute("category").replaceAll(" ", "__").replaceAll("-", "_"));
+			eltOperator.setAttribute(XMLElements.ATT_OP_ID, nameConverter.getProperOperatorName(eltOperator.getAttribute(XMLElements.ATT_OP_ID)));
+			eltOperator.setAttribute(XMLElements.ATT_OP_NAME, nameConverter.getProperOperatorName(eltOperator.getAttribute(XMLElements.ATT_OP_NAME)));
+			eltOperator.setAttribute(XMLElements.ATT_OP_ALT_NAME, nameConverter.getProperOperatorName(eltOperator.getAttribute(XMLElements.ATT_OP_ALT_NAME)));
 			
-			NodeList nLExamples = eltOperator.getElementsByTagName("example");
+			NodeList nLExamples = eltOperator.getElementsByTagName(XMLElements.EXAMPLE);
 			for(int k = 0; k < nLExamples.getLength(); k++){
 				org.w3c.dom.Element eltExample = (org.w3c.dom.Element) nLExamples.item(k);
-				eltExample.setAttribute("index", ""+k);
+				eltExample.setAttribute(XMLElements.ATT_EXAMPLE_INDEX, ""+k);
 			}
 		}		
 		

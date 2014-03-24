@@ -14,6 +14,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -83,7 +84,9 @@ public class TransportationSkill extends Skill {
 
 	@action(name = "loadFile", args = {
 		@arg(name = "source", type = IType.STRING, optional = false, doc = @doc("Path of the source file")),
-		@arg(name = "datatype", type = IType.STRING, optional = true, doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
+		@arg(name = "datatype", type = IType.STRING, optional = true, doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) }, 
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
+			@example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	public void loadFile(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
@@ -189,7 +192,9 @@ public class TransportationSkill extends Skill {
 		@arg(name = "from", type = IType.STRING, optional = false, doc = @doc("departure station ID")),
 		@arg(name = "to", type = IType.STRING, optional = false, doc = @doc("arrival Station ID")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
+		@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) }, 
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
+			@example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	public GamaMap computTravel(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);

@@ -6,6 +6,7 @@ public class XMLElements {
 	public static final String CATEGORY = "category";
 	public static final String OPERATORS = "operators";
 	public static final String OPERATOR = "operator";
+	public static final String OPERATOR_CATEGORIES = "operatorCategories";
 	public static final String COMBINAISON_IO = "combinaisonIO";
 	public static final String OPERANDS = "operands";
 	public static final String OPERAND = "operand";
@@ -49,7 +50,8 @@ public class XMLElements {
 	public static final String ATT_EXAMPLE_VAR = "var";	
 	public static final String ATT_EXAMPLE_EQUALS = "equals";	
 	public static final String ATT_EXAMPLE_IS_NOT = "isNot";	
-	public static final String ATT_EXAMPLE_RAISES = "raises";	
+	public static final String ATT_EXAMPLE_RAISES = "raises";
+	public static final String ATT_EXAMPLE_INDEX = "index";
 	
 	public static final String ATT_EXAMPLE_TYPE = "type";	
 	

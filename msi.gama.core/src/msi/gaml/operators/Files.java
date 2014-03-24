@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -46,7 +47,7 @@ public class Files {
 	public static final String WRITE = "write";
 	public static Deque<Map> tempAttributes = new LinkedList();
 
-	@operator(value = IKeyword.FILE, can_be_const = true)
+	@operator(value = IKeyword.FILE, can_be_const = true, category=IOperatorCategory.FILE)
 	@doc(value = "Creates a file in read/write mode, setting its contents to the container passed in parameter", comment = "The type of container to pass will depend on the type of file (see the management of files in the documentation). Can be used to copy files since files are considered as containers. For example: save file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
 		// WARNING Casting to Modifiable is not safe
@@ -54,17 +55,16 @@ public class Files {
 		return (IGamaFile) Types.get(IKeyword.FILE).cast(scope, s, container, Types.NO_TYPE, Types.NO_TYPE);
 	}
 
-	@operator(value = IKeyword.FILE, can_be_const = true)
-	@doc(value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.", comment = "The file should have a supported extension, see file type deifnition for supported file extensions.", special_cases = "If the specified string does not refer to an existing file, an exception is risen when the variable is used.", examples = {
-		"let fileT type: file value: file(\"../includes/Stupid_Cell.Data\"); ",
-		"			// fileT represents the file \"../includes/Stupid_Cell.Data\"",
-		"			// fileT.contents here contains a matrix storing all the data of the text file" }, see = { "folder",
-		"new_folder" })
+	@operator(value = IKeyword.FILE, can_be_const = true, category=IOperatorCategory.FILE)
+	@doc(value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.", comment = "The file should have a supported extension, see file type deifnition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing file, an exception is risen when the variable is used."), examples = {
+		@example(value="let fileT type: file value: file(\"../includes/Stupid_Cell.Data\"); "),
+		@example(value="			// fileT represents the file \"../includes/Stupid_Cell.Data\""),
+		@example(value="			// fileT.contents here contains a matrix storing all the data of the text file") }, see = { "folder","new_folder" })
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		return from(scope, s, null);
 	}
 
-	@operator(value = "file_exists", can_be_const = true)
+	@operator(value = "file_exists", can_be_const = true, category=IOperatorCategory.FILE)
 	@doc(value = "Test whether the parameter is the path to an existing file.")
 	public static boolean exist_file(final IScope scope, final String s) {
 		if ( s == null ) { return false; }
@@ -79,34 +79,34 @@ public class Files {
 	}
 	
 	// FIXME These methods should not be necessary. To remove at some point in favor of the constructors
-	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of OSM file with some filtering.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing OSM file, an exception is risen.", examples = {
-		"file myOSMfile osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]);"}, see = { "file",
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
+	@doc(value = "opens a file that a is a kind of OSM file with some filtering.", masterDoc=true, comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing OSM file, an exception is risen."), examples = {
+		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]);")}, see = { "file",
 		"properties", "image", "text" })
 	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption);
 	}
 	
-	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing OSM file, an exception is risen.", examples = {
-		"file myOSMfile osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]), 0);"}, see = { "file",
+	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
+	@doc(value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing OSM file, an exception is risen."), examples = {
+		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]), 0);")}, see = { "file",
 		"properties", "image", "text" })
 	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption,final Integer code) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption, code);
 	}
 
 
-	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT)
-	@doc(value = "opens an existing repository", special_cases = " If the specified string does not refer to an existing repository, an exception is risen.", examples = {
-		"let dirT type: file value: folder(\"../includes/\");",
-		"				// dirT represents the repository \"../includes/\"",
-		"				// dirT.contents here contains the list of the names of included files" }, see = { "file", "new_folder" })
+	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
+	@doc(value = "opens an existing repository", usages = @usage(" If the specified string does not refer to an existing repository, an exception is risen."), examples = {
+		@example(value="let dirT type: file value: folder(\"../includes/\");"),
+		@example(value="				// dirT represents the repository \"../includes/\""),
+		@example(value="				// dirT.contents here contains the list of the names of included files") }, see = { "file", "new_folder" })
 	public static IGamaFile folderFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s);
 	}
 
-	@operator("writable")
-	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { "shapefile(\"../images/point_eau.shp\") writable false --: returns a file in read-only mode" }, see = "file")
+	@operator(value="writable", category=IOperatorCategory.FILE)
+	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { @example(value="shapefile(\"../images/point_eau.shp\") writable false --: returns a file in read-only mode") }, see = "file")
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
 		if ( s == null ) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file"); }
 		boolean b = writable == null ? false : writable;
@@ -123,8 +123,8 @@ public class Files {
 	 * @param s the name of the attribute to read
 	 * @return
 	 */
-	@operator(value = { "read", "get" })
-	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", examples = { "let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. " })
+	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
+	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", masterDoc = true, examples = { @example("let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ") })
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -133,8 +133,8 @@ public class Files {
 		return opRead(scope, scope.getAgentScope(), s);
 	}
 
-	@operator(value = { "read", "get" })
-	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { "let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. " })
+	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
+	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { @example("let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ") })
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -144,7 +144,7 @@ public class Files {
 		return g.getAttribute(index);
 	}
 
-	@operator(value = "get")
+	@operator(value = "get", category=IOperatorCategory.FILE)
 //	@doc(examples = { "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable." })
 	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute name is specified by the right operand.",
 		usages = {@usage(examples = @example("string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable"))})
@@ -153,7 +153,7 @@ public class Files {
 		return g.getAttribute(s);
 	}
 
-	@operator(value = "get")
+	@operator(value = "get", category=IOperatorCategory.FILE)
 //	@doc(examples = { "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable." })
 	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute name is specified by the right operand.",
 		usages = {@usage(examples = @example("string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable"))})
@@ -162,10 +162,10 @@ public class Files {
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
 	}
 
-	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING)
-	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", special_cases = {"If the specified string does not refer to an existing repository, the repository is created.", "If the string refers to an existing file, an exception is risen."}, examples = {
-		"let dirNewT type: file value: new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\"",
-		"															// eventually creates the directory ../incl" }, see = { "folder", "file" })
+	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING, category=IOperatorCategory.FILE)
+	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", usages = {@usage("If the specified string does not refer to an existing repository, the repository is created."), @usage("If the string refers to an existing file, an exception is risen.")}, examples = {
+		@example("let dirNewT type: file value: new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\""),
+		@example("															// eventually creates the directory ../incl") }, see = { "folder", "file" })
 	public static IGamaFile newFolder(final IScope scope, final String folder) throws GamaRuntimeException {
 		IModel model = scope.getSimulationScope().getModel();
 		String theName;

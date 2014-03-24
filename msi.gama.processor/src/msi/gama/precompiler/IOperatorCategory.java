@@ -40,6 +40,12 @@ public interface IOperatorCategory {
 	
 	public static final String SPATIAL			= "Spatial operators";
 	public static final String SHAPE			= "Shape";	
+	public static final String THREED			= "3D";
+	public static final String SP_STATISTICAL	= "Spatial statistical operators";
+	public static final String SP_QUERIES		= "Spatial queries operators";
+	public static final String SP_PROPERTIES	= "Spatial properties operators";
+	public static final String SP_RELATIONS		= "Spatial relations operators";
+	public static final String SP_TRANSFORMATIONS = "Spatial transformations operators";
 	
 	public static final String CONTAINER		= "Containers-related operators";
 	public static final String MATRIX			= "Matrix-related operators";
@@ -48,11 +54,21 @@ public interface IOperatorCategory {
 	public static final String MAP				= "Map-related operators";
 	public static final String GRAPH			= "Graphs-related operators";
 	public static final String FILE				= "Files-related operators";
+	public static final String SPECIES			= "Species-related operators";
+	public static final String GRID				= "Grid-related operators";
+	public static final String PATH				= "Path-related operators";
 	
 	public static final String TYPE				= "Types-related operators";
+	
+	public static final String POINT			= "Points-related operators";
 	
 	public static final String WATER			= "Water level operators";
 	
 	public static final String FIPA				= "FIPA-related operators";
 
+	public static final String MAP_COMPARAISON 	= "Map comparaison operators";
+	
+	public static final String USER_CONTROL 	= "User control operators";
+	
+	public static final String TIME				= "Time-related operators";
 }
