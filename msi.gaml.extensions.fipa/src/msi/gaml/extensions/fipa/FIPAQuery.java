@@ -20,8 +20,8 @@ import static msi.gaml.extensions.fipa.FIPAConstants.*;
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
 
 /**
- * Implementation of the FIPA Query interaction protocol. Reference :
- * http://www.fipa.org/specs/fipa00027/SC00027H.html
+ * Implementation of the FIPA Query interaction protocol. 
+ * Reference : http://www.fipa.org/specs/fipa00027/SC00027H.html
  */
 public class FIPAQuery extends FIPAProtocol {
 

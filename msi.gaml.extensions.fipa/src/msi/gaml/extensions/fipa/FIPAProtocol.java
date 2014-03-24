@@ -42,15 +42,15 @@ abstract public class FIPAProtocol {
 	// public static Object[] roots;
 
 	/** The protocols. */
-	private final static Map<Integer, FIPAProtocol> protocols = new HashMap();
+	private final static Map<Integer, FIPAProtocol> protocols = new HashMap<Integer, FIPAProtocol>();
 
 	static {
-		protocols.put(FIPAConstants.Protocols.FIPA_REQUEST, new FIPARequest());
 		protocols.put(FIPAConstants.Protocols.FIPA_BROKERING, new FIPABrokering());
+		protocols.put(FIPAConstants.Protocols.FIPA_ITERATED_CONTRACT_NET, new FIPAIteratedContractNet());
 		protocols.put(FIPAConstants.Protocols.FIPA_CONTRACT_NET, new FIPAContractNet());
-		protocols.put(FIPAConstants.Protocols.FIPA_ITERATED_CONTRACT_NET,
-			new FIPAIteratedContractNet());
+		protocols.put(FIPAConstants.Protocols.FIPA_PROPOSE, new FIPAPropose());
 		protocols.put(FIPAConstants.Protocols.FIPA_QUERY, new FIPAQuery());
+		protocols.put(FIPAConstants.Protocols.FIPA_REQUEST, new FIPARequest());
 		protocols.put(FIPAConstants.Protocols.FIPA_REQUEST_WHEN, new FIPARequestWhen());
 		protocols.put(FIPAConstants.Protocols.FIPA_SUBSCRIBE, new FIPASubscribe());
 		protocols.put(FIPAConstants.Protocols.NO_PROTOCOL, new NoProtocol());

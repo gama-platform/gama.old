@@ -17,8 +17,8 @@
 package msi.gaml.extensions.fipa;
 
 /**
- * Implementation of the FIPA Request interaction protocol. Reference :
- * http://www.fipa.org/specs/fipa00026/SC00026H.html
+ * Implementation of the FIPA Request interaction protocol. 
+ * Reference : http://www.fipa.org/specs/fipa00026/SC00026H.html
  */
 public class FIPARequest extends FIPAProtocol {
 

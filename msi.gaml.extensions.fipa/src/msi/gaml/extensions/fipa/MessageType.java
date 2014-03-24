@@ -3,10 +3,11 @@ package msi.gaml.extensions.fipa;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaType;
 
 @type(name = MessageType.MESSAGE_STR, id = MessageType.MESSAGE_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
 public class MessageType extends GamaType<Message> {
@@ -27,7 +28,7 @@ public class MessageType extends GamaType<Message> {
 	}
 
 	@operator(value = MessageType.MESSAGE_STR, can_be_const = true, category={IOperatorCategory.FIPA})
-	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = {  })
+	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = {  })
 	public static Message asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return MessageType.staticCast(scope, val, null);
 	}

@@ -25,7 +25,6 @@ public interface FIPAConstants {
 	 * Constants identifying the FIPA performatives. These performatives will be employed to
 	 * implement the interaction protocol in GAMA.
 	 */
-
 	public static String[] performativeNames = { "accept_proposal", "agree", "cancel", "cfp",
 		"confirm", "disconfirm", "failure", "inform", "inform_if", "inform_ref", "not_understood",
 		"propagate", "propose", "proxy", "query", "refuse", "reject_proposal", "request",
@@ -158,12 +157,9 @@ public interface FIPAConstants {
 
 		/** Constant field NO_PROTOCOL. */
 		public static final int NO_PROTOCOL = 8;
-		public static final String NO_PROTOCOL_STR = "fipa-subcribe";
+		public static final String NO_PROTOCOL_STR = "no-protocol";
 	}
 
-	// TODO UCdetector: Remove unused code:
-	// /** Constant field CommunicatingSkill. */
-	// public static final String CommunicatingSkill = "communicating";
 
 	/** Conversation has ended. */
 	public static final int CONVERSATION_END = -1;
