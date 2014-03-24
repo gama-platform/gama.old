@@ -35,7 +35,7 @@ global {
 	int zoomFactor <- nbTypeOfClass;
 
 			
-    list<matrix<int>> interactionMatrix ;	
+    list<matrix<int>> interactionMatrix size:nbTypeOfClass;	
     int nbEdgeMax;
     
     reflex updateInteractionMatrix{
@@ -104,9 +104,9 @@ global {
 		
 		rgb color;
 		
-		list<int> classVector ;
-		list<point> posVector ;
-		list<rgb> colorList ;
+		list<int> classVector size:nbTypeOfClass;
+		list<point> posVector size:nbTypeOfClass;
+		list<rgb> colorList size:nbTypeOfClass;
 								
 		reflex shuffleClass{
 			loop i from:0 to: nbTypeOfClass-1{
@@ -150,8 +150,8 @@ global {
 	species macroNode{
 		rgb color;
 		int class;
-		list<int> nbAggregatedNodes ;
-		list<point> posVector ;
+		list<int> nbAggregatedNodes size:nbTypeOfClass;
+		list<point> posVector size:nbTypeOfClass;
 		 
 		reflex update{
 			do updatemyNodes;
@@ -196,7 +196,7 @@ global {
 		rgb color <- rgb("black");
 		macroNode src;
 		macroNode dest;
-		list<int> nbAggregatedLinkList;
+		list<int> nbAggregatedLinkList size:nbTypeOfClass;
 		
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
