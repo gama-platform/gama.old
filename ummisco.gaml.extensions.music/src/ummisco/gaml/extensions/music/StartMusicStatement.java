@@ -23,16 +23,15 @@ import msi.gaml.types.IType;
 import ummisco.gaml.extensions.music.StartMusicStatement.StartMusicValidator;
 
 
-@symbol(name = IKeyword.START_MUSIC, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.START_MUSIC, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+		doc = @doc("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { 
-			@facet(name = IKeyword.SOURCE, type = IType.STRING, optional = false, doc = @doc("")),
-			@facet(name = IKeyword.MODE, type = IType.ID, values = { IKeyword.OVERWRITE, IKeyword.IGNORE }, optional = true, doc = @doc("")),
+			@facet(name = IKeyword.SOURCE, type = IType.STRING, optional = false, doc = @doc("The path to music file. This path is relative to the path of the model.")),
+			@facet(name = IKeyword.MODE, type = IType.ID, values = { IKeyword.OVERWRITE, IKeyword.IGNORE }, optional = true, doc = @doc("Mode of ")),
 			@facet(name = IKeyword.REPEAT, type = IType.BOOL, optional = true, doc = @doc("")) })
 @validator(StartMusicValidator.class)
 public class StartMusicStatement extends AbstractStatementSequence {
-	
-	
 	
 	public static class StartMusicValidator implements IDescriptionValidator {
 
@@ -42,7 +41,6 @@ public class StartMusicStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final IDescription cd) {
-			
 			if (cd.getFacets().getLabel(IKeyword.SOURCE) == null ) { cd.error("missing 'source' facet"); }
 		}
 	}
@@ -78,7 +76,7 @@ public class StartMusicStatement extends AbstractStatementSequence {
 		String musicFilePath = scope.getModel().getRelativeFilePath((String) source.value(scope), false);
 		
 		musicPlayer.play(new File(musicFilePath), 
-				mode != null ? (Integer) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
+				mode != null ? (String) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
 				repeat != null ? (Boolean) repeat.value(scope) : false);
 
 		if (sequence != null) {

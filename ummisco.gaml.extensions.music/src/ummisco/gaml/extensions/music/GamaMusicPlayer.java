@@ -3,6 +3,7 @@ package ummisco.gaml.extensions.music;
 import java.io.File;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 import javazoom.jlgui.basicplayer.BasicController;
@@ -31,12 +32,12 @@ public class GamaMusicPlayer {
 	}
 	
 	
-	public static final int OVERWRITE_MODE = 1;
-	public static final int IGNORE_MODE = 2;
+	public static final String OVERWRITE_MODE = IKeyword.OVERWRITE;
+	public static final String IGNORE_MODE = IKeyword.IGNORE;
 
 	private BasicPlayer musicPlayer;
 	private File musicFile;
-	private int musicPlayerMode = OVERWRITE_MODE;
+	private String musicPlayerMode = OVERWRITE_MODE;
 	private boolean repeat = false;
 	
 	// assure that we don't repeat playing a music file on an already dead agent
@@ -63,14 +64,14 @@ public class GamaMusicPlayer {
 
 
 
-	public void play(final File musicFile, final int gamaMode, final boolean repeat) throws GamaRuntimeException {
+	public void play(final File musicFile, final String playerMode, final boolean repeat) throws GamaRuntimeException {
 		try {
 			int playerState = musicPlayer.getStatus();
 
 			if (playerState == BasicPlayer.UNKNOWN || playerState == BasicPlayer.STOPPED) {
 				musicPlayer.open(musicFile);
 				musicPlayer.play();
-			} else if ( (playerState == BasicPlayer.PLAYING) || (playerState == BasicPlayer.PAUSED) && gamaMode == OVERWRITE_MODE ) {
+			} else if ( ( (playerState == BasicPlayer.PLAYING) || (playerState == BasicPlayer.PAUSED) ) && playerMode.equals(OVERWRITE_MODE)) {
 				musicPlayer.stop();
 				
 				musicPlayer.open(musicFile);
@@ -78,7 +79,7 @@ public class GamaMusicPlayer {
 			}
 			
 			this.musicFile = musicFile;
-			this.musicPlayerMode = gamaMode;
+			this.musicPlayerMode = playerMode;
 			this.repeat = repeat;
 			
 		} catch (BasicPlayerException e) {
@@ -118,12 +119,12 @@ public class GamaMusicPlayer {
 		}
 	}
 
-	public int getMode() {
+	public String getMode() {
 		return musicPlayerMode;
 	}
 
-	public void setMode(int gamaMode) {
-		this.musicPlayerMode = gamaMode;
+	public void setMode(String playerMode) {
+		this.musicPlayerMode = musicPlayerMode;
 	}
 
 	public boolean isRepeat() {
