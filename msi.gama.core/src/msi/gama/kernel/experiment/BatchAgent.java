@@ -143,6 +143,11 @@ public class BatchAgent extends ExperimentAgent {
 		return true;
 	}
 
+	public int getRunNumber()
+	{
+		return this.runNumber;
+	}
+	
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		currentSolution = new ParametersSet(sol);
