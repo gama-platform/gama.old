@@ -448,13 +448,6 @@ Export-Package: au.com.bytecode.opencsv,
  org.jfree.data.xml,
  org.jfree.data.xy,
  org.jfree.date,
- org.jfree.experimental.chart.demo,
- org.jfree.experimental.chart.plot,
- org.jfree.experimental.chart.renderer.xy,
- org.jfree.experimental.chart.swt,
- org.jfree.experimental.chart.swt.demo,
- org.jfree.experimental.chart.swt.editor,
- org.jfree.experimental.swt,
  org.jfree.io,
  org.jfree.layout,
  org.jfree.resources,
@@ -645,4 +638,3 @@ Export-Package: au.com.bytecode.opencsv,
  rcaller.statistics
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.swt;bundle-version="3.7.2"
