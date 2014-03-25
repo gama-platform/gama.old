@@ -97,7 +97,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 				scope.hasArg(PERSISTENCE_COEFFICIENT) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT) : (Double) a
 					.getAttribute(PERSISTENCE_COEFFICIENT);
 			// Double persistenceCoefficient = (Double)a.getAttribute(PERSISTENCE_COEFFICIENT);
-			if ( persistenceCoefficient != null && persistenceCoefficient > 0 ) {
+			if ( persistenceCoefficient != null && persistenceCoefficient >= 0 ) {
 				Boolean flipResult = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficient);
 				// System.out.println("Flip result of " + persistenceCoefficient + " is " + flipResult);
 				if ( flipResult ) {
@@ -178,7 +178,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 					break;
 				}
 			} catch (Exception e1) {
-				System.out.println(perceiveTime + ": " + e1.getMessage());
+				//System.out.println(perceiveTime + ": " + e1.getMessage());
 			}
 		}
 		if ( !isExistPredicate ) {
@@ -219,6 +219,39 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 				if ( isEqualPredicates(predicateItem, currentPredicate) ) { return true; }
 			} catch (Exception e1) {
 				System.out.println(perceiveTime + ": " + e1.getMessage());
+			}
+		}
+		return false;
+	}
+	@action(name = "has_desire")
+	@args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+	public Boolean primTestDesire(final IScope scope) throws GamaRuntimeException {
+		final IAgent agent = getCurrentAgent(scope);
+		String predicateName =
+			scope.hasArg(PREDICATE_NAME) ? scope.getStringArg(PREDICATE_NAME) : (String) agent
+				.getAttribute(PREDICATE_NAME);
+		GamaList<Object> predicateParameters =
+			(GamaList<Object>) (scope.hasArg(PREDICATE_PARAMETERS) ? scope.getListArg(PREDICATE_PARAMETERS)
+				: (GamaList<Object>) agent.getAttribute(PREDICATE_PARAMETERS));
+		if ( predicateName == null || predicateName.length() == 0 ) { return false; }
+		// System.out.println(predicateName);
+		GamaList<Object> desireBase =
+			(GamaList<Object>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE) : (GamaList<Object>) agent
+				.getAttribute(DESIRE_BASE));
+		GamaList<Object> predicateItem = new GamaList<Object>();
+		predicateItem.add(predicateName);
+		if ( predicateParameters != null && predicateParameters.size() > 0 ) {
+			predicateItem.add(predicateParameters);
+		} else {
+			predicateItem.add(null);
+		}
+		int perceiveTime = scope.getClock().getCycle();
+		for ( Object item : desireBase ) {
+			try {
+				GamaList<Object> currentPredicate = (GamaList<Object>) item;
+				if ( isEqualPredicates(predicateItem, currentPredicate) ) { return true; }
+			} catch (Exception e1) {
+			//	System.out.println(perceiveTime + ": " + e1.getMessage());
 			}
 		}
 		return false;
@@ -271,40 +304,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 		return null;
 	}
 
-	@action(name = "has_desire")
-	@args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	public Boolean primTestDesire(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = getCurrentAgent(scope);
-		String predicateName =
-			scope.hasArg(PREDICATE_NAME) ? scope.getStringArg(PREDICATE_NAME) : (String) agent
-				.getAttribute(PREDICATE_NAME);
-		GamaList<Object> predicateParameters =
-			(GamaList<Object>) (scope.hasArg(PREDICATE_PARAMETERS) ? scope.getListArg(PREDICATE_PARAMETERS)
-				: (GamaList<Object>) agent.getAttribute(PREDICATE_PARAMETERS));
-		if ( predicateName == null || predicateName.length() == 0 ) { return false; }
-		// System.out.println(predicateName);
-		GamaList<Object> desireBase =
-			(GamaList<Object>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE) : (GamaList<Object>) agent
-				.getAttribute(DESIRE_BASE));
-		GamaList<Object> predicateItem = new GamaList<Object>();
-		predicateItem.add(predicateName);
-		if ( predicateParameters != null && predicateParameters.size() > 0 ) {
-			predicateItem.add(predicateParameters);
-		} else {
-			predicateItem.add(null);
-		}
-		int perceiveTime = scope.getClock().getCycle();
-		for ( Object item : desireBase ) {
-			try {
-				GamaList<Object> currentPredicate = (GamaList<Object>) item;
-				if ( isEqualPredicates(predicateItem, currentPredicate) ) { return true; }
-			} catch (Exception e1) {
-				System.out.println(perceiveTime + ": " + e1.getMessage());
-			}
-		}
-		return false;
-	}
-
+	
 	@action(name = "remove_belief")
 	@args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
 	public Object primRemoveBelief(final IScope scope) throws GamaRuntimeException {
@@ -392,8 +392,20 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 
 	@Override
 	public void dispose() {}
-
 	private boolean isEqualPredicates(final GamaList<Object> predicate1, final GamaList<Object> predicate2) {
+		if (predicate1.isEmpty() || predicate2.isEmpty()) {
+			return false;
+		}
+		if (!predicate1.get(0).equals(predicate2.get(0))) {return false;}
+		if (predicate1.size() > 1 ) {
+			if (predicate2.size() <= 1 ) {
+				return false;
+			}
+			if (!predicate1.get(1).equals(predicate2.get(1))) {return false;}
+		} else if (predicate2.size() > 1 ) return false;
+		return true;
+	}
+/*	private boolean isEqualPredicates(final GamaList<Object> predicate1, final GamaList<Object> predicate2) {
 		if ( predicate1.size() < 2 || predicate2.size() < 0 ) { return false; }
 		Object currentElement;
 		currentElement = predicate1.get(0);
@@ -434,5 +446,5 @@ public class SimpleBdiArchitecture extends AbstractArchitecture {
 			}
 		}
 		return true;
-	}
+	}*/
 }
