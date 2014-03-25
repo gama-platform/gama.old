@@ -979,5 +979,43 @@ public final class GamlAnnotations {
 
 		doc[] doc() default {};
 	}
+	/**
+	 * Written by gaudou Modified on 24 mars 2014
+	 * 
+	 * Used to annotate methods that can be used as operators in GAML.
+	 * 
+	 */
+	@Retention(RetentionPolicy.SOURCE)
+	@Target({ ElementType.FIELD })
+	public static @interface constant {
 
+		/**
+		 * @return an array of strings, each representing a category in which this constant can be classified (for
+		 *         documentation indexes)
+		 */
+
+		String[] category() default {};
+
+		/**
+		 * @return a string representing the basic keyword for the constant. Does
+		 *         not need to be unique throughout GAML
+		 * 
+		 */
+		String value();
+
+		/**
+		 * @return an Array of strings, each representing a possible alternative name for the constant. Does
+		 *         not need to be unique throughout GAML.
+		 * 
+		 **/
+		String[] altNames() default {};
+		
+		/**
+		 * Doc.
+		 * 
+		 * @return the documentation attached to this constant.
+		 * @see doc
+		 */
+		doc[] doc() default {};
+	}
 }

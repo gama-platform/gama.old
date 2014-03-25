@@ -3,6 +3,7 @@ package msi.gama.precompiler.doc.utils;
 public class XMLElements {
 	public static final String DOC = "doc";
 	public static final String OPERATORS_CATEGORIES = "operatorsCategories";
+	public static final String CATEGORIES = "categories";
 	public static final String CATEGORY = "category";
 	public static final String OPERATORS = "operators";
 	public static final String OPERATOR = "operator";
@@ -18,6 +19,8 @@ public class XMLElements {
 	public static final String EXAMPLE = "example";
 	public static final String FACETS = "facets";
 	public static final String FACET = "facet";
+	public static final String CONSTANTS = "constants";
+	public static final String CONSTANT = "constant";
 	
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
@@ -61,5 +64,8 @@ public class XMLElements {
 	public static final String ATT_FACET_OPTIONAL = "optional";
 	public static final String ATT_FACET_OMISSIBLE = "omissible";
 
-	
+	// Attributes of CONSTANT element
+	public static final String ATT_CST_NAME = "name";
+	public static final String ATT_CST_VALUE = "value";
+	public static final String ATT_CST_NAMES = "altNames";
 }

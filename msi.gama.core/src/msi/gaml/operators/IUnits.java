@@ -21,6 +21,9 @@ package msi.gaml.operators;
 import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.util.GamaColor;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.constant;
+import msi.gama.precompiler.IConstantCategory;
 
 public class IUnits {
 
@@ -39,49 +42,67 @@ public class IUnits {
 	 * Mathematical constants
 	 * 
 	 */
+	@constant(value="pi", category={IConstantCategory.CONSTANT}, doc=@doc("The PI constant"))
 	public final static double pi = Math.PI;
 
+	@constant(value="e", category={IConstantCategory.CONSTANT}, doc=@doc("The e constant"))
 	public final static double e = Math.E;
 
+	@constant(value="to_deg", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the value to convert radians into degrees"))
 	public final static double to_deg = 180d / Math.PI;
-
+	@constant(value="to_rad", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the value to convert degrees into radians"))
 	public final static double to_rad = Math.PI / 180d;
 
+	@constant(value="nan", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)"))
 	public final static double nan = Double.NaN;
+	@constant(value="infinity", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the positive infinity of type (Java Double.POSITIVE_INFINITY)"))	
 	public final static double infinity = Double.POSITIVE_INFINITY;
+	@constant(value="min_float", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)"))		
 	public final static double min_float = Double.MIN_VALUE;
+	@constant(value="max_float", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)"))	
 	public final static double max_float = Double.MAX_VALUE;
+	@constant(value="min_int", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)"))	
 	public final static double min_int = Integer.MIN_VALUE;
+	@constant(value="max_int", category={IConstantCategory.CONSTANT}, doc=@doc("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)"))	
 	public final static double max_int = Integer.MAX_VALUE;
 	/*
 	 * 
 	 * Distance & size conversions
 	 */
 	/** The Constant m. */
+	@constant(value="m", altNames={"meter","meters"}, category={IConstantCategory.LENGTH}, doc=@doc("meter: the length basic unit"))
 	public final static double m = 1, meter = m, meters = m;
 
 	/** The Constant cm. */
+	@constant(value="cm", altNames={"centimeter","centimeters"}, category={IConstantCategory.LENGTH}, doc=@doc("centimeter"))	
 	public final static double cm = 0.01f * m, centimeter = cm, centimeters = cm;
 
 	/** The Constant dm. */
+	@constant(value="dm", altNames={"decimeter","decimeters"}, category={IConstantCategory.LENGTH}, doc=@doc("decimeter"))		
 	public final static double dm = 0.1f * m, decimeter = dm, decimeters = dm;
 
 	/** The Constant mm. */
+	@constant(value="mm", altNames={"milimeter","milimeters"}, category={IConstantCategory.LENGTH}, doc=@doc("milimeter"))			
 	public final static double mm = cm / 10, millimeter = mm, millimeters = mm;
 
 	/** The Constant km. */
+	@constant(value="km", altNames={"kilometer","kilometers"}, category={IConstantCategory.LENGTH}, doc=@doc("kilometer"))				
 	public final static double km = 1000 * m, kilometer = km, kilometers = km;
 
 	/** The Constant mile. */
+	@constant(value="mile", altNames={"miles"}, category={IConstantCategory.LENGTH}, doc=@doc("mile"))			
 	public final static double mile = 1.609344d * km, miles = mile;
 
 	/** The Constant yard. */
+	@constant(value="yard", altNames={"yards"}, category={IConstantCategory.LENGTH}, doc=@doc("yard"))			
 	public final static double yard = 0.9144d * m, yards = yard;
 
 	/** The Constant inch. */
+	@constant(value="inch", altNames={"inches"}, category={IConstantCategory.LENGTH}, doc=@doc("inch"))			
 	public final static double inch = 2.54d * cm, inches = inch;
 
 	/** The Constant foot. */
+	@constant(value="foot", altNames={"feet","ft"}, category={IConstantCategory.LENGTH}, doc=@doc("foot"))			
 	public final static double foot = 30.48d * cm, feet = foot, ft = foot;
 
 	/*

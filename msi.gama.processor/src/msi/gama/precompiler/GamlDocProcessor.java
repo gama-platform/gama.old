@@ -30,6 +30,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -97,6 +98,12 @@ public class GamlDocProcessor {
 		// Set<? extends Element> setRoot = env.getRootElements();
 		org.w3c.dom.Element root = doc.createElement("doc");
 
+		// ////////////////////////////////////////////////
+		// /// Parsing of Constants		
+		Set<? extends Element> setConstants =
+				(Set<? extends Element>) env.getElementsAnnotatedWith(constant.class);
+		root.appendChild(this.processDocXMLConstants(setConstants, doc));		
+		
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
 		Set<? extends ExecutableElement> setOperatorsCategories =
@@ -176,6 +183,18 @@ public class GamlDocProcessor {
 		}
 	}
 
+	private org.w3c.dom.Element processDocXMLConstants(
+					final Set<? extends Element> set, final Document doc) {
+		org.w3c.dom.Element eltConstants = doc.createElement(XMLElements.CONSTANTS);
+		for ( Element e : set ) {
+			if(e.getAnnotation(constant.class).value().equals(e.getSimpleName().toString())) {
+			org.w3c.dom.Element eltConstant = DocProcessorAnnotations.getConstantElt(e.getAnnotation(constant.class), doc, e, mes, tc);
+			eltConstants.appendChild(eltConstant);
+			}
+		}
+		return eltConstants;
+	}	
+	
 	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromTypes(
 			final Set<? extends Element> set, final Document doc) {
 		
@@ -310,7 +329,7 @@ public class GamlDocProcessor {
 							altElt.setAttribute(XMLElements.ATT_OP_ALT_NAME, e.getAnnotation(operator.class).value()[0]);
 							altElt.setAttribute(XMLElements.ATT_ALPHABET_ORDER, getAlphabetOrder(name));
 							
-							altElt.appendChild(getOperatorCategory(e,doc));
+							altElt.appendChild(DocProcessorAnnotations.getCategories(e,doc,tc));
 							operators.appendChild(altElt);
 						} else {
 							// Show an error in the case where two alternative names do not refer to
@@ -332,10 +351,10 @@ public class GamlDocProcessor {
 				// Category
 				org.w3c.dom.Element categoriesElt;
 				if ( operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).getLength() == 0 ) {
-					categoriesElt = getOperatorCategory(e,doc,doc.createElement(XMLElements.OPERATOR_CATEGORIES));
+					categoriesElt = DocProcessorAnnotations.getCategories(e,doc,doc.createElement(XMLElements.OPERATOR_CATEGORIES),tc);
 				} else {
-					categoriesElt = getOperatorCategory(e,doc,
-						(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0));
+					categoriesElt = DocProcessorAnnotations.getCategories(e,doc,
+						(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0),tc);
 				}
 				operator.appendChild(categoriesElt);
 				
@@ -580,40 +599,6 @@ public class GamlDocProcessor {
 			statementsElt.appendChild(statElt);
 		}
 		return statementsElt;
-	}
-
-	
-	private org.w3c.dom.Element getOperatorCategory(final ExecutableElement e, final Document doc, org.w3c.dom.Element categoriesElt){	
-		ArrayList<String> categories = new ArrayList<String>();
-		NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
-		for(int i = 0; i < nL.getLength() ; i++){
-			categories.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
-		}
-		
-		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0) {
-			for(String categoryName : e.getAnnotation(operator.class).category()){
-				if(!categories.contains(categoryName)){
-					categories.add(categoryName);
-					
-					org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
-					catElt.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
-					categoriesElt.appendChild(catElt);
-				}
-			}
-		} else {
-			if(!categories.contains(tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()))) {
-				org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
-				catElt.setAttribute(XMLElements.ATT_CAT_ID, tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()));
-				categoriesElt.appendChild(catElt);
-			}
-		}		
-		return categoriesElt;
-	}
-	
-	private org.w3c.dom.Element getOperatorCategory(final ExecutableElement e, final Document doc){		
-		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
-		
-		return getOperatorCategory(e,doc,categoriesElt);
 	}
 	
 	public static String getAlphabetOrder(String name) {
