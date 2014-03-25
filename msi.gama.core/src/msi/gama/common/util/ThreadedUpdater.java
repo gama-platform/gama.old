@@ -18,7 +18,7 @@ import msi.gama.common.util.ThreadedUpdater.IUpdaterMessage;
 public abstract class ThreadedUpdater<Message extends IUpdaterMessage> implements Runnable, IUpdaterTarget<Message> {
 
 	private Thread runThread;
-	private final BlockingQueue<Message> messages = new LinkedBlockingQueue(4);
+	private final BlockingQueue<Message> messages = new LinkedBlockingQueue(100);
 	private IUpdaterTarget<Message> control;
 
 	@Override

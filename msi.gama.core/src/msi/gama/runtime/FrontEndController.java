@@ -79,6 +79,7 @@ public class FrontEndController implements Runnable {
 				break;
 			case _START:
 				try {
+					scheduler.on_user_hold = false;
 					scheduler.start();
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);

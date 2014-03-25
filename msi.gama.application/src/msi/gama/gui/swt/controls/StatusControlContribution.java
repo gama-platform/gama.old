@@ -40,6 +40,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	Label label;
 	private Popup popup;
 	int status;
+	volatile String message;
 
 	public StatusControlContribution() {}
 
@@ -123,18 +124,30 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
 	}
 
+	Runnable updater = new Runnable() {
+
+		@Override
+		public void run() {
+			label.setBackground(getPopupBackground());
+			label.setText(message);
+			if ( popup.isVisible() ) {
+				popup.display();
+			}
+		}
+
+	};
+
 	/**
 	 * Method updateWith()
 	 * @see msi.gama.gui.swt.controls.ThreadedUpdater.IUpdaterTarget#updateWith(java.lang.Object)
 	 */
 	@Override
 	public void updateWith(final StatusMessage m) {
+
 		status = m.getCode();
-		label.setBackground(getPopupBackground());
-		label.setText(m.getText());
-		if ( popup.isVisible() ) {
-			popup.display();
-		}
+		message = m.getText();
+		GuiUtils.run(updater);
+
 	}
 
 }
