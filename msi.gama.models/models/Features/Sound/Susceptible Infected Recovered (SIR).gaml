@@ -88,7 +88,7 @@ entities {
         
         reflex become_immune when: (is_infected and flip(delta)) {
         	
-        	start_music source: 'includes/CRASHCYM.wav';
+        	start_music source: 'sounds/Sample_Computer Mouse.mp3';
         	
         	is_susceptible <- false;
         	is_infected <- false;
