@@ -80,7 +80,7 @@ public class StartMusicStatement extends AbstractStatementSequence {
 					mode != null ? (String) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
 					repeat != null ? (Boolean) repeat.value(scope) : false);
 		} else {
-			System.out.println("No more player in pool!");
+			//System.out.println("No more player in pool!");
 		}
 
 		if (sequence != null) {
