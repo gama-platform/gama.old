@@ -41,7 +41,7 @@ import org.eclipse.emf.ecore.EObject;
 public abstract class SymbolDescription implements IDescription {
 
 	protected static List<String> typeProviderFacets = Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX,
-		FUNCTION, UPDATE, INIT);
+		FUNCTION, UPDATE, INIT, DEFAULT);
 
 	protected final Facets facets;
 	protected final EObject element;
@@ -309,12 +309,25 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public IType getType() {
 		IType tt = facets.getTypeDenotedBy(TYPE, this);
-		if ( tt.isContainer() ) {
-			IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
-			IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());
-			return GamaType.from(tt, kt, ct);
+		IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
+		IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());
+		boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
+		boolean isContainerWithNoKeyType = tt.isContainer() && kt == Types.NO_TYPE;
+		boolean isSpeciesWithAgentType = tt.id() == IType.SPECIES && ct.id() == IType.AGENT;
+		if ( isContainerWithNoContentsType || isContainerWithNoKeyType || isSpeciesWithAgentType ) {
+			compileTypeProviderFacets();
+			IExpression expr = facets.getExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
+			if ( expr != null ) {
+				IType exprType = expr.getType();
+				if ( isContainerWithNoKeyType ) {
+					kt = exprType.getKeyType();
+				}
+				if ( isContainerWithNoContentsType || isSpeciesWithAgentType ) {
+					ct = exprType.getContentType();
+				}
+			}
 		}
-		return tt;
+		return GamaType.from(tt, kt, ct);
 	}
 
 	@Override

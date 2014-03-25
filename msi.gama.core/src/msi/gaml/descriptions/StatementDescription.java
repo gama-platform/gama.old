@@ -21,6 +21,7 @@ package msi.gaml.descriptions;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.*;
@@ -692,7 +693,9 @@ public class StatementDescription extends SymbolDescription {
 
 		compileTypeProviderFacets();
 		// IExpression value = facets.getExpr(VALUE);
-
+		if ( tag.equals("aaa") ) {
+			GuiUtils.debug("StatementDescription.createVarWithTypes");
+		}
 		// Definition of the type
 		IType t = super.getType();
 
@@ -729,14 +732,17 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		// Last chance: grab the content and key from the value
-		if ( t.isContainer() && (ct == Types.NO_TYPE || kt == Types.NO_TYPE) ) {
-			IExpression value = facets.getExpr(VALUE);
+		boolean isContainerWithNoContentsType = t.isContainer() && ct == Types.NO_TYPE;
+		boolean isContainerWithNoKeyType = t.isContainer() && kt == Types.NO_TYPE;
+		boolean isSpeciesWithAgentType = t.id() == IType.SPECIES && ct.id() == IType.AGENT;
+		if ( isContainerWithNoContentsType || isContainerWithNoKeyType || isSpeciesWithAgentType ) {
+			IExpression value = facets.getExpr(VALUE, DEFAULT);
 			if ( value != null ) {
 				IType tt = t.typeIfCasting(value);
-				if ( ct == Types.NO_TYPE ) {
+				if ( isContainerWithNoContentsType || isSpeciesWithAgentType ) {
 					ct = tt.getContentType();
 				}
-				if ( kt == Types.NO_TYPE ) {
+				if ( isContainerWithNoKeyType ) {
 					kt = tt.getKeyType();
 				}
 			}

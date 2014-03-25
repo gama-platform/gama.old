@@ -20,10 +20,10 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -111,24 +111,7 @@ public class VariableDescription extends SymbolDescription {
 	public IType getType() {
 
 		if ( type == null ) {
-			IType tt = facets.getTypeDenotedBy(TYPE, this);
-			IType kt = facets.getTypeDenotedBy(INDEX, this, tt.getKeyType());
-			IType ct = facets.getTypeDenotedBy(OF, this, tt.getContentType());
-
-			if ( tt.isContainer() && (kt == Types.NO_TYPE || ct == Types.NO_TYPE) ) {
-				compileTypeProviderFacets();
-				IExpression expr = facets.getExpr(INIT, VALUE, UPDATE, FUNCTION);
-				if ( expr != null ) {
-					IType exprType = expr.getType();
-					if ( kt == Types.NO_TYPE ) {
-						kt = exprType.getKeyType();
-					}
-					if ( ct == Types.NO_TYPE ) {
-						ct = exprType.getContentType();
-					}
-				}
-			}
-			type = GamaType.from(tt, kt, ct);
+			type = super.getType();
 		}
 		return type;
 	}
