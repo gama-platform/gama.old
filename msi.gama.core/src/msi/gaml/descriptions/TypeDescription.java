@@ -240,7 +240,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public IList<String> getVarNames() {
-		return new GamaList(variables.keySet());
+		if ( variables != null ) { return new GamaList(variables.keySet()); }
+		return GamaList.EMPTY_LIST;
 	}
 
 	public List<String> getUpdatableVarNames() {
