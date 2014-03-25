@@ -46,7 +46,7 @@ S_Experiment:
 	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=Block;
 
 S_Reflex:
-	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when:" expr=Expression)? block=Block;
+	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
 
 S_Definition:
 	tkey=TypeRef (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
@@ -157,7 +157,7 @@ TypeFacetKey:
 
 
 SpecialFacetKey:
-	'data:' | 'when:' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
+	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
 	"environment:" | 'text:' | 'image:' | 'using:';
 
 ActionFacetKey:

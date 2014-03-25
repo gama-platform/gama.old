@@ -667,16 +667,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameValid_IDParserRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
 		private final Keyword cWhenKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Assignment cExprAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cExprExpressionParserRuleCall_3_1_0 = (RuleCall)cExprAssignment_3_1.eContents().get(0);
+		private final Keyword cColonKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
+		private final Assignment cExprAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
+		private final RuleCall cExprExpressionParserRuleCall_3_2_0 = (RuleCall)cExprAssignment_3_2.eContents().get(0);
 		private final Assignment cBlockAssignment_4 = (Assignment)cGroup.eContents().get(4);
 		private final RuleCall cBlockBlockParserRuleCall_4_0 = (RuleCall)cBlockAssignment_4.eContents().get(0);
 		
 		//S_Reflex:
-		//	key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when:" expr=Expression)? block=Block;
+		//	key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when" ":" expr=Expression)? block=Block;
 		public ParserRule getRule() { return rule; }
 
-		//key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when:" expr=Expression)? block=Block
+		//key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when" ":" expr=Expression)? block=Block
 		public Group getGroup() { return cGroup; }
 
 		//key=_ReflexKey
@@ -697,17 +698,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//Valid_ID
 		public RuleCall getNameValid_IDParserRuleCall_2_0() { return cNameValid_IDParserRuleCall_2_0; }
 
-		//("when:" expr=Expression)?
+		//("when" ":" expr=Expression)?
 		public Group getGroup_3() { return cGroup_3; }
 
-		//"when:"
+		//"when"
 		public Keyword getWhenKeyword_3_0() { return cWhenKeyword_3_0; }
 
+		//":"
+		public Keyword getColonKeyword_3_1() { return cColonKeyword_3_1; }
+
 		//expr=Expression
-		public Assignment getExprAssignment_3_1() { return cExprAssignment_3_1; }
+		public Assignment getExprAssignment_3_2() { return cExprAssignment_3_2; }
 
 		//Expression
-		public RuleCall getExprExpressionParserRuleCall_3_1_0() { return cExprExpressionParserRuleCall_3_1_0; }
+		public RuleCall getExprExpressionParserRuleCall_3_2_0() { return cExprExpressionParserRuleCall_3_2_0; }
 
 		//block=Block
 		public Assignment getBlockAssignment_4() { return cBlockAssignment_4; }
@@ -1997,7 +2001,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "SpecialFacetKey");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cDataKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cWhenKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Keyword cWhenKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Keyword cColonKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final Keyword cConstKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
 		private final Keyword cValueKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
 		private final Keyword cTopologyKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
@@ -2012,19 +2018,25 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		////	"as:" | "of:" | "type:" | 'parent:' | 'species:';
 		//SpecialFacetKey:
-		//	"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-		//	"text:" | "image:" | "using:";
+		//	"data:" | "when" ":" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
+		//	"environment:" | "text:" | "image:" | "using:";
 		public ParserRule getRule() { return rule; }
 
-		//"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-		//"text:" | "image:" | "using:"
+		//"data:" | "when" ":" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:"
+		//| "text:" | "image:" | "using:"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"data:"
 		public Keyword getDataKeyword_0() { return cDataKeyword_0; }
 
-		//"when:"
-		public Keyword getWhenKeyword_1() { return cWhenKeyword_1; }
+		//"when" ":"
+		public Group getGroup_1() { return cGroup_1; }
+
+		//"when"
+		public Keyword getWhenKeyword_1_0() { return cWhenKeyword_1_0; }
+
+		//":"
+		public Keyword getColonKeyword_1_1() { return cColonKeyword_1_1; }
 
 		//"const:"
 		public Keyword getConstKeyword_2() { return cConstKeyword_2; }
@@ -4539,7 +4551,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//S_Reflex:
-	//	key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when:" expr=Expression)? block=Block;
+	//	key=_ReflexKey firstFacet="name:"? name=Valid_ID? ("when" ":" expr=Expression)? block=Block;
 	public S_ReflexElements getS_ReflexAccess() {
 		return (pS_Reflex != null) ? pS_Reflex : (pS_Reflex = new S_ReflexElements());
 	}
@@ -4863,8 +4875,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	////	"as:" | "of:" | "type:" | 'parent:' | 'species:';
 	//SpecialFacetKey:
-	//	"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-	//	"text:" | "image:" | "using:";
+	//	"data:" | "when" ":" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
+	//	"environment:" | "text:" | "image:" | "using:";
 	public SpecialFacetKeyElements getSpecialFacetKeyAccess() {
 		return (pSpecialFacetKey != null) ? pSpecialFacetKey : (pSpecialFacetKey = new SpecialFacetKeyElements());
 	}

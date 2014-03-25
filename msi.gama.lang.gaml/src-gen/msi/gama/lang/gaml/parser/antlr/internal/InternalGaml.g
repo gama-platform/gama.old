@@ -1343,23 +1343,27 @@ ruleS_Reflex returns [EObject current=null]
 	    }
 
 )
-)?(	otherlv_3='when:' 
+)?(	otherlv_3='when' 
     {
     	newLeafNode(otherlv_3, grammarAccess.getS_ReflexAccess().getWhenKeyword_3_0());
+    }
+	otherlv_4=':' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getS_ReflexAccess().getColonKeyword_3_1());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_ReflexAccess().getExprExpressionParserRuleCall_3_1_0()); 
+	        newCompositeNode(grammarAccess.getS_ReflexAccess().getExprExpressionParserRuleCall_3_2_0()); 
 	    }
-		lv_expr_4_0=ruleExpression		{
+		lv_expr_5_0=ruleExpression		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_ReflexRule());
 	        }
        		set(
        			$current, 
        			"expr",
-        		lv_expr_4_0, 
+        		lv_expr_5_0, 
         		"Expression");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -1370,14 +1374,14 @@ ruleS_Reflex returns [EObject current=null]
 		{ 
 	        newCompositeNode(grammarAccess.getS_ReflexAccess().getBlockBlockParserRuleCall_4_0()); 
 	    }
-		lv_block_5_0=ruleBlock		{
+		lv_block_6_0=ruleBlock		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_ReflexRule());
 	        }
        		set(
        			$current, 
        			"block",
-        		lv_block_5_0, 
+        		lv_block_6_0, 
         		"Block");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -3711,13 +3715,19 @@ ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
         newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getDataKeyword_0()); 
     }
 
-    |
-	kw='when:' 
+    |(
+	kw='when' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getWhenKeyword_1()); 
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getWhenKeyword_1_0()); 
     }
 
+	kw=':' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getColonKeyword_1_1()); 
+    }
+)
     |
 	kw='const:' 
     {
