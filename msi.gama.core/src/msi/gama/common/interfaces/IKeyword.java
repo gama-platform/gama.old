@@ -192,6 +192,7 @@ public interface IKeyword {
 	public static final String HISTOGRAM = "histogram";
 	public static final String HOST = "host";
 	public static final String IF = "if";
+	public static final String IGNORE = "ignore";
 	public static final String IMAGE = "image";
 	public static final String IN = "in";
 	public static final String INCLUDE = "include";
@@ -240,6 +241,7 @@ public interface IKeyword {
 	public static final String MINIMIZE = "minimize";
 	public final static String MINUS = "-";
 	public final static String MIRRORS = "mirrors";
+	public final static String MODE = "mode";
 	public static final String MODEL = "model";
 	public static final String MONITOR = "monitor";
 	public static final String MOUSE_DOWN = "mouse_down";
@@ -266,11 +268,13 @@ public interface IKeyword {
 	public static final String OUTPUT = "output";
 	public final static String OUTPUT3D = "output3D";
 	public static final String OVER = "over";
+	public static final String OVERWRITE = "overwrite";
 	public static final String PARAM = "param";
 	public static final String PARAMETER = "parameter";
 	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
+	public static final String PAUSE_MUSIC = "pause_music";
 	public static final String PEERS = "peers";
 	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
 	public static final String PERTINENCE = "pertinence";
@@ -299,6 +303,7 @@ public interface IKeyword {
 	public final static String REMOTE = "remote";
 	public static final String REMOVE = "remove";
 	public static final String REPEAT = "repeat";
+	public static final String RESUME_MUSIC = "resume_music";
 	public static final String RETURN = "return";
 	public static final String RETURNS = "returns";
 	public static final String REWRITE = "rewrite";
@@ -329,10 +334,12 @@ public interface IKeyword {
 	public static final String SPEED = "speed";
 	public static final String SPLINE = "spline";
 	public static final String STACK = "stack";
+	public static final String START_MUSIC = "start_music";
 	public static final String STATE = "state";
 	public static final String STATE_TO_EXIT = "stateToExit";
 	public static final String STATES = "states";
 	public static final String STEP = "step";
+	public static final String STOP_MUSIC = "stop_music";
 	public static final String STRATEGY = "scheduling_strategy";
 	public static final String STYLE = "style";
 	public static final String SWITCH = "switch";

@@ -39,6 +39,9 @@ public class GamaMusicPlayer {
 	private int musicPlayerMode = OVERWRITE_MODE;
 	private boolean repeat = false;
 	
+	// assure that we don't repeat playing a music file on an already dead agent
+	private Boolean agentDiedOrSimDisposed = false; 
+	
 	
 	public GamaMusicPlayer() {
 		musicPlayer = new BasicPlayer();
@@ -47,11 +50,14 @@ public class GamaMusicPlayer {
 	
 	
 	private void repeatMusic() {
-		try {
-			musicPlayer.open(musicFile);
-			musicPlayer.play();
-		} catch (BasicPlayerException e) {
-			throw GamaRuntimeException.error("Failed to replay music");
+		synchronized (agentDiedOrSimDisposed) {
+			if (!agentDiedOrSimDisposed) {
+				try {
+					musicPlayer.play();
+				} catch (BasicPlayerException e) {
+					throw GamaRuntimeException.error("Failed to replay music");
+				}
+			}
 		}
 	}
 
@@ -61,8 +67,6 @@ public class GamaMusicPlayer {
 		try {
 			int playerState = musicPlayer.getStatus();
 
-			System.out.println("playerState = " + playerState);
-			
 			if (playerState == BasicPlayer.UNKNOWN || playerState == BasicPlayer.STOPPED) {
 				musicPlayer.open(musicFile);
 				musicPlayer.play();
@@ -83,12 +87,16 @@ public class GamaMusicPlayer {
 		}
 	}
 
-	public void stop() throws GamaRuntimeException {
-		try {
-			musicPlayer.stop();
-		} catch (BasicPlayerException e) {
-			e.printStackTrace();
-			throw GamaRuntimeException.error("Failed to stop music player");
+	public void stop(final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
+		synchronized (this.agentDiedOrSimDisposed) {
+			this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
+
+			try {
+				musicPlayer.stop();
+			} catch (BasicPlayerException e) {
+				e.printStackTrace();
+				throw GamaRuntimeException.error("Failed to stop music player");
+			}
 		}
 	}
 

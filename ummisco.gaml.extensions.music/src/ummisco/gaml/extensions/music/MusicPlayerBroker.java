@@ -87,7 +87,7 @@ public class MusicPlayerBroker {
 		
 		for (IAgent d : deadAgents) {
 			musicPlayer = musicPlayersOfSimulation.get(d);
-			musicPlayer.stop();
+			musicPlayer.stop(true);
 			
 			musicPlayersOfSimulation.remove(d); 
 		}
@@ -96,17 +96,17 @@ public class MusicPlayerBroker {
 	
 	public void schedulerDisposed(final SimulationAgent simulation) throws GamaRuntimeException {
 		
-		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() BEFORE" + musicPlayerOfAgents.size());
+//		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() BEFORE" + musicPlayerOfAgents.size());
 		
 		Map<IAgent, GamaMusicPlayer> musicPlayersOfSimulation = musicPlayerOfAgents.get(simulation);
 		
 		if (musicPlayersOfSimulation != null) {
-			for (GamaMusicPlayer player : musicPlayersOfSimulation.values()) { player.stop(); }
+			for (GamaMusicPlayer player : musicPlayersOfSimulation.values()) { player.stop(true); }
 			
 			musicPlayersOfSimulation.clear();
 			musicPlayerOfAgents.remove(simulation);
 		}
 
-		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() AFTER" + musicPlayerOfAgents.size());
+//		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() AFTER" + musicPlayerOfAgents.size());
 	}
 }

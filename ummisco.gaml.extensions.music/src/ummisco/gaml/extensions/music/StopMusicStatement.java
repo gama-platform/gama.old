@@ -54,7 +54,7 @@ public class StopMusicStatement extends AbstractStatementSequence {
 		IAgent currentAgent = scope.getAgentScope();
 		
 		GamaMusicPlayer musicPlayer = MusicPlayerBroker.getInstance().getMusicPlayer(currentAgent);
-		musicPlayer.stop();
+		musicPlayer.stop(false);
 
 		if (sequence != null) {
 			Object[] result = new Object[1];
