@@ -75,9 +75,9 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			renderer.gl.glDisable(GL_LIGHTING);
 
 			renderer.gl.glDisable(GL_BLEND);
-
-			renderer.gl.glColor4d(s.getColor().getRed() / 255, s.getColor().getGreen() / 255, s.getColor()
-				.getBlue() / 255, s.getColor().getAlpha() / 255 * s.getAlpha());
+		
+			renderer.gl.glColor4d(s.getColor().getRed() / 255.0, s.getColor().getGreen() / 255.0, s.getColor()
+				.getBlue() / 255.0, s.getColor().getAlpha() / 255.0 * s.getAlpha());
 			renderer.gl.glRasterPos3d(x, y, z);
 
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
