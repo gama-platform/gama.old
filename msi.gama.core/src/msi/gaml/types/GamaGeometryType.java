@@ -182,7 +182,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 */
 	public static IShape buildPolyhedron(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolygon(points);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYHEDRON);
 		return g;
 	}
@@ -199,14 +199,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildLineCylinder(final IShape location1, final IShape location2, final double radius) {
 		final IShape g = buildLine(location1, location2);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setDepth(radius);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, LINECYLINDER);
 		return g;
 	}
 
 	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
 		final IShape g = buildLine(location1, location2);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, PLAN);
 		return g;
 	}
@@ -221,14 +221,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildPolylineCylinder(final List<IShape> points, final double radius) {
 		final IShape g = buildPolyline(points);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setDepth(radius);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, LINECYLINDER);
 		return g;
 	}
 
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolyline(points);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, POLYPLAN);
 		return g;
 	}
@@ -245,7 +245,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildCube(final double side_size, final ILocation location) {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
+		g.setDepth(side_size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, CUBE);
 		return g;
 
@@ -254,7 +254,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildRGBCube(final double side_size, final ILocation location) {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
+		g.setDepth(side_size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, RGBCUBE);
 		return g;
 
@@ -282,7 +282,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildBox(final double width, final double height, final double depth, final ILocation location) {
 		final IShape g = buildRectangle(width, height, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, BOX);
 		return g;
 	}
@@ -340,7 +340,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, CYLINDER);
 		return g;
 	}
@@ -348,14 +348,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 	// FIXME: Be sure that a buffer on a sphere returns a sphere.
 	public static IShape buildSphere(final double radius, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setDepth(radius);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
 		return g;
 	}
 
 	public static IShape buildHemiSphere(final double radius, final ILocation location, final double ratio) {
 		final IShape g = buildCircle(radius, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, radius);
+		g.setDepth(radius);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, HEMISPHERE);
 		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
 		return g;
@@ -363,21 +363,21 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setDepth(depth);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, CONE);
 		return g;
 	}
 
 	public static IShape buildTeapot(final double size, final ILocation location) {
 		final IShape g = buildCircle(size, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, size);
+		g.setDepth(size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, TEAPOT);
 		return g;
 	}
 
 	public static IShape buildPyramid(final double side_size, final ILocation location) {
 		final IShape g = buildRectangle(side_size, side_size, location);
-		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
+		g.setDepth(side_size);
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, PYRAMID);
 		return g;
 	}

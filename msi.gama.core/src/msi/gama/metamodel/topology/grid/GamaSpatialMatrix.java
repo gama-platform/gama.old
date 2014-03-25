@@ -899,6 +899,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return s.getAgent();
 		}
 
+		@Override
+		public void setDepth(double depth) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	/**
@@ -1235,6 +1241,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			@Override
 			public IList<? extends ILocation> getPoints() {
 				return geometry.getPoints();
+			}
+
+			@Override
+			public void setDepth(double depth) {
+				// TODO Auto-generated method stub
+				
 			}
 
 		}

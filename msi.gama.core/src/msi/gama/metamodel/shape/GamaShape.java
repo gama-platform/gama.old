@@ -117,7 +117,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
-	 *            (width, height, depth) or as a set of coefficients.
+	 *            (width, height, 	) or as a set of coefficients.
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final GamaPoint bounds, final boolean isBoundingBox) {
@@ -384,6 +384,12 @@ public class GamaShape implements IShape /* , IContainer */{
 	@getter("depth")
 	public Double getDepth() {
 		return getEnvelope().getDepth();
+		//return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
+	}
+	
+	public void setDepth(double depth) {
+		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		this.envelope = null;
 	}
 
 	@getter("envelope")

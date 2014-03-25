@@ -703,4 +703,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		return geometry.getPoints();
 	}
 
+	@Override
+	public void setDepth(double depth) {
+		if ( geometry == null ) { return ; }
+		geometry.setDepth(depth);
+		
+	}
+
 }

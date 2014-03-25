@@ -378,4 +378,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(x, -y, z);
 	}
 
+	@Override
+	public void setDepth(double depth) {
+		// TODO Auto-generated method stub		
+	}
+
 }

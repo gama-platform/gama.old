@@ -108,4 +108,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public abstract void setInnerGeometry(Geometry intersection);
 
+	public void setDepth(double depth);
+
+	
+
 }

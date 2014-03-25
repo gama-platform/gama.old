@@ -47,10 +47,10 @@ public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final GamaShape s) {
 		Envelope3D env = of(s.getInnerGeometry());
-		if ( s.hasAttribute("depth") ) {
-			Double d = (Double) s.getAttribute("depth");
+		if ( s.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
+			Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
 			GamaPoint center = env.centre();
-			center.setZ(d);
+			center.setZ(d + center.z);
 			env.expandToInclude(center);
 		}
 		return env;
