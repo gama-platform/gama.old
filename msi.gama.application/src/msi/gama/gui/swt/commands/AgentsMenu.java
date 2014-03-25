@@ -21,7 +21,7 @@ package msi.gama.gui.swt.commands;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.metamodel.agent.*;
@@ -146,7 +146,13 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
-	private static SelectionAdapter focuser = new SelectionAdapter() {
+	public static class Focuser extends SelectionAdapter {
+
+		final IDisplaySurface surface;
+
+		public Focuser(final IDisplaySurface s) {
+			surface = s;
+		}
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -157,8 +163,21 @@ public class AgentsMenu extends ContributionItem {
 				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 		}
+	}
 
-	};
+	// private static SelectionAdapter focuser = new SelectionAdapter() {
+	//
+	// @Override
+	// public void widgetSelected(final SelectionEvent e) {
+	// final MenuItem mi = (MenuItem) e.widget;
+	// final IAgent a = (IAgent) mi.getData("agent");
+	// if ( a != null && !a.dead() ) {
+	// GuiUtils.getFirstDisplaySurface().focusOn(a);
+	// GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+	// }
+	// }
+	//
+	// };
 
 	private static SelectionAdapter killer = new SelectionAdapter() {
 
@@ -229,8 +248,9 @@ public class AgentsMenu extends ContributionItem {
 		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(), "Inspect");
 		if ( !topLevel ) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
-			if ( GuiUtils.getFirstDisplaySurface() != null ) {
-				actionAgentMenuItem(menu, agent, focuser, IGamaIcons.MENU_FOCUS.image(), "Focus");
+			if ( GuiUtils.getFirstDisplaySurface() != null && actions == null || actions.length == 0 ) {
+				actionAgentMenuItem(menu, agent, new Focuser(GuiUtils.getFirstDisplaySurface()),
+					IGamaIcons.MENU_FOCUS.image(), "Focus");
 			}
 		}
 		if ( actions != null ) {

@@ -94,43 +94,41 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		return parent;
 	}
 
-	// private class FocusOnSelection extends SelectionAdapter {
-	//
-	// ILayer display;
-	// IDisplaySurface surface;
-	//
-	// FocusOnSelection(final ILayer display, final IDisplaySurface surface) {
-	// this.display = display;
-	// this.surface = surface;
-	// }
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final MenuItem mi = (MenuItem) e.widget;
-	// final IAgent a = (IAgent) mi.getData("agent");
-	// if ( a != null && !a.dead() ) {
-	// new Thread(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// while (!surface.canBeUpdated()) {
-	// try {
-	// Thread.sleep(10);
-	// } catch (final InterruptedException e) {
-	//
-	// }
-	// }
-	// if ( !a.dead() ) {
-	// surface.focusOn(a.getGeometry());
-	// }
-	//
-	// }
-	// }).start();
-	//
-	// }
-	// }
-	//
-	// }
+	private class FocusOnSelection extends SelectionAdapter {
+
+		IDisplaySurface surface;
+
+		FocusOnSelection(final IDisplaySurface surface) {
+			this.surface = surface;
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			final MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						while (!surface.canBeUpdated()) {
+							try {
+								Thread.sleep(10);
+							} catch (final InterruptedException e) {
+
+							}
+						}
+						if ( !a.dead() ) {
+							surface.focusOn(a);
+						}
+
+					}
+				}).start();
+
+			}
+		}
+
+	}
 
 	private class FollowSelection extends SelectionAdapter {
 
@@ -191,21 +189,20 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			if ( filteredList == null || filteredList.isEmpty() ) { return; }
 			// If only the world is selected, no need to display anything more
 			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
-			// final FocusOnSelection adapter = new FocusOnSelection(null, displaySurface);
-			// AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(),
-			// "Focus on");
+			final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
+			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
 			if ( view.getOutput().isOpenGL() ) {
 				// FIXME: 18/03/2014 a.g the follow item has been temporaly remove from opengl because not yet
 				// implemented but should be available in 1.7
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList /* ,focus , follow */);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus /* , follow */);
 			} else {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList/* , focus */);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
 			}
 		} else {
 			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
-				// final FocusOnSelection adapter = new FocusOnSelection(layer, displaySurface);
-				// AgentsMenu.MenuAction focus =
-				// new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
+				final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
+				AgentsMenu.MenuAction focus =
+					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 				boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
 				boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
 				if ( !isAgentLayer ) {
@@ -224,9 +221,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 				String layerName = layer.getType() + ": " + layer.getName();
 
 				if ( view.getOutput().isOpenGL() ) {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList/* , focus, follow */);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus/* , follow */);
 				} else {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList/* , focus */);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus);
 				}
 
 			}
