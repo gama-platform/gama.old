@@ -24,7 +24,14 @@ public class GamaMusicPlayer {
 
 		@Override
 		public void stateUpdated(BasicPlayerEvent event) {
-			if (event.getCode()==BasicPlayerEvent.EOM && repeat) { repeatMusic(); }
+			if (event.getCode() == BasicPlayerEvent.EOM) {
+				if (repeat) { repeatMusic(); }
+				else { endOfMedia = true; }
+			}
+
+			if (event.getCode() == BasicPlayerEvent.STOPPED && !repeat) {
+				playerStopped = true;
+			}
 		}
 
 		@Override
@@ -38,10 +45,13 @@ public class GamaMusicPlayer {
 	private BasicPlayer musicPlayer;
 	private File musicFile;
 	private String musicPlayerMode = OVERWRITE_MODE;
-	private boolean repeat = false;
+	private Boolean repeat = false;
 	
 	// assure that we don't repeat playing a music file on an already dead agent
 	private Boolean agentDiedOrSimDisposed = false; 
+	
+	private Boolean endOfMedia = false;
+	private Boolean playerStopped = false;
 	
 	
 	public GamaMusicPlayer() {
@@ -93,6 +103,7 @@ public class GamaMusicPlayer {
 			this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
 
 			try {
+				endOfMedia = true;
 				musicPlayer.stop();
 			} catch (BasicPlayerException e) {
 				e.printStackTrace();
@@ -130,8 +141,10 @@ public class GamaMusicPlayer {
 	public boolean isRepeat() {
 		return repeat;
 	}
-
-	public void setRepeat(boolean repeat) {
-		this.repeat = repeat;
+	
+	public boolean isEndOfMedia() {
+		return endOfMedia;
 	}
+	
+	public boolean isPlayerStopped() { return playerStopped; }
 }

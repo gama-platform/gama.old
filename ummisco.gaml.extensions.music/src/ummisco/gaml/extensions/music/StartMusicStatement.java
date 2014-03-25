@@ -75,9 +75,13 @@ public class StartMusicStatement extends AbstractStatementSequence {
 		GamaMusicPlayer musicPlayer = MusicPlayerBroker.getInstance().getMusicPlayer(currentAgent);
 		String musicFilePath = scope.getModel().getRelativeFilePath((String) source.value(scope), false);
 		
-		musicPlayer.play(new File(musicFilePath), 
-				mode != null ? (String) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
-				repeat != null ? (Boolean) repeat.value(scope) : false);
+		if (musicPlayer != null) {
+			musicPlayer.play(new File(musicFilePath), 
+					mode != null ? (String) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
+					repeat != null ? (Boolean) repeat.value(scope) : false);
+		} else {
+			System.out.println("No more player in pool!");
+		}
 
 		if (sequence != null) {
 			Object[] result = new Object[1];
