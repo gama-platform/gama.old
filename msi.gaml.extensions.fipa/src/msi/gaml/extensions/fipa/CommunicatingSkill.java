@@ -91,7 +91,8 @@ public class CommunicatingSkill extends Skill {
 		@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("A list of receiver agents")),
 		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the message. A list of any GAML type")),
 		@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("A string, representing the message performative")),
-		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) })
+		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) },
+		doc = @doc(value = "Starts a conversation/interaction protocol."))
 	public Message primStartConversation(final IScope scope) throws GamaRuntimeException {
 		
 		Message message = new Message();
@@ -131,6 +132,46 @@ public class CommunicatingSkill extends Skill {
 		return message;
 	}
 	
+	@action(name = "send", args = {
+			@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("A list of receiver agents")),
+			@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the message. A list of any GAML type")),
+			@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("A string, representing the message performative")),
+			@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) },
+			doc = @doc(deprecated = "It is preferable to use 'start_conversation' instead to start a conversation", value = "Starts a conversation/interaction protocol."))
+	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
+		return primStartConversation(scope);
+	}
+	
+
+	/**
+	 * @throws GamaRuntimeException Primitive reply. Replies a message. Retrieves the conversation
+	 *             specified by the conversationID input argument, the have this conversation handle
+	 *             the replying process.
+	 * 
+	 * @param args contains the conversationID, performative and the content of the replied message.
+	 * 
+	 * @return the Action.CommandStatus indicating the success or failure of the primitive.
+	 * 
+	 * @throws GamlException the gaml exception
+	 */
+	@action(name = "reply", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
+		@arg(name = "performative", type = IType.STRING, optional = false, doc = @doc("The performative of the replying message")),
+		@arg(name = "content", type = IType.LIST, optional = true, doc = @doc("The content of the replying message")) },
+		doc = @doc(value = "Replies a message."))
+	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
+		final IList originals = getMessageArg(scope);
+		if ( originals == null || originals.size() == 0 ) {
+			throw GamaRuntimeException.error("No message to reply", scope);
+		}
+
+		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
+		if ( performative == null ) {
+			throw GamaRuntimeException.error("'performative' argument is mandatory", scope);
+		}
+		
+		return replyMessage(scope, originals, performativeIndexes.get(performative), getContentArg(scope));
+	}
 
 	/**
 	 * @throws GamaRuntimeException Retrieves a list of currently active conversations.
