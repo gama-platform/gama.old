@@ -38,6 +38,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 	private Label label(final Composite c, final int horizontalAlign) {
 		Label l = new Label(c, SWT.None);
 		l.setForeground(WHITE);
+		l.setBackground(BLACK);
 		l.setText(" ");
 		l.setLayoutData(infoData(horizontalAlign));
 		l.addMouseListener(toggleListener);
