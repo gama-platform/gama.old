@@ -5,8 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
@@ -20,8 +20,7 @@ import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -371,21 +370,16 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public boolean resizeImage(final int x, final int y) {
 		// GuiUtils.debug("AbstractAWTDisplaySurface.resizeImage " + x + " " + y + " can be update : " + canBeUpdated);
 		if ( x == displayWidth && y == displayHeight ) { return true; }
+		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = Math.max(1, point[0]);
-		int imageHeight = Math.max(1, point[1]);
-		// TODO Verify that the test on size is correct for Java2D and OpenGL.
-
-		if ( getWidth() > 0 && getHeight() > 0 && imageWidth <= getWidth() * 10 && imageHeight <= getHeight() * 10 ) {
-			createNewImage(imageWidth, imageHeight);
-			createIGraphics();
-			// redrawNavigator();
-			canBeUpdated(true);
-			return true;
-		}
+		int imageWidth = Math.min(Math.max(1, point[0]), getWidth() * 10);
+		int imageHeight = Math.min(Math.max(1, point[1]), getHeight() * 10);
+		createNewImage(imageWidth, imageHeight);
+		createIGraphics();
 		canBeUpdated(true);
-		return false;
+		return true;
+
 	}
 
 	protected void createNewImage(final int width, final int height) {
@@ -469,9 +463,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		setZoomLevel(1d);
 		zoomFit = true;
 	}
-	
+
 	@Override
-	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen, Point sizeInPixels, Point positionInPixels) {
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+		final Point positionInPixels) {
 		final double xScale = sizeInPixels.x / getEnvWidth();
 		final double yScale = sizeInPixels.y / getEnvHeight();
 		final int xInDisplay = xOnScreen - positionInPixels.x;
@@ -480,10 +475,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		final double yInModel = yInDisplay / yScale;
 		return new GamaPoint(xInModel, yInModel);
 	}
-	
+
 	@Override
 	public IList<IAgent> selectAgent(final int x, final int y) {
-		int xc = x -getOriginX();
+		int xc = x - getOriginX();
 		int yc = y - getOriginY();
 		IList<IAgent> result = new GamaList<IAgent>();
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);

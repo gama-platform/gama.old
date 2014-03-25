@@ -18,7 +18,8 @@
  */
 package msi.gama.gui.displays.layers;
 
-import java.awt.Color;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
@@ -32,8 +33,21 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaImageFile;
 import org.eclipse.swt.widgets.Composite;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GridLayer extends ImageLayer {
+
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		final GridLayerStatement g = (GridLayerStatement) definition;
+		IAgent a = geometry.getAgent();
+		if ( a == null ) { return null; }
+		if ( a.getSpecies() != g.getEnvironment().getCellSpecies() ) { return null; }
+		Envelope env = a.getEnvelope();
+		Point min = this.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), s);
+		Point max = this.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), s);
+		return new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
+	}
 
 	private boolean turnGridOn;
 	private double cellSize;
@@ -101,11 +115,11 @@ public class GridLayer extends ImageLayer {
 			GamaImageFile textureFile = g.textureFile();
 			if ( textureFile != null ) { // display grid dem:texturefile
 				BufferedImage texture = textureFile.getImage(scope);
-				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(),g.isShowText(), lineColor,
-					cellSize, this.getName());
+				dg.drawGrid(scope, texture, gridValueMatrix, true, g.isTriangulated(), g.isGrayScaled(),
+					g.isShowText(), lineColor, cellSize, this.getName());
 			} else {
-				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),g.isShowText(),
-					lineColor, cellSize, this.getName());
+				dg.drawGrid(scope, image, gridValueMatrix, g.isTextured(), g.isTriangulated(), g.isGrayScaled(),
+					g.isShowText(), lineColor, cellSize, this.getName());
 			}
 
 		} else {

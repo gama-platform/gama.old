@@ -21,8 +21,6 @@ package msi.gama.jogl;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
@@ -33,10 +31,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.runtime.*;
+import msi.gama.util.*;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -83,8 +79,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
-	
-	//USe to get the EventLayer mouselistener
+
+	// USe to get the EventLayer mouselistener
 	private MouseListener eventMouse;
 
 	public JOGLAWTDisplaySurface(final Object ... args) {
@@ -335,7 +331,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public void focusOn(final IShape geometry, final ILayer display) {
+	public void focusOn(final IShape geometry) {
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		// FIXME: Problem when an agent is placed on a layer with a z_value how to get this z_layer value to offset it?
@@ -354,7 +350,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					@Override
 					public void run() {
 						ILocation l = a.getGeometry().getLocation();
-						Envelope env = a.getGeometry().getEnvelope();						
+						Envelope env = a.getGeometry().getEnvelope();
 						renderer.camera.zoomFocus(l.getX(), l.getY(), l.getZ(), env.maxExtent());
 					}
 				});
@@ -377,7 +373,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public synchronized void addMouseListener(final MouseListener e) {
 		setEventMouse(e);
 	}
-	
+
 	@Override
 	public synchronized void removeMouseListener(final MouseListener e) {
 		renderer.canvas.removeMouseListener(e);
@@ -454,29 +450,35 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		return eventMouse;
 	}
 
-	public void setEventMouse(MouseListener eventMouse) {
+	public void setEventMouse(final MouseListener eventMouse) {
 		this.eventMouse = eventMouse;
 	}
 
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen,final Point sizeInPixels, final Point  positionInPixels) {
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+		final Point positionInPixels) {
 		// TODO Auto-generated method stub
 		Point mp = new Point(xOnScreen, yOnScreen);
 		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer, mp);
-		return new GamaPoint(p.x,-p.y);
-		
-		
+		return new GamaPoint(p.x, -p.y);
+
 	}
 
 	@Override
-	public IList<IAgent> selectAgent(int x, int y) {		
-		final GamaPoint pp = getModelCoordinatesFrom(x, y, null,null);
+	public IList<IAgent> selectAgent(final int x, final int y) {
+		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		Set<IAgent> agents = null;
-		IScope s =  GAMA.obtainNewScope();
-		try{			
-			agents = (Set<IAgent>) GAMA.getSimulation().getPopulation().getTopology().getNeighboursOf(s, new GamaPoint(pp.x,pp.y), this.renderer.getMaxEnvDim()/100,Different.with());
+		IScope s = GAMA.obtainNewScope();
+		try {
+			agents =
+				(Set<IAgent>) GAMA
+					.getSimulation()
+					.getPopulation()
+					.getTopology()
+					.getNeighboursOf(s, new GamaPoint(pp.x, pp.y), this.renderer.getMaxEnvDim() / 100, Different.with());
+		} finally {
+			GAMA.releaseScope(s);
 		}
-		finally {GAMA.releaseScope(s);}
 		return new GamaList<IAgent>(agents);
 	}
 }

@@ -36,13 +36,12 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
+public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom, ISizeProvider {
 
 	public static class AWTDisplayView extends LayeredDisplayView {
 
@@ -165,6 +164,9 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 				}
 			};
 			SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+			// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			// data.minimumHeight = 100;
+			// surfaceComposite.setLayoutData(data);
 			return surfaceComposite;
 		}
 
@@ -196,6 +198,25 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 
 				}
 			});
+		}
+
+		/**
+		 * Method getSizeFlags()
+		 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
+		 */
+		@Override
+		public int getSizeFlags(final boolean width) {
+			return SWT.MIN;
+		}
+
+		/**
+		 * Method computePreferredSize()
+		 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
+		 */
+		@Override
+		public int computePreferredSize(final boolean width, final int availableParallel,
+			final int availablePerpendicular, final int preferredResult) {
+			return 0;
 		}
 
 	}
@@ -242,10 +263,29 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 			return surfaceComposite;
 		}
 
+		/**
+		 * Method getSizeFlags()
+		 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
+		 */
+		@Override
+		public int getSizeFlags(final boolean width) {
+			return 0;
+		}
+
+		/**
+		 * Method computePreferredSize()
+		 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
+		 */
+		@Override
+		public int computePreferredSize(final boolean width, final int availableParallel,
+			final int availablePerpendicular, final int preferredResult) {
+			return 0;
+		}
+
 	}
 
 	protected Composite surfaceComposite;
-	private Composite leftComposite;
+	// private Composite leftComposite;
 	protected IPerspectiveListener perspectiveListener;
 	protected GridData data;
 	protected DisplayOverlay overlay;
@@ -276,8 +316,11 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		super.ownCreatePartControl(c);
-		parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL);
-		leftComposite = new Composite(parent, SWT.NONE);
+		// c.setLayout(new GridLayout(1, true));
+		parent = c;
+
+		// parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL);
+		// leftComposite = new Composite(parent, SWT.NONE);
 		createSurfaceComposite();
 		Composite trueParent = parent;
 		layersOverlay = new LayersOverlay(this);
@@ -328,10 +371,10 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 			});
 		createItem("Properties", null, general, true);
 		displayItems();
-		overlay = new DisplayOverlay(this);
+		overlay = new DisplayOverlay(this, getOutput().getOverlayProvider());
 		getOutput().getSurface().setZoomListener(this);
-		((SashForm) parent).setWeights(new int[] { 1, 2 });
-		((SashForm) parent).setMaximizedControl(surfaceComposite);
+		// ((SashForm) parent).setWeights(new int[] { 1, 2 });
+		// ((SashForm) parent).setMaximizedControl(surfaceComposite);
 		getViewer().addListener(SWT.Collapse, new Listener() {
 
 			@Override
@@ -360,19 +403,19 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 
 	protected abstract Composite createSurfaceComposite();
 
-	protected void monitorMouseMove(final int x, final int y) {
-
-		if ( surfaceComposite.getBounds().height - y < 10 ) {
-			if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
-				overlay.appear();
-			}
-		} else if ( x < 10 ) {
-			if ( !layersOverlay.getPopup().isVisible() ) {
-				layersOverlay.appear();
-			}
-		}
-
-	}
+	// protected void monitorMouseMove(final int x, final int y) {
+	//
+	// if ( surfaceComposite.getBounds().height - y < 10 ) {
+	// if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
+	// overlay.appear();
+	// }
+	// } else if ( x < 10 ) {
+	// if ( !layersOverlay.getPopup().isVisible() ) {
+	// layersOverlay.appear();
+	// }
+	// }
+	//
+	// }
 
 	@Override
 	public LayeredDisplayOutput getOutput() {
@@ -736,7 +779,7 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	}
 
 	public double getValueOfOnePixelInModelUnits() {
-		int displayWidth = getOutput().getSurface().getDisplayWidth();
+		double displayWidth = getOutput().getSurface().getDisplayWidth();
 		double envWidth = getOutput().getSurface().getEnvWidth();
 		return envWidth / displayWidth;
 	}
@@ -753,6 +796,40 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	 */
 	public void toggleOverlay() {
 		this.overlay.toggle();
+	}
+
+	/**
+	 * @return
+	 */
+	public String getOverlayCoordInfo() {
+		IDisplaySurface surface = getOutput().getSurface();
+		boolean paused = surface.isPaused();
+		boolean synced = surface.isSynchronized();
+		GamaPoint point = surface.getModelCoordinates();
+		String x = point == null ? "N/A" : String.format("%8.2f", point.x);
+		String y = point == null ? "N/A" : String.format("%8.2f", point.y);
+		Object[] objects = new Object[] { x, y };
+		return String
+			.format("X%10s | Y%10s" + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : ""), objects);
+
+	}
+
+	/**
+	 * @return
+	 */
+	public String getOverlayZoomInfo() {
+		IDisplaySurface surface = getOutput().getSurface();
+		boolean openGL = getOutput().isOpenGL();
+		Object[] objects = null;
+		if ( !openGL ) {
+			objects = new Object[] { getZoomLevel() };
+		} else {
+			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+			GamaPoint camera = ds.getCameraPosition();
+			objects = new Object[] { getZoomLevel(), camera.x, camera.y, camera.z };
+		}
+		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
+
 	}
 
 }

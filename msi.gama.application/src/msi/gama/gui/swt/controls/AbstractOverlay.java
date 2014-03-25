@@ -29,7 +29,8 @@ public abstract class AbstractOverlay {
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
 	private final Shell parentShell;
-	protected final Shell slidingShell;
+	// protected final Shell slidingShell;
+	final boolean createExtraInfo;
 
 	// ACTIONS ON THE POPUP
 
@@ -200,59 +201,60 @@ public abstract class AbstractOverlay {
 		public void shellIconified(final ShellEvent e) {}
 	}
 
-	public AbstractOverlay(final LayeredDisplayView view) {
+	public AbstractOverlay(final LayeredDisplayView view, final boolean createExtraInfo) {
+		this.createExtraInfo = createExtraInfo;
 		this.view = view;
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
 		final Composite c = view.getComponent();
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
-		slidingShell = new Shell(parentShell, SWT.NO_TRIM);
-		slidingShell.setBackground(BLACK);
-		slidingShell.setAlpha(40);
-		slidingShell.addMouseTrackListener(new MouseTrackAdapter() {
+		// slidingShell = new Shell(parentShell, SWT.NO_TRIM);
+		// slidingShell.setBackground(BLACK);
+		// slidingShell.setAlpha(40);
+		// slidingShell.addMouseTrackListener(new MouseTrackAdapter() {
+		//
+		// @Override
+		// public void mouseHover(final MouseEvent e) {
+		// slidingShell.setVisible(false);
+		// setHidden(false);
+		// }
+		//
+		// @Override
+		// public void mouseExit(final MouseEvent e) {
+		// slidingShell.setVisible(false);
+		// }
+		//
+		// });
 
-			@Override
-			public void mouseHover(final MouseEvent e) {
-				slidingShell.setVisible(false);
-				setHidden(false);
-			}
-
-			@Override
-			public void mouseExit(final MouseEvent e) {
-				slidingShell.setVisible(false);
-			}
-
-		});
-
-		slidingShell.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseUp(final MouseEvent e) {
-				slidingShell.setVisible(false);
-				setHidden(false);
-			}
-
-			@Override
-			public void mouseDown(final MouseEvent e) {
-				// slidingShell.setVisible(false);
-				// toggle();
-			}
-
-			@Override
-			public void mouseDoubleClick(final MouseEvent e) {
-				slidingShell.setVisible(false);
-			}
-
-		});
-		slidingShell.addFocusListener(new FocusAdapter() {
-
-			@Override
-			public void focusLost(final FocusEvent e) {
-				slidingShell.setVisible(false);
-			}
-
-		});
+		// slidingShell.addMouseListener(new MouseAdapter() {
+		//
+		// @Override
+		// public void mouseUp(final MouseEvent e) {
+		// slidingShell.setVisible(false);
+		// setHidden(false);
+		// }
+		//
+		// @Override
+		// public void mouseDown(final MouseEvent e) {
+		// // slidingShell.setVisible(false);
+		// // toggle();
+		// }
+		//
+		// @Override
+		// public void mouseDoubleClick(final MouseEvent e) {
+		// slidingShell.setVisible(false);
+		// }
+		//
+		// });
+		// slidingShell.addFocusListener(new FocusAdapter() {
+		//
+		// @Override
+		// public void focusLost(final FocusEvent e) {
+		// slidingShell.setVisible(false);
+		// }
+		//
+		// });
 		popup.setAlpha(140);
 		FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
@@ -270,10 +272,10 @@ public abstract class AbstractOverlay {
 		// popup.addMouseListener(toggleListener);
 	}
 
-	public void appear() {
-		slidingShell.setVisible(true);
-		slidingShell.setActive();
-	}
+	// public void appear() {
+	// slidingShell.setVisible(true);
+	// slidingShell.setActive();
+	// }
 
 	protected void createPopupControl() {};
 
@@ -329,6 +331,10 @@ public abstract class AbstractOverlay {
 		}
 	}
 
+	public boolean isDisposed() {
+		return popup.isDisposed() || viewIsDetached();
+	}
+
 	public void close() {
 		if ( !popup.isDisposed() ) {
 			Composite c = view.getComponent();
@@ -349,7 +355,7 @@ public abstract class AbstractOverlay {
 
 	protected boolean isHidden() {
 		// AD: Temporary fix for Issue 548. When a view is detached, the overlays are not displayed
-		return isHidden || viewIsDetached();
+		return isDisposed() || isHidden;
 	}
 
 	private boolean viewIsDetached() {

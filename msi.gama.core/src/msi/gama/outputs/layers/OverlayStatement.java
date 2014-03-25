@@ -9,7 +9,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
@@ -116,6 +116,13 @@ public class OverlayStatement extends AbstractLayerStatement implements IOverlay
 	@Override
 	public void setTarget(final IUpdaterTarget overlay) {
 		this.overlay = overlay;
+		GAMA.run(new GAMA.InScope.Void() {
+
+			@Override
+			public void process(final IScope scope) {
+				_step(scope);
+			}
+		});
 	}
 
 }

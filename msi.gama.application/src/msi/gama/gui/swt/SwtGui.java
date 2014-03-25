@@ -20,11 +20,12 @@ package msi.gama.gui.swt;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.ThreadedStatusUpdater.StatusMessage;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
@@ -80,6 +81,10 @@ public class SwtGui implements IGui {
 		COLOR_NEUTRAL = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 
+	public static Color getColor(final int[] c) {
+		return new Color(Display.getDefault(), new RGB(c[0], c[1], c[2]));
+	};
+
 	private static Color COLOR_ERROR;
 	private static Color COLOR_OK;
 	private static Color COLOR_WARNING;
@@ -94,13 +99,15 @@ public class SwtGui implements IGui {
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
-	private static Status status = new Status();
+	private static ThreadedStatusUpdater status = new ThreadedStatusUpdater();
 	private Tell tell = new Tell();
 	private Error error = new Error();
 	private Views views = new Views();
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
+	private final List<IDisplaySurface> surfaces = new ArrayList();
+	private IPartListener partListener;
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -177,65 +184,6 @@ public class SwtGui implements IGui {
 
 		void refresh(final IDisplayOutput out, final int rate) {
 			run(new ViewAction(out, rate));
-		}
-	}
-
-	static class Status implements Runnable {
-
-		Thread runThread;
-		final BlockingQueue<Message> messages;
-		private volatile StatusControlContribution control;
-
-		private class Message {
-
-			String message = "";
-			// Color color = COLOR_OK;
-			int code = IGui.INFORM;
-
-			Message(final String msg, final int s) {
-				message = msg;
-				// color = c;
-				code = s;
-			}
-		}
-
-		Status() {
-			messages = new LinkedBlockingQueue(4);
-		}
-
-		public void setMessage(final String s, final int status) {
-			messages.offer(new Message(s, status));
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-
-				try {
-					final Message m = messages.take();
-					if ( m == null || m.message == null ) { return; }
-					GuiUtils.run(new Runnable() {
-
-						@Override
-						public void run() {
-							if ( !control.isDisposed() ) {
-								control.setText(m.message, m.code);
-							}
-						}
-					});
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-
-			}
-		}
-
-		public void setControl(final StatusControlContribution l) {
-			control = l;
-			if ( runThread == null ) {
-				runThread = new Thread(this, "Status thread");
-				runThread.start();
-			}
 		}
 	}
 
@@ -358,11 +306,11 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void setStatus(final String msg, final int code) {
-		status.setMessage(msg, code);
+		status.updateWith(new StatusMessage(msg, code));
 	}
 
 	public static void setStatusControl(final StatusControlContribution l) {
-		status.setControl(l);
+		status.setTarget(l);
 	}
 
 	private int dialog(final Dialog dialog) {
@@ -482,7 +430,7 @@ public class SwtGui implements IGui {
 		Object o = internalShowView(viewId, secondaryId, code);
 		if ( o instanceof IWorkbenchPart ) {
 			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
-			ps.addPartListener(SwtGui.getPartListener());
+			ps.addPartListener(getPartListener());
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
@@ -492,9 +440,7 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
-	private static IPartListener partListener;
-
-	private static IPartListener getPartListener() {
+	private IPartListener getPartListener() {
 		if ( partListener == null ) {
 			partListener = new GamaPartListener();
 		}
@@ -534,7 +480,7 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	public static class GamaPartListener implements IPartListener {
+	public class GamaPartListener implements IPartListener {
 
 		// TODO implement IPartListener2 to be notified when views are hidden
 		@Override
@@ -559,6 +505,7 @@ public class SwtGui implements IGui {
 		public void partOpened(final IWorkbenchPart partRef) {
 			if ( partRef instanceof LayeredDisplayView ) {
 				LayeredDisplayView view = (LayeredDisplayView) partRef;
+				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
 			}
 		}
@@ -1111,6 +1058,7 @@ public class SwtGui implements IGui {
 	public void cleanAfterSimulation() {
 		setSelectedAgent(null);
 		setHighlightedAgent(null);
+		surfaces.clear();
 		// clearErrors();
 		// hideMonitorView();
 		// eraseConsole(true);
@@ -1129,6 +1077,17 @@ public class SwtGui implements IGui {
 	@Override
 	public void runModel(final Object object, final String exp) throws CoreException {
 		error("Impossible to run the model. The XText environment has not been launched");
-	};
+	}
+
+	/**
+	 * Method getFirstDisplaySurface()
+	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
+	 */
+	@Override
+	public IDisplaySurface getFirstDisplaySurface() {
+		if ( surfaces.isEmpty() ) { return null; }
+		if ( surfaces.size() > 1 ) { return null; }
+		return surfaces.get(0);
+	}
 
 }

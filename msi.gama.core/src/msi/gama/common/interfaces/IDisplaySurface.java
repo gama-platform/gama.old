@@ -18,15 +18,13 @@
  */
 package msi.gama.common.interfaces;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.util.IList;
-
-import java.awt.Point;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
@@ -123,7 +121,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	// void fireSelectionChanged(Object a);
 
-	void focusOn(IShape geometry, ILayer display);
+	void focusOn(IShape geometry);
 
 	boolean canBeUpdated();
 
@@ -232,9 +230,10 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	public abstract void setZoomListener(IZoomListener listener);
 
 	public GamaPoint getModelCoordinates();
-	
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels, final Point  positionInPixels);
-	
+
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+		final Point positionInPixels);
+
 	public IList<IAgent> selectAgent(final int x, final int y);
 
 	public boolean isSynchronized();

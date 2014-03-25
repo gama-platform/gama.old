@@ -19,6 +19,7 @@
 package msi.gama.common.interfaces;
 
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -80,5 +81,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	Integer getTrace();
 
 	Boolean getFading();
+
+	Rectangle2D focusOn(IShape geometry, IDisplaySurface s);
 
 }

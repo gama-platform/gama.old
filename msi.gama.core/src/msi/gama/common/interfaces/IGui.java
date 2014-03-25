@@ -138,4 +138,6 @@ public interface IGui {
 
 	public abstract void runModel(final Object object, final String exp) throws CoreException;
 
+	IDisplaySurface getFirstDisplaySurface();
+
 }

@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -197,24 +197,24 @@ public final class AwtEnvironment {
 
 	private static boolean isLookAndFeelInitialized = false;
 
-	static private void setLookAndFeel() {
-		assert EventQueue.isDispatchThread(); // On AWT event thread
-
-		if ( !isLookAndFeelInitialized ) {
-			isLookAndFeelInitialized = true;
-			try {
-				LookAndFeelHandler.getInstance().setLookAndFeel();
-			} catch (ClassNotFoundException e) {
-				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (InstantiationException e) {
-				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (IllegalAccessException e) {
-				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			} catch (UnsupportedLookAndFeelException e) {
-				SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
-			}
-		}
-	}
+	// static private void setLookAndFeel() {
+	// assert EventQueue.isDispatchThread(); // On AWT event thread
+	//
+	// if ( !isLookAndFeelInitialized ) {
+	// isLookAndFeelInitialized = true;
+	// try {
+	// LookAndFeelHandler.getInstance().setLookAndFeel();
+	// } catch (ClassNotFoundException e) {
+	// SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
+	// } catch (InstantiationException e) {
+	// SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
+	// } catch (IllegalAccessException e) {
+	// SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
+	// } catch (UnsupportedLookAndFeelException e) {
+	// SWT.error(SWT.ERROR_NOT_IMPLEMENTED, e);
+	// }
+	// }
+	// }
 
 	// ==================== Swing Popup Management ================================
 	// (Note there are no known problems with AWT popups (java.awt.PopupMenu), so this code

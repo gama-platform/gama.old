@@ -23,6 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,6 +43,11 @@ public class AgentLayer extends AbstractLayer {
 
 	public AgentLayer(final ILayerStatement layer) {
 		super(layer);
+	}
+
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		return shapes.get(geometry);
 	}
 
 	@Override

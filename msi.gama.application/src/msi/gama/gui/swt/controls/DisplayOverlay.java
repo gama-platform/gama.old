@@ -4,9 +4,12 @@
  */
 package msi.gama.gui.swt.controls;
 
+import java.util.List;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -20,37 +23,67 @@ import org.eclipse.swt.widgets.*;
  * @since 19 august 2013
  * 
  */
-public class DisplayOverlay extends AbstractOverlay {
+public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<OverlayInfo> {
 
-	Label text;
+	Label coord, zoom, left, center, right;
 	Canvas scalebar;
 
-	public DisplayOverlay(final LayeredDisplayView view) {
-		super(view);
+	public DisplayOverlay(final LayeredDisplayView view, final IOverlayProvider provider) {
+		super(view, provider != null);
+		if ( provider != null ) {
+			provider.setTarget(new ThreadedOverlayUpdater(this));
+		}
+	}
+
+	private Label label(final Composite c, final int horizontalAlign) {
+		Label l = new Label(c, SWT.None);
+		l.setForeground(WHITE);
+		l.setText(" ");
+		l.setLayoutData(infoData(horizontalAlign));
+		l.addMouseListener(toggleListener);
+		return l;
+	}
+
+	private GridData infoData(final int horizontalAlign) {
+		GridData data = new GridData(horizontalAlign, SWT.CENTER, true, false);
+		data.minimumHeight = 24;
+		data.heightHint = 24;
+		return data;
 	}
 
 	@Override
 	protected void createPopupControl() {
-		Composite panel = new Composite(getPopup(), SWT.None);
-		panel.setBackground(BLACK);
-		GridLayout layout = new GridLayout(2, false);
-		// layout.verticalSpacing = 2;
-		panel.setLayout(layout);
-
-		GridData textData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		text = new Label(panel, SWT.None);
-		text.setLayoutData(textData);
-		text.setBackground(BLACK);
-		text.setForeground(WHITE);
-		scalebar = new Canvas(panel, SWT.None);
+		// overall panel
+		Shell top = getPopup();
+		GridLayout layout = new GridLayout(3, true);
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginWidth = 5;
+		layout.marginHeight = 5;
+		top.setLayout(layout);
+		top.setBackground(BLACK);
+		if ( createExtraInfo ) {
+			// left overlay info
+			left = label(top, SWT.LEFT);
+			// center overlay info
+			center = label(top, SWT.CENTER);
+			// right overlay info
+			right = label(top, SWT.RIGHT);
+		}
+		// coordinates overlay info
+		coord = label(top, SWT.LEFT);
+		// zoom overlay info
+		zoom = label(top, SWT.CENTER);
+		// scalebar overlay info
+		scalebar = new Canvas(top, SWT.None);
 		scalebar.setVisible(getView().getOutput().shouldDisplayScale());
-		GridData scaleData = new GridData(SWT.RIGHT, SWT.FILL, false, false);
-		scaleData.widthHint = 140;
+		GridData scaleData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
 		scaleData.minimumWidth = 140;
-		scaleData.heightHint = 24;
+		scaleData.widthHint = 140;
 		scaleData.minimumHeight = 24;
+		scaleData.heightHint = 24;
 		scalebar.setLayoutData(scaleData);
-		scalebar.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		scalebar.setBackground(BLACK);
 		scalebar.addPaintListener(new PaintListener() {
 
 			@Override
@@ -58,14 +91,13 @@ public class DisplayOverlay extends AbstractOverlay {
 				paintScale(e.gc);
 			}
 		});
-		text.addMouseListener(toggleListener);
-		getPopup().addMouseListener(toggleListener);
+		top.addMouseListener(toggleListener);
 		scalebar.addMouseListener(toggleListener);
-
-		scalebar.setSize(140, 24);
+		top.layout();
 	}
 
 	void paintScale(final GC gc) {
+		gc.setBackground(BLACK);
 		int BAR_WIDTH = 1;
 		int BAR_HEIGHT = 8;
 		int x = 0;
@@ -74,39 +106,62 @@ public class DisplayOverlay extends AbstractOverlay {
 		int width = scalebar.getBounds().width - 2 * margin;
 		int height = scalebar.getBounds().height;
 		int barStartX = x + 1 + BAR_WIDTH / 2 + margin;
-		int barStartY = y - 2 + height - BAR_HEIGHT;
+		int barStartY = y + height - BAR_HEIGHT / 2;
 
 		Path path = new Path(SwtGui.getDisplay());
-		path.moveTo(barStartX, barStartY);
-		path.lineTo(barStartX, barStartY + BAR_HEIGHT);
-		path.lineTo(barStartX + width, barStartY + BAR_HEIGHT);
-		path.lineTo(barStartX + width, barStartY);
+		path.moveTo(barStartX, barStartY - BAR_HEIGHT + 2);
+		path.lineTo(barStartX, barStartY + 2);
+		path.moveTo(barStartX, barStartY - BAR_HEIGHT / 2 + 2);
+		path.lineTo(barStartX + width, barStartY - BAR_HEIGHT / 2 + 2);
+		path.moveTo(barStartX + width, barStartY - BAR_HEIGHT + 2);
+		path.lineTo(barStartX + width, barStartY + 2);
 
 		gc.setForeground(WHITE);
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setLineWidth(BAR_WIDTH);
 		gc.drawPath(path);
-		gc.setFont(text.getFont());
-		drawStringCentered(gc, "0", barStartX, barStartY);
-		drawStringCentered(gc, String.valueOf(Math.round(getView().getValueOfOnePixelInModelUnits() * 100)), barStartX +
-			width, barStartY);
-		drawStringCentered(gc, "meters", barStartX + width / 2, barStartY + BAR_HEIGHT - 2);
+		gc.setFont(coord.getFont());
+		drawStringCentered(gc, "0", barStartX, barStartY - 6, false);
+		drawStringCentered(gc, getScaleRight(), barStartX + width, barStartY - 6, false);
 		path.dispose();
+	}
+
+	private String getScaleRight() {
+		double real = getView().getValueOfOnePixelInModelUnits() * 100;
+		if ( real > 1000 ) {
+			return String.format("%.1fkm", real / 1000d);
+		} else if ( real < 0.001 ) {
+			return String.format("%dmm", (int) real * 1000);
+		} else if ( real < 0.01 ) {
+			return String.format("%dcm", (int) (real * 100));
+		} else {
+			return String.format("%dm", (int) real);
+		}
 	}
 
 	@Override
 	public void update() {
-		if ( !text.isDisposed() ) {
+		if ( getPopup().isDisposed() ) { return; }
+		if ( !coord.isDisposed() ) {
 			try {
-				text.setText(getView().getOverlayText());
+				coord.setText(getView().getOverlayCoordInfo());
 			} catch (Exception e) {
 				GuiUtils.debug("Error in updating overlay: " + e.getMessage());
-				text.setText("Not initialized yet");
+				coord.setText("Not initialized yet");
+			}
+		}
+		if ( !zoom.isDisposed() ) {
+			try {
+				zoom.setText(getView().getOverlayZoomInfo());
+			} catch (Exception e) {
+				GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+				zoom.setText("Not initialized yet");
 			}
 		}
 		if ( !scalebar.isDisposed() ) {
 			scalebar.redraw();
 		}
+		getPopup().layout(true);
 	}
 
 	@Override
@@ -115,33 +170,88 @@ public class DisplayOverlay extends AbstractOverlay {
 		Point p = surfaceComposite.toDisplay(surfaceComposite.getLocation());
 		Point s = surfaceComposite.getSize();
 		int x = p.x;
-		int y = p.y + s.y - 32;
+		int y = p.y + s.y - (createExtraInfo ? 56 : 32);
 		return new Point(x, y);
 	}
 
 	@Override
 	protected Point getSize() {
 		Point s = getView().getComponent().getSize();
-		return new Point(s.x, 32);
+		return new Point(s.x, -1);
 	}
 
-	public static void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase) {
+	public static void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase,
+		final boolean filled) {
 		Point extent = gc.textExtent(string);
 		int xx = xCenter - extent.x / 2;
-		gc.drawText(string, xx, yBase - extent.y, true);
+		gc.drawText(string, xx, yBase - extent.y, !filled);
 	}
 
 	public void displayScale(final Boolean newValue) {
 		scalebar.setVisible(newValue);
+		// ((GridData) scalebar.getLayoutData()).exclude = !newValue;
 	}
 
+	//
+	// @Override
+	// public void appear() {
+	// Composite surfaceComposite = getView().getComponent();
+	// Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
+	// Point s = surfaceComposite.getSize();
+	// Point extent = new Point(s.x, 10);
+	// slidingShell.setBounds(loc.x, loc.y + s.y - 10, extent.x, extent.y);
+	// super.appear();
+	// }
+
+	/**
+	 * @param left2
+	 * @param createColor
+	 */
+	private void setForeground(final Label label, final Color color) {
+		if ( label == null || label.isDisposed() ) { return; }
+		Color c = label.getForeground();
+		label.setForeground(color);
+		if ( c != WHITE && c != color ) {
+			c.dispose();
+		}
+	}
+
+	/**
+	 * Method isDisposed()
+	 * @see msi.gama.gui.swt.controls.IUpdaterTarget#isDisposed()
+	 */
 	@Override
-	public void appear() {
-		Composite surfaceComposite = getView().getComponent();
-		Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-		Point s = surfaceComposite.getSize();
-		Point extent = new Point(s.x, 10);
-		slidingShell.setBounds(loc.x, loc.y + s.y - 10, extent.x, extent.y);
-		super.appear();
+	public boolean isDisposed() {
+		return super.isDisposed();
+	}
+
+	/**
+	 * Method updateWith()
+	 * @see msi.gama.gui.swt.controls.IUpdaterTarget#updateWith(java.lang.Object)
+	 */
+	@Override
+	public void updateWith(final OverlayInfo m) {
+		String[] infos = m.infos;
+		List<int[]> colors = m.colors;
+		if ( infos[0] != null ) {
+			left.setText(infos[0]);
+			if ( colors != null ) {
+				setForeground(left, SwtGui.getColor(colors.get(0)));
+			}
+		}
+		if ( infos[1] != null ) {
+			center.setText(infos[1]);
+			if ( colors != null ) {
+				setForeground(center, SwtGui.getColor(colors.get(1)));
+			}
+		}
+		if ( infos[2] != null ) {
+			right.setText(infos[2]);
+			if ( colors != null ) {
+				setForeground(right, SwtGui.getColor(colors.get(2)));
+			}
+		}
+
+		getPopup().layout(true);
 	}
 }

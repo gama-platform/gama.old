@@ -82,7 +82,7 @@ public class LayersOverlay extends AbstractOverlay {
 	Integer customWidth;
 
 	public LayersOverlay(final LayeredDisplayView view) {
-		super(view);
+		super(view, false);
 		super.getPopup().addListener(SWT.MouseDown, l);
 		super.getPopup().addListener(SWT.MouseUp, l);
 		super.getPopup().addListener(SWT.MouseMove, l);
@@ -159,15 +159,16 @@ public class LayersOverlay extends AbstractOverlay {
 		super.getPopup().setSize(w, size.y);
 	}
 
-	@Override
-	public void appear() {
-		Composite surfaceComposite = getView().getComponent();
-		Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-		Point s = surfaceComposite.getSize();
-		Point p = new Point(10, s.y);
-		slidingShell.setBounds(loc.x, loc.y, p.x, p.y);
-		super.appear();
-	}
+	//
+	// @Override
+	// public void appear() {
+	// Composite surfaceComposite = getView().getComponent();
+	// Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
+	// Point s = surfaceComposite.getSize();
+	// Point p = new Point(10, s.y);
+	// slidingShell.setBounds(loc.x, loc.y, p.x, p.y);
+	// super.appear();
+	// }
 
 	protected void changeLocationTo(final int x, final int y) {
 		customLocation = new Point(x, y);

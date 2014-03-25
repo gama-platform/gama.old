@@ -18,29 +18,23 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.ThreadedStatusUpdater.StatusMessage;
+import msi.gama.kernel.simulation.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.jfree.util.StringUtils;
 
-public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider {
+public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider,
+	IUpdaterTarget<StatusMessage> {
 
 	private Composite compo;
 	Label label;
@@ -85,20 +79,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return compo;
 	}
 
+	@Override
 	public boolean isDisposed() {
 		return label.isDisposed();
-	}
-
-	/**
-	 * @param message
-	 */
-	public void setText(final String message, final int code) {
-		status = code;
-		label.setBackground(getPopupBackground());
-		label.setText(message);
-		if ( popup.isVisible() ) {
-			popup.display();
-		}
 	}
 
 	/**
@@ -138,6 +121,20 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public Point getAbsoluteOrigin() {
 		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
+	}
+
+	/**
+	 * Method updateWith()
+	 * @see msi.gama.gui.swt.controls.ThreadedUpdater.IUpdaterTarget#updateWith(java.lang.Object)
+	 */
+	@Override
+	public void updateWith(final StatusMessage m) {
+		status = m.getCode();
+		label.setBackground(getPopupBackground());
+		label.setText(m.getText());
+		if ( popup.isVisible() ) {
+			popup.display();
+		}
 	}
 
 }

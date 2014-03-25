@@ -19,6 +19,7 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
@@ -36,6 +37,11 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 public abstract class AbstractLayer implements ILayer {
+
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		return null;
+	}
 
 	private Integer order = 0;
 	protected ILayerStatement definition;
@@ -250,7 +256,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen,sizeInPixels,positionInPixels);	
+		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen, sizeInPixels, positionInPixels);
 	}
 
 	@Override

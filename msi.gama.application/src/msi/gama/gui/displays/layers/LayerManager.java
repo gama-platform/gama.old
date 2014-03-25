@@ -18,9 +18,11 @@
  */
 package msi.gama.gui.displays.layers;
 
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.util.GamaList;
@@ -77,6 +79,19 @@ public class LayerManager implements ILayerManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Method focusOn()
+	 * @see msi.gama.common.interfaces.ILayerManager#focusOn(msi.gama.metamodel.shape.IShape)
+	 */
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		for ( final ILayer display : enabledLayers ) {
+			Rectangle2D r = display.focusOn(geometry, s);
+			if ( r != null ) { return r; }
+		}
+		return null;
 	}
 
 	private void enable(final ILayer found) {
@@ -241,4 +256,5 @@ public class LayerManager implements ILayerManager {
 		}
 		return false;
 	}
+
 }

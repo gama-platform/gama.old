@@ -228,4 +228,13 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void runModel(final Object object, final String exp) throws CoreException {}
+
+	/**
+	 * Method getFirstDisplaySurface()
+	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
+	 */
+	@Override
+	public IDisplaySurface getFirstDisplaySurface() {
+		return null;
+	}
 }

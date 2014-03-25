@@ -146,6 +146,20 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
+	private static SelectionAdapter focuser = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			final MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				GuiUtils.getFirstDisplaySurface().focusOn(a);
+				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
+			}
+		}
+
+	};
+
 	private static SelectionAdapter killer = new SelectionAdapter() {
 
 		@Override
@@ -215,6 +229,9 @@ public class AgentsMenu extends ContributionItem {
 		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(), "Inspect");
 		if ( !topLevel ) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
+			if ( GuiUtils.getFirstDisplaySurface() != null ) {
+				actionAgentMenuItem(menu, agent, focuser, IGamaIcons.MENU_FOCUS.image(), "Focus");
+			}
 		}
 		if ( actions != null ) {
 			for ( MenuAction ma : actions ) {

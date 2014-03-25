@@ -422,4 +422,11 @@ public class GuiUtils {
 		}
 	}
 
+	/**
+	 * @return
+	 */
+	public static IDisplaySurface getFirstDisplaySurface() {
+		return gui.getFirstDisplaySurface();
+	}
+
 }

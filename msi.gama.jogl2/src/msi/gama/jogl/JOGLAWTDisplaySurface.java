@@ -323,7 +323,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public void focusOn(final IShape geometry, final ILayer display) {
+	public void focusOn(final IShape geometry) {
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		// FIXME: Problem when an agent is placed on a layer with a z_value how to get this z_layer value to offset it?
@@ -443,14 +443,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public GamaPoint getModelCoordinatesFrom(int xOnScreen, int yOnScreen,
-			Point sizeInPixels, Point positionInPixels) {
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+		final Point positionInPixels) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IList<IAgent> selectAgent(int x, int y) {
+	public IList<IAgent> selectAgent(final int x, final int y) {
 		// TODO Auto-generated method stub
 		return null;
 	}

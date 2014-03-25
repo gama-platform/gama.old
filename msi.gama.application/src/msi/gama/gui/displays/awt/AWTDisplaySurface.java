@@ -20,9 +20,9 @@ package msi.gama.gui.displays.awt;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Set;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -31,9 +31,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
-import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
@@ -254,7 +251,27 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	}
 
-	public void applyZoom(final double factor, final Point c) {
+	@Override
+	public void focusOn(final IShape geometry) {
+		Rectangle2D r = this.getManager().focusOn(geometry, this);
+		if ( r == null ) { return; }
+		double xScale = getWidth() / r.getWidth();
+		double yScale = getHeight() / r.getHeight();
+		double zoomFactor = Math.min(xScale, yScale);
+		GuiUtils.debug("AWTDisplaySurface.focusOn zoomFactor = " + zoomFactor + " currentZoomLevel = " + zoomLevel);
+		GuiUtils.debug("Center of rectangle = " + r.getCenterX() + " , " + r.getCenterY());
+		applyZoom(zoomFactor, new Point((int) r.getCenterX() + origin.x, (int) r.getCenterY() + origin.y));
+	}
+
+	public void applyZoom(final double f, final Point c) {
+		GuiUtils.debug("Center required = " + c.x + " , " + c.y);
+		// double resultingZoom = f * zoomLevel;
+		double factor = f;
+		// if ( resultingZoom > 10d ) {
+		// factor = 10d / zoomLevel;
+		// }
+		GuiUtils.debug("AWTDisplaySurface.applyZoom zoomFactor = " + factor);
+		Point oldOrigin = origin;
 		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * factor)),
 			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
 			zoomFit = false;
@@ -263,12 +280,15 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			} else {
 				setZoomLevel(getDisplayHeight() / (double) getHeight());
 			}
-			// setZoomLevel(zoomLevel * factor);
+			// setOrigin((int) (c.x * zoomLevel), (int) (c.y * zoomLevel));
+
 			final int imagePX =
-				c.x < origin.x ? 0 : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x - origin.x;
+				c.x < origin.x ? origin.x : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x -
+					origin.x;
 			final int imagePY =
-				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
-			setOrigin(c.x - (int) Math.round(imagePX * factor), c.y - (int) Math.round(imagePY * factor));
+				c.y < origin.y ? origin.y : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y -
+					origin.y;
+			setOrigin((int) Math.round(c.x - imagePX * factor), (int) Math.round(c.y - imagePY * factor));
 			updateDisplay();
 		}
 	}
@@ -283,21 +303,36 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		}
 	}
 
-	@Override
-	public void focusOn(final IShape geometry, final ILayer display) {
-		// FIXME TO BE ENTIRELY REDEFINED
-		Envelope env = geometry.getEnvelope();
-		Point pmin = display.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), this);
-		Point pmax = display.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), this);
+	// @Override
+	// public void focusOn(final IShape geometry, final ILayer display) {
+	// // FIXME TO BE ENTIRELY REDEFINED
+	// final Point pmin;
+	// final Point pmax;
+	// Envelope env = geometry.getEnvelope();
+	// if ( display == null ) {
+	// pmin = getScreenCoordinatesFrom(env.getMinX(), env.getMinY());
+	// pmax = getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY());
+	// } else {
+	// pmin = display.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), this);
+	// pmax = display.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), this);
+	// }
+	//
+	// Rectangle envelop = new Rectangle(pmin.x + origin.x, pmin.y + origin.y, pmax.x - pmin.x, pmax.y - pmin.y);
+	// double xScale = (double) getWidth() / envelop.width;
+	// double yScale = (double) getHeight() / envelop.height;
+	// double zoomFactor = Math.min(xScale, yScale);
+	// if ( zoomFactor > 10 ) {
+	// zoomFactor = 10;
+	// }
+	// applyZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
+	// }
 
-		Rectangle envelop = new Rectangle(pmin.x + origin.x, pmin.y + origin.y, pmax.x - pmin.x, pmax.y - pmin.y);
-		double xScale = (double) getWidth() / envelop.width;
-		double yScale = (double) getHeight() / envelop.height;
-		double zoomFactor = Math.min(xScale, yScale);
-		if ( zoomFactor > 10 ) {
-			zoomFactor = 10;
-		}
-		applyZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
+	Point getScreenCoordinatesFrom(final double x, final double y) {
+		final double xFactor = x / getEnvWidth();
+		final double yFactor = y / getEnvHeight();
+		final int xOnDisplay = (int) (xFactor * getWidth());
+		final int yOnDisplay = (int) (yFactor * getHeight());
+		return new Point(xOnDisplay, yOnDisplay);
 	}
 
 	/**
@@ -380,4 +415,5 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( r.width < 1 && r.height < 1 ) { return; }
 		super.setBounds(r);
 	}
+
 }
