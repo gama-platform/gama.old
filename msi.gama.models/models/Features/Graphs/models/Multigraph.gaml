@@ -17,7 +17,7 @@ global {
 		create road from: shape_file_in;
 		road_graph <- as_edge_graph(road);
 		create people number: 50 {
-			friendship_graph << self;
+			add node:self to: friendship_graph;
 		}
 		loop times: 50 {
 			people p1 <- one_of(people);
