@@ -1,6 +1,6 @@
 /**
  *  morpho3D
- *  Author: Arno
+ *  Author: Arnaud Grignard
  *  Description: This model displays an awesome simulation of something ...
  */
 

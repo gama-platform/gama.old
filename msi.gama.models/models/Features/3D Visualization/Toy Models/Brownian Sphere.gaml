@@ -1,3 +1,9 @@
+/**
+ *  brownianSphere
+ *  Author: Arnaud Grignard
+ */
+
+
 model brownianSphere   
 
 global {
