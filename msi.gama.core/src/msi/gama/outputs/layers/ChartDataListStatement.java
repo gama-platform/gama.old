@@ -53,21 +53,36 @@ import org.jfree.chart.renderer.xy.*;
 //	@facet(name = IKeyword.NAME, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true, doc = @doc("the name of categories (can be a variable with dynamic names)")),
-	@facet(name = "inverse_series_categories", type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
+	@facet(name = ChartDataListStatement.REVERSECATEG, type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
 	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
 		IKeyword.EXPLODED }, optional = true, doc = @doc("series style")) }, omissible = IKeyword.LEGEND)
-public class ChartDataListStatement extends AbstractStatement {
+public class ChartDataListStatement extends AbstractStatement {	
 
-	
-
-	public static final String DATALIST = "datalist";
-	public static final String UPDATEDATA = "updatedata";
-	public static final String REVERSEDATA = "reversedata";
+	public static final String DATALISTS = "datalist";
+//	public static final String UPDATEDATA = "updatedata";
+//	public static final String REVERSEDATA = "reversedata";
 	public static final String CATEGNAMES = "categoriesnames";
-	public static final String SERIESNAMES = "seriesnames";
-	protected int dataNumber = 0;
+//	public static final String SERIESNAMES = "seriesnames";
+	public static final String REVERSECATEG= "inverse_series_categories";
+//	protected int dataNumber = 0;
+	
+	public static class ChartDataList {
+
+		IExpression colorlistexp;
+		IExpression valuelistexp;
+		IExpression legendlistexp;
+		IExpression categlistexp;
+		boolean doreverse;
+		AbstractRenderer renderer;
+		Object lastvalue;
+		String name;
+		int previoussize=0;
+
+
+	}
+
 
 	public ChartDataListStatement(final IDescription desc) {
 		super(desc);
@@ -77,6 +92,7 @@ public class ChartDataListStatement extends AbstractStatement {
 	 * @throws GamaRuntimeException
 	 * @param scope
 	 */
+	
 	public static ChartData newChartData(final IScope scope, AbstractRenderer style, String name, GamaColor color, Object value)
 	{
 		ChartData data = new ChartData();
@@ -94,25 +110,47 @@ public class ChartDataListStatement extends AbstractStatement {
 		
 	}
 	
-	public IList createData(final IScope scope) throws GamaRuntimeException {
-		GamaList<ChartData> datalist=new GamaList<ChartData>();
+	public  ChartDataList createData(final IScope scope) throws GamaRuntimeException {
+		ChartDataList datalist=new ChartDataList();
+		
+
+//		scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(true));
+//		scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(reverse));
+//		for (int i=0; i<values.size(); i++)
+//		{
+//			((ArrayList) scope.getVarValue(ChartDataStatement.DATAS)).add(values.get(i));			
+//		}
 		IExpression valexp=getFacet(IKeyword.VALUE);
+		datalist.valuelistexp=valexp;
+		Boolean reverse= Cast.asBool(scope, getFacetValue(scope, "inverse_series_categories",false));
+		datalist.doreverse=reverse;
+		
 		IExpression categexp=getFacet(ChartDataListStatement.CATEGNAMES);
+		datalist.categlistexp=categexp;
+
+		IExpression colorexp=getFacet(IKeyword.COLOR);
+		datalist.colorlistexp=colorexp;
+
+		IExpression serexp=getFacet(IKeyword.LEGEND);
+		datalist.legendlistexp=serexp;
+		
+		
 		if (categexp!=null)
 		{
-			scope.addVarWithValue(ChartDataListStatement.CATEGNAMES, categexp);			
+//			scope.addVarWithValue(ChartDataListStatement.CATEGNAMES, categexp);			
 		}
-		IExpression serexp=getFacet(IKeyword.LEGEND);
 		if (serexp!=null)
 		{
-			scope.addVarWithValue(ChartDataListStatement.SERIESNAMES, serexp);
+//			scope.addVarWithValue(ChartDataListStatement.SERIESNAMES, serexp);
 		}
-		Object val=valexp.resolveAgainst(scope).value(scope);
+
+/*		Object val=valexp.resolveAgainst(scope).value(scope);
 		if (!(val instanceof GamaList))
 		{
 			GuiUtils.debug("chart list with no list...");
 			return datalist;
 		}
+		
 		IList values = Cast.asList(scope,val);
 		GamaList defaultnames=new GamaList<String>();
 		GamaList defaultcolors=new GamaList<GamaColor>();
@@ -163,6 +201,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		
 //		names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
 		colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));
+*/
 		String style = getLiteral(IKeyword.STYLE);
 		if ( style == null ) {
 			style = IKeyword.LINE;
@@ -185,37 +224,33 @@ public class ChartDataListStatement extends AbstractStatement {
 			} else if ( style.equals(IKeyword.STACK) ) {
 				r = new StackedBarRenderer();
 			}
-			for (int i=0; i<values.size();i++)
-			{
+		datalist.renderer=r;
 			
-			datalist.add(newChartData(scope,r,Cast.asString(scope, defaultnames.get(i)),Cast.asColor(scope,colors.get(i)),values.get(i)));
-		}
 		return datalist;
 	}
 
 	/**
-	 * Data statements rely on the fact that a variable called "chart_datas" is available in the
-	 * scope. If not, it will not do anything.
-	 * This variable is normally created by the ChartLayerStatement.
-	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
+	 * DataList statement requires a variable in the scope created by the Scope:
+	 * DataListVars to transfer the data
 	 */
 
 	@Override
-	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		
-		IList values = createData(scope);
-		IExpression valexp=getFacet(IKeyword.VALUE);
-		Boolean reverse= Cast.asBool(scope, getFacetValue(scope, "inverse_series_categories",false));
-		scope.addVarWithValue(ChartDataListStatement.DATALIST, valexp);
-		scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(true));
-		scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(reverse));
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {		
+		ChartDataList data = createData(scope);
+		((ArrayList) scope.getVarValue(DATALISTS)).add(data);
+		return data;
 
-		for (int i=0; i<values.size(); i++)
-		{
-			((ArrayList) scope.getVarValue(ChartDataStatement.DATAS)).add(values.get(i));
-			
-		}
-		return valexp;
+//		ChartDataList values = createData(scope);
+//		IExpression valexp=getFacet(IKeyword.VALUE);
+//		Boolean reverse= Cast.asBool(scope, getFacetValue(scope, "inverse_series_categories",false));
+//		scope.addVarWithValue(ChartDataListStatement.DATALIST, valexp);
+//		scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(true));
+//		scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(reverse));
+//		for (int i=0; i<values.size(); i++)
+//		{
+//			((ArrayList) scope.getVarValue(ChartDataStatement.DATAS)).add(values.get(i));			
+//		}
+//		return valexp;
 	}
 
 }

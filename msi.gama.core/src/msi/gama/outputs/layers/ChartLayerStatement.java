@@ -24,8 +24,10 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.ChartDataListStatement.ChartDataList;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -39,7 +41,6 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Random;
@@ -101,20 +102,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		public void enterScope(final IScope scope) {
 			super.enterScope(scope);
 			scope.addVarWithValue(ChartDataStatement.DATAS, new ArrayList());
-			scope.addVarWithValue(ChartDataListStatement.DATALIST, LabelExpressionDescription.create("idontknowwhattouse").getExpression()); //to change with something temp...
-			scope.addVarWithValue(ChartDataListStatement.UPDATEDATA, new Boolean(false));
-			scope.addVarWithValue(ChartDataListStatement.REVERSEDATA, new Boolean(false));
+			scope.addVarWithValue(ChartDataListStatement.DATALISTS, new ArrayList()); 
 		}
 
 		// We save the datas once the computation is finished
 		@Override
 		public void leaveScope(final IScope scope) {
 			datas = (List<ChartData>) scope.getVarValue(ChartDataStatement.DATAS);
-			updateseries = (Boolean) scope.getVarValue(ChartDataListStatement.UPDATEDATA);
-			reverseseries = (Boolean) scope.getVarValue(ChartDataListStatement.REVERSEDATA);
-			listvalue = (IExpression) scope.getVarValue(ChartDataListStatement.DATALIST);
-			categoryvalue = (IExpression) scope.getVarValue(ChartDataListStatement.CATEGNAMES);
-			serievalue = (IExpression) scope.getVarValue(ChartDataListStatement.SERIESNAMES);
+			datalists = (List<ChartDataList>) scope.getVarValue(ChartDataListStatement.DATALISTS);
 			super.leaveScope(scope);
 		}
 
@@ -135,14 +130,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private final Map<String, Integer> expressions_index = new HashMap();
 	private Dataset dataset;
 	private boolean exploded;
-	public boolean updateseries=false;
-	public boolean reverseseries=false;
-	IExpression listvalue;
-	IExpression categoryvalue=null;
-	IExpression serievalue=null;
-
 	static String xAxisName = "'time'";
 	List<ChartData> datas;
+	List<ChartData> dataswithoutlists;
+	List<ChartDataList> datalists;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
 	ChartDataStatement timeSeriesXData = null;
@@ -201,6 +192,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
+		if (datas.size()>0)
 		domainAxis.setLabel(datas.get(0).getName());
 		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		expr = getFacet(YRANGE);
@@ -233,11 +225,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			ChartData e = datas.get(i);
 
 			final String legend = e.getName();
-			if ( i != 0 | !isTimeSeries) { // the first data is the domain
+			if ( i != 0 | !isTimeSeries) 
+			{ // the first data is the domain
 				dataset = new DefaultTableXYDataset();
 				final XYSeries serie = new XYSeries(legend, false, false);
 				((DefaultTableXYDataset) dataset).addSeries(serie);
-				expressions_index.put(legend, i);
+					expressions_index.put(legend, i);
 				plot.setRenderer(i, (XYItemRenderer) e.getRenderer(), false);
 				// final Color c = e.getColor();
 				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setSeriesPaint(0, c);
@@ -245,13 +238,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setBaseShapesFilled(false);
 				// TODO Control this with a facet
 				// ((XYLineAndShapeRenderer) plot.getRenderer(i)).setSeriesShapesVisible(0, false);
+//				if (type==SERIES_CHART)
+//					plot.setDataset(i-1, (DefaultTableXYDataset) dataset);
+//			else
 				plot.setDataset(i, (DefaultTableXYDataset) dataset);
 			}
 			history.append(legend);
 			history.append(',');
 
 		}
-
+		if (history.length()>0)
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 
@@ -372,47 +368,24 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		BarRenderer renderer = new CustomRenderer();
 		plot.setRenderer(renderer);
 		dataset = new DefaultCategoryDataset();
-//		dataset=new CategoryTableXYDataset();
-/*
-		for ( int i = 0; i < datas.size(); i++ ) {
-			ChartData e = datas.get(i);
-
-			final String legend = e.getName();
-			if ( i != 0 ) { // the first data is the domain
-				dataset = new DefaultTableXYDataset();
-				final XYSeries serie = new XYSeries(legend, false, false);
-				((DefaultTableXYDataset) dataset).addSeries(serie);
-				expressions_index.put(legend, i);
-				plot.setRenderer(i, (XYItemRenderer) e.getRenderer(), false);
-				final Color c = e.getColor();
-				plot.getRenderer(i).setSeriesPaint(0, c);
-				plot.setDataset(i, (DefaultTableXYDataset) dataset);
-			}
-			history.append(legend);
-			history.append(',');
-
-		}
-*/		
 		int i=0;
 		for ( final ChartData e : datas ) {
 //			String legend = e.getName();
 //			((DefaultCategoryDataset) dataset).setValue(0d, new Integer(0), legend/* , legend */);
 			
 			final String legend = e.getName();
-//			if ( i != 0 ) { // the first data is the domain
-//				dataset = new DefaultCategoryDataset();
 				if (!CategoryItemRenderer.class.isInstance(e.getRenderer()))
 					e.renderer=new BarRenderer();
 				plot.setRenderer(i, (CategoryItemRenderer)e.getRenderer(), false);
 				final Color c = e.getColor();
 				plot.getRenderer(i).setSeriesPaint(0, c);
 				plot.setDataset(i, (DefaultCategoryDataset) dataset);
-//			}
 			i++;
 			history.append(legend);
 			history.append(',');
 		
 		}
+		if (history.length()>0)
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 		plot.setDataset((DefaultCategoryDataset) dataset);
@@ -546,51 +519,39 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		createChart(scope);
 		createData(scope);
+		dataswithoutlists=datas;
+		updateseries(scope);
 		chart.setNotify(false);
 		return true;
 	}
 
 	public void updateseries(final IScope scope) throws GamaRuntimeException {
-		Object val=listvalue.resolveAgainst(scope).value(scope);
-		if (!(val instanceof GamaList))
+		datas=dataswithoutlists;
+		
+		for (int dl=0; dl<datalists.size(); dl++)
 		{
-			GuiUtils.debug("chart list with no list...");
-			return;
-		}
-		GamaList<GamaList> values = (GamaList)Cast.asList(scope,val);
-		if (reverseseries)
-		{
-			IList tempvalues = Cast.asList(scope,val);
-			values=new GamaList<GamaList>();
-			if (tempvalues.get(0) instanceof GamaList)
+			ChartDataList datalist=datalists.get(dl);
+			
+
+			Object val=datalist.valuelistexp.resolveAgainst(scope).value(scope);
+			if (!(val instanceof GamaList))
 			{
-				IList nval=Cast.asList(scope, tempvalues.get(0));
-				for (int j=0; j<nval.size(); j++)
-				{
-					GamaList nl=new GamaList();
-					nl.add(nval.get(j));
-					values.add(nl);					
-				}
-			}
-			else
-			{
-				GuiUtils.debug("Reverse series but not list of list..."+tempvalues);
+				GuiUtils.debug("chart list with no list...");
 				return;
-				
 			}
-			if (tempvalues.size()>1)
-			for (int i=1; i<tempvalues.size(); i++)
+			GamaList<GamaList> values = (GamaList)Cast.asList(scope,val);
+			if (datalist.doreverse)
 			{
-				if (tempvalues.get(i) instanceof GamaList)
+				IList tempvalues = Cast.asList(scope,val);
+				values=new GamaList<GamaList>();
+				if (tempvalues.get(0) instanceof GamaList)
 				{
-					IList nval=Cast.asList(scope, tempvalues.get(i));
+					IList nval=Cast.asList(scope, tempvalues.get(0));
 					for (int j=0; j<nval.size(); j++)
 					{
-//						Cast.asList(scope, values.get(j)).add(nval.get(j));	
-
-						values.get(j).add(nval.get(j));					
-
-
+						GamaList nl=new GamaList();
+						nl.add(nval.get(j));
+						values.add(nl);					
 					}
 				}
 				else
@@ -599,175 +560,193 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					return;
 					
 				}
-			}
-			
-//			GuiUtils.debug("New Values"+values);
-		}
-		GamaList defaultnames=new GamaList<String>();
-		GamaList defaultcolors=new GamaList<GamaColor>();
-		for (int i=0; i<values.size();i++)
-		{
-			defaultnames.add("data"+i);
-			if (i<10)
-			{
-				if (i==0) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.CYAN));
-				if (i==1) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.RED));
-				if (i==2) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.YELLOW));
-				if (i==3) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.GREEN));
-				if (i==4) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.BLUE));
-				if (i==5) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.PINK));
-				if (i==6) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.MAGENTA));
-				if (i==7) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.ORANGE));
-				if (i==8) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.LIGHT_GRAY));
-				if (i==9) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.DARK_GRAY));
-			}
-			if (i>=10)
-			if (i<GamaColor.colors.size())
-				defaultcolors.add(GamaColor.int_colors.values().toArray()[i]);
-			else
-				defaultcolors.add(GamaColor.getInt(Random.opRnd(scope, 10000)));				
-			
-		}		
-		boolean dynamicseriesnames=false;
-		GamaList seriesnames=new GamaList<String>();
-		
-		if (serievalue!=null)
-		{
-		Object valc=serievalue.resolveAgainst(scope).value(scope);
-		
-		if ((valc instanceof GamaList))
-		{
-			dynamicseriesnames=true;
-			seriesnames=(GamaList)valc;
-			for (int i=0; i<Math.min(values.size(),seriesnames.size());i++)
-			{
-				defaultnames.set(i,seriesnames.get(i)+"("+i+")");
-			}/*
-			if (datas.size()>1)
-			for (int i=datas.size()-1;i>0; i--)
-			{
-				String sname=((ChartData)datas.get(i)).getName();
-				if (i<10) sname=sname.substring(0, sname.length()-3);
-				else sname=sname.substring(0, sname.length()-4);
-				if (!seriesnames.contains(sname)) 
+				if (tempvalues.size()>1)
+				for (int i=1; i<tempvalues.size(); i++)
+				{
+					if (tempvalues.get(i) instanceof GamaList)
 					{
-					GuiUtils.debug("remove:"+sname);
-					datas.remove(i);
-					}
-			}*/
-		}
-		}
+						IList nval=Cast.asList(scope, tempvalues.get(i));
+						for (int j=0; j<nval.size(); j++)
+						{
+//							Cast.asList(scope, values.get(j)).add(nval.get(j));	
 
-		int nbseries=values.size();
-		if ( type==SERIES_CHART ) nbseries++;
-		
-		ChartData first=datas.get(0);
-		if ((datas.size()<nbseries)
-			|(datas.size()>1))
-			{
-//				clearvalues(scope);
-				datas.clear();
-				if ( type==SERIES_CHART ) {
-					final XYPlot plot = (XYPlot) chart.getPlot();
-					final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-					domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-					if ( timeSeriesXData == null ) {
+							values.get(j).add(nval.get(j));					
 
-						timeSeriesXData =
-							(ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
-								xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
-						if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
-							timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-								.setExpression(getFacet(IKeyword.TIMEXSERIES));
+
 						}
-						// else {
-						// timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
-						// .setExpression(new ConstantExpression(null) {
-						//
-						// @Override
-						// public Integer value(final IScope scope) {
-						// return scope.getClock().getCycle();
-						// }
-						//
-						// @Override
-						// public boolean isConst() {
-						// return false;
-						// }
-						// });
-						// }
-
 					}
-
-					if ( !datas.contains(timeSeriesXData) ) {
-						datas.add(0, timeSeriesXData.createData(scope));
+					else
+					{
+						GuiUtils.debug("Reverse series but not list of list..."+tempvalues);
+						return;
+						
 					}
-				}	
-		for (int i=datas.size(); i<nbseries;i++)
-		{
-			AbstractRenderer r;
-			try {
-				r = first.renderer.getClass().newInstance();
-				ChartData newdata;
-				if ( type==SERIES_CHART )
-					newdata=ChartDataListStatement.newChartData(scope,r,Cast.asString(scope, defaultnames.get(i-1)),Cast.asColor(scope,defaultcolors.get(i-1)),values.get(i-1));
-				else
-					newdata=ChartDataListStatement.newChartData(scope,r,Cast.asString(scope, defaultnames.get(i)),Cast.asColor(scope,defaultcolors.get(i)),values.get(i));
+				}
+				
+//				GuiUtils.debug("New Values"+values);
+			}
+
+			GamaList defaultnames=new GamaList<String>();
+			GamaList defaultcolors=new GamaList<GamaColor>();
+			for (int i=0; i<values.size();i++)
+			{
+				defaultnames.add("data"+i);
+//				defaultcolors.add(GamaColor.array[i]);
+				if (i<10)
+				{
 					
-				datas.add(newdata);
+					if (i==0) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.CYAN));
+					if (i==1) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.RED));
+					if (i==2) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.YELLOW));
+					if (i==3) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.GREEN));
+					if (i==4) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.BLUE));
+					if (i==5) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.PINK));
+					if (i==6) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.MAGENTA));
+					if (i==7) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.ORANGE));
+					if (i==8) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.LIGHT_GRAY));
+					if (i==9) defaultcolors.add((GamaColor)Cast.asColor(scope,GamaColor.DARK_GRAY));
+				}
+				if (i>=10)
+				if (i<GamaColor.colors.size())
+					defaultcolors.add(GamaColor.int_colors.values().toArray()[i]);
+				else
+					defaultcolors.add(GamaColor.getInt(Random.opRnd(scope, 10000)));				
+				
+			}		
+			boolean dynamicseriesnames=false;
+			GamaList seriesnames=new GamaList<String>();
+			
+			if (datalist.legendlistexp!=null)
+			{
+			Object valc=datalist.legendlistexp.resolveAgainst(scope).value(scope);
+			
+			if ((valc instanceof GamaList))
+			{
+				dynamicseriesnames=true;
+				seriesnames=(GamaList)valc;
+				for (int i=0; i<Math.min(values.size(),seriesnames.size());i++)
+				{
+					defaultnames.set(i,seriesnames.get(i)+"("+i+")");
+				}
+				if (values.size()>seriesnames.size())
+					for (int i=seriesnames.size(); i<values.size();i++)
+					{
+						defaultnames.set(i,"("+i+")");
+					}
+			}
+			else
+				for (int i=values.size(); i<values.size();i++)
+				{
+					defaultnames.set(i,"("+i+")");
+				}
+			}
+
+			int nbseries=values.size();
+//			if ( type==SERIES_CHART ) nbseries++;			
+//			ChartData first=datas.get(0);
+			
+			if (nbseries>datalist.previoussize)
+				{
+//					clearvalues(scope);
+//					datas.clear();
+					for (int i=datalist.previoussize; i<nbseries;i++)
+					{
+						AbstractRenderer r;
+						try {
+							r = datalist.renderer.getClass().newInstance();
+							ChartData newdata;
+								newdata=ChartDataListStatement.newChartData(scope,r,Cast.asString(scope, defaultnames.get(i)),Cast.asColor(scope,defaultcolors.get(i)),values.get(i));
+
+							datas.add(newdata);
+
+
+							if ((type==SERIES_CHART)|(type==XY_CHART))
+							{
+								final XYPlot plot = (XYPlot) chart.getPlot();
+								final String legend = newdata.getName();
+								dataset = new DefaultTableXYDataset();
+								final XYSeries serie = new XYSeries(legend, false, false);
+								((DefaultTableXYDataset) dataset).addSeries(serie);
+								expressions_index.put(legend, datas.size()-1);
+								plot.setRenderer(datas.size()-1, (XYItemRenderer) newdata.getRenderer(), false);
+								final Color c = newdata.getColor();
+								plot.getRenderer(datas.size()-1).setSeriesPaint(0, c);
+								plot.setDataset(datas.size()-1, (DefaultTableXYDataset) dataset);
+								history.append(legend);
+								history.append(',');
+							}
+
+							if (type==HISTOGRAM_CHART)
+							{
+								final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+								for ( final ChartData e : datas ) {
+//									String legend = e.getName();
+//									((DefaultCategoryDataset) dataset).setValue(0d, new Integer(0), legend/* , legend */);
+									
+									final String legend = e.getName();
+										if (!CategoryItemRenderer.class.isInstance(e.getRenderer()))
+											e.renderer=new BarRenderer();
+										plot.setRenderer(i, (CategoryItemRenderer)e.getRenderer(), false);
+										final Color c = e.getColor();
+										plot.getRenderer(i).setSeriesPaint(0, c);
+										plot.setDataset(i, (DefaultCategoryDataset) dataset);
+//									}
+									i++;
+									history.append(legend);
+									history.append(',');
+								
+								}
+								if (history.length()>0)
+								history.deleteCharAt(history.length() - 1);
+								history.append(nl);
+								plot.setDataset((DefaultCategoryDataset) dataset);
+								
+							}
+
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+
 
 				
-				if ((type==SERIES_CHART)|(type==XY_CHART))
-				{
-				final XYPlot plot = (XYPlot) chart.getPlot();
-				final String legend = newdata.getName();
-				dataset = new DefaultTableXYDataset();
-				final XYSeries serie = new XYSeries(legend, false, false);
-				((DefaultTableXYDataset) dataset).addSeries(serie);
-				expressions_index.put(legend, i);
-				plot.setRenderer(i, (XYItemRenderer) newdata.getRenderer(), false);
-				final Color c = newdata.getColor();
-				plot.getRenderer(i).setSeriesPaint(0, c);
-				plot.setDataset(i, (DefaultTableXYDataset) dataset);
-			history.append(legend);
-			history.append(',');
-				}
-			
-			
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-
-
-
-			
-		}
+					datalist.previoussize=nbseries;
 			}
-		if (chart.getLegend()==null)	chart.addLegend(new LegendTitle(chart.getPlot()));
-		LegendTitle legend = chart.getLegend();
-//		GuiUtils.debug("dyncateg:"+defaultnames);
-//		GuiUtils.debug("legend:"+legend);		
-		for (int i=0; i<values.size(); i++)
-		{
-			first=datas.get(i);
-			if (type==SERIES_CHART) first=datas.get(i+1);
-			first.lastvalue=values.get(i);
+			if (chart.getLegend()==null)	chart.addLegend(new LegendTitle(chart.getPlot()));
+			LegendTitle legend = chart.getLegend();
+//			GuiUtils.debug("dyncateg:"+defaultnames);
+//			GuiUtils.debug("legend:"+legend);		
+			for (int i=0; i<nbseries; i++)
+			{
+				ChartData first=datas.get(i);
+				if (type==SERIES_CHART) first=datas.get(i+1);
+				first.lastvalue=values.get(i);
+							
+			}
 						
+			
 		}
-		
-		
 	}
 	
 	public void clearvalues(final IScope scope) {
+		((DefaultCategoryDataset) dataset).clear();
+		if (chart.getLegend()!=null)	chart.removeLegend();
+		for (int dl=0; dl<datalists.size(); dl++)
+		{
+			ChartDataList datalist=datalists.get(dl);
+//			datalist.previoussize=0;
+
 		boolean dynamiccategorynames=false;
 		GamaList categorynames=new GamaList<String>();
 		
-		if (categoryvalue!=null)
+		if (datalist.categlistexp!=null)
 		{
-		Object valc=categoryvalue.resolveAgainst(scope).value(scope);
+		Object valc=datalist.categlistexp.resolveAgainst(scope).value(scope);
 		if ((valc instanceof GamaList))
 		{
 			dynamiccategorynames=true;
@@ -777,9 +756,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		
 		}
 //		if (dynamiccategorynames)
-		{
-			((DefaultCategoryDataset) dataset).clear();
-		}
+//		{
+//			((DefaultCategoryDataset) dataset).clear();
+//		}
+
 		for ( final ChartData d : datas ) {
 			GamaList x = new GamaList();
 			Object obj = d.getValue(scope);
@@ -791,19 +771,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				for (int j=0;j<x.length(scope);j++)
 					if (j<categorynames.size())
 				{
-					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(),categorynames.get(j).toString()+"("+j+")"/* , s */);						
+					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(),categorynames.get(j).toString()+"("+j+")");						
 				}
 					else
-						((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(),"("+j+")"/* , s */);
+					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(),"("+j+")");
 				}
 				else
 				{
 					for (int j=0;j<x.length(scope);j++)
-					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(), new Integer(j)/* , s */);
+					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(), new Integer(j));
 					
 				}
 			} else {
-				((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, obj).doubleValue(), new Integer(0),d.getName()/* , s */);
+				((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, obj).doubleValue(), new Integer(0),d.getName());
 			}
 			
 			switch (type) {
@@ -815,7 +795,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 					// dataset).getRowCount() +
 					// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
-//					((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s/* , s */);
+//					((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s);
 					break;
 				}
 			}
@@ -824,17 +804,26 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		
 		
+		}
+//		if (chart.getLegend()==null)	chart.addLegend(new LegendTitle(chart.getPlot()));
+		
+		
 	}
 	
 	
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		lastComputeCycle = (long) scope.getClock().getCycle();
-		if (updateseries) updateseries(scope);
+		if (datalists.size()>0) updateseries(scope);
 
-
-		
+		if (type==XY_CHART || type== SERIES_CHART)
+		{
+			computeSeries(scope,lastComputeCycle);
+			return true;
 			
+		}
+		
+/*		
 		switch (type) {
 		case XY_CHART:
 			computeSeries(scope, lastComputeCycle);
@@ -842,7 +831,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			computeSeries(scope, lastComputeCycle);
 			return true;
 	}
-		
+	*/	
 		boolean clearvalues=false;
 
 		for ( final ChartData d : datas ) {
@@ -903,6 +892,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if ( datas.isEmpty() ) { return; }
 		GamaList x = new GamaList();
 		Object obj = datas.get(0).getValue(scope);
+		if (type==SERIES_CHART && (scope.getAgentScope() instanceof BatchAgent))
+	//	if (BatchAgent.class.isAssignableFrom(scope.getClass()))
+			obj=((BatchAgent)scope.getAgentScope()).getRunNumber();
+		
 		boolean cumulative=false;
 		if ( obj instanceof GamaList ) {
 			x = (GamaList) obj;
@@ -934,11 +927,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				if ((type==SERIES_CHART))
 					if (cumulative)
 				{
-					serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));					
+//						serie.addOrUpdate(Cast.asFloat(scope,Random.opRnd(scope, 10000))/1000, Double.parseDouble("" + n.get(j)));					
+						serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));					
 				}
 				else
 				{
 					serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));					
+//					serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));					
 					
 				}
 				if ((type==XY_CHART))
