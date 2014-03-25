@@ -97,6 +97,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
+      case GamlPackage.SPECIES_REF: return createSpeciesRef();
       case GamlPackage.TYPE_INFO: return createTypeInfo();
       case GamlPackage.GAML_DEFINITION: return createGamlDefinition();
       case GamlPackage.EQUATION_DEFINITION: return createEquationDefinition();
@@ -468,6 +469,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     VariableRefImpl variableRef = new VariableRefImpl();
     return variableRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SpeciesRef createSpeciesRef()
+  {
+    SpeciesRefImpl speciesRef = new SpeciesRefImpl();
+    return speciesRef;
   }
 
   /**

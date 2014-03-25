@@ -65,6 +65,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.get_VarOrConstKeyAccess().getAlternatives(), "rule___VarOrConstKey__Alternatives");
 					put(grammarAccess.get_ReflexKeyAccess().getAlternatives(), "rule___ReflexKey__Alternatives");
 					put(grammarAccess.get_AssignmentKeyAccess().getAlternatives(), "rule___AssignmentKey__Alternatives");
+					put(grammarAccess.getArgumentDefinitionAccess().getTypeAlternatives_0_0(), "rule__ArgumentDefinition__TypeAlternatives_0_0");
 					put(grammarAccess.getFacetAccess().getAlternatives(), "rule__Facet__Alternatives");
 					put(grammarAccess.getFirstFacetKeyAccess().getAlternatives(), "rule__FirstFacetKey__Alternatives");
 					put(grammarAccess.getDefinitionFacetKeyAccess().getAlternatives(), "rule__DefinitionFacetKey__Alternatives");
@@ -210,6 +211,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getUnitRefAccess().getGroup(), "rule__UnitRef__Group__0");
 					put(grammarAccess.getVariableRefAccess().getGroup(), "rule__VariableRef__Group__0");
 					put(grammarAccess.getTypeRefAccess().getGroup(), "rule__TypeRef__Group__0");
+					put(grammarAccess.getSpeciesRefAccess().getGroup(), "rule__SpeciesRef__Group__0");
 					put(grammarAccess.getTypeInfoAccess().getGroup(), "rule__TypeInfo__Group__0");
 					put(grammarAccess.getTypeInfoAccess().getGroup_2(), "rule__TypeInfo__Group_2__0");
 					put(grammarAccess.getSkillRefAccess().getGroup(), "rule__SkillRef__Group__0");
@@ -398,6 +400,8 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getVariableRefAccess().getRefAssignment_1(), "rule__VariableRef__RefAssignment_1");
 					put(grammarAccess.getTypeRefAccess().getRefAssignment_1(), "rule__TypeRef__RefAssignment_1");
 					put(grammarAccess.getTypeRefAccess().getParameterAssignment_2(), "rule__TypeRef__ParameterAssignment_2");
+					put(grammarAccess.getSpeciesRefAccess().getNameAssignment_0(), "rule__SpeciesRef__NameAssignment_0");
+					put(grammarAccess.getSpeciesRefAccess().getParameterAssignment_1(), "rule__SpeciesRef__ParameterAssignment_1");
 					put(grammarAccess.getTypeInfoAccess().getFirstAssignment_1(), "rule__TypeInfo__FirstAssignment_1");
 					put(grammarAccess.getTypeInfoAccess().getSecondAssignment_2_1(), "rule__TypeInfo__SecondAssignment_2_1");
 					put(grammarAccess.getSkillRefAccess().getRefAssignment_1(), "rule__SkillRef__RefAssignment_1");

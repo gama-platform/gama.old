@@ -139,6 +139,11 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	@Override
+	public Object caseSpeciesRef(final SpeciesRef object) {
+		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
+	}
+
+	@Override
 	public Object caseParameter(final Parameter object) {
 		return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
 	}

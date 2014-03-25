@@ -260,7 +260,7 @@ public class GamlCompatibilityConverter {
 			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
 				ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
 				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
-				TypeRef type = (TypeRef) def.getType();
+				EObject type = def.getType();
 				addFacet(arg, TYPE, convExpr(type, errors), errors);
 				// addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
 				// convertType(arg, type, errors);

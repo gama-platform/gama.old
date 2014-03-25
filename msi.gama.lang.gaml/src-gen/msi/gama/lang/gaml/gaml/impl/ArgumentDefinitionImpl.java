@@ -13,6 +13,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -41,7 +42,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * @generated
    * @ordered
    */
-  protected Expression type;
+  protected EObject type;
 
   /**
    * The cached value of the '{@link #getDefault() <em>Default</em>}' containment reference.
@@ -79,7 +80,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
-  public Expression getType()
+  public EObject getType()
   {
     return type;
   }
@@ -89,9 +90,9 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetType(Expression newType, NotificationChain msgs)
+  public NotificationChain basicSetType(EObject newType, NotificationChain msgs)
   {
-    Expression oldType = type;
+    EObject oldType = type;
     type = newType;
     if (eNotificationRequired())
     {
@@ -106,7 +107,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setType(Expression newType)
+  public void setType(EObject newType)
   {
     if (newType != type)
     {
@@ -217,7 +218,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
     switch (featureID)
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
-        setType((Expression)newValue);
+        setType((EObject)newValue);
         return;
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         setDefault((Expression)newValue);
@@ -237,7 +238,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
     switch (featureID)
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
-        setType((Expression)null);
+        setType((EObject)null);
         return;
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         setDefault((Expression)null);

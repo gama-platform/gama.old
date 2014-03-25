@@ -5,6 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,12 +35,12 @@ public interface ArgumentDefinition extends VarDefinition
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Type</em>' containment reference.
-   * @see #setType(Expression)
+   * @see #setType(EObject)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getArgumentDefinition_Type()
    * @model containment="true"
    * @generated
    */
-  Expression getType();
+  EObject getType();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.ArgumentDefinition#getType <em>Type</em>}' containment reference.
@@ -49,7 +50,7 @@ public interface ArgumentDefinition extends VarDefinition
    * @see #getType()
    * @generated
    */
-  void setType(Expression value);
+  void setType(EObject value);
 
   /**
    * Returns the value of the '<em><b>Default</b></em>' containment reference.

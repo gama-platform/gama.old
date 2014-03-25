@@ -135,7 +135,7 @@ ActionArguments:
 	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
 
 ArgumentDefinition:
-	type=TypeRef name=Valid_ID ('<-' default=Expression)?;
+	type=(TypeRef | SpeciesRef) name=Valid_ID ('<-' default=Expression)?;
 
 	/**
  * Facets
@@ -311,9 +311,12 @@ VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
 TypeRef returns Expression:
-	{TypeRef} ref=[TypeDefinition|ID] parameter=TypeInfo?;
-	
-TypeInfo:
+	{TypeRef} ref=[TypeDefinition|ID] parameter=TypeInfo? ;
+
+SpeciesRef:
+	name="species" parameter=TypeInfo?;
+
+TypeInfo: 
 	('<' first=TypeRef ("," second=TypeRef)? =>'>')
 ;
 SkillRef returns Expression:

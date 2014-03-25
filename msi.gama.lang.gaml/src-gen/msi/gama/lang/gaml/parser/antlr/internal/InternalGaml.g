@@ -3332,20 +3332,38 @@ ruleArgumentDefinition returns [EObject current=null]
     @after { leaveRule(); }:
 ((
 (
+(
 		{ 
-	        newCompositeNode(grammarAccess.getArgumentDefinitionAccess().getTypeTypeRefParserRuleCall_0_0()); 
+	        newCompositeNode(grammarAccess.getArgumentDefinitionAccess().getTypeTypeRefParserRuleCall_0_0_0()); 
 	    }
-		lv_type_0_0=ruleTypeRef		{
+		lv_type_0_1=ruleTypeRef		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getArgumentDefinitionRule());
 	        }
        		set(
        			$current, 
        			"type",
-        		lv_type_0_0, 
+        		lv_type_0_1, 
         		"TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
+
+    |		{ 
+	        newCompositeNode(grammarAccess.getArgumentDefinitionAccess().getTypeSpeciesRefParserRuleCall_0_0_1()); 
+	    }
+		lv_type_0_2=ruleSpeciesRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getArgumentDefinitionRule());
+	        }
+       		set(
+       			$current, 
+       			"type",
+        		lv_type_0_2, 
+        		"SpeciesRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
 
 )
 )(
@@ -6639,6 +6657,60 @@ ruleTypeRef returns [EObject current=null]
        			$current, 
        			"parameter",
         		lv_parameter_2_0, 
+        		"TypeInfo");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)?)
+;
+
+
+
+
+
+// Entry rule entryRuleSpeciesRef
+entryRuleSpeciesRef returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getSpeciesRefRule()); }
+	 iv_ruleSpeciesRef=ruleSpeciesRef 
+	 { $current=$iv_ruleSpeciesRef.current; } 
+	 EOF 
+;
+
+// Rule SpeciesRef
+ruleSpeciesRef returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		lv_name_0_0=	'species' 
+    {
+        newLeafNode(lv_name_0_0, grammarAccess.getSpeciesRefAccess().getNameSpeciesKeyword_0_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getSpeciesRefRule());
+	        }
+       		setWithLastConsumed($current, "name", lv_name_0_0, "species");
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getSpeciesRefAccess().getParameterTypeInfoParserRuleCall_1_0()); 
+	    }
+		lv_parameter_1_0=ruleTypeInfo		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getSpeciesRefRule());
+	        }
+       		set(
+       			$current, 
+       			"parameter",
+        		lv_parameter_1_0, 
         		"TypeInfo");
 	        afterParserOrEnumRuleCall();
 	    }

@@ -23,7 +23,7 @@ import static msi.gaml.expressions.IExpressionFactory.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
@@ -215,6 +215,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		TypeInfo parameter = object.getParameter();
 		if ( parameter == null || !t.isContainer() ) { return t; }
+		TypeRef first = (TypeRef) parameter.getFirst();
+		if ( first == null ) { return t; }
+		TypeRef second = (TypeRef) parameter.getSecond();
+		if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
+		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
+	}
+
+	IType fromSpeciesRef(final SpeciesRef object) {
+		IType t = Types.get(IKeyword.SPECIES);
+		TypeInfo parameter = object.getParameter();
+		if ( parameter == null ) { return t; }
 		TypeRef first = (TypeRef) parameter.getFirst();
 		if ( first == null ) { return t; }
 		TypeRef second = (TypeRef) parameter.getSecond();
@@ -498,6 +509,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// - lors d'une affectation de nil warning sur le type (candidate)
 
 		if ( t.isAgentType() ) { return factory.createConst(t.getSpeciesName(), GamaType.from(t.getSpecies())); }
+		return factory.createTypeExpression(t);
+	}
+
+	@Override
+	public IExpression caseSpeciesRef(final SpeciesRef object) {
+		IType t = fromSpeciesRef(object);
 		return factory.createTypeExpression(t);
 	}
 

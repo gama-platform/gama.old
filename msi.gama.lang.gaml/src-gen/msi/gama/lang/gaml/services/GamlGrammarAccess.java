@@ -1811,7 +1811,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ArgumentDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cTypeTypeRefParserRuleCall_0_0 = (RuleCall)cTypeAssignment_0.eContents().get(0);
+		private final Alternatives cTypeAlternatives_0_0 = (Alternatives)cTypeAssignment_0.eContents().get(0);
+		private final RuleCall cTypeTypeRefParserRuleCall_0_0_0 = (RuleCall)cTypeAlternatives_0_0.eContents().get(0);
+		private final RuleCall cTypeSpeciesRefParserRuleCall_0_0_1 = (RuleCall)cTypeAlternatives_0_0.eContents().get(1);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameValid_IDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
@@ -1820,17 +1822,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDefaultExpressionParserRuleCall_2_1_0 = (RuleCall)cDefaultAssignment_2_1.eContents().get(0);
 		
 		//ArgumentDefinition:
-		//	type=TypeRef name=Valid_ID ("<-" default=Expression)?;
+		//	type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?;
 		public ParserRule getRule() { return rule; }
 
-		//type=TypeRef name=Valid_ID ("<-" default=Expression)?
+		//type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?
 		public Group getGroup() { return cGroup; }
 
-		//type=TypeRef
+		//type=(TypeRef | SpeciesRef)
 		public Assignment getTypeAssignment_0() { return cTypeAssignment_0; }
 
+		//TypeRef | SpeciesRef
+		public Alternatives getTypeAlternatives_0_0() { return cTypeAlternatives_0_0; }
+
 		//TypeRef
-		public RuleCall getTypeTypeRefParserRuleCall_0_0() { return cTypeTypeRefParserRuleCall_0_0; }
+		public RuleCall getTypeTypeRefParserRuleCall_0_0_0() { return cTypeTypeRefParserRuleCall_0_0_0; }
+
+		//SpeciesRef
+		public RuleCall getTypeSpeciesRefParserRuleCall_0_0_1() { return cTypeSpeciesRefParserRuleCall_0_0_1; }
 
 		//name=Valid_ID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
@@ -3720,6 +3728,34 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getParameterTypeInfoParserRuleCall_2_0() { return cParameterTypeInfoParserRuleCall_2_0; }
 	}
 
+	public class SpeciesRefElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "SpeciesRef");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final Keyword cNameSpeciesKeyword_0_0 = (Keyword)cNameAssignment_0.eContents().get(0);
+		private final Assignment cParameterAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cParameterTypeInfoParserRuleCall_1_0 = (RuleCall)cParameterAssignment_1.eContents().get(0);
+		
+		//SpeciesRef:
+		//	name="species" parameter=TypeInfo?;
+		public ParserRule getRule() { return rule; }
+
+		//name="species" parameter=TypeInfo?
+		public Group getGroup() { return cGroup; }
+
+		//name="species"
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+
+		//"species"
+		public Keyword getNameSpeciesKeyword_0_0() { return cNameSpeciesKeyword_0_0; }
+
+		//parameter=TypeInfo?
+		public Assignment getParameterAssignment_1() { return cParameterAssignment_1; }
+
+		//TypeInfo
+		public RuleCall getParameterTypeInfoParserRuleCall_1_0() { return cParameterTypeInfoParserRuleCall_1_0; }
+	}
+
 	public class TypeInfoElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "TypeInfo");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -4365,6 +4401,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private UnitRefElements pUnitRef;
 	private VariableRefElements pVariableRef;
 	private TypeRefElements pTypeRef;
+	private SpeciesRefElements pSpeciesRef;
 	private TypeInfoElements pTypeInfo;
 	private SkillRefElements pSkillRef;
 	private ActionRefElements pActionRef;
@@ -4812,7 +4849,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ArgumentDefinition:
-	//	type=TypeRef name=Valid_ID ("<-" default=Expression)?;
+	//	type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?;
 	public ArgumentDefinitionElements getArgumentDefinitionAccess() {
 		return (pArgumentDefinition != null) ? pArgumentDefinition : (pArgumentDefinition = new ArgumentDefinitionElements());
 	}
@@ -5241,6 +5278,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getTypeRefRule() {
 		return getTypeRefAccess().getRule();
+	}
+
+	//SpeciesRef:
+	//	name="species" parameter=TypeInfo?;
+	public SpeciesRefElements getSpeciesRefAccess() {
+		return (pSpeciesRef != null) ? pSpeciesRef : (pSpeciesRef = new SpeciesRefElements());
+	}
+	
+	public ParserRule getSpeciesRefRule() {
+		return getSpeciesRefAccess().getRule();
 	}
 
 	//TypeInfo:

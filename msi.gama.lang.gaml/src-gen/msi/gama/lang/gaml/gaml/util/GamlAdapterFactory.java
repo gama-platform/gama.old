@@ -228,6 +228,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createVariableRefAdapter();
       }
       @Override
+      public Adapter caseSpeciesRef(SpeciesRef object)
+      {
+        return createSpeciesRefAdapter();
+      }
+      @Override
       public Adapter caseTypeInfo(TypeInfo object)
       {
         return createTypeInfoAdapter();
@@ -885,6 +890,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createVariableRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.SpeciesRef <em>Species Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.SpeciesRef
+   * @generated
+   */
+  public Adapter createSpeciesRefAdapter()
   {
     return null;
   }

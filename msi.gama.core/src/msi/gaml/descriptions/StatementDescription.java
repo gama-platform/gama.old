@@ -21,7 +21,6 @@ package msi.gaml.descriptions;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.*;
@@ -257,6 +256,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public void verifyArgs(final IDescription caller, final Arguments names) {
+
 		// GuiUtils.debug(this.toString() + " called by " + caller + " with " + names);
 		// if ( args == null ) { return; }
 		Set<String> allArgs = args == null ? Collections.EMPTY_SET : args.keySet();
@@ -284,7 +284,8 @@ public class StatementDescription extends SymbolDescription {
 			if ( argFacets.containsKey(DEFAULT) ) {
 				continue;
 			}
-			if ( c.getFacets().containsKey(OPTIONAL) && c.getFacets().get(OPTIONAL).equalsString(FALSE) ) {
+			if ( c.getFacets().containsKey(OPTIONAL) && c.getFacets().get(OPTIONAL).equalsString(FALSE) ||
+				!c.getFacets().containsKey(OPTIONAL) ) {
 				// GuiUtils.debug("arg found for " + this + ": " + n + " with optional=" + c.getFacets().get(OPTIONAL));
 				mandatoryArgs.add(n);
 			}
@@ -315,14 +316,6 @@ public class StatementDescription extends SymbolDescription {
 						caller
 							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
 					}
-					// else if ( formalType.hasContents() ) {
-					// formalType = args.get(name).getContentType();
-					// callerType = arg.getValue().getExpression().getContentType();
-					// if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
-					// caller.error("The content type of argument " + name + " should be " + formalType,
-					// IGamlIssue.WRONG_TYPE);
-					// }
-					// }
 				}
 			}
 		}
@@ -330,10 +323,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public void verifyArgs(final String actionName, final Arguments args) {
 		StatementDescription executer = getAction();
-		if ( executer == null ) {
-			// error("Unknown action " + actionName, ACTION);
-			return;
-		}
+		if ( executer == null ) { return; }
 		executer.verifyArgs(this, args);
 	}
 
@@ -692,10 +682,7 @@ public class StatementDescription extends SymbolDescription {
 	protected IExpression createVarWithTypes(final String tag) {
 
 		compileTypeProviderFacets();
-		// IExpression value = facets.getExpr(VALUE);
-		if ( tag.equals("aaa") ) {
-			GuiUtils.debug("StatementDescription.createVarWithTypes");
-		}
+
 		// Definition of the type
 		IType t = super.getType();
 
@@ -732,6 +719,7 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		// Last chance: grab the content and key from the value
+		// TODO Verify: maybe useless as already done above in getType()
 		boolean isContainerWithNoContentsType = t.isContainer() && ct == Types.NO_TYPE;
 		boolean isContainerWithNoKeyType = t.isContainer() && kt == Types.NO_TYPE;
 		boolean isSpeciesWithAgentType = t.id() == IType.SPECIES && ct.id() == IType.AGENT;
