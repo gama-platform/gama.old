@@ -5,8 +5,7 @@
 package msi.gama.util.file;
 
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaGeometryType;
@@ -84,6 +83,13 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
 		return GamaGeometryType.geometriesToGeometry(scope, getBuffer());
+	}
+
+	@Override
+	public void invalidateContents() {
+		super.invalidateContents();
+		gis = null;
+		initialCRSCode = null;
 	}
 
 }

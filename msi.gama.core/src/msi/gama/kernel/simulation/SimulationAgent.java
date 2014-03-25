@@ -70,7 +70,7 @@ public class SimulationAgent extends GamlAgent {
 	AgentScheduler scheduler;
 	IScope scope;
 	IOutputManager outputs;
-	final ProjectionFactory projectionFactory;
+	ProjectionFactory projectionFactory;
 
 	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
 		super(pop);
@@ -153,6 +153,7 @@ public class SimulationAgent extends GamlAgent {
 			scheduler.dispose();
 			scheduler = null;
 		}
+		projectionFactory = new ProjectionFactory();
 
 	}
 

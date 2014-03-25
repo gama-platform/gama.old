@@ -162,6 +162,7 @@ public class GamaGridFile extends GamaGisFile {
 		return createReader(scope).numCols;
 	}
 
+	@Override
 	public IShape getGeometry(final IScope scope) {
 		return createReader(scope).geom;
 	}
@@ -216,6 +217,12 @@ public class GamaGridFile extends GamaGisFile {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void invalidateContents() {
+		super.invalidateContents();
+		reader = null;
 	}
 
 }
