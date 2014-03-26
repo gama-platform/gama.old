@@ -73,7 +73,6 @@ public class CaptureStatement extends AbstractStatementSequence {
 	private IExpression target;
 	private final String returnString;
 	private String microSpeciesName = null;
-	// private IList<IAgent> microAgents = new GamaList<IAgent>();
 
 	private AbstractStatementSequence sequence = null;
 
@@ -109,8 +108,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 		final ISpecies macroSpecies = macroAgent.getSpecies();
 
 		final Object t = target.value(scope);
+		
 		if ( t == null ) {
-			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 

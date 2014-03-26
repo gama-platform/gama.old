@@ -44,8 +44,8 @@ import com.google.common.collect.Iterables;
 public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
-	// protected MetaPopulation microPopulations;
 	protected final IPopulation population;
+	
 	protected IShape geometry;
 	protected String name;
 
@@ -264,8 +264,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> migrateMicroAgents(final IScope scope, final ISpecies oldMicroSpecies,
 		final ISpecies newMicroSpecies) {
 		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
+		
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
-		// WARNING oldMicroPop appears to be null under certain conditions
 		final IList<IAgent> immigrants = new GamaList<IAgent>();
 		final Iterator<IAgent> it = oldMicroPop.iterator();
 		while (it.hasNext()) {
@@ -280,7 +280,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** Variables which are not saved during the capture and release process. */
 	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS,
-		IKeyword.HOST, IKeyword.TOPOLOGY, IKeyword.MEMBERS);
+		IKeyword.HOST, IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
 
 	/**
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
@@ -310,6 +310,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
 					continue;
 				}
+				
+				if (species.getVar(specVar).value(scope, agent) instanceof IPopulation) {
+					continue;
+				}
+					
 				if ( specVar.equals(IKeyword.SHAPE) ) {
 					// variables.put(specVar, geometry.copy());
 					// Changed 3/2/12: is it necessary to make the things below ?
@@ -367,7 +372,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 
 			for ( final String microPopName : innerPopulations.keySet() ) {
-				final IPopulation microPop = getHost().getMicroPopulation(microPopName);
+				final IPopulation microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
 
 				if ( microPop != null ) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
@@ -390,7 +395,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		final ISpecies microSpec = getModel().getSpecies(name);
-		if ( microSpec == null ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		attributes.put(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);
@@ -553,19 +557,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation[] getMicroPopulations() {
-		// if ( !attributes.containsKey("micropopulations") ) {
-		// Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
-		// microPopulations = new MetaPopulation(Iterables.toArray(it, IPopulation.class));
-		// }
-		IPopulation[] pops = (IPopulation[]) getAttribute("populations");
-		if ( pops == null ) {
-			Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
-			pops = Iterables.toArray(it, IPopulation.class);
-			setAttribute("populations", pops);
-		}
+		Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
+		IPopulation[] pops = Iterables.toArray(it, IPopulation.class);
+			
 		return pops;
-		// return microPopulations.getPopulations(getScope());
-		// return new GamaList<IPopulation>(microPopulations.values());
 	}
 
 	@Override

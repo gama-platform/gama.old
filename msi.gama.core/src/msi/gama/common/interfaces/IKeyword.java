@@ -274,7 +274,7 @@ public interface IKeyword {
 	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
-	public static final String PAUSE_MUSIC = "pause_music";
+	public static final String PAUSE_SOUND = "pause_sound";
 	public static final String PEERS = "peers";
 	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
 	public static final String PERTINENCE = "pertinence";
@@ -303,7 +303,7 @@ public interface IKeyword {
 	public final static String REMOTE = "remote";
 	public static final String REMOVE = "remove";
 	public static final String REPEAT = "repeat";
-	public static final String RESUME_MUSIC = "resume_music";
+	public static final String RESUME_SOUND = "resume_sound";
 	public static final String RETURN = "return";
 	public static final String RETURNS = "returns";
 	public static final String REWRITE = "rewrite";
@@ -334,12 +334,12 @@ public interface IKeyword {
 	public static final String SPEED = "speed";
 	public static final String SPLINE = "spline";
 	public static final String STACK = "stack";
-	public static final String START_MUSIC = "start_music";
+	public static final String START_SOUND = "start_sound";
 	public static final String STATE = "state";
 	public static final String STATE_TO_EXIT = "stateToExit";
 	public static final String STATES = "states";
 	public static final String STEP = "step";
-	public static final String STOP_MUSIC = "stop_music";
+	public static final String STOP_SOUND = "stop_sound";
 	public static final String STRATEGY = "scheduling_strategy";
 	public static final String STYLE = "style";
 	public static final String SWITCH = "switch";

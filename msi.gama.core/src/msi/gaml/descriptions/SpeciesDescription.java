@@ -405,7 +405,7 @@ public class SpeciesDescription extends TypeDescription {
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
 		// Takes care of invalid species (see Issue 711)
 		if ( parent == null || parent == this ) { return; }
-		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {
+		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {	
 			if ( !getMicroSpecies().containsKey(entry.getKey()) ) {
 				getMicroSpecies().put(entry.getKey(), entry.getValue());
 				// children.add(entry.getValue());
