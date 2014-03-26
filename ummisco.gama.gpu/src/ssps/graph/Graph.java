@@ -5,15 +5,13 @@
 package ssps.graph;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import ssps.util.P;
+import msi.gama.util.GamaMap;
+import ssps.algorithm.Dijkstra;
+
 
 /**
  * 
@@ -24,6 +22,8 @@ public class Graph {
 	private int edge_list[];
 	private float weight_list[];
 	private int vertex_count;
+	private Dijkstra dijkstraGPU;
+	GamaMap<Object, Integer> vertexId;
 
 	public int[] getVertex_list() {
 		return vertex_list;
@@ -46,13 +46,27 @@ public class Graph {
 	}
 
 	int edge_count;
+	
+	public Graph(int nbVertices, int nbEdges) {
+		vertex_count = nbVertices;
+		edge_count = nbEdges;
+		vertex_list = new int[vertex_count];
+		edge_list = new int[nbEdges];
+		weight_list = new float[nbEdges];
+		generateRandomGraph(nbVertices,nbEdges);
+		dijkstraGPU = new Dijkstra();
+		
+	}
 
-	public Graph() {
-		vertex_list = new int[P.V_MAX];
-		edge_list = new int[P.E_MAX];
-		weight_list = new float[P.E_MAX];
-		vertex_count = 0;
-		edge_count = 0;
+	public Graph(int[] vertices, int[] edges, float[] weights, int nbVertices, int nbEdges, GamaMap<Object, Integer> vertexId) {
+		vertex_list = vertices;
+		edge_list = edges;
+		weight_list = weights;
+		vertex_count = nbVertices;
+		edge_count = nbEdges;
+		dijkstraGPU = new Dijkstra();
+		this.vertexId = vertexId;
+		
 	}
 
 	public Graph(int vertexs[], int edges[], float weighs[], int nb_vertex,
@@ -62,6 +76,7 @@ public class Graph {
 		weight_list = weighs;
 		vertex_count = nb_vertex;
 		edge_count = nb_edge;
+		dijkstraGPU = new Dijkstra();
 	}
 
 	public void input(String file_name) {
@@ -112,51 +127,6 @@ public class Graph {
 		}
 	}
 
-	public void output(String file_name) {
-		try {
-			FileWriter writer = new FileWriter(file_name);
-			PrintWriter printer = new PrintWriter(writer);
-			printer.println(vertex_count);
-			int start;
-			int end;
-			for (int i = 0; i < vertex_count; i++) {
-				start = vertex_list[i];
-				if (i + 1 < vertex_count)
-					end = vertex_list[i + 1];
-				else
-					end = edge_count;
-				printer.print(end - start + "\t");
-				for (int j = start; j < end; j++) {
-					printer.print(" " + edge_list[j] + " " + weight_list[j]);
-				}
-				printer.println();
-			}
-			printer.close();
-		} catch (IOException ex) {
-			Logger.getLogger(Graph.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-
-	/*
-	 * public void generateRandomGraph(int nb_vertice, int nb_edge) { if
-	 * (nb_vertice > nb_edge || nb_edge > nb_vertice * nb_vertice) return;
-	 * Random rand = new Random(); this.vertex_count = nb_vertice;
-	 * this.vertex_list = new int[this.vertex_count]; this.edge_count = nb_edge;
-	 * this.edge_list = new int[nb_edge]; this.weight_list = new float[nb_edge];
-	 * int small = 1; int big = 100; int start; int end; int temp; int
-	 * nb_neighbor_per_vertex = nb_edge / nb_vertice; int smaller_v_rand = 0;
-	 * int bigger_v_rand; for (int i = 0; i < nb_vertice; i++) {
-	 * this.vertex_list[i] = i * nb_neighbor_per_vertex; } for (int i = 0; i <
-	 * nb_edge; i++) { for (int v = 0; v < nb_vertice; v++) { start =
-	 * vertex_list[v]; if (v + 1 < nb_vertice) end = vertex_list[v + 1]; else
-	 * end = nb_edge; if (i >= start && i < end) { if (v == 1) smaller_v_rand =
-	 * 0; if (v > 1) { smaller_v_rand = rand.nextInt(v - 1); } if(v + 1 <
-	 * nb_vertice) { temp = rand.nextInt(nb_vertice-v); if(temp == 0)
-	 * bigger_v_rand = v + 1; else bigger_v_rand = v + temp; } else
-	 * bigger_v_rand = v - 1; if (rand.nextBoolean()) this.edge_list[i] =
-	 * smaller_v_rand; else this.edge_list[i] = bigger_v_rand; } }
-	 * this.weight_list[i] = small + (big - small) * rand.nextFloat(); } }
-	 */
 
 	public void generateRandomGraph(int nb_vertice, int nb_edge) {
 		Random rand = new Random();
@@ -177,29 +147,22 @@ public class Graph {
 		}
 	}
 
-	public void optimiserGraph() {
-		int start;
-		int end;
-		float edge_commun_smaller_weigh[] = new float[vertex_count];
-		for (int v = 0; v < vertex_count; v++) {
-			start = vertex_list[v];
-			if (v + 1 < vertex_count)
-				end = vertex_list[v + 1];
-			else
-				end = edge_count;
-			for (int j = 0; j < vertex_count; j++)
-				edge_commun_smaller_weigh[j] = Float.MAX_VALUE;
-			for (int i = start; i < end; i++) {
-				if (edge_commun_smaller_weigh[edge_list[i]] > this.weight_list[i])
-					edge_commun_smaller_weigh[edge_list[i]] = this.weight_list[i];
-			}
-
-			for (int i = start; i < end; i++) {
-				this.weight_list[i] = edge_commun_smaller_weigh[edge_list[i]];
-				if (edge_list[i] == v)
-					this.weight_list[i] = 0;
-			}
-		}
+	public Dijkstra getDijkstraGPU() {
+		return dijkstraGPU;
 	}
+
+	public void setDijkstraGPU(Dijkstra dijkstraGPU) {
+		this.dijkstraGPU = dijkstraGPU;
+	}
+
+	public GamaMap<Object, Integer> getVertexId() {
+		return vertexId;
+	}
+
+	public void setVertexId(GamaMap<Object, Integer> vertexId) {
+		this.vertexId = vertexId;
+	}
+	
+	
 
 }

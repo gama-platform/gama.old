@@ -9,6 +9,5 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/nicolas/Documents/wsMiro/nqkhai.tpe.gama.jocl/lib/JOCL-0.1.9-bin/JOCL-0.1.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
