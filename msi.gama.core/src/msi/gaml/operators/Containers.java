@@ -54,7 +54,7 @@ import com.google.common.collect.*;
  */
 public class Containers {
 
-	@operator(value = { "internal_at" }, content_type = IType.NONE)
+	@operator(value = { "internal_at" }, content_type = IType.NONE, category={IOperatorCategory.CONTAINER})
 	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 		throws GamaRuntimeException {
