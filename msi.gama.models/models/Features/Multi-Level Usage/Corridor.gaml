@@ -173,7 +173,7 @@ entities {
 	}
 }
 
-experiment default_expr type: gui{
+experiment corridor_expr type: gui{
 	output {
 		display defaut_display {
 			species pedestrian;

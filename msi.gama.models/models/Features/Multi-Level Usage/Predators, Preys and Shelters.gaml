@@ -10,13 +10,13 @@ global {
 	rgb prey_invisible_color <- rgb ('black');  
 	int prey_in_shelter_max_time min: 1 init: 200;
 	int prey_invisible_max_time min: 1 max: 100 init: 70; 
-	int number_of_prey min: 1 max: 1000 init: 100;
+	int number_of_preys min: 1 max: 1000 init: 100;
 	
 	rgb predator_color <- rgb ('red') const: true;
 	float predator_perception <- 3.0;
 	float predator_size <- 4.0;
 	float predator_speed <- 1.0;
-	int number_of_predator min: 1 max: 100 init: 30; 
+	int number_of_predators min: 1 max: 100 init: 30; 
 	geometry shape <- square(400);
 	
 	rgb predator_in_shelter_color <- rgb ('yellow') const: true;
@@ -28,8 +28,8 @@ global {
 	
 	
 	init {
-		create prey number: number_of_prey;
-		create predator number: number_of_predator; 
+		create prey number: number_of_preys;
+		create predator number: number_of_predators; 
 		create shelter number: number_of_shelter returns: shelters;
 		(shelters at 0).shape <- shelter_shape at_location {150, 250};
 		(shelters at 1).shape <- shelter_shape at_location {350, 250};

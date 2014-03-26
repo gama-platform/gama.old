@@ -63,11 +63,12 @@ global {
 	reflex create_clouds when: (create_cloud and ((cycle mod creation_frequency) = 0) ) {
 		list<group> candidate_groups <- group where (length(each.members) > (0.05 * ball_number) );
 		list<list> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
-		loop one_cloud over: satisfying_groups {
+		
+		loop one_group over: satisfying_groups {
 			create cloud returns: rets;			
 			cloud newCloud <- rets at 0; 
 			ask newCloud as: cloud {
-				capture one_cloud as: group_delegation;
+				capture one_group as: group_delegation;
 			}
 
 			loop gd over: (newCloud.members) {
@@ -312,19 +313,20 @@ global {
 	}
 	
 	species cloud parent: base {
-		geometry shape update: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
+		geometry shape <- convex_hull(polygon(members collect (((group_delegation(each)).shape).location))) update: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
+
 		rgb color;
 				
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			geometry shape update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+			geometry shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer 10 update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
-			reflex capture_nearby_free_balls when: (cycle mod update_frequency) = 0 {
+			reflex capture_nearby_free_balls when: false {
 			}
 			
-			reflex merge_nearby_groups when: (cycle mod merge_frequency) = 0 {
+			reflex merge_nearby_groups when: false {
 			}
 			
-			reflex chase_target when: (target != nil) {
+			reflex chase_target when: false {
 			}
 			
 			reflex self_disaggregate {
@@ -485,10 +487,13 @@ experiment cloud_experiment type: gui {
 			species group_agents_viewer;
 		}
 
-		display 'Group display' {
-			species group;
-			species group_agents_viewer;
+		display 'Cloud display' {
+			species cloud;
 		}
+		
+		monitor balls value: length(ball);
+		monitor groups value: length(group);
+		monitor clouds value: length(cloud);
 	}
 }
 
