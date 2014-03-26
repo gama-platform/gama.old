@@ -1,7 +1,7 @@
 package ummisco.gama.communicator;
 
 public interface ICommunicatorSkill {
-	public static String CONNECT_TOPIC = "connectMessendesger";
+	public static String CONNECT_TOPIC = "connectMessenger";
 	
 	public static String BOX_NAME = "to";
 	public static String SERVER_URL = "at";
