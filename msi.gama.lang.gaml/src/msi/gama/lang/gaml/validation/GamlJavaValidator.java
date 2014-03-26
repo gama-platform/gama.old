@@ -77,7 +77,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
 				final long begin = System.nanoTime();
 				final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
-				result = parse(r, resourceSet);
+				result = parse(r, resourceSet, true);
 				if ( r.getErrors().isEmpty() ) {
 					result.validate();
 				}
@@ -99,14 +99,29 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
-	public ModelDescription validateForContentAssist(final GamlResource r) {
+	public IModel build(final EObject object) {
+		if ( !(object instanceof Model) ) { return null; }
+		Model model = (Model) object;
+		final GamlResource r = (GamlResource) model.eResource();
+		try {
+			ModelDescription description = parse(r, buildResourceSet, false);
+			if ( r.getErrors().isEmpty() ) {
+				final IModel result_model = (IModel) description.compile();
+				return result_model;
+			}
+		} catch (Exception e) {
+			error("Cannot compile file because of : " + e.getMessage(), r.getContents().get(0), null);
+			return null;
+		} finally {
+			cleanResourceSet(buildResourceSet, true);
+		}
 		return null;
 	}
 
 	// TODO : Verify the behavior in case of compilation errors.
 	public IModel build(final GamlResource resource) {
 		try {
-			final ModelDescription description = parse(resource, buildResourceSet);
+			final ModelDescription description = parse(resource, buildResourceSet, true);
 			if ( resource.getErrors().isEmpty() ) {
 				final IModel model = (IModel) description.compile();
 				return model;
@@ -121,13 +136,18 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
-		final ResourceSet resourceSet) {
+		final ResourceSet resourceSet, final boolean forceReload) {
 		final Map<URI, ISyntacticElement> models = new LinkedHashMap();
 		final LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
 		final LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
 		// Forcing the resource set to reload the primary resource, even though it has been
 		// passed, in order to be sure that all resources will belong to the same resource set.
-		final GamlResource first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
+		final GamlResource first;
+		if ( forceReload ) {
+			first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
+		} else {
+			first = resource;
+		}
 
 		newResources.add(first);
 		while (!newResources.isEmpty()) {
@@ -173,8 +193,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	@SuppressWarnings("restriction")
-	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
-		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
+	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet,
+		final boolean forceReload) {
+		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet, forceReload);
 		GAML.getExpressionFactory().getParser().reset();
 		IPath path;
 		boolean isFile = false;
@@ -279,7 +300,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			Set<String> importsWithErrors = new HashSet();
 			importsWithErrors.add(uri);
 			context.put(currentObject, importsWithErrors);
-			error(string, currentObject, gamlDefinitionName, importError, uri);
+			warning(string, currentObject, gamlDefinitionName, importError, uri);
 		}
 	}
 
