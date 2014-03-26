@@ -335,67 +335,67 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	}
 
-	@operator("edge")
+	@operator(value="edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object source, final Object target, final Double weight) {
 		return edge(source, target, null, weight);
 	}
 
-	@operator("edge")
+	@operator(value="edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final GamaPair pair, final Object object, final Double weight) {
 		return edge(pair.key, pair.value, object, weight);
 	}
 
-	@operator("edge")
+	@operator(value="edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object source, final Object target) {
 		return edge(source, target, null, null);
 	}
 
-	@operator("edge")
+	@operator(value="edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object source, final Object target, final Object object) {
 		return edge(source, target, object, null);
 	}
 
-	@operator("edge")
+	@operator(value="edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object source, final Object target, final Object object, final Double weight) {
 		return new EdgeToAdd(source, target, object, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE)
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object edgeObject, final Double weight) {
 		return edge(null, null, edgeObject, weight);
 	}
 
-	@operator(value = "edge")
+	@operator(value = "edge", category={IOperatorCategory.GRAPH})
 	public static Object edge(final GamaPair pair, final Double weight) {
 		return edge(pair.key, pair.value, null, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE)
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
 	public static Object edge(final Object object) {
 		return edge(null, null, object, null);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE)
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
 	public static Object edge(final GamaPair pair) {
 		return edge(pair.key, pair.value, null, null);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE)
+	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
 	public static Object node(final Object object, final Double weight) {
 		return new NodeToAdd(object, weight);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE)
+	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
 	public static Object node(final Object nodeObject) {
 		return node(nodeObject, null);
 	}
 
-	@operator(value = "nodes", type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "nodes", type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
 	public static IContainer nodes(final IScope scope, final IContainer nodes) {
 		return new NodesToAdd(scope, nodes);
 	}
 
-	@operator(value = "edges", type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = "edges", type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
 	public static IContainer edges(final IScope scope, final IContainer nodes) {
 		return new EdgesToAdd(scope, nodes);
 	}

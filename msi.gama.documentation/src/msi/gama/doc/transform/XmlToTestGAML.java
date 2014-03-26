@@ -150,6 +150,19 @@ public class XmlToTestGAML {
 			hm.put("/", "Divide");
 			hm.put("+", "Plus");
 			hm.put("^", "Power");
+			hm.put("!=", "Different");
+			hm.put("<>", "Different2");				
+			hm.put("<", "LT");
+			hm.put("<=", "LE");
+			hm.put(">", "GT");
+			hm.put(">=", "GE");
+			hm.put("=", "Equals");
+			hm.put(":", "ELSEoperator");
+			hm.put("!", "NOunary");
+			hm.put("?", "IFoperator");
+			hm.put("::", "DoublePoint");
+			hm.put("@", "Arobase");
+			hm.put(".", "PointAcces");
 			return hm;
 		}
 		

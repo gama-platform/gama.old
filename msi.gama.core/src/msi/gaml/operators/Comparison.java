@@ -210,7 +210,7 @@ public class Comparison {
 
 	@operator(value = LTE, can_be_const = true,category={IOperatorCategory.COMPARISON,IOperatorCategory.STRING})
 	@doc(value="Returns true if the left-hand operand is smaller than or equal to the right-hand operand, false otherwise.",
-		usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings", examples = { @example(value="abc <= aeb",equals="true") }))
+		usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings", examples = { @example(value="'abc' <= 'aeb'",equals="true") }))
 	public static Boolean lessOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -219,7 +219,7 @@ public class Comparison {
 
 	@operator(value = GTE, can_be_const = true,category={IOperatorCategory.COMPARISON,IOperatorCategory.STRING})
 	@doc(value = "Returns true if the left-hand operand is greater than or equal to the right-hand operand, false otherwise.", 
-		usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings",examples = {@example(value="abc >= aeb",equals="false"), @example(value="abc >= abc",equals="true") }))
+		usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings",examples = {@example(value="'abc' >= 'aeb'",equals="false"), @example(value="'abc' >= 'abc'",equals="true") }))
 	public static Boolean greaterOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -229,7 +229,7 @@ public class Comparison {
 	@operator(value = LT, can_be_const = true,category={IOperatorCategory.COMPARISON,IOperatorCategory.STRING})
 	@doc(value = "A lexicographic comparison of two strings. Returns true if the left-hand operand is smaller than the right-hand operand, false otherwise.", 
 		usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings", 
-		examples = { @example(value="abc < aeb",equals="true") }))
+		examples = { @example(value="'abc' < 'aeb'",equals="true") }))
 	public static Boolean less(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -238,7 +238,7 @@ public class Comparison {
 
 	@operator(value = GT, can_be_const = true,category={IOperatorCategory.COMPARISON,IOperatorCategory.STRING})
 	@doc(value = "Returns true if the left-hand operand is greater than the right-hand operand, false otherwise.",
-			usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings", examples = { @example(value="abc > aeb",equals="false") }))
+			usages = @usage(value="if both operands are String, uses a lexicographic comparison of two strings", examples = { @example(value="'abc' > 'aeb'",equals="false") }))
 	public static Boolean greater(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);

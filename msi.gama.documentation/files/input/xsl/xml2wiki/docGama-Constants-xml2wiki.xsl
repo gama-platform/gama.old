@@ -70,12 +70,12 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 
 			<xsl:for-each select="categories/category">
 				<xsl:variable name="catItem" select="@id"/>
-				<xsl:if test="$catItem = $categoryGlobal"> 
+				<xsl:if test="$catItem = $categoryGlobal">
 						<xsl:text>
   * *</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>*</xsl:text> <xsl:if test="../../@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
   	<xsl:if test="../../documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="../../documentation/result[text()]"/>  
     </xsl:if>
-				</xsl:if>			
+				</xsl:if>		 
 			</xsl:for-each>
 		</xsl:for-each> 
 		</xsl:if>   	
@@ -91,7 +91,7 @@ In addition to the previous units, GAML provides a direct access to the 147 name
 rgb my_color &lt;- °teal;
 }}}
 </xsl:text>
-    <xsl:for-each select="/doc/constants/constant[categories/category/@id=$colors]">
+    <xsl:for-each select="/doc/constants/constant[categories/category/@id = $colors]">
 			<xsl:sort select="@name" />
 			<xsl:variable name="unitName" select="@name"/>
 			<xsl:variable name="unitAltNames" select="@altNames"/>

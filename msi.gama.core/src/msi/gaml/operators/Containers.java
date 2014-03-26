@@ -179,7 +179,7 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true, category={IOperatorCategory.MATRIX})
 	@doc(value = "the index of the first occurence of the right operand in the left operand container", 
-		usages = @usage(value="if the left operand is a matrix, index_of returns the index as a point", examples = { @example(value="matrix([[1,2,3],[4,5,6]]) index_of 4", equals="{1.0;0.0}")}))
+		usages = @usage(value="if the left operand is a matrix, index_of returns the index as a point", examples = { @example(value="matrix([[1,2,3],[4,5,6]]) index_of 4", equals="{1.0,0.0}")}))
 	public static ILocation index_of(final IScope scope, final IMatrix m, final Object o) {
 		for ( int i = 0; i < nullCheck(m).getCols(scope); i++ ) {
 			for ( int j = 0; j < m.getRows(scope); j++ ) {
@@ -451,7 +451,7 @@ public class Containers {
 	@doc(value = "Returns a list of length the value of the left-hand operand, containing random elements from the right-hand operand. As of GAMA 1.6, the order in which the elements are returned can be different than the order in which they appear in the right-hand container", special_cases = {
 		"if the right-hand operand is empty, among returns a new empty list. If it is nil, it throws an error.",
 		"if the left-hand operand is greater than the length of the right-hand operand, among returns the right-hand operand. If it is smaller or equal to zero, it returns an empty list" }, examples = {
-		@example(value="3 among [1,2,4,3,5,7,6,8]", equals="[1,2,8]"), @example(value="3 among g2", equals="[node6,node11,node7]"),
+		@example(value="3 among [1,2,4,3,5,7,6,8]", equals="[1,2,8]"), @example(value="3 among g2", equals="[node6,node11,node7]",isExecutable=false),
 		@example(value="3 among list(node)", equals="[node1,node11,node4]", isExecutable=false) })
 	public static IList among(final IScope scope, final Integer number, final IContainer c) throws GamaRuntimeException {
 		final List l = new GamaList(nullCheck(c).listValue(scope, Types.NO_TYPE));

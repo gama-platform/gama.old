@@ -75,7 +75,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		 * @return
 		 * @throws GamaRuntimeException
 		 */
-		@operator(value = { "internal_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
+		@operator(value = { "internal_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.CONTAINER})
 		@doc(value="For internal use only. Corresponds to the implementation of the access to containers with [index]", see={IKeyword.AT})
 		public ValueType getFromIndicesList(IScope scope, IList<KeyType> indices) throws GamaRuntimeException;
 

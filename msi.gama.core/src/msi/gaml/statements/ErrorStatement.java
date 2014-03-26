@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false) }, omissible = IKeyword.MESSAGE)
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false, doc=@doc("the message to display in the error.")) }, omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an error dialog (if the simulation contains a user interface). Otherwise displays the error in the console.", 
 	usages = {@usage(examples = {@example("error 'This is an error raised by ' + self;")})})
 public class ErrorStatement extends AbstractStatement {

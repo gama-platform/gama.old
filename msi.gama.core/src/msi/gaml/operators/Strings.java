@@ -151,7 +151,7 @@ public class Strings {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, category={IOperatorCategory.STRING})
-	@doc(examples = @example(value="copy_between(\"abcabcabc\", 2,6)",equals="cabc"))
+	@doc(examples = @example(value="copy_between(\"abcabcabc\", 2,6)",equals="\"cabc\""))
 	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
 		int bIndex = beginIndex < 0 ? 0 : beginIndex;
 		int eIndex = endIndex > target.length() ? target.length() : endIndex;
@@ -161,7 +161,7 @@ public class Strings {
 
 	@operator(value = { "split_with", "tokenize" }, content_type = IType.STRING, can_be_const = true, category={IOperatorCategory.STRING})
 	@doc(value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.", comment = "Delimiters themselves are excluded from the resulting list.", 
-		examples = @example(value="'to be or not to be,that is the question' split_with ' ,'",equals="[to,be,or,not,to,be,that,is,the,question]"))
+		examples = @example(value="'to be or not to be,that is the question' split_with ' ,'",equals="['to','be','or','not','to','be','that','is','the','question']"))
 	public static IList opTokenize(final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return new GamaList(Collections.list(st));
@@ -307,7 +307,7 @@ public class Strings {
 	}
 	
 	@operator(value = "toChar", can_be_const = true, category={IOperatorCategory.STRING})
-	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { @example("toChar (34) 		--: 	\"") })
+	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { @example(value="toChar (34)",equals="\"") })
 	static public String toChar(final Integer s) {
 		return asChar(s);
 	}

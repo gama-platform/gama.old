@@ -70,6 +70,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private GamlProperties gp;
 	// JavaAgentBaseWriter jabw;
 
+	boolean alwaysDoc = false;
 	GamlDocProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
@@ -144,7 +145,7 @@ public class GamaProcessor extends AbstractProcessor {
 				// "Exception while generating GamlAdditions file ");
 				// }
 			}
-			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
+			if ( "true".equals(processingEnv.getOptions().get("doc")) || alwaysDoc ) {
 				// new XMLWriter(processingEnv).write(createWriter("doc.xml"), gp);
 				if ( docProc.firstParsing ) {
 					docProc.processDocXML(env, createWriter("docGAMA.xml"));

@@ -17,7 +17,7 @@ import org.jdom2.output.XMLOutputter;
 
 public class UnifyDoc {
 
-	private static String[] tabEltXML = {"operatorsCategories","operators", "skills","speciess","statements"};	
+	private static String[] tabEltXML = {"operatorsCategories","operators", "skills","speciess","statements","constantsCategories","constants"};	
 	
 	public static void unify() throws IOException, JDOMException {
 		HashMap<File,String> hmFilesPackages = getMapFiles(".");

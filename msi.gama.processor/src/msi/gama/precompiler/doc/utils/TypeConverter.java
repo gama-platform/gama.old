@@ -23,6 +23,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
 		hm.put("java.lang.Integer", "int");
 		hm.put("java.lang.Double", "float");
+		hm.put("double", "float");		
 		hm.put("java.lang.Long", "float");		
 		hm.put("msi.gama.util.file.IGamaFile", "file");
 		hm.put("msi.gama.util.GamaColor", "rgb");
@@ -41,7 +42,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list of double");
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
 		hm.put("msi.gama.metamodel.shape.ILocation", "point");
-		hm.put("java.lang.Object", "any");
+		hm.put("java.lang.Object", "unknown");
 		hm.put("msi.gama.util.GamaPair", "pair");
 		hm.put("java.lang.Boolean", "bool");
 		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
@@ -55,12 +56,12 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer", "container");
 		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
 		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container of shapes");
-		hm.put("msi.gama.metamodel.shape.GamaShape", "geaometry");
+		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");
 		hm.put("java.util.Map", "map");
-		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map");
+		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		hm.put("msi.gama.util.IPath", "path");		
 		hm.put("msi.gama.util.path.IPath", "path");
-		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,any>");
+		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		return hm;
 	}
 	
@@ -106,7 +107,7 @@ public class TypeConverter {
 		hm.put("Graphs", 				IOperatorCategory.GRAPH);
 		hm.put("GraphsGraphstream", 	IOperatorCategory.GRAPH);
 		hm.put("Logic", 			IOperatorCategory.LOGIC);
-		hm.put("Maths", 				IOperatorCategory.MATHEMATIC);
+		hm.put("Maths", 				IOperatorCategory.ARITHMETIC);
 		hm.put("GamaFloatMatrix", 	IOperatorCategory.MATRIX);
 		hm.put("GamaIntMatrix", 	IOperatorCategory.MATRIX);
 		hm.put("GamaMatrix", 		IOperatorCategory.MATRIX);

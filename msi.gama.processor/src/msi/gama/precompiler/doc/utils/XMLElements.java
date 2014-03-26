@@ -1,22 +1,5 @@
 package msi.gama.precompiler.doc.utils;
 
-import java.util.Set;
-
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-
-import org.w3c.dom.Document;
-
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.doc.DocProcessorAnnotations;
-
 public class XMLElements {
 	public static final String DOC = "doc";
 	public static final String OPERATORS_CATEGORIES = "operatorsCategories";

@@ -509,13 +509,13 @@ public class Maths {
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
 	@doc(value = "Returns the product of the two operands.", masterDoc = true, usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic product and returns a float if one of them is a float.")}, examples = {
-		@example(value="1 + 1",equals="2"), @example(value="2 + 2.5",equals="4.5") }, see = {IKeyword.PLUS, IKeyword.MINUS, IKeyword.DIVIDE })
+		@example(value="1 * 1",equals="1") }, see = {IKeyword.PLUS, IKeyword.MINUS, IKeyword.DIVIDE })
 	public static Integer opTimes(final Integer a, final Integer b) {
 		return a * b;
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc(value = "Returns the product of the two operands", examples = {}, see = "/")
+	@doc(value = "Returns the product of the two operands", examples = { @example(value="2.5 * 2",equals="5.0")}, see = "/")
 	public static Double opTimes(final Double a, final Integer b) {
 		return Double.valueOf(a * b);
 	}
@@ -538,14 +538,14 @@ public class Maths {
 		return b.times(a);
 	}
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category={IOperatorCategory.ARITHMETIC})
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.ARITHMETIC})
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
 	@doc(value = "Returns the sum, union or concatenation of the two operands.", masterDoc = true, usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.", examples = {
-		@example(value="1 + 1",equals="2"), @example(value="2 + 2.5",equals="4.5") }) }, see = {
+		@example(value="1 + 1",equals="2")}) }, see = {
 		IKeyword.MINUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static Integer opPlus(final Integer a, final Integer b) {
 		return a + b;
@@ -584,14 +584,14 @@ public class Maths {
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
 	@doc(value = "Returns the difference of the two operands.", masterDoc=true, usages = { @usage(value = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.", examples = {
-		@example(value="1 - 1",equals="0"), @example(value="3 - 1.2",equals="1.8") }) }, see = {
+		@example(value="1 - 1",equals="0") }) }, see = {
 		IKeyword.PLUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static Integer opMinus(final Integer a, final Integer b) {
 		return a - b;
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc(value = "the difference of the two operands", examples = @example(value="1.0 - 1",equals="0.0"))
+	@doc(value = "the difference of the two operands", examples = {@example(value="1.0 - 1",equals="0.0")})
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
@@ -609,13 +609,14 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category={IOperatorCategory.ARITHMETIC})
-	@doc(usages = { @usage(value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic difference of the number with each element of the matrix (results are float if the number is a float.", examples = { @example("matrix<float> m <- 3.5 + matrix([[2,5],[3,4]]);	// m equals matrix([[5.5,8.5],[6.5,7.5]])") }) })
+	@doc(value = "the difference of the two operands", usages = { @usage(value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic difference of the number with each element of the matrix (results are float if the number is a float.", examples = { @example(value="3.5 - matrix([[2,5],[3,4]])", equals="matrix([[1.5,-1.5],[-0.5,0.5]])") }) })
 	// TODO check update
 	public static IMatrix opMinus(final Integer a, final IMatrix b) {
 		return b.times(-1).plus(a);
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category={IOperatorCategory.ARITHMETIC})
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.ARITHMETIC})
+	@doc(value = "the difference of the two operands")
 	public static IMatrix opMinus(final Double a, final IMatrix b) {
 		return b.times(-1).plus(a);
 	}
@@ -663,8 +664,8 @@ public class Maths {
 
 	@operator(value = "ceil", can_be_const = true)
 	@doc(value = "Maps the operand to the smallest following integer, i.e. the smallest integer not less than x.", examples = {
-		@example(value="float f1 <- ceil(3)",equals="3.0"), @example(value="float f2 <- ceil(3.5)",equals="4.0"),
-		@example(value="float f3 <- ceil(-4.7)",equals="-4.0") }, see = { "floor", "round" })
+		@example(value="ceil(3)",equals="3.0"), @example(value="ceil(3.5)",equals="4.0"),
+		@example(value="ceil(-4.7)",equals="-4.0") }, see = { "floor", "round" })
 	public static final double ceil(final double d) {
 		return Math.ceil(d);
 	}
@@ -735,10 +736,12 @@ public class Maths {
 	}
 
 	@operator(value = "atan2", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	// TODO doc de atan2 .........
+	@doc(value = "the atan2 value of the two operands.", comment= "The function atan2 is the arctangent function with two arguments. The purpose of using two arguments instead of one is to gather information on the signs of the inputs in order to return the appropriate quadrant of the computed angle, which is not possible for the single-argument arctangent function.", masterDoc = true, 
+	examples = @example(value="atan2 (0,0)", equals="0.0"), see = {"atan", "acos", "asin" })
 	public static double atan2(final double y, final double x) {
 		return Math.atan2(y, x) * toDeg;
 	}
+	
 
 	public static double aTan2(final double y, final double x) {
 		final double abs_y = Math.abs(y);
@@ -778,19 +781,19 @@ public class Maths {
 	}
 
 	@operator(value = "is_number", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc("Returns whether the argument is a real number or not")
+	@doc(value="Returns whether the argument is a real number or not", examples={@example(value="is_number(4.66)",equals="true"),@example(value="is_number(#infinity)",equals="false"),@example(value="is_number(#nan)",equals="false")})
 	public static Boolean is_number(final Double d) {
 		return !Double.isNaN(d);
 	}
 
 	@operator(value = "is_finite", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc("Returns whether the argument is a finite number or not")
+	@doc(value="Returns whether the argument is a finite number or not", examples={@example(value="is_finite(4.66)",equals="true"),@example(value="is_finite(#infinity)",equals="false")})
 	public static Boolean is_finite(final Double d) {
 		return !Double.isInfinite(d);
 	}
 
 	@operator(value = "signum", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc("Returns -1 if the argument is negative, +1 if it is positive, 0 if it is equal to zero or not a number")
+	@doc(value="Returns -1 if the argument is negative, +1 if it is positive, 0 if it is equal to zero or not a number", examples={@example(value="signum(-12)",equals="-1"),@example(value="signum(14)",equals="1"),@example(value="signum(0)",equals="0")})
 	public static Integer signum(final Double d) {
 		if ( d == null || d.isNaN() || Comparison.equal(d, 0d) ) { return 0; }
 		if ( d < 0 ) { return -1; }

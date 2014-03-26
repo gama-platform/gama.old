@@ -19,9 +19,6 @@
 package msi.gama.precompiler;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -203,6 +200,14 @@ public class GamlDocProcessor {
 			
 			if((e.getAnnotation(constant.class).category() != null) && (IConstantCategory.COLOR_CSS.equals(e.getAnnotation(constant.class).category()[0]))) {
 				Object[] colorTab = ColorCSS.array;
+				for(int i = 0; i<colorTab.length; i+=2){
+					org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);		
+					constantElt.setAttribute(XMLElements.ATT_CST_NAME, DocProcessorAnnotations.PREFIX_CONSTANT+colorTab[i]);
+					constantElt.setAttribute(XMLElements.ATT_CST_VALUE, "r="+((int[])colorTab[i+1])[0]+", g="+((int[])colorTab[i+1])[1]+", b="+((int[])colorTab[i+1])[2]+", alpha="+((int[])colorTab[i+1])[3]);
+					constantElt.appendChild(DocProcessorAnnotations.getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES),tc));
+					
+					eltConstants.appendChild(constantElt);
+				}
 			}
 		}
 		return eltConstants;
@@ -280,21 +285,23 @@ public class GamlDocProcessor {
 			NodeList nL = categories.getElementsByTagName(XMLElements.CATEGORY);
 			
 			for(String categoryName : categoryNames) {
-				int i = 0;
-				boolean found = false;
-				while (!found && i < nL.getLength()) {
-					org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-					if ( categoryName.equals(tc.getProperCategory(elt.getAttribute(XMLElements.ATT_CAT_ID))) ) {
-						found = true;
+				if(!IOperatorCategory.DEPRECATED.equals(categoryName)){
+					int i = 0;
+					boolean found = false;
+					while (!found && i < nL.getLength()) {
+						org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
+						if ( categoryName.equals(tc.getProperCategory(elt.getAttribute(XMLElements.ATT_CAT_ID))) ) {
+							found = true;
+						}
+						i++;
 					}
-					i++;
-				}
-	
-				if ( !found ) {
-					org.w3c.dom.Element category;
-					category = doc.createElement(XMLElements.CATEGORY);
-					category.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
-					categories.appendChild(category);
+		
+					if ( !found ) {
+						org.w3c.dom.Element category;
+						category = doc.createElement(XMLElements.CATEGORY);
+						category.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
+						categories.appendChild(category);
+					}
 				}
 			}
 		}

@@ -80,12 +80,12 @@ public class WriteStatement extends AbstractStatement {
 		return mes;
 	}
 
-	@operator(value = "sample", doc = @doc("Returns a string containing the GAML code of the expression passed in parameter, followed by the result of its evaluation"))
+	@operator(value = "sample", doc = @doc("Returns a string containing the GAML code of the expression passed in parameter, followed by the result of its evaluation"), category={IOperatorCategory.STRING})
 	public static String sample(final IScope scope, final IExpression expr) {
 		return sample(scope, expr == null ? "nil" : expr.toGaml(), expr);
 	}
 
-	@operator(value = "sample", doc = @doc("Returns a string containing the string passed in parameter, followed by the result of the evaluation of the expression"))
+	@operator(value = "sample", doc = @doc("Returns a string containing the string passed in parameter, followed by the result of the evaluation of the expression"), category={IOperatorCategory.STRING})
 	public static String sample(final IScope scope, final String text, final IExpression expr) {
 		return text == null ? "" : text.trim() + " -: " + (expr == null ? "nil" : Cast.toGaml(expr.value(scope)));
 	}

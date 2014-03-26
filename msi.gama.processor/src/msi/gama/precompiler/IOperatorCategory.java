@@ -26,7 +26,6 @@ package msi.gama.precompiler;
  */
 public interface IOperatorCategory {
 
-	public static final String MATHEMATIC		= "Mathematics operators";
 	public static final String ARITHMETIC 		= "Arithmetic operators";
 	public static final String LOGIC			= "Logical operators";
 	public static final String RANDOM			= "Random operators";
@@ -71,4 +70,6 @@ public interface IOperatorCategory {
 	public static final String USER_CONTROL 	= "User control operators";
 	
 	public static final String TIME				= "Time-related operators";
+	
+	public static final String DEPRECATED 		= "DeprecatedOperators";	
 }

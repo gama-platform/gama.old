@@ -20,10 +20,13 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -41,7 +44,9 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.WARNING, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false) }, omissible = IKeyword.MESSAGE)
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false,
+	doc =@doc("the message to display as a warning.")) },omissible = IKeyword.MESSAGE)
+@doc(value = "The statement makes the agent output an arbitrary message in the error view as a warning.", usages = {@usage(examples = {@example("warn 'This is a warning from ' + self;")})})
 public class WarnStatement extends AbstractStatement {
 
 	final IExpression message;

@@ -124,50 +124,50 @@ public class Colors {
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "Returns a color defined by red, green, blue components and an alpha blending value.", masterDoc=true, usages = @usage("It can be used with r=red, g=greeb, b=blue, each between 0 and 255"), examples = @example("rgb colorRGB <- rgb (255,0,0);"), see = "hsb")
+	@doc(value = "Returns a color defined by red, green, blue components and an alpha blending value.", masterDoc=true, usages = @usage("It can be used with r=red, g=greeb, b=blue, each between 0 and 255"), examples = @example(value="rgb (255,0,0)",equals="#red"), see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b) {
 		return new GamaColor(r, g, b, 255);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 1)"), examples = @example("rgb colorRGBalpha <- rgb (255,0,0,0.5);"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 1)"), examples = @example(value="rgb (255,0,0,0.5)",equals="rgb(125,0,0)"), see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b, final int alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 255)"), examples = @example("rgb colorName <- rgb (\"red\");"), see = "hsb")
+	@doc(value = "rgb named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 255)"), examples = @example(value="rgb (\"red\")",equals="rgb(255,0,0)"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb  named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 1)"), examples = @example("rgb colorNameAlpha <- rgb (\"red\",0.2);"), see = "hsb")
+	@doc(value = "rgb  named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 1)"), examples = @example(value="rgb(\"red\",0.2)",equals="rgb([5,0,0])"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 255"), examples = @example("rgb color <- rgb(rgb(255,0,0),125);"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 255"), examples = @example(value="rgb(rgb(255,0,0),125)", equals="#cyan"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 1"), examples = @example("rgb color <- rgb(rgb(255,0,0),0.5);"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 1"), examples = @example(value="rgb(rgb(255,0,0),0.5)", equals="#purple"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "grayscale", category={IOperatorCategory.COLOR})
-	@doc(value = "Converts rgb color to grayscale value", comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)", examples = @example("rgb grayscale_color <- grayscale (rgb(255,255,0));"), see = {"rgb","hsb"})
+	@doc(value = "Converts rgb color to grayscale value", comment = "r=red, g=greeb, b=blue. Between 0 and 255 and gray = 0.299 `*` red + 0.587 `*` green + 0.114 `*` blue (Photoshop value)", examples = @example(value="grayscale (rgb(255,255,0))",equals="#grey"), see = {"rgb","hsb"})
 	public static GamaColor grayscale(final GamaColor c) {
 		int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
 	}
 
 	@operator(value = "blend", category={IOperatorCategory.COLOR})
-	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1", masterDoc=true, examples = @example("rgb blended <- blend(°red, °blue, 0.3);"), see = {"rgb","hsb"})
+	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1", masterDoc=true, examples = @example(value="blend(#red, #blue, 0.3)",equals="#grey"), see = {"rgb","hsb"})
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
 		double ir = 1.0 - r;
 		GamaColor color =
@@ -177,7 +177,7 @@ public class Colors {
 	}
 
 	@operator(value = "blend", category={IOperatorCategory.COLOR})
-	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", usages=@usage(value="If the ratio is ommitted, an even blend is done",examples = @example("rgb blended <- blend(°red, °blue);")), see = {"rgb","hsb"})
+	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1. If the ratio is ommitted, an even blend is done", usages=@usage(value="If the ratio is ommitted, an even blend is done",examples = @example(value="blend(#red, #blue)",equals="#cyan")), see = {"rgb","hsb"})
 	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
 		return blend(color1, color2, 0.5);
 	}

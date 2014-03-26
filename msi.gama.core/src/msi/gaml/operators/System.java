@@ -58,8 +58,8 @@ public class System {
 
 	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, category={IOperatorCategory.SYSTEM})
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = {
-		@example(value="point p <- agent1.location ;		//	p equals the location of the agent agent1", isExecutable=false),
-		@example(value="nil.x", raises="exception")})
+		@example(value="agent1.location",equals="the location of the agent agent1", isExecutable=false),
+		@example(value="map(nil).keys", raises="exception")})
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) {
@@ -89,7 +89,7 @@ public class System {
 	@doc(value = "asks the user for some values (not defined as parameters)", masterDoc=true, comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
 		@example("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example("create node number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];") })
+		@example("create agent number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];") })
 	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		final IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
@@ -97,8 +97,8 @@ public class System {
 
 	@operator(value = "user_input", category={IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL})
 	@doc(value = "asks the user for some values (not defined as parameters)", examples = {
-		@example("map<string,unknown> values <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example("create node number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];") })
+		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+		@example("create agent number: int(values at \"Number\") with: [location:: (point(values2 at \"Location\"))];") })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
 		final GamaMap<String, IType> initialTypes = new GamaMap();
