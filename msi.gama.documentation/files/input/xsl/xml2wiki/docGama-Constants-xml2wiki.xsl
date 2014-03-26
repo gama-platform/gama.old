@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
+<xsl:variable name="colors" select="'Colors'"/>
 
 <xsl:template match="/">
  	<xsl:text>#summary Constants (Modeling Guide)
@@ -50,13 +51,14 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 <xsl:call-template name="buildUnits"/>
 <xsl:text>
 </xsl:text>
-<xsl:call-template name="buildConstants"/>
+<xsl:call-template name="buildColors"/>
 
 </xsl:template>
 
 <xsl:template name="buildUnits">
 	<xsl:for-each select="doc/constantsCategories/category">
 		<xsl:sort select="@id"/>
+		<xsl:if test="@id != $colors">
 		<xsl:variable name="categoryGlobal" select="@id"/> 
 		<xsl:text>
 = &lt;font color="blue"&gt; </xsl:text> <xsl:value-of select="@id"/> <xsl:text> &lt;/font&gt; =</xsl:text>
@@ -75,12 +77,31 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
     </xsl:if>
 				</xsl:if>			
 			</xsl:for-each>
-		</xsl:for-each>    	
+		</xsl:for-each> 
+		</xsl:if>   	
 	</xsl:for-each>
 </xsl:template>
  
-<xsl:template name="buildConstants">
-<xsl:text></xsl:text>
+<xsl:template name="buildColors">
+<xsl:text>
+= &lt;font color="blue"&gt; </xsl:text> <xsl:value-of select="$colors"/> <xsl:text> &lt;/font&gt; =
+
+In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see http://www.cssportal.com/css3-color-names/). E.g,
+{{{
+rgb my_color &lt;- °teal;
+}}}
+</xsl:text>
+    <xsl:for-each select="/doc/constants/constant[categories/category/@id=$colors]">
+			<xsl:sort select="@name" />
+			<xsl:variable name="unitName" select="@name"/>
+			<xsl:variable name="unitAltNames" select="@altNames"/>
+			<xsl:variable name="unitValue" select="@value"/>
+ 
+			<xsl:text>
+  * *</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>*</xsl:text> <xsl:if test="@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
+  	<xsl:if test="documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="documentation/result[text()]"/>  
+    </xsl:if>	
+	</xsl:for-each>
 </xsl:template> 
  
 </xsl:stylesheet>
