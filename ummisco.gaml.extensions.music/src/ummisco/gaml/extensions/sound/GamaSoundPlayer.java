@@ -1,4 +1,4 @@
-package ummisco.gaml.extensions.music;
+package ummisco.gaml.extensions.sound;
 
 import java.io.File;
 import java.util.Map;
@@ -12,7 +12,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
 import javazoom.jlgui.basicplayer.BasicPlayerListener;
 
-public class GamaMusicPlayer {
+public class GamaSoundPlayer {
 	
 	private class MyBasicPlayerListener implements BasicPlayerListener {
 
@@ -24,13 +24,22 @@ public class GamaMusicPlayer {
 
 		@Override
 		public void stateUpdated(BasicPlayerEvent event) {
+			
 			if (event.getCode() == BasicPlayerEvent.EOM) {
-				if (repeat) { repeatMusic(); }
-				else { endOfMedia = true; }
+				
+				if (repeat) { endOfMedia = true; }
 			}
 
-			if (event.getCode() == BasicPlayerEvent.STOPPED && !repeat) {
+			if (event.getCode() == BasicPlayerEvent.STOPPED) {
+
+				
+				if (repeat && endOfMedia) {
+					endOfMedia = false;
+					repeatSound();
+				}
+
 				playerStopped = true;
+				
 			}
 		}
 
@@ -42,9 +51,9 @@ public class GamaMusicPlayer {
 	public static final String OVERWRITE_MODE = IKeyword.OVERWRITE;
 	public static final String IGNORE_MODE = IKeyword.IGNORE;
 
-	private BasicPlayer musicPlayer;
-	private File musicFile;
-	private String musicPlayerMode = OVERWRITE_MODE;
+	private BasicPlayer basicPlayer;
+	private File soundFile;
+	private String soundPlayerMode = OVERWRITE_MODE;
 	private Boolean repeat = false;
 	
 	// assure that we don't repeat playing a music file on an already dead agent
@@ -54,19 +63,20 @@ public class GamaMusicPlayer {
 	private Boolean playerStopped = false;
 	
 	
-	public GamaMusicPlayer() {
-		musicPlayer = new BasicPlayer();
-		musicPlayer.addBasicPlayerListener(new MyBasicPlayerListener());
+	
+	public GamaSoundPlayer() {
+		basicPlayer = new BasicPlayer();
+		basicPlayer.addBasicPlayerListener(new MyBasicPlayerListener());
 	}
 	
 	
-	private void repeatMusic() {
+	private void repeatSound() {
 		synchronized (agentDiedOrSimDisposed) {
 			if (!agentDiedOrSimDisposed) {
 				try {
-					musicPlayer.play();
+					basicPlayer.play();
 				} catch (BasicPlayerException e) {
-					throw GamaRuntimeException.error("Failed to replay music");
+					throw GamaRuntimeException.error("Failed to replay sound");
 				}
 			}
 		}
@@ -74,22 +84,22 @@ public class GamaMusicPlayer {
 
 
 
-	public void play(final File musicFile, final String playerMode, final boolean repeat) throws GamaRuntimeException {
+	public void play(final File soundFile, final String playerMode, final boolean repeat) throws GamaRuntimeException {
 		try {
-			int playerState = musicPlayer.getStatus();
+			int playerState = basicPlayer.getStatus();
 
 			if (playerState == BasicPlayer.UNKNOWN || playerState == BasicPlayer.STOPPED) {
-				musicPlayer.open(musicFile);
-				musicPlayer.play();
+				basicPlayer.open(soundFile);
+				basicPlayer.play();
 			} else if ( ( (playerState == BasicPlayer.PLAYING) || (playerState == BasicPlayer.PAUSED) ) && playerMode.equals(OVERWRITE_MODE)) {
-				musicPlayer.stop();
+				basicPlayer.stop();
 				
-				musicPlayer.open(musicFile);
-				musicPlayer.play();
+				basicPlayer.open(soundFile);
+				basicPlayer.play();
 			}
 			
-			this.musicFile = musicFile;
-			this.musicPlayerMode = playerMode;
+			this.soundFile = soundFile;
+			this.soundPlayerMode = playerMode;
 			this.repeat = repeat;
 			
 		} catch (BasicPlayerException e) {
@@ -104,47 +114,37 @@ public class GamaMusicPlayer {
 
 			try {
 				endOfMedia = true;
-				musicPlayer.stop();
+				basicPlayer.stop();
 			} catch (BasicPlayerException e) {
 				e.printStackTrace();
-				throw GamaRuntimeException.error("Failed to stop music player");
+				throw GamaRuntimeException.error("Failed to stop sound player");
 			}
 		}
 	}
 
 	public void pause() throws GamaRuntimeException {
 		try {
-			musicPlayer.pause();
+			basicPlayer.pause();
 		} catch (BasicPlayerException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("Failed to pause music player");
+			throw GamaRuntimeException.error("Failed to pause sound player");
 		}
 	}
 
 	public void resume() throws GamaRuntimeException {
 		try {
-			musicPlayer.resume();
+			basicPlayer.resume();
 		} catch (BasicPlayerException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("Failed to resume music player");
+			throw GamaRuntimeException.error("Failed to resume sound player");
 		}
-	}
-
-	public String getMode() {
-		return musicPlayerMode;
-	}
-
-	public void setMode(String playerMode) {
-		this.musicPlayerMode = musicPlayerMode;
 	}
 
 	public boolean isRepeat() {
 		return repeat;
 	}
 	
-	public boolean isEndOfMedia() {
-		return endOfMedia;
+	public boolean canBeReused() {
+		return !repeat && playerStopped;
 	}
-	
-	public boolean isPlayerStopped() { return playerStopped; }
 }

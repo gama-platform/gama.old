@@ -1,29 +1,27 @@
-package ummisco.gaml.extensions.music;
+package ummisco.gaml.extensions.sound;
 
 import java.util.List;
 
-import ummisco.gaml.extensions.music.ResumeMusicStatement.PauseMusicValidator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
+import ummisco.gaml.extensions.sound.StopSoundStatement.StopSoundValidator;
 
-
-@symbol(name = IKeyword.RESUME_MUSIC, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@validator(PauseMusicValidator.class)
-public class ResumeMusicStatement extends AbstractStatementSequence {
-
+@validator(StopSoundValidator.class)
+public class StopSoundStatement extends AbstractStatementSequence {
 	
-	public static class PauseMusicValidator implements IDescriptionValidator {
+	public static class StopSoundValidator implements IDescriptionValidator {
 
 		/**
 		 * Method validate()
@@ -35,10 +33,12 @@ public class ResumeMusicStatement extends AbstractStatementSequence {
 			// what to validate?
 		}
 	}
-
+	
+	
 	private AbstractStatementSequence sequence = null;
 
-	public ResumeMusicStatement(IDescription desc) {
+
+	public StopSoundStatement(IDescription desc) {
 		super(desc);
 	}
 
@@ -53,8 +53,8 @@ public class ResumeMusicStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		IAgent currentAgent = scope.getAgentScope();
 		
-		GamaMusicPlayer musicPlayer = MusicPlayerBroker.getInstance().getMusicPlayer(currentAgent);
-		musicPlayer.resume();
+		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
+		soundPlayer.stop(false);
 
 		if (sequence != null) {
 			Object[] result = new Object[1];

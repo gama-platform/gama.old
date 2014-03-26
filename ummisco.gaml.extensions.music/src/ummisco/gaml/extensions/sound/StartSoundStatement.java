@@ -1,4 +1,4 @@
-package ummisco.gaml.extensions.music;
+package ummisco.gaml.extensions.sound;
 
 import java.io.File;
 import java.util.List;
@@ -20,20 +20,20 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import ummisco.gaml.extensions.music.StartMusicStatement.StartMusicValidator;
+import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 
 
-@symbol(name = IKeyword.START_MUSIC, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
+@symbol(name = IKeyword.START_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
 		doc = @doc("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { 
 			@facet(name = IKeyword.SOURCE, type = IType.STRING, optional = false, doc = @doc("The path to music file. This path is relative to the path of the model.")),
 			@facet(name = IKeyword.MODE, type = IType.ID, values = { IKeyword.OVERWRITE, IKeyword.IGNORE }, optional = true, doc = @doc("Mode of ")),
 			@facet(name = IKeyword.REPEAT, type = IType.BOOL, optional = true, doc = @doc("")) })
-@validator(StartMusicValidator.class)
-public class StartMusicStatement extends AbstractStatementSequence {
+@validator(StartSoundValidator.class)
+public class StartSoundStatement extends AbstractStatementSequence {
 	
-	public static class StartMusicValidator implements IDescriptionValidator {
+	public static class StartSoundValidator implements IDescriptionValidator {
 
 		/**
 		 * Method validate()
@@ -52,7 +52,7 @@ public class StartMusicStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
 
-	public StartMusicStatement(IDescription desc) {
+	public StartSoundStatement(IDescription desc) {
 		super(desc);
 		
 		source = getFacet(IKeyword.SOURCE);
@@ -72,15 +72,15 @@ public class StartMusicStatement extends AbstractStatementSequence {
 		
 		IAgent currentAgent = scope.getAgentScope();
 		
-		GamaMusicPlayer musicPlayer = MusicPlayerBroker.getInstance().getMusicPlayer(currentAgent);
-		String musicFilePath = scope.getModel().getRelativeFilePath((String) source.value(scope), false);
+		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
+		String soundFilePath = scope.getModel().getRelativeFilePath((String) source.value(scope), false);
 		
-		if (musicPlayer != null) {
-			musicPlayer.play(new File(musicFilePath), 
-					mode != null ? (String) mode.value(scope) : GamaMusicPlayer.OVERWRITE_MODE, 
+		if (soundPlayer != null) {
+			soundPlayer.play(new File(soundFilePath), 
+					mode != null ? (String) mode.value(scope) : GamaSoundPlayer.OVERWRITE_MODE, 
 					repeat != null ? (Boolean) repeat.value(scope) : false);
 		} else {
-			//System.out.println("No more player in pool!");
+//			System.out.println("No more player in pool!");
 		}
 
 		if (sequence != null) {

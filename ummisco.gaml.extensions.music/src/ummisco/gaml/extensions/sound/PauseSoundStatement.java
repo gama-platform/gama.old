@@ -1,8 +1,8 @@
-package ummisco.gaml.extensions.music;
+package ummisco.gaml.extensions.sound;
 
 import java.util.List;
 
-import ummisco.gaml.extensions.music.PauseMusicStatement.PauseMusicValidator;
+import ummisco.gaml.extensions.sound.PauseSoundStatement.PauseSoundValidator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.ISymbolKind;
@@ -17,12 +17,12 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.PAUSE_MUSIC, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = IKeyword.PAUSE_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@validator(PauseMusicValidator.class)
-public class PauseMusicStatement extends AbstractStatementSequence {
+@validator(PauseSoundValidator.class)
+public class PauseSoundStatement extends AbstractStatementSequence {
 
-	public static class PauseMusicValidator implements IDescriptionValidator {
+	public static class PauseSoundValidator implements IDescriptionValidator {
 
 		/**
 		 * Method validate()
@@ -36,7 +36,7 @@ public class PauseMusicStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
 
-	public PauseMusicStatement(IDescription desc) {
+	public PauseSoundStatement(IDescription desc) {
 		super(desc);
 	}
 
@@ -52,8 +52,8 @@ public class PauseMusicStatement extends AbstractStatementSequence {
 		
 		IAgent currentAgent = scope.getAgentScope();
 		
-		GamaMusicPlayer musicPlayer = MusicPlayerBroker.getInstance().getMusicPlayer(currentAgent);
-		musicPlayer.pause();
+		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
+		soundPlayer.pause();
 
 		if (sequence != null) {
 			Object[] result = new Object[1];
