@@ -71,7 +71,7 @@ public class CommunicatingSkill extends Skill implements MessageListener {
 		readCallParameters(scope);
 		String name = (String) scope.getArg(ICommunicatorSkill.WITHNAME, IType.STRING);
 		
-		if(!messages.containsKey(name))
+		if(messages.containsKey(name))
 		{
 			name = name + messages.keySet().size(); // agent identificator is added to the agent name is the agent already exist
 		}
@@ -211,7 +211,7 @@ public class CommunicatingSkill extends Skill implements MessageListener {
 		if(!this.messages.containsKey(myName))
 			throw new GamaRuntimeException(new Exception("Agent has not any mailbox"));
 		
-		return this.messages.containsKey(myName);
+		return this.messages.get(myName).size()==0;
 	}
 	
 	
