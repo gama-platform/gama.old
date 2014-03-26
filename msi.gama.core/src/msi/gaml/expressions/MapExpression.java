@@ -60,6 +60,9 @@ public class MapExpression extends AbstractExpression {
 	public IExpression resolveAgainst(final IScope scope) {
 		GamaMap result = new GamaMap(keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {
+			if ( keys[i] == null || vals[i] == null ) {
+				continue;
+			}
 			result.put(keys[i].resolveAgainst(scope), vals[i].resolveAgainst(scope));
 		}
 		MapExpression copy = new MapExpression(getElements());
@@ -70,6 +73,10 @@ public class MapExpression extends AbstractExpression {
 	public GamaMap value(final IScope scope) throws GamaRuntimeException {
 		if ( isConst && computed ) { return (GamaMap) values.clone(); }
 		for ( int i = 0; i < keys.length; i++ ) {
+			if ( keys[i] == null || vals[i] == null ) {
+				computed = false;
+				return GamaMap.EMPTY_MAP;
+			}
 			values.put(keys[i].value(scope), vals[i].value(scope));
 		}
 		computed = true;
@@ -84,6 +91,8 @@ public class MapExpression extends AbstractExpression {
 	@Override
 	public boolean isConst() {
 		for ( int i = 0; i < keys.length; i++ ) {
+			// indicates an error in the compilation process of a former expression
+			if ( keys[i] == null || vals[i] == null ) { return false; }
 			if ( !keys[i].isConst() || !vals[i].isConst() ) { return false; }
 		}
 		isConst = true;
@@ -98,9 +107,13 @@ public class MapExpression extends AbstractExpression {
 			if ( i > 0 ) {
 				sb.append(',');
 			}
-			sb.append(keys[i].toGaml());
-			sb.append("::");
-			sb.append(vals[i].toGaml());
+			if ( keys[i] == null || vals[i] == null ) {
+				sb.append("nill::nil");
+			} else {
+				sb.append(keys[i].toGaml());
+				sb.append("::");
+				sb.append(vals[i].toGaml());
+			}
 		}
 		sb.append(']').append(' ');
 		return sb.toString();

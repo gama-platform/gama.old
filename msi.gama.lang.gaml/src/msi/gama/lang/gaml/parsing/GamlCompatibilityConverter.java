@@ -324,7 +324,8 @@ public class GamlCompatibilityConverter {
 			// 08/01/14: Addition of the ">>-" keyword (remove all)
 			elt.setKeyword(REMOVE);
 			// 20/01/14: Addition of the access [] to remove from the index
-			if ( expr instanceof Access && EGaml.getExprsOf(((Access) expr).getArgs()).size() == 0 ) {
+			if ( expr instanceof Access && expr.getOp().equals("[") &&
+				EGaml.getExprsOf(((Access) expr).getArgs()).size() == 0 ) {
 				addFacet(elt, FROM, convExpr(expr.getLeft(), errors), errors);
 				addFacet(elt, INDEX, value, errors);
 			} else {

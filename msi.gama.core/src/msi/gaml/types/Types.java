@@ -132,7 +132,7 @@ public class Types {
 	 */
 	public static boolean mapListCase(final IType receiverType, final IType assignedType, final IExpression expr2) {
 		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.LIST ) {
-			if ( expr2 instanceof ListExpression && ((ListExpression) expr2).isEmpty() ) { return true; }
+			if ( expr2 instanceof ListExpression ) { return ((ListExpression) expr2).isEmpty(); }
 			if ( expr2.isConst() && ((List) expr2.value(null)).isEmpty() ) { return true; }
 		}
 		if ( receiverType.id() == IType.MAP && assignedType.id() == IType.MAP ) {

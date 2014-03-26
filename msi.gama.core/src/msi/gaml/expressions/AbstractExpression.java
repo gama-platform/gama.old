@@ -106,7 +106,7 @@ public abstract class AbstractExpression implements IExpression {
 			if ( i > 0 ) {
 				sb.append(',');
 			}
-			sb.append(exp[i].toGaml());
+			sb.append(exp[i] == null ? "nil" : exp[i].toGaml());
 		}
 		sb.append(last).append(' ');
 		return sb.toString();

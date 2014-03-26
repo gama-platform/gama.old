@@ -67,6 +67,10 @@ public class ListExpression extends AbstractExpression {
 	public GamaList value(final IScope scope) throws GamaRuntimeException {
 		if ( isConst && computed ) { return new GamaList(values); }
 		for ( int i = 0; i < elements.length; i++ ) {
+			if ( elements[i] == null ) {
+				computed = false;
+				return GamaList.EMPTY_LIST;
+			}
 			values[i] = elements[i].value(scope);
 		}
 		computed = true;
@@ -82,7 +86,9 @@ public class ListExpression extends AbstractExpression {
 	@Override
 	public boolean isConst() {
 		for ( final IExpression e : elements ) {
-			if ( e != null && !e.isConst() ) { return false; }
+			// indicates a former problem in the compilation of the expression
+			if ( e == null ) { return false; }
+			if ( !e.isConst() ) { return false; }
 		}
 		isConst = true;
 		return true;
