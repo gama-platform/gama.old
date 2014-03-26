@@ -178,6 +178,9 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
  				continue;
     		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
      	 }
+    	 if (species.getReflexList().isEmpty() && ! reflexMap.isEmpty()) {
+    		 species.getReflexList().addAll(reflexMap.keySet());
+    	 }
     	 for (String reflex : species.getReflexList()) {
     		 if (reflexMap.containsKey(reflex))
     			 	model += defineReflex(reflexMap.get(reflex),level+1);
@@ -449,6 +452,9 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	       	 for (EReflexLink link : worldAgent.getReflexLinks()) {
 	       		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
 	        	 }
+	       	 if (worldAgent.getReflexList().isEmpty() && ! reflexMap.isEmpty()) {
+	       		worldAgent.getReflexList().addAll(reflexMap.keySet());
+	    	 }
 	       	 for (String reflex : worldAgent.getReflexList()) {
 	       		 model += defineReflex(reflexMap.get(reflex),level+1);
 	        	 }
