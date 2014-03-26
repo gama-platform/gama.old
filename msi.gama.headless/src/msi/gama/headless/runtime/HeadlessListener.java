@@ -182,7 +182,10 @@ public class HeadlessListener implements IGui {
 		}
 		// keyword = "image";
 		Class<IDisplaySurface> clazz = displayClasses.get("image");
-		if ( clazz == null ) { throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere."); }
+		if ( clazz == null ) { return new NullDisplaySurface(); /*
+																 * throw GamaRuntimeException.error("Display " + keyword
+																 * + " is not defined anywhere.");
+																 */}
 		try {
 			IDisplaySurface surface = clazz.newInstance();
 			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
