@@ -19,30 +19,63 @@
  */
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
-import msi.gama.util.matrix.*;
-import msi.gama.util.path.*;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaMatrix;
+import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractContainerStatement.EdgeToAdd;
 import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
 import msi.gaml.statements.AbstractContainerStatement.NodeToAdd;
 import msi.gaml.statements.AbstractContainerStatement.NodesToAdd;
-import msi.gaml.types.*;
-import org.jgrapht.*;
-import org.jgrapht.alg.*;
-import org.jgrapht.graph.*;
+import msi.gaml.types.GamaPairType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.Graphs;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.KShortestPaths;
+import org.jgrapht.alg.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.util.VertexPair;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
@@ -67,6 +100,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected ISpecies edgeSpecies;
 	protected int optimizerType = Djikstra;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
+	
+	private Object linkedGraph = null;
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
@@ -1018,6 +1053,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public void incVersion() {
 		version++;
 		shortestPathComputed.clear();
+		linkedGraph = null;
 	}
 
 	@Override
@@ -1135,7 +1171,84 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		}
 	}
+	
+	public IList getPath ( int M[], GamaList vertices, int nbvertices, Object v1, Object vt, int i, int j) {
+		VertexPair vv = new VertexPair(v1, vt);
+		GamaList<E> edges = new GamaList<E>();
+		if ( v1 == vt ) {
+			return new GamaList<E>();
+		}
+		Object vc = vt;
+		int previous = j;
+		int next = M[j];
+		if ( j == next || next == -1) {
+			return new GamaList<E>();
+		}
+		do {
+			Object vn = vertices.get(next);
 
+			Set<E> eds = this.getAllEdges(vn, vc);
+			
+			E edge = null;
+			for ( E ed : eds ) {
+				if ( edge == null || getEdgeWeight(ed) < getEdgeWeight(edge) ) {
+					edge = ed;
+				}
+			}
+			if ( edge == null ) {
+				break;
+			}
+			edges.add(0,edge);
+			previous = next;
+			next = M[next];
+			vc = vn;
+		} while (previous != i);
+		return edges;
+	}
+	
+	public IList savePaths ( int M[], GamaList vertices, int nbvertices, Object v1, int i, int t) {
+		IList edgesVertices = new GamaList();
+		for ( int j = 0; j < nbvertices; j++ ) {
+			GamaList<E> edges = new GamaList<E>();
+			V vt = (V) vertices.get(j);
+			if ( v1 == vt ) {
+				continue;
+			}
+			Object vc = vt;
+			int previous = j;
+			int next = M[j];
+			if ( j == next || next == -1) {
+				continue;
+			}
+			do {
+				Object vn = vertices.get(next);
+
+				Set<E> eds = this.getAllEdges(vn, vc);
+				
+				E edge = null;
+				for ( E ed : eds ) {
+					if ( edge == null || getEdgeWeight(ed) < getEdgeWeight(edge) ) {
+						edge = ed;
+					}
+				}
+				if ( edge == null ) {
+					break;
+				}
+				edges.add(0,edge);
+				previous = next;
+				next = M[next];
+				vc = vn;
+			} while (previous != i);
+			VertexPair vv = new VertexPair(v1, vt);
+			if (!shortestPathComputed.containsKey(vv)) {
+				GamaList<GamaList<E>> ssp = new GamaList<GamaList<E>>();
+				ssp.add(edges);
+				shortestPathComputed.put(vv, ssp);
+			}
+			if (j == t)edgesVertices = edges;
+		}
+		return edgesVertices;
+	}
 	public GamaIntMatrix saveShortestPaths() {
 		GamaMap<V, Integer> indexVertices = new GamaMap<V, Integer>();
 		GamaList<V> vertices = (GamaList<V>) getVertices();
@@ -1219,6 +1332,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public Map<VertexPair<V>, GamaList<GamaList<E>>> getShortestPathComputed() {
 		return shortestPathComputed;
 	}
+	
+	public GamaList<E> getShortestPath(V s, V t) {
+		VertexPair<V> vp = new VertexPair<V>(s, t);
+		GamaList<GamaList<E>> ppc = shortestPathComputed.get(vp);
+		if (ppc == null || ppc.isEmpty()) return null;
+		return ppc.get(0);
+	}
 
 	public Map<V, _Vertex<V, E>> getVertexMap() {
 		return vertexMap;
@@ -1280,5 +1400,15 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 		return result;
 	}
+
+	public Object getLinkedGraph() {
+		return linkedGraph;
+	}
+
+	public void setLinkedGraph(Object linkedGraph) {
+		this.linkedGraph = linkedGraph;
+	}
+	
+	
 
 }
