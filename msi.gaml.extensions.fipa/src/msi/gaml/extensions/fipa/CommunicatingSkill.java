@@ -123,9 +123,9 @@ public class CommunicatingSkill extends Skill {
 			throw GamaRuntimeException.error(performative + " performative is unknown", scope);
 		}
 
-		final String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
+		String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
 		if ( protocol == null ) {
-			throw GamaRuntimeException.error(protocol + " is not recognized as a supported interaction protocol", scope);
+			protocol = FIPAConstants.Protocols.NO_PROTOCOL_STR;
 		}
 		MessageBroker.getInstance().scheduleForDelivery(scope, message, protocolIndexes.get(protocol));
 			
