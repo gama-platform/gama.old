@@ -526,7 +526,8 @@ public class MovingSkill extends Skill {
 			}
 		}
 		if ( currentLocation.equals(falseTarget) ) {
-			currentLocation = (GamaPoint) path.getEndVertex();
+			
+			currentLocation = (GamaPoint) Cast.asPoint(scope, path.getEndVertex());
 			index++;
 		}
 		path.setIndexSegementOf(agent, indexSegment);
