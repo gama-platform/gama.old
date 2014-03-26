@@ -21,8 +21,13 @@ package msi.gaml.operators;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGridAgent;
+import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -68,6 +73,26 @@ public class Graphs {
 		@Override
 		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
+		}
+	};
+
+	private static class GridNeighboursRelation implements VertexRelationship<IShape> {
+
+
+		GridNeighboursRelation() {
+		}
+
+		@Override
+		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
+			if (!(p1 instanceof GamlGridAgent)) return false;
+			GridTopology topo=(GridTopology)((GamlGridAgent)p1).getTopology();
+	//		ITopology topo = (((IAgent)p1).getScope().getTopology());
+			return topo.getNeighboursOf(scope, ((IAgent)p1), 1.0, In.list(scope, ((IAgent)p2).getSpecies())).contains(p2);
+		}
+
+		@Override
+		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
+			return p1 == p2;
 		}
 	};
 
@@ -453,6 +478,12 @@ public class Graphs {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
 		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope);
+	}
+
+	@operator(value = "grid_cells_to_graph", content_type = IType.GEOMETRY, index_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
+	@doc(value = "creates a graph from a list of cells (operand). An edge is created between neighbours.", masterDoc=true, comment = "", examples = @example(value="my_cell_graph<-grid_cells_to_graph(cells_list)",isExecutable=false), see = {})
+	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
+		return new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope);
 	}
 
 	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY, category={IOperatorCategory.GRAPH})
