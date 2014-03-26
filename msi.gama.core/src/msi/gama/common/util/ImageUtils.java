@@ -25,7 +25,6 @@ import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import msi.gama.runtime.GAMA;
-import org.eclipse.swt.graphics.*;
 
 public class ImageUtils {
 
@@ -197,52 +196,53 @@ public class ImageUtils {
 		return map[position];
 	}
 
-	public static ImageData convertToSWT(final BufferedImage bufferedImage) {
-		if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
-			final DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
-			final PaletteData palette =
-				new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
-			final ImageData data =
-				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
-			final WritableRaster raster = bufferedImage.getRaster();
-			final int[] pixelArray = new int[3];
-			for ( int y = 0; y < data.height; y++ ) {
-				for ( int x = 0; x < data.width; x++ ) {
-					raster.getPixel(x, y, pixelArray);
-					final int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
-					data.setPixel(x, y, pixel);
-				}
-			}
-			return data;
-		} else if ( bufferedImage.getColorModel() instanceof IndexColorModel ) {
-			final IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
-			final int size = colorModel.getMapSize();
-			final byte[] reds = new byte[size];
-			final byte[] greens = new byte[size];
-			final byte[] blues = new byte[size];
-			colorModel.getReds(reds);
-			colorModel.getGreens(greens);
-			colorModel.getBlues(blues);
-			final RGB[] rgbs = new RGB[size];
-			for ( int i = 0; i < rgbs.length; i++ ) {
-				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
-			}
-			final PaletteData palette = new PaletteData(rgbs);
-			final ImageData data =
-				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
-			data.transparentPixel = colorModel.getTransparentPixel();
-			final WritableRaster raster = bufferedImage.getRaster();
-			final int[] pixelArray = new int[1];
-			for ( int y = 0; y < data.height; y++ ) {
-				for ( int x = 0; x < data.width; x++ ) {
-					raster.getPixel(x, y, pixelArray);
-					data.setPixel(x, y, pixelArray[0]);
-				}
-			}
-			return data;
-		}
-		return null;
-	}
+	//
+	// public static ImageData convertToSWT(final BufferedImage bufferedImage) {
+	// if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
+	// final DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
+	// final PaletteData palette =
+	// new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
+	// final ImageData data =
+	// new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
+	// final WritableRaster raster = bufferedImage.getRaster();
+	// final int[] pixelArray = new int[3];
+	// for ( int y = 0; y < data.height; y++ ) {
+	// for ( int x = 0; x < data.width; x++ ) {
+	// raster.getPixel(x, y, pixelArray);
+	// final int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
+	// data.setPixel(x, y, pixel);
+	// }
+	// }
+	// return data;
+	// } else if ( bufferedImage.getColorModel() instanceof IndexColorModel ) {
+	// final IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
+	// final int size = colorModel.getMapSize();
+	// final byte[] reds = new byte[size];
+	// final byte[] greens = new byte[size];
+	// final byte[] blues = new byte[size];
+	// colorModel.getReds(reds);
+	// colorModel.getGreens(greens);
+	// colorModel.getBlues(blues);
+	// final RGB[] rgbs = new RGB[size];
+	// for ( int i = 0; i < rgbs.length; i++ ) {
+	// rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
+	// }
+	// final PaletteData palette = new PaletteData(rgbs);
+	// final ImageData data =
+	// new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
+	// data.transparentPixel = colorModel.getTransparentPixel();
+	// final WritableRaster raster = bufferedImage.getRaster();
+	// final int[] pixelArray = new int[1];
+	// for ( int y = 0; y < data.height; y++ ) {
+	// for ( int x = 0; x < data.width; x++ ) {
+	// raster.getPixel(x, y, pixelArray);
+	// data.setPixel(x, y, pixelArray[0]);
+	// }
+	// }
+	// return data;
+	// }
+	// return null;
+	// }
 
 	/**
 	 * Convenience method that returns a scaled instance of the
