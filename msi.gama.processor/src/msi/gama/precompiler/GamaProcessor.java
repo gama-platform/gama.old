@@ -20,6 +20,7 @@ package msi.gama.precompiler;
 
 import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.*;
+
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -33,6 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -114,7 +116,8 @@ public class GamaProcessor extends AbstractProcessor {
 			processVars(env);
 			processDisplays(env);
 			processFiles(env);
-
+			processConstants(env);
+			
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
 			Writer doc = createDocSourceWriter();
@@ -591,8 +594,8 @@ public class GamaProcessor extends AbstractProcessor {
 			// }
 			gp.put(sb.toString(), ""); /* doc ? */
 		}
-	}
-
+	}	
+	
 	/**
 	 * Format : prefix 0.name 1.class 2.[skill$]*
 	 * @param env
@@ -843,6 +846,33 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
+	public void processConstants(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(constant.class) ) {		
+			VariableElement ve = (VariableElement)e;
+			constant constant = ve.getAnnotation(constant.class);
+			doc documentation = (constant.doc().length == 0 ) ? null : constant.doc()[0];	
+			String ret = rawNameOf(ve.asType(), ve);
+			String constantName = constant.value();			
+			Object valueConstant = ve.getConstantValue();
+			
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(CONSTANT_PREFIX);
+			// 0.return class
+			sb.append(ret).append(SEP);
+			// 1.constant name
+			sb.append(constantName).append(SEP); 
+			// 2+.alternative names			
+			for ( String s : constant.altNames() ) {
+				sb.append(s).append(SEP);
+			}
+			// 3.value
+			sb.append(valueConstant);
+			// 4.doc
+			gp.put(sb.toString(), docToString(documentation));					
+		}
+	}	
+	
 	void write(final RoundEnvironment r, final Class<? extends Annotation> c, final String s) {
 		for ( Element e : r.getElementsAnnotatedWith(c) ) {
 			gp.put(s, name((TypeElement) (e instanceof TypeElement ? e : e.getEnclosingElement())));

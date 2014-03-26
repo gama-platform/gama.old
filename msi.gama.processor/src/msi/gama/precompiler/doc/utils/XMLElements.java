@@ -1,5 +1,22 @@
 package msi.gama.precompiler.doc.utils;
 
+import java.util.Set;
+
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+
+import org.w3c.dom.Document;
+
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.doc.DocProcessorAnnotations;
+
 public class XMLElements {
 	public static final String DOC = "doc";
 	public static final String OPERATORS_CATEGORIES = "operatorsCategories";
@@ -13,14 +30,37 @@ public class XMLElements {
 	public static final String OPERAND = "operand";
 	public static final String DOCUMENTATION = "documentation";
 	public static final String RESULT = "result";
+	public static final String COMMENT = "comment";
+	public static final String SEEALSO = "seeAlso";
+	public static final String SEE = "see";
 	public static final String USAGES = "usages";
 	public static final String USAGE = "usage";
+	public static final String USAGES_EXAMPLES = "usagesExamples";
+	public static final String USAGES_NO_EXAMPLE = "usagesNoExample";
 	public static final String EXAMPLES = "examples";
 	public static final String EXAMPLE = "example";
 	public static final String FACETS = "facets";
 	public static final String FACET = "facet";
 	public static final String CONSTANTS = "constants";
 	public static final String CONSTANT = "constant";
+	public static final String ACTIONS = "actions";	
+	public static final String ACTION = "action";
+	public static final String ARGS = "args";
+	public static final String ARG = "arg";
+	public static final String INSIDE = "inside";
+	public static final String SYMBOLS = "symbols";
+	public static final String SYMBOL = "symbol";
+	public static final String KINDS = "kinds";
+	public static final String KIND = "kind";
+	public static final String SKILLS = "skills";
+	public static final String SKILL = "skill";
+	public static final String VARS = "vars";
+	public static final String VAR = "var";	
+	public static final String SPECIESS = "speciess";
+	public static final String SPECIES = "species";
+	public static final String STATEMENTS = "statements";
+	public static final String STATEMENT = "statement";
+	public static final String CONSTANTS_CATEGORIES = "constantsCategories";
 	
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
@@ -68,4 +108,40 @@ public class XMLElements {
 	public static final String ATT_CST_NAME = "name";
 	public static final String ATT_CST_VALUE = "value";
 	public static final String ATT_CST_NAMES = "altNames";
+	
+	// Attributes of RESULT element
+	public static final String ATT_RES_MASTER = "masterDoc";
+	
+	// Attributes of SEE element
+	public static final String ATT_SEE_ID = "id";
+	
+	// Attributes of ACTION element
+	public static final String ATT_ACTION_NAME= "name";
+	public static final String ATT_ACTION_RETURNTYPE= "returnType";
+	
+	// Attributes of ARG element
+	public static final String ATT_ARG_NAME = "name";
+	public static final String ATT_ARG_TYPE = "type";
+	public static final String ATT_ARG_OPTIONAL = "optional";
+	
+	// Attributes of SKILL element
+	public static final String ATT_SKILL_ID = "id";
+	public static final String ATT_SKILL_NAME = "name";
+	public static final String ATT_SKILL_CLASS = "class";
+	public static final String ATT_SKILL_EXTENDS = "extends";
+	
+	// Attributes of VAR element
+	public static final String ATT_VAR_NAME = "name";
+	public static final String ATT_VAR_TYPE = "type";
+	public static final String ATT_VAR_CONSTANT = "constant";
+	public static final String ATT_VAR_DEPENDS_ON = "depends_on";
+
+	// Attributes of SPECIES element
+	public static final String ATT_SPECIES_ID = "id";
+	public static final String ATT_SPECIES_NAME = "name";
+	
+	// Attributes of STATEMENT element
+	public static final String ATT_STAT_ID = "id";
+	public static final String ATT_STAT_NAME = "name";
+	public static final String ATT_STAT_KIND = "kind";
 }

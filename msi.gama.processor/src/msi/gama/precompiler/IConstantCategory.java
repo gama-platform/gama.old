@@ -28,7 +28,13 @@ public interface IConstantCategory {
 
 	// Units
 	public static final String LENGTH		= "Length units";
+	public static final String TIME			= "Time units";
+	public static final String VOLUME		= "Volume units";	
+	public static final String WEIGHT		= "Weight units";
+	public static final String SURFACE		= "Surface units";
+	public static final String GRAPHIC		= "Graphics units";	
 	
 	// Constants
 	public static final String CONSTANT		= "Constants";
+	public static final String COLOR_CSS 	= "Colors";
 }

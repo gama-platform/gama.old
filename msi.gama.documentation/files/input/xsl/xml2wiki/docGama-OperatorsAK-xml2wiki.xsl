@@ -7,8 +7,8 @@
 <xsl:variable name="emptyStr" select="''"/>
 
 <xsl:variable name="alphabetID" select="'ak'"/>
-<xsl:variable name="fileAK" select="'OperatorsAKCurrent'"/>
-<xsl:variable name="fileLZ" select="'OperatorsLZCurrent'"/>
+<xsl:variable name="fileAK" select="'OperatorsAK161'"/>
+<xsl:variable name="fileLZ" select="'OperatorsLZ161'"/>
 
 <xsl:template match="/">
  	<xsl:text>#summary Operators(Modeling Guide)

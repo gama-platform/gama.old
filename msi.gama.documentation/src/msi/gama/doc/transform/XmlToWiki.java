@@ -16,32 +16,52 @@ import org.xml.sax.SAXException;
 
 public class XmlToWiki {
 
+	public static String suffix = "161"; // "Dev"
+	
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
 		//
+		System.out.print("Creation of the wiki page for Operators from A to K.....");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2wiki.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsAK"+suffix+".wiki");
+		System.out.println("Done");	
+		//
+		System.out.print("Creation of the wiki page for Operators from L to Z.....");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2wiki.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsLZ"+suffix+".wiki");
+		System.out.println("Done");	
+		//
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsDev.wiki");
-		System.out.println("Done");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".wiki");
+		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Statements-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "StatementsDev.wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Statements"+suffix+".wiki");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for Skills.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "SkillsDev.wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Skills"+suffix+".wiki");	
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Built-in Species.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "SpeciesDev.wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "Species"+suffix+".wiki");	
+		System.out.println("Done");	
+		//
+		System.out.print("Creation of the wiki page for Constants and units.....");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2wiki.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "Constants"+suffix+".wiki");	
 		System.out.println("Done");	
 		//
 		System.out.println("End of the transformation");		

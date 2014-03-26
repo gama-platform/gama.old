@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.IConstantCategory;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -25,6 +26,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 public class DocProcessorAnnotations {
+	
+	public static final String PREFIX_CONSTANT = "#";
 	
 	public static org.w3c.dom.Element getDocElt(doc docAnnot, Document doc, Messager mes, String eltName, TypeConverter tc, ExecutableElement e){ 
 		return DocProcessorAnnotations.getDocElt(docAnnot, doc, null, mes, eltName, tc, e);
@@ -45,28 +48,28 @@ public class DocProcessorAnnotations {
 			mes.printMessage(Kind.ERROR, "The element __" + eltName + "__ is not documented.");
 		} else {	
 			if(docElt == null){
-				docElt = doc.createElement("documentation");
+				docElt = doc.createElement(XMLElements.DOCUMENTATION);
 			} 
 	
 			// Parse result
 			String value = docAnnot.value();
 			boolean masterDoc = docAnnot.masterDoc();
 			if(value != ""){
-				if(docElt.getElementsByTagName("result").getLength() != 0){
-					org.w3c.dom.Element resultElt = (org.w3c.dom.Element) docElt.getElementsByTagName("result").item(0);
-					if(("true".equals(resultElt.getAttribute("masterDoc")) && masterDoc) || (!("true".equals(resultElt.getAttribute("masterDoc"))) && !masterDoc)){ 
+				if(docElt.getElementsByTagName(XMLElements.RESULT).getLength() != 0){
+					org.w3c.dom.Element resultElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.RESULT).item(0);
+					if(("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && masterDoc) || (!("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER))) && !masterDoc)){ 
 						resultElt.setTextContent(resultElt.getTextContent() + value);							
-					} else if (!resultElt.hasAttribute("masterDoc") && masterDoc) {
+					} else if (!resultElt.hasAttribute(XMLElements.ATT_RES_MASTER) && masterDoc) {
 						resultElt.setTextContent(value);			
-						resultElt.setAttribute("masterDoc", "true");
+						resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");
 					} 
 					// eltResult.setTextContent(eltResult.getTextContent() + value);
 					//	docElt.getElementsByTagName("result").item(0)
 					//		.setTextContent(docElt.getElementsByTagName("result").item(0).getTextContent() + value);					
 				} else {
-					org.w3c.dom.Element resultElt = doc.createElement("result");
+					org.w3c.dom.Element resultElt = doc.createElement(XMLElements.RESULT);
 					resultElt.setTextContent(value);
-					if(masterDoc) {resultElt.setAttribute("masterDoc", "true");	}				
+					if(masterDoc) {resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");	}				
 					docElt.appendChild(resultElt);
 				}
 			}
@@ -74,11 +77,11 @@ public class DocProcessorAnnotations {
 			// Parse comment
 			String comment = docAnnot.comment();
 			if(!"".equals(comment)){
-				if(docElt.getElementsByTagName("comment").getLength() != 0){
-					docElt.getElementsByTagName("comment").item(0)
-						.setTextContent(docElt.getElementsByTagName("comment").item(0).getTextContent() + comment);					
+				if(docElt.getElementsByTagName(XMLElements.COMMENT).getLength() != 0){
+					docElt.getElementsByTagName(XMLElements.COMMENT).item(0)
+						.setTextContent(docElt.getElementsByTagName(XMLElements.COMMENT).item(0).getTextContent() + comment);					
 				} else {
-					org.w3c.dom.Element commentElt = doc.createElement("comment");
+					org.w3c.dom.Element commentElt = doc.createElement(XMLElements.COMMENT);
 					commentElt.setTextContent(comment);
 					docElt.appendChild(commentElt);
 				}
@@ -86,24 +89,24 @@ public class DocProcessorAnnotations {
 		
 			// Parse: seeAlso
 			org.w3c.dom.Element seeAlsoElt;
-			if(docElt.getElementsByTagName("seeAlso").getLength() != 0){
-				seeAlsoElt = (org.w3c.dom.Element) docElt.getElementsByTagName("seeAlso").item(0);				
+			if(docElt.getElementsByTagName(XMLElements.SEEALSO).getLength() != 0){
+				seeAlsoElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.SEEALSO).item(0);				
 			} else {
-				seeAlsoElt = doc.createElement("seeAlso");
+				seeAlsoElt = doc.createElement(XMLElements.SEEALSO);
 			}	
 			for ( String see : docAnnot.see() ) {
-				NodeList nLSee = seeAlsoElt.getElementsByTagName("see");
+				NodeList nLSee = seeAlsoElt.getElementsByTagName(XMLElements.SEE);
 				int i = 0;
 				boolean seeAlreadyInserted = false;
 				while(i < nLSee.getLength() && !seeAlreadyInserted){
-					if(((org.w3c.dom.Element) nLSee.item(i)).getAttribute("id").equals(see) ){
+					if(((org.w3c.dom.Element) nLSee.item(i)).getAttribute(XMLElements.ATT_SEE_ID).equals(see) ){
 						seeAlreadyInserted = true;
 					}
 					i++;
 				}
 				if(!seeAlreadyInserted){
-					org.w3c.dom.Element seesElt = doc.createElement("see");
-					seesElt.setAttribute("id", see);
+					org.w3c.dom.Element seesElt = doc.createElement(XMLElements.SEE);
+					seesElt.setAttribute(XMLElements.ATT_SEE_ID, see);
 					seeAlsoElt.appendChild(seesElt);
 				}
 			}
@@ -119,15 +122,15 @@ public class DocProcessorAnnotations {
 			} else {
 				usagesElt = doc.createElement(XMLElements.USAGES);
 			}	
-			if(docElt.getElementsByTagName("usagesExamples").getLength() != 0){
-				usagesExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName("usagesExamples").item(0);				
+			if(docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).getLength() != 0){
+				usagesExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).item(0);				
 			} else {
-				usagesExampleElt = doc.createElement("usagesExamples");
+				usagesExampleElt = doc.createElement(XMLElements.USAGES_EXAMPLES);
 			}	
-			if(docElt.getElementsByTagName("usagesNoExample").getLength() != 0){
-				usagesNoExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName("usagesNoExample").item(0);				
+			if(docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).getLength() != 0){
+				usagesNoExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).item(0);				
 			} else {
-				usagesNoExampleElt = doc.createElement("usagesNoExample");
+				usagesNoExampleElt = doc.createElement(XMLElements.USAGES_NO_EXAMPLE);
 			}			
 			int numberOfUsages = 0;			
 			int numberOfUsagesWithExamplesOnly = 0;
@@ -250,16 +253,17 @@ public class DocProcessorAnnotations {
 	public static org.w3c.dom.Element getConstantElt(constant constant, Document doc, Element e, Messager mes, TypeConverter tc){ 
 		org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);		
 		
-		constantElt.setAttribute(XMLElements.ATT_CST_NAME, constant.value());
+		constantElt.setAttribute(XMLElements.ATT_CST_NAME, PREFIX_CONSTANT+constant.value());
 		constantElt.setAttribute(XMLElements.ATT_CST_VALUE, ((VariableElement)e).getConstantValue().toString());
 		
 		String names= "";
-		for(String n : constant.altNames()){names=names+","+n;}
-		constantElt.setAttribute(XMLElements.ATT_CST_NAMES, names);
+		for(String n : constant.altNames()){names=("".equals(names)) ? PREFIX_CONSTANT+n : names+","+PREFIX_CONSTANT+n;}
+		if(!"".equals(names)) constantElt.setAttribute(XMLElements.ATT_CST_NAMES, names);
 		
 		constantElt.appendChild(getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES),tc));
 		
-		constantElt.appendChild(getDocElt(constant.doc(), doc, mes, e.getSimpleName().toString(), null, null));
+		org.w3c.dom.Element docConstantElt = getDocElt(constant.doc(), doc, mes, e.getSimpleName().toString(), null, null);
+		if(docConstantElt != null) {constantElt.appendChild(docConstantElt);}
 
 		return constantElt;
 	}
@@ -270,22 +274,22 @@ public class DocProcessorAnnotations {
 		}
 		
 		ExecutableElement eltMethod = (ExecutableElement) e;
-		org.w3c.dom.Element actionElt = doc.createElement("action");
-		actionElt.setAttribute("name", actionAnnot.name());
-		actionElt.setAttribute("returnType", tc.getProperType(eltMethod.getReturnType().toString())); 
+		org.w3c.dom.Element actionElt = doc.createElement(XMLElements.ACTION);
+		actionElt.setAttribute(XMLElements.ATT_ACTION_NAME, actionAnnot.name());
+		actionElt.setAttribute(XMLElements.ATT_ACTION_RETURNTYPE, tc.getProperType(eltMethod.getReturnType().toString())); 
 
-		org.w3c.dom.Element argsElt = doc.createElement("args");
+		org.w3c.dom.Element argsElt = doc.createElement(XMLElements.ARGS);
 		for (arg eltArg : actionAnnot.args()){
-			org.w3c.dom.Element argElt = doc.createElement("arg");
-			argElt.setAttribute("name", eltArg.name());
+			org.w3c.dom.Element argElt = doc.createElement(XMLElements.ARG);
+			argElt.setAttribute(XMLElements.ATT_ARG_NAME, eltArg.name());
 			
 			String tabType = "";
 			for(int i = 0; i < eltArg.type().length ; i++){
 				// tabType = tabType + ((i < eltArg.type().length - 1) ? typeStringFromIType.get(eltArg.type()[i]) + "," : typeStringFromIType.get(eltArg.type()[i]));
 				tabType = tabType + ((i < eltArg.type().length - 1) ? tc.getTypeString(eltArg.type()[i]) + "," : tc.getTypeString(eltArg.type()[i]));
 			}
-			argElt.setAttribute("type", tabType);
-			argElt.setAttribute("optional", ""+eltArg.optional());
+			argElt.setAttribute(XMLElements.ATT_ARG_TYPE, tabType);
+			argElt.setAttribute(XMLElements.ATT_ARG_OPTIONAL, ""+eltArg.optional());
 			org.w3c.dom.Element docEltArg = 
 					DocProcessorAnnotations.getDocElt(eltArg.doc(), doc, mes, "Arg " + eltArg.name() + " from " + eltMethod.getSimpleName(), tc, null);
 			if(docEltArg != null){
@@ -335,19 +339,19 @@ public class DocProcessorAnnotations {
 			return null;
 		}
 		
-		org.w3c.dom.Element insideElt = doc.createElement("inside");
+		org.w3c.dom.Element insideElt = doc.createElement(XMLElements.INSIDE);
 		
-		org.w3c.dom.Element symbolsElt = doc.createElement("symbols");
+		org.w3c.dom.Element symbolsElt = doc.createElement(XMLElements.SYMBOLS);
 		for(String sym : insideAnnot.symbols()){
-			org.w3c.dom.Element symElt = doc.createElement("symbol");
+			org.w3c.dom.Element symElt = doc.createElement(XMLElements.SYMBOL);
 			symElt.setTextContent(sym);
 			symbolsElt.appendChild(symElt);
 		}
 		insideElt.appendChild(symbolsElt);
 
-		org.w3c.dom.Element kindsElt = doc.createElement("kinds");
+		org.w3c.dom.Element kindsElt = doc.createElement(XMLElements.KINDS);
 		for(int kind : insideAnnot.kinds()){
-			org.w3c.dom.Element kindElt = doc.createElement("kind");
+			org.w3c.dom.Element kindElt = doc.createElement(XMLElements.KIND);
 			kindElt.setTextContent(""+kind);
 			kindsElt.appendChild(kindElt);
 		}

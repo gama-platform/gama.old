@@ -18,6 +18,7 @@ public class JavaWriter {
 	public final static String VAR_PREFIX = "%";
 	public final static String FILE_PREFIX = "+";
 	public final static String DOC_PREFIX = "@";
+	public final static String CONSTANT_PREFIX = "£";
 	public final static String DOC_SEP = "€";
 	public final static String DOC_REGEX = "\\€";
 	public final static String SEP = "$";
