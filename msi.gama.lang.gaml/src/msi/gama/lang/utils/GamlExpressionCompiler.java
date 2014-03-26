@@ -596,13 +596,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return unary(EGaml.getKeyOf(object), object.getRight());
 	}
 
-	@Override
-	public IExpression caseDot(final Dot object) {
+	// @Override
+	public IExpression caseDot(final Access object) {
 		return compileFieldExpr(object.getLeft(), object.getRight());
 	}
 
 	@Override
 	public IExpression caseAccess(final Access object) {
+		if ( object.getOp().equals(".") ) { return caseDot(object); }
 		IExpression container = compile(object.getLeft());
 		// If no container is defined, return a null expression
 		if ( container == null ) { return null; }

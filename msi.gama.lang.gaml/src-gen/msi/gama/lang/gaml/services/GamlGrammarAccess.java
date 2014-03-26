@@ -3138,89 +3138,73 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class AccessElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Access");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cDotParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
-		private final Action cAccessLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
-		private final Keyword cLeftSquareBracketKeyword_1_0_1 = (Keyword)cGroup_1_0.eContents().get(1);
-		private final Assignment cArgsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cArgsExpressionListParserRuleCall_1_1_0 = (RuleCall)cArgsAssignment_1_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
-		
-		//Access returns Expression:
-		//	Dot (({Access.left=current} "[") args=ExpressionList? "]")*;
-		public ParserRule getRule() { return rule; }
-
-		//Dot (({Access.left=current} "[") args=ExpressionList? "]")*
-		public Group getGroup() { return cGroup; }
-
-		//Dot
-		public RuleCall getDotParserRuleCall_0() { return cDotParserRuleCall_0; }
-
-		//(({Access.left=current} "[") args=ExpressionList? "]")*
-		public Group getGroup_1() { return cGroup_1; }
-
-		//{Access.left=current} "["
-		public Group getGroup_1_0() { return cGroup_1_0; }
-
-		//{Access.left=current}
-		public Action getAccessLeftAction_1_0_0() { return cAccessLeftAction_1_0_0; }
-
-		//"["
-		public Keyword getLeftSquareBracketKeyword_1_0_1() { return cLeftSquareBracketKeyword_1_0_1; }
-
-		//args=ExpressionList?
-		public Assignment getArgsAssignment_1_1() { return cArgsAssignment_1_1; }
-
-		//ExpressionList
-		public RuleCall getArgsExpressionListParserRuleCall_1_1_0() { return cArgsExpressionListParserRuleCall_1_1_0; }
-
-		//"]"
-		public Keyword getRightSquareBracketKeyword_1_2() { return cRightSquareBracketKeyword_1_2; }
-	}
-
-	public class DotElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Dot");
-		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cPrimaryParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Action cDotLeftAction_1_0 = (Action)cGroup_1.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
-		private final Assignment cOpAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
-		private final Keyword cOpFullStopKeyword_1_1_0_0 = (Keyword)cOpAssignment_1_1_0.eContents().get(0);
-		private final Assignment cRightAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cRightAbstractRefParserRuleCall_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1.eContents().get(0);
+		private final Action cAccessLeftAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cAlternatives_1_1.eContents().get(0);
+		private final Assignment cOpAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
+		private final Keyword cOpLeftSquareBracketKeyword_1_1_0_0_0 = (Keyword)cOpAssignment_1_1_0_0.eContents().get(0);
+		private final Assignment cArgsAssignment_1_1_0_1 = (Assignment)cGroup_1_1_0.eContents().get(1);
+		private final RuleCall cArgsExpressionListParserRuleCall_1_1_0_1_0 = (RuleCall)cArgsAssignment_1_1_0_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_1_1_0_2 = (Keyword)cGroup_1_1_0.eContents().get(2);
+		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
+		private final Assignment cOpAssignment_1_1_1_0 = (Assignment)cGroup_1_1_1.eContents().get(0);
+		private final Keyword cOpFullStopKeyword_1_1_1_0_0 = (Keyword)cOpAssignment_1_1_1_0.eContents().get(0);
+		private final Assignment cRightAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
+		private final RuleCall cRightAbstractRefParserRuleCall_1_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1_1.eContents().get(0);
 		
-		//Dot returns Expression:
-		//	Primary ({Dot.left=current} (op="." right=AbstractRef))*;
+		//Access returns Expression:
+		//	Primary ({Access.left=current} (op="[" args=ExpressionList? "]" | op="." right=AbstractRef))*;
 		public ParserRule getRule() { return rule; }
 
-		//Primary ({Dot.left=current} (op="." right=AbstractRef))*
+		//Primary ({Access.left=current} (op="[" args=ExpressionList? "]" | op="." right=AbstractRef))*
 		public Group getGroup() { return cGroup; }
 
 		//Primary
 		public RuleCall getPrimaryParserRuleCall_0() { return cPrimaryParserRuleCall_0; }
 
-		//({Dot.left=current} (op="." right=AbstractRef))*
+		//({Access.left=current} (op="[" args=ExpressionList? "]" | op="." right=AbstractRef))*
 		public Group getGroup_1() { return cGroup_1; }
 
-		//{Dot.left=current}
-		public Action getDotLeftAction_1_0() { return cDotLeftAction_1_0; }
+		//{Access.left=current}
+		public Action getAccessLeftAction_1_0() { return cAccessLeftAction_1_0; }
+
+		//op="[" args=ExpressionList? "]" | op="." right=AbstractRef
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+
+		//op="[" args=ExpressionList? "]"
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
+
+		//op="["
+		public Assignment getOpAssignment_1_1_0_0() { return cOpAssignment_1_1_0_0; }
+
+		//"["
+		public Keyword getOpLeftSquareBracketKeyword_1_1_0_0_0() { return cOpLeftSquareBracketKeyword_1_1_0_0_0; }
+
+		//args=ExpressionList?
+		public Assignment getArgsAssignment_1_1_0_1() { return cArgsAssignment_1_1_0_1; }
+
+		//ExpressionList
+		public RuleCall getArgsExpressionListParserRuleCall_1_1_0_1_0() { return cArgsExpressionListParserRuleCall_1_1_0_1_0; }
+
+		//"]"
+		public Keyword getRightSquareBracketKeyword_1_1_0_2() { return cRightSquareBracketKeyword_1_1_0_2; }
 
 		//op="." right=AbstractRef
-		public Group getGroup_1_1() { return cGroup_1_1; }
+		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
 
 		//op="."
-		public Assignment getOpAssignment_1_1_0() { return cOpAssignment_1_1_0; }
+		public Assignment getOpAssignment_1_1_1_0() { return cOpAssignment_1_1_1_0; }
 
 		//"."
-		public Keyword getOpFullStopKeyword_1_1_0_0() { return cOpFullStopKeyword_1_1_0_0; }
+		public Keyword getOpFullStopKeyword_1_1_1_0_0() { return cOpFullStopKeyword_1_1_1_0_0; }
 
 		//right=AbstractRef
-		public Assignment getRightAssignment_1_1_1() { return cRightAssignment_1_1_1; }
+		public Assignment getRightAssignment_1_1_1_1() { return cRightAssignment_1_1_1_1; }
 
 		//AbstractRef
-		public RuleCall getRightAbstractRefParserRuleCall_1_1_1_0() { return cRightAbstractRefParserRuleCall_1_1_1_0; }
+		public RuleCall getRightAbstractRefParserRuleCall_1_1_1_1_0() { return cRightAbstractRefParserRuleCall_1_1_1_1_0; }
 	}
 
 	public class PrimaryElements extends AbstractParserRuleElementFinder {
@@ -4390,7 +4374,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private UnitElements pUnit;
 	private UnaryElements pUnary;
 	private AccessElements pAccess;
-	private DotElements pDot;
 	private PrimaryElements pPrimary;
 	private AbstractRefElements pAbstractRef;
 	private FunctionElements pFunction;
@@ -5159,23 +5142,13 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Access returns Expression:
-	//	Dot (({Access.left=current} "[") args=ExpressionList? "]")*;
+	//	Primary ({Access.left=current} (op="[" args=ExpressionList? "]" | op="." right=AbstractRef))*;
 	public AccessElements getAccessAccess() {
 		return (pAccess != null) ? pAccess : (pAccess = new AccessElements());
 	}
 	
 	public ParserRule getAccessRule() {
 		return getAccessAccess().getRule();
-	}
-
-	//Dot returns Expression:
-	//	Primary ({Dot.left=current} (op="." right=AbstractRef))*;
-	public DotElements getDotAccess() {
-		return (pDot != null) ? pDot : (pDot = new DotElements());
-	}
-	
-	public ParserRule getDotRule() {
-		return getDotAccess().getRule();
 	}
 
 	//Primary returns Expression:

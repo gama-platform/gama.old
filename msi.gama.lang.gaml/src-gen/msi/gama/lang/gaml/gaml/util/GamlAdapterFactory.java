@@ -348,11 +348,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createAccessAdapter();
       }
       @Override
-      public Adapter caseDot(Dot object)
-      {
-        return createDotAdapter();
-      }
-      @Override
       public Adapter caseArray(Array object)
       {
         return createArrayAdapter();
@@ -1250,21 +1245,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAccessAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Dot <em>Dot</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Dot
-   * @generated
-   */
-  public Adapter createDotAdapter()
   {
     return null;
   }

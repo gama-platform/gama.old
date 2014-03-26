@@ -150,7 +150,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" eType="#//ExpressionList"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Dot" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Array" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="exprs" eType="#//ExpressionList"
         containment="true"/>

@@ -281,7 +281,7 @@ public class GamlCompatibilityConverter {
 			// "put item: value in: container at: index"
 			// 20/1/14: Translation of container[index] +<- value" to
 			// "add item: value in: container at: index"
-			if ( expr instanceof Access ) {
+			if ( expr instanceof Access && expr.getOp().equals("[") ) {
 				String kw = keyword.equals("+<-") ? ADD : PUT;
 				String to = keyword.equals("+<-") ? TO : IN;
 				elt.setKeyword(kw);

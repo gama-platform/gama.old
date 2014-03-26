@@ -126,7 +126,6 @@
     <genClasses ecoreClass="Gaml.ecore#//Access">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Access/args"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//Dot"/>
     <genClasses ecoreClass="Gaml.ecore#//Array">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Array/exprs"/>
     </genClasses>

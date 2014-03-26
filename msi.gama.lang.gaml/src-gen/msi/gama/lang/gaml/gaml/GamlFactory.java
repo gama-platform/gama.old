@@ -512,15 +512,6 @@ public interface GamlFactory extends EFactory
   Access createAccess();
 
   /**
-   * Returns a new object of class '<em>Dot</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Dot</em>'.
-   * @generated
-   */
-  Dot createDot();
-
-  /**
    * Returns a new object of class '<em>Array</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -18,7 +18,6 @@ import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
-import msi.gama.lang.gaml.gaml.Dot;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
@@ -469,13 +468,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass accessEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass dotEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1583,16 +1575,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getDot()
-  {
-    return dotEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getArray()
   {
     return arrayEClass;
@@ -1996,8 +1978,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     accessEClass = createEClass(ACCESS);
     createEReference(accessEClass, ACCESS__ARGS);
 
-    dotEClass = createEClass(DOT);
-
     arrayEClass = createEClass(ARRAY);
     createEReference(arrayEClass, ARRAY__EXPRS);
 
@@ -2116,7 +2096,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     unitEClass.getESuperTypes().add(this.getExpression());
     unaryEClass.getESuperTypes().add(this.getExpression());
     accessEClass.getESuperTypes().add(this.getExpression());
-    dotEClass.getESuperTypes().add(this.getExpression());
     arrayEClass.getESuperTypes().add(this.getExpression());
     pointEClass.getESuperTypes().add(this.getExpression());
     parameterEClass.getESuperTypes().add(this.getExpression());
@@ -2280,8 +2259,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(accessEClass, Access.class, "Access", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAccess_Args(), this.getExpressionList(), null, "args", null, 0, 1, Access.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(dotEClass, Dot.class, "Dot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(arrayEClass, Array.class, "Array", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getArray_Exprs(), this.getExpressionList(), null, "exprs", null, 0, 1, Array.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

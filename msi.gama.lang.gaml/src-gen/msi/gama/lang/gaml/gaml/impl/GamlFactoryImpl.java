@@ -121,7 +121,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.UNIT: return createUnit();
       case GamlPackage.UNARY: return createUnary();
       case GamlPackage.ACCESS: return createAccess();
-      case GamlPackage.DOT: return createDot();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
       case GamlPackage.PARAMETER: return createParameter();
@@ -733,17 +732,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     AccessImpl access = new AccessImpl();
     return access;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Dot createDot()
-  {
-    DotImpl dot = new DotImpl();
-    return dot;
   }
 
   /**

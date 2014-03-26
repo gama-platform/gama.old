@@ -269,12 +269,12 @@ Unary returns Expression:
 	Access |
 	{Unary} ((op=('°'|'#') right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
-
+	
 Access returns Expression:
-	Dot (({Access.left=current} '[') args=ExpressionList? ']')*;
+	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
+;
 
-Dot returns Expression:
-	Primary ({Dot.left=current} (op='.' right=AbstractRef))*;
+
 
 Primary returns Expression:
 	TerminalExpression |

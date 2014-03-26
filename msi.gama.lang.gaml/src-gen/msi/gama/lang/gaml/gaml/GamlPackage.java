@@ -2931,52 +2931,6 @@ public interface GamlPackage extends EPackage
   int ACCESS_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.DotImpl <em>Dot</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.DotImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDot()
-   * @generated
-   */
-  int DOT = 54;
-
-  /**
-   * The feature id for the '<em><b>Left</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DOT__LEFT = EXPRESSION__LEFT;
-
-  /**
-   * The feature id for the '<em><b>Op</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DOT__OP = EXPRESSION__OP;
-
-  /**
-   * The feature id for the '<em><b>Right</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DOT__RIGHT = EXPRESSION__RIGHT;
-
-  /**
-   * The number of structural features of the '<em>Dot</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DOT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArrayImpl <em>Array</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2984,7 +2938,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArray()
    * @generated
    */
-  int ARRAY = 55;
+  int ARRAY = 54;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3039,7 +2993,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPoint()
    * @generated
    */
-  int POINT = 56;
+  int POINT = 55;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3094,7 +3048,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getParameter()
    * @generated
    */
-  int PARAMETER = 57;
+  int PARAMETER = 56;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3149,7 +3103,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnitName()
    * @generated
    */
-  int UNIT_NAME = 58;
+  int UNIT_NAME = 57;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3204,7 +3158,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeRef()
    * @generated
    */
-  int TYPE_REF = 59;
+  int TYPE_REF = 58;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3268,7 +3222,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getSkillRef()
    * @generated
    */
-  int SKILL_REF = 60;
+  int SKILL_REF = 59;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3323,7 +3277,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionRef()
    * @generated
    */
-  int ACTION_REF = 61;
+  int ACTION_REF = 60;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3378,7 +3332,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getEquationRef()
    * @generated
    */
-  int EQUATION_REF = 62;
+  int EQUATION_REF = 61;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3433,7 +3387,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getIntLiteral()
    * @generated
    */
-  int INT_LITERAL = 63;
+  int INT_LITERAL = 62;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3479,7 +3433,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDoubleLiteral()
    * @generated
    */
-  int DOUBLE_LITERAL = 64;
+  int DOUBLE_LITERAL = 63;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3525,7 +3479,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
    * @generated
    */
-  int COLOR_LITERAL = 65;
+  int COLOR_LITERAL = 64;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3571,7 +3525,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getStringLiteral()
    * @generated
    */
-  int STRING_LITERAL = 66;
+  int STRING_LITERAL = 65;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3617,7 +3571,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBooleanLiteral()
    * @generated
    */
-  int BOOLEAN_LITERAL = 67;
+  int BOOLEAN_LITERAL = 66;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3663,7 +3617,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getReservedLiteral()
    * @generated
    */
-  int RESERVED_LITERAL = 68;
+  int RESERVED_LITERAL = 67;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -4681,16 +4635,6 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EReference getAccess_Args();
-
-  /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Dot <em>Dot</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Dot</em>'.
-   * @see msi.gama.lang.gaml.gaml.Dot
-   * @generated
-   */
-  EClass getDot();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Array <em>Array</em>}'.
@@ -5813,16 +5757,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference ACCESS__ARGS = eINSTANCE.getAccess_Args();
-
-    /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.DotImpl <em>Dot</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.DotImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDot()
-     * @generated
-     */
-    EClass DOT = eINSTANCE.getDot();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ArrayImpl <em>Array</em>}' class.
