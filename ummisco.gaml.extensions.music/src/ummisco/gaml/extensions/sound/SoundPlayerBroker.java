@@ -15,9 +15,10 @@ import msi.gaml.compilation.GamaHelper;
 
 public class SoundPlayerBroker {
 	
-	private static final int NB_OF_MUSIC_PLAYERS = 5;
+	// the maximum number of BasicPlayer instant can only be 2. Increase this number will raise error.
+	private static final int MAX_NB_OF_MUSIC_PLAYERS = 2;
 	
-	private List<GamaSoundPlayer> soundPlayerPools = Collections.synchronizedList(new ArrayList<GamaSoundPlayer>(NB_OF_MUSIC_PLAYERS));
+	private List<GamaSoundPlayer> soundPlayerPools = Collections.synchronizedList(new ArrayList<GamaSoundPlayer>(MAX_NB_OF_MUSIC_PLAYERS));
 
 	private static Map<SimulationAgent, Map<IAgent, GamaSoundPlayer>> soundPlayerOfAgents = new HashMap<SimulationAgent, Map<IAgent, GamaSoundPlayer>>();
 	
@@ -33,7 +34,7 @@ public class SoundPlayerBroker {
 	
 	private void initializeGamaSoundPlayer() {
 		synchronized (soundPlayerPools) {
-			for (int i = 0; i < NB_OF_MUSIC_PLAYERS; i++) { soundPlayerPools.add(new GamaSoundPlayer()); }
+			for (int i = 0; i < MAX_NB_OF_MUSIC_PLAYERS; i++) { soundPlayerPools.add(new GamaSoundPlayer()); }
 		}
 	}
 	
@@ -86,8 +87,6 @@ public class SoundPlayerBroker {
 					}
 				}
 			}
-			
-//			System.out.println("musicPlayersOfSimulation.size() = " + musicPlayersOfSimulation.size());
 
 			return soundPlayerOfAgent;
 		}
@@ -100,8 +99,6 @@ public class SoundPlayerBroker {
 		Map<IAgent, GamaSoundPlayer> soundPlayersOfSimulation = soundPlayerOfAgents.get(simulation);
 		
 		
-//		System.out.println("manageMusicPlayers :: musicPlayerPools.size() :: BEFORE :: " + musicPlayerPools.size());
-		
 		// remove music players of dead agents
 		List<IAgent> deadAgents = new ArrayList<IAgent>();
 		for (IAgent a : soundPlayersOfSimulation.keySet()) { if (a.dead()) deadAgents.add(a); }
@@ -112,25 +109,13 @@ public class SoundPlayerBroker {
 			soundPlayersOfSimulation.remove(d); 
 
 			synchronized (soundPlayerPools) {
-				
-				try {
-					soundPlayer.getBasicPlayerMThread().join();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
 				soundPlayerPools.add(new GamaSoundPlayer());
 			}
 		}
-
-//		System.out.println("manageMusicPlayers :: musicPlayerPools.size() :: AFTER :: " + musicPlayerPools.size());
 		
 		
 		// remove music players already finished playing
 		synchronized (soundPlayerOfAgents) {
-//			System.out.println("EOM removed BEFORE : musicPlayersOfSimulation.size() : " + musicPlayersOfSimulation.size());
-			
 			List<IAgent> agentsToBeRemoved = new ArrayList<IAgent>();
 			for (IAgent a : soundPlayersOfSimulation.keySet()) {
 				
@@ -139,32 +124,17 @@ public class SoundPlayerBroker {
 			}
 			
 			for (IAgent a : agentsToBeRemoved) {
-				soundPlayer = soundPlayersOfSimulation.remove(a);
-				
-				try {
-					soundPlayer.getBasicPlayerMThread().join();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				System.out.println("soundPlayer.getBasicPlayerMThread().getState().name() == " + soundPlayer.getBasicPlayerMThread().getState().name());
-//				soundPlayersOfSimulation.remove(a);
-				
+				soundPlayersOfSimulation.remove(a);
 				synchronized (soundPlayerPools) {
 					soundPlayerPools.add(new GamaSoundPlayer());
 				}
 				
 			}
-
-//			System.out.println("EOM removed AFTER : musicPlayersOfSimulation.size() : " + musicPlayersOfSimulation.size());
 		}
 	}
 	
 	
 	public void schedulerDisposed(final SimulationAgent simulation) throws GamaRuntimeException {
-		
-//		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() BEFORE" + musicPlayerOfAgents.size());
 		
 		Map<IAgent, GamaSoundPlayer> soundPlayersOfSimulation = soundPlayerOfAgents.get(simulation);
 		
@@ -179,7 +149,5 @@ public class SoundPlayerBroker {
 			soundPlayersOfSimulation.clear();
 			soundPlayerOfAgents.remove(simulation);
 		}
-
-//		System.out.println("MusicPlayerBroker :: schedulerDisposed :: musicPlayerOfAgents.size() AFTER" + musicPlayerOfAgents.size());
 	}
 }
