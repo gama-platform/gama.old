@@ -25,25 +25,18 @@ public class Application implements IApplication {
 		Globals.OUTPUT_PATH = args[1];
 		Globals.IMAGES_PATH = args[1] + "/snapshot";
 		File output = new File(Globals.OUTPUT_PATH);
+		if(!output.exists())
+			output.mkdir();
+		
 		File images = new File(Globals.IMAGES_PATH);
+		if(!images.exists())
+			images.mkdir();
+			
 		File input = new File(args[0]);
-		// if (output.exists()) {
-		// return showError(HeadLessErrors.EXIST_DIRECTORY_ERROR,
-		// Globals.OUTPUT_PATH);
-		// }
 		if (!input.exists()) {
 			return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[0]);
 		}
-		// if (!output.mkdir()) {
-		// return showError(HeadLessErrors.PERMISSION_ERROR,
-		// Globals.OUTPUT_PATH);
-		// }
-		// if (!images.mkdir()) {
-		// return showError(HeadLessErrors.PERMISSION_ERROR,
-		// Globals.IMAGES_PATH);
-		// }
 		return true;
-
 	}
 
 	private static boolean showError(final int errorCode, final String path) {

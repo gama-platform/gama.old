@@ -23,7 +23,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
-
 	private int experimentID;
 
 	private int currentStep;

@@ -11,6 +11,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
 
@@ -39,12 +40,6 @@ public class HeadlessSimulationLoader {
 		final ParametersSet params) throws GamaRuntimeException {
 		// FIXME Verify all this.
 		configureHeadLessSimulation();
-		// preloadGAMA();  
-		// IModel model = loadModel(fileName);
-		// if ( model == null ) {
-		// System.out.println("GAMA cannot load model " + fileName);
-		// return null;
-		// }
 		ExperimentSpecies exp1 = (ExperimentSpecies) model.getExperiment(expName);
 		if ( exp1 == null ) {
 			System.out.println("Experiment " + expName + " cannot be created");
@@ -57,7 +52,7 @@ public class HeadlessSimulationLoader {
 		exp1.createAgent();
 		SimulationAgent sim = exp1.getAgent().createSimulation(
 				new ParametersSet(), true);
-		// GAMA.controller.newHeadlessExperiment(exp1);
+		 GAMA.controller.newHeadlessExperiment(exp1);
 		waitLoading(exp1);
 		return exp1;
 	}
