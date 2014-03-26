@@ -147,4 +147,9 @@ public class GamaSoundPlayer {
 	public boolean canBeReused() {
 		return !repeat && playerStopped;
 	}
+
+
+	public Thread getBasicPlayerMThread() {
+		return basicPlayer.getMThread();
+	}
 }
