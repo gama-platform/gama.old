@@ -1,0 +1,72 @@
+/**
+ *  usercontrolarchitecture
+ *  Author: Patrick Taillandier
+ *  Description: show how to use agent architecture
+ */
+
+model user_control
+
+global {
+
+	int nbAgent <- 10;
+	bool advanced_user_control <- false;
+	init {
+		create cell number: nbAgent {
+			color <-°green;
+		}
+		create user;
+	}
+}
+
+species cell {
+	rgb color;	
+	aspect default {
+		draw circle(1) color: color;
+	}
+}
+
+species user control:user_only {
+   user_panel default initial: true {
+      transition to: "Basic Control" when: every (10) and !advanced_user_control;
+      transition to: "Advanced Control" when: every(10) and advanced_user_control;
+   }
+   
+   user_panel "Basic Control" {
+      user_command "Kill one cell" {
+         ask (one_of(cell)){
+            do die;
+         }
+		start_sound source: '../includes/sounds/agent_kill.wav';        
+      }
+      user_command "Create one cell" {
+        create cell {
+			color <-°green;
+		}
+		start_sound source: '../includes/sounds/agent_creation.mp3';        
+      } 
+      transition to: default when: true;                    
+   }
+   user_panel "Advanced Control" {
+      user_command "Kill cells" {
+        user_input "Number" returns: number type: int <- 10;
+        ask (number among list(cell)){
+           do die;
+        }
+      }
+      user_command "Create cells" {
+        user_input "Number" returns: number type: int <- 10;
+        create cell number: number ;
+      } 
+      transition to: default when: true;        
+   }
+}
+
+
+experiment user_control_with_sound type: gui {
+	parameter "advanced user control" var: advanced_user_control <- false;
+	output { 
+		display map { 
+			species cell;
+		}
+	}
+}
