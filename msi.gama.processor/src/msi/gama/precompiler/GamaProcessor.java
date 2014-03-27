@@ -20,7 +20,6 @@ package msi.gama.precompiler;
 
 import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.*;
-
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -37,7 +36,6 @@ import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -118,7 +116,7 @@ public class GamaProcessor extends AbstractProcessor {
 			processDisplays(env);
 			processFiles(env);
 			processConstants(env);
-			
+
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
 			Writer doc = createDocSourceWriter();
@@ -484,26 +482,26 @@ public class GamaProcessor extends AbstractProcessor {
 		if ( doc == null ) { return ""; }
 		StringBuilder sb = new StringBuilder();
 		sb.append(doc.value()).append(DOC_SEP);
-		sb.append(doc.deprecated()).append(DOC_SEP);
-		sb.append(doc.returns()).append(DOC_SEP);
-		sb.append(doc.comment()).append(DOC_SEP);
-		String[] cases = doc.special_cases();
-		sb.append(cases.length).append(DOC_SEP);
-		for ( int i = 0; i < cases.length; i++ ) {
-			sb.append(cases[i]).append(DOC_SEP);
-		}
+		sb.append(doc.deprecated())/* .append(DOC_SEP) */;
+		// sb.append(doc.returns()).append(DOC_SEP);
+		// sb.append(doc.comment()).append(DOC_SEP);
+		// String[] cases = doc.special_cases();
+		// sb.append(cases.length).append(DOC_SEP);
+		// for ( int i = 0; i < cases.length; i++ ) {
+		// sb.append(cases[i]).append(DOC_SEP);
+		// }
 		// TODO: check Ben modif
-//		String[] examples = doc.examples();
-		example[] examples = doc.examples();	
-		sb.append(examples.length).append(DOC_SEP);
-		for ( int i = 0; i < examples.length; i++ ) {
-			sb.append(examples[i]).append(DOC_SEP);
-		}
-		String[] see = doc.see();
-		sb.append(see.length).append(DOC_SEP);
-		for ( int i = 0; i < see.length; i++ ) {
-			sb.append(see[i]).append(DOC_SEP);
-		}
+		// String[] examples = doc.examples();
+		// example[] examples = doc.examples();
+		// sb.append(examples.length).append(DOC_SEP);
+		// for ( int i = 0; i < examples.length; i++ ) {
+		// sb.append(examples[i]).append(DOC_SEP);
+		// }
+		// String[] see = doc.see();
+		// sb.append(see.length).append(DOC_SEP);
+		// for ( int i = 0; i < see.length; i++ ) {
+		// sb.append(see[i]).append(DOC_SEP);
+		// }
 		// sb.setLength(sb.length() - 1);
 		return sb.toString();
 	}
@@ -595,8 +593,8 @@ public class GamaProcessor extends AbstractProcessor {
 			// }
 			gp.put(sb.toString(), ""); /* doc ? */
 		}
-	}	
-	
+	}
+
 	/**
 	 * Format : prefix 0.name 1.class 2.[skill$]*
 	 * @param env
@@ -848,32 +846,32 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	public void processConstants(final RoundEnvironment env) {
-		for ( Element e : env.getElementsAnnotatedWith(constant.class) ) {		
-			VariableElement ve = (VariableElement)e;
+		for ( Element e : env.getElementsAnnotatedWith(constant.class) ) {
+			VariableElement ve = (VariableElement) e;
 			constant constant = ve.getAnnotation(constant.class);
-			doc documentation = (constant.doc().length == 0 ) ? null : constant.doc()[0];	
+			doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 			String ret = rawNameOf(ve.asType(), ve);
-			String constantName = constant.value();			
+			String constantName = constant.value();
 			Object valueConstant = ve.getConstantValue();
-			
+
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(CONSTANT_PREFIX);
 			// 0.return class
 			sb.append(ret).append(SEP);
 			// 1.constant name
-			sb.append(constantName).append(SEP); 
-			// 2+.alternative names			
+			sb.append(constantName).append(SEP);
+			// 2+.alternative names
 			for ( String s : constant.altNames() ) {
 				sb.append(s).append(SEP);
 			}
 			// 3.value
 			sb.append(valueConstant);
 			// 4.doc
-			gp.put(sb.toString(), docToString(documentation));					
+			gp.put(sb.toString(), docToString(documentation));
 		}
-	}	
-	
+	}
+
 	void write(final RoundEnvironment r, final Class<? extends Annotation> c, final String s) {
 		for ( Element e : r.getElementsAnnotatedWith(c) ) {
 			gp.put(s, name((TypeElement) (e instanceof TypeElement ? e : e.getEnclosingElement())));
