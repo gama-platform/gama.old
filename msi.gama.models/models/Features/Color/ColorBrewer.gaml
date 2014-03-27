@@ -9,26 +9,15 @@ model ColorBrewer
 global skills:[graphic]{
 
 int nb_class<-6 among:[1,3,4,5,6,7,8,9];
-
 geometry shape <- cube(nb_class) ;
 
-//Sequentail
-list<rgb> Blues<-list<rgb>(brewer_palette("Blues"));
-list<rgb> YlGnBu<-list<rgb>(brewer_palette("YlGnBu"));
-list<rgb> YlOrRd<-list<rgb>(brewer_palette("YlOrRd"));
+string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
+string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
+string qualitativePalette <- "Paired" among:["Accents","Paired","Set3","Set2","Set1","Dark2","Pastel2","Pastel1"];
 
-//Diverging
-list<rgb> BrBG<-list<rgb>(brewer_palette("BrBG"));
-list<rgb> RdBu<-list<rgb>(brewer_palette("RdBu"));
-list<rgb> RdYlBu<-list<rgb>(brewer_palette("RdYlBu"));
-
-
-//Qualitative
-list<rgb> Paired<-list<rgb>(brewer_palette("Paired"));
-list<rgb> Set1<-list<rgb>(brewer_palette("Set1"));
-list<rgb> Set3<-list<rgb>(brewer_palette("Set3"));
-
-
+list<rgb> SequentialColors<-list<rgb>(brewer_palette(sequentialPalette));
+list<rgb> DivergingColors<-list<rgb>(brewer_palette(divergingPalette));
+list<rgb> QualitativeColors<-list<rgb>(brewer_palette(qualitativePalette));
 
 init {
 	loop i from:0 to:nb_class-1{
@@ -62,53 +51,42 @@ species cells skills:[graphic]{
 }
 
 
-experiment BrewerColoredCells type: gui {
+
+
+experiment BrewerPalette type: gui {
+	parameter "Sequential Palettes" var:sequentialPalette category:"Brewer";
+	parameter "Diverging Palettes" var:divergingPalette category:"Brewer";
+	parameter "Qualitatives Palettes" var:qualitativePalette category:"Brewer";
+	output {
+		display View1 type:opengl draw_env:false{
+			graphics "brewer"{
+				//Sequential
+				draw "Sequential" at:{-world.shape.width*0.2,0} color:°black bitmap:false;
+				loop i from:0 to:length(SequentialColors)-1{
+					draw square(1) color:SequentialColors[i] at: {0.5 + i, 0, 0};
+				}
+				//Diverging
+				loop i from:0 to:length(DivergingColors)-1{
+					draw "Diverging" at:{-world.shape.width*0.2,1} color:°black bitmap:false;
+					draw square(1) color:DivergingColors[i] at: {0.5 + i, 1, 0};
+				}
+				//Qualitative		
+				loop i from:0 to:length(QualitativeColors)-1{
+					draw "Qualitative" at:{-world.shape.width*0.2,2} color:°black bitmap:false;
+					draw square(1) color:QualitativeColors[i] at: {0.5 + i, 2, 0};
+				}
+		    }
+		}	
+	}
+}
+
+experiment BrewerColoredAgent type: gui {
 	parameter "Number of data classes" var:nb_class category:"Brewer";
 	output {
 		display View1 type:opengl draw_env:false{
 			species cells aspect:sequential position:{0,world.shape.height/4};
 			species cells aspect:diverging position:{0,2*world.shape.height/4};
 			species cells aspect:qualitative position:{0,3*world.shape.height/4};
-		}	
-	}
-}
-
-experiment BrewerPalette type: gui {
-	parameter "Number of data classes" var:nb_class category:"Brewer";
-	output {
-		display View1 type:opengl draw_env:false{
-			graphics "brewer"{
-				//Sequentia
-				loop i from:0 to:length(Blues)-1{
-					draw square(1) color:Blues[i] at: {0.5 + i, 0, 0};
-				}
-				loop i from:0 to:length(YlGnBu)-1{
-					draw square(1) color:YlGnBu[i] at: {0.5 + i, 1, 0};
-				}		
-				loop i from:0 to:length(YlOrRd)-1{
-					draw square(1) color:YlOrRd[i] at: {0.5 + i, 2, 0};
-				}
-				//Diverging
-				loop i from:0 to:length(BrBG)-1{
-					draw square(1) color:BrBG[i] at: {0.5 + i, 4, 0};
-				}
-				loop i from:0 to:length(RdBu)-1{
-					draw square(1) color:RdBu[i] at: {0.5 + i, 5, 0};
-				}		
-				loop i from:0 to:length(RdYlBu)-1{
-					draw square(1) color:RdYlBu[i] at: {0.5 + i, 6, 0};
-				}
-				//Qualitative
-				loop i from:0 to:length(Paired)-1{
-					draw square(1) color:Paired[i] at: {0.5 + i, 8, 0};
-				}
-				loop i from:0 to:length(Set1)-1{
-					draw square(1) color:Set1[i] at: {0.5 + i, 9, 0};
-				}		
-				loop i from:0 to:length(Set3)-1{
-					draw square(1) color:Set3[i] at: {0.5 + i, 10, 0};
-				}
-		    }
 		}	
 	}
 }
