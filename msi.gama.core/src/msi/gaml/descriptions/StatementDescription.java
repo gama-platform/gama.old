@@ -312,7 +312,9 @@ public class StatementDescription extends SymbolDescription {
 				} else if ( arg.getValue() != null && arg.getValue().getExpression() != null ) {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
-					if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
+					boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
+					accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
+					if ( !accepted ) {
 						caller
 							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
 					}
