@@ -42,8 +42,8 @@ public class ModelDescription extends SpeciesDescription {
 	private final Map<String, ExperimentDescription> titledExperiments = new LinkedHashMap();
 	private IDescription output;
 	final TypesManager types;
-	private final String modelFilePath;
-	private final String modelFolderPath;
+	private String modelFilePath;
+	private String modelFolderPath;
 	private final String modelProjectPath;
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
@@ -70,6 +70,15 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void setTorus(final boolean b) {
 		isTorus = b;
+	}
+
+	/**
+	 * Relocates the working path. The last segment must not end with a "/"
+	 * @param path
+	 */
+	public void setWorkingDirectory(final String path) {
+		modelFilePath = path + File.separator + new File(modelFilePath).getName();
+		modelFolderPath = new File(modelFilePath).getParent();
 	}
 
 	public boolean isTorus() {
