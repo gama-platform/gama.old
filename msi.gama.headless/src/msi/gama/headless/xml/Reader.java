@@ -90,7 +90,7 @@ public class Reader {
 	}
 	private Simulation readSimulation(Element e)
 	{
-		int expId=Integer.valueOf(e.getAttribute("id"));
+		String expId=e.getAttribute("id");
 		int max=Integer.valueOf(e.getAttribute("finalstep"));
 		String sourcePath=e.getAttribute("sourcePath");
 		//String driver= "msi.gama.headless.runtime.GamaSimulator"; //e.getAttribute("driver");
@@ -102,9 +102,7 @@ public class Reader {
 			prt = ff.getPath();
 			String pr = prt.substring(0, (int)(prt.length()- ff.getName().length()));
 				sourcePath = pr+sourcePath; 
-			
 		}
-		
 		Simulation res=new Simulation(expId, sourcePath, experimentName, max);
 		this.readParameter(res, e);
 		this.readOutput(res, e);

@@ -1,4 +1,4 @@
-package msi.gama.headless.openMole;
+package msi.gama.headless.openmole;
 
 public class TestMole {
 

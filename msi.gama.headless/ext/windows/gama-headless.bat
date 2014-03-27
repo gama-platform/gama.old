@@ -7,9 +7,9 @@ set memory=2048m
 
 
 echo ******************************************************************
-echo * GAMA version 1.6                                               *
+echo * GAMA version 1.6.1                                             *
 echo * http://gama-platform.googlecode.com                            *
-echo * (c) 2007-2013 UMI 209 UMMISCO IRD/UPMC and Partners            *
+echo * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC and Partners            *
 echo ******************************************************************
 
 
@@ -29,7 +29,8 @@ if  exist %outputFile% ( goto existOutputDirectory)
    set CLASSPATH=%%a;!CLASSPATH!
  )
  set CLASSPATH=!CLASSPATH!"
- call java  -Xms512m -Xmx%memory%  org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 "%inputFile%" "%outputFile%"
+ echo GAMA is starting...
+ call java  -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 "%inputFile%" "%outputFile%"
  goto end
  
 :help

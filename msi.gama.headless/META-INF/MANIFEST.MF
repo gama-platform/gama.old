@@ -23,6 +23,7 @@ Export-Package:
    msi.gama.headless.common,
    msi.gama.util,
    msi.gaml.descriptions",
+ msi.gama.headless.openmole,
  msi.gama.headless.runtime;
   uses:="msi.gama.common.interfaces,
    msi.gama.outputs,

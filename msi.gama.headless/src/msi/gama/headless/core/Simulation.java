@@ -34,7 +34,7 @@ public class Simulation {
 	/**
 	 * id of current experiment
 	 */
-	private int experimentID;
+	private String experimentID;
 	public int maxStep;
 	
 	public void setBufferedWriter(Writer w)
@@ -64,7 +64,7 @@ public class Simulation {
 		this.outputs = clone.outputs;
 	}
 
-	public Simulation(int expId, String sourcePath, String exp, int max) {
+	public Simulation(String expId, String sourcePath, String exp, int max) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.maxStep = max;
@@ -85,7 +85,7 @@ public class Simulation {
 		{
 			Parameter temp=parameters.get(i);
 			this.simulator.setParameterWithName(temp.getName(), temp.getValue());
-			System.out.println("parameter setup : "+ temp.getName()+" "+temp.getValue());
+	
 		}
 		for(int i=0; i<outputs.size();i++)
 		{
@@ -134,11 +134,11 @@ public class Simulation {
 		this.exportData();
 	}
 	
-	public int getExperimentID() {
+	public String getExperimentID() {
 		return experimentID;
 	}
 
-	public void setExperimentID(int experimentID) {
+	public void setExperimentID(String experimentID) {
 		this.experimentID = experimentID;
 	}
 	private void exportVariable()

@@ -1,6 +1,4 @@
-package msi.gama.headless.openMole;
-
-import java.awt.image.BufferedImage;
+package msi.gama.headless.openmole;
 
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.ExperimentSpecies;
@@ -47,10 +45,8 @@ public class MoleExperiment implements IMoleExperiment {
 		this.experimentName = expName;
 		this.currentStep = 0;
 		this.currentExperiment = HeadlessSimulationLoader.newHeadlessSimulation(model, experimentName, this.params);
-
 	}
 	
-
 	public long step() {
 		this.currentExperiment.getCurrentSimulation().step(this.getScope());
 		return currentStep ++;

@@ -23,7 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
-	private int experimentID;
+	private String experimentID;
 
 	private int currentStep;
 	private final ParametersSet params;
@@ -112,7 +112,7 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public void load(final String var, final int exp, final String expName) {
+	public void load(final String var, final String exp, final String expName) {
 		this.fileName = var;
 		this.experimentID = exp;
 		this.experimentName = expName;
@@ -124,7 +124,7 @@ public class GamaSimulator implements ISimulator {
 		this.experiment.getAgent().getRandomGenerator().setSeed(seed);
 	}
 
-	public int getExperimentID() {
+	public String getExperimentID() {
 		return experimentID;
 	}
 
