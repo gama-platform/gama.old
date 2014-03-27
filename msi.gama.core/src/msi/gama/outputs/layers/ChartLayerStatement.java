@@ -1008,7 +1008,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				n.add(o);
 			}
 			if ((type==XY_CHART))
-				serie.clear();
+			{
+				final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
+				data.removeSeries(0);
+				data.addSeries(nserie);
+				serie=nserie;
+//				serie.clear();
+			}
 //			java.lang.System.out.println("gr"+n);
 			for ( int j = 0; j < n.size(); j++ ) {
 				if ((type==SERIES_CHART))
