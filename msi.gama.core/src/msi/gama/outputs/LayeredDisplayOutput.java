@@ -54,6 +54,7 @@ import com.vividsolutions.jts.geom.Envelope;
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.FOCUS, type = IType.GEOMETRY, optional = true),
 	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
@@ -365,7 +366,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
-		createSurface(env);
+		createSurface(scope, env);
 		return true;
 	}
 
@@ -500,7 +501,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	protected void createSurface(final Envelope env) {
+	protected void createSurface(final IScope scope, final Envelope env) {
 		if ( surface != null ) {
 			surface.outputChanged(envWidth, envHeight, this);
 			return;
@@ -511,6 +512,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.setSnapshotFileName(GAMA.getModel().getName() + "_display_" + getName());
 			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		}
+		// IExpression expr = getFacet(IKeyword.FOCUS);
+		// if ( expr != null ) {
+		// surface.focusOn(expr);
+		// }
 	}
 
 	public void setSurface(final IDisplaySurface sur) {
