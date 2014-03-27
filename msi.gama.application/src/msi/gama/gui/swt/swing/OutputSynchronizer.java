@@ -44,7 +44,7 @@ public class OutputSynchronizer {
 		// GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
-		GuiUtils.debug("Briefly showing :" + view);
+		GuiUtils.debug("Showing :" + view);
 		GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
 	}
 

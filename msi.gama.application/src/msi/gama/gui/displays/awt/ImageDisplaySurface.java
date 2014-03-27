@@ -521,4 +521,5 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		}
 		return result;
 	}
+
 }

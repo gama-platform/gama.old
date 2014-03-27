@@ -31,6 +31,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
+import msi.gaml.operators.Cast;
 
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
@@ -97,6 +98,41 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
+	public void updateDisplay() {
+		super.updateDisplay();
+		// EXPERIMENTAL
+
+		if ( temp_focus != null ) {
+			IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
+
+				@Override
+				public IShape run(final IScope scope) {
+					return Cast.asGeometry(scope, temp_focus.value(scope));
+				}
+			});
+			if ( geometry != null ) {
+				Rectangle2D r = this.getManager().focusOn(geometry, this);
+				System.out.println("Rectangle = " + r);
+				if ( r == null ) { return; }
+				double xScale = getWidth() / r.getWidth();
+				double yScale = getHeight() / r.getHeight();
+				double zoomFactor = Math.min(xScale, yScale);
+				Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
+
+				zoomFactor = applyZoom(zoomFactor);
+				center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
+				centerOnDisplayCoordinates(center);
+			}
+			temp_focus = null;
+			// canBeUpdated(true);
+			super.updateDisplay();
+			// canBeUpdated(false);
+		}
+
+		// EXPERIMENTAL
+	}
+
+	@Override
 	public void zoomIn() {
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 + zoomIncrement);
@@ -130,6 +166,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void run() {
+
 				canBeUpdated(false);
 				drawDisplaysWithoutRepainting();
 				repaint();
@@ -244,6 +281,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
+
 		// ex[0] = null;
 		iGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(iGraphics);

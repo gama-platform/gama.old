@@ -21,6 +21,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -56,6 +57,18 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
+	// / EXPERIMENTAL
+
+	protected IExpression temp_focus;
+
+	//
+	// @Override
+	// public void focusOn(final IExpression expr) {
+	// temp_focus = expr;
+	// }
+
+	// / EXPERIMENTAL
+
 	@Override
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		setOutput(output);
@@ -84,6 +97,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		} else {
 			manager.outputChanged();
 		}
+		temp_focus = output.getFacet(IKeyword.FOCUS);
 	}
 
 	// FIXME Ugly code. The hack must be better written
@@ -163,7 +177,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 		String file =
 			snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
-				scope.getClock().getCycle() + "_time_" + System.currentTimeMillis() + ".png";
+				scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -346,12 +360,14 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void updateDisplay() {
+
 		if ( !canBeUpdated() ) { return; }
 		if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
 			runDisplay(false);
 			return;
 		}
 		runDisplay(synchronous);
+
 	}
 
 	// Used when the image is resized.
@@ -386,6 +402,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected void createNewImage(final int width, final int height) {
 		setDisplayHeight(height);
 		setDisplayWidth(width);
+
 	}
 
 	protected abstract void createIGraphics();
