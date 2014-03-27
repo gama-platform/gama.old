@@ -146,7 +146,7 @@ public class Cast {
 		@usage("if the operand is a matrix, returns the grid topology associated"),
 		@usage("if the operand is another kind of container, returns the multiple topology associated to the container"),
 		@usage("otherwise, casts the operand to a geometry and build a topology from it.") }, examples = {
-		@example(value="topology(0)", equals="null", isExecutable=false),
+		@example(value="topology(0)", equals="nil", isExecutable=true),
 		@example(value="topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
 			+ "at location[53.556743711446195;34.57529210646354]", isExecutable=false) }, see = { "geometry" })
 	public static ITopology asTopology(final IScope scope, final Object val) throws GamaRuntimeException {
@@ -417,7 +417,7 @@ public class Cast {
 		@usage("if the operand is an agent, returns its species;"),
 		@usage("if the operand is a string, returns the species with this name (nil if not found);"), 
 		@usage("otherwise, returns nil") }, examples = {
-		@example(value="species(self)", equals="the species of the current agent",isExecutable=false), 
+		@example(value="species(self)", equals="the species of the current agent",test=false), 
 		@example(value="species('node')", equals="node", isExecutable=false),
 		@example(value="species([1,5,9,3])", equals="nil"), 
 		@example(value="species(node1)", equals="node",isExecutable=false) })

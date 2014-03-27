@@ -66,13 +66,13 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 
 	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
 	@doc(value = "returns a list of the rows of the matrix, with each row as a list of elements", examples = {
-		@example(value="rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])",
-				 equals=" [[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") }, see = "columns_list")
+		@example(value="rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
+				 equals=" matrix([[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]])") }, see = "columns_list")
 	public abstract IList<IList<T>> getRowsList(IScope scope);
 
 	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
 	@doc(value = "returns a list of the columns of the matrix, with each column as a list of elements", examples = {
-		@example(value="columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])",
+		@example(value="columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 				 equals="[[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]") }, see = "rows_list")
 	public abstract IList<IList<T>> getColumnsList(IScope scope);
 

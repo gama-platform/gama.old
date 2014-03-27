@@ -144,8 +144,8 @@ public class Graphs {
 
 	@operator(value = "agent_from_geometry", category={IOperatorCategory.GRAPH,IOperatorCategory.PATH})
 	@doc(value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).", usages = @usage("if the left-hand operand is nil, returns nil"), examples = {
-		@example(value="geometry line <- one_of(path_followed.segments);"),
-		@example(value="road ag <- road(path_followed agent_from_geometry line);") })
+		@example(value="geometry line <- one_of(path_followed.segments);", isExecutable=false),
+		@example(value="road ag <- road(path_followed agent_from_geometry line);", isExecutable=false) })
 	public static IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if ( path == null ) { return null; }
 		return (IAgent) path.getRealObject(geom);
@@ -190,8 +190,8 @@ public class Graphs {
 	@operator(value = "contains_edge", category={IOperatorCategory.GRAPH})
 	@doc(value = "returns true if the graph(left-hand operand) contains the given edge (righ-hand operand), false otherwise",
 		usages = @usage(value="if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph", examples = {
-		@example("graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );"),
-		@example(value="graphEpidemio contains_edge (node(0)::node(3));", equals="true") }))
+	//	@example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
+		@example(value="graphEpidemio contains_edge (node(0)::node(3))", equals="true",isExecutable=false) }))
 	public static Boolean containsEdge(final IGraph graph, final GamaPair edge) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the contains_edge operator, the graph should not be null!"); }
@@ -200,9 +200,9 @@ public class Graphs {
 
 	@operator(value = "source_of", type = ITypeProvider.FIRST_KEY_TYPE, category={IOperatorCategory.GRAPH})
 	@doc(value = "returns the source of the edge (right-hand operand) contained in the graph given in left-hand operand.", usages = @usage("if the lef-hand operand (the graph) is nil, throws an Exception"), examples = {
-		@example("graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );"),
-		@example(value="graphEpidemio source_of(edge(3))",equals="node1"),
-		@example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
+		@example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
+		@example(value="graphEpidemio source_of(edge(3))",equals="node1",isExecutable=false),
+		@example(value="graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0;5.0}") }, see = { "target_of" })
 	public static Object sourceOf(final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -213,8 +213,8 @@ public class Graphs {
 
 	@operator(value = "target_of", type = ITypeProvider.FIRST_KEY_TYPE, category={IOperatorCategory.GRAPH})
 	@doc(value = "returns the target of the edge (right-hand operand) contained in the graph given in left-hand operand.", usages = @usage("if the lef-hand operand (the graph) is nil, returns nil"), examples = {
-		@example("graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );"),
-		@example(value="graphEpidemio source_of(edge(3))",equals="node1"),
+		@example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
+		@example(value="graphEpidemio source_of(edge(3))",equals="node1",isExecutable=false),
 		@example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0;5.0}") }, see = "source_of")
 	public static Object targetOf(final IGraph graph, final Object edge) {
@@ -241,7 +241,7 @@ public class Graphs {
 	}
 
 	@operator(value = "in_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graphFromMap in_edges_of node({12,45})  --:  [LineString]", isExecutable=false) }, see = "out_edges_of")
+	@doc(value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = {@example(value="graph graphFromMap <- graph([]);",isTestOnly=true), @example(value="graphFromMap in_edges_of node({12,45})",equals="[LineString]", test=false) }, see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the in_edges_of operator, the graph should not be null!"); }
@@ -250,7 +250,7 @@ public class Graphs {
 	}
 
 	@operator(value = "edge_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the edge linking two nodes", examples = { @example(value="graphFromMap edge_between node1::node2  --:  edge1", isExecutable=false) }, see = {
+	@doc(value = "returns the edge linking two nodes", examples = { @example(value="graphFromMap edge_between node1::node2",equals="edge1", isExecutable=false) }, see = {
 		"out_edges_of", "in_edges_of" })
 	public static Object EdgeBetween(final IGraph graph, final GamaPair verticePair) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -261,7 +261,7 @@ public class Graphs {
 	}
 
 	@operator(value = "in_degree_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graphEpidemio in_degree_of (node(3))",equals="2") }, see = {
+	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = {@example(value="graph graphFromMap <- graph([]);",isTestOnly=true), @example(value="graphFromMap in_degree_of (node(3))",equals="2",test=false) }, see = {
 		"out_degree_of", "degree_of" })
 	public static int inDregreeOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -271,7 +271,7 @@ public class Graphs {
 	}
 
 	@operator(value = "out_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", masterDoc=true, examples = { @example(value="graphEpidemio out_edges_of (node(3))",equals="3") }, see = "in_edges_of")
+	@doc(value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", masterDoc=true, examples = { @example(value="graph graphFromMap <- graph([]);",isTestOnly=true),@example(value="graphFromMap out_edges_of (node(3))",equals="3",test=false) }, see = "in_edges_of")
 	public static IList outEdgesOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the out_edges_of operator, the graph should not be null!"); }
@@ -280,7 +280,7 @@ public class Graphs {
 	}
 
 	@operator(value = "out_degree_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graphEpidemio out_degree_of (node(3))", isExecutable=false) }, see = {
+	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graph graphFromMap <- graph([]);",isTestOnly=true),@example(value="graphFromMap out_degree_of (node(3))", test=false) }, see = {
 		"in_degree_of", "degree_of" })
 	public static int outDregreeOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -290,7 +290,7 @@ public class Graphs {
 	}
 
 	@operator(value = "degree_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graphEpidemio degree_of (node(3))",isExecutable=false) }, see = {
+	@doc(value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graph graphFromMap <- graph([]);",isTestOnly=true),@example(value="graphFromMap degree_of (node(3))",equals="3",test=false) }, see = {
 		"in_degree_of", "out_degree_of" })
 	public static int degreeOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -300,7 +300,7 @@ public class Graphs {
 	}
 
 	@operator(value = "connected_components_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = { @example(value="list<list> l <- connected_components_of (my_graph);") }, see = {
+	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = {@example(value="graph my_graph <- graph([]);"), @example(value="connected_components_of (my_graph);",equals="the list of all the components as list",test=false) }, see = {
 		"alpha_index", "connectivity_index", "nb_cycles" })
 	public static List<List> connectedComponentOf(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -321,7 +321,7 @@ public class Graphs {
 	}
 
 	@operator(value = "nb_cycles", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the maximum number of independent cycles in a graph. This number (u) is estimated through the number of nodes (v), links (e) and of sub-graphs (p): u = e - v + p.", examples = { @example(value="nb_cycles(graphEpidemio)", isExecutable=false) }, see = {
+	@doc(value = "returns the maximum number of independent cycles in a graph. This number (u) is estimated through the number of nodes (v), links (e) and of sub-graphs (p): u = e - v + p.", examples = { @example(value="graph graphEpidemio <- graph([]);"), @example(value="nb_cycles(graphEpidemio)", equals="the number of cycles in the graph", test=false) }, see = {
 		"alpha_index", "beta_index", "gamma_index", "connectivity_index" })
 	public static int nbCycles(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -343,7 +343,7 @@ public class Graphs {
 	}
 
 	@operator(value = "beta_index", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.", examples = { @example(value="beta_index(graphEpidemio)",isExecutable=false) }, see = {
+	@doc(value = "returns the beta index of the graph (Measures the level of connectivity in a graph and is expressed by the relationship between the number of links (e) over the number of nodes (v) : beta = e/v.", examples = { @example(value="graph graphEpidemio <- graph([]);"),@example(value="beta_index(graphEpidemio)",equals="the beta index of the graph",test=false) }, see = {
 		"alpha_index", "gamma_index", "nb_cycles", "connectivity_index" })
 	public static double betaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -352,7 +352,7 @@ public class Graphs {
 	}
 
 	@operator(value = "gamma_index", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.", examples = { @example(value="gamma_index(graphEpidemio)",isExecutable=false) }, see = {
+	@doc(value = "returns the gamma index of the graph (A measure of connectivity that considers the relationship between the number of observed links and the number of possible links: gamma = e/(3 `*` (v - 2)) - for planar graph.", examples = { @example(value="graph graphEpidemio <- graph([]);"), @example(value="gamma_index(graphEpidemio)",equals="the gamma index of the graph",test=false) }, see = {
 		"alpha_index", "beta_index", "nb_cycles", "connectivity_index" })
 	public static double gammaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -361,7 +361,7 @@ public class Graphs {
 	}
 
 	@operator(value = "connectivity_index", category={IOperatorCategory.GRAPH})
-	@doc(value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).", examples = { @example(value="connectivity_index(graphEpidemio)",isExecutable=false) }, see = {
+	@doc(value = "retruns a simple connetivity index. This number is estimated through the number of nodes (v) and of sub-graphs (p) : IC = (v - p) /(v - 1).", examples = { @example(value="graph graphEpidemio <- graph([]);"), @example(value="connectivity_index(graphEpidemio)",equals="the connectivity index of the graph",test=false) }, see = {
 		"alpha_index", "beta_index", "gamma_index", "nb_cycles" })
 	public static double connectivityIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -372,7 +372,7 @@ public class Graphs {
 	}
 
 	@operator(value = "betweenness_centrality", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ", examples = { @example(value="betweenness_centrality(graphEpidemio)",isExecutable=false) }, see = {
+	@doc(value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ", examples = { @example(value="graph graphEpidemio <- graph([]);"), @example(value="betweenness_centrality(graphEpidemio)",equals="the betweenness centrality index of the graph",test=false) }, see = {
 		 })
 	public static GamaMap betweennessCentrality(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -404,8 +404,8 @@ public class Graphs {
 	
 	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_KEY_TYPE, category={IOperatorCategory.GRAPH})
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
-		@example(value="graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",isExecutable=false),
-		@example(value="graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]",isExecutable=false) }, see = { "predecessors_of", "successors_of" })
+		@example(value="graphEpidemio neighbours_of (node(3))",equals="[node0,node2]",isExecutable=false),
+		@example(value="graphFromMap neighbours_of node({12,45})",equals="[{1.0,5.0},{34.0,56.0}]",isExecutable=false) }, see = { "predecessors_of", "successors_of" })
 	public static IList neighboursOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the neighbours_of operator, the graph should not be null!"); }
@@ -415,16 +415,17 @@ public class Graphs {
 
 	@operator(value = "predecessors_of", content_type = ITypeProvider.FIRST_KEY_TYPE, category={IOperatorCategory.GRAPH})
 	@doc(value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
-		@example(value="graphEpidemio predecessors_of (node(3))",equals="[node0,node2]",isExecutable=false),
-		@example(value="graphFromMap predecessors_of node({12,45})",equals="[{1.0;5.0}]",isExecutable=false) }, see = { "neighbours_of", "successors_of" })
+		@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),
+		@example(value="graphEpidemio predecessors_of (node(3))",equals="[node0,node2]",test=false),
+		@example(value="graphEpidemio predecessors_of node({12,45})",equals="[{1.0;5.0}]",test=false) }, see = { "neighbours_of", "successors_of" })
 	public static IList predecessorsOf(final IGraph graph, final Object vertex) {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
 		return new GamaList();
 	}
 
 	@operator(value = "successors_of", content_type = ITypeProvider.FIRST_KEY_TYPE, category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
-		@example(value="graphEpidemio successors_of (node(3))",equals="[]",isExecutable=false), @example(value="graphFromMap successors_of node({12,45})",equals="[{34.0;56.0}]",isExecutable=false) }, see = {
+	@doc(value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),
+		@example(value="graphEpidemio successors_of (node(3))",equals="[]",test=false), @example(value="graphEpidemio successors_of node({12,45})",equals="[{34.0;56.0}]",test=false) }, see = {
 		"predecessors_of", "neighbours_of" })
 	public static IList successorsOf(final IGraph graph, final Object vertex) {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.successorListOf(graph, vertex)); }
@@ -437,7 +438,7 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_edge_graph", content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = IType.GEOMETRY, category={IOperatorCategory.GRAPH})
-	@doc(value = "creates a graph from the list/map of edges given as operand", masterDoc=true, usages = @usage(value="if the operand is a list, the graph will be built with elements of the list as vertices", examples = { @example(value="as_edge_graph([{1,5},{12,45},{34,56}])", equals="build a graph with these three vertices and reflexive links on each vertices", isExecutable=false) }), see = {
+	@doc(value = "creates a graph from the list/map of edges given as operand", masterDoc=true, usages = @usage(value="if the operand is a list, the graph will be built with elements of the list as vertices", examples = { @example(value="as_edge_graph([{1,5},{12,45},{34,56}])", equals="build a graph with these three vertices and reflexive links on each vertices", test=false) }), see = {
 		"as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 		return new GamaSpatialGraph(edges, true, false, null, null, scope);
@@ -450,7 +451,7 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_edge_graph", index_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
-	@doc(usages = @usage(value="if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = @example(value="as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])", equals="a graph with these three vertices and two edges", isExecutable=false)))
+	@doc(usages = @usage(value="if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = @example(value="as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])", equals="a graph with these three vertices and two edges", test=false)))
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 
@@ -599,7 +600,7 @@ public class Graphs {
 	}
 
 	@operator(value = "rewire_p", category={IOperatorCategory.GRAPH})
-	@doc(value = "Rewires a graph (in the Watts-Strogatz meaning)", deprecated = "Does not work now", examples = @example("set graphEpidemio <- graphEpidemio rewire_p 0.2;"), see = "rewire_p")
+	@doc(value = "Rewires a graph (in the Watts-Strogatz meaning)", deprecated = "Does not work now", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),@example(value="graphEpidemio rewire_p 0.2",test=false)}, see = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Double probability) {
 		GraphAlgorithmsHandmade.rewireGraphProbability(g, probability);
 		g.incVersion();
@@ -607,7 +608,7 @@ public class Graphs {
 	}
 
 	@operator(value = "rewire_n", category={IOperatorCategory.GRAPH})
-	@doc(value = "rewires the given count of edges.", comment = "If there are too many edges, all the edges will be rewired.", examples = @example(value="graphEpidemio <- graphEpidemio rewire_n 10;", isExecutable=false), see = "rewire_p")
+	@doc(value = "rewires the given count of edges.", comment = "If there are too many edges, all the edges will be rewired.", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),@example(value="graphEpidemio rewire_n 10", equals="", test=false)}, see = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
 		g.incVersion();
@@ -657,7 +658,7 @@ public class Graphs {
 	}
 
 	@operator(value = "as_path", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH, IOperatorCategory.PATH})
-	@doc(value = "create a graph path from the list of shape", examples = { @example(value="[road1,road2,road3] as_path my_graph", equals="A path road1->road2->road3 of my_graph",isExecutable=false) })
+	@doc(value = "create a graph path from the list of shape", examples = { @example(value="[road1,road2,road3] as_path my_graph", equals="a path road1->road2->road3 of my_graph",isExecutable=false) })
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
@@ -779,7 +780,7 @@ public class Graphs {
 	 */
 
 	@operator(value = "load_shortest_paths", category={IOperatorCategory.GRAPH,IOperatorCategory.PATH})
-	@doc(value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)", examples = { @example(value="load_shortest_paths(shortest_paths_matrix)", equals="return my_graph with all the shortest paths computed") })
+	@doc(value = "put in the graph cache the computed shortest paths contained in the matrix (rows: source, columns: target)", examples = { @example(value="load_shortest_paths(shortest_paths_matrix)", equals="return my_graph with all the shortest paths computed", isExecutable=false) })
 	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
 		throws GamaRuntimeException {
 		if ( graph == null ) { throw GamaRuntimeException

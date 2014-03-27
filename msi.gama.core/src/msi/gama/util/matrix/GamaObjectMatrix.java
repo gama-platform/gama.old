@@ -105,10 +105,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendVertically" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", 
-		examples = { @example(value="opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3;4,5,6;7,8,9;10,11,12]") })
-	public/* static */IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
+	@operator(value = { "append_vertically" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices")
+	public static IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
 		Object[] ma = ((GamaObjectMatrix) a).getMatrix();
 		Object[] mb = ((GamaObjectMatrix) b).getMatrix();
 		Object[] mab = ArrayUtils.addAll(ma, mb);
@@ -126,11 +125,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@Override
-	@operator(value = { "opAppendHorizontally"}, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", 
-		examples = { @example(value="opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3,7,8,9;4,5,6,10,11,12]") })
-	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
+	@operator(value = { "append_horizontally"}, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices")
+	public static IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
 
 		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);

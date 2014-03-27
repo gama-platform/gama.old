@@ -106,7 +106,7 @@ public class Files {
 	}
 
 	@operator(value="writable", category=IOperatorCategory.FILE)
-	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { @example(value="shapefile(\"../images/point_eau.shp\") writable false --: returns a file in read-only mode") }, see = "file")
+	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { @example(value="shapefile(\"../images/point_eau.shp\") writable false",equals="returns a file in read-only mode",test=false) }, see = "file")
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
 		if ( s == null ) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file"); }
 		boolean b = writable == null ? false : writable;
@@ -124,7 +124,7 @@ public class Files {
 	 * @return
 	 */
 	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
-	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", masterDoc = true, examples = { @example("let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ") })
+	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", masterDoc = true, examples = { @example(value="string agent_name <- read ('name');",equals="reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ",test=false) })
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -134,7 +134,7 @@ public class Files {
 	}
 
 	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
-	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { @example("let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ") })
+	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { @example(value="let second_variable value: read (2);",equals="reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ",test=false) })
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -147,7 +147,7 @@ public class Files {
 	@operator(value = "get", category=IOperatorCategory.FILE)
 //	@doc(examples = { "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable." })
 	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute name is specified by the right operand.",
-		usages = {@usage(examples = @example("string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable"))})
+		usages = {@usage(examples = @example(value="string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable", isExecutable=false))})
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return g.getAttribute(s);
@@ -156,7 +156,7 @@ public class Files {
 	@operator(value = "get", category=IOperatorCategory.FILE)
 //	@doc(examples = { "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable." })
 	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute name is specified by the right operand.",
-		usages = {@usage(examples = @example("string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable"))})
+		usages = {@usage(examples = @example(value="string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable", isExecutable=false))})
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return ((GamaShape) g.getGeometry()).getAttribute(s);

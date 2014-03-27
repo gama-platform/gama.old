@@ -66,7 +66,7 @@ public class Stats {
 		@usage(value="if it is a list of int of float, max returns the maximum of all the elements", examples = {
 			@example(value="max ([100, 23.2, 34.5])",equals="100.0")}),
 		@usage(value="if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )", examples = {
-			@example(value="max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])", equals="{9.0;1.0}") }),
+			@example(value="max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals="{9.0,1.0}") }),
 		@usage("if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them"),
 		@usage("if it is a map, max returns the maximum among the list of all elements value"),
 		@usage("if it is a file, max returns the maximum of the content of the file (that is also a container)"),
@@ -167,7 +167,7 @@ public class Stats {
 		IType.INT, IType.FLOAT, IType.POINT }, category={IOperatorCategory.STATISTICAL,IOperatorCategory.CONTAINER})
 	@doc(value = "the sum of all the elements of the operand", masterDoc=true, comment = "the sum operator behavior depends on the nature of the operand", usages = {
 		@usage(value="if it is a list of int or float: sum returns the sum of all the elements", examples = {@example(value="sum ([12,10, 3])", equals="25.0") }),
-		@usage(value="if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)", examples = {@example(value="sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])", equals="{20.0;17.0}") }),
+		@usage(value="if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)", examples = {@example(value="sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals="{20.0,17.0}") }),
 		@usage(value="if it is a population or a list of other types: sum transforms all elements into integer and sums them"),
 		@usage(value="if it is a map, sum returns the sum of the value of all elements"),
 		@usage(value="if it is a file, sum returns the sum of the content of the file (that is also a container)"),
@@ -278,7 +278,7 @@ public class Stats {
 	}
 
 	@operator(value = { "frequency_of" }, iterator = true, index_type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = IType.INT, category={IOperatorCategory.STATISTICAL})
-	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { @example("[ag1, ag2, ag3, ag4] frequency_of each.size 	--:   will return the different sizes as keys and the number of agents of this size as values") }, see = "as_map")
+	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { @example(value="[ag1, ag2, ag3, ag4] frequency_of each.size",equals="the different sizes as keys and the number of agents of this size as values",isExecutable=false) }, see = "as_map")
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 		throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
@@ -298,8 +298,7 @@ public class Stats {
 	@operator(value = "corR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).", 
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0", examples = {
-		@example("list X <- [2, 3, 1];"), @example("list Y <- [2, 12, 4];"), @example("float corResult <- 0.0;"), @example("corResult <- corR(X, Y);"),
-		@example("write corResult; // -> 0.755928946018454") })
+		@example("list X <- [2, 3, 1];"), @example("list Y <- [2, 12, 4];"), @example(value="corR(X, Y)",equals="0.755928946018454")})
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -347,8 +346,7 @@ public class Stats {
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).", examples = {
-		@example("list X <- [2, 3, 1];"), @example("list Y <- [2, 12, 4];"), @example("float meanResult <- 0.0;"), @example("meanResult <- meanR(X);"),
-		@example("write meanResult; // -> 2.0") })
+		@example("list X <- [2, 3, 1];"), @example(value="meanR(X)",equals="2.0")})
 	public static Object getMeanR(final IScope scope, final IContainer l) throws GamaRuntimeException,
 		RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -379,8 +377,8 @@ public class Stats {
 
 	@operator(value = "R_compute", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).", examples = {
-		@example("list result;"), @example("result <- R_compute('C:/YourPath/Correlation.R');"), @example("// Correlation.R file:"), @example("x <- c(1, 2, 3);"),
-		@example("y <- c(1, 2, 4);"), @example("result <- cor(x, y);"), @example("// Output:"), @example("result::[0.981980506061966]") })
+		@example("map result <- [];"), @example("result <- R_compute('C:/YourPath/Correlation.R');"), @example("////// Correlation.R file:"), @example("// x <- c(1, 2, 3);"),
+		@example("// y <- c(1, 2, 4);"), @example("// result <- cor(x, y);"), @example("// Output:"), @example("// result::[0.981980506061966]") })
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile) throws GamaRuntimeException,
 		RCallerParseException, RCallerExecutionException {
 		try {
@@ -455,9 +453,9 @@ public class Stats {
 
 	@operator(value = "R_compute_param", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector", examples = {
-		@example("list X <- [2, 3, 1];"), @example("list result;"), @example("result <- R_compute_param('C:/YourPath/AddParam.R', X);"),
-		@example("write result at 0;"), @example("// AddParam.R file:"), @example("v1 <- vectorParam[1];"), @example("v2<-vectorParam[2];"), @example("v3<-vectorParam[3];"),
-		@example("result<-v1+v2+v3;"), @example("// Output:"), @example("result::[10]") })
+		@example("list X <- [2, 3, 1];"), @example("map result <- [];"), @example("result <- R_compute_param('C:/YourPath/AddParam.R', X);"),
+		@example("write result at 0;"), @example("////// AddParam.R file:"), @example("// v1 <- vectorParam[1];"), @example("// v2<-vectorParam[2];"), @example("// v3<-vectorParam[3];"),
+		@example("// result<-v1+v2+v3;"), @example("////// Output:"), @example("// result::[10]") })
 	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( param.length(scope) == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception"); }

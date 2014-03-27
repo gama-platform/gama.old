@@ -48,21 +48,27 @@ experiment testOp</xsl:text><xsl:value-of select="doc/operators/operator/operato
  
 <xsl:template name="generateTestFromExample">
 	<xsl:for-each select="examples/example">
-	  	<xsl:if test="@isExecutable = 'true'">
+	 <!-- <xsl:if test="@isExecutable = 'true'">  --> 	
 		<xsl:choose>
 			<xsl:when test="@equals">
 				<xsl:text>			</xsl:text>
-				<xsl:value-of select="@type"/> var<xsl:value-of select="@index"/> &lt;- <xsl:value-of select="@code"/>; 	// var<xsl:value-of select="@index"/> equals <xsl:value-of select="@equals"/>
-			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text>
-</xsl:text>
+			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@type"/> var<xsl:value-of select="@index"/> &lt;- <xsl:value-of select="@code"/>; 	// var<xsl:value-of select="@index"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
+</xsl:text></xsl:if>
+			<xsl:if test="@test = 'true'">
+			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
+</xsl:text> </xsl:if>
+			</xsl:when>
+			<xsl:when test="@raises">
+			assert <xsl:value-of select="@code"/> raises: "<xsl:value-of select="@raises"/>";<xsl:text> 
+</xsl:text>			
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>			</xsl:text>
-				<xsl:value-of select="@code"/><xsl:text>
+				<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@code"/><xsl:text>
 </xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-		</xsl:if>
+	<!-- </xsl:if>  -->	
 	</xsl:for-each>
 </xsl:template>		
  

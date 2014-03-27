@@ -233,6 +233,11 @@ public class DocProcessorAnnotations {
 		if(!"".equals(example.raises())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_RAISES, example.raises());}
 		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TEST_ONLY, ""+example.isTestOnly());
 		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_EXECUTABLE, ""+example.isExecutable());
+		if(!example.isExecutable()) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, "false");					
+		} else {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, ""+example.test());					
+		}
 		if (e != null){
 			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, tc.getProperType(e.getReturnType().toString()));
 		}

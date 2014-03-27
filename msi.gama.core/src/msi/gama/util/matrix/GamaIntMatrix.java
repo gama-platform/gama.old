@@ -61,10 +61,9 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendVertically" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", 
-		examples = { @example(value="opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3;4,5,6;7,8,9;10,11,12]" )})
-	public/* static */IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
+	@operator(value = { "append_vertically" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices")
+	public static IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
 		int[] ma = ((GamaIntMatrix) a).getMatrix();
 		int[] mb = ((GamaIntMatrix) b).getMatrix();
 		int[] mab = ArrayUtils.addAll(ma, mb);
@@ -82,14 +81,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendHorizontally" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", 
-		examples = { @example(value="opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3,7,8,9;4,5,6,10,11,12]" )})
-	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaIntMatrix a, final GamaIntMatrix b) {
+	@operator(value = { "append_horizontally" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices")
+	public static IMatrix opAppendHorizontally(final IScope scope, final GamaIntMatrix a, final GamaIntMatrix b) {
 
 		IMatrix aprime = new GamaIntMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);
-		// System.out.println("aprime = " + aprime);
+		// System.out.println("aprime = " + aprime);	
 		IMatrix bprime = new GamaIntMatrix(b.getRows(scope), b.getCols(scope));
 		bprime = b._reverse(scope);
 		// System.out.println("bprime = " + bprime);

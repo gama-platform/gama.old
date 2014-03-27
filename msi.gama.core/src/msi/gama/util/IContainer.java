@@ -56,7 +56,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			+ "The at operator behavior depends on the nature of the operand", 
 			usages = {
 				@usage(value="if it is a list or a matrix, at returns the element at the index specified by the right operand",
-					examples={@example(value="[1, 2, 3] at 2", equals="3"), @example(value="[{1,2}, {3,4}, {5,6}] at 0", equals="{1.0;2.0}")}),
+					examples={@example(value="[1, 2, 3] at 2", equals="3"), @example(value="[{1,2}, {3,4}, {5,6}] at 0", equals="{1.0,2.0}")}),
 				@usage("if it is a file, at returns the element of the file content at the index specified by the right operand"),
 				@usage("if it is a population, at returns the agent at the index specified by the right operand"),
 				@usage("if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node"),
@@ -188,7 +188,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		@usage(value="if it is a list, reverse returns a copy of the operand list with elements in the reversed order", examples={
 			@example(value="reverse ([10,12,14])", equals="[14, 12, 10]")}),
 		@usage(value="if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)", examples={
-			@example(value="reverse (map([k1::44, k2::32, k3::12]))", equals="map([12::k3,  32::k2, 44::k1])")}),
+			@example(value="reverse (['k1'::44, 'k2'::32, 'k3'::12])", equals="[12::'k3',  32::'k2', 44::'k1']")}),
 		@usage("if it is a file, reverse returns a copy of the file with a reversed content"),
 		@usage("if it is a population, reverse returns a copy of the population with elements in the reversed order"),
 		@usage("if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),
@@ -209,11 +209,11 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					@example("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""),
 					@example(value="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat", equals="true",isTestOnly=true)}),
 			@usage(value="if it is a map, one_of returns one the value of a random pair of the map", examples ={
-					@example("int im <- one_of (map([2::3, 4::5, 6::7]));	// im equals 3, 5 or 7"),@example(value="map([2::3, 4::5, 6::7]).values contains im",equals="true")}),
+					@example("int im <- one_of ([2::3, 4::5, 6::7]);	// im equals 3, 5 or 7"),@example(value="[2::3, 4::5, 6::7].values contains im",equals="true")}),
 			@usage(value="if it is a graph, one_of returns one of the lists of edges"),
 			@usage(value="if it is a file, one_of returns one of the elements of the content of the file (that is also a container)"),
 			@usage(value="if it is a population, one_of returns one of the agents of the population", examples={
-					@example("bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3")})},
+				@example(value="agent b <- one_of(agents);", isTestOnly=true),@example(value="bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3", isExecutable=false)})},
 		see = {"contains"})
 	public ValueType anyValue(IScope scope);
 

@@ -64,10 +64,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendVertically" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", 
-		examples = { @example(value="opAppendVertically([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3;4,5,6;7,8,9;10,11,12]" )})
-	public/* static */IMatrix opAppendVertically(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
+	@operator(value = { "append_vertically" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices")
+	public static IMatrix opAppendVertically(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
 		double[] ma = a.getMatrix();
 		double[] mb = b.getMatrix();
 		double[] mab = ArrayUtils.addAll(ma, mb);
@@ -85,10 +84,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "opAppendHorizontally" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", 
-		examples = {@example(value= "opAppendHorizontally([1,2,3;4,5,6],[7,8,9;10,11,12])", equals="[1,2,3,7,8,9;4,5,6,10,11,12]" )})
-	public/* static */IMatrix opAppendHorizontally(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
+	@operator(value = { "append_horizontally" }, category={IOperatorCategory.MATRIX})
+	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices")
+	public static IMatrix opAppendHorizontally(final IScope scope, final GamaFloatMatrix a, final GamaFloatMatrix b) {
 
 		IMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);

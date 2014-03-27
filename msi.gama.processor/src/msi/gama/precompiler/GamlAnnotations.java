@@ -950,7 +950,14 @@ public final class GamlAnnotations {
 		 * 
 		 * @return isExecutable specifies that the example is correct GAML code that can be executed.
 		 */
-		boolean isExecutable() default true;	
+		boolean isExecutable() default true;
+		
+		/**
+		 * test
+		 * 
+		 * @return test specifies that the example is will be tested with the equals.
+		 */
+		boolean test() default true;			
 	}
 
 	@Retention(RetentionPolicy.SOURCE)

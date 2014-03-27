@@ -72,7 +72,8 @@ public class XMLElements {
 	// Attributes of EXAMPLE element
 	public static final String ATT_EXAMPLE_CODE = "code";	
 	public static final String ATT_EXAMPLE_IS_TEST_ONLY = "isTestOnly";	
-	public static final String ATT_EXAMPLE_IS_EXECUTABLE = "isExecutable";	
+	public static final String ATT_EXAMPLE_IS_EXECUTABLE = "isExecutable";
+	public static final String ATT_EXAMPLE_IS_TESTABLE = "test";
 	public static final String ATT_EXAMPLE_VAR = "var";	
 	public static final String ATT_EXAMPLE_EQUALS = "equals";	
 	public static final String ATT_EXAMPLE_IS_NOT = "isNot";	
