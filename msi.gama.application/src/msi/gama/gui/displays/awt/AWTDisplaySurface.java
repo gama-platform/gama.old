@@ -68,7 +68,11 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		public void mouseWheelMoved(final MouseWheelEvent e) {
 			final boolean zoomIn = e.getWheelRotation() < 0;
 			mousePosition = e.getPoint();
-			applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement, mousePosition);
+			Point p = new Point(mousePosition.x, mousePosition.y);
+			double zoomFactor = applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement);
+			double newx = Math.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2);
+			double newy = Math.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2);
+			centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 			updateDisplay();
 		}
 
@@ -92,6 +96,35 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	}
 
+	@Override
+	public void zoomIn() {
+		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
+		double zoomFactor = applyZoom(1.0 + zoomIncrement);
+		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
+		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
+		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
+		updateDisplay();
+	}
+
+	@Override
+	public void zoomOut() {
+		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
+		double oldx = Math.round(getWidth() / 2 - origin.x);
+		double oldy = Math.round(getHeight() / 2 - origin.y);
+		double zoomFactor = applyZoom(1.0 - zoomIncrement);
+
+		// setOrigin((int) (origin.x + origin.x * (1 - zoomFactor) / 2),
+		// (int) (origin.y + origin.y * (1 - zoomFactor) / 2));
+		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
+		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
+		// jd
+		// Point center = new Point((int) newx, (int) newy);
+		// center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
+
+		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
+		updateDisplay();
+	}
+
 	public AWTDisplaySurface(final Object ... args) {
 		displayBlock = new Runnable() {
 
@@ -112,21 +145,20 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	protected void createNewImage(final int width, final int height) {
-		super.createNewImage(width, height);
+
 		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
 		if ( buffImage != null ) {
 			newImage.getGraphics().drawImage(buffImage, 0, 0, width, height, null);
 			buffImage.flush();
 		}
 		buffImage = newImage;
-
+		super.createNewImage(width, height);
 	}
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
-		// menuManager = new AWTDisplaySurfaceMenu(this);
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -237,60 +269,87 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void zoomIn() {
-		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);
-		applyZoom(1.0 + zoomIncrement, mousePosition);
-
-	}
-
-	@Override
-	public void zoomOut() {
-		if ( getZoomLevel() < 0.02 ) { return; }
-		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);;
-		applyZoom(1.0 - zoomIncrement, mousePosition);
-
-	}
-
-	@Override
 	public void focusOn(final IShape geometry) {
 		Rectangle2D r = this.getManager().focusOn(geometry, this);
+		System.out.println("Rectangle = " + r);
 		if ( r == null ) { return; }
 		double xScale = getWidth() / r.getWidth();
 		double yScale = getHeight() / r.getHeight();
 		double zoomFactor = Math.min(xScale, yScale);
-		GuiUtils.debug("AWTDisplaySurface.focusOn zoomFactor = " + zoomFactor + " currentZoomLevel = " + zoomLevel);
-		GuiUtils.debug("Center of rectangle = " + r.getCenterX() + " , " + r.getCenterY());
-		applyZoom(zoomFactor, new Point((int) r.getCenterX() + origin.x, (int) r.getCenterY() + origin.y));
+		Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
+
+		zoomFactor = applyZoom(zoomFactor);
+		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
+		centerOnDisplayCoordinates(center);
+
+		updateDisplay();
 	}
 
-	public void applyZoom(final double f, final Point c) {
-		GuiUtils.debug("Center required = " + c.x + " , " + c.y);
-		// double resultingZoom = f * zoomLevel;
-		double factor = f;
-		// if ( resultingZoom > 10d ) {
-		// factor = 10d / zoomLevel;
-		// }
-		GuiUtils.debug("AWTDisplaySurface.applyZoom zoomFactor = " + factor);
-		Point oldOrigin = origin;
-		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * factor)),
-			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
+	public void centerOnViewCoordinates(final Point p) {
+		int translationX = p.x - Math.round(getWidth() / 2);
+		int translationY = p.y - Math.round(getHeight() / 2);
+		setOrigin(origin.x - translationX, origin.y - translationY);
+
+	}
+
+	public void centerOnDisplayCoordinates(final Point p) {
+		centerOnViewCoordinates(new Point(p.x + origin.x, p.y + origin.y));
+	}
+
+	public double applyZoom(final double factor) {
+		System.out.println("Origin = " + origin);
+		double real_factor = factor;
+		boolean success = false;
+
+		try {
+			success =
+				resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+		} catch (Exception e) {
+			System.gc();
+			GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			real_factor = MAX_ZOOM_FACTOR;
+			try {
+				success =
+					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+			} catch (Exception e1) {
+				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				real_factor = 1;
+				success = true;
+			} catch (Error e1) {
+				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				real_factor = 1;
+				success = true;
+			}
+		} catch (Error e) {
+			System.gc();
+			GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			real_factor = MAX_ZOOM_FACTOR;
+			try {
+				success =
+					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+			} catch (Exception e1) {
+				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				real_factor = 1;
+				success = true;
+			} catch (Error e1) {
+				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				real_factor = 1;
+				success = true;
+			}
+		}
+
+		if ( success ) {
 			zoomFit = false;
 			if ( widthHeightConstraint < 1 ) {
-				setZoomLevel(getDisplayWidth() / (double) getWidth());
+				setZoomLevel((double) getDisplayWidth() / (double) getWidth());
 			} else {
-				setZoomLevel(getDisplayHeight() / (double) getHeight());
+				setZoomLevel((double) getDisplayHeight() / (double) getHeight());
 			}
-			// setOrigin((int) (c.x * zoomLevel), (int) (c.y * zoomLevel));
-
-			final int imagePX =
-				c.x < origin.x ? origin.x : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x -
-					origin.x;
-			final int imagePY =
-				c.y < origin.y ? origin.y : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y -
-					origin.y;
-			setOrigin((int) Math.round(c.x - imagePX * factor), (int) Math.round(c.y - imagePY * factor));
-			updateDisplay();
 		}
+		return real_factor;
 	}
 
 	@Override
@@ -302,30 +361,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			updateDisplay();
 		}
 	}
-
-	// @Override
-	// public void focusOn(final IShape geometry, final ILayer display) {
-	// // FIXME TO BE ENTIRELY REDEFINED
-	// final Point pmin;
-	// final Point pmax;
-	// Envelope env = geometry.getEnvelope();
-	// if ( display == null ) {
-	// pmin = getScreenCoordinatesFrom(env.getMinX(), env.getMinY());
-	// pmax = getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY());
-	// } else {
-	// pmin = display.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), this);
-	// pmax = display.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), this);
-	// }
-	//
-	// Rectangle envelop = new Rectangle(pmin.x + origin.x, pmin.y + origin.y, pmax.x - pmin.x, pmax.y - pmin.y);
-	// double xScale = (double) getWidth() / envelop.width;
-	// double yScale = (double) getHeight() / envelop.height;
-	// double zoomFactor = Math.min(xScale, yScale);
-	// if ( zoomFactor > 10 ) {
-	// zoomFactor = 10;
-	// }
-	// applyZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
-	// }
 
 	Point getScreenCoordinatesFrom(final double x, final double y) {
 		final double xFactor = x / getEnvWidth();

@@ -52,6 +52,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envHeight;
 	private IZoomListener zoomListener;
 	protected DisplaySurfaceMenu menuManager;
+	protected static final int MAX_ZOOM_FACTOR = 2;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -373,8 +374,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = Math.min(Math.max(1, point[0]), getWidth() * 10);
-		int imageHeight = Math.min(Math.max(1, point[1]), getHeight() * 10);
+		int imageWidth = Math.max(1, point[0]);
+		int imageHeight = Math.max(1, point[1]);
 		createNewImage(imageWidth, imageHeight);
 		createIGraphics();
 		canBeUpdated(true);
