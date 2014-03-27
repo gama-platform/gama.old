@@ -72,8 +72,9 @@ public class GamaDynamicLink extends GamaShape {
 		Geometry p1 = source.getInnerGeometry();
 		Geometry p2 = target.getInnerGeometry();
 		if ( p1 == null || p2 == null ) { return null; }
-		Geometry inter = p1.intersection(p2);
-		if ( inter.getLength() > 0 ) { return new GamaShape(inter); }
+		//delete because it is not very consistent with path building
+		//Geometry inter = p1.intersection(p2);
+		//if ( inter.getLength() > 0 ) { return new GamaShape(inter); }
 		return GamaGeometryType.buildLine(s, t);
 	}
 
