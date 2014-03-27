@@ -98,7 +98,7 @@ public class System {
 	@operator(value = "user_input", category={IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL})
 	@doc(value = "asks the user for some values (not defined as parameters)", examples = {
 		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example("create agent number: int(values at \"Number\") with: [location:: (point(values2 at \"Location\"))];") })
+		@example("create agent number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];") })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
 		final GamaMap<String, IType> initialTypes = new GamaMap();

@@ -300,14 +300,14 @@ public class Strings {
 	}
 
 	@operator(value = "char", can_be_const = true, category={IOperatorCategory.STRING})
-	@doc(usages = @usage(value="converts ACSII integer value to character", examples = @example(value="char (34)",equals="\"")))
+	@doc(usages = @usage(value="converts ACSII integer value to character", examples = @example(value="char (34)",equals="'\"'")))
 	static public String asChar(final Integer s) {
 		if ( s == null ) { return ""; }
 		return Character.toString((char) s.intValue());
 	}
 	
 	@operator(value = "toChar", can_be_const = true, category={IOperatorCategory.STRING})
-	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { @example(value="toChar (34)",equals="\"") })
+	@doc(deprecated="Use 'char' instead", special_cases = { "convert ACSII integer value to character" }, examples = { @example(value="toChar (34)",equals="'\"'") })
 	static public String toChar(final Integer s) {
 		return asChar(s);
 	}

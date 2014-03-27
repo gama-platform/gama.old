@@ -206,7 +206,7 @@ public class Containers {
 
 	@operator(value = "last_index_of", can_be_const = true, category={IOperatorCategory.MATRIX})
 	@doc(value = "the index of the last occurence of the right operand in the left operand container",
-		usages = @usage(value="if the left operand is a matrix, last_index_of returns the index as a point", examples = { @example(value= "matrix([[1,2,3],[4,5,4]]) last_index_of 4", equals="{1.0;2.0}") }))
+		usages = @usage(value="if the left operand is a matrix, last_index_of returns the index as a point", examples = { @example(value= "matrix([[1,2,3],[4,5,4]]) last_index_of 4", equals="{1.0,2.0}") }))
 	public static ILocation last_index_of(final IScope scope, final IMatrix m, final Object o) {
 		for ( int i = nullCheck(m).getCols(scope) - 1; i > -1; i-- ) {
 			for ( int j = m.getRows(scope) - 1; j > -1; j-- ) {
