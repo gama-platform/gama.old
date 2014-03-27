@@ -19,10 +19,13 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
+
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -31,7 +34,9 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
+
 import org.apache.commons.lang.ArrayUtils;
+
 import com.google.common.collect.ImmutableList;
 
 public class GamaObjectMatrix extends GamaMatrix<Object> {
@@ -98,49 +103,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		}
 	}
 
-	/**
-	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
-	 * right side of the first matrix
-	 * 
-	 * @param two matrix to concatenate
-	 * @return the matrix concatenated
-	 */
-	@operator(value = { "append_vertically" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices")
-	public static IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
-		Object[] ma = ((GamaObjectMatrix) a).getMatrix();
-		Object[] mb = ((GamaObjectMatrix) b).getMatrix();
-		Object[] mab = ArrayUtils.addAll(ma, mb);
-
-		GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
-
-		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
-		return fl;
-	}
-
-	/**
-	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
-	 * side of the first matrix
-	 * 
-	 * @param two matrix to concatenate
-	 * @return the matrix concatenated
-	 */
-	@operator(value = { "append_horizontally"}, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices")
-	public static IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
-
-		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
-		aprime = a._reverse(scope);
-		// System.out.println("aprime = " + aprime);
-		IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = b._reverse(scope);
-		// System.out.println("bprime = " + bprime);
-		IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
-		// System.out.println("c = " + c);
-		IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
-		// System.out.println("cprime = " + cprime);
-		return cprime;
-	}
 
 	public GamaObjectMatrix(final IScope scope, final Object[] mat) {
 		super(1, mat.length);
@@ -176,7 +138,53 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	public Integer _length(final IScope scope) {
 		return getMatrix().length;
 	}
+	/**
+	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
+	 * right side of the first matrix
+	 * 
+	 * @param two matrix to concatenate
+	 * @return the matrix concatenated
+	 */
+/*	
+	@Override
+	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
+		GamaObjectMatrix a=this;
+		Object[] ma = ((GamaObjectMatrix) a).getMatrix();
+		Object[] mb = ((GamaObjectMatrix) b).getMatrix();
+		Object[] mab = ArrayUtils.addAll(ma, mb);
 
+		IMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
+
+		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
+		return fl;
+	}
+*/
+	/**
+	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
+	 * side of the first matrix
+	 * 
+	 * @param two matrix to concatenate
+	 * @return the matrix concatenated
+	 */
+	/*
+	@Override
+	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
+		GamaObjectMatrix a=this;
+		GamaObjectMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
+		aprime = (GamaObjectMatrix)a._reverse(scope);
+		// System.out.println("aprime = " + aprime);
+		GamaObjectMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
+		bprime = ((GamaObjectMatrix)b)._reverse(scope);
+		// System.out.println("bprime = " + bprime);
+		GamaObjectMatrix c = aprime.opAppendVertically(scope, (GamaObjectMatrix) bprime);
+		// System.out.println("c = " + c);
+		GamaObjectMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
+		// System.out.println("cprime = " + cprime);
+		return cprime;
+	}
+*/
 	// @Override
 	// public Double _max(final IScope scope) {
 	// Double max = -Double.MAX_VALUE;

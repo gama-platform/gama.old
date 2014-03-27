@@ -19,9 +19,12 @@
 package msi.gama.util.matrix;
 
 import java.util.List;
+
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -30,6 +33,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -178,18 +182,17 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @return the matrix concatenated
 	 */
 
-	@operator(value = { "append_vertically" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices", masterDoc=true,
-		examples = { @example(value="opAppendVertically([[1,2,3],[4,5,6]],[[7,8,9],[10,11,12]])", equals="[[1,2,3,4,5,6],[7,8,9,10,11,12]]") })
-	public static IMatrix opAppendVertically(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
-		Object[] ma = a.getMatrix();
+	@Override
+	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
+/*		Object[] ma = this.getMatrix();
 		Object[] mb = b.getMatrix();
 		Object[] mab = ArrayUtils.addAll(ma, mb);
 
 		GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
-
+*/
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
-		return fl;
+		return this;
 	}
 
 	/**
@@ -199,11 +202,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@operator(value = { "append_horizontally" }, category={IOperatorCategory.MATRIX})
-	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices", masterDoc=true, 
-		examples = { @example(value="opAppendHorizontally([[1,2,3],[4,5,6]],[[7,8,9],[10,11,12]])", equals="[[1,2,3,4,5,6],[7,8,9,10,11,12]]") })
-	public static IMatrix opAppendHorizontally(final IScope scope, final GamaObjectMatrix a, final GamaObjectMatrix b) {
+	
+	@Override
+	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
 
+/*		IMatrix a=this;
 		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);
 		// System.out.println("aprime = " + aprime);
@@ -213,8 +217,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
 		// System.out.println("c = " + c);
 		IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
-		// System.out.println("cprime = " + cprime);
-		return cprime;
+		// System.out.println("cprime = " + cprime);*/
+		return this;
 	}
 
 	@Override
