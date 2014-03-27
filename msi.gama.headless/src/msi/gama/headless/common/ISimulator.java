@@ -20,5 +20,5 @@ public interface ISimulator {
     public DataType getVariableTypeWithName(java.lang.String name) ;
     public boolean containVariableWithName(java.lang.String name) ;
     public void load(String var, int exp, String expName);
-    public void setSeed(double seed); 
+    public void setSeed(long seed); 
 }

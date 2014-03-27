@@ -55,7 +55,6 @@ public class Simulation {
 	public Simulation(final Simulation clone) {
 		this.experimentID = clone.experimentID;
 		this.sourcePath = clone.sourcePath;
-		// this.driver=driver;
 		this.maxStep = clone.maxStep;
 		this.experimentName = clone.experimentName;
 		this.parameters = clone.parameters;
@@ -68,7 +67,6 @@ public class Simulation {
 	public Simulation(int expId, String sourcePath, String exp, int max) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
-		// this.driver=driver;
 		this.maxStep = max;
 		this.experimentName = exp;
 		initialize();
@@ -94,9 +92,7 @@ public class Simulation {
 			Output temp=outputs.get(i);
 			this.listenedVariable[i]=temp.getName();
 			this.listenedVariableFrameRate[i]=temp.getFrameRate();
-//			this.addProbe(temp.getName(), temp.getFrameRate());
 		}
-	//	this.outputFile.writeSimulationHeader(this);
 		this.setup();
 		simulator.initialize();
 	}
@@ -104,15 +100,13 @@ public class Simulation {
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		System.setProperty("user.dir",this.sourcePath);
-		this.simulator=new GamaSimulator(); //(ISimulator)(Class.forName(this.driver)).newInstance();
+		this.simulator=new GamaSimulator(); 
 		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName);
 	}
 	
 	public void setup()
 	{
 		this.step=0;
-		//this.model.setup();
-		//this.model.
 	}
 
 	public void play() {
@@ -120,7 +114,6 @@ public class Simulation {
 			this.outputFile.writeSimulationHeader(this);
 		System.out.println("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
-		// int affDelay = maxStep/100;
 		int affDelay = maxStep < 100 ? 1 : maxStep /100;
 		for(;step<maxStep;step++)
 		{
@@ -148,50 +141,44 @@ public class Simulation {
 	public void setExperimentID(int experimentID) {
 		this.experimentID = experimentID;
 	}
-
+	private void exportVariable()
+	{
+		
+		int size=this.listenedVariable.length;
+		
+		for(int i=0;i<size;i++)
+		{
+			int frameRate=this.listenedVariableFrameRate[i].intValue();
+			if((this.step%frameRate)==0)
+			{
+				String vars=this.listenedVariable[i];
+				Object obj=this.simulator.getVariableWithName(vars);
+				this.results[i]=obj;
+			} 
+		}
+		if(this.outputFile!=null)
+			this.outputFile.writeResultStep(this.step,this.listenedVariable,this.results);
+		
+	}
+		
 	/**
-	 * add a new probe to the simulation instance
-	 * 
+	 * Export simulation data to database...
 	 */
-		
-		private void exportVariable()
+	private void exportData()
+	{
+		exportVariable();
+	}
+	
+	public void initialize()
+	{
+		parameters=new Vector<Parameter>();
+		outputs=new Vector<Output>();
+				
+		if(simulator!=null)
 		{
-			
-			int size=this.listenedVariable.length;
-			
-			for(int i=0;i<size;i++)
-			{
-				int frameRate=this.listenedVariableFrameRate[i].intValue();
-				if((this.step%frameRate)==0)
-				{
-					String vars=this.listenedVariable[i];
-					Object obj=this.simulator.getVariableWithName(vars);
-					this.results[i]=obj;
-				} 
-			}
-			if(this.outputFile!=null)
-				this.outputFile.writeResultStep(this.step,this.listenedVariable,this.results);
-			
+			simulator.free();
+			simulator=null;
 		}
-		
-		/**
-		 * Export simulation data to database...
-		 */
-		private void exportData()
-		{
-			exportVariable();
-		}
-		
-		public void initialize()
-		{
-			parameters=new Vector<Parameter>();
-			outputs=new Vector<Output>();
-					
-			if(simulator!=null)
-			{
-				simulator.free();
-				simulator=null;
-			}
 
 	}
 

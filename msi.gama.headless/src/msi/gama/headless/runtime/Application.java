@@ -8,8 +8,11 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.Simulation;
+import msi.gama.headless.openMole.IMoleExperiment;
+import msi.gama.headless.openMole.MoleSimulationLoader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
+import msi.gama.kernel.model.IModel;
 import msi.gaml.operators.Cast;
 
 import org.eclipse.equinox.app.IApplication;
@@ -46,6 +49,29 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		
+//		MoleSimulationLoader.loadGAMA();
+//		IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
+//		IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
+//		exp.setParameter("nb_preys_init", 678);
+//		
+//		exp.setup("preyPred",123);
+//		exp.step();
+//		exp.step();
+//		exp.step();
+//		exp.step();
+//		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
+//		
+//		exp.step();
+//		exp.step();
+//		exp.step();
+//		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
+//		System.out.println("coucocy "+ exp.getVariableOutput("nb_preys"));
+//
+//		System.out.println("fin loading;");
+//		
+//		System.exit(-1);
+		
 		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");

@@ -1,6 +1,8 @@
 package msi.gama.headless.core;
 
+import java.io.File;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
@@ -35,28 +37,29 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final IModel model,
-			final String expName,
-		final ParametersSet params) throws GamaRuntimeException {
+	public static ExperimentSpecies newHeadlessSimulation(final IModel model,final String expName,final ParametersSet params) throws GamaRuntimeException {
 		// FIXME Verify all this.
 		configureHeadLessSimulation();
-		ExperimentSpecies exp1 = (ExperimentSpecies) model.getExperiment(expName);
-		if ( exp1 == null ) {
-			System.out.println("Experiment " + expName + " cannot be created");
-			return null;
+		ExperimentSpecies currentExperiment = (ExperimentSpecies) model.getExperiment(expName);
+		if ( currentExperiment == null ) {
+			throw new GamaRuntimeException(new Throwable("Experiment " + expName + " cannot be created")); 
 		}
-		waitLoading(exp1);
+		
+		//Little Hack
+		//waitLoading(exp1);
+		
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
-			exp1.setParameterValue(entry.getKey(), entry.getValue());
+			currentExperiment.setParameterValue(entry.getKey(), entry.getValue());
 		}
-		exp1.createAgent();
-		SimulationAgent sim = exp1.getAgent().createSimulation(
+		currentExperiment.createAgent();
+		SimulationAgent sim = currentExperiment.getAgent().createSimulation(
 				new ParametersSet(), true);
-		 GAMA.controller.newHeadlessExperiment(exp1);
-		waitLoading(exp1);
-		return exp1;
+		 GAMA.controller.newHeadlessExperiment(currentExperiment);
+		//Little
+		//waitLoading(currentExperiment);
+		return currentExperiment;
 	}
-
+/*
 	private static void waitLoading(final ExperimentSpecies exp) {
 		System.out.println("Simulation loading...");
 		try {
@@ -65,30 +68,35 @@ public class HeadlessSimulationLoader {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
 	}
 
 	public static void preloadGAMA() {
-		System.out.println("GAMA configuring and loading...");
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA configuring and loading...");
 		GuiUtils.setSwtGui(new HeadlessListener());
 		try {
 			GamaBundleLoader.preBuildContributions();
 		} catch (Exception e1) {
-			e1.printStackTrace();
-			System.out.println("Impossible to load GAMA");
-			System.exit(-1);
+			throw new GamaRuntimeException(e1); 
 		}
 		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-		System.out.println("GAMA loading complete");
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 	}
 
-	public static IModel loadModel(final String fileName) {
-		System.out.println(fileName + " model is loading...");
+	public static IModel loadModel(File myFile) {
+	//	System.out.println("coucocu "+myFile.getAbsolutePath());
+		return loadModel(myFile.getAbsolutePath());
+	}	
+	
+	public static IModel loadModel(final String fileName)
+	{
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName+ " model is loading...");
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
+		
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		if ( r != null && r.getErrors().isEmpty() ) {
 			try {
@@ -96,22 +104,20 @@ public class HeadlessSimulationLoader {
 				lastModel = validator.build(r);
 				if ( !r.getErrors().isEmpty() ) {
 					lastModel = null;
-					System.out.println("GAMA cannot build model " + fileName);
+					Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA cannot build model " + fileName);
 					for ( Resource.Diagnostic d : r.getErrors() ) {
-						System.out.println(">> Error " + d.getMessage());
+						Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(">> Error " + d.getMessage());
 					}
 				}
 
 			} catch (GamaRuntimeException e1) {
-				System.out.println("Exception during compilation:" + e1.getMessage());
-				return null;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
+				throw e1;
+			} catch (Exception e2) {
+				throw new RuntimeException(e2);
 			}
-			System.out.println("Experiment created ");
+			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Experiment created ");
 		} else {
-			System.out.println("Xtext cannot parse model " + fileName);
+			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Xtext cannot parse model " + fileName);
 		}
 		return lastModel;
 	}

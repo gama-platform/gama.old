@@ -30,11 +30,9 @@ public class GamaSimulator implements ISimulator {
 	private IModel model;
 	private String fileName;
 	private String experimentName;
-	private double seed;
 	private ExperimentSpecies experiment;
 
 	public GamaSimulator() {
-		this.seed = Math.random();
 		this.params = new ParametersSet();
 	}
 
@@ -48,8 +46,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public void free() {
-		// TODO Auto-generated method stub
-
+		experiment.dispose();
 	}
 
 	@Override
@@ -123,9 +120,8 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public void setSeed(final double seed) {
-		this.seed = seed;
-
+	public void setSeed(final long seed) {
+		this.experiment.getAgent().getRandomGenerator().setSeed(seed);
 	}
 
 	public int getExperimentID() {
@@ -135,8 +131,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = HeadlessSimulationLoader.newHeadlessSimulation(
-					this.model, this.experimentName, this.params);
+			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.model, this.experimentName, this.params);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			experiment = null;
