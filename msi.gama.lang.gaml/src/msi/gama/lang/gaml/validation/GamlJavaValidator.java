@@ -30,6 +30,8 @@ import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.StatementDescription;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
@@ -116,6 +118,28 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			cleanResourceSet(buildResourceSet, true);
 		}
 		return null;
+	} 
+	
+	public void validateModel(final EObject object) {
+		if ( !(object instanceof Model) ) { return; }
+		Model model = (Model) object;
+		final GamlResource r = (GamlResource) model.eResource();
+		try {
+			ModelDescription result = parse(r, buildResourceSet, false);
+			final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
+			if ( r.getErrors().isEmpty() ) {
+				result.validate();
+			}
+			if ( result != null ) {
+				final boolean hasError = result.hasErrors();
+				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
+				result.dispose();
+			} else {
+				r.updateWith(true, Collections.EMPTY_SET);
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// TODO : Verify the behavior in case of compilation errors.
