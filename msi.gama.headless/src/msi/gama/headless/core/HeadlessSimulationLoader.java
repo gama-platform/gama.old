@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.ExperimentSpecies;
@@ -82,6 +83,12 @@ public class HeadlessSimulationLoader {
 		} catch (Exception e1) {
 			throw new GamaRuntimeException(e1); 
 		}
+		
+		//SEED HACK
+		GamaPreferences.CORE_SEED_DEFINED.set(true);
+		GamaPreferences.CORE_SEED.set(1.0);
+		//SEED HACK
+		
 		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 	}
