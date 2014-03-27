@@ -79,7 +79,8 @@ Bundle-ClassPath: jgrapht-jdk1.6.jar,
  commons-math-1.0.jar,
  org.apache.log4j_1.2.15.v201012070815.jar,
  osmosis-osm-binary-0.43.1.jar,
- com.google.protobuf-2.4.0.jar
+ com.google.protobuf-2.4.0.jar,
+ gt-brewer-2.7.3.jar
 Bundle-Vendor: MSI
 Export-Package: au.com.bytecode.opencsv,
  com.kitfox.svg,
@@ -258,6 +259,7 @@ Export-Package: au.com.bytecode.opencsv,
  org.apache.commons.math3.stat.regression,
  org.apache.commons.math3.transform,
  org.apache.commons.math3.util,
+ org.geotools.brewer.color,
  org.geotools.console,
  org.geotools.coverage,
  org.geotools.coverage.grid,

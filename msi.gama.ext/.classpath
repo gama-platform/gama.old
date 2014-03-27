@@ -76,5 +76,6 @@
 	<classpathentry exported="true" kind="lib" path="commons-compress-1.4.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-osm-binary-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="com.google.protobuf-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-brewer-2.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
