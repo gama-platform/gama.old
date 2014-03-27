@@ -5,9 +5,9 @@ clear
 
 echo "\n\n\n\n\n"
 echo "******************************************************************"
-echo "* GAMA version 1.6                                               *"
+echo "* GAMA version 1.6.1                                             *"
 echo "* http://gama-platform.googlecode.com                            *"
-echo "* (c) 2007-2013 UMI 209 UMMISCO IRD/UPMC & Partners              *"
+echo "* (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners              *"
 echo "******************************************************************"
 
 
@@ -61,4 +61,6 @@ mP=$( cd $(dirname $inputFile) ; pwd -P )
 mF=$(basename $inputFile)
 mfull=$mP/$mF
 
-java -cp $GAMA  -Xms512m -Xmx$memory  org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 "$mfull" "$outputFile"
+echo "GAMA is starting..."
+
+java -cp $GAMA  -Xms512m -Xmx$memory  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 "$mfull" "$outputFile"
