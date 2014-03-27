@@ -37,6 +37,8 @@ public interface IKeyword {
 	public static final String AMBIENT_LIGHT = "ambient_light";
 	public static final String AMONG = "among";
 	public static final String ANNEALING = "annealing";
+	public static final String APPEND_HORYZONTALLY="append_horyzontally";
+	public static final String APPEND_VERTICALLY="append_vertically";
 	public static final String AREA = "area";
 	public static final String ARG = "arg";
 	public static final String AS = "as";
