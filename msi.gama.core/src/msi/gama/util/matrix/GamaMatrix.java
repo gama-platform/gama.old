@@ -183,8 +183,18 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 
 	@Override
-	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
+		if ((this instanceof GamaIntMatrix) && (b instanceof GamaIntMatrix))
+			return ((GamaIntMatrix)this)._opAppendVertically(scope, b);
+		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaFloatMatrix))
+			return ((GamaFloatMatrix)this)._opAppendVertically(scope, b);
+		if ((this instanceof GamaIntMatrix) && (b instanceof GamaFloatMatrix))
+			return (new GamaFloatMatrix(((GamaIntMatrix)this).getRealMatrix()))._opAppendVertically(scope, b);
+		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaIntMatrix))
+			return ((GamaFloatMatrix)this)._opAppendVertically(scope, (GamaFloatMatrix)(new GamaFloatMatrix(((GamaIntMatrix)b).getRealMatrix())));
+		if ((this instanceof GamaObjectMatrix) && (b instanceof GamaObjectMatrix))
+			return ((GamaObjectMatrix)this)._opAppendVertically(scope, b);
 /*		Object[] ma = this.getMatrix();
 		Object[] mb = b.getMatrix();
 		Object[] mab = ArrayUtils.addAll(ma, mb);
@@ -204,9 +214,18 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	
 	@Override
-	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
-
+		if ((this instanceof GamaIntMatrix) && (b instanceof GamaIntMatrix))
+			return ((GamaIntMatrix)this)._opAppendHorizontally(scope, b);
+		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaFloatMatrix))
+			return ((GamaFloatMatrix)this)._opAppendHorizontally(scope, b);
+		if ((this instanceof GamaIntMatrix) && (b instanceof GamaFloatMatrix))
+			return (new GamaFloatMatrix(((GamaIntMatrix)this).getRealMatrix()))._opAppendHorizontally(scope, b);
+		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaIntMatrix))
+			return ((GamaFloatMatrix)this)._opAppendHorizontally(scope, (GamaFloatMatrix)(new GamaFloatMatrix(((GamaIntMatrix)b).getRealMatrix())));
+		if ((this instanceof GamaObjectMatrix) && (b instanceof GamaObjectMatrix))
+			return ((GamaObjectMatrix)this)._opAppendHorizontally(scope, b);
 /*		IMatrix a=this;
 		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = a._reverse(scope);

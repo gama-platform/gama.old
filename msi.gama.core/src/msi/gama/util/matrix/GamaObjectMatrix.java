@@ -145,10 +145,10 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-/*	
-	@Override
-	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
+	
+//	@Override
+//	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public IMatrix _opAppendVertically(final IScope scope, final IMatrix b) {
 		GamaObjectMatrix a=this;
 		Object[] ma = ((GamaObjectMatrix) a).getMatrix();
 		Object[] mb = ((GamaObjectMatrix) b).getMatrix();
@@ -159,7 +159,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 		return fl;
 	}
-*/
+
 	/**
 	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
 	 * side of the first matrix
@@ -167,24 +167,24 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	/*
-	@Override
-	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
+	
+//	@Override
+//	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	public GamaObjectMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
 		GamaObjectMatrix a=this;
 		GamaObjectMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = (GamaObjectMatrix)a._reverse(scope);
 		// System.out.println("aprime = " + aprime);
 		GamaObjectMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = ((GamaObjectMatrix)b)._reverse(scope);
+		bprime = (GamaObjectMatrix) ((GamaObjectMatrix)b)._reverse(scope);
 		// System.out.println("bprime = " + bprime);
-		GamaObjectMatrix c = aprime.opAppendVertically(scope, (GamaObjectMatrix) bprime);
+		GamaObjectMatrix c = (GamaObjectMatrix) aprime.opAppendVertically(scope, (GamaObjectMatrix) bprime);
 		// System.out.println("c = " + c);
-		GamaObjectMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
+		GamaObjectMatrix cprime = (GamaObjectMatrix) ((GamaObjectMatrix) c)._reverse(scope);
 		// System.out.println("cprime = " + cprime);
 		return cprime;
 	}
-*/
+
 	// @Override
 	// public Double _max(final IScope scope) {
 	// Double max = -Double.MAX_VALUE;

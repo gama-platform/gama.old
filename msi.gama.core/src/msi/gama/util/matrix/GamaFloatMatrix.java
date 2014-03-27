@@ -172,9 +172,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@Override
-	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
+//	@Override
+//	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	public IMatrix _opAppendVertically(final IScope scope, final IMatrix b) {
 		GamaFloatMatrix a=this;
 		double[] ma = ((GamaFloatMatrix) a).getMatrix();
 		double[] mb = ((GamaFloatMatrix) b).getMatrix();
@@ -193,9 +193,9 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	@Override
-	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
+//	@Override
+//	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	public IMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
 		GamaFloatMatrix a=this;
 		GamaFloatMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = (GamaFloatMatrix)a._reverse(scope);
