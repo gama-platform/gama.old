@@ -20,7 +20,7 @@ public class MapComparison {
 
 	@operator(value = { "kappa" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
 	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.", 
-		examples = { @example(value="kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3])",isExecutable=false) })
+		examples = { @example(value="kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3])",isExecutable=false),@example(value="kappa([1,3,5,1,5],[1,1,1,1,5],[1,3,5])",equals="the similarity between 0 and 1", test=false),@example(value="kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])",equals="1") })
 	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
 		final List<Object> categories) {
 		return kappa(scope, vals1, vals2, categories, null);

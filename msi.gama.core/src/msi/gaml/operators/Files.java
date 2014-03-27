@@ -81,15 +81,15 @@ public class Files {
 	// FIXME These methods should not be necessary. To remove at some point in favor of the constructors
 	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
 	@doc(value = "opens a file that a is a kind of OSM file with some filtering.", masterDoc=true, comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing OSM file, an exception is risen."), examples = {
-		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]);")}, see = { "file",
+		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]]);")}, see = { "file",
 		"properties", "image", "text" })
 	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption);
 	}
 	
 	@operator(value = "osm_file", can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
-	@doc(value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.", comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing OSM file, an exception is risen."), examples = {
-		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]), 0);")}, see = { "file",
+	@doc(value = "opens a file that a is a kind of OSM file with some filtering, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected.", masterDoc= true, comment = "The file should have a OSM file extension, cf. file type definition for supported file extensions.", usages = @usage("If the specified string does not refer to an existing OSM file, an exception is risen."), examples = {
+		@example(value="file myOSMfile osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]]), 0);")}, see = { "file",
 		"properties", "image", "text" })
 	public static IGamaFile loadOSMFileWithFiltering (final IScope scope, final String s, final GamaMap<String, GamaList> filteringOption,final Integer code) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption, code);
@@ -124,7 +124,7 @@ public class Files {
 	 * @return
 	 */
 	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
-	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", masterDoc = true, examples = { @example(value="string agent_name <- read ('name');",equals="reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ",test=false) })
+	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", masterDoc = true, examples = { @example(var="agent_name",value="read ('name');",equals="reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ",test=false) })
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -134,7 +134,7 @@ public class Files {
 	}
 
 	@operator(value = { "read", "get" }, category=IOperatorCategory.FILE)
-	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { @example(value="let second_variable value: read (2);",equals="reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ",test=false) })
+	@doc(value = "Reads an attribute of the agent. The attribute index is specified by the operand.", examples = { @example(value="read (2)", var="second_variable",equals="reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ",test=false) })
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();

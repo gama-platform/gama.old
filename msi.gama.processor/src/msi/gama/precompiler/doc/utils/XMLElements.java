@@ -79,6 +79,7 @@ public class XMLElements {
 	public static final String ATT_EXAMPLE_IS_NOT = "isNot";	
 	public static final String ATT_EXAMPLE_RAISES = "raises";
 	public static final String ATT_EXAMPLE_INDEX = "index";
+	public static final String ATT_EXAMPLE_RETURN_TYPE = "returnType";
 	
 	public static final String ATT_EXAMPLE_TYPE = "type";	
 	

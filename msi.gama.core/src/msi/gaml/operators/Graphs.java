@@ -203,7 +203,7 @@ public class Graphs {
 		@example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
 		@example(value="graphEpidemio source_of(edge(3))",equals="node1",isExecutable=false),
 		@example(value="graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
-		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0;5.0}") }, see = { "target_of" })
+		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0,5.0}") }, see = { "target_of" })
 	public static Object sourceOf(final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the source_of operator, the graph should not be null!"); }
@@ -216,7 +216,7 @@ public class Graphs {
 		@example(value="graph graphEpidemio <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",isExecutable=false),
 		@example(value="graphEpidemio source_of(edge(3))",equals="node1",isExecutable=false),
 		@example("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
-		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0;5.0}") }, see = "source_of")
+		@example(value="graphFromMap source_of(link({1,5}::{12,45}))", equals="{1.0,5.0}") }, see = "source_of")
 	public static Object targetOf(final IGraph graph, final Object edge) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the target_of operator, the graph should not be null!"); }
@@ -280,7 +280,7 @@ public class Graphs {
 	}
 
 	@operator(value = "out_degree_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graph graphFromMap <- graph([]);",isTestOnly=true),@example(value="graphFromMap out_degree_of (node(3))", test=false) }, see = {
+	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { @example(value="graph graphFromMap <- graph([]);",isTestOnly=true),@example(value="graphFromMap out_degree_of (node(3))", equals="4", test=false) }, see = {
 		"in_degree_of", "degree_of" })
 	public static int outDregreeOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -333,7 +333,7 @@ public class Graphs {
 	}
 
 	@operator(value = "alpha_index", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = { @example(value="alpha_index(graphEpidemio)") }, see = {
+	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true), @example(value="alpha_index(graphEpidemio)",equals="the alpha index of the graph",test=false) }, see = {
 		"beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
 	public static double alphaIndex(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
@@ -608,7 +608,7 @@ public class Graphs {
 	}
 
 	@operator(value = "rewire_n", category={IOperatorCategory.GRAPH})
-	@doc(value = "rewires the given count of edges.", comment = "If there are too many edges, all the edges will be rewired.", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),@example(value="graphEpidemio rewire_n 10", equals="", test=false)}, see = "rewire_p")
+	@doc(value = "rewires the given count of edges.", comment = "If there are too many edges, all the edges will be rewired.", examples = {@example(value="graph graphEpidemio <- graph([]);",isTestOnly=true),@example(value="graphEpidemio rewire_n 10", equals="the graph with 3 egdes rewired", test=false)}, see = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
 		g.incVersion();

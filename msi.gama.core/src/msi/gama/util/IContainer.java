@@ -139,26 +139,26 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@doc(value = "the first value of the operand", masterDoc=true, comment = "the first operator behavior depends on the nature of the operand", usages = {
 		@usage(value="if it is a list, first returns the first element of the list, or nil if the list is empty", examples = {
 			@example(value="first ([1, 2, 3])", equals="1")}),
-		@usage("if it is a map, first returns the first value of the first pair (in insertion order)"),
-		@usage("if it is a file, first returns the first element of the content of the file (that is also a container)"),
-		@usage("if it is a population, first returns the first agent of the population"),
-		@usage("if it is a graph, first returns the first edge (in creation order)"),
-		@usage("if it is a matrix, first returns the element at {0,0} in the matrix"),
-		@usage("for a matrix of int or float, it will return 0 if the matrix is empty"),
-		@usage("for a matrix of object or geometry, it will return nil if the matrix is empty")}, see = { "last" })
+		@usage(value="if it is a map, first returns the first value of the first pair (in insertion order)"),
+		@usage(value="if it is a file, first returns the first element of the content of the file (that is also a container)"),
+		@usage(value="if it is a population, first returns the first agent of the population"),
+		@usage(value="if it is a graph, first returns the first edge (in creation order)"),
+		@usage(value="if it is a matrix, first returns the element at {0,0} in the matrix"),
+		@usage(value="for a matrix of int or float, it will return 0 if the matrix is empty"),
+		@usage(value="for a matrix of object or geometry, it will return nil if the matrix is empty")}, see = { "last" })
 	public ValueType firstValue(IScope scope) throws GamaRuntimeException;
 
 	@operator(value = "last", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.CONTAINER})
 	@doc(value = "the last element of the operand", masterDoc=true, comment = "the last operator behavior depends on the nature of the operand", usages = {
 		@usage(value="if it is a list, last returns the last element of the list, or nil if the list is empty",examples = {
 			@example(value="last ([1, 2, 3])",equals="3")}),
-		@usage("if it is a map, last returns the value of the last pair (in insertion order)"),
-		@usage("if it is a file, last returns the last element of the content of the file (that is also a container)"),
-		@usage("if it is a population, last returns the last agent of the population"),
-		@usage("if it is a graph, last returns a list containing the last edge created"),
-		@usage("if it is a matrix, last returns the element at {length-1,length-1} in the matrix"),
-		@usage("for a matrix of int or float, it will return 0 if the matrix is empty"),
-		@usage("for a matrix of object or geometry, it will return nil if the matrix is empty")}, see = { "first" })
+		@usage(value="if it is a map, last returns the value of the last pair (in insertion order)"),
+		@usage(value="if it is a file, last returns the last element of the content of the file (that is also a container)"),
+		@usage(value="if it is a population, last returns the last agent of the population"),
+		@usage(value="if it is a graph, last returns a list containing the last edge created"),
+		@usage(value="if it is a matrix, last returns the element at {length-1,length-1} in the matrix"),
+		@usage(value="for a matrix of int or float, it will return 0 if the matrix is empty"),
+		@usage(value="for a matrix of object or geometry, it will return nil if the matrix is empty")}, see = { "first" })
 	public ValueType lastValue(IScope scope) throws GamaRuntimeException;
 
 	@operator(value = "length", can_be_const = true, category={IOperatorCategory.CONTAINER})
@@ -175,12 +175,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@doc(value = "true if the operand is empty, false otherwise.", masterDoc=true, comment = "the empty operator behavior depends on the nature of the operand", usages={
 		@usage(value="if it is a list, empty returns true if there is no element in the list, and false otherwise", examples={
 			@example(value="empty([])", equals="true")}),
-		@usage("if it is a map, empty returns true if the map contains no key-value mappings, and false otherwise"),
-		@usage("if it is a file, empty returns true if the content of the file (that is also a container) is empty, and false otherwise"),
-		@usage("if it is a population, empty returns true if there is no agent in the population, and false otherwise"),
-		@usage("if it is a graph, empty returns true if it contains no vertex and no edge, and false otherwise"),
-		@usage("if it is a matrix of int, float or object, it will return true if all elements are respectively 0, 0.0 or null, and false otherwise"),
-		@usage("if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise")})
+		@usage(value="if it is a map, empty returns true if the map contains no key-value mappings, and false otherwise"),
+		@usage(value="if it is a file, empty returns true if the content of the file (that is also a container) is empty, and false otherwise"),
+		@usage(value="if it is a population, empty returns true if there is no agent in the population, and false otherwise"),
+		@usage(value="if it is a graph, empty returns true if it contains no vertex and no edge, and false otherwise"),
+		@usage(value="if it is a matrix of int, float or object, it will return true if all elements are respectively 0, 0.0 or null, and false otherwise"),
+		@usage(value="if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise")})
 	public boolean isEmpty(IScope scope);
 
 	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.CONTAINER})
@@ -189,9 +189,9 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			@example(value="reverse ([10,12,14])", equals="[14, 12, 10]")}),
 		@usage(value="if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)", examples={
 			@example(value="reverse (['k1'::44, 'k2'::32, 'k3'::12])", equals="[12::'k3',  32::'k2', 44::'k1']")}),
-		@usage("if it is a file, reverse returns a copy of the file with a reversed content"),
-		@usage("if it is a population, reverse returns a copy of the population with elements in the reversed order"),
-		@usage("if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),
+		@usage(value="if it is a file, reverse returns a copy of the file with a reversed content"),
+		@usage(value="if it is a population, reverse returns a copy of the population with elements in the reversed order"),
+		@usage(value="if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),
 		@usage(value="if it is a matrix, reverse returns a new matrix containing the transpose of the operand.", examples={
 			@example(value="reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])")})})
 	public IContainer<KeyType, ValueType> reverse(IScope scope) throws GamaRuntimeException;
@@ -203,9 +203,9 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@doc(value = "one of the values stored in this container  at a random key", masterDoc=true, comment = "the one_of operator behavior depends on the nature of the operand", 
 		usages = {
 			@usage(value="if the operand is empty, one_of returns nil", examples={
-				@example(value="one_of([])",equals="nil")}),
+				@example(value="one_of([])",equals="nil",returnType="list",isTestOnly=true)}),
 			@usage(value="if it is a list or a matrix, one_of returns one of the values of the list or of the matrix", examples ={
-					@example("int i <- any ([1,2,3]);	// i equals 1, 2 or 3"),@example(value="[1,2,3] contains i",equals="true", isTestOnly=true),
+					@example(value="any ([1,2,3])",var="i",equals= "1, 2 or 3",returnType="int", test=false),@example(value="[1,2,3] contains i",returnType="bool",equals="true", isTestOnly=true),
 					@example("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""),
 					@example(value="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat", equals="true",isTestOnly=true)}),
 			@usage(value="if it is a map, one_of returns one the value of a random pair of the map", examples ={

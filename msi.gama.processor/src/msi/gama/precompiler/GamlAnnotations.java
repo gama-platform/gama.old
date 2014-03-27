@@ -923,6 +923,13 @@ public final class GamlAnnotations {
 		 * @return The value to which the value will be compared
 		 */
 		String equals() default "";
+		
+		/**
+		 * returnType
+		 * 
+		 * @return The type of the value that should be tested
+		 */
+		String returnType() default "";
 
 		/**
 		 * isnot

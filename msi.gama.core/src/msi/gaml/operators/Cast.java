@@ -417,9 +417,9 @@ public class Cast {
 		@usage("if the operand is an agent, returns its species;"),
 		@usage("if the operand is a string, returns the species with this name (nil if not found);"), 
 		@usage("otherwise, returns nil") }, examples = {
-		@example(value="species(self)", equals="the species of the current agent",test=false), 
+		@example(value="species(self)", equals="the species of the current agent",isExecutable=false), 
 		@example(value="species('node')", equals="node", isExecutable=false),
-		@example(value="species([1,5,9,3])", equals="nil"), 
+		@example(value="species([1,5,9,3])", equals="nil", isExecutable=false), 
 		@example(value="species(node1)", equals="node",isExecutable=false) })
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
