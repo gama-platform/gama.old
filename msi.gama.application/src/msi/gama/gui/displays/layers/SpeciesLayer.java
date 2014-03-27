@@ -21,6 +21,7 @@ package msi.gama.gui.displays.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.gui.displays.awt.AWTDisplayGraphics;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -111,6 +112,8 @@ public class SpeciesLayer extends AgentLayer {
 			Object[] result = new Object[1];
 			scope.execute(aspect, a, null, result);
 			final Rectangle2D r = (Rectangle2D) result[0];
+//			((AWTDisplayGraphics) g).getRenderer().drawRect((int) r.getMinX(), (int) r.getMinY(), (int) r.getWidth(),
+//				(int) r.getHeight());
 			// aspect.draw(scope, a);
 			if ( r != null ) {
 				shapes.put(a, r);
