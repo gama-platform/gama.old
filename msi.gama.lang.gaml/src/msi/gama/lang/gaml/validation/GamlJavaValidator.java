@@ -40,6 +40,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.util.GAML;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;
@@ -137,9 +138,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return null;
 	} 
 	
-	public String validateModel(final EObject object) {
+	public List<GamlCompilationError> validateModel(final EObject object) {
 		if ( !(object instanceof Model) ) { return null; }
-		String valVerdict = "";
+		List<GamlCompilationError> errors = new GamaList<GamlCompilationError>();
 		Model model = (Model) object;
 		final GamlResource r = (GamlResource) model.eResource();
 		try {
@@ -150,18 +151,14 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			}
 			if ( result != null ) {
 				final boolean hasError = result.hasErrors();
-				if (! hasError) {valVerdict = "Compilation: ok";}
 				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
-				valVerdict = "Errors during Compilation:";
+				errors.addAll(result.getErrors());
 				result.dispose();
 			} else {
 				r.updateWith(true, Collections.EMPTY_SET);
-				valVerdict = "Errors during Compilation:";
-				for (GamlCompilationError er: result.getErrors()) {
-					valVerdict +="\n" + er.toString();
-				}
+				return null;
 			}
-			return valVerdict;
+			return errors;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
