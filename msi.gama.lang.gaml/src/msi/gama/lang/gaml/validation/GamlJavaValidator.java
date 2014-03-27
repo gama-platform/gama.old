@@ -120,8 +120,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return null;
 	} 
 	
-	public void validateModel(final EObject object) {
-		if ( !(object instanceof Model) ) { return; }
+	public String validateModel(final EObject object) {
+		if ( !(object instanceof Model) ) { return null; }
+		String valVerdict = "";
 		Model model = (Model) object;
 		final GamlResource r = (GamlResource) model.eResource();
 		try {
@@ -132,14 +133,22 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			}
 			if ( result != null ) {
 				final boolean hasError = result.hasErrors();
+				if (! hasError) {valVerdict = "Compilation: ok";}
 				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
+				valVerdict = "Errors during Compilation:";
 				result.dispose();
 			} else {
 				r.updateWith(true, Collections.EMPTY_SET);
+				valVerdict = "Errors during Compilation:";
+				for (GamlCompilationError er: result.getErrors()) {
+					valVerdict +="\n" + er.toString();
+				}
 			}
+			return valVerdict;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	// TODO : Verify the behavior in case of compilation errors.
