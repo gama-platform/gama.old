@@ -33,6 +33,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
+import msi.gaml.operators.Cast;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -119,6 +120,31 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			}
 		};
 
+	}
+
+	@Override
+	public void updateDisplay() {
+		super.updateDisplay();
+		// EXPERIMENTAL
+
+		if ( temp_focus != null ) {
+			IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
+
+				@Override
+				public IShape run(final IScope scope) {
+					return Cast.asGeometry(scope, temp_focus.value(scope));
+				}
+			});
+			if ( geometry != null ) {
+				temp_focus = null;
+				canBeUpdated(true);
+				focusOn(geometry);
+			}
+
+			// canBeUpdated(false);
+		}
+
+		// EXPERIMENTAL
 	}
 
 	@Override
