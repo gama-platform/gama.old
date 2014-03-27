@@ -13,11 +13,11 @@ public class GamlElementDocumentation {
 	public final static String NO = "Not documented yet";
 	private String main;
 	private String deprecated;
-	private String returns;
-	private String comment;
-	String[] special_cases;
-	String[] examples;
-	String[] see;
+	// private String returns;
+	// private String comment;
+	// String[] special_cases;
+	// String[] examples;
+	// String[] see;
 
 	static boolean hasWarnedOnce = false;
 
@@ -28,23 +28,23 @@ public class GamlElementDocumentation {
 				int index = 0;
 				main = array[index++];
 				deprecated = array[index++];
-				setReturns(array[index++]);
-				comment = array[index++];
-				int number = Integer.decode(array[index++]);
-				special_cases = new String[number];
-				for ( int i = 0; i < number; i++ ) {
-					special_cases[i] = array[index++];
-				}
-				number = Integer.decode(array[index++]);
-				examples = new String[number];
-				for ( int i = 0; i < number; i++ ) {
-					examples[i] = array[index++];
-				}
-				number = Integer.decode(array[index++]);
-				see = new String[number];
-				for ( int i = 0; i < number; i++ ) {
-					see[i] = array[index++];
-				}
+				// setReturns(array[index++]);
+				// comment = array[index++];
+				// int number = Integer.decode(array[index++]);
+				// special_cases = new String[number];
+				// for ( int i = 0; i < number; i++ ) {
+				// special_cases[i] = array[index++];
+				// }
+				// number = Integer.decode(array[index++]);
+				// examples = new String[number];
+				// for ( int i = 0; i < number; i++ ) {
+				// examples[i] = array[index++];
+				// }
+				// number = Integer.decode(array[index++]);
+				// see = new String[number];
+				// for ( int i = 0; i < number; i++ ) {
+				// see[i] = array[index++];
+				// }
 			} catch (final Exception e) {
 				if ( !hasWarnedOnce ) {
 					hasWarnedOnce = true;
@@ -61,13 +61,14 @@ public class GamlElementDocumentation {
 		}
 	}
 
-	String getReturns() {
-		return returns;
-	}
-
-	void setReturns(final String returns) {
-		this.returns = returns == null ? "" : returns;
-	}
+	//
+	// String getReturns() {
+	// return returns;
+	// }
+	//
+	// void setReturns(final String returns) {
+	// this.returns = returns == null ? "" : returns;
+	// }
 
 	public String getMain() {
 		return main;
@@ -84,37 +85,37 @@ public class GamlElementDocumentation {
 	public void setDeprecated(final String deprecated) {
 		this.deprecated = deprecated == null ? "" : deprecated;
 	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(final String comment) {
-		this.comment = comment == null ? "" : comment;
-	}
-
-	public String[] getSpecial_cases() {
-		return special_cases;
-	}
-
-	public void setSpecial_cases(final String[] special_cases) {
-		this.special_cases = special_cases;
-	}
-
-	public String[] getExamples() {
-		return examples;
-	}
-
-	public void setExamples(final String[] examples) {
-		this.examples = examples;
-	}
-
-	public String[] getSee() {
-		return see;
-	}
-
-	public void setSee(final String[] see) {
-		this.see = see;
-	}
+	//
+	// public String getComment() {
+	// return comment;
+	// }
+	//
+	// public void setComment(final String comment) {
+	// this.comment = comment == null ? "" : comment;
+	// }
+	//
+	// public String[] getSpecial_cases() {
+	// return special_cases;
+	// }
+	//
+	// public void setSpecial_cases(final String[] special_cases) {
+	// this.special_cases = special_cases;
+	// }
+	//
+	// public String[] getExamples() {
+	// return examples;
+	// }
+	//
+	// public void setExamples(final String[] examples) {
+	// this.examples = examples;
+	// }
+	//
+	// public String[] getSee() {
+	// return see;
+	// }
+	//
+	// public void setSee(final String[] see) {
+	// this.see = see;
+	// }
 
 }
