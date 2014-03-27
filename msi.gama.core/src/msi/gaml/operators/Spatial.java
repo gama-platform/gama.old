@@ -1331,17 +1331,17 @@ public abstract class Spatial {
 			return p;
 		}
 
-		@operator(value = { "points_exterior_ring" }, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
-		@doc(value = "A list of points of the exterior ring of the operand-geometry distant from each other to the float right-operand .", examples = { @example(value=" square(5) points_exterior_ring(2)",equals="a list of points belonging to the exterior ring of the square distant from each other of 2.",test=false) }, see = {
+		@operator(value = { "points_on" }, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
+		@doc(value = "A list of points of the operand-geometry distant from each other to the float right-operand .", examples = { @example(value=" square(5) points_on(2)",equals="a list of points belonging to the exterior ring of the square distant from each other of 2.",test=false) }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
 		public static GamaList points_exterior_ring(final IShape geom, final Double distance) {
 			final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
 			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
 				for ( int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++ ) {
-					locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry().getGeometryN(i), distance));
+					locs.addAll(GeometryUtils.locsOnGeometry(geom.getInnerGeometry().getGeometryN(i), distance));
 				}
 			} else {
-				locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry(), distance));
+				locs.addAll(GeometryUtils.locsOnGeometry(geom.getInnerGeometry(), distance));
 			}
 			return locs;
 		}

@@ -620,7 +620,7 @@ public class GeometryUtils {
 		return POLYGON;
 	}
 
-	public static GamaList<GamaPoint> locExteriorRing(final Geometry geom, final Double distance) {
+	public static GamaList<GamaPoint> locsOnGeometry(final Geometry geom, final Double distance) {
 		final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
 		if ( geom instanceof Point ) {
 			locs.add(new GamaPoint(geom.getCoordinate()));
@@ -660,9 +660,9 @@ public class GeometryUtils {
 			}
 		} else if ( geom instanceof Polygon ) {
 			final Polygon poly = (Polygon) geom;
-			locs.addAll(locExteriorRing(poly.getExteriorRing(), distance));
+			locs.addAll(locsOnGeometry(poly.getExteriorRing(), distance));
 			for ( int i = 0; i < poly.getNumInteriorRing(); i++ ) {
-				locs.addAll(locExteriorRing(poly.getInteriorRingN(i), distance));
+				locs.addAll(locsOnGeometry(poly.getInteriorRingN(i), distance));
 			}
 		}
 		return locs;

@@ -184,8 +184,8 @@ public class GraphsGraphstream {
 		+ "The map operand should includes following elements:", usages = {
 		@usage("\"edges_specy\": the species of edges"), @usage("\"vertices_specy\": the species of vertices"),
 		@usage("\"size\": the graph will contain (size + 1) nodes"), @usage("\"m\": the number of edges added per novel node") }, examples = {
-		@example("graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert("), @example("		yourNodeSpecy,"),
-		@example("		yourEdgeSpecy,"), @example("		3,"), @example("		5);") }, see = { "generate_watts_strogatz" })
+		@example(value="graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert(",isExecutable=false), @example(value="		yourNodeSpecy,",isExecutable=false),
+		@example(value="		yourEdgeSpecy,",isExecutable=false), @example(value="		3,",isExecutable=false), @example(value="		5);",isExecutable=false) }, see = { "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Integer m) {
 
@@ -204,8 +204,8 @@ public class GraphsGraphstream {
 		@usage("\"size\": the graph will contain (size + 1) nodes. Size must be greater than k."),
 		@usage("\"p\": probability to \"rewire\" an edge. So it must be between 0 and 1. The parameter is often called beta in the literature."),
 		@usage("\"k\": the base degree of each node. k must be greater than 2 and even.") }, examples = {
-		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
-		@example("			2,"), @example("			0.3,"), @example("			2);") }, see = { "generate_barabasi_albert" })
+		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
+		@example(value="			2,",isExecutable=false), @example(value="			0.3,",isExecutable=false), @example(value="			2);",isExecutable=false) }, see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Double p, final Integer k) {
 
@@ -222,8 +222,8 @@ public class GraphsGraphstream {
 		@usage("\"size\": the graph will contain size nodes."),
 		@usage("\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment.")}, 
 		examples = {
-		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
-		@example("			10, 25);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
+		@example(value="			10, 25);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final double layoutRadius) {
 		
@@ -252,8 +252,8 @@ public class GraphsGraphstream {
 		@usage("\"edges_specy\": the species of edges"),
 		@usage("\"size\": the graph will contain size nodes.")}, 
 		examples = {
-		@example("graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph("), @example("			myVertexSpecy,"), @example("			myEdgeSpecy,"),
-		@example("			10);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
+		@example(value="			10);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size) {
 		

@@ -300,7 +300,7 @@ public class Graphs {
 	}
 
 	@operator(value = "connected_components_of", category={IOperatorCategory.GRAPH})
-	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = {@example(value="graph my_graph <- graph([]);"), @example(value="connected_components_of (my_graph);",equals="the list of all the components as list",test=false) }, see = {
+	@doc(value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ", examples = {@example(value="graph my_graph <- graph([]);"), @example(value="connected_components_of (my_graph)",equals="the list of all the components as list",test=false) }, see = {
 		"alpha_index", "connectivity_index", "nb_cycles" })
 	public static List<List> connectedComponentOf(final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException
