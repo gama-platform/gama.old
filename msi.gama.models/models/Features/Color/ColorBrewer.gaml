@@ -9,7 +9,8 @@ model ColorBrewer
 global skills:[graphic]{
 
 int nb_class<-6 among:[1,3,4,5,6,7,8,9];
-geometry shape <- cube(nb_class) ;
+int agent_size <-10;
+//geometry shape <- cube(nb_class) ;
 
 string sequentialPalette <- "Blues" among:["YlOrRd","Grays","PuBu","GnRdPu","BuPu","YlOrBr","Greens","BuGn","GnBu","PuRd","Purples","Blues","Oranges","PuBu","OrRd","Reds","YlGn","YlGnBu"];
 string divergingPalette <- "Spectral" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn","RdBu","RdYlBu","PiYG","BrBG"];
@@ -22,7 +23,7 @@ list<rgb> QualitativeColors<-list<rgb>(brewer_palette(qualitativePalette));
 init {
 	loop i from:0 to:nb_class-1{
 	  create cells{
-		location <-{0.5 + i mod nb_class, 0, 0};
+		location <-{0.5 + i mod nb_class * agent_size, 0, 0};
 		myClass <-i;
 	  }	
 	}
@@ -36,17 +37,17 @@ species cells skills:[graphic]{
 	int myClass;	
 	aspect sequential {
 		rgb myColor<-self.brewer_color("sequential",nb_class,myClass);
-		draw cube(1) color:myColor border:myColor at:location;
+		draw cube(agent_size) color:myColor border:myColor at:location;
 	}
 	
 	aspect diverging {
 		rgb myColor<-self.brewer_color("diverging",nb_class,myClass);
-		draw cube(1) color:myColor border:myColor at:location;
+		draw cube(agent_size) color:myColor border:myColor at:location;
 	}
 	
 	aspect qualitative {
 		rgb myColor<-self.brewer_color("qualitative",nb_class,myClass);
-		draw cube(1) color:myColor border:myColor at:location;
+		draw cube(agent_size) color:myColor border:myColor at:location;
 	}	
 }
 
@@ -63,17 +64,17 @@ experiment BrewerPalette type: gui {
 				//Sequential
 				draw "Sequential" at:{-world.shape.width*0.2,0} color:°black bitmap:false;
 				loop i from:0 to:length(SequentialColors)-1{
-					draw square(1) color:SequentialColors[i] at: {0.5 + i, 0, 0};
+					draw square(agent_size) color:SequentialColors[i] at: {agent_size*(0.5 + i), 0, 0};
 				}
 				//Diverging
 				loop i from:0 to:length(DivergingColors)-1{
-					draw "Diverging" at:{-world.shape.width*0.2,1} color:°black bitmap:false;
-					draw square(1) color:DivergingColors[i] at: {0.5 + i, 1, 0};
+					draw "Diverging" at:{-world.shape.width*0.2,1*agent_size} color:°black bitmap:false;
+					draw square(agent_size) color:DivergingColors[i] at: {agent_size*(0.5 + i), 1*agent_size, 0};
 				}
 				//Qualitative		
 				loop i from:0 to:length(QualitativeColors)-1{
-					draw "Qualitative" at:{-world.shape.width*0.2,2} color:°black bitmap:false;
-					draw square(1) color:QualitativeColors[i] at: {0.5 + i, 2, 0};
+					draw "Qualitative" at:{-world.shape.width*0.2,2*agent_size} color:°black bitmap:false;
+					draw square(agent_size) color:QualitativeColors[i] at: {agent_size*(0.5 + i), 2*agent_size, 0};
 				}
 		    }
 		}	
