@@ -109,7 +109,8 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	HashSet<IAgent> agentsForLayer = new HashSet();
 	protected String constantAspectName = null;
 	protected IExpression aspectExpr;
-	protected IExpression focusExpr;
+
+	// protected IExpression focusExpr;
 
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -118,7 +119,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		if ( aspectExpr != null && aspectExpr.isConst() ) {
 			constantAspectName = aspectExpr.literalValue();
 		}
-		focusExpr = getFacet(IKeyword.FOCUS);
+		// focusExpr = getFacet(IKeyword.FOCUS);
 		// agents = new HashSet();
 	}
 
