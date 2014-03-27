@@ -1,4 +1,4 @@
-package ummisco.gama.communicator;
+package ummisco.gama.communicator.common;
 
 public interface ICommunicatorSkill {
 	public static String CONNECT_TOPIC = "connectMessenger";

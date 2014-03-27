@@ -1,9 +1,6 @@
-package ummisco.gama.communicator;
+package ummisco.gama.communicator.common;
 
-import java.io.ObjectOutputStream;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.jms.Connection;
@@ -24,6 +21,9 @@ import javax.naming.NamingException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
+import ummisco.gama.communicator.common.remoteObject.GamaAgentConverter;
+import ummisco.gama.communicator.common.remoteObject.GamaScopeConverter;
+
 import com.thoughtworks.xstream.XStream;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -40,7 +40,7 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
 
-public class CommunicatingSkill extends Skill implements MessageListener {
+public class ConnectionManager extends Skill implements MessageListener {
 
 	protected static String DEFAULT_PORT_NUM="61616";
 	protected String serverURL;
@@ -50,7 +50,7 @@ public class CommunicatingSkill extends Skill implements MessageListener {
 	private HashMap<String,LinkedList<GamaMap<String,Object>>> messages;
 	private XStream xstream ;
 
-	public CommunicatingSkill()
+	public ConnectionManager()
 	{
 		this.messages= new HashMap<String, LinkedList<GamaMap<String,Object>>>();
   	  	this.xstream = new XStream();

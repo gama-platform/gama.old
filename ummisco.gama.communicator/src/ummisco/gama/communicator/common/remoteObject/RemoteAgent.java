@@ -1,4 +1,4 @@
-package ummisco.gama.remoteObject;
+package ummisco.gama.communicator.common.remoteObject;
 
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.shape.ILocation;

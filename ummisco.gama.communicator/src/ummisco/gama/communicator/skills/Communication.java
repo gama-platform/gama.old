@@ -1,10 +1,13 @@
-package ummisco.gama.communicator;
+package ummisco.gama.communicator.skills;
 
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+
+import ummisco.gama.communicator.common.ConnectionManager;
+import ummisco.gama.communicator.common.ICommunicatorSkill;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -22,7 +25,7 @@ import msi.gaml.types.IType;
 @vars({@var(name = ICommunicatorSkill.NET_AGENT_NAME, type= IType.STRING, doc = @doc("Net ID of the agent"))
 })
 @skill(name=ICommunicatorSkill.NETWORK_SKILL)
-public class Communication  extends CommunicatingSkill 
+public class Communication  extends ConnectionManager 
 {
 
 	
