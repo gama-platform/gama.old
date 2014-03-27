@@ -158,7 +158,7 @@ public class CommunicatingSkill extends Skill {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
 		@arg(name = "performative", type = IType.STRING, optional = false, doc = @doc("The performative of the replying message")),
 		@arg(name = "content", type = IType.LIST, optional = true, doc = @doc("The content of the replying message")) },
-		doc = @doc(value = "Replies a message."))
+		doc = @doc(value = "Replies a message. This action should be only used to reply a message in a 'no-protocol' conversation and with a 'user defined performative'. For performatives supported by GAMA (i.e., standard FIPA performatives), please use the 'action' with the same name of 'performative'. For example, to reply a message with a 'request' performative message, the modeller should use the 'request' action."))
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
