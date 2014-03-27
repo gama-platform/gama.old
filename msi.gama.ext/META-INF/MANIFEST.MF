@@ -48,7 +48,6 @@ Bundle-ClassPath: jgrapht-jdk1.6.jar,
  svnkit.jar,
  jsr-275-1.0-beta-2.jar,
  hsqldb-1.8.0.7.jar,
- trove-3.0.3.jar,
  svnkit-javahl.jar,
  trilead.jar,
  gt-epsg-wkt-2.7.3.jar,
@@ -80,7 +79,8 @@ Bundle-ClassPath: jgrapht-jdk1.6.jar,
  org.apache.log4j_1.2.15.v201012070815.jar,
  osmosis-osm-binary-0.43.1.jar,
  com.google.protobuf-2.4.0.jar,
- gt-brewer-2.7.3.jar
+  gt-brewer-2.7.3.jar,
+ trove-3.0.3.jar
 Bundle-Vendor: MSI
 Export-Package: au.com.bytecode.opencsv,
  com.kitfox.svg,

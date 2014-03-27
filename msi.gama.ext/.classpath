@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="org.apache.log4j_1.2.15.v201012070815.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-math-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="mondrian.jar"/>
@@ -14,7 +15,6 @@
 	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
 	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
-	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar" sourcepath="sources/trove-3.0.3-src.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
