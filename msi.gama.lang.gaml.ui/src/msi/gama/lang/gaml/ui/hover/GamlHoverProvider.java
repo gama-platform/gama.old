@@ -195,10 +195,12 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getFirstLine(final EObject o) {
+		if(o == null){return "";}
 		Documentation description = DescriptionFactory.getGamlDocumentation(o);
 		if ( description == null ) {
 			Statement s = EGaml.getStatement(o);
 			if ( s != null && SymbolProto.nonTypeStatements.contains(EGaml.getKeyOf(o)) ) {
+				if(s==o){return "";}
 				return getFirstLine(s);
 			} else {
 				if ( o instanceof TypeRef ) {
