@@ -143,7 +143,7 @@ public class NewFileWizardPage extends WizardPage {
 			public void modifyText(final ModifyEvent e) {
 				Text t = (Text)e.getSource();
 				String fname = t.getText();
-				int i = fname.lastIndexOf(".diagram");
+				int i = fname.lastIndexOf(".gadl");
 				if (i>0) {
 					// model title = filename less extension less all non alphanumeric characters
 					titleText.setText(fname.substring(0, i).replaceAll("[^\\p{Alnum}]", ""));
@@ -246,13 +246,13 @@ public class NewFileWizardPage extends WizardPage {
 		if ( exampleModelButton.getSelection() ) {
 			descriptionText.setText("This model displays an awesome simulation of something ...");
 			titleText.setText("example");
-			fileText.setText("example.diagram");
+			fileText.setText("example.gadl");
 			updateStatus(null);
 		}
 		if ( emptyModelButton.getSelection() || skeletonModelButton.getSelection() ) {
 			descriptionText.setText("");
 			titleText.setText("new");
-			fileText.setText("new.diagram");
+			fileText.setText("new.gadl");
 			updateStatus(null);
 		}
 		dialogChanged();
@@ -275,7 +275,7 @@ public class NewFileWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("new.diagram");
+		fileText.setText("new.gadl");
 	}
 
 	/**
@@ -324,8 +324,8 @@ public class NewFileWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
-		if ( !fileName.endsWith(".diagram") ) {
-			updateStatus("File extension must be \".diagram\"");
+		if ( !fileName.endsWith(".gadl") ) {
+			updateStatus("File extension must be \".gadl\"");
 			return;
 		}
 		if ( author.length() == 0 ) {

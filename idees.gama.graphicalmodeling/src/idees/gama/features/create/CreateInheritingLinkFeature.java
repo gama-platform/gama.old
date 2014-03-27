@@ -7,6 +7,7 @@ import gama.ESpecies;
 import gama.EWorldAgent;
 import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddSpeciesFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -45,6 +46,7 @@ public class CreateInheritingLinkFeature extends AbstractCreateSpeciesComponentL
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newSpecies;
 	}
 	

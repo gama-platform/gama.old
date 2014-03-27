@@ -7,6 +7,7 @@ import gama.ESpecies;
 import gama.ESubSpeciesLink;
 import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddSpeciesFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -45,7 +46,7 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 		acNode.setLocation(context.getTargetLocation().getX() - 100, context.getTargetLocation().getY());
 		acNode.setSize(0, 0);
 		acNode.setTargetContainer(getDiagram());
-		
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newNode;
 	}
 	

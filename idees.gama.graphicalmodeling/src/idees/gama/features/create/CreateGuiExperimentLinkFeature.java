@@ -1,6 +1,7 @@
 package idees.gama.features.create;
 
 import idees.gama.features.add.AddGuiExperimentFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 import gama.EExperiment;
 import gama.EExperimentLink;
@@ -46,6 +47,7 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newGUIExp; 
 	}
 	

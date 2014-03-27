@@ -9,6 +9,7 @@ import gama.ESpecies;
 import gama.EVariable;
 import gama.EWorldAgent;
 import idees.gama.features.edit.EditSpeciesFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.Collection;
 import java.util.List;
@@ -1462,6 +1463,7 @@ public class EditSpeciesFrame extends EditFrame {
 			}
 		
 	    ef.hasDoneChanges = true;  
+	    ModelGenerator.modelValidation(fp, diagram);
 	}
 
 	@Override

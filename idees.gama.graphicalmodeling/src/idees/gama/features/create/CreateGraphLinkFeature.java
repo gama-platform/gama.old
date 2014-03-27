@@ -4,6 +4,7 @@ import gama.EGraphLink;
 import gama.EGraphTopologyEdge;
 import gama.EGraphTopologyNode;
 import gama.ESpecies;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -44,7 +45,7 @@ public class CreateGraphLinkFeature extends AbstractCreateSpeciesComponentLinkFe
 				eReference.setEdge(target);
 			}
 		}
-		
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newConnectionNode;
 	}
 

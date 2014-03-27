@@ -5,6 +5,7 @@ import gama.EParameter;
 import gama.ESpecies;
 import gama.EVariable;
 import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
 
@@ -322,7 +323,7 @@ public class EditExperimentFrame extends EditFrame {
 		} 
 		
        	 ef.hasDoneChanges = true;
-		
+       	ModelGenerator.modelValidation(fp, diagram);
 	}
 	
 	@Override

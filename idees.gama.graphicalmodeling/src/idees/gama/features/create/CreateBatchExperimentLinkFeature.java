@@ -6,6 +6,7 @@ import gama.EExperiment;
 import gama.EExperimentLink;
 import gama.EWorldAgent;
 import idees.gama.features.add.AddBatchExperimentFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import idees.gama.features.ExampleUtil;
@@ -44,6 +45,7 @@ public class CreateBatchExperimentLinkFeature  extends AbstractCreateConnectionF
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newBatchExp;
 	}
 	

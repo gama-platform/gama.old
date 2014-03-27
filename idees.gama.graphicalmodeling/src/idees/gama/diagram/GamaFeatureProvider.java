@@ -567,7 +567,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
         return new ICreateConnectionFeature[] {
             new CreateSubSpeciesLinkFeature (this), 
             new CreateSubGridLinkFeature(this),
-            new CreateSubGraphSpeciesFeature(this),
+            //new CreateSubGraphSpeciesFeature(this),
             new CreateInheritingLinkFeature(this),
             new CreateActionLinkFeature (this),
             new CreateReflexLinkFeature (this),

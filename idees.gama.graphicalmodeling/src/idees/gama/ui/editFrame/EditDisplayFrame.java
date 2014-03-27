@@ -6,6 +6,7 @@ import gama.EGridTopology;
 import gama.ELayer;
 import gama.ESpecies;
 import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
 
@@ -533,6 +534,7 @@ public class EditDisplayFrame extends EditFrame {
 			});
 		}
 		ef.hasDoneChanges = true;
+		ModelGenerator.modelValidation(fp, diagram);
 		
 	}
 	

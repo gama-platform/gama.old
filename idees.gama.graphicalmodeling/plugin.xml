@@ -69,5 +69,17 @@
             name="Generate Diagram">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="idees.gama.diagram.GamaDiagramEditor"
+            default="true"
+            extensions="gadl"
+            icon="icons/wizards/diagram_small.png"
+            id="idees.gama.graphicalmodeling.diagram.gamadiagrameditor"
+            matchingStrategy="org.eclipse.graphiti.ui.editor.DiagramEditorFactory$DiagramEditorMatchingStrategy"
+            name="Gama Diagram Editor">
+      </editor>
+   </extension>
 
 </plugin>

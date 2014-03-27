@@ -3,6 +3,7 @@ package idees.gama.ui.editFrame;
 import gama.EGamaObject;
 import gama.EReflex;
 import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -132,7 +133,7 @@ public class EditReflexFrame extends EditActionFrame {
 		} 
 		
        	 ef.hasDoneChanges = true;
-		
+       	ModelGenerator.modelValidation(fp, diagram);
 	}
 	
 }

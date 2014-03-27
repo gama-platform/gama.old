@@ -92,7 +92,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
             }
             String containerStr = "/"+ uri.segment(0);
             String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
-            path = path.replace(".diagram", ".gaml");
+            path = path.replace(".gadl", ".gaml");
            
             File file = new File(path);
             if (file.exists()) file.delete();
@@ -110,7 +110,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 		        
 		        IContainer container = resource.getProject();				
 				
-				final IFile fileP = container.getFile(new Path("diagrams/" + uri.lastSegment().replace(".diagram", ".gaml")));
+				final IFile fileP = container.getFile(new Path("diagrams/" + uri.lastSegment().replace(".gadl", ".gaml")));
 				
 		        doFinish(fileP);
 			

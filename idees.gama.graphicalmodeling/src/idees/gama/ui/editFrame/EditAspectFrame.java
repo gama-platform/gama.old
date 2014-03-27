@@ -3,6 +3,7 @@ package idees.gama.ui.editFrame;
 import gama.EAspect;
 import gama.ELayerAspect;
 import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
 
@@ -255,7 +256,7 @@ public class EditAspectFrame extends EditFrame {
 			    	  });
 			}
 	    ef.hasDoneChanges = true;  
-		
+	    ModelGenerator.modelValidation(fp, diagram);
 	}
 	
 	

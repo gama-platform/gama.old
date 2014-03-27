@@ -2,6 +2,7 @@ package idees.gama.features.create;
 
 
 import idees.gama.features.add.AddReflexFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 import gama.EReflex;
 import gama.EReflexLink;
@@ -39,6 +40,7 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newReflex;
 	}
 	

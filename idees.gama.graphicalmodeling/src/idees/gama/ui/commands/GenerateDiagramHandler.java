@@ -18,31 +18,27 @@
  */
 package idees.gama.ui.commands;
 
+import idees.gama.diagram.GamaFeatureProvider;
+
 import java.io.File;
 
-import idees.gama.diagram.GamaFeatureProvider;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.GamlEditor;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -77,8 +73,7 @@ public class GenerateDiagramHandler extends AbstractHandler {
 			});
 		 if (model == null)
 			 return null;
-		 	File file = new File(model.getProjectPath()+ "/diagrams/" + model.getName() + ".diagram");
-			System.out.println("file : " + model.getProjectPath()+ "/diagrams/" + model.getName() + ".diagram");
+		 	File file = new File(model.getProjectPath()+ "/diagrams/" + model.getName() + ".gadl");
 			if (file.exists()) file.delete();
 			
 	 	IResource resource = editor.getResource();
@@ -91,7 +86,7 @@ public class GenerateDiagramHandler extends AbstractHandler {
 				e.printStackTrace();
 			}
 		}
-		final IFile fileP = container.getFile(new Path("diagrams/" + model.getName() + ".diagram"));
+		final IFile fileP = container.getFile(new Path("diagrams/" + model.getName() + ".gadl"));
 			
 		createDiagramEditor(fileP, model.getName(), model);
 		return null;
@@ -112,7 +107,7 @@ public class GenerateDiagramHandler extends AbstractHandler {
 				IWorkbenchPage pag =
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
-					IEditorPart ep = pag.openEditor(editorInput, "org.eclipse.graphiti.ui.editor.DiagramEditor");
+					IEditorPart ep = pag.openEditor(editorInput, "idees.gama.graphicalmodeling.diagram.gamadiagrameditor");
 					IDiagramTypeProvider dtp = GraphitiInternal.getEmfService().getDTPForDiagram(diagram);
 					GamaFeatureProvider gfp = ((GamaFeatureProvider) dtp.getFeatureProvider());
 					gfp.setTypeOfModel("custom");
