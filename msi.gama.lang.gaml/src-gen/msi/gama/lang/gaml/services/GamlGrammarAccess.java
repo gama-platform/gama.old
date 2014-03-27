@@ -5438,7 +5438,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//terminal KEYWORD:
-	//	"each" | "self" | "myself" | "nil" | "world";
+	//	"each" | "self" | "myself" | "nil" | "world" | "user_location";
 	public TerminalRule getKEYWORDRule() {
 		return (tKEYWORD != null) ? tKEYWORD : (tKEYWORD = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "KEYWORD"));
 	} 

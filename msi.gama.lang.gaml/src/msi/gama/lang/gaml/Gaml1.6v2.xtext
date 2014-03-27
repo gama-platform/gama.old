@@ -378,7 +378,7 @@ TerminalExpression:
 	{ReservedLiteral} op=KEYWORD;
 
 terminal KEYWORD:
-	'each' | 'self' | 'myself' | 'nil' | 'world';
+	'each' | 'self' | 'myself' | 'nil' | 'world' | 'user_location';
 
 terminal INTEGER:
 	'0' | ('1'..'9' ('0'..'9')*);
