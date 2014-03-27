@@ -19,25 +19,42 @@
 package msi.gama.lang.gaml.validation;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
+
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Import;
+import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.StatementDescription;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.Check;
 
