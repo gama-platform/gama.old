@@ -28,7 +28,7 @@ global torus: torus_environment {
 	}
 
 	reflex play_music when: (time = 1) {
-		start_sound source: '../includes/sounds/Life Song - Casting Crowns.mp3' repeat: true;
+//		start_sound source: '../includes/sounds/Life Song - Casting Crowns.mp3' repeat: true;
 	}
 
 	action description {
