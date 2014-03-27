@@ -189,11 +189,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final IOperator helper = ops.get(signature);
 			// We finally make a copy of the operator and init it with the arguments
 			IOperator copy = helper.copy().init(op, context, args);
-			GamlElementDocumentation ged = copy.getDocumentationObject();
-			if ( ged != null ) {
-				if ( ged.getDeprecated() != null ) {
-					context.warning(helper.getName() + " is deprecated: " + ged.getDeprecated(), IGamlIssue.DEPRECATED,
-						currentEObject);
+			if(copy != null){
+				GamlElementDocumentation ged = copy.getDocumentationObject();
+				if ( ged != null ) {
+					if ( ged.getDeprecated() != null ) {
+						context.warning(helper.getName() + " is deprecated: " + ged.getDeprecated(), IGamlIssue.DEPRECATED,
+							currentEObject);
+					}
 				}
 			}
 			return copy;
