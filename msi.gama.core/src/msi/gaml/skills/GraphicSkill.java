@@ -123,7 +123,7 @@ public class GraphicSkill extends Skill {
 			args = { @arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")),
 			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class")),
 			@arg(name = "index", type = IType.INT,optional = false, doc = @doc("index")) }, 
-			doc = @doc(examples = { @example(" color <- self.colors(1);") } ))
+			doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") } ))
 	public GamaColor getBrewerColors(final IScope scope){
 		String type = scope.getStringArg("type");
 		int nbClass = scope.getIntArg("class");
