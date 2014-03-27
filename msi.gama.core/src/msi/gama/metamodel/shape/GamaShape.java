@@ -383,8 +383,8 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@getter("depth")
 	public Double getDepth() {
-		return getEnvelope().getDepth();
-		//return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
+		return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
+		//return getEnvelope().getDepth();
 	}
 	
 	public void setDepth(double depth) {
