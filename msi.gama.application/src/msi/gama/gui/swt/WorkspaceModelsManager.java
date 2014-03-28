@@ -168,7 +168,7 @@ public class WorkspaceModelsManager {
 		// TODO If no project has been found... we return null, but it might be possible to create a project on the fly
 		if ( dotFile == null || projectFileBean == null ) {
 			GuiUtils
-				.debug("The model '" +
+				.tell("The model '" +
 					modelFile.getAbsolutePath() +
 					"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
 			return createUnclassifiedModelsProjectAndAdd(originalPath);
@@ -222,7 +222,7 @@ public class WorkspaceModelsManager {
 		} catch (InvocationTargetException e) {
 			return null;
 		} catch (CoreException e) {
-			return null;
+			GuiUtils.error("Error wien importing project: " + e.getMessage());
 		}
 		IProject project = workspace.getRoot().getProject(pathToProject);
 		String relativePathToModel =
