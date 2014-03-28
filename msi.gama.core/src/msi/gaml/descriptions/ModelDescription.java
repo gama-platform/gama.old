@@ -130,6 +130,16 @@ public class ModelDescription extends SpeciesDescription {
 	public String getModelProjectPath() {
 		return modelProjectPath;
 	}
+	
+	
+
+	public void setModelFilePath(String modelFilePath) {
+		this.modelFilePath = modelFilePath;
+	}
+
+	public void setModelFolderPath(String modelFolderPath) {
+		this.modelFolderPath = modelFolderPath;
+	}
 
 	/**
 	 * Create types from the species descriptions
