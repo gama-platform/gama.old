@@ -19,26 +19,17 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
-
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ITypeProvider;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
-
 import com.google.common.primitives.Ints;
 
 public class GamaIntMatrix extends GamaMatrix<Integer> {
@@ -58,7 +49,6 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		if ( m instanceof GamaFloatMatrix ) { return new GamaIntMatrix(c, r, ((GamaFloatMatrix) m).getMatrix()); }
 		return null;
 	}
-
 
 	// In case the matrix represents a discretization of an environment
 	private double cellSize;
@@ -184,11 +174,12 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-//	@Override
-//	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	// @Override
+	// @operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH,
+	// category={IOperatorCategory.MATRIX})
 	public IMatrix _opAppendVertically(final IScope scope, final IMatrix b) {
-		GamaIntMatrix a=this;
-		int[] ma = ((GamaIntMatrix) a).getMatrix();
+		GamaIntMatrix a = this;
+		int[] ma = a.getMatrix();
 		int[] mb = ((GamaIntMatrix) b).getMatrix();
 		int[] mab = ArrayUtils.addAll(ma, mb);
 
@@ -206,23 +197,23 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @return the matrix concatenated
 	 */
 
-//	@Override
-//	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	// @Override
+	// @operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH,
+	// category={IOperatorCategory.MATRIX})
 	public IMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
-		GamaIntMatrix a=this;
+		GamaIntMatrix a = this;
 		GamaIntMatrix aprime = new GamaIntMatrix(a.getRows(scope), a.getCols(scope));
-		aprime = (GamaIntMatrix)a._reverse(scope);
-		// System.out.println("aprime = " + aprime);	
+		aprime = (GamaIntMatrix) a._reverse(scope);
+		// System.out.println("aprime = " + aprime);
 		GamaIntMatrix bprime = new GamaIntMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = (GamaIntMatrix) ((GamaIntMatrix)b)._reverse(scope);
+		bprime = (GamaIntMatrix) ((GamaIntMatrix) b)._reverse(scope);
 		// System.out.println("bprime = " + bprime);
 		GamaIntMatrix c = (GamaIntMatrix) aprime.opAppendVertically(scope, bprime);
 		// System.out.println("c = " + c);
-		GamaIntMatrix cprime = (GamaIntMatrix) ((GamaIntMatrix) c)._reverse(scope);
+		GamaIntMatrix cprime = (GamaIntMatrix) c._reverse(scope);
 		// System.out.println("cprime = " + cprime);
 		return cprime;
 	}
-
 
 	// @Override
 	// public Integer _max(final IScope scope) {
@@ -499,9 +490,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix times(final Double val) throws GamaRuntimeException {
-		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		double[] mm = nm.getMatrix();
 		for ( int i = 0; i < matrix.length; i++ ) {
-			nm.matrix[i] = matrix[i] * Cast.asInt(null, val);
+			mm[i] = matrix[i] * val;
 		}
 		return nm;
 	}
@@ -517,18 +509,20 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix divides(final Double val) throws GamaRuntimeException {
-		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		double[] mm = nm.getMatrix();
 		for ( int i = 0; i < matrix.length; i++ ) {
-			nm.matrix[i] = matrix[i] / Cast.asInt(null, val);
+			mm[i] = matrix[i] / val;
 		}
 		return nm;
 	}
 
 	@Override
 	public IMatrix divides(final Integer val) throws GamaRuntimeException {
-		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		double[] mm = nm.getMatrix();
 		for ( int i = 0; i < matrix.length; i++ ) {
-			nm.matrix[i] = matrix[i] / val;
+			mm[i] = matrix[i] / val;
 		}
 		return nm;
 	}
@@ -559,9 +553,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix plus(final Double val) throws GamaRuntimeException {
-		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		double[] mm = nm.getMatrix();
 		for ( int i = 0; i < matrix.length; i++ ) {
-			nm.matrix[i] = matrix[i] + Cast.asInt(null, val);
+			mm[i] = matrix[i] + val;
 		}
 		return nm;
 	}
@@ -577,9 +572,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public IMatrix minus(final Double val) throws GamaRuntimeException {
-		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		double[] mm = nm.getMatrix();
 		for ( int i = 0; i < matrix.length; i++ ) {
-			nm.matrix[i] = matrix[i] - Cast.asInt(null, val);
+			mm[i] = matrix[i] - val;
 		}
 		return nm;
 	}
