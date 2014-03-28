@@ -11,7 +11,7 @@ global {
 	const clock_big_hand   type: file <- image_file("../images/big_hand.png");
 	const clock_small_hand type: file <- image_file("../images/small_hand.png");
 	const clock_alarm 	   type: file <- image_file("../images/alarm_hand.png");
-	int zoom <- 5 min:1 max:100;
+	int zoom <- 4 min:1 max:100;
 	int rate <- 10 min:1 max:3600000;
 	int alarm_days <- 0 min:0 max:365;
 	int alarm_hours <- 2 min:0 max:11;
@@ -45,7 +45,7 @@ species  clock {
 		reflex update {
 			if (cycle = alarmCycle) {
 				 write "Time to leave" ; 
-				start_sound source:"../includes/Alarm.mp3" ;
+				//start_sound source:"../includes/Alarm.mp3" ;
 			}
 		}
  
