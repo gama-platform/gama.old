@@ -814,7 +814,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					datas.get(i).setName(seriesnames.get(i)+"("+i+")");
 				}
 			}
-			}
+		}
 		
 			
 		boolean dynamiccategorynames=false;
@@ -920,7 +920,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 	*/	
 		boolean clearvalues=false;
-
+		int cpt=0;
 		for ( final ChartData d : datas ) {
 			GamaList x = new GamaList();
 			Object obj = d.getValue(scope);
@@ -944,16 +944,20 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		for ( final Map.Entry<String, Double> d : lastValues.entrySet() ) {
 			String s = d.getKey();
 			final double n = d.getValue();
+			if (!(d instanceof GamaList))
 			switch (type) {
 				case PIE_CHART: {
 					((DefaultPieDataset) dataset).setValue(s, n);
 					break;
 				}
 				case HISTOGRAM_CHART: {
+//					((DefaultCategoryDataset) dataset).setValue(Cast.asFloat(scope, x.get(j)).doubleValue(),d.getName(),"("+j+")");
 					// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 					// dataset).getRowCount() +
 					// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
-//					((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s/* , s */);
+					((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s/* , s */);
+					((CategoryPlot)chart.getPlot()).getRenderer().setSeriesPaint(0, datas.get(cpt).color);
+					cpt++;
 					break;
 				}
 			}
