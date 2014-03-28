@@ -19,13 +19,19 @@ global {
 	init{
 		create LV_agt number:1 with:[x::xInit, y::yInit];
 	}
+	
+	list val_xy<-[];
+	reflex update_val{
+		list tmp<-[first(list(LV_agt)).x, first(list(LV_agt)).y];
+ 		add tmp to:val_xy;
+ 	}
 }
 
 entities {
 	species LV_agt {
 	    float t;  
 		float x ;
-		float y ;
+		float y ; 
   
 		equation lotka_volterra { 
 			diff(x,t) =   x * (alpha - beta * y);
@@ -44,10 +50,10 @@ experiment maths type: gui {
 				data 'y' value: first(LV_agt).y color: rgb('red') ;
 			}
 		}
-		display LVphase refresh_every: 1 {			
+		display "LVphase" refresh_every: 1 {			
 			chart "SIR" type: xy background: rgb('white') {
-				data 'x' value: first(LV_agt).x color: rgb('green') ;				
-				data 'y' value: first(LV_agt).y color: rgb('red') ;
+				data 'xy' value:val_xy color: rgb('green') ;				
+//				data 'y' value: first(LV_agt).y color: rgb('red') ;
 			}
 		}			
 	}

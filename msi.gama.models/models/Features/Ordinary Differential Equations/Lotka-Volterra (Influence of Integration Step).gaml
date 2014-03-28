@@ -22,6 +22,19 @@ global {
 		create agt_LV with:[x::xInit, y::yInit, h::0.1, my_length::10];
 		create agt_LV with:[x::xInit, y::yInit, h::0.01, my_length::100];				
 	}
+	
+	list val_xy1<-[];
+	list val_xy2<-[];
+	list val_xy3<-[];
+	list tmp<-[];
+	reflex update_val{
+		tmp<-[first(agt_LV where (each.h = 1)).x, first(agt_LV where (each.h = 1)).y];
+ 		add tmp to:val_xy1;
+ 		tmp<-[first(agt_LV where (each.h = 0.1)).x, first(agt_LV where (each.h = 0.1)).y];
+ 		add tmp to:val_xy2;
+ 		tmp<-[first(agt_LV where (each.h = 0.01)).x, first(agt_LV where (each.h = 0.01)).y];
+ 		add tmp to:val_xy3;
+ 	}
 }
 
 entities {
@@ -60,16 +73,16 @@ experiment maths type: gui {
 		}
 		display LVphase refresh_every: 1 {			
 			chart "LV_h1" type: xy background: rgb('white') position: {0,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where (each.h = 1)).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where (each.h = 1)).y color: rgb('red') ;
+				data 'xy' value: val_xy1 color: rgb('green') ;				
+//				data 'y' value: first(agt_LV where (each.h = 1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.1" type: xy background: rgb('white') position: {0.33,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where (each.h = 0.1)).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where (each.h = 0.1)).y color: rgb('red') ;
+				data 'xy' value: val_xy2 color: rgb('green') ;				
+//				data 'y' value: first(agt_LV where (each.h = 0.1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.01" type: xy background: rgb('white') position: {0.66,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where (each.h = 0.01)).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where (each.h = 0.01)).y color: rgb('red') ;
+				data 'xy' value: val_xy3 color: rgb('green') ;				
+//				data 'y' value: first(agt_LV where (each.h = 0.01)).y color: rgb('red') ;
 			}	
 		}			
 	}
