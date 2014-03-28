@@ -10,3 +10,4 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
 Import-Package: com.vividsolutions.jts.geom
 Export-Package: simtools.gaml.extensions.traffic
 Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy

@@ -11,3 +11,4 @@ Export-Package:
  irit.gaml.skills
 Bundle-ClassPath: bin/,
  .
+Bundle-ActivationPolicy: lazy

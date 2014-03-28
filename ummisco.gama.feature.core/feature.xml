@@ -22,6 +22,55 @@ models.
       <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
    </url>
 
+   <requires>
+      <import plugin="msi.gama.core" version="1.6.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator"/>
+      <import plugin="org.eclipse.team.svn.ui" version="0.7.9" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator.resources" version="3.4.300" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.logging"/>
+      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide.application"/>
+      <import plugin="org.eclipse.ui.ide" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.team.svn.core"/>
+      <import plugin="org.eclipse.equinox.p2.core" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.engine" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.operations" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata.repository" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.junit" version="4.8.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.application" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.lang.gaml" version="1.4.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.lang.gaml.ui" version="1.4.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.models" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.inject"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.eclipse.xtext"/>
+      <import plugin="org.eclipse.xtext" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.util"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="org.eclipse.xtext.generator" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.validation" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.xbase.lib"/>
+      <import plugin="org.eclipse.xtext.ui"/>
+      <import plugin="org.eclipse.xtext.ui.shared"/>
+      <import plugin="org.eclipse.xtext.builder"/>
+      <import plugin="org.eclipse.xtext.ui.codetemplates.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="msi.gama.application" version="1.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors"/>
+   </requires>
+
    <plugin
          id="idees.gama.mapcomparison"
          download-size="0"

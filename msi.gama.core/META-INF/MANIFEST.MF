@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: msi.gama.core;singleton:=true
-Bundle-Version: 1.6.0
+Bundle-Version: 1.6.1.qualifier
 Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
  msi.gama.processor;bundle-version="1.4.0",
  org.eclipse.emf.ecore;visibility:=reexport,
  org.junit;bundle-version="4.8.2",
- org.eclipse.core.runtime;bundle-version="3.7.0"
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ com.google.guava;bundle-version="[10.0.1,11.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.common,
@@ -404,10 +405,6 @@ Export-Package: msi.gama.common,
  org.uncommons.maths.number,
  org.uncommons.maths.random;uses:="org.uncommons.maths.number",
  org.uncommons.maths.statistics
-Import-Package: com.google.common.base;version="[10.0.1,11.0.0)",
- com.google.common.cache;version="[10.0.1,11.0.0)",
- com.google.common.collect;version="[10.0.1,11.0.0)",
- com.google.common.primitives;version="[10.0.1,11.0.0)",
- org.apache.commons.lang;version="2.4.0"
+Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .

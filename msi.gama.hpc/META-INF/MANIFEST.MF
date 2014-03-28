@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hpc
 Bundle-SymbolicName: msi.gama.hpc;singleton:=true
-Bundle-Version: 1.0.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.processor;bundle-version="1.4.0",
@@ -21,3 +21,4 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
 Export-Package: msi.gama.hpc.simulation
 Bundle-ClassPath: lib/BaseX.jar,
  lib/expression4j.2.jar
+Bundle-ActivationPolicy: lazy
