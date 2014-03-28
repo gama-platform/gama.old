@@ -41,6 +41,9 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 		    }  
 		}  
 	    EGUIExperiment newGUIExp= gama.GamaFactory.eINSTANCE.createEGUIExperiment();
+	    newGUIExp.setError("");
+	    newGUIExp.setHasError(false);
+		
 	    newGUIExp.setName(newGUIName);
 		this.getDiagram().eResource().getContents().add(newGUIExp);
 		CreateContext ac = new CreateContext();

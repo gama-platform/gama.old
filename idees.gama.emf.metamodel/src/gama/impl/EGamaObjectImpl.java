@@ -36,6 +36,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link gama.impl.EGamaObjectImpl#getName <em>Name</em>}</li>
  *   <li>{@link gama.impl.EGamaObjectImpl#getModel <em>Model</em>}</li>
  *   <li>{@link gama.impl.EGamaObjectImpl#getColorPicto <em>Color Picto</em>}</li>
+ *   <li>{@link gama.impl.EGamaObjectImpl#getHasError <em>Has Error</em>}</li>
+ *   <li>{@link gama.impl.EGamaObjectImpl#getError <em>Error</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,6 +73,46 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * @ordered
 	 */
 	protected EList<Integer> colorPicto;
+
+	/**
+	 * The default value of the '{@link #getHasError() <em>Has Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHasError()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean HAS_ERROR_EDEFAULT = Boolean.FALSE;
+
+	/**
+	 * The cached value of the '{@link #getHasError() <em>Has Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHasError()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean hasError = HAS_ERROR_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getError() <em>Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getError()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ERROR_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getError() <em>Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getError()
+	 * @generated
+	 * @ordered
+	 */
+	protected String error = ERROR_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -170,6 +212,48 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Boolean getHasError() {
+		return hasError;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setHasError(Boolean newHasError) {
+		Boolean oldHasError = hasError;
+		hasError = newHasError;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_OBJECT__HAS_ERROR, oldHasError, hasError));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getError() {
+		return error;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setError(String newError) {
+		String oldError = error;
+		error = newError;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_OBJECT__ERROR, oldError, error));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -223,6 +307,10 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return getModel();
 			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
 				return getColorPicto();
+			case GamaPackage.EGAMA_OBJECT__HAS_ERROR:
+				return getHasError();
+			case GamaPackage.EGAMA_OBJECT__ERROR:
+				return getError();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -246,6 +334,12 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				getColorPicto().clear();
 				getColorPicto().addAll((Collection<? extends Integer>)newValue);
 				return;
+			case GamaPackage.EGAMA_OBJECT__HAS_ERROR:
+				setHasError((Boolean)newValue);
+				return;
+			case GamaPackage.EGAMA_OBJECT__ERROR:
+				setError((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -267,6 +361,12 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
 				getColorPicto().clear();
 				return;
+			case GamaPackage.EGAMA_OBJECT__HAS_ERROR:
+				setHasError(HAS_ERROR_EDEFAULT);
+				return;
+			case GamaPackage.EGAMA_OBJECT__ERROR:
+				setError(ERROR_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -285,6 +385,10 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return getModel() != null;
 			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
 				return colorPicto != null && !colorPicto.isEmpty();
+			case GamaPackage.EGAMA_OBJECT__HAS_ERROR:
+				return HAS_ERROR_EDEFAULT == null ? hasError != null : !HAS_ERROR_EDEFAULT.equals(hasError);
+			case GamaPackage.EGAMA_OBJECT__ERROR:
+				return ERROR_EDEFAULT == null ? error != null : !ERROR_EDEFAULT.equals(error);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -303,6 +407,10 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 		result.append(name);
 		result.append(", colorPicto: ");
 		result.append(colorPicto);
+		result.append(", hasError: ");
+		result.append(hasError);
+		result.append(", error: ");
+		result.append(error);
 		result.append(')');
 		return result.toString();
 	}

@@ -57,7 +57,6 @@ public class ModelGenerator {
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
-		
 		try {
 			resource.load(is, null);
 		} catch (IOException e1) {
@@ -83,6 +82,7 @@ public class ModelGenerator {
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
+		
 		try {
 			resource.load(is, null);
 		} catch (IOException e1) {

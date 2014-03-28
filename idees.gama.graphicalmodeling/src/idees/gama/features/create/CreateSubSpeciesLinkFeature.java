@@ -13,15 +13,18 @@ import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 
 public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentLinkFeature {
 
 	 private static final String TITLE = "Create species";
 	  
 	 private static final String USER_QUESTION = "Enter new species name";
-	 
+	
+   
 	public CreateSubSpeciesLinkFeature(IFeatureProvider fp) {
 		// provide name and description for the UI, e.g. the palette
 		super(fp, "is composed of a species", "Create a new species");
@@ -33,7 +36,10 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 	    	return null;
 	    }  
 	    ESpecies newSpecies = gama.GamaFactory.eINSTANCE.createESpecies();
-		this.getDiagram().eResource().getContents().add(newSpecies);
+	    newSpecies.setError("");
+	    newSpecies.setHasError(false);
+		
+	  	this.getDiagram().eResource().getContents().add(newSpecies);
 		newSpecies.setName(newSpeciesName);
 		CreateContext ac = new CreateContext();
 		EContinuousTopology newTopo = gama.GamaFactory.eINSTANCE.createEContinuousTopology();

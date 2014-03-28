@@ -43,6 +43,8 @@ public class EditActionFrame extends EditFrame {
 		//****** CANVAS GAMLCODE *********
 		groupGamlCode(container);
 		
+		//canvasValidation(container);
+		
 		//****** CANVAS OK/CANCEL *********
 		groupOkCancel(container);
 		

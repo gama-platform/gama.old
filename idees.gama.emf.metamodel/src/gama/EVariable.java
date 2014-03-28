@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link gama.EVariable#getFunction <em>Function</em>}</li>
  *   <li>{@link gama.EVariable#getType <em>Type</em>}</li>
  *   <li>{@link gama.EVariable#getName <em>Name</em>}</li>
+ *   <li>{@link gama.EVariable#getHasError <em>Has Error</em>}</li>
+ *   <li>{@link gama.EVariable#getError <em>Error</em>}</li>
  * </ul>
  * </p>
  *
@@ -212,5 +214,58 @@ public interface EVariable extends EObject {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Has Error</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Has Error</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Has Error</em>' attribute.
+	 * @see #setHasError(Boolean)
+	 * @see gama.GamaPackage#getEVariable_HasError()
+	 * @model default="false"
+	 * @generated
+	 */
+	Boolean getHasError();
+
+	/**
+	 * Sets the value of the '{@link gama.EVariable#getHasError <em>Has Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Has Error</em>' attribute.
+	 * @see #getHasError()
+	 * @generated
+	 */
+	void setHasError(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Error</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Error</em>' attribute.
+	 * @see #setError(String)
+	 * @see gama.GamaPackage#getEVariable_Error()
+	 * @model
+	 * @generated
+	 */
+	String getError();
+
+	/**
+	 * Sets the value of the '{@link gama.EVariable#getError <em>Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Error</em>' attribute.
+	 * @see #getError()
+	 * @generated
+	 */
+	void setError(String value);
 
 } // EVariable

@@ -34,6 +34,9 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 	    	return null;
 	    }  
 	    ESpecies newSpecies = gama.GamaFactory.eINSTANCE.createESpecies();
+	    newSpecies.setError("");
+	    newSpecies.setHasError(false);
+		
 		this.getDiagram().eResource().getContents().add(newSpecies);
 		newSpecies.setName(newSpeciesName);
 	    EGridTopology newTopo = gama.GamaFactory.eINSTANCE.createEGridTopology();

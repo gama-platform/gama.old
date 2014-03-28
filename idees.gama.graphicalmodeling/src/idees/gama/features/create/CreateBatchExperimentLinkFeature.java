@@ -39,6 +39,8 @@ public class CreateBatchExperimentLinkFeature  extends AbstractCreateConnectionF
 	    	return null;
 	    }  
 	    EBatchExperiment newBatchExp= gama.GamaFactory.eINSTANCE.createEBatchExperiment();
+	    newBatchExp.setError("");
+	    newBatchExp.setHasError(false);
 	    newBatchExp.setName(newBatchName);
 		this.getDiagram().eResource().getContents().add(newBatchExp);
 		CreateContext ac = new CreateContext();

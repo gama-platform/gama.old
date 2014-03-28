@@ -37,9 +37,13 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 	    	return null;
 	    }  
 	    ESpecies newNode = gama.GamaFactory.eINSTANCE.createESpecies();
+	    newNode.setError("");
+	    newNode.setHasError(false);
+		
 		this.getDiagram().eResource().getContents().add(newNode);
 		newNode.setName(newNodeName);
 		EGraphTopologyNode newTopoNode = gama.GamaFactory.eINSTANCE.createEGraphTopologyNode();
+		
 		this.getDiagram().eResource().getContents().add(newTopoNode);
 		newNode.setTopology(newTopoNode);
 		CreateContext acNode = new CreateContext();
@@ -57,6 +61,9 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 	    	return null;
 	    }  
 	    ESpecies newEdge = gama.GamaFactory.eINSTANCE.createESpecies();
+	    newEdge.setError("");
+	    newEdge.setHasError(false);
+		
 		this.getDiagram().eResource().getContents().add(newEdge);
 		newEdge.setName(newEdgeName);
 		EGraphTopologyEdge newTopoEdge = gama.GamaFactory.eINSTANCE.createEGraphTopologyEdge();

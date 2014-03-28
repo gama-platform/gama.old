@@ -37,6 +37,9 @@ public class CreateInheritingLinkFeature extends AbstractCreateSpeciesComponentL
 	    	return null;
 	    }  
 	    ESpecies newSpecies = gama.GamaFactory.eINSTANCE.createESpecies();
+	    newSpecies.setError("");
+	    newSpecies.setHasError(false);
+		
 		this.getDiagram().eResource().getContents().add(newSpecies);
 		newSpecies.setName(newSpeciesName);
 		CreateContext ac = new CreateContext();

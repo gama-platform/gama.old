@@ -34,6 +34,8 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 	    	return null;
 	    }  
 	    EReflex newReflex = gama.GamaFactory.eINSTANCE.createEReflex();
+	    newReflex.setError("");
+	    newReflex.setHasError(false);
 		this.getDiagram().eResource().getContents().add(newReflex);
 		newReflex.setName(newReflexName);
 		CreateContext ac = new CreateContext();

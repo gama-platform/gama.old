@@ -143,13 +143,31 @@ public interface GamaPackage extends EPackage {
 	int EGAMA_OBJECT__COLOR_PICTO = 2;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGAMA_OBJECT__HAS_ERROR = 3;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGAMA_OBJECT__ERROR = 4;
+
+	/**
 	 * The number of structural features of the '<em>EGama Object</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGAMA_OBJECT_FEATURE_COUNT = 3;
+	int EGAMA_OBJECT_FEATURE_COUNT = 5;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
@@ -187,6 +205,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ESPECIES__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__ERROR = EGAMA_OBJECT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -532,6 +568,24 @@ public interface GamaPackage extends EPackage {
 	int EACTION__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -594,6 +648,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EASPECT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT__ERROR = EGAMA_OBJECT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -669,6 +741,24 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -740,6 +830,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EEXPERIMENT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT__ERROR = EGAMA_OBJECT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
@@ -815,6 +923,24 @@ public interface GamaPackage extends EPackage {
 	int EGUI_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGUI_EXPERIMENT__HAS_ERROR = EEXPERIMENT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGUI_EXPERIMENT__ERROR = EEXPERIMENT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -886,6 +1012,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EBATCH_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EBATCH_EXPERIMENT__HAS_ERROR = EEXPERIMENT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EBATCH_EXPERIMENT__ERROR = EEXPERIMENT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
@@ -1327,6 +1471,24 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Layers</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1499,13 +1661,31 @@ public interface GamaPackage extends EPackage {
 	int EVARIABLE__NAME = 6;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__HAS_ERROR = 7;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__ERROR = 8;
+
+	/**
 	 * The number of structural features of the '<em>EVariable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EVARIABLE_FEATURE_COUNT = 7;
+	int EVARIABLE_FEATURE_COUNT = 9;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.
@@ -1543,6 +1723,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EWORLD_AGENT__COLOR_PICTO = ESPECIES__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__HAS_ERROR = ESPECIES__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__ERROR = ESPECIES__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -1933,6 +2131,24 @@ public interface GamaPackage extends EPackage {
 	int ELAYER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2168,6 +2384,24 @@ public interface GamaPackage extends EPackage {
 	int ETOPOLOGY__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ETOPOLOGY__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ETOPOLOGY__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2221,6 +2455,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRAPH_TOPOLOGY_NODE__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_NODE__HAS_ERROR = ETOPOLOGY__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_NODE__ERROR = ETOPOLOGY__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
@@ -2340,6 +2592,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ELAYER_ASPECT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__ERROR = EGAMA_OBJECT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -2568,6 +2838,24 @@ public interface GamaPackage extends EPackage {
 	int EGRID_TOPOLOGY__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID_TOPOLOGY__HAS_ERROR = ETOPOLOGY__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID_TOPOLOGY__ERROR = ETOPOLOGY__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2657,6 +2945,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ECONTINUOUS_TOPOLOGY__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECONTINUOUS_TOPOLOGY__HAS_ERROR = ETOPOLOGY__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECONTINUOUS_TOPOLOGY__ERROR = ETOPOLOGY__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
@@ -2778,6 +3084,24 @@ public interface GamaPackage extends EPackage {
 	int EGRAPH_TOPOLOGY_EDGE__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_EDGE__HAS_ERROR = ETOPOLOGY__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_EDGE__ERROR = ETOPOLOGY__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2897,6 +3221,24 @@ public interface GamaPackage extends EPackage {
 	int ECHART_LAYER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
 	 * The feature id for the '<em><b>Style</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2968,6 +3310,24 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EPARAMETER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__ERROR = EGAMA_OBJECT__ERROR;
 
 	/**
 	 * The feature id for the '<em><b>Variable</b></em>' attribute.
@@ -3127,6 +3487,28 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getEGamaObject_ColorPicto();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EGamaObject#getHasError <em>Has Error</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Has Error</em>'.
+	 * @see gama.EGamaObject#getHasError()
+	 * @see #getEGamaObject()
+	 * @generated
+	 */
+	EAttribute getEGamaObject_HasError();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EGamaObject#getError <em>Error</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Error</em>'.
+	 * @see gama.EGamaObject#getError()
+	 * @see #getEGamaObject()
+	 * @generated
+	 */
+	EAttribute getEGamaObject_Error();
 
 	/**
 	 * Returns the meta object for class '{@link gama.ESpecies <em>ESpecies</em>}'.
@@ -4093,6 +4475,28 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEVariable_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getHasError <em>Has Error</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Has Error</em>'.
+	 * @see gama.EVariable#getHasError()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_HasError();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getError <em>Error</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Error</em>'.
+	 * @see gama.EVariable#getError()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Error();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EWorldAgent <em>EWorld Agent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5050,6 +5454,22 @@ public interface GamaPackage extends EPackage {
 		EAttribute EGAMA_OBJECT__COLOR_PICTO = eINSTANCE.getEGamaObject_ColorPicto();
 
 		/**
+		 * The meta object literal for the '<em><b>Has Error</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGAMA_OBJECT__HAS_ERROR = eINSTANCE.getEGamaObject_HasError();
+
+		/**
+		 * The meta object literal for the '<em><b>Error</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGAMA_OBJECT__ERROR = eINSTANCE.getEGamaObject_Error();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -5790,6 +6210,22 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EVARIABLE__NAME = eINSTANCE.getEVariable_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Has Error</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__HAS_ERROR = eINSTANCE.getEVariable_HasError();
+
+		/**
+		 * The meta object literal for the '<em><b>Error</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__ERROR = eINSTANCE.getEVariable_Error();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.

@@ -45,7 +45,6 @@ import idees.gama.features.create.CreateDisplayLinkFeature;
 import idees.gama.features.create.CreateGuiExperimentLinkFeature;
 import idees.gama.features.create.CreateInheritingLinkFeature;
 import idees.gama.features.create.CreateReflexLinkFeature;
-import idees.gama.features.create.CreateSubGraphSpeciesFeature;
 import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.layout.LayoutCommonFeature;
@@ -190,10 +189,27 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          				initSkeleton(newClass, diagram);
          			 } else  if ("custom".equals(typeOfModel)) {
           				initCustom(newClass, worldPE, diagram);
+         			 } else {
+         				initSimple(newClass, diagram);
          			 }
          	     }
          	  });
     	}
+    }
+    public void initSimple(EWorldAgent world, Diagram diagram) {
+		final CreateGuiExperimentLinkFeature cXp= new CreateGuiExperimentLinkFeature(this);
+		final CreateDisplayLinkFeature cDisp= new CreateDisplayLinkFeature(this);
+		PictogramElement worldPe = getPictogramElementForBusinessObject(world);
+		
+		CreateConnectionContext context = new CreateConnectionContext();
+		context.setSourcePictogramElement(worldPe);
+		context.setSourceAnchor(Graphiti.getPeService().getChopboxAnchor((AnchorContainer) worldPe));
+		//context.setSourceLocation(new LocationImpl(100,50));
+		context.setTargetLocation(new LocationImpl(600,50));
+		Connection link = cXp.create(context, false);
+		AddConnectionContext cont = new AddConnectionContext(null, null);
+		cont.setNewObject(link);
+		addIfPossible(cont);
     }
     
     @SuppressWarnings("restriction")

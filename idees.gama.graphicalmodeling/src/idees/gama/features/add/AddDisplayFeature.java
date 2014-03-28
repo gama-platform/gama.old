@@ -31,12 +31,6 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
 	public static final int INIT_WIDTH = 140;
 	public static final int INIT_HEIGHT = 50;
 
-	private static final IColorConstant CLASS_TEXT_FOREGROUND =
-        new ColorConstant(0, 0, 0);
- 
-    private static final IColorConstant CLASS_FOREGROUND =
-    		 new ColorConstant(0,0,0);
-
     private static final List<Integer> CLASS_BACKGROUND =GamaList.with(127,255,0);
     
  
@@ -57,6 +51,7 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
  
     public PictogramElement add(IAddContext context) {
     	EDisplay addedClass = (EDisplay) context.getNewObject();
+    	 boolean error = (addedClass.getHasError()  != null && addedClass.getHasError()) ;
          Diagram targetDiagram = (Diagram) context.getTargetContainer();
          IPeCreateService peCreateService = Graphiti.getPeCreateService();
          ContainerShape containerShape =
@@ -71,14 +66,15 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
             // create and set graphics algorithm
            Ellipse ellipse =
                 gaService.createEllipse(containerShape);
-	           ellipse.setForeground(manageColor(CLASS_FOREGROUND));
+           ellipse.setForeground(manageColor((error ? ColorDisplay.CLASS_FOREGROUND_ERROR : ColorDisplay.CLASS_FOREGROUND_OK)));
+           
 	           if (addedClass.getColorPicto().isEmpty()) {
 	            	 addedClass.getColorPicto().addAll(CLASS_BACKGROUND);
 	           }
 	            List<Integer> currentColor = addedClass.getColorPicto();
 	            Color color = gaService.manageColor(getDiagram(), currentColor.get(0), currentColor.get(1), currentColor.get(2));
 	            ellipse.setBackground(color);
-	           ellipse.setLineWidth(2);
+	           ellipse.setLineWidth(error ? 4 : 2);
 	           gaService.setLocationAndSize(ellipse,
                 context.getX(), context.getY(), width, height);
             
@@ -97,7 +93,7 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
             // create and set text graphics algorithm
             Text text = gaService.createDefaultText(getDiagram(), shape,
                         addedClass.getName());
-            text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
+            text.setForeground(manageColor(ColorDisplay.CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setFont(gaService.manageFont(getDiagram(), "Arial", 12, false, false));
            // text.getFont().setBold(true);

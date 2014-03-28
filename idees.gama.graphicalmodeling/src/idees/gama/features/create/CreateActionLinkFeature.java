@@ -35,6 +35,8 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 	    	return null;
 	    }  
 		EAction newAction = gama.GamaFactory.eINSTANCE.createEAction();
+		newAction.setError("");
+		newAction.setHasError(false);
 		this.getDiagram().eResource().getContents().add(newAction);
 		newAction.setName(newActionName);
 		CreateContext ac = new CreateContext();

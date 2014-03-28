@@ -401,6 +401,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEGamaObject_HasError() {
+		return (EAttribute)eGamaObjectEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEGamaObject_Error() {
+		return (EAttribute)eGamaObjectEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getESpecies() {
 		return eSpeciesEClass;
 	}
@@ -1202,6 +1220,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEVariable_HasError() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Error() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEWorldAgent() {
 		return eWorldAgentEClass;
 	}
@@ -1954,6 +1990,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__NAME);
 		createEReference(eGamaObjectEClass, EGAMA_OBJECT__MODEL);
 		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__COLOR_PICTO);
+		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__HAS_ERROR);
+		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__ERROR);
 
 		eSpeciesEClass = createEClass(ESPECIES);
 		createEReference(eSpeciesEClass, ESPECIES__VARIABLES);
@@ -2058,6 +2096,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eVariableEClass, EVARIABLE__FUNCTION);
 		createEAttribute(eVariableEClass, EVARIABLE__TYPE);
 		createEAttribute(eVariableEClass, EVARIABLE__NAME);
+		createEAttribute(eVariableEClass, EVARIABLE__HAS_ERROR);
+		createEAttribute(eVariableEClass, EVARIABLE__ERROR);
 
 		eWorldAgentEClass = createEClass(EWORLD_AGENT);
 		createEAttribute(eWorldAgentEClass, EWORLD_AGENT__BOUNDS_WIDTH);
@@ -2218,6 +2258,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEGamaObject_Name(), ecorePackage.getEString(), "name", null, 0, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGamaObject_Model(), this.getEGamaModel(), this.getEGamaModel_Objects(), "model", null, 1, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEGamaObject_ColorPicto(), ecorePackage.getEIntegerObject(), "colorPicto", null, 0, 3, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEGamaObject_HasError(), ecorePackage.getEBooleanObject(), "hasError", "false", 0, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEGamaObject_Error(), ecorePackage.getEString(), "error", null, 0, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSpeciesEClass, ESpecies.class, "ESpecies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2322,6 +2364,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEVariable_Function(), ecorePackage.getEString(), "function", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_Type(), ecorePackage.getEString(), "type", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_HasError(), ecorePackage.getEBooleanObject(), "hasError", "false", 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Error(), ecorePackage.getEString(), "error", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eWorldAgentEClass, EWorldAgent.class, "EWorldAgent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEWorldAgent_BoundsWidth(), ecorePackage.getEString(), "boundsWidth", null, 0, 1, EWorldAgent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -1,9 +1,24 @@
 package idees.gama.ui.editFrame;
 
+import java.util.List;
+
 import gama.EGamaObject;
 import gama.EWorldAgent;
 import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
+import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
+import msi.gama.lang.gaml.gaml.impl.S_DefinitionImpl;
+import msi.gama.lang.gaml.gaml.impl.S_DisplayImpl;
+import msi.gama.lang.gaml.gaml.impl.S_ExperimentImpl;
+import msi.gama.lang.gaml.gaml.impl.S_ReflexImpl;
+import msi.gama.lang.gaml.gaml.impl.S_SpeciesImpl;
+import msi.gama.lang.gaml.gaml.impl.VariableRefImpl;
+import msi.gama.util.GamaList;
+import msi.gaml.compilation.GamlCompilationError;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jface.action.MenuManager;
@@ -12,10 +27,12 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -53,14 +70,100 @@ public abstract class EditFrame extends ApplicationWindow {
 		addStatusLine();
 		
 	}
+	
+	static public String fromErrorToString(GamlCompilationError error) {
+		String result = "Error concerning: ";
+		EObject toto = error.getStatement();
+		GamaList<String> ids = new GamaList<String>();
+			do {
+				if (toto instanceof VariableRefImpl) {
+					VariableRefImpl vv = (VariableRefImpl) toto;
+					ids.add(0,vv.getRef().getName());
+				} else if (toto instanceof S_ReflexImpl) {
+					S_ReflexImpl vv = (S_ReflexImpl) toto;
+					if (vv.getName() != null)
+						ids.add(0,vv.getName());
+					else {ids.add(0,"init");}
+				} else if (toto instanceof S_SpeciesImpl) {
+					S_SpeciesImpl vv = (S_SpeciesImpl) toto;
+					ids.add(0,vv.getName());
+				} else if (toto instanceof S_ActionImpl) {
+					S_ActionImpl vv = (S_ActionImpl) toto;
+					ids.add(0,vv.getName());
+				} else if (toto instanceof S_DisplayImpl) {
+					S_DisplayImpl vv = (S_DisplayImpl) toto;
+					ids.add(0,vv.getName());
+				} else if (toto instanceof S_ExperimentImpl) {
+					S_ExperimentImpl vv = (S_ExperimentImpl) toto;
+					ids.add(0,vv.getName());
+				} else if (toto instanceof S_DefinitionImpl) {
+					S_DefinitionImpl vv = (S_DefinitionImpl) toto;
+					ids.add(0,vv.getName()); 
+				}
+				toto = toto.eContainer();
+			} while (!(toto instanceof Model)) ;
+			for ( int i = 0 ; i < ids.size(); i++) {
+				String id = ids.get(i);
+				result += "->" + id;
+			}
+			result += " : " + error.toString();
+			return result;
+	}
 
 	
-	protected Canvas canvasValidation(Composite container) {
-		Canvas canvasValidation = new Canvas(container, SWT.BORDER);
-		validationResult = new StyledText(canvasValidation, SWT.BORDER);
-		UtilEditFrame.buildCanvasValidation(container, canvasValidation, validationResult, fp, diagram, eobject);
-		canvasValidation.setBounds(10, 580, 720, 95);
-		return canvasValidation;
+	protected void canvasValidation(Composite container) {
+		Group group = new Group(container, SWT.BORDER);
+		group.setLayout( new FillLayout(SWT.HORIZONTAL));
+	    group.setText("GAML code compilation result");
+	    
+	   GridData gridData = new GridData();
+	   gridData.horizontalAlignment = SWT.FILL;
+	   gridData.verticalAlignment = SWT.FILL;
+	   gridData.grabExcessHorizontalSpace = true;
+	   gridData.grabExcessVerticalSpace= true;
+	   group.setLayoutData(gridData);
+	   group.setLayout(new GridLayout(1, false));
+	   
+	   GridData gridData2 = new GridData();
+	   gridData2.horizontalAlignment = SWT.FILL;
+	   gridData2.verticalAlignment = SWT.FILL;
+	   gridData2.grabExcessHorizontalSpace = true;
+	   gridData2.grabExcessVerticalSpace= true;
+	 
+	   validationResult = new StyledText(group, SWT.BORDER);
+	   validationResult.setLayoutData(gridData2);
+		validationResult.setEditable(false);
+				
+		Button btnValidate = new Button(group, SWT.NONE);
+		btnValidate.addSelectionListener(new SelectionAdapter() {
+				 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				save();
+				List<GamlCompilationError> errors = ModelGenerator.modelValidation(fp, diagram);
+				String eC = "";
+				StyleRange styleRange = new StyleRange();
+				if (errors.isEmpty())  {
+					eC = "No compilation error";
+					styleRange.start = 0;
+					styleRange.length = eC.length();
+					styleRange.fontStyle = SWT.BOLD;
+					styleRange.foreground = getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
+					
+				}
+				else {
+					for (GamlCompilationError val : errors) eC += fromErrorToString(val) + "\n";
+					styleRange.start = 0;
+					styleRange.length = eC.length();
+					styleRange.fontStyle = SWT.BOLD;
+					styleRange.foreground = getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_RED);
+					
+				}
+				validationResult.setText(eC);	
+				validationResult.setStyleRange(styleRange);
+			}
+		});
+		btnValidate.setText("Validate"); 		
 	}
 	
 	protected void groupName(Composite container) {

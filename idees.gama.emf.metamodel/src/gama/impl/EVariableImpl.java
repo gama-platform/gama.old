@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link gama.impl.EVariableImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getType <em>Type</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getName <em>Name</em>}</li>
+ *   <li>{@link gama.impl.EVariableImpl#getHasError <em>Has Error</em>}</li>
+ *   <li>{@link gama.impl.EVariableImpl#getError <em>Error</em>}</li>
  * </ul>
  * </p>
  *
@@ -175,6 +177,46 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getHasError() <em>Has Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHasError()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean HAS_ERROR_EDEFAULT = Boolean.FALSE;
+
+	/**
+	 * The cached value of the '{@link #getHasError() <em>Has Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHasError()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean hasError = HAS_ERROR_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getError() <em>Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getError()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ERROR_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getError() <em>Error</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getError()
+	 * @generated
+	 * @ordered
+	 */
+	protected String error = ERROR_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -347,6 +389,48 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Boolean getHasError() {
+		return hasError;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setHasError(Boolean newHasError) {
+		Boolean oldHasError = hasError;
+		hasError = newHasError;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EVARIABLE__HAS_ERROR, oldHasError, hasError));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getError() {
+		return error;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setError(String newError) {
+		String oldError = error;
+		error = newError;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EVARIABLE__ERROR, oldError, error));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -364,6 +448,10 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return getType();
 			case GamaPackage.EVARIABLE__NAME:
 				return getName();
+			case GamaPackage.EVARIABLE__HAS_ERROR:
+				return getHasError();
+			case GamaPackage.EVARIABLE__ERROR:
+				return getError();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -396,6 +484,12 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return;
 			case GamaPackage.EVARIABLE__NAME:
 				setName((String)newValue);
+				return;
+			case GamaPackage.EVARIABLE__HAS_ERROR:
+				setHasError((Boolean)newValue);
+				return;
+			case GamaPackage.EVARIABLE__ERROR:
+				setError((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -430,6 +524,12 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 			case GamaPackage.EVARIABLE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
+			case GamaPackage.EVARIABLE__HAS_ERROR:
+				setHasError(HAS_ERROR_EDEFAULT);
+				return;
+			case GamaPackage.EVARIABLE__ERROR:
+				setError(ERROR_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -456,6 +556,10 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
 			case GamaPackage.EVARIABLE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case GamaPackage.EVARIABLE__HAS_ERROR:
+				return HAS_ERROR_EDEFAULT == null ? hasError != null : !HAS_ERROR_EDEFAULT.equals(hasError);
+			case GamaPackage.EVARIABLE__ERROR:
+				return ERROR_EDEFAULT == null ? error != null : !ERROR_EDEFAULT.equals(error);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -484,6 +588,10 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 		result.append(type);
 		result.append(", name: ");
 		result.append(name);
+		result.append(", hasError: ");
+		result.append(hasError);
+		result.append(", error: ");
+		result.append(error);
 		result.append(')');
 		return result.toString();
 	}

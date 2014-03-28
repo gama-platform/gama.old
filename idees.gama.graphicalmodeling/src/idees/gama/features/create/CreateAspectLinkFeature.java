@@ -2,7 +2,6 @@ package idees.gama.features.create;
 
 
 import idees.gama.features.add.AddAspectFeature;
-import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 import gama.EAspect;
 import gama.EAspectLink;
@@ -34,13 +33,14 @@ public class CreateAspectLinkFeature extends AbstractCreateSpeciesComponentLinkF
 	    	return null;
 	    }  
 	    EAspect newAspect = gama.GamaFactory.eINSTANCE.createEAspect();
+	    newAspect.setError("");
+	    newAspect.setHasError(false);
 		this.getDiagram().eResource().getContents().add(newAspect);
 		newAspect.setName(newAspectName);
 		CreateContext ac = new CreateContext();
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newAspect;
 	}
 	

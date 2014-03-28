@@ -37,7 +37,7 @@ public class AddActionLinkFeature extends AbstractAddFeature {
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(connection);
         polyline.setLineWidth(3);
-        polyline.setForeground(manageColor(IColorConstant.RED));
+        polyline.setForeground(manageColor(IColorConstant.LIGHT_ORANGE));
  
         // create link and wire it
         link(connection, addedEReference);

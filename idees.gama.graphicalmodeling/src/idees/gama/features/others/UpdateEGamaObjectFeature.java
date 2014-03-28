@@ -14,6 +14,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.util.ColorConstant;
 
 public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
  
@@ -30,26 +31,38 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
  
     public IReason updateNeeded(IUpdateContext context) {
         // retrieve name from pictogram model
-        String pictogramName = null;
+    	String pictogramName = null;
         String pictogramVar = "";
-        PictogramElement pictogramElement = context.getPictogramElement();
+       PictogramElement pictogramElement = context.getPictogramElement();
+        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+        
         if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-            for (Shape shape : cs.getChildren()) {
+            final ContainerShape cs = (ContainerShape) pictogramElement;
+            if (bo instanceof EGamaObject) {
+       		 	final EGamaObject eClass = (EGamaObject) bo;
+       		 	final boolean error = (eClass.getHasError()  != null && eClass.getHasError()) ;
+       		 	if (cs != null && cs.getGraphicsAlgorithm() != null && cs.getGraphicsAlgorithm().getForeground() != null) {
+       		 		if ((cs.getGraphicsAlgorithm().getForeground().getGreen() == 255) == error) {
+       		 			return Reason.createTrueReason("Foreground color is out of date");
+       		 		}
+   
+       		 	}
+       		 }
+            for (final Shape shape : cs.getChildren()) {
                 if (shape.getGraphicsAlgorithm() instanceof Text) {
                     Text text = (Text) shape.getGraphicsAlgorithm();
                    
                     if (text.getY() != 25)
                     	 pictogramName = text.getValue();
                     else pictogramVar = text.getValue();
-                }
+                } 
             }
         }
  
         // retrieve name from business model
         String businessName = null;
         String varNames = "";
-        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+        
         if (bo instanceof EGamaObject) {
         	EGamaObject eClass = (EGamaObject) bo;
             businessName = eClass.getName();
@@ -62,7 +75,7 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
         }
  
         // update needed, if names are different
-        boolean updateNameNeeded =
+        boolean updateNameNeeded = 
             ((pictogramName == null && businessName != null) ||
                 (pictogramName != null && !pictogramName.equals(businessName)));
         if (updateNameNeeded) {
@@ -79,13 +92,17 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
  
     public boolean update(IUpdateContext context) {
         // retrieve name from business model
-        String businessName = null;
+    	 String businessName = null;
         String varNames = "";
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-        int cpt = 0;
+      int cpt = 0;
+       boolean error = true ;
+      
+   	
         if (bo instanceof EGamaObject) {
         	EGamaObject eClass = (EGamaObject) bo;
+        	 error = (eClass.getHasError()  != null && eClass.getHasError());
             businessName = eClass.getName();
             if (bo instanceof ESpecies) {
             	 for (EVariable var:((ESpecies)eClass).getVariables() ) {
@@ -93,6 +110,7 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
 	           		 varNames += type + " " + var.getName()+ "\n";
 	           		 
                 }
+            	 
             	 cpt = ((ESpecies)eClass).getVariables().size();
             }
         }
@@ -100,7 +118,11 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
         // Set name in pictogram model
         boolean update = false;
         if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
+        	ContainerShape cs = (ContainerShape) pictogramElement;
+        	cs.getGraphicsAlgorithm().setForeground(error ? manageColor(new ColorConstant(255, 0, 0)):manageColor(new ColorConstant(0, 255, 0)));
+        	cs.getGraphicsAlgorithm().setLineWidth(error ? 4 : 2);
+             update = true;
+            
             for (Shape shape : cs.getChildren()) {
             	 if (shape.getGraphicsAlgorithm() instanceof Text) {
                     Text text = (Text) shape.getGraphicsAlgorithm();
@@ -110,12 +132,10 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
                     	text.setValue(varNames);
                     	Graphiti.getGaService().setLocationAndSize(text, 5, 25, text.getWidth(), 18 + cpt * 18);
                     }
-                    
-                    update = true;
-                }
+                 	
+                } 
             }
         }
- 
         return update;
     }
 }
