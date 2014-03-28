@@ -35,8 +35,12 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ModelDescription;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -65,12 +69,31 @@ public class ModelGenerator {
 		try {
 			GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
 			IModel model = validator.build(resource.getContents().get(0));
+			((ModelDescription)model.getDescription()).setModelFilePath(getPath(fp, diagram));
 			return model;
 		} catch (GamaRuntimeException e1) {
 			return null;
 		} catch (Exception e) {
 			return null;
 		} 
+	}
+	
+	public static String getPath(IFeatureProvider fp,Diagram diagram) {
+		List<Shape> contents = diagram.getChildren();
+		URI uri = null;
+		if (contents != null) {
+        	uri = EcoreUtil.getURI( (EObject) fp.getBusinessObjectForPictogramElement(contents.get(0)) );
+		} else {
+			return "";
+		}
+		 uri = uri.trimFragment();
+        if (uri.isPlatform()) {
+            uri = URI.createURI( uri.toPlatformString( true ) );
+        }
+        String containerStr = "/"+ uri.segment(0);
+        String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
+        path = path.replace(".gadl", ".gaml");
+        return path;
 	}
 	public static List<GamlCompilationError> modelValidation(IFeatureProvider fp, Diagram diagram) {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());

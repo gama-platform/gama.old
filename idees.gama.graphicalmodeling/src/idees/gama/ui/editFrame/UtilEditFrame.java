@@ -7,15 +7,20 @@ import gama.EWorldAgent;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
+import msi.gama.lang.gaml.ui.GamlEditor;
 import msi.gaml.compilation.GamlCompilationError;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -75,5 +80,26 @@ public class UtilEditFrame {
 			
 		CLabel lblName = new CLabel(groupName, SWT.NONE);
 		lblName.setText("Name");
+	}
+	protected void canvasValidation(Composite container) {
+		Group group = new Group(container, SWT.BORDER);
+		group.setLayout( new FillLayout(SWT.HORIZONTAL));
+	    group.setText("GAML code compilation result");
+	    
+	   GridData gridData = new GridData();
+	   gridData.horizontalAlignment = SWT.FILL;
+	   gridData.verticalAlignment = SWT.FILL;
+	   gridData.grabExcessHorizontalSpace = true;
+	   gridData.grabExcessVerticalSpace= true;
+	   group.setLayoutData(gridData);
+	   group.setLayout(new GridLayout(1, false));
+	   
+	   GridData gridData2 = new GridData();
+	   gridData2.horizontalAlignment = SWT.FILL;
+	   gridData2.verticalAlignment = SWT.FILL;
+	   gridData2.grabExcessHorizontalSpace = true;
+	   gridData2.grabExcessVerticalSpace= true;
+	 
+	
 	}
 }

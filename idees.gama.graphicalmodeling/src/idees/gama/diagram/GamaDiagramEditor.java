@@ -280,10 +280,6 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		diagram = getDiagram();
-		if (diagram != null && !diagram.getChildren().isEmpty())
-			ModelGenerator.modelValidation(this.getDiagramTypeProvider()
-					.getFeatureProvider(), diagram);
 	}
 
 	@Override
