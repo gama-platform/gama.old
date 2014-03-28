@@ -48,8 +48,8 @@ entities {
 			location <- myCell.location;
 		}
 		reflex basic_move {
-			myCell <- self choose_cell() ;
-			location <- myCell.location ;
+			myCell <- self choose_cell();
+			location <- myCell.location; 
 		} 
 		vegetation_cell choose_cell {return nil;}
 		reflex die when: energy <= 0 {
