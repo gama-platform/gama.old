@@ -9,6 +9,7 @@ global {
 	
 	action initialize_people { 
 		create people number: number_of_people; 
+		all_people <- people as list ;  
 	} 
 	action initialize_places { 
 		all_places <- shuffle (space);
