@@ -341,7 +341,8 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 
 	@Override
 	public boolean contains(final IScope scope, final Object o) {
-		return containsKey(o) || containsValue(o);
+		// AD: see Issue 918
+		return /* containsKey(o) || */containsValue(o);
 	}
 
 	private static class ToReverseProcedure {
