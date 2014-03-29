@@ -59,9 +59,15 @@ public class AssertStatement extends AbstractStatement {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
 		if ( equals != null ) {
-			if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException
-				.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
-			return null;
+			if(value.value(scope) != null){
+				if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException
+					.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
+				return null;				
+			} else {
+				if (equals.value(scope) != null) { throw GamaRuntimeException
+					.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
+				return null;
+			}
 		}
 
 		if ( isnot != null ) {
