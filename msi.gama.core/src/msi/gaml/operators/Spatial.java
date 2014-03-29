@@ -1740,7 +1740,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "set_z" }, category={IOperatorCategory.SPATIAL,IOperatorCategory.THREED})
-		@doc(value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the third argument", examples = { @example("shape <- shape set_z [5,10,14];") }, see = { "add_z" })
+		@doc(value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the right argument", examples = { @example("shape <- triangle(3) set_z [5,10,14];") }, see = { "add_z" })
 		public static IShape set_z(final IScope scope, final IShape geom, final IContainer<?, Double> coords) {
 			if ( geom == null ) { return null; }
 			Geometry g = geom.getInnerGeometry();

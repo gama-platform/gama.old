@@ -29,8 +29,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.example;import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -399,40 +398,41 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category = IOperatorCategory.CONTAINER)
-	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = {
-		@usage("if the left-hand operand is nil, last_with throws an error."),
-		@usage("If there is no element that satisfies the condition, it returns nil") }, examples = {
+	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category=IOperatorCategory.CONTAINER)
+	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
+		@usage("if the left-hand operand is nil, last_with throws an error."), @usage("If there is no element that satisfies the condition, it returns nil"),
+		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] last_with (each >= 4)", equals="5::6"), @example(value="[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)", equals="5::6")} )}, examples = {
 		@example(value = "[1,2,3,4,5,6,7,8] last_with (each > 3)", equals = "8"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
-		@example(value = "g2 last_with (length(g2 out_edges_of each) = 0 )", equals = "node11", isExecutable = false),
-		@example(value = "(list(node) last_with (round(node(each).location.x) > 32)", equals = "node3", isExecutable = false),
-		@example(value = "[1::2, 3::4, 5::6] last_with (each.key > 4)", equals = "5::6") }, see = { "group_by",
-		"first_with", "where" })
+		@example(value = "g2 last_with (length(g2 out_edges_of each) = 0 )", equals="node11", isExecutable = false),
+		@example(value = "(list(node) last_with (round(node(each).location.x) > 32)", equals = "node3", isExecutable=false),
+		@example(value = "[1::2, 3::4, 5::6] last_with (each > 4)", equals="5::6") }, see = { "group_by", "first_with", "where" })
 	public static Object last_with(final IScope scope, final IContainer original, final IExpression filter) {
 		final Iterable it = filter(nullCheck(original).iterable(scope), withPredicate(scope, filter));
 		return size(it) == 0 ? null : getLast(it);
 	}
 
 	@operator(value = { "first_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category = IOperatorCategory.CONTAINER)
-	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { @usage("if the left-hand operand is nil, first_with throws an error. If there is no element that satisfies the condition, it returns nil") }, examples = {
+	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
+			@usage("if the left-hand operand is nil, first_with throws an error. If there is no element that satisfies the condition, it returns nil"), 
+			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] first_with (each >= 4)", equals="3::4"), @example(value="[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)", equals="3::4")} )}, examples = {
 		@example(value = "[1,2,3,4,5,6,7,8] first_with (each > 3)", equals = "4"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 first_with (length(g2 out_edges_of each) = 0)", equals = "node9", test = false),
-		@example(value = "(list(node) first_with (round(node(each).location.x) > 32)", equals = "node2", isExecutable = false),
-		@example(value = "[1::2, 3::4, 5::6] first_with (each.key > 4)", equals = "5::6") }, see = { "group_by",
+		@example(value = "(list(node) first_with (round(node(each).location.x) > 32)", equals = "node2", isExecutable = false)}, see = { "group_by",
 		"last_with", "where" })
 	public static Object first_with(final IScope scope, final IContainer original, final IExpression filter) {
 		return find(nullCheck(original).iterable(scope), withPredicate(scope, filter), null);
 	}
 
 	@operator(value = { "max_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
-	@doc(value = "the maximum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { @usage("As of GAMA 1.6, if the left-hand operand is nil or empty, max_of throws an error") }, examples = {
+	@doc(value = "the maximum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
+			@usage("As of GAMA 1.6, if the left-hand operand is nil or empty, max_of throws an error"),
+			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] max_of (each + 3)", equals="9")})}, examples = {
 		@example(value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )", equals = "800"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 max_of (length(g2 out_edges_of each) )", equals = "3", test = false),
-		@example(value = "(list(node) max_of (round(node(each).location.x))", equals = "96", isExecutable = false),
-		@example(value = "[1::2, 3::4, 5::6] max_of (each.value + 3)", equals = "9") }, see = { "min_of" })
+		@example(value = "(list(node) max_of (round(node(each).location.x))", equals = "96", isExecutable = false) }, see = { "min_of" })
 	public static Object max_of(final IScope scope, final IContainer container, final IExpression filter) {
 		final Function f = GAML.<Comparable> function(scope, filter);
 		final Object result = f.apply(orderOn(f).max(emptyCheck(scope, container).iterable(scope)));
@@ -440,12 +440,13 @@ public class Containers {
 	}
 
 	@operator(value = { "min_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
-	@doc(value = "the minimum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { @usage("if the left-hand operand is nil or empty, min_of throws an error") }, examples = {
+	@doc(value = "the minimum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
+			@usage("if the left-hand operand is nil or empty, min_of throws an error"), 
+			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] min_of (each + 3)", equals="2")})}, examples = {
 		@example(value = "[1,2,4,3,5,7,6,8] min_of (each * 100 )", equals = "100"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 min_of (length(g2 out_edges_of each) )", equals = "0", test = false),
-		@example(value = "(list(node) min_of (round(node(each).location.x))", equals = "4", isExecutable = false),
-		@example(value = "[1::2, 3::4, 5::6] min_of (each.value + 3)", equals = "5") }, see = { "max_of" })
+		@example(value = "(list(node) min_of (round(node(each).location.x))", equals = "4", isExecutable = false) }, see = { "max_of" })
 	public static Object min_of(final IScope scope, final IContainer container, final IExpression filter) {
 		final Function f = GAML.<Comparable> function(scope, filter);
 		final Object result = f.apply(orderOn(f).min(emptyCheck(scope, container).iterable(scope)));
@@ -536,14 +537,13 @@ public class Containers {
 	// return result;
 	// }
 
-	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category = IOperatorCategory.CONTAINER)
-	@doc(value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { @usage(value = "if the left-hand operand is a list nil, where returns a new empty list") }, examples = {
-		@example(value = "[1,2,3,4,5,6,7,8] where (each > 3)", equals = "[4, 5, 6, 7, 8] "),
-		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
+	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category=IOperatorCategory.CONTAINER)
+	@doc(value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
+		@usage(value = "if the left-hand operand is a list nil, where returns a new empty list"),
+		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples = {@example(value = "[1::2, 3::4, 5::6] where (each >= 4)", equals = "[3::4, 5::6]")} )}, examples = {			
+		@example(value = "[1,2,3,4,5,6,7,8] where (each > 3)", equals = "[4, 5, 6, 7, 8] "), @example(value = "graph g2 <- graph([]);",isTestOnly  = true),
 		@example(value = "g2 where (length(g2 out_edges_of each) = 0 )", equals = "[node9, node7, node10, node8, node11]", test = false),
-		@example(value = "(list(node) where (round(node(each).location.x) > 32)", equals = "[node2, node3]", isExecutable = false),
-		@example(value = "[1::2, 3::4, 5::6] where (each.value >= 4)", equals = "[3::4, 5::6]") }, see = {
-		"first_with", "last_with", "where" })
+		@example(value = "(list(node) where (round(node(each).location.x) > 32)", equals = "[node2, node3]", isExecutable = false) }, see = { "first_with", "last_with", "where" })
 	public static IList where(final IScope scope, final IContainer original, final IExpression filter) {
 		return new GamaList(filter(nullCheck(original).iterable(scope), withPredicate(scope, filter)));
 	}
@@ -638,7 +638,7 @@ public class Containers {
 		+ "(all the lists) produced are concaneted. In addition, collect can be applied to any container.", usages = { @usage("if the left-hand operand is nil, collect throws an error") }, examples = {
 		@example(value = "[1,2,4] collect (each *2)", equals = "[2,4,8]"),
 		@example(value = "[1,2,4] collect ([2,4])", equals = "[[2,4],[2,4],[2,4]]"),
-		@example(value = "[1::2, 3::4, 5::6] collect (each + 2)", equals = "[8,4,6]"),
+		@example(value = "[1::2, 3::4, 5::6] collect (each + 2)", equals = "[4,6,8]"),
 		@example(value = "(list(node) collect (node(each).location.x * 2)", equals = "the list of nodes with their x multiplied by 2", isExecutable = false) }, see = { "accumulate" })
 	public static IList collect(final IScope scope, final IContainer original, final IExpression filter) {
 		// GuiUtils.debug("Containers.collect begin for " + scope.getAgentScope());

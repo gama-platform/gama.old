@@ -89,7 +89,9 @@ public class System {
 	@doc(value = "asks the user for some values (not defined as parameters)", masterDoc=true, comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
 		@example("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example("create agent number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];") })
+		@example(value="assert (values2 at \"Number\") equals: 100;",isTestOnly=true),
+		@example(value="assert (values2 at \"Location\") equals: {10,10};",isTestOnly=true),
+		@example(value="create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",isExecutable=false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		final IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
@@ -98,7 +100,7 @@ public class System {
 	@operator(value = "user_input", category={IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL})
 	@doc(value = "asks the user for some values (not defined as parameters)", examples = {
 		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example("create agent number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];") })
+		@example(value="create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",isExecutable=false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
 		final GamaMap<String, IType> initialTypes = new GamaMap();

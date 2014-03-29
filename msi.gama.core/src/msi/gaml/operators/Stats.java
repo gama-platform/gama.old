@@ -22,6 +22,7 @@ package msi.gaml.operators;
 
 import java.io.*;
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -166,7 +167,7 @@ public class Stats {
 	@operator(value = "sum", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT }, category={IOperatorCategory.STATISTICAL,IOperatorCategory.CONTAINER})
 	@doc(value = "the sum of all the elements of the operand", masterDoc=true, comment = "the sum operator behavior depends on the nature of the operand", usages = {
-		@usage(value="if it is a list of int or float: sum returns the sum of all the elements", examples = {@example(value="sum ([12,10, 3])", equals="25.0") }),
+		@usage(value="if it is a list of int or float: sum returns the sum of all the elements", examples = {@example(value="sum ([12,10,3])",returnType=IKeyword.INT,equals="25") }),
 		@usage(value="if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)", examples = {@example(value="sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals="{20.0,17.0}") }),
 		@usage(value="if it is a population or a list of other types: sum transforms all elements into integer and sums them"),
 		@usage(value="if it is a map, sum returns the sum of the value of all elements"),

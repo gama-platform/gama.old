@@ -162,7 +162,7 @@ public class Points {
 	@operator(value = IKeyword.PLUS, can_be_const = true,category=IOperatorCategory.POINT)
 	@doc(value = "Returns a point with coordinate summing of the two operands.", 
 		usages = @usage(value="if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.", 
-		examples = {@example(value="{1, 2} + 4",equals="{5.0, 6.0}"), @example(value="{1, 2} + 4.5",equals="{5.5, 6.5}")}))
+		examples = {@example(value="{1, 2} + 4",equals="{5.0, 6.0,4.0}"), @example(value="{1, 2} + 4.5",equals="{5.5, 6.5,4.5}")}))
 	public static ILocation add(final GamaPoint p1, final Double p) {
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
@@ -176,7 +176,7 @@ public class Points {
 	@operator(value = IKeyword.MINUS, can_be_const = true,category=IOperatorCategory.POINT)
 	@doc(value = "Returns a point with coordinate resulting from the first operand minus the second operand.", 
 		usages = @usage(value="if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number."), 
-		examples = {@example(value="{1, 2} - 4.5",equals="{-3.5, -2.5}"),@example(value="{1, 2} - 4",equals="{-3.0,-2.0}")})
+		examples = {@example(value="{1, 2} - 4.5",equals="{-3.5, -2.5, -4.5}"),@example(value="{1, 2} - 4",equals="{-3.0,-2.0,-4.0}")})
 	public static ILocation substract(final GamaPoint p1, final Double p) {
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
@@ -201,7 +201,7 @@ public class Points {
 	}
 
 	@operator(value = "round", can_be_const = true)
-	@doc(value = "Returns the rounded value of the operand.", examples = { @example(value="{12345.78943,  12345.78943, 12345.78943} with_precision 2",equals="{12345, 12345, 12345}") }, see = "round")
+	@doc(value = "Returns the rounded value of the operand.", examples = { @example(value="{12345.78943,  12345.78943, 12345.78943} with_precision 2",equals="{12345.79,12345.79,12345.79}") }, see = "round")
 	public static ILocation round(final ILocation v) {
 		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
 	}

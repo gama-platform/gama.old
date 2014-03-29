@@ -133,14 +133,14 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	public abstract void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
 
 
-	@operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	@operator(value = IKeyword.APPEND_HORIZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices. If not both numerical or both object matrices, returns the first matrix.", masterDoc=true, 
-	examples = { @example(value="[[1,2,3],[4,5,6]] appendy_horyzontally [[7,8,9],[10,11,12]]", equals="[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]") })
+	examples = { @example(value="matrix([[1,2,3],[4,5,6]]) append_horizontally matrix([[7,8,9],[10,11,12]])", equals="matrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]])") })
 	public abstract IMatrix opAppendHorizontally(final IScope scope, final IMatrix b);
 
 	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices. If not both numerical or both object matrices, returns the first matrix.", masterDoc=true,
-	examples = { @example(value="[[1,2,3],[4,5,6]] append_vertycally [[7,8,9],[10,11,12]]", equals="[[1,2,3,7,8,9],[4,5,6,10,11,12]]") })
+	examples = { @example(value="matrix([[1,2,3],[4,5,6]]) append_vertically matrix([[7,8,9],[10,11,12]])", equals="matrix([[1,2,3,7,8,9],[4,5,6,10,11,12]])") })
 	public abstract IMatrix opAppendVertically(final IScope scope, final IMatrix b);
 	
 	

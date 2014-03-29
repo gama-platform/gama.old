@@ -277,7 +277,7 @@ public class Maths {
 	}
 
 	@operator(value = "asin", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc(value = "the arcsin of the operand", masterDoc = true, examples = @example(value="asin (90)",equals="1"), see = { "acos", "atan" })
+	@doc(value = "the arcsin of the operand", masterDoc = true, examples = @example(value="asin (90)",equals="#nan"), see = { "acos", "atan" })
 	public static Double asin(final Integer rv) {
 		return Math.asin(rv) * toDeg;
 	}
@@ -576,7 +576,7 @@ public class Maths {
 		return b.plus(a);
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category={IOperatorCategory.ARITHMETIC})
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.ARITHMETIC})
 	@doc(value = "Returns the sum of the two operands", examples = {}, see = "/")
 	public static IMatrix opPlus(final Double a, final IMatrix b) {
 		return b.plus(a);
@@ -609,7 +609,7 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, category={IOperatorCategory.ARITHMETIC})
-	@doc(value = "the difference of the two operands", usages = { @usage(value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic difference of the number with each element of the matrix (results are float if the number is a float.", examples = { @example(value="3.5 - matrix([[2,5],[3,4]])", equals="matrix([[1.5,-1.5],[-0.5,0.5]])") }) })
+	@doc(value = "the difference of the two operands", usages = { @usage(value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic difference of the number with each element of the matrix (results are float if the number is a float.", examples = { @example(value="3.5 - matrix([[2,5],[3,4]])", equals="matrix([[1.5,-1.5],[0.5,-0.5]])") }) })
 	// TODO check update
 	public static IMatrix opMinus(final Integer a, final IMatrix b) {
 		return b.times(-1).plus(a);
@@ -781,7 +781,7 @@ public class Maths {
 	}
 
 	@operator(value = "is_number", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc(value="Returns whether the argument is a real number or not", examples={@example(value="is_number(4.66)",equals="true"),@example(value="is_number(#infinity)",equals="false"),@example(value="is_number(#nan)",equals="false")})
+	@doc(value="Returns whether the argument is a real number or not", examples={@example(value="is_number(4.66)",equals="true"),@example(value="is_number(#infinity)",equals="true"),@example(value="is_number(#nan)",equals="false")})
 	public static Boolean is_number(final Double d) {
 		return !Double.isNaN(d);
 	}

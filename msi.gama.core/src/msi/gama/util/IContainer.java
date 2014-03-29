@@ -56,7 +56,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			+ "The at operator behavior depends on the nature of the operand", 
 			usages = {
 				@usage(value="if it is a list or a matrix, at returns the element at the index specified by the right operand",
-					examples={@example(value="[1, 2, 3] at 2", equals="3"), @example(value="[{1,2}, {3,4}, {5,6}] at 0", equals="{1.0,2.0}")}),
+					examples={@example(value="[1, 2, 3] at 2", returnType=IKeyword.INT,equals="3"), @example(value="[{1,2}, {3,4}, {5,6}] at 0", returnType=IKeyword.POINT, equals="{1.0,2.0}")}),
 				@usage("if it is a file, at returns the element of the file content at the index specified by the right operand"),
 				@usage("if it is a population, at returns the agent at the index specified by the right operand"),
 				@usage("if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node"),
@@ -138,7 +138,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@operator(value = "first", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.CONTAINER})
 	@doc(value = "the first value of the operand", masterDoc=true, comment = "the first operator behavior depends on the nature of the operand", usages = {
 		@usage(value="if it is a list, first returns the first element of the list, or nil if the list is empty", examples = {
-			@example(value="first ([1, 2, 3])", equals="1")}),
+			@example(value="first ([1, 2, 3])", returnType=IKeyword.INT, equals="1")}),
 		@usage(value="if it is a map, first returns the first value of the first pair (in insertion order)"),
 		@usage(value="if it is a file, first returns the first element of the content of the file (that is also a container)"),
 		@usage(value="if it is a population, first returns the first agent of the population"),
@@ -151,7 +151,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@operator(value = "last", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.CONTAINER})
 	@doc(value = "the last element of the operand", masterDoc=true, comment = "the last operator behavior depends on the nature of the operand", usages = {
 		@usage(value="if it is a list, last returns the last element of the list, or nil if the list is empty",examples = {
-			@example(value="last ([1, 2, 3])",equals="3")}),
+			@example(value="last ([1, 2, 3])",returnType=IKeyword.INT,equals="3")}),
 		@usage(value="if it is a map, last returns the value of the last pair (in insertion order)"),
 		@usage(value="if it is a file, last returns the last element of the content of the file (that is also a container)"),
 		@usage(value="if it is a population, last returns the last agent of the population"),
@@ -193,7 +193,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		@usage(value="if it is a population, reverse returns a copy of the population with elements in the reversed order"),
 		@usage(value="if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),
 		@usage(value="if it is a matrix, reverse returns a new matrix containing the transpose of the operand.", examples={
-			@example(value="reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])")})})
+			@example(value="reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals="matrix([[\"c11\",\"c21\"],[\"c12\",\"c22\"],[\"c13\",\"c23\"]])")})})
 	public IContainer<KeyType, ValueType> reverse(IScope scope) throws GamaRuntimeException;
 
 	/**
@@ -203,13 +203,13 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@doc(value = "one of the values stored in this container  at a random key", masterDoc=true, comment = "the one_of operator behavior depends on the nature of the operand", 
 		usages = {
 			@usage(value="if the operand is empty, one_of returns nil", examples={
-				@example(value="one_of([])",equals="nil",returnType="list",isTestOnly=true)}),
+				@example(value="one_of([])",equals="nil",returnType=IKeyword.LIST,isTestOnly=true)}),
 			@usage(value="if it is a list or a matrix, one_of returns one of the values of the list or of the matrix", examples ={
-					@example(value="any ([1,2,3])",var="i",equals= "1, 2 or 3",returnType="int", test=false),@example(value="[1,2,3] contains i",returnType="bool",equals="true", isTestOnly=true),
+					@example(value="any ([1,2,3])",var="i",equals= "1, 2 or 3",returnType=IKeyword.INT, test=false),@example(value="[1,2,3] contains i",returnType=IKeyword.BOOL,equals="true", isTestOnly=true),
 					@example("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""),
-					@example(value="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat", equals="true",isTestOnly=true)}),
+					@example(value="matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat",returnType=IKeyword.BOOL ,equals="true",isTestOnly=true)}),
 			@usage(value="if it is a map, one_of returns one the value of a random pair of the map", examples ={
-					@example("int im <- one_of ([2::3, 4::5, 6::7]);	// im equals 3, 5 or 7"),@example(value="[2::3, 4::5, 6::7].values contains im",equals="true")}),
+					@example("int im <- one_of ([2::3, 4::5, 6::7]);	// im equals 3, 5 or 7"),@example(value="[2::3, 4::5, 6::7].values contains im",returnType=IKeyword.BOOL,equals="true")}),
 			@usage(value="if it is a graph, one_of returns one of the lists of edges"),
 			@usage(value="if it is a file, one_of returns one of the elements of the content of the file (that is also a container)"),
 			@usage(value="if it is a population, one_of returns one of the agents of the population", examples={

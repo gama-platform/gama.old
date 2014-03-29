@@ -117,8 +117,7 @@ public class Colors {
 	}
 
 	@operator(value = "hsb", category={IOperatorCategory.COLOR})
-	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color",
-		examples = @example(value="hsb (0.16,1.0,1.0,125)",equals="rgb(\"yellow\",125)"))
+	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Integer a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}

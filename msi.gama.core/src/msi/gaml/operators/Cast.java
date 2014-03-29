@@ -427,16 +427,16 @@ public class Cast {
 
 	@operator(value = "to_gaml", category={IOperatorCategory.CASTING})
 	@doc(value = "represents the gaml way to write an expression in gaml, depending on its type", examples = {
-		@example(value="to_gaml(0)", equals="0"),
-		@example(value="to_gaml(3.78)", equals="3.78"),
-		@example(value="to_gaml(true)", equals="true"),
-		@example(value="to_gaml({23, 4.0})",equals="{23.0,4.0}"),
-		@example(value="to_gaml(5::34)", equals="(5)::(34)"),
-		@example(value="to_gaml(#green)", equals="rgb (-16711936)"),
-		@example(value="to_gaml('hello')", equals="'hello'"),
-		@example(value="to_gaml([1,5,9,3])", equals="[1,5,9,3]"),
-		@example(value="to_gaml(['a'::345, 'b'::13, 'c'::12])", equals="[('b')::(13),('c')::(12),('a')::(345)]"),
-		@example(value="to_gaml([[3,5,7,9],[2,4,6,8]])", equals="[3,2,5,4,7,6,9,8] as matrix"),
+		@example(value="to_gaml(0)", equals="'0'"),
+		@example(value="to_gaml(3.78)", equals="'3.78'"),
+		@example(value="to_gaml(true)", equals="'true'"),
+		@example(value="to_gaml({23, 4.0})",equals="'{23.0,4.0,0.0}'"),
+		@example(value="to_gaml(5::34)", equals="'5::34'"),
+		@example(value="to_gaml(rgb(255,0,125))", equals="'rgb (255, 0, 125,255)'"),
+		@example(value="to_gaml('hello')", equals="\"'hello'\""),
+		@example(value="to_gaml([1,5,9,3])", equals="'[1,5,9,3]'"),
+		@example(value="to_gaml(['a'::345, 'b'::13, 'c'::12])", equals="\"([\'b\'::345,\'c\'::13,\'a\'::12] as map )\""),
+		@example(value="to_gaml([[3,5,7,9],[2,4,6,8]])", equals="'[[3,5,7,9],[2,4,6,8]]'"),
 		@example(value="to_gaml(a_graph)", equals="([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",isExecutable=false),
 		@example(value="to_gaml(node1)", equals=" 1 as node", isExecutable=false) }, see = { "to_java" })
 	public static String toGaml(final Object val) {
