@@ -3,6 +3,8 @@
  *  Author: bgaudou
  *  Description: 
  *    a simple example of the use of the first version of the unit test in GAMA.
+ * 
+ *   Exceptions will be thrown.
  *    
  *    NOTE: you have to go in the Preferences, in "General" pane and Uncheck "stop at the first error", to show all the errors.
  */
