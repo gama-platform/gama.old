@@ -7,8 +7,8 @@ global {
     float initialBugSizeMean <- 0.1;
 	float initialBugSizeSD <- 0.03;
 	matrix<float> init_data <- matrix<float>(csv_file("../data/Stupid_Cell.Data", "\t"));
-    int width <- (max (copy_between(init_data column_at 0,3, init_data.rows - 1)));
-    int height  <- (max(copy_between(init_data column_at 1, 3,init_data.rows - 1)));
+    int width <- int(max (copy_between(init_data column_at 0,3, init_data.rows - 1)));
+    int height  <- int(max(copy_between(init_data column_at 1, 3,init_data.rows - 1)));
     geometry shape <- rectangle(width,height);
 	init {
 		create bug number: numberBugs {
@@ -16,10 +16,10 @@ global {
 			location <- my_place.location;
 		}
 		loop i from: 3 to: ((init_data.rows)) - 1 {
-			int ind_i <- init_data[0,i]; 
-			int ind_j <- init_data[1,i];
+			int ind_i <- int(init_data[0,i]); 
+			int ind_j <- int(init_data[1,i]);
 			ask cell [ind_i,ind_j] {
-				foodProd <- float(init_data[2,i]);
+				foodProd <- init_data[2,i];
 			}  
 		} 
 	}
