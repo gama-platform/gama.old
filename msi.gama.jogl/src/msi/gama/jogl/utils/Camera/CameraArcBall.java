@@ -189,11 +189,19 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
 		velocityHoriz = 0;
 		velocityVert = 0;
-		final double zPos = extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 10;
+		final double zPos;
+		
+		if(extent == 0){
+			zPos = centerZ + getRenderer().getMaxEnvDim() / 10;	
+		}
+		
+		else{
+			zPos= extent * 1.5;
+		}
 		radius = zPos;
 		update();
 		updatePosition(centerX, -centerY, zPos);
-		lookPosition(centerX, -centerY, -(extent * 2));
+		lookPosition(centerX, -centerY, 0);
 	}
 
 	@Override
