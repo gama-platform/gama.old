@@ -218,12 +218,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		if ( contentsType == null || contentsType.id() == IType.NONE ) { return new GamaList(this); }
 		// AD 24/01/13 - modified by creating a new list to avoid side effects
 		// TODO Is the copy necessary in all cases ? It seems a bit overkill !
-		int n = size();
-		GamaList result = new GamaList(n);
+
+		GamaList copy = this.clone();
+		int n = copy.size();
 		for ( int i = 0; i < n; i++ ) {
-			result.add(GamaType.toType(scope, get(i), contentsType));
+			copy.set(i, GamaType.toType(scope, copy.get(i), contentsType));
 		}
-		return result;
+		return copy;
 		// return new GamaList(this);
 	}
 
