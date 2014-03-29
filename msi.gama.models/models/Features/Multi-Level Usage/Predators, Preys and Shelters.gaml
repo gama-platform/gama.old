@@ -1,3 +1,16 @@
+/**
+ * This model demonstrates a use-case of the multi-level modeling feature.
+ * 
+ * We model three kinds of agents : prey, predator and shelter.
+ * 
+ * "predator" agents chase "prey" agent.
+ * "prey" agent flees into the "shelter" agent.
+ * When a "prey" agent is in a "shelter" agent, it is not chased by the "predator" agent anymore and it changes its behavior.
+ * To model the fact that a "prey" agent changes its behavior when it 's in a shelter, we make "prey" agent changes its species
+ * from "prey" species to "prey_in_shelter" species.
+ * 
+ * When a prey stays in a shelter long enough, it quits the shelter and becomes a "prey" agent again and thus is chased by a "predator" agent again.
+ */
 model preys_predators_shelters
 
 global { 
@@ -36,118 +49,114 @@ global {
 	}
 }
 
-entities {  
-	species prey skills: [moving] control: fsm {
-		geometry shape <- square (prey_size);
-		rgb color <- prey_color;
-		list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator depends_on: shape;
-		int invisible_time min: 1 <- int(time);
+species prey skills: [moving] control: fsm {
+	geometry shape <- square (prey_size);
+	rgb color <- prey_color;
+	list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator depends_on: shape;
+	int invisible_time min: 1 <- int(time);
 
-		shelter nearest_shelter;		
+	shelter nearest_shelter;		
 
-		state move_around initial: true {
-			enter {
-				speed <- prey_speed;
-				color <- prey_color;
-			}
-			do wander; 
-			
-			transition to: flee_predator when: !(empty (nearby_predators)); 
+	state move_around initial: true {
+		enter {
+			speed <- prey_speed;
+			color <- prey_color;
 		}
+		do wander; 
 		
-		
-		state flee_predator {
-			enter {
-				color <- prey_flee_color;
-				nearest_shelter <- first ( (list (shelter)) sort_by ( each distance_to (self)) );
-			}
-			if !(empty (nearby_predators)) { do move heading: (self) towards (nearest_shelter) speed: prey_speed;}
-			
-			transition to: move_around when: (empty (nearby_predators));
-		}
-		
-		state invisible {
-			enter {
-				speed <- prey_invisible_speed;
-				color <- prey_invisible_color;
-				invisible_time <- int(time);
-				heading <- rnd (359) ;
-			}
-			do move; 
-			transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );
-		}
-		
-		aspect default {
-			draw geometry: shape color: color;
-		}
+		transition to: flee_predator when: !(empty (nearby_predators)); 
 	}
 	
-	species predator skills: [moving] schedules: shuffle (list (predator)) {
-		geometry shape <- square (predator_size);
-		prey target_prey update: self choose_target_prey [];
-		
-		action choose_target_prey type: prey {
-			if ( (target_prey = nil) or (dead (target_prey) ) ) {
-				return one_of ( (list (prey)) where (each.state = 'move_around') );
-			}
-			
-			return target_prey;
-		}
-		
-		reflex move_around when: (target_prey = nil) { do wander speed: predator_speed; }
-		
-		reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
-		
-		aspect default {
-			draw geometry:shape color: predator_color;
-		} 
-	} 
 	
-	species shelter skills: [moving]  frequency: 2 {
-		geometry shape <- (square (50.0)) at_location {250, 250};
-		list<prey> chased_preys update: (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
-		
-		reflex move_around {
-			//do wander speed: shelter_speed; 
+	state flee_predator {
+		enter {
+			color <- prey_flee_color;
+			nearest_shelter <- first ( (list (shelter)) sort_by ( each distance_to (self)) );
 		}
-		 
-		reflex capture_chased_preys when: !(empty (chased_preys)) { 
-			capture chased_preys as: prey_in_shelter {
-				state <- 'in_shelter'; 
-				shape <- ( triangle (4.0) ) at_location location;
-			}
-		}
+		if !(empty (nearby_predators)) { do move heading: (self) towards (nearest_shelter) speed: prey_speed;}
 		
-		reflex release_member_preys {
-			list<prey_in_shelter> to_be_released <- (prey_in_shelter) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
-			 
-			release to_be_released in: world as: prey { 
-				state <- 'invisible';
-				shape <-  at_location (square (prey_size), self.location);   
-			}
-		} 
-		
-		
-		species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {
-			var in_shelter_time type: int init: int(time);
-			
-			state in_shelter {
-				do wander speed: shelter_speed;
-			}
-			
-			aspect default {
-				draw geometry: shape color: predator_in_shelter_color;
-			} 
-		}
-		
-		aspect default {
-			draw geometry:shape color: shelter_color;
-			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
-		}
+		transition to: move_around when: (empty (nearby_predators));
 	}
-
+	
+	state invisible {
+		enter {
+			speed <- prey_invisible_speed;
+			color <- prey_invisible_color;
+			invisible_time <- int(time);
+			heading <- rnd (359) ;
+		}
+		do move; 
+		transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );
+	}
+	
+	aspect default {
+		draw geometry: shape color: color;
+	}
 }
 
+species predator skills: [moving] schedules: shuffle (list (predator)) {
+	geometry shape <- square (predator_size);
+	prey target_prey update: self choose_target_prey [];
+	
+	action choose_target_prey type: prey {
+		if ( (target_prey = nil) or (dead (target_prey) ) ) {
+			return one_of ( (list (prey)) where (each.state = 'move_around') );
+		}
+		
+		return target_prey;
+	}
+	
+	reflex move_around when: (target_prey = nil) { do wander speed: predator_speed; }
+	
+	reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
+	
+	aspect default {
+		draw geometry:shape color: predator_color;
+	} 
+} 
+
+species shelter skills: [moving]  frequency: 2 {
+	geometry shape <- (square (50.0)) at_location {250, 250};
+	list<prey> chased_preys update: (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
+	
+	reflex move_around {
+		//do wander speed: shelter_speed; 
+	}
+	 
+	reflex capture_chased_preys when: !(empty (chased_preys)) { 
+		capture chased_preys as: prey_in_shelter {
+			state <- 'in_shelter'; 
+			shape <- ( triangle (4.0) ) at_location location;
+		}
+	}
+	
+	reflex release_member_preys {
+		list<prey_in_shelter> to_be_released <- (prey_in_shelter) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
+		 
+		release to_be_released in: world as: prey { 
+			state <- 'invisible';
+			shape <-  at_location (square (prey_size), self.location);   
+		}
+	} 
+	
+	
+	species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {
+		var in_shelter_time type: int init: int(time);
+		
+		state in_shelter {
+			do wander speed: shelter_speed;
+		}
+		
+		aspect default {
+			draw geometry: shape color: predator_in_shelter_color;
+		} 
+	}
+	
+	aspect default {
+		draw geometry:shape color: shelter_color;
+		draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
+	}
+}
 
 experiment default_experiment type: gui {
 	output {

@@ -1,6 +1,22 @@
-model pedestrian_corridor
-
-
+/**
+ * This model demonstrates a use-case of the multi-level modeling feature.
+ * It models the pedestrians walking over a corridor.
+ * 
+ * In the entrance and exiting parts of the corridor, pedestrians are represented as "pedestrian" species.
+ * These parts are important with the modeler so he would like to consider the detail behavior of pedestrians.
+ * 
+ * The middle part of the corridor is represented by an unique agent of the "corridor" species.
+ * The modeler considers that the middle part is not important to him.
+ * Hence pedestrians in this part are represented as agents of "captured_pedestrian" species (a micro-species of the "corridor" species).
+ * Agents of "captured_pedestrian" species have no behavior except for keeping the time when it enters the middle part.
+ * 
+ * The "corridor" agent is responsible to capturing and releasing pedestrians appropriately.
+ * When "capture" and "release" occur, a pedestrian changes it representation species from "pedestrian" to "captured_pedestrian" and vice-versa.
+ * 
+ * In the reality, the modeler may use an Equation-Based Model to represent the dynamics of pedestrians in the middle part of the corridor.
+ * This may help to accelerate the simulation speed.
+ */
+model corridor
 
 global {	
 	bool capture_pedestrians <- false parameter: 'Capture pedestrians?';
@@ -36,7 +52,7 @@ global {
 	float start_time <- machine_time;
 	
 	init {
-		create corridor number: 1;
+		create corridor;
 		 
 		create corridor_wall number: 2 returns: corridor_walls; 
 		(corridor_walls at 0).shape <- corridor_wall_0_shape;
@@ -59,119 +75,118 @@ global {
 
 } 
 
-entities {
-	species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) /*schedules: shuffle (list (pedestrian)*/ {
-		geometry shape <-  circle (pedestrian_size);
-		point initial_location;
-		point target_location;
-		int heading;
-		float speed <- 2.0;
+species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) /*schedules: shuffle (list (pedestrian)*/ {
+	geometry shape <-  circle (pedestrian_size);
+	point initial_location;
+	point target_location;
+	int heading;
+	float speed <- 2.0;
+	
+	action init_location {
+		arg name: loc type: point;
 		
-		action init_location {
-			arg name: loc type: point;
-			
-			location <- loc;
-			initial_location <- loc;
-			target_location <- {environment_size, loc.y};
-			heading <- (self) towards (target_location);
-		}
-		
-		reflex move_left {
-			int update_heading <- (self) towards (target_location);
-			
-			point current_location <- location;
-			
-			do move heading: update_heading ;
-			
-			if (current_location = location) { // hack
-				if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
-					do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2}; 
-				} else {
-					do move heading: self towards {environment_size / 2, environment_size / 2}; 
-				}
-			}
-			
-			if( (target_location.x - location.x) <= speed ) { 
-				do die;
-			}
-		}
-		 
-		aspect my_aspect {
-			draw shape color: pedestrian_color;
-		}
+		location <- loc;
+		initial_location <- loc;
+		target_location <- {environment_size, loc.y};
+		heading <- (self) towards (target_location);
 	}
 	
-	species corridor  {
-		geometry shape <- corridor_shape;
+	reflex move_left {
+		int update_heading <- (self) towards (target_location);
 		
-		species captured_pedestrian parent: pedestrian schedules: [] {
-			float released_time;
-			
-			aspect my_aspect { }
-		}
+		point current_location <- location;
 		
-		init {
-			create corridor_info_drawer number: 1 with: [target :: self];
-		}
+		do move heading: update_heading ;
 		
-		
-		reflex aggregate when: capture_pedestrians {
-			list<pedestrian> tobe_captured_pedestrians <- (pedestrian overlapping shape);
-			
-			if !(empty (tobe_captured_pedestrians)) {
-				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
-				
-				loop cp over: cps {
-					cp.released_time <- time + ( ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
-				}
+		if (current_location = location) { // hack
+			if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
+				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2}; 
+			} else {
+				do move heading: self towards {environment_size / 2, environment_size / 2}; 
 			}
 		}
 		
-		reflex disaggregate  {
-			list tobe_released_pedestrians <- members where (time >= (captured_pedestrian (each)).released_time);
-			if !(empty (tobe_released_pedestrians)) {
-				release tobe_released_pedestrians as: pedestrian in: world {
-					location <- {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
-				}
-			}
-		}
-		
-		aspect my_aspect {
-			draw shape color: corridor_color;
+		if( (target_location.x - location.x) <= speed ) { 
+			do die;
 		}
 	}
-	
-	species corridor_wall {
-		init {
-			create corridor_wall_info_drawer number: 1 with: [target :: self];
-		}
-		
-		aspect name: my_aspect {
-			draw shape color: corridor_wall_color;
-		}
-	}
-	
-	species corridor_info_drawer {
-		corridor target;
-		
-		aspect my_aspect {
-			draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
-			draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
-		}
-	}
-	
-	species corridor_wall_info_drawer {
-		corridor_wall target;
-		
-		init {
-			location <- target.location;
-		}
-		
-		aspect my_aspect { 
-			draw 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
-		}
+	 
+	aspect my_aspect {
+		draw shape color: pedestrian_color;
 	}
 }
+
+species corridor  {
+	geometry shape <- corridor_shape;
+	
+	species captured_pedestrian parent: pedestrian schedules: [] {
+		float released_time;
+		
+		aspect my_aspect { }
+	}
+	
+	init {
+		create corridor_info_drawer number: 1 with: [target :: self];
+	}
+	
+	
+	reflex aggregate when: capture_pedestrians {
+		list<pedestrian> tobe_captured_pedestrians <- (pedestrian overlapping shape);
+		
+		if !(empty (tobe_captured_pedestrians)) {
+			capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
+			
+			loop cp over: cps {
+				cp.released_time <- time + ( ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
+			}
+		}
+	}
+	
+	reflex disaggregate  {
+		list tobe_released_pedestrians <- members where (time >= (captured_pedestrian (each)).released_time);
+		if !(empty (tobe_released_pedestrians)) {
+			release tobe_released_pedestrians as: pedestrian in: world {
+				location <- {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
+			}
+		}
+	}
+	
+	aspect my_aspect {
+		draw shape color: corridor_color;
+	}
+}
+
+species corridor_wall {
+	init {
+		create corridor_wall_info_drawer number: 1 with: [target :: self];
+	}
+	
+	aspect name: my_aspect {
+		draw shape color: corridor_wall_color;
+	}
+}
+
+species corridor_info_drawer {
+	corridor target;
+	
+	aspect my_aspect {
+		draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
+		draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
+	}
+}
+
+species corridor_wall_info_drawer {
+	corridor_wall target;
+	
+	init {
+		location <- target.location;
+	}
+	
+	aspect my_aspect { 
+		draw 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
+	}
+}
+
 
 experiment corridor_expr type: gui{
 	output {
@@ -199,6 +214,5 @@ experiment corridor_expr type: gui{
 				data 'pedestrians' value: length (list (pedestrian)) color: rgb ('white');  
 			}
 		}
- 
 	}
 }

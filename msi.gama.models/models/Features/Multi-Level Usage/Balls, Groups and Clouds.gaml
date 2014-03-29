@@ -1,3 +1,22 @@
+/**
+ * This model demonstrates a use-case of the multi-level modeling feature.
+ * 
+ * It 's a three-level (of organisation) model. 
+ * 
+ * "ball" agents are represented at three levels of organization :
+ * 		1. "ball" species when they "stays alone",
+ * 		2. "ball_in_group" species when "ball" agents are members of a "group" agent,
+ * 		3. "ball_in_cloud" species when "ball" agents are members of a "group" agent which is in turn a members of a "cloud" agent.
+ * 
+ * "group" agent is formed by a set of nearby balls.
+ * "group" agents are represented at two levels of organization :
+ * 		1. "group" species when they "stay alone",
+ * 		2. "group_delegation" species when they are member of a "cloud" agent.
+ * 
+ * "cloud" agent is formed by a set of nearby groups.
+ * 
+ * Agents can change their representation/organization levels (species) thanks to the "capture", "release" and "migrate" statements.
+ */
 model balls_groups_clouds
 
 global { 
