@@ -145,10 +145,7 @@ public class GamlDocProcessor {
 		org.w3c.dom.Element eltOperators = (org.w3c.dom.Element) root.getElementsByTagName(XMLElements.OPERATORS).item(0);
 		for(org.w3c.dom.Element eltOp : listEltOperatorsFromTypes){
 			eltOperators.appendChild(eltOp);
-		}
-		
-		root.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES).item(0).appendChild(new Category(doc, tc.getProperCategory("Types")).getElementDOM());
-		
+		}		
 		
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files 

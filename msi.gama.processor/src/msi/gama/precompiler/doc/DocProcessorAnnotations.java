@@ -229,7 +229,6 @@ public class DocProcessorAnnotations {
 		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_CODE, example.value());
 		if(!"".equals(example.var())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_VAR, example.var());}
 		if(!"".equals(example.equals())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_EQUALS, example.equals());}
-		if(!"".equals(example.returnType())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_RETURN_TYPE, example.returnType());}
 		if(!"".equals(example.isNot())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_NOT, example.isNot());}
 		if(!"".equals(example.raises())) {exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_RAISES, example.raises());}
 		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TEST_ONLY, ""+example.isTestOnly());
@@ -239,10 +238,13 @@ public class DocProcessorAnnotations {
 		} else {
 			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, ""+example.test());					
 		}
-		if (e != null){
-			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, tc.getProperType(e.getReturnType().toString()));
+		if(!"".equals(example.returnType())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, example.returnType());
+		} else {
+			if (e != null){
+				exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, tc.getProperType(e.getReturnType().toString()));
+			}
 		}
-
 		return exampleElt;
 //		public static @interface example {
 //			String value() default "";
