@@ -119,7 +119,7 @@ entities {
 		}
 
 		species boids_in_flock parent: boids {
-			float my_age <- 1.0 value: my_age + 0.01;
+			float my_age <- 1.0 update: my_age + 0.01;
 			reflex separation when: apply_separation {
 			}
 

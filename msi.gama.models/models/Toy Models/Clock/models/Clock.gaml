@@ -19,7 +19,7 @@ global {
 	int alarm_seconds <- 0 min:0 max:59;
 	bool alarm_am <- true;
 	int timeElapsed;
-	int alarmCycle <-  (alarm_seconds+alarm_minutes*60+alarm_hours*3600 + (alarm_am ? 0 : 3600*12) + alarm_days*3600*24) * 1000 / rate;
+	int alarmCycle <-  int((alarm_seconds+alarm_minutes*60+alarm_hours*3600 + (alarm_am ? 0 : 3600*12) + alarm_days*3600*24) * 1000 / rate);
 	string reflexType <-"";
 	
 	init {

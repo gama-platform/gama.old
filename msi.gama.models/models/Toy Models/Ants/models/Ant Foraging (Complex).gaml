@@ -139,7 +139,7 @@ experiment callback type: gui parent: Complete { //Inherits from experiment "com
 		ask simulation {
 			do die; // the simulation is disposed
 		}
-		int n <- user_input( 'Simulation '  + i, ['Ants number ?'::100])['Ants number ?'];
+		int n <- int(user_input( 'Simulation '  + i, ['Ants number ?'::100])['Ants number ?']);
 		create ants_model with: [ants_number:: n]; // automatically modifies "simulation". 'ants_model' is the species of the model in which the experiment is defined
 		write "Number of ants: " + simulation.ants_number; // We verify it is correct
 	}
