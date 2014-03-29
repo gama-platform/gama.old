@@ -334,12 +334,12 @@ public class GamaPreferences {
 		"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL").in(DISPLAY)
 		.group("Properties");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
-		"Synchronize displays with simulations by default", false, IType.BOOL).in(DISPLAY).group("Properties");
-	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay by default", false,
+		"Synchronize displays with simulations", false, IType.BOOL).in(DISPLAY).group("Properties");
+	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false,
 		IType.BOOL).in(DISPLAY).activates("core.scale").group("Properties");
-	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay by default", false,
+	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay", false,
 		IType.BOOL).in(DISPLAY).group("Properties");
-	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing by default",
+	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing",
 		false, IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Color> CORE_BACKGROUND = create("core.background", "Default background color",
 		Color.white, IType.COLOR).in(DISPLAY).group("Properties");
@@ -360,17 +360,17 @@ public class GamaPreferences {
 	/**
 	 * OpenGL
 	 */
-	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting by default", true,
+	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting", true,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env",
-		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
+		"Draw environment and 3D axes", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
-		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Lighting by default", true,
+		create("core.show_fps", "Show fps", false, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable Lighting", true,
 			IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals by default", false,
+	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals", false,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Cube Display by default", false,
+	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Cube Display", false,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	// EDITOR PAGE
