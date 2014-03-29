@@ -3,21 +3,21 @@
 
 <xsl:template match="/">
  	<xsl:text>/**
- *  Op</xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>Test.gaml
+ *  Op</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>
  *  Author: automatic generator
- *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/operators/operator/@category"/><xsl:text>.
+ *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>.
  */
 
-model Op</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test
+model Op</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test
 
 global {
 	init {
-		create testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test number: 1;
+		create testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test number: 1;
 	}
 }
 
 entities {
-	species testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Test {
+	species testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test {
 
 	</xsl:text>
 
@@ -27,7 +27,7 @@ entities {
 	}
 }
 
-experiment testOp</xsl:text><xsl:value-of select="doc/operators/operator/operatorCategories/category/@id"/><xsl:text>Exp type: gui {}	
+experiment testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp type: gui {}	
 	</xsl:text>
 
 </xsl:template>
@@ -51,12 +51,27 @@ experiment testOp</xsl:text><xsl:value-of select="doc/operators/operator/operato
 	 <!-- <xsl:if test="@isExecutable = 'true'">  --> 	
 		<xsl:choose>
 			<xsl:when test="@equals">
+			
+				<xsl:choose>
+				<xsl:when test="@var">
+				<xsl:text>			</xsl:text>
+			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- <xsl:value-of select="@code"/>; 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
+</xsl:text></xsl:if>
+			<xsl:if test="@test = 'true'">
+			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
+</xsl:text> </xsl:if>								
+				</xsl:when>
+				<xsl:otherwise>
 				<xsl:text>			</xsl:text>
 			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@type"/> var<xsl:value-of select="@index"/> &lt;- <xsl:value-of select="@code"/>; 	// var<xsl:value-of select="@index"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
 </xsl:text></xsl:if>
 			<xsl:if test="@test = 'true'">
 			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
-</xsl:text> </xsl:if>
+</xsl:text> </xsl:if>					
+				</xsl:otherwise>
+				
+				</xsl:choose>
+
 			</xsl:when>
 			<xsl:when test="@raises">
 			assert <xsl:value-of select="@code"/> raises: "<xsl:value-of select="@raises"/>";<xsl:text> 

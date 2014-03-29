@@ -21,6 +21,8 @@ import org.xml.sax.SAXException;
 
 public class XmlToTestGAML {
 
+	public static final String ATT_NAME_FILE = "fileName"; 
+	
 	public static void createAllTests() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		Document document = XMLUtils.createDoc(Constants.DOCGAMA_GLOBAL_FILE);
@@ -33,7 +35,7 @@ public class XmlToTestGAML {
 		File dirOperators = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_OPERATORS_FOLDER);
 		dirOperators.mkdir();
 		
-		createTest(document,
+		createTests(document,
 				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Operators-xml2test.xsl",
 				dirOperators.getCanonicalPath() ); 
 		System.out.println("Done");	
@@ -53,7 +55,7 @@ public class XmlToTestGAML {
 		DocTransformer.transformDocument(document, xsl, targetFolder + File.separator + "masterTest.gaml"); 		
 	}
 	
-	private static void createTest(Document document, String xsl, String targetFolder) 
+	private static void createTests(Document document, String xsl, String targetFolder) 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
@@ -66,9 +68,12 @@ public class XmlToTestGAML {
 		
 		for(int i =0; i< nLCategories.getLength() ; i++){
 			org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
-						
+			String nameFileSpecies = "Op"+eltCategory.getAttribute("id")+"Test";	
+			// System.out.println(nameFileSpecies);			
+			
 			Document docTemp = builder.newDocument();
 			org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);	
+			root.setAttribute(ATT_NAME_FILE, nameFileSpecies);
 			org.w3c.dom.Element rootOperators = docTemp.createElement(XMLElements.OPERATORS);			
 		
 			for(int j = 0; j < nLOperators.getLength(); j++){
@@ -94,7 +99,7 @@ public class XmlToTestGAML {
 			root.appendChild(rootOperators);
 			docTemp.appendChild(root);
 			
-			DocTransformer.transformDocument(docTemp, xsl, targetFolder + File.separator + "Op"+eltCategory.getAttribute("id")+"Test.gaml"); 		
+			DocTransformer.transformDocument(docTemp, xsl, targetFolder + File.separator + nameFileSpecies + ".gaml"); 		
 		}
 	}
 	

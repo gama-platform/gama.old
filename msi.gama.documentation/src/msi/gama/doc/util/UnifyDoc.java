@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import msi.gama.doc.Constants;
+import msi.gama.precompiler.doc.Element.Category;
+import msi.gama.precompiler.doc.utils.TypeConverter;
+import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -71,6 +74,10 @@ public class UnifyDoc {
 				}
 	    	}
        	}
+       	     
+       	// Add an element for the generated types
+       	doc.getRootElement().getChild(XMLElements.OPERATORS_CATEGORIES).addContent(
+       			(new Element(XMLElements.CATEGORY)).setAttribute(XMLElements.ATT_CAT_ID, (new TypeConverter()).getProperCategory("Types")));
        	
        	return doc;
 	}
