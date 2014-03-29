@@ -38,7 +38,7 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final IModel model,final String expName,final ParametersSet params) throws GamaRuntimeException {
+	public static synchronized ExperimentSpecies newHeadlessSimulation(final IModel model,final String expName,final ParametersSet params) throws GamaRuntimeException {
 		// FIXME Verify all this.
 		configureHeadLessSimulation();
 		ExperimentSpecies currentExperiment = (ExperimentSpecies) model.getExperiment(expName);
@@ -98,7 +98,7 @@ public class HeadlessSimulationLoader {
 		return loadModel(myFile.getAbsolutePath());
 	}	
 	
-	public static IModel loadModel(final String fileName)
+	public static synchronized  IModel loadModel(final String fileName)
 	{
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName+ " model is loading...");
 		IModel lastModel = null;
@@ -107,7 +107,9 @@ public class HeadlessSimulationLoader {
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		if ( r != null && r.getErrors().isEmpty() ) {
 			try {
-				GamlJavaValidator validator = injector.getInstance(GamlJavaValidator.class);
+			//	Injector mInjector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+				
+				GamlJavaValidator validator = new GamlJavaValidator(); //.getInstance(GamlJavaValidator.class);
 				lastModel = validator.build(r);
 				if ( !r.getErrors().isEmpty() ) {
 					lastModel = null;

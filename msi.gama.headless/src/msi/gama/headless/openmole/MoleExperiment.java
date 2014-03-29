@@ -40,7 +40,7 @@ public class MoleExperiment implements IMoleExperiment {
 		this.loadCurrentExperiment(expName);
 	}
 	
-	private void loadCurrentExperiment(final String expName)
+	private synchronized void loadCurrentExperiment(final String expName)
 	{
 		this.experimentName = expName;
 		this.currentStep = 0;

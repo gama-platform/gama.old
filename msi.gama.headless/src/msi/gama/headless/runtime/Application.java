@@ -49,28 +49,78 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+/*
+ * 
+ * FOR NGHI
+ * 
+ * 
+ * 
+ */
 		
-//		MoleSimulationLoader.loadGAMA();
-//		IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
-//		IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
-//		exp.setParameter("nb_preys_init", 678);
+		
+		
+		
+		/*
+	MoleSimulationLoader.loadGAMA();
 //		
-//		exp.setup("preyPred",123);
-//		exp.step();
-//		exp.step();
-//		exp.step();
-//		exp.step();
-//		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
+		for(int i =0;i<100;i++)
+		{
+			Thread myThread =new Thread()
+			{
+				public void run()
+				{
+					System.out.println("starting ");
+					IModel mdl = MoleSimulationLoader.loadModel(new File("/tmp/headless/samples/predatorPrey/predatorPrey.gaml"));
+					IMoleExperiment exp = MoleSimulationLoader.newExperiment(mdl);
+					exp.setParameter("nb_preys_init", 678);
+////					
+					exp.setup("preyPred",123);
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					for(int j = 0; j<1000000; j++)
+					{
+						exp.step();
+						exp.step();
+						exp.step();
+						exp.step();
+						System.out.println("coucocy "+ exp.getOutput("number_of_preys")+ "  "+ j+ " " + this);
+					}	
+					exp.step();
+					exp.step();
+					exp.step();
+					System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
+//					System.out.println("coucocy "+ exp.getVariableOutput("nb_preys"));
+//			//
+					System.out.println("fin loading;");
+				}
+			};
+//			
+			myThread.start();
 //		
-//		exp.step();
-//		exp.step();
-//		exp.step();
-//		System.out.println("coucocy "+ exp.getOutput("number_of_preys"));
-//		System.out.println("coucocy "+ exp.getVariableOutput("nb_preys"));
-//
-//		System.out.println("fin loading;");
+		}
+		
+	
+		
+		
+		Thread.sleep(1000000);
+		*/
+
 //		
-//		System.exit(-1);
+	//	System.exit(-1);
+
+/*
+ * 
+ * END FOR NGHI
+ * 
+ * 
+ * 
+ */
+		
+		
 		
 		HeadlessSimulationLoader.preloadGAMA();
 		Map<String, String[]> mm = context.getArguments();
