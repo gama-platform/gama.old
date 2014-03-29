@@ -45,6 +45,9 @@ species  clock {
 		reflex update {
 			if (cycle = alarmCycle) {
 				 write "Time to leave" ; 
+
+				 // Un comment the following statement to play the Alarm.mp3
+				 // But firstly, you need to go to "Help -> Install New Software..." to install the "Audio" feature (which is still in the experimental stage). 
 				//start_sound source:"../includes/Alarm.mp3" ;
 			}
 		}
