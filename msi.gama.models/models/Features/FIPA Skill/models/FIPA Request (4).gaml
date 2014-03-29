@@ -52,12 +52,13 @@ species Participant skills: [communicating] {
 	}
 
 	reflex reply_messages when: (!empty(messages)) {
-		write 'send an inform message';
+		write name + ' sends an inform message';
 		
-		// Attention: note that GAMA will raise an exception because an 'inform' message is not appropriate here.
-		do inform with: [ message :: (messages at 0), content :: ['I don\'t want'] ];
+		
+		write 'A GamaRuntimeException is raised to inform that the message\'s performative doesn\'t respect the \'request\' interaction protocol\' specification';
+		do inform with: [ message :: (messages at 0), content :: ['I don\'t want'] ]; // Attention: note that GAMA will raise an exception because an 'inform' message is not appropriate here.
 	}
 }
 
 
-experiment test type: gui {}
+experiment test_request_interaction_protocol type: gui {}

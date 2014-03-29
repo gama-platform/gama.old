@@ -64,4 +64,4 @@ species Participant skills: [communicating] {
 }
 
 
-experiment test type: gui {}
+experiment test_no_protocol type: gui {}
