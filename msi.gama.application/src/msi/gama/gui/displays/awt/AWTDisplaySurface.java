@@ -178,6 +178,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	protected void createIGraphics() {
 		iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
+		iGraphics.setQualityRendering(qualityRendering);
 	}
 
 	@Override
@@ -336,7 +337,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	public double applyZoom(final double factor) {
 		System.out.println("Origin = " + origin);
-		double real_factor = factor;
+		double real_factor = Math.min(factor, 10 / zoomLevel);
 		boolean success = false;
 
 		try {
