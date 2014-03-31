@@ -384,7 +384,7 @@ public class GraphTopology extends AbstractTopology {
 		final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges;
 
-		if ( edgeS.equals(edgeT) ) {
+		if ( !sourceNode && !targetNode && edgeS.equals(edgeT) ) {
 			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if ( source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS) ) {
 				edges = new GamaList<IShape>();
@@ -397,8 +397,8 @@ public class GraphTopology extends AbstractTopology {
 
 		if ( nodeS.equals(nodeT) ) {
 			edges = new GamaList<IShape>();
-			edges.add(edgeS);
-			edges.add(edgeT);
+			if (edgeS != null)edges.add(edgeS);
+			if (edgeT != null)edges.add(edgeT);
 			return PathFactory.newInstance(this, source, target, edges);
 		}
 		edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
