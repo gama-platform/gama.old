@@ -165,8 +165,11 @@ species people skills: [advanced_driving] {
 	reflex time_to_go when: final_target = nil {
 		target <- one_of(intersection where not each.is_traffic_signal);
 		current_path <- compute_path(graph: road_network, target: target );
+		if (current_path = nil ) {
+			final_target <- nil;
+		}
 	}
-	reflex move when: final_target != nil {
+	reflex move when: current_path != nil and final_target != nil {
 		do drive;
 		if real_speed < 5°km/°h {
 			counter_stucked<- counter_stucked + 1;
