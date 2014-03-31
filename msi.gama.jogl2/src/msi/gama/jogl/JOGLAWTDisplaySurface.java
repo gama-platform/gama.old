@@ -279,6 +279,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		}
 		super.zoomFit();
 	}
+	
+	@Override
+    public void setZoomLevel(final Double newZoomLevel) {
+            super.setZoomLevel(newZoomLevel);
+            if(iGraphics != null){
+            	((JOGLAWTDisplayGraphics) iGraphics).reinitFor(this);		
+            }        
+    }
 
 	@Override
 	public void toggleView() {
@@ -462,6 +470,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public int getDisplayWidth() {
 		return (int) (super.getDisplayWidth() * getZoomLevel());
+	}
+	
+	@Override
+	public int getDisplayHeight() {
+		return (int) (super.getDisplayHeight() * getZoomLevel());
 	}
 
 	@Override

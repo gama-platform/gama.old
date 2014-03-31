@@ -81,6 +81,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}
 		}
 	}
+	
+	public void reinitFor(final IDisplaySurface surface) {
+		super.initFor(surface);
+	}
 
 	/**
 	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
