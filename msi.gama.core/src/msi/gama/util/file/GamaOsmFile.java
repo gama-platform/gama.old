@@ -231,7 +231,7 @@ public class GamaOsmFile extends GamaGisFile {
 	private IShape createRoad(final List<IShape> points, final Map<String, Object> values) {
 		if ( points.size() < 2 ) { return null; }
 		IShape geom = GamaGeometryType.buildPolyline(points);
-		if ( geom != null && !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isValid() &&
+		if ( geom != null && !geom.getInnerGeometry().isEmpty() && geom.getInnerGeometry().isSimple() &&
 			geom.getPerimeter() > 0 ) {
 			for ( String key : values.keySet() ) {
 				geom.setAttribute(key, values.get(key));

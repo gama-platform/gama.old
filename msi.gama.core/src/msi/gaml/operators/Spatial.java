@@ -586,7 +586,7 @@ public abstract class Spatial {
 				final LinearRing ring = GeometryUtils.FACTORY.createLinearRing(coord);
 				geom_Tmp = GeometryUtils.FACTORY.createPolygon(ring, null);
 			}
-			if ( geom_Tmp != null && geom_Tmp.isValid() ) { return new GamaShape(g, geom_Tmp);
+			if ( geom_Tmp != null && geom_Tmp.isSimple() ) { return new GamaShape(g, geom_Tmp);
 
 			}
 			return g;
@@ -1063,7 +1063,7 @@ public abstract class Spatial {
 			if ( g1 == null || g1.getInnerGeometry() == null ) { return g1; }
 			if ( g1.isPoint() ) { return g1.copy(scope); }
 			final Geometry geomSimp = DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(), distanceTolerance);
-			if ( geomSimp != null && !geomSimp.isEmpty() && geomSimp.isValid() ) { return new GamaShape(g1, geomSimp); }
+			if ( geomSimp != null && !geomSimp.isEmpty() && geomSimp.isSimple() ) { return new GamaShape(g1, geomSimp); }
 			return g1.copy(scope);
 		}
 
