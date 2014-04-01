@@ -20,15 +20,11 @@
       <update label="GAMA 1.6.1 Update Site" url="http://gama-platform.googlecode.com/svn/update_site"/>
    </url>
 
-   <requires>
-      <import feature="ummisco.gama.feature.core" version="1.6.1.qualifier"/>
-   </requires>
-
    <plugin
          id="simtools.gaml.extensions.physics"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
@@ -38,7 +34,7 @@
          arch="x86_64"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -49,7 +45,7 @@
          arch="x86"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -60,7 +56,7 @@
          arch="x86,x86_64"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -71,7 +67,7 @@
          arch="x86_64"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -82,7 +78,7 @@
          arch="x86"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -90,7 +86,7 @@
          id="msi.gama.jogl2"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
