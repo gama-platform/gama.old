@@ -37,7 +37,7 @@ public class GamlParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getModelAccess().getAlternatives(), "rule__Model__Alternatives");
+					put(grammarAccess.getEntryAccess().getAlternatives(), "rule__Entry__Alternatives");
 					put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 					put(grammarAccess.getStatementAccess().getAlternatives_1(), "rule__Statement__Alternatives_1");
 					put(grammarAccess.getStatementAccess().getAlternatives_1_1(), "rule__Statement__Alternatives_1_1");
@@ -102,8 +102,9 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActionDefinitionAccess().getAlternatives(), "rule__ActionDefinition__Alternatives");
 					put(grammarAccess.getValid_IDAccess().getAlternatives(), "rule__Valid_ID__Alternatives");
 					put(grammarAccess.getTerminalExpressionAccess().getAlternatives(), "rule__TerminalExpression__Alternatives");
-					put(grammarAccess.getModelAccess().getGroup_0(), "rule__Model__Group_0__0");
-					put(grammarAccess.getModelAccess().getGroup_1(), "rule__Model__Group_1__0");
+					put(grammarAccess.getStringEvaluatorAccess().getGroup(), "rule__StringEvaluator__Group__0");
+					put(grammarAccess.getActionEditorAccess().getGroup(), "rule__ActionEditor__Group__0");
+					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getGroup(), "rule__S_1Expr_Facets_BlockOrEnd__Group__0");
 					put(grammarAccess.getS_DoAccess().getGroup(), "rule__S_Do__Group__0");
@@ -228,11 +229,12 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_3(), "rule__TerminalExpression__Group_3__0");
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_4(), "rule__TerminalExpression__Group_4__0");
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_5(), "rule__TerminalExpression__Group_5__0");
-					put(grammarAccess.getModelAccess().getNameAssignment_0_1(), "rule__Model__NameAssignment_0_1");
-					put(grammarAccess.getModelAccess().getImportsAssignment_0_2(), "rule__Model__ImportsAssignment_0_2");
-					put(grammarAccess.getModelAccess().getStatementsAssignment_0_3(), "rule__Model__StatementsAssignment_0_3");
-					put(grammarAccess.getModelAccess().getTotoAssignment_1_1(), "rule__Model__TotoAssignment_1_1");
-					put(grammarAccess.getModelAccess().getExprAssignment_1_3(), "rule__Model__ExprAssignment_1_3");
+					put(grammarAccess.getStringEvaluatorAccess().getTotoAssignment_0(), "rule__StringEvaluator__TotoAssignment_0");
+					put(grammarAccess.getStringEvaluatorAccess().getExprAssignment_2(), "rule__StringEvaluator__ExprAssignment_2");
+					put(grammarAccess.getActionEditorAccess().getActionAssignment_1(), "rule__ActionEditor__ActionAssignment_1");
+					put(grammarAccess.getModelAccess().getNameAssignment_1(), "rule__Model__NameAssignment_1");
+					put(grammarAccess.getModelAccess().getImportsAssignment_2(), "rule__Model__ImportsAssignment_2");
+					put(grammarAccess.getModelAccess().getStatementsAssignment_3(), "rule__Model__StatementsAssignment_3");
 					put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getKeyAssignment_0(), "rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getFirstFacetAssignment_1(), "rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1");
@@ -429,7 +431,7 @@ public class GamlParser extends AbstractContentAssistParser {
 	protected Collection<FollowElement> getFollowElements(AbstractInternalContentAssistParser parser) {
 		try {
 			msi.gama.lang.gaml.ui.contentassist.antlr.internal.InternalGamlParser typedParser = (msi.gama.lang.gaml.ui.contentassist.antlr.internal.InternalGamlParser) parser;
-			typedParser.entryRuleModel();
+			typedParser.entryRuleEntry();
 			return typedParser.getFollowElements();
 		} catch(RecognitionException ex) {
 			throw new RuntimeException(ex);
