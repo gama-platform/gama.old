@@ -3,7 +3,17 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="gaml"
     nsURI="http://www.gama.msi/lang/gaml/Gaml" nsPrefix="gaml">
-  <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//VarDefinition">
+  <eClassifiers xsi:type="ecore:EClass" name="Entry"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringEvaluator" eSuperTypes="#//Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="toto" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionEditor" eSuperTypes="#//Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//S_Definition"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Entry #//VarDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
@@ -130,11 +140,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="VarFakeDefinition" eSuperTypes="#//VarDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="EquationFakeDefinition" eSuperTypes="#//EquationDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="TerminalExpression" eSuperTypes="#//Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="StringEvaluator" eSuperTypes="#//Model">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="toto" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="S_Action" eSuperTypes="#//S_Definition"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Var" eSuperTypes="#//S_Definition"/>
   <eClassifiers xsi:type="ecore:EClass" name="Pair" eSuperTypes="#//Expression"/>

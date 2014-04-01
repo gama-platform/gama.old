@@ -75,10 +75,34 @@ public class GamlSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
+      case GamlPackage.ENTRY:
+      {
+        Entry entry = (Entry)theEObject;
+        T result = caseEntry(entry);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.STRING_EVALUATOR:
+      {
+        StringEvaluator stringEvaluator = (StringEvaluator)theEObject;
+        T result = caseStringEvaluator(stringEvaluator);
+        if (result == null) result = caseEntry(stringEvaluator);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.ACTION_EDITOR:
+      {
+        ActionEditor actionEditor = (ActionEditor)theEObject;
+        T result = caseActionEditor(actionEditor);
+        if (result == null) result = caseEntry(actionEditor);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.MODEL:
       {
         Model model = (Model)theEObject;
         T result = caseModel(model);
+        if (result == null) result = caseEntry(model);
         if (result == null) result = caseVarDefinition(model);
         if (result == null) result = caseGamlDefinition(model);
         if (result == null) result = defaultCase(theEObject);
@@ -452,16 +476,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.STRING_EVALUATOR:
-      {
-        StringEvaluator stringEvaluator = (StringEvaluator)theEObject;
-        T result = caseStringEvaluator(stringEvaluator);
-        if (result == null) result = caseModel(stringEvaluator);
-        if (result == null) result = caseVarDefinition(stringEvaluator);
-        if (result == null) result = caseGamlDefinition(stringEvaluator);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.SACTION:
       {
         S_Action s_Action = (S_Action)theEObject;
@@ -664,6 +678,54 @@ public class GamlSwitch<T> extends Switch<T>
       }
       default: return defaultCase(theEObject);
     }
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Entry</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Entry</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEntry(Entry object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStringEvaluator(StringEvaluator object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Action Editor</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Action Editor</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseActionEditor(ActionEditor object)
+  {
+    return null;
   }
 
   /**
@@ -1366,22 +1428,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseTerminalExpression(TerminalExpression object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseStringEvaluator(StringEvaluator object)
   {
     return null;
   }

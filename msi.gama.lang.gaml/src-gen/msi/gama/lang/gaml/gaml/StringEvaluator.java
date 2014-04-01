@@ -23,7 +23,7 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface StringEvaluator extends Model
+public interface StringEvaluator extends Entry
 {
   /**
    * Returns the value of the '<em><b>Toto</b></em>' attribute.

@@ -19,43 +19,23 @@
 package msi.gama.lang.gaml.validation;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
-
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Statement;
+import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
-import msi.gama.util.GAML;
-import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gama.util.*;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
-import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.Check;
 
@@ -136,8 +116,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			cleanResourceSet(buildResourceSet, true);
 		}
 		return null;
-	} 
-	
+	}
+
 	public List<GamlCompilationError> validateModel(final EObject object) {
 		if ( !(object instanceof Model) ) { return null; }
 		List<GamlCompilationError> errors = new GamaList<GamlCompilationError>();
@@ -174,7 +154,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				return model;
 			}
 		} catch (Exception e) {
-			error("Cannot compile file because of : " + e.getMessage(), resource.getContents().get(0), null);
+			e.printStackTrace();
+			GuiUtils
+				.debug("Cannot compile file because of : " + e.getMessage()/* , resource.getContents().get(0), null */);
 			return null;
 		} finally {
 			cleanResourceSet(buildResourceSet, true);

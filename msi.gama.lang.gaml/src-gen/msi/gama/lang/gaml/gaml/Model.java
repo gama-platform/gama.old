@@ -24,7 +24,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface Model extends VarDefinition
+public interface Model extends Entry, VarDefinition
 {
   /**
    * Returns the value of the '<em><b>Imports</b></em>' containment reference list.

@@ -43,7 +43,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 		// c.setLinewrap(0, 1, 2).before(g.getSL_COMMENTRule());
 		c.setLinewrap(1).around(g.getStatementRule());
-		c.setLinewrap(2).after(g.getModelAccess().getNameAssignment_0_1());
+		c.setLinewrap(2).after(g.getModelAccess().getNameAssignment_1());
 		c.setLinewrap(1).after(g.getImportRule());
 
 		Set<Keyword> handled = new HashSet();

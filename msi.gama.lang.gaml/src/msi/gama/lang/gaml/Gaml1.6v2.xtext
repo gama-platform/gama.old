@@ -3,8 +3,18 @@ grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
+Entry:
+	Model | StringEvaluator | ActionEditor;
+
+StringEvaluator:
+	toto=ID "<-" expr=Expression;
+	
+ActionEditor:
+	"$$$" action=S_Definition;		
+
+
 Model:
-	'model' name=ID (imports+=Import)* (statements+=Statement)* | {StringEvaluator} toto=ID "<-" expr=Expression;
+	('model' name=ID (imports+=Import)* (statements+=Statement)*) ;
 
 Import:
 	'import' importURI=STRING; // must be named importURI

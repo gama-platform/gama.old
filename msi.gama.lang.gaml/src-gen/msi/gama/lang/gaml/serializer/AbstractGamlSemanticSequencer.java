@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
+import msi.gama.lang.gaml.gaml.ActionEditor;
 import msi.gama.lang.gaml.gaml.ActionFakeDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
@@ -119,6 +120,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.ACTION_ARGUMENTS:
 				if(context == grammarAccess.getActionArgumentsRule()) {
 					sequence_ActionArguments(context, (ActionArguments) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.ACTION_EDITOR:
+				if(context == grammarAccess.getActionEditorRule() ||
+				   context == grammarAccess.getEntryRule()) {
+					sequence_ActionEditor(context, (ActionEditor) semanticObject); 
 					return; 
 				}
 				else break;
@@ -545,7 +553,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.MODEL:
-				if(context == grammarAccess.getGamlDefinitionRule() ||
+				if(context == grammarAccess.getEntryRule() ||
+				   context == grammarAccess.getGamlDefinitionRule() ||
 				   context == grammarAccess.getModelRule() ||
 				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_Model(context, (Model) semanticObject); 
@@ -841,10 +850,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.STRING_EVALUATOR:
-				if(context == grammarAccess.getGamlDefinitionRule() ||
-				   context == grammarAccess.getModelRule() ||
-				   context == grammarAccess.getVarDefinitionRule()) {
-					sequence_Model(context, (StringEvaluator) semanticObject); 
+				if(context == grammarAccess.getEntryRule() ||
+				   context == grammarAccess.getStringEvaluatorRule()) {
+					sequence_StringEvaluator(context, (StringEvaluator) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1048,6 +1056,22 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_ActionArguments(EObject context, ActionArguments semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     action=S_Definition
+	 */
+	protected void sequence_ActionEditor(EObject context, ActionEditor semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.ACTION_EDITOR__ACTION) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.ACTION_EDITOR__ACTION));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getActionEditorAccess().getActionS_DefinitionParserRuleCall_1_0(), semanticObject.getAction());
+		feeder.finish();
 	}
 	
 	
@@ -1435,15 +1459,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (toto=ID expr=Expression)
-	 */
-	protected void sequence_Model(EObject context, StringEvaluator semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (left=Pair_Pair_1_0_0 op='::' right=If)
 	 */
 	protected void sequence_Pair(EObject context, Pair semanticObject) {
@@ -1735,6 +1750,25 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_SpeciesRef(EObject context, SpeciesRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (toto=ID expr=Expression)
+	 */
+	protected void sequence_StringEvaluator(EObject context, StringEvaluator semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.STRING_EVALUATOR__TOTO) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.STRING_EVALUATOR__TOTO));
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.STRING_EVALUATOR__EXPR) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.STRING_EVALUATOR__EXPR));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getStringEvaluatorAccess().getTotoIDTerminalRuleCall_0_0(), semanticObject.getToto());
+		feeder.accept(grammarAccess.getStringEvaluatorAccess().getExprExpressionParserRuleCall_2_0(), semanticObject.getExpr());
+		feeder.finish();
 	}
 	
 	

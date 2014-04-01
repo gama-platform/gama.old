@@ -17,76 +17,124 @@ import org.eclipse.xtext.service.AbstractElementFinder.*;
 public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
-	public class ModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Model");
+	public class EntryElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Entry");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Keyword cModelKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_0_1_0 = (RuleCall)cNameAssignment_0_1.eContents().get(0);
-		private final Assignment cImportsAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
-		private final RuleCall cImportsImportParserRuleCall_0_2_0 = (RuleCall)cImportsAssignment_0_2.eContents().get(0);
-		private final Assignment cStatementsAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
-		private final RuleCall cStatementsStatementParserRuleCall_0_3_0 = (RuleCall)cStatementsAssignment_0_3.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Action cStringEvaluatorAction_1_0 = (Action)cGroup_1.eContents().get(0);
-		private final Assignment cTotoAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cTotoIDTerminalRuleCall_1_1_0 = (RuleCall)cTotoAssignment_1_1.eContents().get(0);
-		private final Keyword cLessThanSignHyphenMinusKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
-		private final Assignment cExprAssignment_1_3 = (Assignment)cGroup_1.eContents().get(3);
-		private final RuleCall cExprExpressionParserRuleCall_1_3_0 = (RuleCall)cExprAssignment_1_3.eContents().get(0);
+		private final RuleCall cModelParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cStringEvaluatorParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cActionEditorParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
-		//Model:
-		//	"model" name=ID imports+=Import* statements+=Statement* | {StringEvaluator} toto=ID "<-" expr=Expression;
+		//Entry:
+		//	Model | StringEvaluator | ActionEditor;
 		public ParserRule getRule() { return rule; }
 
-		//"model" name=ID imports+=Import* statements+=Statement* | {StringEvaluator} toto=ID "<-" expr=Expression
+		//Model | StringEvaluator | ActionEditor
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//"model" name=ID imports+=Import* statements+=Statement*
-		public Group getGroup_0() { return cGroup_0; }
+		//Model
+		public RuleCall getModelParserRuleCall_0() { return cModelParserRuleCall_0; }
 
-		//"model"
-		public Keyword getModelKeyword_0_0() { return cModelKeyword_0_0; }
+		//StringEvaluator
+		public RuleCall getStringEvaluatorParserRuleCall_1() { return cStringEvaluatorParserRuleCall_1; }
 
-		//name=ID
-		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
+		//ActionEditor
+		public RuleCall getActionEditorParserRuleCall_2() { return cActionEditorParserRuleCall_2; }
+	}
 
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_0_1_0() { return cNameIDTerminalRuleCall_0_1_0; }
+	public class StringEvaluatorElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "StringEvaluator");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cTotoAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cTotoIDTerminalRuleCall_0_0 = (RuleCall)cTotoAssignment_0.eContents().get(0);
+		private final Keyword cLessThanSignHyphenMinusKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cExprAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cExprExpressionParserRuleCall_2_0 = (RuleCall)cExprAssignment_2.eContents().get(0);
+		
+		//StringEvaluator:
+		//	toto=ID "<-" expr=Expression;
+		public ParserRule getRule() { return rule; }
 
-		//imports+=Import*
-		public Assignment getImportsAssignment_0_2() { return cImportsAssignment_0_2; }
-
-		//Import
-		public RuleCall getImportsImportParserRuleCall_0_2_0() { return cImportsImportParserRuleCall_0_2_0; }
-
-		//statements+=Statement*
-		public Assignment getStatementsAssignment_0_3() { return cStatementsAssignment_0_3; }
-
-		//Statement
-		public RuleCall getStatementsStatementParserRuleCall_0_3_0() { return cStatementsStatementParserRuleCall_0_3_0; }
-
-		//{StringEvaluator} toto=ID "<-" expr=Expression
-		public Group getGroup_1() { return cGroup_1; }
-
-		//{StringEvaluator}
-		public Action getStringEvaluatorAction_1_0() { return cStringEvaluatorAction_1_0; }
+		//toto=ID "<-" expr=Expression
+		public Group getGroup() { return cGroup; }
 
 		//toto=ID
-		public Assignment getTotoAssignment_1_1() { return cTotoAssignment_1_1; }
+		public Assignment getTotoAssignment_0() { return cTotoAssignment_0; }
 
 		//ID
-		public RuleCall getTotoIDTerminalRuleCall_1_1_0() { return cTotoIDTerminalRuleCall_1_1_0; }
+		public RuleCall getTotoIDTerminalRuleCall_0_0() { return cTotoIDTerminalRuleCall_0_0; }
 
 		//"<-"
-		public Keyword getLessThanSignHyphenMinusKeyword_1_2() { return cLessThanSignHyphenMinusKeyword_1_2; }
+		public Keyword getLessThanSignHyphenMinusKeyword_1() { return cLessThanSignHyphenMinusKeyword_1; }
 
 		//expr=Expression
-		public Assignment getExprAssignment_1_3() { return cExprAssignment_1_3; }
+		public Assignment getExprAssignment_2() { return cExprAssignment_2; }
 
 		//Expression
-		public RuleCall getExprExpressionParserRuleCall_1_3_0() { return cExprExpressionParserRuleCall_1_3_0; }
+		public RuleCall getExprExpressionParserRuleCall_2_0() { return cExprExpressionParserRuleCall_2_0; }
+	}
+
+	public class ActionEditorElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ActionEditor");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cDollarSignDollarSignDollarSignKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cActionAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cActionS_DefinitionParserRuleCall_1_0 = (RuleCall)cActionAssignment_1.eContents().get(0);
+		
+		//ActionEditor:
+		//	"$$$" action=S_Definition;
+		public ParserRule getRule() { return rule; }
+
+		//"$$$" action=S_Definition
+		public Group getGroup() { return cGroup; }
+
+		//"$$$"
+		public Keyword getDollarSignDollarSignDollarSignKeyword_0() { return cDollarSignDollarSignDollarSignKeyword_0; }
+
+		//action=S_Definition
+		public Assignment getActionAssignment_1() { return cActionAssignment_1; }
+
+		//S_Definition
+		public RuleCall getActionS_DefinitionParserRuleCall_1_0() { return cActionS_DefinitionParserRuleCall_1_0; }
+	}
+
+	public class ModelElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Model");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cModelKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Assignment cImportsAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cImportsImportParserRuleCall_2_0 = (RuleCall)cImportsAssignment_2.eContents().get(0);
+		private final Assignment cStatementsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cStatementsStatementParserRuleCall_3_0 = (RuleCall)cStatementsAssignment_3.eContents().get(0);
+		
+		//Model:
+		//	"model" name=ID imports+=Import* statements+=Statement*;
+		public ParserRule getRule() { return rule; }
+
+		//"model" name=ID imports+=Import* statements+=Statement*
+		public Group getGroup() { return cGroup; }
+
+		//"model"
+		public Keyword getModelKeyword_0() { return cModelKeyword_0; }
+
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+
+		//imports+=Import*
+		public Assignment getImportsAssignment_2() { return cImportsAssignment_2; }
+
+		//Import
+		public RuleCall getImportsImportParserRuleCall_2_0() { return cImportsImportParserRuleCall_2_0; }
+
+		//statements+=Statement*
+		public Assignment getStatementsAssignment_3() { return cStatementsAssignment_3; }
+
+		//Statement
+		public RuleCall getStatementsStatementParserRuleCall_3_0() { return cStatementsStatementParserRuleCall_3_0; }
 	}
 
 	public class ImportElements extends AbstractParserRuleElementFinder {
@@ -4306,6 +4354,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	
+	private EntryElements pEntry;
+	private StringEvaluatorElements pStringEvaluator;
+	private ActionEditorElements pActionEditor;
 	private ModelElements pModel;
 	private ImportElements pImport;
 	private StatementElements pStatement;
@@ -4444,8 +4495,38 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 
 	
+	//Entry:
+	//	Model | StringEvaluator | ActionEditor;
+	public EntryElements getEntryAccess() {
+		return (pEntry != null) ? pEntry : (pEntry = new EntryElements());
+	}
+	
+	public ParserRule getEntryRule() {
+		return getEntryAccess().getRule();
+	}
+
+	//StringEvaluator:
+	//	toto=ID "<-" expr=Expression;
+	public StringEvaluatorElements getStringEvaluatorAccess() {
+		return (pStringEvaluator != null) ? pStringEvaluator : (pStringEvaluator = new StringEvaluatorElements());
+	}
+	
+	public ParserRule getStringEvaluatorRule() {
+		return getStringEvaluatorAccess().getRule();
+	}
+
+	//ActionEditor:
+	//	"$$$" action=S_Definition;
+	public ActionEditorElements getActionEditorAccess() {
+		return (pActionEditor != null) ? pActionEditor : (pActionEditor = new ActionEditorElements());
+	}
+	
+	public ParserRule getActionEditorRule() {
+		return getActionEditorAccess().getRule();
+	}
+
 	//Model:
-	//	"model" name=ID imports+=Import* statements+=Statement* | {StringEvaluator} toto=ID "<-" expr=Expression;
+	//	"model" name=ID imports+=Import* statements+=Statement*;
 	public ModelElements getModelAccess() {
 		return (pModel != null) ? pModel : (pModel = new ModelElements());
 	}

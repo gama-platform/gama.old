@@ -67,6 +67,9 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     switch (eClass.getClassifierID())
     {
+      case GamlPackage.ENTRY: return createEntry();
+      case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
+      case GamlPackage.ACTION_EDITOR: return createActionEditor();
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.STATEMENT: return createStatement();
@@ -111,7 +114,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.VAR_FAKE_DEFINITION: return createVarFakeDefinition();
       case GamlPackage.EQUATION_FAKE_DEFINITION: return createEquationFakeDefinition();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
-      case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
       case GamlPackage.SACTION: return createS_Action();
       case GamlPackage.SVAR: return createS_Var();
       case GamlPackage.PAIR: return createPair();
@@ -138,6 +140,39 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Entry createEntry()
+  {
+    EntryImpl entry = new EntryImpl();
+    return entry;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StringEvaluator createStringEvaluator()
+  {
+    StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
+    return stringEvaluator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionEditor createActionEditor()
+  {
+    ActionEditorImpl actionEditor = new ActionEditorImpl();
+    return actionEditor;
   }
 
   /**
@@ -622,17 +657,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     TerminalExpressionImpl terminalExpression = new TerminalExpressionImpl();
     return terminalExpression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public StringEvaluator createStringEvaluator()
-  {
-    StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
-    return stringEvaluator;
   }
 
   /**

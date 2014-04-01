@@ -25,7 +25,7 @@ public class GamlParser extends org.eclipse.xtext.parser.antlr.AbstractAntlrPars
 	
 	@Override 
 	protected String getDefaultRuleName() {
-		return "Model";
+		return "Entry";
 	}
 	
 	public GamlGrammarAccess getGrammarAccess() {

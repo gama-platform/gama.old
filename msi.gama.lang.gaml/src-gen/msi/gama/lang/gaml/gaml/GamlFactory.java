@@ -26,6 +26,33 @@ public interface GamlFactory extends EFactory
   GamlFactory eINSTANCE = msi.gama.lang.gaml.gaml.impl.GamlFactoryImpl.init();
 
   /**
+   * Returns a new object of class '<em>Entry</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Entry</em>'.
+   * @generated
+   */
+  Entry createEntry();
+
+  /**
+   * Returns a new object of class '<em>String Evaluator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>String Evaluator</em>'.
+   * @generated
+   */
+  StringEvaluator createStringEvaluator();
+
+  /**
+   * Returns a new object of class '<em>Action Editor</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Editor</em>'.
+   * @generated
+   */
+  ActionEditor createActionEditor();
+
+  /**
    * Returns a new object of class '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -420,15 +447,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   TerminalExpression createTerminalExpression();
-
-  /**
-   * Returns a new object of class '<em>String Evaluator</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>String Evaluator</em>'.
-   * @generated
-   */
-  StringEvaluator createStringEvaluator();
 
   /**
    * Returns a new object of class '<em>SAction</em>'.

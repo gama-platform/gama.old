@@ -78,6 +78,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
     new GamlSwitch<Adapter>()
     {
       @Override
+      public Adapter caseEntry(Entry object)
+      {
+        return createEntryAdapter();
+      }
+      @Override
+      public Adapter caseStringEvaluator(StringEvaluator object)
+      {
+        return createStringEvaluatorAdapter();
+      }
+      @Override
+      public Adapter caseActionEditor(ActionEditor object)
+      {
+        return createActionEditorAdapter();
+      }
+      @Override
       public Adapter caseModel(Model object)
       {
         return createModelAdapter();
@@ -298,11 +313,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createTerminalExpressionAdapter();
       }
       @Override
-      public Adapter caseStringEvaluator(StringEvaluator object)
-      {
-        return createStringEvaluatorAdapter();
-      }
-      @Override
       public Adapter caseS_Action(S_Action object)
       {
         return createS_ActionAdapter();
@@ -438,6 +448,51 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
     return modelSwitch.doSwitch((EObject)target);
   }
 
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Entry <em>Entry</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Entry
+   * @generated
+   */
+  public Adapter createEntryAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringEvaluator <em>String Evaluator</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.StringEvaluator
+   * @generated
+   */
+  public Adapter createStringEvaluatorAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionEditor <em>Action Editor</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ActionEditor
+   * @generated
+   */
+  public Adapter createActionEditorAdapter()
+  {
+    return null;
+  }
 
   /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Model <em>Model</em>}'.
@@ -1095,21 +1150,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createTerminalExpressionAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringEvaluator <em>String Evaluator</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.StringEvaluator
-   * @generated
-   */
-  public Adapter createStringEvaluatorAdapter()
   {
     return null;
   }

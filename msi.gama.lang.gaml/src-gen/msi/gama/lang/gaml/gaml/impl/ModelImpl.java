@@ -7,17 +7,22 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
+import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -29,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getStatements <em>Statements</em>}</li>
  * </ul>
@@ -36,8 +42,28 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ModelImpl extends VarDefinitionImpl implements Model
+public class ModelImpl extends EntryImpl implements Model
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getImports() <em>Imports</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -77,6 +103,29 @@ public class ModelImpl extends VarDefinitionImpl implements Model
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.MODEL;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__NAME, oldName, name));
   }
 
   /**
@@ -135,6 +184,8 @@ public class ModelImpl extends VarDefinitionImpl implements Model
   {
     switch (featureID)
     {
+      case GamlPackage.MODEL__NAME:
+        return getName();
       case GamlPackage.MODEL__IMPORTS:
         return getImports();
       case GamlPackage.MODEL__STATEMENTS:
@@ -154,6 +205,9 @@ public class ModelImpl extends VarDefinitionImpl implements Model
   {
     switch (featureID)
     {
+      case GamlPackage.MODEL__NAME:
+        setName((String)newValue);
+        return;
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         getImports().addAll((Collection<? extends Import>)newValue);
@@ -176,6 +230,9 @@ public class ModelImpl extends VarDefinitionImpl implements Model
   {
     switch (featureID)
     {
+      case GamlPackage.MODEL__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         return;
@@ -196,12 +253,83 @@ public class ModelImpl extends VarDefinitionImpl implements Model
   {
     switch (featureID)
     {
+      case GamlPackage.MODEL__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case GamlPackage.MODEL__IMPORTS:
         return imports != null && !imports.isEmpty();
       case GamlPackage.MODEL__STATEMENTS:
         return statements != null && !statements.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        case GamlPackage.MODEL__NAME: return GamlPackage.GAML_DEFINITION__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == VarDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        case GamlPackage.GAML_DEFINITION__NAME: return GamlPackage.MODEL__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == VarDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (name: ");
+    result.append(name);
+    result.append(')');
+    return result.toString();
   }
 
 } //ModelImpl

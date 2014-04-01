@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
+public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
 {
   /**
    * The default value of the '{@link #getToto() <em>Toto</em>}' attribute.

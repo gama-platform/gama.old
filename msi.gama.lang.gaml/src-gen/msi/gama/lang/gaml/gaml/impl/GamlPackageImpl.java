@@ -8,6 +8,7 @@ package msi.gama.lang.gaml.gaml.impl;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
+import msi.gama.lang.gaml.gaml.ActionEditor;
 import msi.gama.lang.gaml.gaml.ActionFakeDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
@@ -19,6 +20,7 @@ import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
+import msi.gama.lang.gaml.gaml.Entry;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
@@ -91,6 +93,27 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  */
 public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 {
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass entryEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass stringEvaluatorEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass actionEditorEClass = null;
+
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -404,13 +427,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass stringEvaluatorEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass s_ActionEClass = null;
 
   /**
@@ -628,6 +644,66 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(GamlPackage.eNS_URI, theGamlPackage);
     return theGamlPackage;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getEntry()
+  {
+    return entryEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getStringEvaluator()
+  {
+    return stringEvaluatorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getStringEvaluator_Toto()
+  {
+    return (EAttribute)stringEvaluatorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getStringEvaluator_Expr()
+  {
+    return (EReference)stringEvaluatorEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getActionEditor()
+  {
+    return actionEditorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getActionEditor_Action()
+  {
+    return (EReference)actionEditorEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1435,36 +1511,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getStringEvaluator()
-  {
-    return stringEvaluatorEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getStringEvaluator_Toto()
-  {
-    return (EAttribute)stringEvaluatorEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getStringEvaluator_Expr()
-  {
-    return (EReference)stringEvaluatorEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getS_Action()
   {
     return s_ActionEClass;
@@ -1830,6 +1876,15 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     isCreated = true;
 
     // Create classes and their features
+    entryEClass = createEClass(ENTRY);
+
+    stringEvaluatorEClass = createEClass(STRING_EVALUATOR);
+    createEAttribute(stringEvaluatorEClass, STRING_EVALUATOR__TOTO);
+    createEReference(stringEvaluatorEClass, STRING_EVALUATOR__EXPR);
+
+    actionEditorEClass = createEClass(ACTION_EDITOR);
+    createEReference(actionEditorEClass, ACTION_EDITOR__ACTION);
+
     modelEClass = createEClass(MODEL);
     createEReference(modelEClass, MODEL__IMPORTS);
     createEReference(modelEClass, MODEL__STATEMENTS);
@@ -1954,10 +2009,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     terminalExpressionEClass = createEClass(TERMINAL_EXPRESSION);
 
-    stringEvaluatorEClass = createEClass(STRING_EVALUATOR);
-    createEAttribute(stringEvaluatorEClass, STRING_EVALUATOR__TOTO);
-    createEReference(stringEvaluatorEClass, STRING_EVALUATOR__EXPR);
-
     s_ActionEClass = createEClass(SACTION);
 
     s_VarEClass = createEClass(SVAR);
@@ -2045,6 +2096,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    stringEvaluatorEClass.getESuperTypes().add(this.getEntry());
+    actionEditorEClass.getESuperTypes().add(this.getEntry());
+    modelEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getVarDefinition());
     s_DoEClass.getESuperTypes().add(this.getStatement());
     s_LoopEClass.getESuperTypes().add(this.getS_Declaration());
@@ -2086,7 +2140,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     varFakeDefinitionEClass.getESuperTypes().add(this.getVarDefinition());
     equationFakeDefinitionEClass.getESuperTypes().add(this.getEquationDefinition());
     terminalExpressionEClass.getESuperTypes().add(this.getExpression());
-    stringEvaluatorEClass.getESuperTypes().add(this.getModel());
     s_ActionEClass.getESuperTypes().add(this.getS_Definition());
     s_VarEClass.getESuperTypes().add(this.getS_Definition());
     pairEClass.getESuperTypes().add(this.getExpression());
@@ -2112,6 +2165,15 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     reservedLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
 
     // Initialize classes and features; add operations and parameters
+    initEClass(entryEClass, Entry.class, "Entry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(stringEvaluatorEClass, StringEvaluator.class, "StringEvaluator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getStringEvaluator_Toto(), ecorePackage.getEString(), "toto", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStringEvaluator_Expr(), this.getExpression(), null, "expr", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(actionEditorEClass, ActionEditor.class, "ActionEditor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getActionEditor_Action(), this.getS_Definition(), null, "action", null, 0, 1, ActionEditor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getModel_Imports(), this.getImport(), null, "imports", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Statements(), this.getStatement(), null, "statements", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2235,10 +2297,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(equationFakeDefinitionEClass, EquationFakeDefinition.class, "EquationFakeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(terminalExpressionEClass, TerminalExpression.class, "TerminalExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(stringEvaluatorEClass, StringEvaluator.class, "StringEvaluator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getStringEvaluator_Toto(), ecorePackage.getEString(), "toto", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStringEvaluator_Expr(), this.getExpression(), null, "expr", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_ActionEClass, S_Action.class, "S_Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

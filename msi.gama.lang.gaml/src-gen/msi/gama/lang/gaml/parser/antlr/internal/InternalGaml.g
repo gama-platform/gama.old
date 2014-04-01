@@ -44,7 +44,7 @@ import msi.gama.lang.gaml.services.GamlGrammarAccess;
     
     @Override
     protected String getFirstRuleName() {
-    	return "Model";	
+    	return "Entry";	
    	}
    	
    	@Override
@@ -63,6 +63,160 @@ import msi.gama.lang.gaml.services.GamlGrammarAccess;
 
 
 
+// Entry rule entryRuleEntry
+entryRuleEntry returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getEntryRule()); }
+	 iv_ruleEntry=ruleEntry 
+	 { $current=$iv_ruleEntry.current; } 
+	 EOF 
+;
+
+// Rule Entry
+ruleEntry returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(
+    { 
+        newCompositeNode(grammarAccess.getEntryAccess().getModelParserRuleCall_0()); 
+    }
+    this_Model_0=ruleModel
+    { 
+        $current = $this_Model_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getEntryAccess().getStringEvaluatorParserRuleCall_1()); 
+    }
+    this_StringEvaluator_1=ruleStringEvaluator
+    { 
+        $current = $this_StringEvaluator_1.current; 
+        afterParserOrEnumRuleCall();
+    }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getEntryAccess().getActionEditorParserRuleCall_2()); 
+    }
+    this_ActionEditor_2=ruleActionEditor
+    { 
+        $current = $this_ActionEditor_2.current; 
+        afterParserOrEnumRuleCall();
+    }
+)
+;
+
+
+
+
+
+// Entry rule entryRuleStringEvaluator
+entryRuleStringEvaluator returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getStringEvaluatorRule()); }
+	 iv_ruleStringEvaluator=ruleStringEvaluator 
+	 { $current=$iv_ruleStringEvaluator.current; } 
+	 EOF 
+;
+
+// Rule StringEvaluator
+ruleStringEvaluator returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		lv_toto_0_0=RULE_ID
+		{
+			newLeafNode(lv_toto_0_0, grammarAccess.getStringEvaluatorAccess().getTotoIDTerminalRuleCall_0_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getStringEvaluatorRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"toto",
+        		lv_toto_0_0, 
+        		"ID");
+	    }
+
+)
+)	otherlv_1='<-' 
+    {
+    	newLeafNode(otherlv_1, grammarAccess.getStringEvaluatorAccess().getLessThanSignHyphenMinusKeyword_1());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getStringEvaluatorAccess().getExprExpressionParserRuleCall_2_0()); 
+	    }
+		lv_expr_2_0=ruleExpression		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getStringEvaluatorRule());
+	        }
+       		set(
+       			$current, 
+       			"expr",
+        		lv_expr_2_0, 
+        		"Expression");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))
+;
+
+
+
+
+
+// Entry rule entryRuleActionEditor
+entryRuleActionEditor returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getActionEditorRule()); }
+	 iv_ruleActionEditor=ruleActionEditor 
+	 { $current=$iv_ruleActionEditor.current; } 
+	 EOF 
+;
+
+// Rule ActionEditor
+ruleActionEditor returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='$$$' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getActionEditorAccess().getDollarSignDollarSignDollarSignKeyword_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getActionEditorAccess().getActionS_DefinitionParserRuleCall_1_0()); 
+	    }
+		lv_action_1_0=ruleS_Definition		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getActionEditorRule());
+	        }
+       		set(
+       			$current, 
+       			"action",
+        		lv_action_1_0, 
+        		"S_Definition");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))
+;
+
+
+
+
+
 // Entry rule entryRuleModel
 entryRuleModel returns [EObject current=null] 
 	:
@@ -77,15 +231,15 @@ ruleModel returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-((	otherlv_0='model' 
+(	otherlv_0='model' 
     {
-    	newLeafNode(otherlv_0, grammarAccess.getModelAccess().getModelKeyword_0_0());
+    	newLeafNode(otherlv_0, grammarAccess.getModelAccess().getModelKeyword_0());
     }
 (
 (
 		lv_name_1_0=RULE_ID
 		{
-			newLeafNode(lv_name_1_0, grammarAccess.getModelAccess().getNameIDTerminalRuleCall_0_1_0()); 
+			newLeafNode(lv_name_1_0, grammarAccess.getModelAccess().getNameIDTerminalRuleCall_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -102,7 +256,7 @@ ruleModel returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getModelAccess().getImportsImportParserRuleCall_0_2_0()); 
+	        newCompositeNode(grammarAccess.getModelAccess().getImportsImportParserRuleCall_2_0()); 
 	    }
 		lv_imports_2_0=ruleImport		{
 	        if ($current==null) {
@@ -120,7 +274,7 @@ ruleModel returns [EObject current=null]
 )*(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_0_3_0()); 
+	        newCompositeNode(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_3_0()); 
 	    }
 		lv_statements_3_0=ruleStatement		{
 	        if ($current==null) {
@@ -136,53 +290,6 @@ ruleModel returns [EObject current=null]
 
 )
 )*)
-    |((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getModelAccess().getStringEvaluatorAction_1_0(),
-            $current);
-    }
-)(
-(
-		lv_toto_5_0=RULE_ID
-		{
-			newLeafNode(lv_toto_5_0, grammarAccess.getModelAccess().getTotoIDTerminalRuleCall_1_1_0()); 
-		}
-		{
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getModelRule());
-	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"toto",
-        		lv_toto_5_0, 
-        		"ID");
-	    }
-
-)
-)	otherlv_6='<-' 
-    {
-    	newLeafNode(otherlv_6, grammarAccess.getModelAccess().getLessThanSignHyphenMinusKeyword_1_2());
-    }
-(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getModelAccess().getExprExpressionParserRuleCall_1_3_0()); 
-	    }
-		lv_expr_7_0=ruleExpression		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getModelRule());
-	        }
-       		set(
-       			$current, 
-       			"expr",
-        		lv_expr_7_0, 
-        		"Expression");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-)))
 ;
 
 
