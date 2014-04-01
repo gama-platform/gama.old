@@ -35,7 +35,7 @@ global skills: [moving] control: fsm {
 	list<int> a3 <- [1, 2, 3];
 
 	// The declaration of a default size/value in containers is now working correctly
-	list<float> f size: 2000 fill_with: 0.0;
+	list<float> f <- list_with(2000,0.0);
 
 	// Functions can be declared using the regular facet "->" / "function:" 
 	int b1 -> { 100 + length(a1) };
@@ -241,10 +241,10 @@ global skills: [moving] control: fsm {
 		// This method is convenient as it allows to pass only some arguments (if defaults are defined, which is implicitely the case in primitives), 
 		// but also to pass them in any order
 		do wander(speed: 100, amplitude: 10);
-		path p1 <- self.wander(amplitude: 10, speed: 100);
-		path p2 <- self wander (speed: 100, bounds: square(10));
-		path p3 <- wander(speed: 100);
-		path p4 <- wander();
+		path p1 <- path(self.wander(amplitude: 10, speed: 100));
+		path p2 <- path(self wander (speed: 100, bounds: square(10)));
+		path p3 <- path(wander(speed: 100));
+		path p4 <- path(wander());
 
 		// CALLING WITH COMPLETE ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
 		// This method is convenient as it follows the functional syntax of operators and then allows to declare "quasi-operators" in species, even to redefine existing ones.

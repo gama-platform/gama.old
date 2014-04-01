@@ -24,23 +24,23 @@ species declaring_map_attributes {
 	// Values can be declared litterally in this map, which is nothing more than a list of pair objects
 	map explicit_filled_map <- ["First"::1, "Second"::2];
 	// If a map is initialized with a list that contains non-pair objects, the pairs element::element are added to the map
-	map map_initialized_with_list <- [1,2,3,4];
+	map map_initialized_with_list <- map<int, int>([1,2,3,4]);
 	// maps can be declared so that they only accept a given type of keys and values
 	// For instance, empty_map_of_int will accept string keys and integer values
 	map<string, int> empty_map_of_int <- [];
 	// The appropriate casting is realized if the map is initialized with a list of values
-	map<string, int> map_of_int_with_init_of_string <- ['10', '20']; // => ['10'::10,'20'::20]
+	map<string, int> map_of_int_with_init_of_string <- map<string, int>(['10', '20']); // => ['10'::10,'20'::20]
 	// or with another map
-	map<int, float> map_of_float_with_init_of_map <- map_initialized_with_list; 
+	map<int, float> map_of_float_with_init_of_map <- map<int, float>(map_initialized_with_list); 
 	// When the casting is not obvious, the default values are used
 	// Here, the list is first casted to return pairs, and they are casted to pair<string, float>
-	map<string, float> map_of_float_with_impossible_casting <- ['A','B']; 
+	map<string, float> map_of_float_with_impossible_casting <- map<string, float>(['A','B']); 
 	// maps can of course contain maps
-	map<string, map> map_of_maps <- ['A'::[], 'B'::[]];
+	map<string, map> map_of_maps <- map<string, map>(['A'::[], 'B'::[]]);
 	// untyped maps can contain heterogeneous objects
 	map untyped_map <- [10::'5','11'::5,[12]::[5]];
 	// the casting applies to all elements when a key and contents type is defined
-	map<int, string> recasted_map_with_int_and_string <- untyped_map; //=> [5,5,0]
+	map<int, string> recasted_map_with_int_and_string <- map<int, string>(untyped_map); //=> [5,5,0]
 
 	
 	init {
@@ -66,7 +66,7 @@ species declaring_map_attributes {
 		// for instance, map(species_name) will return a list of all the agents of species_name
 		// using pairs of agent::agent. If the key is explicit, it is used in the casting:
 		create test_species number:4;
-		map<string, test_species> my_agents <- list(test_species);
+		map<string, test_species> my_agents <- map<string, test_species>(test_species);
 		write sample(my_agents);
 		// Some special casting operations are applied to specific types, like agents (returns a copy of their attributes)
 		write sample(map(any(my_agents)));
@@ -81,7 +81,7 @@ species declaring_map_attributes {
 species test_species{}
 
 species accessing_map_elements {
-	map<int, int> l1 <- [1,2,3,4,5,6,7,8,9,10];
+	map<int, int> l1 <- map<int, int>([1,2,3,4,5,6,7,8,9,10]);
 	map<int, string> l2 <- [1::'this',2::'is',3::'a',4::'list', 5::'of',6::'strings'];
 	init {
 		write "";
@@ -123,8 +123,8 @@ species accessing_map_elements {
 }
 
 species combining_maps {
-	map<int, int> l1 <- [1,2,3,4,5,6,7,8,9,10];
-	map<int, int> l2 <- [1,3,5,7,9];
+	map<int, int> l1 <- map<int, int>([1,2,3,4,5,6,7,8,9,10]);
+	map<int, int> l2 <- map<int, int>([1,3,5,7,9]);
 	init {
 
 		write "";
@@ -136,7 +136,7 @@ species combining_maps {
 		write sample(l1 - l2);
 		write sample(l1 inter l2);
 		write sample(l1 union l2);
-		map<string> l3 <- l1 + l2;
+		map<string> l3 <- map<int, string>(l1 + l2);
 		write "map<string> l3 <- l1 + l2; " + sample(l3);
 	}
 }
@@ -165,9 +165,9 @@ species modifying_maps {
 		m1 <<+ [10,11,12,13];
 		write sample(m1);
 		// automatic casting applies to any element added to the map
-		m1 <+ "14";
+		m1 <+ int("14");
 		// as well as any container of elements
-		m1 <<+ [15::"15", 16::16.0];
+		m1 <<+ map<int, int>([15::"15", 16::16.0]);
 		write sample(m1);
 		// elements are by default added to the map while their keys are unique
 		// So, what about replacing some elements once they have been added ?
@@ -262,7 +262,7 @@ species looping_on_maps {
 		write sample(l2);
 		// Finally, maps containing agents can be the support of implicit loops in the 'ask' statement
 		create test_species number: 5 returns: my_agents;
-		map<int, test_species> map_of_agents <- my_agents;
+		map<int, test_species> map_of_agents <- map<int, test_species>(my_agents);
 		write(sample(map_of_agents));
 		l2 <- [];
 		ask map_of_agents{
@@ -278,7 +278,7 @@ species looping_on_maps {
 
 experiment Maps type: gui {
 	user_command "Declaring maps" {create declaring_map_attributes;}
-	user_command "Accessing lists" {create accessing_map_elements;}
+	user_command "Accessing maps" {create accessing_map_elements;}
 	user_command "Combining maps" {create combining_maps;}
 	user_command "Modifying maps" {create modifying_maps;}
 	user_command "Looping on maps" {create looping_on_maps;}	

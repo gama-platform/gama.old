@@ -20,30 +20,28 @@ species declaring_list_attributes {
 	// To provide it with an initial value, use the '<-' (or 'init:') facet
 	list explicit_empty_list <- [];
 	// lists can also be provided with a default size, in which case they are filled with the nil element
-	list list_of_size_10 <- [] size: 10; // => [nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
-	// to fill them with a given initial value, use the 'fill_with:' facet
-	list list_of_size_10_with_0 <- [] size: 10 fill_with: 0; // => [0,0,0,0,0,0,0,0,0,0]
-	// in that case, the initial value of the list can be ommitted
-	list list_of_size_10_with_0_no_init size: 10 fill_with:0; // => [0,0,0,0,0,0,0,0,0,0]
+	list list_of_size_10 <-[];// list_size(10); // => [nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+	// to fill them with a given initial value, use the 'list_with' operator
+	list list_of_size_10_with_0 <- list_with(10, 0); // => [0,0,0,0,0,0,0,0,0,0]
+	
 	// lists can be declared so that they only accept a given type of contents.
 	// For instance, empty_list_of_int will only accept integer elements
 	list<int> empty_list_of_int <- [];
-	// This changes the default behavior if a size is defined
-	list<int> list_of_int_size_10 size: 10; // now, list_of_int_size_10 is filled with the 'default' integer value, i.e. 0
-	// the value passed to 'fill_with:' is verified and casted to the contents type of the list if necessary
-	list<int> list_of_int_size_10_filled_with_string size: 10 fill_with: '1'; // list_of_int_size_10_filled_with_string is filled with the casting of '1' to int, i.e. 1
-	list<string> list_of_string_size_10_filled_with_string size: 10 fill_with: '1'; // while list_of_string_size_10_filled_with_string is filled with the string '1'
+	
+	// the value passed to 'list_with' is verified and casted to the contents type of the list if necessary
+	list<int> list_of_int_size_10_filled_with_string<- list<int>(list_with(10,'1')); // list_of_int_size_10_filled_with_string is filled with the casting of '1' to int, i.e. 1
+	list<string> list_of_string_size_10_filled_with_string <- list_with(10,'1'); // while list_of_string_size_10_filled_with_string is filled with the string '1'
 	// the casting is also realized if the list is initialized with a value
-	list<int> list_of_int_with_init_of_string <- ['10', '20']; // => [10,20]
-	list<float> list_of_float_with_init_of_string <- list_of_string_size_10_filled_with_string; // => [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+	list<int> list_of_int_with_init_of_string <- list<int>(['10', '20']); // => [10,20]
+	list<float> list_of_float_with_init_of_string <- list<float>(list_of_string_size_10_filled_with_string); // => [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
 	// When the casting is not obvious, the default value is used
-	list<float> list_of_float_with_impossible_casting <- ['A','B']; 
+	list<float> list_of_float_with_impossible_casting <- list<float>(['A','B']); 
 	// lists can of course contain lists
-	list<list> list_of_lists size: 5 fill_with: [];
+	list<list> list_of_lists <- list_with (5,[]);
 	// untyped lists can contain heterogeneous objects
 	list untyped_list <- ['5',5,[5]];
 	// the casting applies to all elements when a contents type is defined (note the default last value of 0)
-	list<int> recasted_list_with_int <- untyped_list; //=> [5,5,0]
+	list<int> recasted_list_with_int <- list<int>(untyped_list); //=> [5,5,0]
 
 	
 	init {
@@ -54,9 +52,7 @@ species declaring_list_attributes {
 		write sample(explicit_empty_list);
 		write sample(list_of_size_10);
 		write sample(list_of_size_10_with_0);
-		write sample(list_of_size_10_with_0_no_init);
 		write sample(empty_list_of_int);
-		write sample(list_of_int_size_10);
 		write sample(list_of_int_size_10_filled_with_string);
 		write sample(list_of_string_size_10_filled_with_string);
 		write sample(list_of_int_with_init_of_string);
@@ -150,7 +146,7 @@ species combining_lists {
 		write sample(l1 inter l2);
 		write sample(l1 union l2);
 		write sample(interleave ([l1,l2]));
-		list<string> l3 <- l1 + l2;
+		list<string> l3 <- list<string>(l1 + l2);
 		write "list<string> l3 <- l1 + l2; " + sample(l3);
 		write sample(l1 as list<float>);
 	}
@@ -181,9 +177,9 @@ species modifying_lists {
 		l1 <<+ [10,11,12,13];
 		write sample(l1);
 		// automatic casting applies to any element added to the list
- 		l1 <+ ("14");
+ 		l1 <+ (int("14"));
 		// as well as any container of elements
-		l1 <<+ (["15", 16.0]);
+		l1 <<+ (list<int>(["15", 16.0]));
 		write sample(l1);
 		// elements are by default added to the end of the list
 		// but they can be introduced at specific positions using the "at:" facet
@@ -289,7 +285,7 @@ species looping_on_lists {
 		l2 <<+ my_agents collect each.name;
 		write sample(l2);
 		// ... or, even simpler (since the casting of an agent to string returns its name)
-		list<string> l3 <- my_agents;
+		list<string> l3 <- list<string>(my_agents);
 		write sample(l3);
 	}
 }
