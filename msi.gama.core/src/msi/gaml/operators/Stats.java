@@ -79,9 +79,9 @@ public class Stats {
 		Number maxNum = null;
 		ILocation maxPoint = null;
 		for ( Object o : l.iterable(scope) ) {
-			if ( o instanceof ILocation && maxNum == null &&
-				(maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) ) {
-				maxPoint = (ILocation) o;
+			if ( o instanceof ILocation && maxNum == null) {
+				if (maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0)
+					maxPoint = (ILocation) o;
 			} else if ( o instanceof Number && maxPoint == null &&
 				(maxNum == null || ((Number) o).doubleValue() > maxNum.doubleValue()) ) {
 				maxNum = (Number) o;
@@ -111,9 +111,9 @@ public class Stats {
 		Number minNum = null;
 		ILocation minPoint = null;
 		for ( Object o : l.iterable(scope) ) {
-			if ( o instanceof ILocation && minNum == null &&
-				(minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) ) {
-				minPoint = (ILocation) o;
+			if ( o instanceof ILocation && minNum == null) {
+				if (minPoint == null || ((ILocation) o).compareTo(minPoint) < 0)
+					minPoint = (ILocation) o;
 			} else if ( o instanceof Number && minPoint == null &&
 				(minNum == null || ((Number) o).doubleValue() < minNum.doubleValue()) ) {
 				minNum = (Number) o;
