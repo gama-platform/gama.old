@@ -21,30 +21,6 @@
       <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
    </url>
 
-   <includes
-         id="ummisco.gama.feature.core"
-         version="0.0.0"
-         name="Gama Core"/>
-
-   <requires>
-      <import plugin="msi.gama.core" version="1.4.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.headless" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.application" version="1.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.swt" version="3.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.7.101" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.event" version="1.2.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.console" version="3.5.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.navigator" version="3.5.101" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.ds" version="1.3.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi" version="3.7.2" match="greaterOrEqual"/>
-      <import plugin="msi.gama.core" version="1.6.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="cenres.gaml.extensions.hydro"
          download-size="0"
@@ -61,12 +37,6 @@
 
    <plugin
          id="msi.gama.hpc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="msi.gaml.architecture.simplebdi"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
