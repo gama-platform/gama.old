@@ -20,11 +20,13 @@ package msi.gaml.operators;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.GamaColorType;
@@ -163,6 +165,14 @@ public class Colors {
 	public static GamaColor grayscale(final GamaColor c) {
 		int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
+	}
+	
+    @operator(value = "rnd_color", category={IOperatorCategory.COLOR})
+	@doc(value = "rgb color", comment = "Return a random color equivalent to rgb(rnd(255),rnd(255),rnd(255)) when using rnd_color(255)", examples = @example(value="rnd_color",equals=""), see = {"rgb","hsb"})
+	public static GamaColor random_color(final Integer max) {
+    	final RandomUtils r = GAMA.getRandom();
+    	int realMax = Math.max(0, (Math.min(max, 255)));
+		return new GamaColor(r.between(0, realMax), r.between(0, realMax), r.between(0, realMax),255);
 	}
 
 	@operator(value = "blend", category={IOperatorCategory.COLOR})
