@@ -419,7 +419,7 @@ public class JTSDrawer {
 			// myGl.glPolygonOffset(0.0f,10.0f);
 			gl.glBegin(GL.GL_POLYGON);
 			if ( !colorpicking ) {
-				setColor(border, 1.0d);
+				setColor(border, alpha);
 			}
 			p.getExteriorRing().apply(visitor);
 			gl.glEnd();
@@ -442,7 +442,8 @@ public class JTSDrawer {
 		} else {
 			gl.glBegin(GL.GL_LINES);
 			if ( !colorpicking ) {
-				gl.glColor4d(border.getRed() / 255.0, border.getGreen() / 255.0, border.getBlue() / 255.0, 1.0d);
+				setColor(border, alpha);
+				//gl.glColor4d(border.getRed() / 255.0, border.getGreen() / 255.0, border.getBlue() / 255.0, 1.0d);
 			}
 			p.getExteriorRing().apply(visitor);
 			gl.glEnd();
