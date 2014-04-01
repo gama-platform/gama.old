@@ -393,7 +393,7 @@ public class Containers {
 			if ( !result.containsKey(key) ) {
 				result.put(key, new GamaMap());
 			}
-			((GamaMap) result.get(key)).add((GamaPair) each);
+			((GamaMap) result.get(key)).add(Cast.asPair(scope, each));
 		}
 		return result;
 	}
