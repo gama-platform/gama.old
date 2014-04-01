@@ -18,9 +18,21 @@
  */
 package msi.gama.util;
 
+import static msi.gama.util.GAML.nullCheck;
+
 import java.util.*;
+
+import com.google.common.collect.Iterables;
+
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.population.IPopulationSet;
+import msi.gama.metamodel.population.MetaPopulation;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
@@ -128,6 +140,76 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		put(v.getKey(), v.getValue());
 	}
 
+	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of both operands", examples = {
+		@example(value = "['a'::1,'b'::2] + ['c'::3]", equals = "['a'::1,'b'::2,'c'::3]"),
+		@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") }, see = { "" + IKeyword.MINUS })
+	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
+		// special case for the addition of two populations or meta-populations
+//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
+		res.addVallues(scope,m2);
+		return res;
+	}
+	
+	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of both operands",examples = {
+		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
+		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" + IKeyword.MINUS })
+	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
+		// special case for the addition of two populations or meta-populations
+//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
+		res.add(m2);
+		return res;
+	}
+	
+	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand",examples = {
+		@example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
+		@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1.0]") }, see = { "" + IKeyword.MINUS })
+	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
+		// special case for the addition of two populations or meta-populations
+//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
+		res.removeValues(scope,m2);
+		return res;
+	}
+	
+	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand",examples = {
+		@example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
+		@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") }, see = { "" + IKeyword.MINUS })
+	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
+		// special case for the addition of two populations or meta-populations
+//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
+		res.remove(m2.getKey());
+		return res;
+	}	
+	
+	
+	
+/*
+	// TODO plus / union / inter / minus on maps and graphs and maybe on lists
+
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = IOperatorCategory.CONTAINER)
+	@doc(usages = @usage(value = "if the right operand is an object of any type (except a container), " +
+		IKeyword.PLUS + " returns a list of the elemets of the left operand, to which this object has been added", examples = {
+		@example(value = "[1,2,3,4,5,6] + 2", equals = "[1,2,3,4,5,6,2]"),
+		@example(value = "[1,2,3,4,5,6] + 0", equals = "[1,2,3,4,5,6,0]") }))
+	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
+		final IList result = (IList) nullCheck(l1).listValue(scope, Types.NO_TYPE).copy(scope);
+		result.add(l);
+		return result;
+	}
+
+	@operator(value = IKeyword.PLUS, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
+	@doc(value = "the sum, union or concatenation of the two operands.", examples = @example(value="1.0 + 2.5",equals="3.5"))
+	public static Double opPlus(final Double a, final Double b) {
+		return a + b;
+	}
+	*/
 	@Override
 	public V anyValue(final IScope scope) {
 		if ( isEmpty() ) { return null; }
