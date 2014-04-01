@@ -280,6 +280,7 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String value() {
 				Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
+				if (params.isEmpty())  return "";
 				String result = "";
 				int dim = 1;
 				for ( Map.Entry<String, IParameter.Batch> entry : params.entrySet() ) {

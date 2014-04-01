@@ -116,7 +116,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		while (nbGen <= maxGenerations) {
 			Set<Chromosome> children = new HashSet<Chromosome>();
 			for ( final Chromosome chromosome : population ) {
-				if ( getRandUniform().nextValue() < crossoverProb ) {
+				if ( getRandUniform().nextValue() < crossoverProb &&   !variables.isEmpty()) {
 					children.addAll(crossOverOp.crossOver(chromosome,
 						population.get(GAMA.getRandom().between(0, population.size() - 1))));
 				}
@@ -126,7 +126,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 			Set<Chromosome> mutatePop = new HashSet<Chromosome>();
 			for ( final Chromosome chromosome : population ) {
-				if ( getRandUniform().nextValue() < mutationProb ) {
+				if ( getRandUniform().nextValue() < mutationProb && !variables.isEmpty()) {
 					mutatePop.add(mutationOp.mutate(chromosome, variables));
 				}
 			}

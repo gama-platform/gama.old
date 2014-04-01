@@ -118,10 +118,13 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		testedSolutions = new Hashtable<ParametersSet, Double>();
 		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
 		int tabuListSize = tabuListSizeInit;
-		tabuList.add(getBestSolution());
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
-		double bestFitnessAlgo = currentFitness;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
+		tabuList.add(bestSolutionAlgo);
+		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+		testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
+		
+		double bestFitnessAlgo = currentFitness;
+
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
 

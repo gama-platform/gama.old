@@ -51,8 +51,14 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	private void testSolutions(final ParametersSet sol, final int index) throws GamaRuntimeException {
 		List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		final IParameter.Batch var = variables.get(index);
 		ParametersSet solution = new ParametersSet(sol);
+		if (variables.isEmpty()) {
+			final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
+			setBestFitness(fitness);
+			setBestSolution(solution);
+			return;
+		}
+		final IParameter.Batch var = variables.get(index);
 		if ( var.getAmongValue() != null ) {
 			for ( Object val : var.getAmongValue() ) {
 				solution.put(var.getName(), val);
