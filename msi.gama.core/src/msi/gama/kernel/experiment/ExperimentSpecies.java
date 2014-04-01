@@ -110,6 +110,10 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	public ExperimentSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
+		String type = description.getFacets().getLabel(IKeyword.TYPE);
+		if (type.equals(IKeyword.BATCH) ) {
+			exploration = new ExhaustiveSearch(null);
+		}
 	}
 
 	@Override
@@ -198,6 +202,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			children.remove(exploration);
 		}
 
+		
 		BatchOutput fileOutputDescription = null;
 		for ( final ISymbol s : children ) {
 			if ( s instanceof BatchOutput ) {
