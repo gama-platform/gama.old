@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="org.apache.log4j_1.2.15.v201012070815.jar"/>
-	<classpathentry exported="true" kind="lib" path="commons-math-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="mondrian.jar"/>
-	<classpathentry exported="true" kind="lib" path="eigenbase-resgen.jar"/>
-	<classpathentry exported="true" kind="lib" path="commons-vfs-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="commons-pool-1.5.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="commons-collections-3.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="eigenbase-properties.jar"/>
-	<classpathentry exported="true" kind="lib" path="eigenbase-xom.jar"/>
-	<classpathentry exported="true" kind="lib" path="xercesImpl-2.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="svgSalamander.jar"/>
-	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
-	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
@@ -58,6 +43,9 @@
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry exported="true" kind="lib" path="jsr-275-1.0-beta-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="hsqldb-1.8.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="svnkit-javahl.jar"/>
+	<classpathentry exported="true" kind="lib" path="trilead.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-epsg-wkt-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-apidb-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-areafilter-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-core-0.43.1.jar"/>
@@ -73,8 +61,20 @@
 	<classpathentry exported="true" kind="lib" path="osmosis-tagtransform-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-xml-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-compress-1.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="svgSalamander.jar"/>
+	<classpathentry exported="true" kind="lib" path="xercesImpl-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-xom.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-properties.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-vfs-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="eigenbase-resgen.jar"/>
+	<classpathentry exported="true" kind="lib" path="mondrian.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-math-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="org.apache.log4j_1.2.15.v201012070815.jar"/>
 	<classpathentry exported="true" kind="lib" path="osmosis-osm-binary-0.43.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="com.google.protobuf-2.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-brewer-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="trove-3.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
