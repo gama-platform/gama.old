@@ -18,30 +18,71 @@
  */
 package msi.gaml.operators;
 
-import static com.google.common.base.Predicates.*;
-import static com.google.common.collect.Iterables.*;
-import static msi.gama.util.GAML.*;
-import java.util.*;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.toArray;
+import static msi.gama.util.GAML.emptyCheck;
+import static msi.gama.util.GAML.function;
+import static msi.gama.util.GAML.inContainer;
+import static msi.gama.util.GAML.iterableFunction;
+import static msi.gama.util.GAML.nullCheck;
+import static msi.gama.util.GAML.orderOn;
+import static msi.gama.util.GAML.withPredicate;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.population.IPopulationSet;
+import msi.gama.metamodel.population.MetaPopulation;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GAML;
 import msi.gama.util.GAML.InterleavingIterator;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.BinaryOperator;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Written by drogoul Modified on 31 juil. 2010
@@ -353,8 +394,13 @@ public class Containers {
 		@example(value = "[1,3,2,4,5,6,8,5,6] union [0,8]", equals = "[0,1,2,3,4,5,6,8]") }, see = { "inter",
 		IKeyword.PLUS })
 	public static IList union(final IScope scope, final IContainer source, final IContainer l) {
-		return new GamaList(Sets.union(Sets.newHashSet(nullCheck(source).iterable(scope)),
-			Sets.newHashSet(nullCheck(l).iterable(scope))));
+		/*return new GamaList(Sets.union(Sets.newHashSet(nullCheck(source).iterable(scope)),
+			Sets.newHashSet(nullCheck(l).iterable(scope))));*/
+		//New solution less optimized but that keep the order of the first list
+		GamaList r = new GamaList();
+		LinkedHashSet s = new LinkedHashSet((Collection) plus(scope,source,l));
+		r.addAll(s);
+		return r;
 	}
 
 	// ITERATORS
