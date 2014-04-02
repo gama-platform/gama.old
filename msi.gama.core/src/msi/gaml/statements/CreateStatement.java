@@ -19,6 +19,7 @@
 package msi.gaml.statements;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.metamodel.agent.IAgent;
@@ -34,6 +35,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -167,7 +169,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map> inits = new GamaList(max == null ? 10 : max);
 		final Object source = getSource(scope);
-		if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
+		if ( source instanceof GamaCSVFile ) {
+			fillInits(scope, inits, max, (GamaCSVFile) source);
+		}
+		else if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
 			// DBAccess
 			fillInitsWithDBResults(scope, inits, max, (IList) source);
 		} else if ( source instanceof IList && ((IList) source).get(0) instanceof GamaShape ||
@@ -175,8 +180,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			fillInits(scope, inits, max, (IAddressableContainer) source);
 		} else if ( source instanceof GamaGridFile ) {
 			fillInits(scope, inits, max, (GamaGridFile) source);
-		} else if ( source instanceof GamaTextFile ) {
-			fillInits(scope, inits, max, (GamaTextFile) source);
+		} else if ( source instanceof GamaTextFile ||  source instanceof GamaCSVFile) {
+			fillInits(scope, inits, max, (GamaFile) source);
 		} else {
 			fillInits(scope, inits, max);
 		}
@@ -186,6 +191,33 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			scope.setVarValue(returns, agents);
 		}
 		return agents;
+	}
+
+	private void fillInits(IScope scope, List<Map> inits, Integer max,
+			GamaCSVFile source) {
+		final boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
+		IMatrix mat = source.getContents(scope);
+		if (mat == null || mat.isEmpty(scope))
+			return;
+		int rows = mat.getRows(scope);
+		final int num = max == null ? rows : Math.min(rows, max);
+		
+		IList<String> headers = new GamaList<String>();
+		if (hasHeader) {
+			for (Object obj : mat.getRow(scope, 0)) {
+				headers.add(Cast.asString(scope,obj));
+			}
+		}
+		for ( int i = hasHeader ? 1 : 0; i < num; i++ ) {
+			final GamaMap map = new GamaMap();
+			final IList vals = mat.getRow(scope, i);
+			for ( int j = 0; j < vals.size(); j++ ) {
+				map.put(hasHeader ?headers.get(j) : j, vals.get(j));
+			}
+			// CSV attributes are mixed with the attributes of agents
+			fillWithUserInit(scope, map);
+			inits.add(map);
+		}
 	}
 
 	private Object getSource(final IScope scope) {
