@@ -98,7 +98,7 @@ public class Files {
 
 	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT, category=IOperatorCategory.FILE)
 	@doc(value = "opens an existing repository", usages = @usage(" If the specified string does not refer to an existing repository, an exception is risen."), examples = {
-		@example(value="folder(\"../includes/\")",raises="exception"),		
+		@example(value="folder(\"../includes/\")",raises="error"),		
 		@example(value="let dirT type: file value: folder(\"../includes/\");",isExecutable=false),
 		@example(value="				// dirT represents the repository \"../includes/\""),
 		@example(value="				// dirT.contents here contains the list of the names of included files") }, see = { "file", "new_folder" })
@@ -165,8 +165,8 @@ public class Files {
 
 	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING, category=IOperatorCategory.FILE)
 	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", usages = {@usage("If the specified string does not refer to an existing repository, the repository is created."), @usage("If the string refers to an existing file, an exception is risen.")}, examples = {
-		@example("let dirNewT type: file value: new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\""),
-		@example("															// eventually creates the directory ../incl") }, see = { "folder", "file" })
+		@example("file dirNewT <- new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\""),
+		@example("												// eventually creates the directory ../incl") }, see = { "folder", "file" })
 	public static IGamaFile newFolder(final IScope scope, final String folder) throws GamaRuntimeException {
 		IModel model = scope.getSimulationScope().getModel();
 		String theName;

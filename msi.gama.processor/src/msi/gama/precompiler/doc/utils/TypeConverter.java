@@ -65,7 +65,8 @@ public class TypeConverter {
 		hm.put("msi.gama.util.path.IPath", "path");
 		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		hm.put("double", "float");	
-		hm.put("boolean", "bool");	
+		hm.put("boolean", "bool");
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");
 		return hm;
 	}
 	

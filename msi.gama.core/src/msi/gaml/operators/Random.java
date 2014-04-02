@@ -18,6 +18,7 @@
  */
 package msi.gaml.operators;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -114,8 +115,8 @@ public class Random {
 		return RANDOM(scope).createBinomial(n, p).nextValue();
 	}
 
-	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.RANDOM})
-	@doc(value = "The elements of the operand in random order.", usages = { @usage(value="if the operand is empty, returns an empty list (or string, matrix)") }, examples = { @example(value="shuffle ([12, 13, 14])",equals="[14,12,13]",test=false) }, see = { "reverse" })
+	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.RANDOM,IOperatorCategory.CONTAINER})
+	@doc(value = "The elements of the operand in random order.", usages = { @usage(value="if the operand is empty, returns an empty list (or string, matrix)") }, examples = { @example(value="shuffle ([12, 13, 14])",equals="[14,12,13] (for example)",test=false) }, see = { "reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if ( target == null || target.isEmpty(scope) ) { return new GamaList(); }
 		final IList list = (IList) target.listValue(scope, Types.NO_TYPE).copy(scope);
@@ -130,23 +131,23 @@ public class Random {
 	// return opShuffle(scope, scope.getAgentScope().getPopulationFor(target).getAgentsList());
 	// }
 
-	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.RANDOM})
-	@doc(examples = { @example(value="shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals="matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]])") })
+	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.RANDOM,IOperatorCategory.MATRIX})
+	@doc(examples = { @example(value="shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals="matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)",test=false) })
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
 		final IMatrix matrix2 = (IMatrix) target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
 		return matrix2;
 	}
 
-	@operator(value = "shuffle", content_type = IType.STRING, category={IOperatorCategory.RANDOM})
-	@doc(examples = { @example(value="shuffle ('abc')", equals="'bac'") })
+	@operator(value = "shuffle", content_type = IType.STRING, category={IOperatorCategory.RANDOM,IOperatorCategory.STRING})
+	@doc(examples = { @example(value="shuffle ('abc')", equals="'bac' (for example)",test=false) })
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
 
 	@operator(value = "rnd", category={IOperatorCategory.RANDOM})
 	@doc(value = "a random integer in the interval [0, operand]", masterDoc= true, comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision", usages = { }, examples = {
-		@example(value="rnd (2)",equals="0, 1 or 2",test=false), @example(value="rnd (1000) / 1000",equals="a float between 0 and 1 with a precision of 0.001",test=false) }, see = { "flip" })
+		@example(value="rnd (2)",equals="0, 1 or 2",test=false), @example(value="rnd (1000) / 1000",returnType=IKeyword.FLOAT,equals="a float between 0 and 1 with a precision of 0.001",test=false) }, see = { "flip" })
 	public static Integer opRnd(final IScope scope, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(0, max);

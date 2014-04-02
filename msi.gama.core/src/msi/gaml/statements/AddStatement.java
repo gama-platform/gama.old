@@ -58,11 +58,11 @@ import msi.gaml.types.*;
 			examples = {@example("add expr to: expr_container;    // Add at the end"),
 						@example("add expr at: expr to: expr_container;   // Add at position expr")}),
 		@usage(value = "Case of a list, the expression in the attribute at: should be an integer.", 
-			examples = {@example("let emptyList type: list <- [];"),
-						@example(value="add 0 at: 0 to: emptyList ;", var="emptyList", equals="[0]"),      // emptyList now equals [0]
-						@example(value="add 10 at: 0 to: emptyList ;", var="emptyList", equals="[10,0]"),   // emptyList now equals [10,0]
-						@example(value="add 25 at: 2 to: emptyList ;", var="emptyList", equals="[10,0,20]"),   // emptyList now equals [10,0,20]
-						@example(value="add 50 to: emptyList;", var="emptyList", equals="[10,0,20,50]")}),          // emptyList now equals [10,0,20,50]
+			examples = {@example("list<int> workingList <- [];"),
+						@example(value="add 0 at: 0 to: workingList ;", var="workingList", equals="[0]"),      // emptyList now equals [0]
+						@example(value="add 10 at: 0 to: workingList ;", var="workingList", equals="[10,0]"),   // emptyList now equals [10,0]
+						@example(value="add 20 at: 2 to: workingList ;", var="workingList", equals="[10,0,20]"),   // emptyList now equals [10,0,20]
+						@example(value="add 50 to: workingList;", var="workingList", equals="[10,0,20,50]")}),          // emptyList now equals [10,0,20,50]
 		@usage(value = "Case of a matrix: this statement can not be used on matrix. Please refer to the statement put."),
 		@usage(value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. " +
 				"It is important to note that the behavior of the statement is slightly different, in particular in the use of the at attribute.", 

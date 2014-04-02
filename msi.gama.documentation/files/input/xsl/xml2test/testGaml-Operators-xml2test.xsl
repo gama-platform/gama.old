@@ -8,16 +8,17 @@
  *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>.
  */
 
-model Op</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test
+model </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>
 
 global {
 	init {
-		create testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test number: 1;
+		create test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> number: 1;
+		ask test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> {do _step_;}
 	}
 }
 
 entities {
-	species testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Test {
+	species test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> {
 
 	</xsl:text>
 
@@ -27,7 +28,7 @@ entities {
 	}
 }
 
-experiment testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp type: gui {}	
+experiment test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp type: gui {}	
 	</xsl:text>
 
 </xsl:template>
@@ -39,6 +40,7 @@ experiment testOp</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp 
 <xsl:for-each select="documentation/usages/usage" >  
 <xsl:call-template name="generateTestFromExample"/>  
 </xsl:for-each>
+
 <xsl:for-each select="documentation/usagesExamples/usage" >  
 <xsl:call-template name="generateTestFromExample"/>  
 </xsl:for-each>

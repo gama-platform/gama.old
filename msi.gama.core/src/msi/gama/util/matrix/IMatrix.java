@@ -67,7 +67,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
 	@doc(value = "returns a list of the rows of the matrix, with each row as a list of elements", examples = {
 		@example(value="rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
-				 equals=" matrix([[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]])") }, see = "columns_list")
+				 equals="[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") }, see = "columns_list")
 	public abstract IList<IList<T>> getRowsList(IScope scope);
 
 	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST, category={IOperatorCategory.MATRIX})
@@ -135,12 +135,12 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 
 	@operator(value = IKeyword.APPEND_HORIZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	@doc(value = "A matrix resulting from the concatenation of the rows of the two given matrices. If not both numerical or both object matrices, returns the first matrix.", masterDoc=true, 
-	examples = { @example(value="matrix([[1,2,3],[4,5,6]]) append_horizontally matrix([[7,8,9],[10,11,12]])", equals="matrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]])") })
+	examples = { @example(value="matrix([[1.0,2.0],[3.0,4.0]]) append_horizontally matrix([[1,2],[3,4]])", equals="matrix([[1.0,2.0],[3.0,4.0],[1.0,2.0],[3.0,4.0]])") })
 	public abstract IMatrix opAppendHorizontally(final IScope scope, final IMatrix b);
 
 	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	@doc(value = "A matrix resulting from the concatenation of the columns  of the two given matrices. If not both numerical or both object matrices, returns the first matrix.", masterDoc=true,
-	examples = { @example(value="matrix([[1,2,3],[4,5,6]]) append_vertically matrix([[7,8,9],[10,11,12]])", equals="matrix([[1,2,3,7,8,9],[4,5,6,10,11,12]])") })
+	examples = { @example(value="matrix([[1,2],[3,4]]) append_vertically matrix([[1,2],[3,4]])", equals="matrix([[1,2,1,2],[3,4,3,4]])") })
 	public abstract IMatrix opAppendVertically(final IScope scope, final IMatrix b);
 	
 	

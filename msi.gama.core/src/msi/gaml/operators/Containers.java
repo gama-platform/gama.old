@@ -133,8 +133,8 @@ public class Containers {
 	@doc(value = "true if the left operand contains all the elements of the right operand, false otherwise", comment = "the definition of contains depends on the container", usages = { @usage("if the right operand is nil or empty, contains_all returns true") }, examples = {
 		@example(value = "[1,2,3,4,5,6] contains_all [2,4]", equals = "true "),
 		@example(value = "[1,2,3,4,5,6] contains_all [2,8]", equals = "false"),
-		@example(value = "[1::2, 3::4, 5::6] contains_all [1,3]", equals = "true "),
-		@example(value = "[1::2, 3::4, 5::6] contains_all [2,4]", equals = "false") }, see = { "contains",
+		@example(value = "[1::2, 3::4, 5::6] contains_all [1,3]", equals = "false "),
+		@example(value = "[1::2, 3::4, 5::6] contains_all [2,4]", equals = "true") }, see = { "contains",
 		"contains_any" })
 	public static Boolean contains_all(final IScope scope, final IContainer m, final IContainer l) {
 		return Iterables.all(nullCheck(l).iterable(scope), inContainer(scope, m));
@@ -144,8 +144,8 @@ public class Containers {
 	@doc(value = "true if the left operand contains one of the elements of the right operand, false otherwise", comment = "the definition of contains depends on the container", special_cases = { "if the right operand is nil or empty, contains_any returns false" }, examples = {
 		@example(value = "[1,2,3,4,5,6] contains_any [2,4]", equals = "true "),
 		@example(value = "[1,2,3,4,5,6] contains_any [2,8]", equals = "true"),
-		@example(value = "[1::2, 3::4, 5::6] contains_any [1,3]", equals = "true "),
-		@example(value = "[1::2, 3::4, 5::6] contains_any [2,4]", equals = "false") }, see = { "contains",
+		@example(value = "[1::2, 3::4, 5::6] contains_any [1,3]", equals = "false"),
+		@example(value = "[1::2, 3::4, 5::6] contains_any [2,4]", equals = "true") }, see = { "contains",
 		"contains_all" })
 	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer l) {
 		return Iterables.any(nullCheck(c).iterable(scope), inContainer(scope, l));
@@ -189,8 +189,8 @@ public class Containers {
 	@doc(value = "true if the right operand contains the left operand, false otherwise", comment = "the definition of in depends on the container", usages = { @usage("if the right operand is nil or empty, in returns false") }, examples = {
 		@example(value = "2 in [1,2,3,4,5,6]", equals = "true"),
 		@example(value = "7 in [1,2,3,4,5,6]", equals = "false"),
-		@example(value = "3 in [1::2, 3::4, 5::6]", equals = "true"),
-		@example(value = "6 in [1::2, 3::4, 5::6]", equals = "false") }, see = { "contains" })
+		@example(value = "3 in [1::2, 3::4, 5::6]", equals = "false"),
+		@example(value = "6 in [1::2, 3::4, 5::6]", equals = "true") }, see = { "contains" })
 	public static Boolean in(final IScope scope, final Object o, final IContainer source) throws GamaRuntimeException {
 		return source.contains(scope, o);
 		// return contains(nullCheck(source).iterable(scope), o);
@@ -259,7 +259,7 @@ public class Containers {
 	}
 
 	@operator(value = "last_index_of", can_be_const = true, type = ITypeProvider.FIRST_KEY_TYPE, category = { IOperatorCategory.MAP })
-	@doc(value = "the index of the last occurence of the right operand in the left operand container", usages = @usage(value = "if the left operand is a map, last_index_of returns the index as a pair", examples = { @example(value = "[1::2, 3::4, 5::4] last_index_of 4", equals = "5::4") }))
+	@doc(value = "the index of the last occurence of the right operand in the left operand container", usages = @usage(value = "if the left operand is a map, last_index_of returns the index as an int (the key of the pair)", examples = { @example(value = "[1::2, 3::4, 5::4] last_index_of 4", equals = "5") }))
 	public static Object last_index_of(final GamaMap<?, ?> m, final Object o) {
 		for ( final Map.Entry<?, ?> k : Lists.reverse(ImmutableList.copyOf(nullCheck(m).entrySet())) ) {
 			if ( k.getValue().equals(o) ) { return k.getKey(); }
@@ -274,7 +274,7 @@ public class Containers {
 		@usage(value = "if an operand is a map, it will be transformed into the set of its values", examples = {
 			@example(value = "[1::2, 3::4, 5::6] inter [2,4]", equals = "[2,4]"),
 			@example(value = "[1::2, 3::4, 5::6] inter [1,3]", equals = "[]") }),
-		@usage(value = "if an operand is a matrix, it will be transformed into the set of the lines", examples = @example(value = "matrix([[1,2,3],[4,5,4]]) inter [3,4]", equals = "[4,3]")) }, examples = {
+		@usage(value = "if an operand is a matrix, it will be transformed into the set of the lines", examples = @example(value = "matrix([[1,2,3],[4,5,4]]) inter [3,4]", equals = "[3,4]")) }, examples = {
 		@example(value = "[1,2,3,4,5,6] inter [2,4]", equals = "[2,4]"),
 		@example(value = "[1,2,3,4,5,6] inter [0,8]", equals = "[]") }, see = { "remove_duplicates" })
 	public static IList inter(final IScope scope, final IContainer l1, final IContainer l) {
@@ -338,7 +338,7 @@ public class Containers {
 		+ "(resulting in the need to cast it explicitely if it is to be used in an ask statement, for instance).", usages = @usage("if the right operand is nil, of_species returns the right operand"), examples = {
 		@example(value = "(self neighbours_at 10) of_species (species (self))", equals = "all the neighbouring agents of the same species.", isExecutable = false),
 		@example(value = "[test(0),test(1),node(1),node(2)] of_species test", equals = "[test0,test1]", isExecutable = false),
-		@example(value = "[1,2,3,4,5,6] of_species agent", equals = "[]") }, see = { "of_generic_species" })
+		@example(value = "[1,2,3,4,5,6] of_species agent", equals = "nil") }, see = { "of_generic_species" })
 	public static IList of_species(final IScope scope, final IContainer agents, final ISpecies s) {
 		return of_species(scope, nullCheck(agents), nullCheck(s), false);
 	}
@@ -390,7 +390,7 @@ public class Containers {
 	@operator(value = "union", can_be_const = true, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new list containing all the elements of both containers without duplicated elements.", comment = "", usages = { @usage("if the left or right operand is nil, union throws an error") }, examples = {
 		@example(value = "[1,2,3,4,5,6] union [2,4,9]", equals = "[1,2,3,4,5,6,9]"),
-		@example(value = "[1,2,3,4,5,6] union [0,8]", equals = "[0,1,2,3,4,5,6,8]"),
+		@example(value = "[1,2,3,4,5,6] union [0,8]", equals = "[1,2,3,4,5,6,0,8]"),
 		@example(value = "[1,3,2,4,5,6,8,5,6] union [0,8]", equals = "[0,1,2,3,4,5,6,8]") }, see = { "inter",
 		IKeyword.PLUS })
 	public static IList union(final IScope scope, final IContainer source, final IContainer l) {
@@ -447,12 +447,11 @@ public class Containers {
 	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category=IOperatorCategory.CONTAINER)
 	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
 		@usage("if the left-hand operand is nil, last_with throws an error."), @usage("If there is no element that satisfies the condition, it returns nil"),
-		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] last_with (each >= 4)", equals="5::6"), @example(value="[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)", equals="5::6")} )}, examples = {
+		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] last_with (each >= 4)", equals="6"), @example(value="[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)", equals="5::6")} )}, examples = {
 		@example(value = "[1,2,3,4,5,6,7,8] last_with (each > 3)", equals = "8"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 last_with (length(g2 out_edges_of each) = 0 )", equals="node11", isExecutable = false),
-		@example(value = "(list(node) last_with (round(node(each).location.x) > 32)", equals = "node3", isExecutable=false),
-		@example(value = "[1::2, 3::4, 5::6] last_with (each > 4)", equals="5::6") }, see = { "group_by", "first_with", "where" })
+		@example(value = "(list(node) last_with (round(node(each).location.x) > 32)", equals = "node3", isExecutable=false)}, see = { "group_by", "first_with", "where" })
 	public static Object last_with(final IScope scope, final IContainer original, final IExpression filter) {
 		final Iterable it = filter(nullCheck(original).iterable(scope), withPredicate(scope, filter));
 		return size(it) == 0 ? null : getLast(it);
@@ -461,7 +460,7 @@ public class Containers {
 	@operator(value = { "first_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category = IOperatorCategory.CONTAINER)
 	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
 			@usage("if the left-hand operand is nil, first_with throws an error. If there is no element that satisfies the condition, it returns nil"), 
-			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] first_with (each >= 4)", equals="3::4"), @example(value="[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)", equals="3::4")} )}, examples = {
+			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] first_with (each >= 4)", equals="4"), @example(value="[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)", equals="3::4")} )}, examples = {
 		@example(value = "[1,2,3,4,5,6,7,8] first_with (each > 3)", equals = "4"),
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 first_with (length(g2 out_edges_of each) = 0)", equals = "node9", test = false),
@@ -475,9 +474,10 @@ public class Containers {
 	@doc(value = "the maximum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
 			@usage("As of GAMA 1.6, if the left-hand operand is nil or empty, max_of throws an error"),
 			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] max_of (each + 3)", equals="9")})}, examples = {
+		@example(value="graph([]) max_of([])", raises = "error", isTestOnly=true),
 		@example(value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )", equals = "800"),
-		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
-		@example(value = "g2 max_of (length(g2 out_edges_of each) )", equals = "3", test = false),
+		@example(value = "graph g2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
+		@example(value = "g2 max_of (length(g2 out_edges_of each) )", equals = "1"),
 		@example(value = "(list(node) max_of (round(node(each).location.x))", equals = "96", isExecutable = false) }, see = { "min_of" })
 	public static Object max_of(final IScope scope, final IContainer container, final IExpression filter) {
 		final Function f = GAML.<Comparable> function(scope, filter);
@@ -488,10 +488,11 @@ public class Containers {
 	@operator(value = { "min_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
 	@doc(value = "the minimum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
 			@usage("if the left-hand operand is nil or empty, min_of throws an error"), 
-			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] min_of (each + 3)", equals="2")})}, examples = {
+			@usage(value="if the left-operand is a map, the keyword each will contain each value",examples={@example(value="[1::2, 3::4, 5::6] min_of (each + 3)", equals="5")})}, examples = {
+		@example(value="graph([]) min_of([])", raises = "error", isTestOnly=true),
 		@example(value = "[1,2,4,3,5,7,6,8] min_of (each * 100 )", equals = "100"),
-		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
-		@example(value = "g2 min_of (length(g2 out_edges_of each) )", equals = "0", test = false),
+		@example(value = "graph g2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
+		@example(value = "g2 min_of (length(g2 out_edges_of each) )", equals = "0"),
 		@example(value = "(list(node) min_of (round(node(each).location.x))", equals = "4", isExecutable = false) }, see = { "max_of" })
 	public static Object min_of(final IScope scope, final IContainer container, final IExpression filter) {
 		final Function f = GAML.<Comparable> function(scope, filter);
@@ -522,7 +523,7 @@ public class Containers {
 	@doc(value = "Returns a list of length the value of the left-hand operand, containing random elements from the right-hand operand. As of GAMA 1.6, the order in which the elements are returned can be different than the order in which they appear in the right-hand container", special_cases = {
 		"if the right-hand operand is empty, among returns a new empty list. If it is nil, it throws an error.",
 		"if the left-hand operand is greater than the length of the right-hand operand, among returns the right-hand operand. If it is smaller or equal to zero, it returns an empty list" }, examples = {
-		@example(value = "3 among [1,2,4,3,5,7,6,8]", equals = "[1,2,8]"),
+		@example(value = "3 among [1,2,4,3,5,7,6,8]", equals = "[1,2,8] (for example)",test=false),
 		@example(value = "3 among g2", equals = "[node6,node11,node7]", isExecutable = false),
 		@example(value = "3 among list(node)", equals = "[node1,node11,node4]", isExecutable = false) })
 	public static IList among(final IScope scope, final Integer number, final IContainer c) throws GamaRuntimeException {
@@ -630,7 +631,7 @@ public class Containers {
 
 	@operator(value = { "interleave" }, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE, category = IOperatorCategory.CONTAINER)
 	@doc(value = "a new list containing the interleaved elements of the containers contained in the operand", comment = "the operand should be a list of lists of elements. The result is a list of elements. ", examples = {
-		@example(value = "interleave([1,2,4,3,5,7,6,8])", equals = "[1,2,3,4,5,7,6,8]"),
+		@example(value = "interleave([1,2,4,3,5,7,6,8])", equals = "[1,2,4,3,5,7,6,8]"),
 		@example(value = "interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])", equals = "['e11','e21','e31','e12','e22','e32','e13','e23','e33']") })
 	public static IList interleave(final IScope scope, final IContainer cc) {
 		final Iterator it = new InterleavingIterator(toArray(nullCheck(cc).iterable(scope), Object.class));
