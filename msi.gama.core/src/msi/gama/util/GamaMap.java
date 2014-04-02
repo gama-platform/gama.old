@@ -152,7 +152,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		return res;
 	}
 	
-	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new map containing all the elements of both operands",examples = {
 		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
 		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" + IKeyword.MINUS })
@@ -176,7 +176,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		return res;
 	}
 	
-	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
+	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand",examples = {
 		@example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
 		@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") }, see = { "" + IKeyword.MINUS })
