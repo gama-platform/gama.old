@@ -131,22 +131,28 @@ public class Colors {
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 1)"), examples = @example(value="rgb (255,0,0,0.5)",equals="rgb(125,0,0)"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"), examples = @example(value="rgb (255,0,0,125)",equals="rgb(125,0,0)"), see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b, final int alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
 
+	@operator(value = "rgb", category={IOperatorCategory.COLOR})
+	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"), examples = @example(value="rgb (255,0,0,0.5)",equals="rgb(125,0,0)"), see = "hsb")
+	public static GamaColor rgb(final int r, final int g, final int b, final double alpha) {
+		return new GamaColor(r, g, b, alpha);
+	}
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
 	@doc(value = "rgb named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 255)"), examples = @example(value="rgb (\"red\")",equals="rgb(255,0,0)"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
-	@operator(value = "rgb", category={IOperatorCategory.COLOR})
+	//to add
+	/*@operator(value = "rgb", category={IOperatorCategory.COLOR})
 	@doc(value = "rgb  named color", usages = @usage("It can be used with a name of color and alpha (between 0 and 1)"), examples = @example(value="rgb(\"red\",0.2)",equals="rgb([5,0,0])"), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final String s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
-	}
+	}*/
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
 	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 255"), examples = @example(value="rgb(rgb(255,0,0),125)", equals="#cyan"), see = "hsb")
