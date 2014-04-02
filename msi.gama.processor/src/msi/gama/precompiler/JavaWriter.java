@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'JavaWriter.java', in plugin 'msi.gama.processor', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.precompiler;
 
 import java.util.*;
@@ -56,44 +67,135 @@ public class JavaWriter {
 	// Keeps track of the current index of the documentation in the GamlDocumentation.contents list
 	int docCount = 0;
 
-	public String write(final String packageName, final GamlProperties props, final StringBuilder classBuilder,
-		final StringBuilder docBuilder) {
-		writeHeader(classBuilder, packageName);
-		writeDocHeader(docBuilder, packageName);
+	public String write(final String packageName, final GamlProperties props, final StringBuilder sb,
+		final StringBuilder doc) {
+		writeHeader(sb, packageName);
+		writeDocHeader(doc, packageName);
+		sb.append(ln);
+		writeTypesInitialization(props, sb, doc);
+		sb.append(ln);
+		writeSymbolsInitialization(props, sb, doc);
+		sb.append(ln);
+		writeVarsInitialization(props, sb, doc);
+		sb.append(ln);
+		writeOperatorsInitialization(props, sb, doc);
+		sb.append(ln);
+		writeFilesInitialization(props, sb, doc);
+		sb.append(ln);
+		writeActionsInitialization(props, sb, doc);
+		sb.append(ln);
+		writeSkillsInitialization(props, sb, doc);
+		sb.append(ln);
+		writeSpeciesInitialization(props, sb, doc);
+		sb.append(ln);
+		writeDisplaysInitialization(props, sb, doc);
+		sb.append(ln);
+		writeFooter(sb);
+		writeDocFooter(doc);
+		return sb.toString();
+	}
 
-		for ( Map.Entry<String, String> entry : props.filterFirst(TYPE_PREFIX).entrySet() ) {
-			writeType(classBuilder, docBuilder, entry.getKey(), entry.getValue());
+	protected void writeHeader(final StringBuilder sb, final String packageName) {
+		sb.append("package ").append(packageName).append(';');
+		for ( int i = 0; i < IMPORTS.length; i++ ) {
+			sb.append(ln).append("import ").append(IMPORTS[i]).append(".*;");
 		}
-		writeFactoriesAddition(classBuilder, props.filterFirst(FACTORY_PREFIX));
-		for ( Map.Entry<String, String> entry : props.filterFirst(SYMBOL_PREFIX).entrySet() ) {
-			writeSymbolAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
+		for ( int i = 0; i < EXPLICIT_IMPORTS.length; i++ ) {
+			sb.append(ln).append("import ").append(EXPLICIT_IMPORTS[i]).append(";");
 		}
-		for ( Map.Entry<String, String> entry : props.filterFirst(VAR_PREFIX).entrySet() ) {
-			writeVarAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
-		for ( Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet() ) {
-			writeOperatorAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
+		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
+		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
+		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
+		sb.append(ln).append(ln).append(classDefinition()).append(" {");
+		sb.append(ln).append(tab);
+		sb.append(
+			"	protected static GamlElementDocumentation DOC(int i) { return GamlDocumentation.getInstance().contents.get(i);}")
+			.append(ln).append(ln);
 
-		for ( Map.Entry<String, String> entry : props.filterFirst(FILE_PREFIX).entrySet() ) {
-			writeFileAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
-		for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
-			writeActionAddition(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
-		for ( Map.Entry<String, String> entry : props.filterFirst(SKILL_PREFIX).entrySet() ) {
-			writeSkill(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
-		for ( Map.Entry<String, String> entry : props.filterFirst(SPECIES_PREFIX).entrySet() ) {
-			writeSpecies(classBuilder, docBuilder, entry.getKey(), entry.getValue());
-		}
+		sb.append("public void initialize() {");
+		sb.append(ln).append(tab).append("initializeTypes();");
+		sb.append(ln).append(tab).append("initializeSymbols();");
+		sb.append(ln).append(tab).append("initializeVars();");
+		sb.append(ln).append(tab).append("initializeOperators();");
+		sb.append(ln).append(tab).append("initializeFiles();");
+		sb.append(ln).append(tab).append("initializeActions();");
+		sb.append(ln).append(tab).append("initializeSkills();");
+		sb.append(ln).append(tab).append("initializeSpecies();");
+		sb.append(ln).append(tab).append("initializeDisplays();");
+		sb.append(ln).append('}');
+	}
+
+	private void writeDisplaysInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeDisplays() {");
 		for ( Map.Entry<String, String> entry : props.filterFirst(DISPLAY_PREFIX).entrySet() ) {
-			writeDisplay(classBuilder, docBuilder, entry.getKey(), entry.getValue());
+			writeDisplay(sb, doc, entry.getKey(), entry.getValue());
 		}
+		sb.append("};");
+	}
 
-		writeFooter(classBuilder);
-		writeFooter(docBuilder);
-		return classBuilder.toString();
+	private void writeActionsInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeActions() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
+			writeActionAddition(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	private void writeSpeciesInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeSpecies() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(SPECIES_PREFIX).entrySet() ) {
+			writeSpecies(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	private void writeSkillsInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeSkills() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(SKILL_PREFIX).entrySet() ) {
+			writeSkill(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	private void writeFilesInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeFiles() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(FILE_PREFIX).entrySet() ) {
+			writeFileAddition(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	void writeTypesInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeTypes() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(TYPE_PREFIX).entrySet() ) {
+			writeType(sb, doc, entry.getKey(), entry.getValue());
+		}
+		writeFactoriesAddition(sb, props.filterFirst(FACTORY_PREFIX));
+		sb.append("};");
+	}
+
+	void writeSymbolsInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeSymbols() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(SYMBOL_PREFIX).entrySet() ) {
+			writeSymbolAddition(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	void writeVarsInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeVars() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(VAR_PREFIX).entrySet() ) {
+			writeVarAddition(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}
+
+	void writeOperatorsInitialization(final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
+		sb.append("public void initializeOperators() {");
+		for ( Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet() ) {
+			writeOperatorAddition(sb, doc, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
 	}
 
 	String toClassObject(final String s) {
@@ -559,26 +661,6 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeHeader(final StringBuilder sb, final String packageName) {
-		sb.append("package ").append(packageName).append(';');
-		for ( int i = 0; i < IMPORTS.length; i++ ) {
-			sb.append(ln).append("import ").append(IMPORTS[i]).append(".*;");
-		}
-		for ( int i = 0; i < EXPLICIT_IMPORTS.length; i++ ) {
-			sb.append(ln).append("import ").append(EXPLICIT_IMPORTS[i]).append(";");
-		}
-		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
-		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
-		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
-		sb.append(ln).append(ln).append(classDefinition()).append(" {");
-		sb.append(ln).append(tab);
-		sb.append(
-			"	protected static GamlElementDocumentation DOC(int i) { return GamlDocumentation.getInstance().contents.get(i);}")
-			.append(ln).append(ln);
-
-		sb.append("public void initialize() {");
-	}
-
 	protected void writeDocHeader(final StringBuilder sb, final String packageName) {
 		sb.append("package ").append(packageName).append(';');
 		sb.append(ln).append("import ").append("java.util").append(".*;");
@@ -622,9 +704,13 @@ public class JavaWriter {
 	}
 
 	protected void writeFooter(final StringBuilder sb) {
-		sb.append(ln);
-		sb.append(tab).append('}');
 		sb.append(ln).append('}');
+	}
+
+	protected void writeDocFooter(final StringBuilder sb) {
+		sb.append(ln).append('}');
+		sb.append(ln).append('}');
+
 	}
 
 	private String concat(final String ... tab) {

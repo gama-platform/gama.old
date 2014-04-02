@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'XMLWriter.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.precompiler;
 
 import java.io.PrintWriter;
@@ -49,7 +60,7 @@ public class XMLWriter {
 		try {
 			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			System.err.println("Impossible de créer un DocumentBuilder.");
+			System.err.println("Impossible de crï¿½er un DocumentBuilder.");
 			System.exit(1);
 		}
 
