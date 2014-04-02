@@ -37,6 +37,7 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
+
 import org.uncommons.maths.statistics.DataSet;
 import rcaller.*;
 import rcaller.exception.*;
@@ -376,7 +377,7 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "R_compute", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
+	@operator(value = "R_compute", can_be_const = true, type = IType.MAP,content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).", examples = {
 		@example("map result <- [];"), @example("result <- R_compute('C:/YourPath/Correlation.R');"), @example("////// Correlation.R file:"), @example("// x <- c(1, 2, 3);"),
 		@example("// y <- c(1, 2, 4);"), @example("// result <- cor(x, y);"), @example("// Output:"), @example("// result::[0.981980506061966]") })
@@ -452,7 +453,7 @@ public class Stats {
 		}
 	}
 
-	@operator(value = "R_compute_param", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
+	@operator(value = "R_compute_param", can_be_const = true, type = IType.MAP,content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector", examples = {
 		@example("list X <- [2, 3, 1];"), @example("map result <- [];"), @example("result <- R_compute_param('C:/YourPath/AddParam.R', X);"),
 		@example("write result at 0;"), @example("////// AddParam.R file:"), @example("// v1 <- vectorParam[1];"), @example("// v2<-vectorParam[2];"), @example("// v3<-vectorParam[3];"),

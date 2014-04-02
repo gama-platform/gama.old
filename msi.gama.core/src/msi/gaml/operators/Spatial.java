@@ -941,20 +941,20 @@ public abstract class Spatial {
 			return new GamaShape(g, result);
 		}
 
-		@operator(value = "triangulate", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "triangulate", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", masterDoc=true, examples = { @example(value="triangulate(self)",equals="the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",test=false) })
 		public static GamaList<IShape> triangulate(final IScope scope, final IShape g) {
 			if ( g == null ) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
 
-		@operator(value = "triangulate", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "triangulate", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { @example(value="triangulate(self)",equals="the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",test=false) })
 		public static GamaList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
 
-		@operator(value = "to_rectangles", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "to_rectangles", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangle that overlaps the border of the geometry", examples = { @example(value="to_rectangles(self, {10.0, 15.0}, true)",equals="the list of rectangles of size {10.0, 15.0} corresponding to the discretisation into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",test=false) })
 		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
 			final boolean overlaps) {
@@ -962,7 +962,7 @@ public abstract class Spatial {
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
 		}
 
-		@operator(value = "split_geometry", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "split_geometry", type = IType.LIST,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries that result from the decomposition of the geometry according to a grid", examples = { @example(value="split_geometry(self, {5, 5})",equals="the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",test=false) })
 		public static GamaList<IShape> geometryDecomposition(final IScope scope, final IShape geom, final GamaPoint dimension) {
 			if ( geom == null)
@@ -975,13 +975,13 @@ public abstract class Spatial {
 		}
 
 		
-		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
+		@operator(value = "as_hexagonal_grid", type = IType.LIST,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { @example(value="triangulate(self)",equals="the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.", test=false) })
 		public static GamaList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
 		}
 
-		@operator(value = "as_grid", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
+		@operator(value = "as_grid", type = IType.MATRIX,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
 		@doc(value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { @example(value="self as_grid {10, 5}",equals="a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",test=false) })
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
@@ -989,7 +989,7 @@ public abstract class Spatial {
 			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, false, false, false);
 		}
 
-		@operator(value = "as_4_grid", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
+		@operator(value = "as_4_grid", type = IType.MATRIX,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
 		@doc(value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { @example(value="self as_grid {10, 5}",equals="matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",test=false) })
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
@@ -997,7 +997,7 @@ public abstract class Spatial {
 			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false);
 		}
 
-		@operator(value = "split_lines", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "split_lines", type = IType.LIST,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries resulting after cutting the lines at their intersections.", examples = { @example(value="split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",equals="a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",test=false) })
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 			throws GamaRuntimeException {
@@ -1021,7 +1021,7 @@ public abstract class Spatial {
 			return nwGeoms;
 		}
 
-		@operator(value = "skeletonize", content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = "skeletonize",type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)", examples = { @example(value="skeletonize(self)",equals="the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",test=false) })
 		public static GamaList<IShape> skeletonize(final IScope scope, final IShape g) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
@@ -1110,7 +1110,7 @@ public abstract class Spatial {
 			return t.directionInDegreesTo(scope, g1, g2);
 		}
 
-		@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
+		@operator(value = "path_between",type = IType.PATH, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
 		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.", examples = { @example(value="my_topology path_between [ag1, ag2]",equals="A path between ag1 and ag2",isExecutable=false) }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
 		public static IPath path_between(final IScope scope, final ITopology graph, final IContainer<?, IShape> nodes)
@@ -1153,7 +1153,7 @@ public abstract class Spatial {
 			return scope.getTopology().distanceBetween(scope, source, target);
 		}
 
-		@operator(value="path_to", category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
+		@operator(value="path_to", type = IType.PATH,category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
 		@doc(value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.", masterDoc=true, examples = { @example(value="ag1 path_to ag2",equals="the path between ag1 and ag2 considering the topology of the agent applying the operator",isExecutable=false) }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_between", "distance_to" })
 		public static IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
@@ -1161,7 +1161,7 @@ public abstract class Spatial {
 			return scope.getTopology().pathBetween(scope, g1, g);
 		}
 
-		@operator(value="path_to", category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
+		@operator(value="path_to", type = IType.PATH,category={IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS,IOperatorCategory.PATH})
 		@doc(value = "A shortest path between two points considering the topology of the agent applying the operator.")
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1)
@@ -1331,7 +1331,7 @@ public abstract class Spatial {
 			return p;
 		}
 
-		@operator(value = { "points_on" }, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
+		@operator(value = { "points_on" }, type = IType.LIST,category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
 		@doc(value = "A list of points of the operand-geometry distant from each other to the float right-operand .", examples = { @example(value=" square(5) points_on(2)",equals="a list of points belonging to the exterior ring of the square distant from each other of 2.",test=false) }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
 		public static GamaList points_exterior_ring(final IShape geom, final Double distance) {
@@ -1346,7 +1346,7 @@ public abstract class Spatial {
 			return locs;
 		}
 
-		@operator(value = { "points_at" }, content_type = IType.POINT, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
+		@operator(value = { "points_at" }, type = IType.LIST,content_type = IType.POINT, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
 		@doc(value = "A list of left-operand number of points located at a the right-operand distance to the agent location.", examples = { @example(value="3 points_at(20.0)",equals="returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location",test=false) }, see = {
 			"any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 		public static GamaList points_at(final IScope scope, final Integer nbLoc, final Double distance) {
@@ -1368,7 +1368,7 @@ public abstract class Spatial {
 
 		}
 
-		@operator(value="closest_points_with", category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
+		@operator(value="closest_points_with", type = IType.LIST, content_type = IType.POINT, category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
 		@doc(value = "A list of two closest points between the two geometries.", examples = { @example(value="geom1 closest_points_with(geom2)",equals="[pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1",isExecutable=false) }, see = {
 			"any_location_in", "any_point_in", "farthest_point_to", "points_at" })
 		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
@@ -1439,7 +1439,7 @@ public abstract class Spatial {
 
 	public static abstract class Queries {
 
-		@operator(value = "neighbours_of", content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "neighbours_of", type = IType.LIST,content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "a list, containing all the agents located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.", masterDoc=true, examples = { @example(value="topology(self) neighbours_of self",equals="returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.",test=false) }, see = {
 			"neighbours_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside", "agent_closest_to" })
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent) {
@@ -1447,7 +1447,7 @@ public abstract class Spatial {
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
-		@operator(value = "neighbours_of", content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "neighbours_of", type = IType.LIST,content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		/* TODO, expected_content_type = { IType.FLOAT, IType.INT } */
 		@doc(deprecated = "Use 'neighbours_of(topology, agent, distance)' instead", usages = @usage(value="a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.", examples = { @example(value="topology(self) neighbours_of self::10",equals="all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",test=false) }))
 		public static IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
@@ -1456,7 +1456,7 @@ public abstract class Spatial {
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
-		@operator(value = "neighbours_of", content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "neighbours_of",type = IType.LIST, content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		/* TODO, expected_content_type = { IType.FLOAT, IType.INT } */
 		@doc(usages = @usage(value="a list, containing all the agents located at a distance inferior or equal to the third argument to the second argument (agent, geometry or point) considering the first operand topology.", examples = { @example(value="neighbours_of (topology(self), self,10)",equals="all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",test=false) }))
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IShape agent,
@@ -1465,7 +1465,7 @@ public abstract class Spatial {
 			// TODO We could compute a filter based on the population if it is an agent
 		}
 
-		@operator(value = "neighbours_at", content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "neighbours_at", type = IType.LIST,content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { @example(value="(self neighbours_at (10))",equals="all the agents located at a distance lower or equal to 10 to the agent applying the operator.",test=false) }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside", "agent_closest_to","at_distance" })
 		public static IList neighbours_at(final IScope scope, final IShape agent, final Double distance) {
@@ -1473,7 +1473,7 @@ public abstract class Spatial {
 				: Different.with(), agent, distance);
 		}
 
-		@operator(value = "at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "at_distance", type = IType.LIST,content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)", examples = { @example(value="[ag1, ag2, ag3] at_distance 20",equals="the agents of the list located at a distance <= 20 from the caller agent (in the same order).",isExecutable=false) }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside","overlapping" })
 		public static IList<IAgent> at_distance(final IScope scope, final IContainer<?, ? extends IShape> list,
@@ -1481,7 +1481,7 @@ public abstract class Spatial {
 			return _neighbours(scope, In.list(scope, list), scope.getAgentScope(), distance);
 		}
 
-		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = { "inside" }, type = IType.LIST,content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents among the left-operand list, species or meta-population (addition of species), covered by the operand (casted as a geometry).", examples = {
 			@example(value="[ag1, ag2, ag3] inside(self)",equals="the agents among ag1, ag2 and ag3 that are covered by the shape of the right-hand argument.",isExecutable=false),
 			@example(value="(species1 + species2) inside (self)",equals="the agents among species species1 and species2 that are covered by the shape of the right-hand argument.",isExecutable=false) }, see = { "neighbours_at", "neighbours_of", "closest_to","overlapping", "agents_overlapping", "agents_inside", "agent_closest_to" })
@@ -1490,7 +1490,7 @@ public abstract class Spatial {
 			return _gather(scope, In.list(scope, list), source, true);
 		}
 
-		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = { "overlapping" }, type = IType.LIST,content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents among the left-operand list, species or meta-population (addition of species), overlapping the operand (casted as a geometry).", examples = {
 			@example(value="[ag1, ag2, ag3] overlapping(self)",equals="return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator.",isExecutable=false),
 			@example(value="(species1 + species2) overlapping self",isExecutable=false) }, see = { "neighbours_at", "neighbours_of", "agent_closest_to","agents_inside", "closest_to", "inside", "agents_overlapping" })
@@ -1515,14 +1515,14 @@ public abstract class Spatial {
 			return _closest(scope, Different.with(), source);
 		}
 
-		@operator(value = "agents_inside", content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "agents_inside", type = IType.LIST,content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents covered by the operand (casted as a geometry).", examples = { @example(value="agents_inside(self)",equals="return the agents that are covered by the shape of the agent applying the operator.",test=false) }, see = {
 			"agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
 		public static IList<IAgent> agents_inside(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, true);
 		}
 
-		@operator(value = "agents_overlapping", content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "agents_overlapping",type = IType.LIST, content_type = IType.AGENT, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents overlapping the operand (casted as a geometry).", examples = { @example(value="agents_overlapping(self)",equals="return the agents that overlap the shape of the agent applying the operator.",test=false) }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 			"overlapping", "at_distance" })
@@ -1530,7 +1530,7 @@ public abstract class Spatial {
 			return _gather(scope, Different.with(), source, false);
 		}
 
-		@operator(value = "agents_at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
+		@operator(value = "agents_at_distance", type = IType.LIST,content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_QUERIES})
 		@doc(value = "A list of agents situated at a distance <= the right argument.", comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'", examples = { @example(value="agents_at_distance(20)",equals="all the agents (excluding the caller) which distance to the caller is <= 20",test=false) }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to", "inside","overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
@@ -1561,7 +1561,7 @@ public abstract class Spatial {
 
 	public static abstract class Statistics {
 
-		@operator(value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" }, content_type = IType.LIST, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_STATISTICAL,IOperatorCategory
+		@operator(value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" }, type = IType.LIST,content_type = IType.LIST, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_STATISTICAL,IOperatorCategory
 				.STATISTICAL})
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", examples = { @example(value="[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0",equals="for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]",isExecutable=false) }, see = { "hierarchical_clustering" })
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
@@ -1593,7 +1593,7 @@ public abstract class Spatial {
 			return group;
 		}
 
-		@operator(value = { "hierarchical_clustering" }, content_type = IType.LIST, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_STATISTICAL, IOperatorCategory
+		@operator(value = { "hierarchical_clustering" }, type = IType.LIST,content_type = IType.LIST, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_STATISTICAL, IOperatorCategory
 				.STATISTICAL})
 		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { @example(value="[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0",equals="for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]",isExecutable=false) }, see = { "simple_clustering_by_distance" })
 		public static IList hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents,
@@ -1811,7 +1811,7 @@ public abstract class Spatial {
 			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
 
-		@operator(value="rgb_to_xyz", category={IOperatorCategory.SPATIAL,IOperatorCategory.THREED})
+		@operator(value="rgb_to_xyz", type = IType.LIST,content_type = IType.POINT,category={IOperatorCategory.SPATIAL,IOperatorCategory.THREED})
 		@doc(value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)", examples = { @example(value="rgb_to_xyz(texture)",equals="a list of points",isExecutable=false) }, see = {})
 		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
 
