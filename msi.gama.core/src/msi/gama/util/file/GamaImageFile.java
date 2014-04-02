@@ -255,4 +255,9 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	// return Files.IMAGE;
 	// }
 
+	public void setImage(IScope scope, BufferedImage image2) {
+		// TODO Auto-generated method stub
+		image=image2;
+	}
+
 }
