@@ -2,7 +2,7 @@ model tutorial_gis_city_traffic
 
 global {
 	
-	geometry focusOnShape <- rectangle (world.shape.width,world.shape.height) at_location {world.shape.width, world.shape.height/2};
+	geometry focusOnShape <- rectangle (world.shape.width*1.5,world.shape.height) at_location {world.shape.width*1.5, world.shape.height/2};
 	file shape_file_buildings <- shape_file('../includes/building.shp');
 	file shape_file_roads <- shape_file('../includes/road.shp');
 	file shape_file_bounds <- shape_file('../includes/bounds.shp');
@@ -403,17 +403,20 @@ entities {
 experiment road_traffic type: gui {	
 	output {
 		display city_display type:opengl focus:focusOnShape{
+			text "reference model" size:50;
 			species building aspect: base ;
 			species road aspect: base ;
-			species people aspect: base ;
+			species people aspect: base ;	
+			text "tidying up" size:50 position:{world.shape.width * 1.2, 0.0, 0 };
 			species abstractBuilding aspect: abstract position: { world.shape.width * 1.2, 0.0, 0 };
 			species abstractRoad aspect: abstract position: { world.shape.width * 1.2, 0.0, 0 };
 		    species abstractPeople aspect: abstract position: { world.shape.width * 1.2, 0.0, 0 };
+		    
+		    text "age pyramid" size:50 position:{world.shape.width * 2 * 1.2, 0.0, 0 };
 		    species abstractPeopleAge aspect: abstract position: { world.shape.width * 2 * 1.2, 0.0, 0 };
-		    species abstractPeopleInfected aspect: abstract position: { world.shape.width * 2 * 1.2, 0.0, 0 };
 		    
-		    
-		
+		    text "macro SIR" size:50 position:{world.shape.width * 3 * 1.2, 0.0, 0 };
+		    species abstractPeopleInfected aspect: abstract position: { world.shape.width * 3 * 1.2, 0.0, 0 };
 		}	
 	}
 }
