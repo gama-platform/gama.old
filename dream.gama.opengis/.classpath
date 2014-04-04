@@ -8,5 +8,9 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/gt-swing-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-wms-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-xml-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
