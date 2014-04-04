@@ -18,22 +18,40 @@
  */
 package msi.gama.util.file;
 
-import java.io.*;
-import java.util.*;
-import msi.gama.metamodel.shape.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gaml.types.GamaGeometryType;
+
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
-import org.openstreetmap.osmosis.core.domain.v0_6.*;
-import org.openstreetmap.osmosis.core.task.v0_6.*;
+import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
+import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
+import org.openstreetmap.osmosis.core.domain.v0_6.Node;
+import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
+import org.openstreetmap.osmosis.core.domain.v0_6.Way;
+import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
+import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
+import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
-import com.vividsolutions.jts.geom.*;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Written by drogoul
@@ -52,16 +70,20 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @param pathName
 	 */
 	public GamaOsmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName, null);
+		super(scope, pathName, (Integer) null);
 	}
 
 	public GamaOsmFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
+	
+	public GamaOsmFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
+		super(scope, pathName, code);
+	}
 
 	public GamaOsmFile(IScope scope, String pathName,
 			GamaMap<String, GamaList> filteringOptions) {
-		super(scope, pathName, null);
+		super(scope, pathName,  (Integer) null);
 		this.filteringOptions = filteringOptions;
 	}
 

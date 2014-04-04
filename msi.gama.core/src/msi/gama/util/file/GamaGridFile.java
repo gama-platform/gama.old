@@ -1,21 +1,34 @@
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
-import msi.gama.metamodel.shape.*;
+
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.types.GamaGeometryType;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.PrjFileReader;
 import org.geotools.factory.Hints;
 import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.geometry.*;
+import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.GeneralEnvelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "grid", extensions = { "asc" })
@@ -129,10 +142,13 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName, null);
+		super(scope, pathName, (Integer) null);
 	}
 
 	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
+		super(scope, pathName, code);
+	}
+	public GamaGridFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 

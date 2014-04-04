@@ -5,11 +5,14 @@
 package msi.gama.util.file;
 
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.*;
+import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaGeometryType;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -25,6 +28,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	public static final int ALREADY_PROJECTED_CODE = 0;
 	protected IProjection gis;
 	protected Integer initialCRSCode = null;
+	protected String initialCRSCodeStr = null;
 
 	// Faire les tests sur ALREADY_PROJECTED ET LE PASSER AUSSI A GIS UTILS ???
 
@@ -40,7 +44,15 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 				throw GamaRuntimeException.error("The code " + initialCRSCode +
 					" does not correspond to a known EPSG code. GAMA is unable to load " + getPath(), scope);
 			}
-		}
+		} 
+		if ( initialCRSCodeStr != null ) {
+			try {
+				return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCodeStr);
+			} catch (GamaRuntimeException e) {
+				throw GamaRuntimeException.error("The code " + initialCRSCodeStr +
+					" does not correspond to a known CRS code. GAMA is unable to load " + getPath(), scope);
+			}
+		} 
 		CoordinateReferenceSystem crs = getOwnCRS();
 		if ( crs == null ) {
 			crs = scope.getSimulationScope().getProjectionFactory().getDefaultInitialCRS();
@@ -62,6 +74,11 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName);
 		initialCRSCode = code;
+	}
+	
+	public GamaGisFile(final IScope scope, final String pathName, final String code) {
+		super(scope, pathName);
+		initialCRSCodeStr = code;
 	}
 
 	/**
@@ -90,6 +107,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		super.invalidateContents();
 		gis = null;
 		initialCRSCode = null;
+		initialCRSCodeStr = null;
 	}
 
 }

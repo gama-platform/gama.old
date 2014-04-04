@@ -19,34 +19,78 @@
 package msi.gaml.operators;
 
 import gnu.trove.set.hash.THashSet;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGisFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.*;
-import msi.gaml.types.*;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.algorithm.distance.*;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
-import com.vividsolutions.jts.operation.buffer.*;
+import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
+import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.operation.buffer.BufferOp;
+import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
@@ -1838,5 +1882,24 @@ public abstract class Spatial {
 			return points;
 		}
 	}
+	public static abstract class Projection {
+		@operator(value="crs",category={IOperatorCategory.SPATIAL,IOperatorCategory.FILE})
+		@doc(value = "the Coordinate Reference System (CRS) of the GIS file", examples = { @example(value="crs(my_shapefile)",equals="the crs of the shapefile",isExecutable=false) }, see = {})
+		public static String crsFromFile(final IScope scope, final GamaFile gisFile) {
+			if (gisFile instanceof GamaGisFile) {
+				CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS();
+				if (crs == null)
+					return null;
+				try {
+					return CRS.lookupIdentifier(crs, true).toString();
+				} catch (FactoryException e) {
+					return null;
+				}
+			} else {
+				throw GamaRuntimeException.error("Impossible to compute the CRS for this type of file");
+			}
+		}
+	}
+
 
 }

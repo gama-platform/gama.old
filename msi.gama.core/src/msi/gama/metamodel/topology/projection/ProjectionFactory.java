@@ -71,7 +71,7 @@ public class ProjectionFactory {
 	}
 
 	CoordinateReferenceSystem getSaveCRS() {
-		if ( GamaPreferences.LIB_USE_DEFAULT.getValue() ) { return getTargetCRS(); }
+		if ( GamaPreferences.LIB_USE_DEFAULT.getValue() ) { return getWorld().getInitialCRS(); }
 		return computeDefaultCRS(GamaPreferences.LIB_OUTPUT_CRS.getValue(), false);
 	}
 
@@ -92,7 +92,7 @@ public class ProjectionFactory {
 		try {
 			CoordinateReferenceSystem crs = CRSCache.get(code);
 			if ( crs == null ) {
-				if ( code.startsWith(EPSGPrefix) ) {
+				if ( code.startsWith(EPSGPrefix) || code.startsWith("CRS:") ) {
 					crs = CRS.decode(code, longitudeFirst);
 				} else if ( code.startsWith("PROJCS") || code.startsWith("GEOGCS") || code.startsWith("COMPD_CS") ) {
 					crs = CRS.parseWKT(code);
@@ -171,9 +171,8 @@ public class ProjectionFactory {
 		CoordinateReferenceSystem crs = null;
 		try {
 			crs = getCRS(code, lonFirst);
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			crs = null;
-			GuiUtils.debug("Exception: " + e.getMessage());
 		}
 		if ( crs == null ) {
 			crs = getSaveCRS();

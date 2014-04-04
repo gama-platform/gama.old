@@ -47,10 +47,14 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @param pathName
 	 */
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName, null);
+		super(scope, pathName, (Integer)null);
 	}
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
+		super(scope, pathName, code);
+	}
+	
+	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 
