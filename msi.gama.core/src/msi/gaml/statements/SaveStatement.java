@@ -234,14 +234,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 		final Integer code = epsgCode == null ? null : Cast.asInt(scope, epsgCode.value(scope));
+		
 		IProjection gis;
-		try {
-			gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
-		} catch (FactoryException e1) {
-			throw GamaRuntimeException.error("The code " + code +
-				" does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+		if (code == null) {
+			gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+		} else {
+			try {
+				gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+			} catch (FactoryException e1) {
+				throw GamaRuntimeException.error("The code " + code +
+					" does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+			}
 		}
-
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
 
