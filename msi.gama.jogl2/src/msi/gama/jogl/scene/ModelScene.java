@@ -85,7 +85,7 @@ public class ModelScene {
 	}
 
 	public void addString(final String string, final GamaPoint location, final Integer size,
-		final Double sizeInModelUnits, final Color color, final String font, final Integer style, final Double angle,
+		final Color color, final String font, final Integer style, final Double angle,
 		final Boolean bitmap) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addString(string, location, size, color, font, style, angle, bitmap);

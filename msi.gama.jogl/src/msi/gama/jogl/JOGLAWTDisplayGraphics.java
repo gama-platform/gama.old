@@ -232,17 +232,14 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final Boolean bitmap) {
 		GamaPoint location = new GamaPoint(locationInModelUnits).yNegated();
 		Integer size;
-		Double sizeInModelUnits;
+
 		if ( heightInModelUnits == null ) {
-			size = heightOfLayerInPixels;
-			sizeInModelUnits =
-				heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightOfLayerInPixels;
+			size = heightOfDisplayInPixels/heightOfLayerInPixels;
 		} else {
-			sizeInModelUnits = heightInModelUnits;
-			size =
-				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
+			size =  heightInModelUnits.intValue();
 		}
-		renderer.getScene().addString(string, location, size, sizeInModelUnits, stringColor, fontName, styleName,
+				
+		renderer.getScene().addString(string, location, size, stringColor, fontName, styleName,
 			angle, bitmap);
 		return null;
 	}
