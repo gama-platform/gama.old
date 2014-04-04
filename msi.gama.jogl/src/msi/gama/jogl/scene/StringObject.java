@@ -11,6 +11,7 @@ public class StringObject extends AbstractObject {
 	public Integer style = 0;
 	public Double angle = 0d;
 	public Integer size = 12;
+	public Double sizeInModelUnits = 12d;
 	public GamaPoint location;
 	private GamaPoint offset = new GamaPoint(0, 0, 0);
 	private GamaPoint scale = new GamaPoint(1, 1, 1);
@@ -18,7 +19,8 @@ public class StringObject extends AbstractObject {
 	public Boolean bitmap;
 
 	public StringObject(final String string, final String font, final Integer style, final GamaPoint offset,
-		final GamaPoint scale, final Color color, final Double angle, final GamaPoint location, final Integer size, final Double alpha, final Boolean bitmap) {
+		final GamaPoint scale, final Color color, final Double angle, final GamaPoint location,
+		final Double sizeInModelUnits, final Integer size, final Double alpha, final Boolean bitmap) {
 		super(color, alpha);
 		if ( offset != null ) {
 			setOffset(offset);
@@ -36,6 +38,9 @@ public class StringObject extends AbstractObject {
 		}
 		if ( angle != null ) {
 			this.angle = angle;
+		}
+		if ( sizeInModelUnits != null ) {
+			this.sizeInModelUnits = sizeInModelUnits;
 		}
 		this.location = location;
 		if ( size != null ) {

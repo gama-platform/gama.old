@@ -88,9 +88,9 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addString(final String string, final GamaPoint location, final Integer size,
-		final Color color, final String font, final Integer style, final Double angle,
+		final Double sizeInModelUnits, final Color color, final String font, final Integer style, final Double angle,
 		final Boolean bitmap) {
-		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location,
+		strings.add(new StringObject(string, font, style, offset, scale, color, angle, location, sizeInModelUnits,
 			size, alpha, bitmap));
 	}
 

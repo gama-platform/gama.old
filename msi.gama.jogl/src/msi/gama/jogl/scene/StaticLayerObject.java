@@ -115,9 +115,9 @@ public class StaticLayerObject extends LayerObject {
 			addGeometry(g, null, Color.blue, true, Color.blue, false, null, 0, 0, false,
 				IShape.Type.LINESTRING, 0);
 			// add the legends
-			addString("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), 12, Color.black, "Arial", Font.BOLD, 0d, false);
-			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 12, Color.black, "Arial", Font.BOLD, 0d, false);
-			addString("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), 12, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("X", new GamaPoint(1.2f * size, 0.0d, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("Y", new GamaPoint(0.0d, -1.2f * size, 0.0d), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
+			addString("Z", new GamaPoint(0.0d, 0.0d, 1.2f * size), 12, 12d, Color.black, "Arial", Font.BOLD, 0d, false);
 			// add the triangles
 			g =
 				GamaGeometryType.buildArrow(origin, new GamaPoint(size + size / 10, 0,0), size / 4, size / 4,
