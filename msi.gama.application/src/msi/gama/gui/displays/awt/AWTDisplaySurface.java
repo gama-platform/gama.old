@@ -336,7 +336,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	public double applyZoom(final double factor) {
-		System.out.println("Origin = " + origin);
 		double real_factor = Math.min(factor, 10 / zoomLevel);
 		boolean success = false;
 
