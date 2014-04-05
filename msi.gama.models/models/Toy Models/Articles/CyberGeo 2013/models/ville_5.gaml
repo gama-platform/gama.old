@@ -32,10 +32,12 @@ species foyer {
 	}
 	action emmenager {
 		habitation.capacite <- habitation.capacite - 1;
+		habitation.foyers << self;
 		location <- any_location_in(habitation.shape) + {0,0, habitation.hauteur};
 	}
 	action demenager {
 		habitation.capacite <- habitation.capacite + 1;
+		remove self from: habitation.foyers;
 	}
 	batiment choisir_batiment {
 		return one_of(batiment where ((each.capacite >0) and ( each.distances[lieu_travail]< 1000.0)));
@@ -55,7 +57,7 @@ species batiment {
 	int capacite <- type = "Industrial" ? 0 : int(shape.area / 70.0);
 	map<batiment,float> distances;
 	int hauteur <- 5 + rnd(10);
-	list<foyer> foyers update: foyer overlapping self;
+	list<foyer> foyers ;
 	float revenu_moyen update: empty(foyer) ? 0.0 : mean (foyers collect each.revenu);
 	init {
 		loop bat over: batiment where (each.type = "Industrial") {

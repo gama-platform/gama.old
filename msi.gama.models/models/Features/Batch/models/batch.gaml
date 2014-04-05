@@ -15,7 +15,7 @@ global {
 		create people number: number_people ;
         ask (number_I among people) {
         	is_infected <- true;
-        	color <- °red;
+        	color <- rgb("red");
         } 
    }
   }
@@ -23,7 +23,7 @@ global {
 species people skills:[moving] {
 	bool is_infected <- false;
 	bool is_immune <- false;
-	rgb color <- °green;
+	rgb color <- rgb("green");
 	int cpt <- 0;
 	reflex basic_move {
 		do wander speed: speed_people;
@@ -33,7 +33,7 @@ species people skills:[moving] {
 		if (cpt > end_immunity_step) {
 			cpt <- 0;   
 			is_immune <- false;
-			color <-  °green; 
+			color <-  rgb("green"); 
 		} else {
 			cpt <- cpt + 1;
 		}
@@ -43,7 +43,7 @@ species people skills:[moving] {
 			cpt <- 0;   
 			is_immune <- true;
 			is_infected <- false;
-			color <-  °blue; 
+			color <-  rgb("blue"); 
 		} else {
 			cpt <- cpt + 1;
 		}
@@ -51,7 +51,7 @@ species people skills:[moving] {
 	reflex become_infected when: not is_infected and not is_immune{
 		if (flip(infection_rate) and not empty(people at_distance infection_distance where each.is_infected)) {
 			is_infected <- true;
-			color <-  °red;    
+			color <-  rgb("red");    
 			nb_infected <- nb_infected + 1;
 		}
 	}  
@@ -72,12 +72,23 @@ experiment Simple type:gui {
 	}
 }
 
+
+// This experiment runs the simulation 5 times. 
+// At the end of each simulation, the people agents are saved in a shapefile
+experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( time > 1000 ) {
+	int cpt <- 0;
+	action _step_ {
+		save people type:"shp" to:"people_shape" + cpt + ".shp" with: [is_infected::"INFECTED",is_immune::"IMMUNE"];
+		cpt <- cpt + 1;
+	}
+}
+
 // This experiment explores two parameters with an exhaustive strategy, 
 // repeating each simulation three times, in order to find the best combination 
 // of parameters to minimize the number of infected people
 experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 , 0.5 , 1.0 ];
-	parameter 'Speed of people:' var: speed_people min: 1 max: 3 step:1.0;
+	parameter 'Speed of people:' var: speed_people min: 1.0 max: 3.0 step:1.0;
 	method exhaustive minimize: nb_infected;
 }
 
@@ -86,7 +97,7 @@ experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until
 // of parameters to minimize the number of infected people
 experiment Genetic type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 ,0.2, 0.5 , 0.6,0.8, 1.0 ];
-	parameter 'Speed of people:' var: speed_people min: 1 max: 10 step:1.0;
+	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
 	method genetic pop_dim: 3 crossover_prob: 0.7 mutation_prob: 0.1
 	nb_prelim_gen: 1 max_gen: 5  minimize: nb_infected;
 }
@@ -96,6 +107,6 @@ experiment Genetic type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) 
 // of parameters to minimize the number of infected people
 experiment Tabu_Search type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 ,0.2, 0.5 , 0.6,0.8, 1.0 ];
-	parameter 'Speed of people:' var: speed_people min: 1 max: 10 step:1.0;
+	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
 	method tabu iter_max: 10 tabu_list_size: 5 minimize: nb_infected;
 }
