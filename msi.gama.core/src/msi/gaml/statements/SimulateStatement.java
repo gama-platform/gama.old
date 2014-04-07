@@ -51,7 +51,7 @@ import msi.gaml.types.IType;
 		ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @doc(value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
 	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
-	@example("ask receiver_agent(s) {"), @example("     // [statements]"), @example("}") })
+	@example(value="ask receiver_agent(s) {",isExecutable=false), @example(value="     // [statements]",isExecutable=false), @example(value="}",isExecutable=false) })
 public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;

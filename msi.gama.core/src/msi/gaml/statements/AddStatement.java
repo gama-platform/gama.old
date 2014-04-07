@@ -47,35 +47,42 @@ import msi.gaml.types.*;
 @facets(value = {
 	@facet(name = IKeyword.TO, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY }, optional = false, doc = { @doc("an expression that evaluates to a container") }),
 	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true, doc = { @doc("any expression to add in the container") }),
-	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true, doc = { @doc("a pair that will be added to a graph as an edge (if nodes do not exist, they are also added)") }),
 	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true, doc = { @doc(deprecated = "Use 'node' instead") }),
-	@facet(name = IKeyword.NODE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.AT, type = IType.NONE, optional = true, doc = { @doc("position in the container of element added") }),
+	@facet(name = IKeyword.NODE, type = IType.NONE, optional = true, doc = { @doc("an expression that will be added to a graph as a node") }),
+	@facet(name = IKeyword.AT, type = IType.NONE, optional = true, doc = { @doc("position in the container of added element") }),
 	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true) }, omissible = IKeyword.ITEM)
 @doc(value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).\\ Incorrect use: The addition of a new element at a position out of the bounds of the container will produce a warning and let the container unmodified.", usages = {
-		@usage(value = "The new element can be added either at the end of the container or at a particular position.",
-			examples = {@example("add expr to: expr_container;    // Add at the end"),
-						@example("add expr at: expr to: expr_container;   // Add at position expr")}),
-		@usage(value = "Case of a list, the expression in the attribute at: should be an integer.", 
-			examples = {@example("list<int> workingList <- [];"),
-						@example(value="add 0 at: 0 to: workingList ;", var="workingList", equals="[0]"),      // emptyList now equals [0]
-						@example(value="add 10 at: 0 to: workingList ;", var="workingList", equals="[10,0]"),   // emptyList now equals [10,0]
-						@example(value="add 20 at: 2 to: workingList ;", var="workingList", equals="[10,0,20]"),   // emptyList now equals [10,0,20]
-						@example(value="add 50 to: workingList;", var="workingList", equals="[10,0,20,50]")}),          // emptyList now equals [10,0,20,50]
-		@usage(value = "Case of a matrix: this statement can not be used on matrix. Please refer to the statement put."),
-		@usage(value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. " +
-				"It is important to note that the behavior of the statement is slightly different, in particular in the use of the at attribute.", 
-			examples = {@example("let emptyMap type: map <- [];"),
-						@example(value="add \"val1\" at: \"x\" to: emptyMap", var="emptyList", equals="[x::val1]")}),  // emptyList now equals [x::val1]";
-		@usage(value = "If the at: attribute is ommitted, a pair null::expr_item will be added to the map. " +
-				"An important exception is the case where the is a pair expression: in this case the pair is added.",
-			examples = {@example(value="add \"val2\" to: emptyMap;", var="emptyList", equals= "[null::val2, x::val1]"),	// emptyList now equals [null::val2, x::val1]
-						@example(value="add 5::\"val4\" to: emptyMap; ", var="emptyList", equals= "[null::val2, x::val1]")}),   // emptyList now equals [null::val2, 5::val4, x::val1]
-		@usage(value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) " +
-				"will only modify the value associated with the given key.",
-			examples = {@example(value="add \"val3\" at: \"x\" to: emptyMap;", var="emptyMap", equals="[null::value2, 5::val4, x::val3]")})   // emptyList now equals [null::value2, 5::val4, x::val3]
-		})
+	@usage(value = "The new element can be added either at the end of the container or at a particular position.",
+		examples = {@example(value="add expr to: expr_container;    // Add at the end", isExecutable=false),
+					@example(value="add expr at: expr to: expr_container;   // Add at position expr", isExecutable=false)}),
+	@usage(value = "Case of a list, the expression in the facet at: should be an integer.", 
+		examples = {@example("list<int> workingList <- [];"),
+					@example(value="add 0 at: 0 to: workingList ;", var="workingList", equals="[0]", returnType="null"),      // workingList now equals [0]
+					@example(value="add 10 at: 0 to: workingList ;", var="workingList", equals="[10,0]", returnType="null"),   // workingList now equals [10,0]
+					@example(value="add 20 at: 2 to: workingList ;", var="workingList", equals="[10,0,20]", returnType="null"),   // workingList now equals [10,0,20]
+					@example(value="add 50 to: workingList;", var="workingList", equals="[10,0,20,50]", returnType="null")}),          // workingList now equals [10,0,20,50]
+	@usage(value = "Case of a matrix: this statement can not be used on matrix. Please refer to the statement put."),
+	@usage(value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. " +
+			"It is important to note that the behavior of the statement is slightly different, in particular in the use of the at facet, which denotes the key of the pair.", 
+		examples = {@example("map<string,string> workingMap <- [];"),
+					@example(value="add \"val1\" at: \"x\" to: workingMap;", var="workingMap", equals="[\"x\"::\"val1\"]", returnType="null")}),  // workingMap now equals [x::val1]";
+	@usage(value = "If the at facet is ommitted, a pair expr_item::expr_item will be added to the map. " +
+			"An important exception is the case where the is a pair expression: in this case the pair is added.",
+		examples = {@example(value="add \"val2\" to: workingMap;", var="workingMap", equals= "[\"x\"::\"val1\", \"val2\"::\"val2\"]", returnType="null"),	// workingMap now equals [nil::val2, x::val1]
+					@example(value="add \"5\"::\"val4\" to: workingMap; ", var="workingMap", equals= "[\"x\"::\"val1\", \"val2\"::\"val2\", \"5\"::\"val4\"]", returnType="null")}),   // workingMap now equals [nil::val2, 5::val4, x::val1]
+	@usage(value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) " +
+			"will only modify the value associated with the given key.",
+		examples = {@example(value="add \"val3\" at: \"x\" to: workingMap;", var="workingMap", equals="[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]", returnType="null")}),   // workingMap now equals [null::value2, 5::val4, x::val3]
+	@usage(value = "In case of a graph, we can use the facets `node`, `edge` and `weight` to add a node, an edge or weights to the graph", examples= {
+		@example(value="graph g <- as_edge_graph([{1,5}::{12,45}]);"),
+		@example(value="add edge: {1,5}::{2,3} to: g;",returnType="null",var="g", equals="as_edge_graph([{1,5}::{12,45},{1,5}::{2,3}])"),
+		@example(value="add node: {5,5} to: g;"),
+		@example(value="g.vertices",returnType=IKeyword.LIST,equals="[{1.0,5.0},{12.0,45.0},{2.0,3.0},{5.0,5.0}]"),
+		@example(value="g.edges",returnType=IKeyword.LIST,equals="[polyline({1.0,5.0}::{12.0,45.0}),polyline({2.0,3.0}::{5.0,5.0})]"),		
+	})
+	})
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AddValidator.class)

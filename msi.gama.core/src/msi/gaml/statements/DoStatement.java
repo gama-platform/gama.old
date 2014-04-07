@@ -24,6 +24,9 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,10 +46,28 @@ import msi.gaml.types.IType;
  */
 @symbol(name = { IKeyword.DO, IKeyword.REPEAT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, with_scope = false, with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false),
-	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true),
-	@facet(name = IKeyword.INTERNAL_FUNCTION, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)
+@facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false, doc = @doc("the name of an action or a primitive")),
+	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true, doc = @doc(deprecated="use a set of facets instead",value="a map expression containing the parameters of the action")),
+	@facet(name = IKeyword.INTERNAL_FUNCTION, type = IType.NONE, optional = true, doc = @doc(deprecated="for internal use only")),
+	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc(deprecated="declare a temporary variable and use assignement instead",value="create a new variable and assign to it the result of the action")) }, omissible = IKeyword.ACTION)
+@doc(value="Allows the agent to execute an action or a primitive.  For a list of primitives available in every species, see this [BuiltIn161 page]; for the list of primitives defined by the different skills, see this [Skills161 page]. Finally, see this [Species161 page] to know how to declare custom actions.", usages = {
+	@usage(value="The simple syntax (when the action does not expect any argument and the result is not to be kept) is:", examples = {
+		@example(value="do name_of_action_or_primitive;",isExecutable=false)}),
+	@usage(value="In case the action expects one or more arguments to be passed, they are defined by using facets (enclosed tags or a map are now deprecated):", examples={
+			@example(value="do name_of_action_or_primitive arg1: expression1 arg2: expression2;",isExecutable=false)}),		
+	@usage(value="In case the result of the action needs to be made available to the agent, the action can be called with the agent calling the action (`self` when the agent itself calls the action) instead of `do`; the result should be assigned to a temporary variable:", examples = {
+		@example(value="type_returned_by_action result <- self name_of_action_or_primitive [];",isExecutable=false)}),
+	@usage(value="In case of an action expecting arguments and returning a value, the following syntax is used:",examples = {
+		@example(value="type_returned_by_action result <- self name_of_action_or_primitive [arg1::expression1, arg2::expression2];",isExecutable=false)
+	}),	
+	@usage(value="Deprecated uses: following uses of the `do` statement (still accepted) are now deprecated:",examples={
+		@example(value="// Simple syntax: "), @example(value="do action: name_of_action_or_primitive;",isExecutable=false),@example(""),
+		@example(value="// In case the result of the action needs to be made available to the agent, the `returns` keyword can be defined; the result will then be referred to by the temporary variable declared in this attribute:"), @example(value="do name_of_action_or_primitive returns: result;",isExecutable=false), @example(value="do name_of_action_or_primitive arg1: expression1 arg2: expression2 returns: result;",isExecutable=false),@example(value="type_returned_by_action result <- name_of_action_or_primitive(self, [arg1::expression1, arg2::expression2]);",isExecutable=false),@example(""),
+		@example(value="// In case the result of the action needs to be made available to the agent"),@example(value="let result <- name_of_action_or_primitive(self, []);",isExecutable=false),@example(""),
+		@example(value="// In case the action expects one or more arguments to be passed, they can also be defined by using enclosed `arg` statements, or the `with` facet with a map of parameters:"),
+		@example(value="do name_of_action_or_primitive with: [arg1::expression1, arg2::expression2];",isExecutable=false), @example(value="",isExecutable=false),@example(value="or",isExecutable=false),@example(value="",isExecutable=false), @example(value="do name_of_action_or_primitive {",isExecutable=false),@example(value="     arg arg1 value: expression1;",isExecutable=false),@example(value="     arg arg2 value: expression2;",isExecutable=false),@example(value="     ...",isExecutable=false),@example(value="}",isExecutable=false)
+	})
+})
 @validator(DoValidator.class)
 public class DoStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 

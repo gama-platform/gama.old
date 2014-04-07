@@ -35,27 +35,40 @@ public class XmlToTestGAML {
 		File dirOperators = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_OPERATORS_FOLDER);
 		dirOperators.mkdir();
 		
-		createTests(document,
+		createOperatorsTests(document,
 				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Operators-xml2test.xsl",
 				dirOperators.getCanonicalPath() ); 
 		System.out.println("Done");	
 		
 		//////////////////////////////////////////////////////////////////////////////////
+		System.out.print("Creation of the test models for Statements.....");
+		File dirStatements = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_STATEMENTS_FOLDER);
+		dirStatements.mkdir();
+		
+		createMasterTest(document,
+				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Statements-xml2test.xsl",
+				dirStatements.getCanonicalPath(), "StatementsTest.gaml" ); 
+		System.out.println("Done");			
+		
+		//////////////////////////////////////////////////////////////////////////////////
 		System.out.print("Creation of the master test model.....");
 		createMasterTest(document,
 				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Master-xml2test.xsl",
-				Constants.TEST_FOLDER ); 
+				Constants.TEST_FOLDER, "masterTest.gaml"); 
 		System.out.println("Done");			
 		//
 		System.out.println("End of the transformation");		
 	}
 
-	private static void createMasterTest(Document document, String xsl, String targetFolder) 
-			throws ParserConfigurationException, SAXException, IOException {		
-		DocTransformer.transformDocument(document, xsl, targetFolder + File.separator + "masterTest.gaml"); 		
-	}
 	
-	private static void createTests(Document document, String xsl, String targetFolder) 
+	private static void createMasterTest(Document document, String xsl, String targetFolder, String targetFile) 
+			throws ParserConfigurationException, SAXException, IOException {		
+		DocTransformer.transformDocument(document, xsl, targetFolder + File.separator + targetFile); 		
+	}
+
+	
+	
+	private static void createOperatorsTests(Document document, String xsl, String targetFolder) 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();

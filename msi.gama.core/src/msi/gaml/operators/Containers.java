@@ -391,7 +391,7 @@ public class Containers {
 	@doc(value = "returns a new list containing all the elements of both containers without duplicated elements.", comment = "", usages = { @usage("if the left or right operand is nil, union throws an error") }, examples = {
 		@example(value = "[1,2,3,4,5,6] union [2,4,9]", equals = "[1,2,3,4,5,6,9]"),
 		@example(value = "[1,2,3,4,5,6] union [0,8]", equals = "[1,2,3,4,5,6,0,8]"),
-		@example(value = "[1,3,2,4,5,6,8,5,6] union [0,8]", equals = "[0,1,2,3,4,5,6,8]") }, see = { "inter",
+		@example(value = "[1,3,2,4,5,6,8,5,6] union [0,8]", equals = "[1,3,2,4,5,6,8,0]") }, see = { "inter",
 		IKeyword.PLUS })
 	public static IList union(final IScope scope, final IContainer source, final IContainer l) {
 		/*return new GamaList(Sets.union(Sets.newHashSet(nullCheck(source).iterable(scope)),
@@ -408,7 +408,7 @@ public class Containers {
 	@operator(value = { "group_by" }, iterator = true, index_type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = IType.LIST)
 	@doc(value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
 		+ "of the left-hand operand associated to the key value", masterDoc = true, comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { @usage("if the left-hand operand is nil, group_by throws an error") }, examples = {
-		@example(value = "[1,2,3,4,5,6,7,8] group_by (each > 3)", equals = "[false::[1, 2, 3], true::[4, 5, 6, 7, 8]] "),
+		@example(value = "[1,2,3,4,5,6,7,8] group_by (each > 3)", equals = "[false::[1, 2, 3], true::[4, 5, 6, 7, 8]]"),
 		@example(value = "g2 group_by (length(g2 out_edges_of each) )", equals = "[ 0::[node9, node7, node10, node8, node11], 1::[node6], 2::[node5], 3::[node4]]", isExecutable = false),
 		@example(value = "(list(node) group_by (round(node(each).location.x))", equals = "[32::[node5], 21::[node1], 4::[node0], 66::[node2], 96::[node3]]", isExecutable = false),
 		@example(value = "[1::2, 3::4, 5::6] group_by (each > 4)", equals = "[false::[2, 4], true::[6]]") }, see = {
@@ -538,7 +538,7 @@ public class Containers {
 		@example(value = "graph g2 <- graph([]);", isTestOnly = true),
 		@example(value = "g2 sort_by (length(g2 out_edges_of each) )", equals = "[node9, node7, node10, node8, node11, node6, node5, node4]", test = false),
 		@example(value = "(list(node) sort_by (round(node(each).location.x))", equals = "[node5, node1, node0, node2, node3]", isExecutable = false),
-		@example(value = "[1::2, 5::6, 3::4] sort_by (each)", equals = "[1::2, 3::4, 5::6]") }, see = { "group_by" })
+		@example(value = "[1::2, 5::6, 3::4] sort_by (each)", equals = "[2, 4, 6]") }, see = { "group_by" })
 	public static IList sort(final IScope scope, final IContainer original, final IExpression filter) {
 		final Iterable it = nullCheck(original).iterable(scope);
 		final int size = size(it);
@@ -587,7 +587,7 @@ public class Containers {
 	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category=IOperatorCategory.CONTAINER)
 	@doc(value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", usages = { 
 		@usage(value = "if the left-hand operand is a list nil, where returns a new empty list"),
-		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples = {@example(value = "[1::2, 3::4, 5::6] where (each >= 4)", equals = "[3::4, 5::6]")} )}, examples = {			
+		@usage(value = "if the left-operand is a map, the keyword each will contain each value",examples = {@example(value = "[1::2, 3::4, 5::6] where (each >= 4)", equals = "[4, 6]")} )}, examples = {			
 		@example(value = "[1,2,3,4,5,6,7,8] where (each > 3)", equals = "[4, 5, 6, 7, 8] "), @example(value = "graph g2 <- graph([]);",isTestOnly  = true),
 		@example(value = "g2 where (length(g2 out_edges_of each) = 0 )", equals = "[node9, node7, node10, node8, node11]", test = false),
 		@example(value = "(list(node) where (round(node(each).location.x) > 32)", equals = "[node2, node3]", isExecutable = false) }, see = { "first_with", "last_with", "where" })

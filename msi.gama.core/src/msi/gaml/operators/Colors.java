@@ -113,7 +113,7 @@ public class Colors {
 
 	@operator(value = "hsb", category={IOperatorCategory.COLOR})
 	@doc(value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color", 
-		examples = @example(value="hsb (0.5,1.0,1.0,0.5)",equals="rgb(\"cyan\",0.5)"))
+		examples = @example(value="hsb (0.5,1.0,1.0,0.5)",equals="rgb(\"cyan\",125)"))
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Double a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
@@ -131,13 +131,13 @@ public class Colors {
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"), examples = @example(value="rgb (255,0,0,125)",equals="rgb(125,0,0)"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0 and 255)"), examples = {@example(value="rgb (255,0,0,125)",equals="a light red color",test=false),@example(value="rgb (255,0,0,125).alpha",equals="125",returnType=IKeyword.INT,isTestOnly=true)}, see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b, final int alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"), examples = @example(value="rgb (255,0,0,0.5)",equals="rgb(125,0,0)"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with r=red, g=greeb, b=blue (each between 0 and 255), a=alpha (between 0.0 and 1.0)"), examples = @example(value="rgb (255,0,0,0.5)",equals="a light red color",test=false), see = "hsb")
 	public static GamaColor rgb(final int r, final int g, final int b, final double alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
@@ -155,13 +155,13 @@ public class Colors {
 	}*/
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 255"), examples = @example(value="rgb(rgb(255,0,0),125)", equals="#cyan"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 255"), examples = @example(value="rgb(rgb(255,0,0),125)",equals="a light red color",test=false), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final int a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}
 
 	@operator(value = "rgb", category={IOperatorCategory.COLOR})
-	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 1"), examples = @example(value="rgb(rgb(255,0,0),0.5)", equals="rgb(127,0,127)"), see = "hsb")
+	@doc(value = "rgb color", usages = @usage("It can be used with a color and an alpha between 0 and 1"), examples = @example(value="rgb(rgb(255,0,0),0.5)",equals="a light red color",test=false), see = "hsb")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final double a) {
 		return GamaColorType.staticCast(scope, s, a);
 	}

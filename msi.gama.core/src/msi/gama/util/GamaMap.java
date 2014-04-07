@@ -167,7 +167,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand",examples = {
 		@example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
-		@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1.0]") }, see = { "" + IKeyword.MINUS })
+		@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1]") }, see = { "" + IKeyword.MINUS })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		// special case for the addition of two populations or meta-populations
 //		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);

@@ -16,6 +16,7 @@ model masterTest
 </xsl:text>
 	</xsl:for-each>
 	<xsl:text>
+import "statementsTest/StatementsTest.gaml"	
 
 global {}
 

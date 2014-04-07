@@ -435,7 +435,7 @@ public class Cast {
 		@example(value="to_gaml(rgb(255,0,125))", equals="'rgb (255, 0, 125,255)'"),
 		@example(value="to_gaml('hello')", equals="\"'hello'\""),
 		@example(value="to_gaml([1,5,9,3])", equals="'[1,5,9,3]'"),
-		@example(value="to_gaml(['a'::345, 'b'::13, 'c'::12])", equals="\"([\'b\'::345,\'c\'::13,\'a\'::12] as map )\""),
+		@example(value="to_gaml(['a'::345, 'b'::13, 'c'::12])", equals="\"([\'a\'::345,\'b\'::13,\'c\'::12] as map )\""),
 		@example(value="to_gaml([[3,5,7,9],[2,4,6,8]])", equals="'[[3,5,7,9],[2,4,6,8]]'"),
 		@example(value="to_gaml(a_graph)", equals="([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",isExecutable=false),
 		@example(value="to_gaml(node1)", equals=" 1 as node", isExecutable=false) }, see = { "to_java" })
