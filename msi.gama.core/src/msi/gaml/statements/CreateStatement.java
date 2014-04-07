@@ -73,9 +73,7 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.NUMBER, type = IType.INT, optional = true),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true),
 	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true),
-	@facet(name = IKeyword.SIZE, type = { IType.FLOAT }, optional = true),
-	@facet(name = IKeyword.HEADER, type = { IType.BOOL }, optional = true),
-	@facet(name = IKeyword.TYPE, type = { IType.STRING }, optional = true) }, omissible = IKeyword.SPECIES)
+	@facet(name = IKeyword.HEADER, type = { IType.BOOL }, optional = true)}, omissible = IKeyword.SPECIES)
 @validator(CreateValidator.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
@@ -346,11 +344,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			Files.tempAttributes.pop();
 		}
 	}
-
-	// @Override
-	// public IType getType() {
-	// return Types.get(IType.LIST);
-	// }
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
