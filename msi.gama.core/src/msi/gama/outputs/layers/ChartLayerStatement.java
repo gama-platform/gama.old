@@ -83,13 +83,20 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
 		IKeyword.BAR }, optional = true), @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
+	@facet(name = ChartLayerStatement.YTICKUNIT, type = IType.FLOAT, optional = true),
+	@facet(name = ChartLayerStatement.XTICKUNIT, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) }, omissible = IKeyword.NAME)
+
+
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
 	public static final String YRANGE = "y_range";
+
+	public static final String YTICKUNIT = "y_tick_unit";
+	public static final String XTICKUNIT = "x_tick_unit";
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {
 
@@ -176,6 +183,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		IExpression expr = getFacet(XRANGE);
+		IExpression expr2 = getFacet(XTICKUNIT);
 		if ( expr != null ) {
 			Object range = expr.value(scope);
 			// Double range = Cast.asFloat(scope, expr.value(scope));
@@ -191,11 +199,23 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				domainAxis.setRange(((GamaPoint) range).getX(), ((GamaPoint) range).getY());
 			}
 		}
+		if ( expr2 != null ) {
+			Object range = expr2.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					domainAxis.setTickUnit(new NumberTickUnit(r));
+				}
+			}
+		}
 		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 		if (datas.size()>0)
 		domainAxis.setLabel(datas.get(0).getName());
 		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		expr = getFacet(YRANGE);
+		expr2 = getFacet(YTICKUNIT);
 		if ( expr != null ) {
 			Object range = expr.value(scope);
 			// Double range = Cast.asFloat(scope, expr.value(scope));
@@ -209,6 +229,17 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				yAxis.setAutoRangeIncludesZero(false);
 			} else if ( range instanceof GamaPoint ) {
 				yAxis.setRange(((GamaPoint) range).getX(), ((GamaPoint) range).getY());
+			}
+		}
+		if ( expr2 != null ) {
+			Object range = expr2.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					yAxis.setTickUnit(new NumberTickUnit(r));
+				}
 			}
 		}
 		if ( datas.size() == 2 ) {
