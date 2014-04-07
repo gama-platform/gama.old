@@ -992,32 +992,65 @@ public abstract class Spatial {
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
 
-		@operator(value = "triangulate", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@operator(value = {"triangulate", "to_triangles"}, type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { @example(value="triangulate(self)",equals="the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",test=false) })
 		public static GamaList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
+		
+		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@doc(value = "A list of squares of the size corresponding to the given size that result from the decomposition of the geometry into squares (geometry, size, overlaps), if overlaps = true, add the squares that overlap the border of the geometry", examples = { @example(value="to_squares(self, 10.0, true)",equals="the list of squares of side size 10.0 corresponding to the discretisation into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",test=false) })
+		public static GamaList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension,
+			final boolean overlaps) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension, dimension, overlaps);
+		}
 
 		@operator(value = "to_rectangles", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
-		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangle that overlaps the border of the geometry", examples = { @example(value="to_rectangles(self, {10.0, 15.0}, true)",equals="the list of rectangles of size {10.0, 15.0} corresponding to the discretisation into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",test=false) })
+		@doc(value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangles that overlap the border of the geometry", examples = { @example(value="to_rectangles(self, {10.0, 15.0}, true)",equals="the list of rectangles of size {10.0, 15.0} corresponding to the discretisation into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",test=false) })
 		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
 			final boolean overlaps) {
 			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
 		}
-
-		@operator(value = "split_geometry", type = IType.LIST,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
-		@doc(value = "A list of geometries that result from the decomposition of the geometry according to a grid", examples = { @example(value="split_geometry(self, {5, 5})",equals="the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",test=false) })
-		public static GamaList<IShape> geometryDecomposition(final IScope scope, final IShape geom, final GamaPoint dimension) {
-			if ( geom == null)
-				new GamaList<IShape>(); 
-			if (geom.getPerimeter() <= 0 ) { 
-				GamaList<IShape> shps =  new GamaList<IShape>(); 
-				shps.add(geom);
-			}
-			return GeometryUtils.geometryDecomposition(geom, (int) dimension.x, (int) dimension.y);
+		
+		@operator(value = "to_rectangles", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@doc(value = "A list of rectangles corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, nb_cols, nb_rows, overlaps) by a grid composed of the given number of columns and rows, if overlaps = true, add the rectangles that overlap the border of the geometry", examples = { @example(value="to_rectangles(self, 5, 20, true)",equals="the list of rectangles corresponding to the discretisation by a grid of 5 columns and 20 rows into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",test=false) })
+		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols, final int nbRows,
+			final boolean overlaps) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			double x_size = geom.getEnvelope().getWidth() / nbCols;
+			double y_size = geom.getEnvelope().getHeight() / nbRows;
+			
+			return GeometryUtils.discretisation(geom.getInnerGeometry(), x_size, y_size, overlaps);
 		}
+		
+		
 
+		@operator(value = {"split_geometry", "to_squares"}, type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@doc(value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size)", examples = { @example(value="to_squares(self, 10.0)",equals="the list of the geometries corresponding to the decomposition of the geometry by squares of side size 10.0",test=false) })
+		public static GamaList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			return GeometryUtils.geometryDecomposition(geom, dimension,dimension);
+		} 
+
+		@operator(value = {"split_geometry", "to_rectangles"}, type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@doc(value = "A list of geometries that result from the decomposition of the geometry by rectangle cells of the given dimension (geometry, {size_x, size_y})", examples = { @example(value="to_rectangles(self, {10.0, 15.0})",equals="the list of the geometries corresponding to the decomposition of the geometry by rectangles of size 10.0, 15.0",test=false) })
+		public static GamaList<IShape> toRectangle(final IScope scope, final IShape geom, final GamaPoint dimension) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			return GeometryUtils.geometryDecomposition(geom, dimension.x, dimension.y);
+		}
+		
+		@operator(value = {"split_geometry", "to_rectangles"}, type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
+		@doc(value = "A list of geometries that result from the decomposition of the geometry according to a grid with the given number of rows and columns (geometry, nb_cols, nb_rows)", examples = { @example(value="to_rectangles(self, 10,20)",equals="the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",test=false) })
+		public static GamaList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols, final int nbRows) {
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			double x_size = geom.getEnvelope().getWidth() / nbCols;
+			double y_size = geom.getEnvelope().getHeight() / nbRows;
+			
+			return GeometryUtils.geometryDecomposition(geom, x_size, y_size);
+		}
+		
 		
 		@operator(value = "as_hexagonal_grid", type = IType.LIST,content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS,IOperatorCategory.GRID})
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { @example(value="triangulate(self)",equals="the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.", test=false) })
@@ -1375,10 +1408,10 @@ public abstract class Spatial {
 			return p;
 		}
 
-		@operator(value = { "points_on" }, type = IType.LIST,category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
+		@operator(value = { "points_on" }, type = IType.LIST, content_type = IType.POINT,category={IOperatorCategory.SPATIAL,IOperatorCategory.POINT})
 		@doc(value = "A list of points of the operand-geometry distant from each other to the float right-operand .", examples = { @example(value=" square(5) points_on(2)",equals="a list of points belonging to the exterior ring of the square distant from each other of 2.",test=false) }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
-		public static GamaList points_exterior_ring(final IShape geom, final Double distance) {
+		public static GamaList points_on(final IShape geom, final Double distance) {
 			final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
 			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
 				for ( int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++ ) {

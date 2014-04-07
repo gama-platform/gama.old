@@ -425,10 +425,8 @@ public class GeometryUtils {
 		return geoms;
 	}
 	
-	public static GamaList<IShape> geometryDecomposition(final IShape geom, int nbCols, int nbRows) {
+	public static GamaList<IShape> geometryDecomposition(final IShape geom, double x_size,  double y_size) {
 		final GamaList<IShape> geoms = new GamaList<IShape>();
-		double x_size = geom.getEnvelope().getWidth() / nbCols;
-		double y_size = geom.getEnvelope().getHeight() / nbRows;
 		double zVal = geom.getLocation().getZ();
 		GamaList<IShape> rects =  discretisation(geom.getInnerGeometry(), x_size, y_size, true);
 		for (IShape shape : rects) {
@@ -446,6 +444,12 @@ public class GeometryUtils {
 			}
 		}
 		return geoms;
+	}
+	
+	public static GamaList<IShape> geometryDecomposition(final IShape geom, int nbCols, int nbRows) {
+		double x_size = geom.getEnvelope().getWidth() / nbCols;
+		double y_size = geom.getEnvelope().getHeight() / nbRows;
+		return geometryDecomposition(geom, x_size, y_size);
 	}
 
 	public static GamaList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
