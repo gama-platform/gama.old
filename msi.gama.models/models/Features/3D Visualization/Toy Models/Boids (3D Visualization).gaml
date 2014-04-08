@@ -320,7 +320,6 @@ experiment start type: gui {
 		display RealBoids  type:opengl ambient_light:255 z_fighting:false trace: 30{
 			image name:'background' file:'images/ocean.jpg';
 			species boids aspect: dynamicColor  position:{0,0,0.1};
-			//species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
@@ -330,7 +329,7 @@ experiment start type: gui {
 experiment trajectory_analysis type: gui {
 	output {
 		
-		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
+		display RealBoids  type:opengl ambient_light:100 z_fighting:false{
 			image name:'background' file:'images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
@@ -339,10 +338,10 @@ experiment trajectory_analysis type: gui {
 		}
 		
 		
-		display RealBoidsAggregatedBoids  type:opengl trace:true{
+		display AggregatedBoidsTrajectory  ambient_light:50 diffuse_light:100 type:opengl trace:true{
 			image name:'background' file:'images/ocean.jpg';
-			species aggregatedboids  aspect: base position:{0,0,0.1+time/200};
-			species boids_goal aspect:sphere position:{0,0,0.1+time/200};		
+			species aggregatedboids  aspect: base;
+			species boids_goal aspect:sphere;		
 		}
 	}
 }
@@ -356,8 +355,7 @@ experiment aggregated type: gui {
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
-		
-		
+				
 		display RealBoidsAggregatedTrajectory  type:opengl trace:true{
 			image name:'background' file:'images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
