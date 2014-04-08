@@ -299,8 +299,8 @@ entities {
 		}
 				
 		aspect dynamicColor{
-			//float hue <- heading/360;
-			rgb cc <- hsb (hue,1.0,1.0);
+			float hue <- heading/360;
+			rgb cc <- hsb (heading/360,1.0,1.0);
 			draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
 			draw name;
 		}
