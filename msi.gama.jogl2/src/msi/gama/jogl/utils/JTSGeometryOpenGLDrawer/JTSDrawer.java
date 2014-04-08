@@ -392,20 +392,20 @@ public class JTSDrawer {
 			gl.glBegin(GL_QUADS);
 				gl.glTexCoord2f(0.0f, 1.0f);
 				gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(),
-					0.0d);
+						p.getExteriorRing().getCoordinateN(0).z);
 	
 				gl.glTexCoord2f(1.0f, 1.0f);;
 				gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(),
-					0.0d);
+						p.getExteriorRing().getCoordinateN(1).z);
 	
 				gl.glTexCoord2f(1.0f, 0.0f);;
 				gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(),
-					0.0d);
+						p.getExteriorRing().getCoordinateN(2).z);
 	
 				gl.glTexCoord2f(0.0f, 0.0f);
 				gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(),
-					0.0d);
-			gl.glEnd();
+						p.getExteriorRing().getCoordinateN(3).z);
+		    gl.glEnd();
 		}
 
 		texture.unbindFrom(renderer);
