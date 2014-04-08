@@ -24,35 +24,21 @@ global {
     
 species cells skills: [moving] {  
 	rgb color;
-	list<cells> neighbours update: neighbours(width_and_height_of_environment/10);
+	
 	reflex move {
 		  do wander_3D z_max:width_and_height_of_environment;
 	}	
-	
-	list<cells> neighbours(int dist) {
-                return cells select ((each distance_to self) < dist);
-    }
-     	
+    	
 	aspect default {
-		  draw sphere(radius);	
-    }
-    
-    aspect neighbours {
-		draw sphere(radius);
-		loop pp over: neighbours {
-			draw line([self.location,pp.location]);
-		}	
+		  draw sphere(radius) color:color;	
     }
 }
 	
 
 experiment Display  type: gui {
 	output {
-		display WanderingSphere type:opengl  background:rgb(10,40,55){
+		display WanderingSphere type:opengl  ambient_light:0 diffuse_light:100 background:rgb(10,40,55){
 			species cells;
-		}
-		display WanderingSphereWithNeighbourgs type:opengl  background:rgb(10,40,55){
-			species cells aspect:neighbours;
 		}
 	}
 }
