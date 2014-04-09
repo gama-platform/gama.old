@@ -25,6 +25,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,21 +40,29 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed repeatedly.
 
 @symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true),
-	@facet(name = IKeyword.TO, type = IType.INT, optional = true),
-	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.OVER, type = { IType.CONTAINER, IType.POINT }, optional = true),
-	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true) },
-
+@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.TO, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.STEP, type = IType.INT, optional = true, doc = @doc("an int expression")),
+	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a temporary variable name")),
+	@facet(name = IKeyword.OVER, type = { IType.CONTAINER, IType.POINT }, optional = true, doc = @doc("a list, point, matrix or map expression")),
+	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true, doc = @doc("a boolean expression")),
+	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true, doc = @doc("an int expression")) },
 combinations = {
-
-@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME, IKeyword.STEP }),
+	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME, IKeyword.STEP }),
 	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME }), @combination({ IKeyword.OVER, IKeyword.NAME }),
 	@combination({ IKeyword.OVER, IKeyword.NAME, IKeyword.STEP }), @combination({ IKeyword.TIMES }),
 	@combination({ IKeyword.WHILE }) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@doc(value="Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of integers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.", usages = {
+	@usage(value="The basic syntax for repeating a fixed number of times a set of statements is:", examples = {@example(value="loop times: an_int_expression {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false),@example(value="int sumTimes <- 1;", isTestOnly=true),@example(value="loop times: 3 {sumTimes <- sumTimes + sumTimes;}", isTestOnly=true),@example(var="sumTimes",equals="8",isTestOnly=true)}),
+	@usage(value="The basic syntax for repeating a set of statements while a condition holds is:", examples = {@example(value="loop while: a_bool_expression {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false),@example(value="int sumWhile <- 1;", isTestOnly=true),@example(value="loop while: (sumWhile < 3) {sumWhile <- sumWhile + sumWhile;}", isTestOnly=true),@example(var="sumWhile",equals="8",isTestOnly=true)}),
+	@usage(value="The basic syntax for repeating a set of statements by progressing over a container of a point is:", examples = {@example(value="loop a_temp_var over: a_collection_expression {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false)}),
+	@usage(value="The basic syntax for repeating a set of statements while an index iterates over a range of values with a fixed step of 1 is:", examples = {@example(value="loop a_temp_var from: int_expression_1 to: int_expression_2 {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false)}),
+	@usage(value="The incrementation step of the index can also be chosen:", examples = {@example(value="loop a_temp_var from: int_expression_1 to: int_expression_2 step: int_expression3 {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false),@example(value="int sumFor <- 0;", isTestOnly=true),@example(value="loop i from: 10 to: 30 step: 10 {sumFor <- sumFor + i;}", isTestOnly=true),@example(var="sumFor",equals="60",isTestOnly=true)}),
+//	@usage(value="The former use can also be written using a point (to represent an interval):", examples = {@example(value="loop a_temp_var over: point_expression step: int_expression3 {", isExecutable=false),@example(value="     // [statements]", isExecutable=false),@example(value="}", isExecutable=false),@example(value="int sumOverPoint <- 0;", isTestOnly=true),@example(value="loop i over: {10,30} step: 10 {sumOverPoint <- sumOverPoint + i;}", isTestOnly=true),@example(var="sumOverPoint",equals="60",isTestOnly=true)}),
+	@usage(value="In these latter three cases, the name facet designates the name of a temporary variable, whose scope is the loop, and that takes, in turn, the value of each of the element of the list (or each value in the interval). For example, in the first instance of the \"loop over\" syntax :", examples = {@example(value="int a <- 0;"),@example(value="loop i over: [10, 20, 30] {"),@example(value="     a <- a + i;"),@example(value="} // a now equals 60"), @example(var="a",equals="60",isTestOnly=true)}),
+	@usage(value="The second (quite common) case of the loop syntax allows one to use an interval of integers. The from and to facets take an integer expression as arguments, with the first (resp. the last) specifying the beginning (resp. end) of the inclusive interval (i.e. [to, from]). If the step is not defined, it is assumed to be equal to 1.", examples = {@example(value="list the_list <-list (species_of (self)) {"),@example(value="loop i from: 0 to: length (the_list) - 1 {"),@example(value="     ask the_list at i {"),@example(value="        // ..."), @example(value="     }"),@example(value="} // every  agent of the list is asked to do something")})
+})
 public class LoopStatement extends AbstractStatementSequence {
 
 	private final LoopExecuter executer;
@@ -145,14 +156,19 @@ public class LoopStatement extends AbstractStatementSequence {
 		private final IExpression over = getFacet(IKeyword.OVER);
 		ILocation constantOver;
 		private final IExpression step = getFacet(IKeyword.STEP);
-		Integer constantStep = 1;
+		Integer constantStep;
 
 		Interval() throws GamaRuntimeException {
 			final IScope scope = GAMA.obtainNewScope();
 			if ( over.isConst() ) {
 				constantOver = Cast.asPoint(scope, over.value(scope));
 			}
-			if ( step != null && step.isConst() ) {
+		//	if ( step != null && step.isConst() ) {
+		//		constantStep = Cast.asInt(scope, step.value(scope));
+		//	}
+			if ( step == null ) {
+				constantStep = 1;
+			} else if ( step.isConst() ) {
 				constantStep = Cast.asInt(scope, step.value(scope));
 			}
 			GAMA.releaseScope(scope);
@@ -164,9 +180,9 @@ public class LoopStatement extends AbstractStatementSequence {
 			final int first = (int) interval.getX();
 			final int last = (int) interval.getY();
 			if ( first > last ) { return null; }
-			final int step_ = constantStep == null ? Cast.asInt(scope, step.value(scope)) : 1;
+			final int step_ = (constantStep == null) ? Cast.asInt(scope, step.value(scope)) : constantStep;
 			if ( step_ <= 0 || step_ > last - first ) { return null; }
-			for ( int i = first; i < last && loopBody(scope, i); i += step_ ) {}
+			for ( int i = first, n = last + 1; i < n && loopBody(scope, i); i += step_ ) {}
 			return result[0];
 		}
 
