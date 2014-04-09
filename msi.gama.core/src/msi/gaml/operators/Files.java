@@ -107,7 +107,7 @@ public class Files {
 	}
 
 	@operator(value="writable", category=IOperatorCategory.FILE)
-	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { @example(value="shapefile(\"../images/point_eau.shp\") writable false",equals="returns a file in read-only mode",test=false) }, see = "file")
+	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { @example(value="shape_file(\"../images/point_eau.shp\") writable false",equals="returns a file in read-only mode",test=false) }, see = "file")
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
 		if ( s == null ) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file"); }
 		boolean b = writable == null ? false : writable;

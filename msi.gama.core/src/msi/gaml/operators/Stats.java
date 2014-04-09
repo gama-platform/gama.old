@@ -297,10 +297,10 @@ public class Stats {
 		return result;
 	}
 
-	@operator(value = "corR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.STATISTICAL})
+	@operator(value = "corR", can_be_const = true, type = IType.FLOAT, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).", 
 		special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0", examples = {
-		@example("list X <- [2, 3, 1];"), @example("list Y <- [2, 12, 4];"), @example(value="corR(X, Y)",equals="0.755928946018454")})
+		@example("list X <- [1, 2, 3];"), @example("list Y <- [1, 2, 4];"), @example(value="corR(X, Y)",equals="0.981980506061966")})
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -348,7 +348,7 @@ public class Stats {
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).", examples = {
-		@example("list X <- [2, 3, 1];"), @example(value="meanR(X)",equals="2.0")})
+		@example("list<int> X <- [2, 3, 1];"), @example(value="meanR(X)",equals="2",returnType=IKeyword.INT)})
 	public static Object getMeanR(final IScope scope, final IContainer l) throws GamaRuntimeException,
 		RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -379,7 +379,8 @@ public class Stats {
 
 	@operator(value = "R_compute", can_be_const = true, type = IType.MAP,content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).", examples = {
-		@example("map result <- [];"), @example("result <- R_compute('C:/YourPath/Correlation.R');"), @example("////// Correlation.R file:"), @example("// x <- c(1, 2, 3);"),
+			@example(value="file f <- file('Correlation.r');",isTestOnly=true),@example(value="save \"x <- c(1, 2, 3);\" to: f.path;",isTestOnly=true),@example(value="save \"y <- c(1, 2, 4);\" to: f.path;",isTestOnly=true),@example(value="save \"result<- cor(x, y);\" to: f.path;",isTestOnly=true),
+			@example(value="R_compute('Correlation.R')", var="result", equals="['result'::['0.981980506061966']]"), @example("////// Correlation.R file:"), @example("// x <- c(1, 2, 3);"),
 		@example("// y <- c(1, 2, 4);"), @example("// result <- cor(x, y);"), @example("// Output:"), @example("// result::[0.981980506061966]") })
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile) throws GamaRuntimeException,
 		RCallerParseException, RCallerExecutionException {
@@ -455,9 +456,10 @@ public class Stats {
 
 	@operator(value = "R_compute_param", can_be_const = true, type = IType.MAP,content_type = IType.LIST, index_type = IType.STRING, category={IOperatorCategory.STATISTICAL})
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector", examples = {
-		@example("list X <- [2, 3, 1];"), @example("map result <- [];"), @example("result <- R_compute_param('C:/YourPath/AddParam.R', X);"),
-		@example("write result at 0;"), @example("////// AddParam.R file:"), @example("// v1 <- vectorParam[1];"), @example("// v2<-vectorParam[2];"), @example("// v3<-vectorParam[3];"),
-		@example("// result<-v1+v2+v3;"), @example("////// Output:"), @example("// result::[10]") })
+		@example(value="file f <- file('AddParam.r');",isTestOnly=true),@example(value="save \"v1 <- vectorParam[1];\" to: f.path;",isTestOnly=true),@example(value="save \"v2<-vectorParam[2];\" to: f.path;",isTestOnly=true),@example(value="save \"v3<-vectorParam[3];\" to: f.path;",isTestOnly=true),@example(value="save \"result<-v1+v2+v3;\" to: f.path;",isTestOnly=true),
+		@example("list<int> X <- [2, 3, 1];"), @example(value="R_compute_param('AddParam.R', X)", var = "result", equals="['result'::['6']]"),
+		@example("////// AddParam.R file:"), @example("// v1 <- vectorParam[1];"), @example("// v2<-vectorParam[2];"), @example("// v3<-vectorParam[3];"),
+		@example("// result<-v1+v2+v3;"), @example("////// Output:"), @example("// 'result'::[6]") })
 	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( param.length(scope) == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception"); }

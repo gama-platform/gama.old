@@ -483,7 +483,7 @@ public abstract class Spatial {
 	public static abstract class Operators {
 
 		@operator(value = { "inter", "intersection" }, category={IOperatorCategory.SPATIAL})
-		@doc(value = "A geometry resulting from the intersection between the two geometries", special_cases = { "returns nil if one of the operands is nil" }, examples = { @example(value="square(5) intersects circle(5)",equals="circle(5)",test=false) }, see = {
+		@doc(value = "A geometry resulting from the intersection between the two geometries", special_cases = { "returns nil if one of the operands is nil" }, examples = { @example(value="square(10) inter circle(5)",equals="circle(5)") }, see = {
 			"union", "+", "-" })
 		public static IShape inter(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g2 == null || g1 == null ) { return null; }
@@ -727,7 +727,7 @@ public abstract class Spatial {
 			return masked_by(scope, source, obstacles, null);
 		}
 
-		@operator(value="split_at", category={IOperatorCategory.SPATIAL})
+		@operator(value="split_at", type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL})
 		@doc(value = "The two part of the left-operand lines split at the given right-operand point", usages = { @usage("if the left-operand is a point or a polygon, returns an empty list") }, examples = { @example(value="polyline([{1,2},{4,6}]) split_at {7,6}",equals="[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
 		public static GamaList<IShape> split_at(final IShape geom, final ILocation pt) {
 			final GamaList<IShape> lines = new GamaList<IShape>();
@@ -1023,10 +1023,10 @@ public abstract class Spatial {
 			double y_size = geom.getEnvelope().getHeight() / nbRows;
 			
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), x_size, y_size, overlaps);
-		}
-		
-		
+		}		
 
+		
+		
 		@operator(value = {"split_geometry", "to_squares"}, type = IType.LIST, content_type = IType.GEOMETRY, category={IOperatorCategory.SPATIAL,IOperatorCategory.SP_TRANSFORMATIONS})
 		@doc(value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size)", examples = { @example(value="to_squares(self, 10.0)",equals="the list of the geometries corresponding to the decomposition of the geometry by squares of side size 10.0",test=false) })
 		public static GamaList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension) {

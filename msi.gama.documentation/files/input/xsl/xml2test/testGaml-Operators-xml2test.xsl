@@ -57,10 +57,10 @@ experiment test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp ty
 				<xsl:choose>
 				<xsl:when test="@var">
 				<xsl:text>			</xsl:text>
-			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- <xsl:value-of select="@code"/>; 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
+			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:if test="@type != 'null'"><xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- </xsl:if><xsl:value-of select="@code"/><xsl:if test="@type != 'null'">;</xsl:if> 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
 </xsl:text></xsl:if>
 			<xsl:if test="@test = 'true'">
-			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
+			assert <xsl:value-of select="@var"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
 </xsl:text> </xsl:if>								
 				</xsl:when>
 				<xsl:otherwise>
@@ -93,7 +93,8 @@ experiment test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp ty
  	<xsl:choose>
  		<xsl:when test="@name = '*'"><xsl:text>`*`</xsl:text></xsl:when>
  		<xsl:when test="@name = '**'"><xsl:text>`**`</xsl:text></xsl:when>
- 		<xsl:when test="@name = '&lt;-&gt;'"><xsl:text>`&lt;-&gt;`</xsl:text></xsl:when> 		
+ 		<xsl:when test="@name = '&lt;-&gt;'"><xsl:text>`&lt;-&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="@name = '='"><xsl:text>Equals</xsl:text></xsl:when>  		
  		<xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
  	</xsl:choose>
  </xsl:template>

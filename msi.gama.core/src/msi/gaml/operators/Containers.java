@@ -337,8 +337,7 @@ public class Containers {
 		+ "whereas, in the second syntax, the parser cannot determine the species of the agents within the list "
 		+ "(resulting in the need to cast it explicitely if it is to be used in an ask statement, for instance).", usages = @usage("if the right operand is nil, of_species returns the right operand"), examples = {
 		@example(value = "(self neighbours_at 10) of_species (species (self))", equals = "all the neighbouring agents of the same species.", isExecutable = false),
-		@example(value = "[test(0),test(1),node(1),node(2)] of_species test", equals = "[test0,test1]", isExecutable = false),
-		@example(value = "[1,2,3,4,5,6] of_species agent", equals = "nil") }, see = { "of_generic_species" })
+		@example(value = "[test(0),test(1),node(1),node(2)] of_species test", equals = "[test0,test1]", isExecutable = false)}, see = { "of_generic_species" })
 	public static IList of_species(final IScope scope, final IContainer agents, final ISpecies s) {
 		return of_species(scope, nullCheck(agents), nullCheck(s), false);
 	}
@@ -477,7 +476,7 @@ public class Containers {
 		@example(value="graph([]) max_of([])", raises = "error", isTestOnly=true),
 		@example(value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )", equals = "800"),
 		@example(value = "graph g2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
-		@example(value = "g2 max_of (length(g2 out_edges_of each) )", equals = "1"),
+		@example(value = "g2.vertices max_of (g2 degree_of( each ))", equals = "2"),
 		@example(value = "(list(node) max_of (round(node(each).location.x))", equals = "96", isExecutable = false) }, see = { "min_of" })
 	public static Object max_of(final IScope scope, final IContainer container, final IExpression filter) {
 		final Function f = GAML.<Comparable> function(scope, filter);

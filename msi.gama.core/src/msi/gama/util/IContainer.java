@@ -203,7 +203,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@doc(value = "one of the values stored in this container  at a random key", masterDoc=true, comment = "the one_of operator behavior depends on the nature of the operand", 
 		usages = {
 			@usage(value="if the operand is empty, one_of returns nil", examples={
-				@example(value="one_of([])",equals="nil",returnType=IKeyword.INT,isTestOnly=true)}),
+				@example(value="one_of([])",equals="nil",returnType=IKeyword.UNKNOWN,isTestOnly=true)}),
 			@usage(value="if it is a list or a matrix, one_of returns one of the values of the list or of the matrix", examples ={
 					@example(value="any ([1,2,3])",var="i",equals= "1, 2 or 3",returnType=IKeyword.INT, test=false),@example(value="[1,2,3] contains i",returnType=IKeyword.BOOL,equals="true", isTestOnly=true),
 					@example("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""),

@@ -57,7 +57,7 @@ experiment testStatementsExp type: gui {}
 				<xsl:choose>
 				<xsl:when test="@var">
 				<xsl:text>			</xsl:text>
-			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:if test='@type != null'><xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- </xsl:if><xsl:value-of select="@code"/><xsl:if test='@type != null'>;</xsl:if> 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
+			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:if test="@type != 'null'"><xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- </xsl:if><xsl:value-of select="@code"/><xsl:if test="@type != 'null'">;</xsl:if> 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
 </xsl:text></xsl:if>
 			<xsl:if test="@test = 'true'">
 			assert <xsl:value-of select="@var"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
