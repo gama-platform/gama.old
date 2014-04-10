@@ -139,7 +139,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private boolean exploded;
 	static String xAxisName = "'time'";
 	List<ChartData> datas;
-	List<ChartData> dataswithoutlists;
+	List<ChartData> datasfromlists;
 	List<ChartDataList> datalists;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
@@ -153,7 +153,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		axesColor = Cast.asColor(null, "black");
-		lastValues = new HashMap();
+		lastValues = new LinkedHashMap();
 		lastComputeCycle = 0l;
 	}
 
@@ -550,15 +550,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		createChart(scope);
 		createData(scope);
-		dataswithoutlists=datas;
+//		dataswithoutlists=datas;
 		updateseries(scope);
 		chart.setNotify(false);
 		return true;
 	}
 
 	public void updateseries(final IScope scope) throws GamaRuntimeException {
-		datas=dataswithoutlists;
-		
+//		datas=dataswithoutlists;
+		datasfromlists=new ArrayList<ChartData>();
 		for (int dl=0; dl<datalists.size(); dl++)
 		{
 			ChartDataList datalist=datalists.get(dl);
@@ -658,10 +658,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				for (int i=0; i<Math.min(values.size(),seriesnames.size());i++)
 				{
 					defaultnames.set(i,seriesnames.get(i)+"("+i+")");
-					if ((type==SERIES_CHART)&&(((XYPlot)chart.getPlot()).getDataset(i)!=null))
+					if ((type==SERIES_CHART)&&(((XYPlot)chart.getPlot()).getDataset(i+1)!=null))
 					{
-							if (((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i))).getSeriesCount()>0)
-							((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i))).getSeries(0).setKey(seriesnames.get(i)+"("+i+")");
+							if (((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i+1))).getSeriesCount()>0)
+							((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i+1))).getSeries(0).setKey(seriesnames.get(i)+"("+i+")");
 					}
 				}
 				if (values.size()>seriesnames.size())
@@ -697,7 +697,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 								newdata=ChartDataListStatement.newChartData(scope,r,Cast.asString(scope, defaultnames.get(i)),Cast.asColor(scope,defaultcolors.get(i)),values.get(i));
 
 							datas.add(newdata);
-
+							datasfromlists.add(newdata);
 
 							if ((type==SERIES_CHART)|(type==XY_CHART))
 							{
@@ -1029,7 +1029,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			history.append(',');
 		}
 		if (!((type==SERIES_CHART)&(datas.size()<2)))
-		for ( int i = 0; i < datas.size(); i++ ) {
+		for ( int i = 0; i < datas.size(); i++ ) 
+		if (!datasfromlists.contains(datas.get(i))){
 			if ((type==SERIES_CHART)&(i==0)) i++;
 			XYPlot plot = (XYPlot) chart.getPlot();
 			DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
