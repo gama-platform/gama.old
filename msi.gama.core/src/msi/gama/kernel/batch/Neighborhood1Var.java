@@ -32,6 +32,7 @@ public class Neighborhood1Var extends Neighborhood {
 	public List<ParametersSet> neighbor(final ParametersSet solution) throws GamaRuntimeException {
 		final List<ParametersSet> neighbors = new ArrayList<ParametersSet>();
 		for ( final IParameter.Batch var : variables ) {
+			var.setValue(solution.get(var.getName()));
 			final Set<Object> neighbourValues = var.neighbourValues();
 			for ( final Object val : neighbourValues ) {
 				final ParametersSet newSol = new ParametersSet(solution);

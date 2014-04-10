@@ -273,13 +273,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if ( type.id() == IType.FLOAT ) {
 			double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 			double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			double val = Cast.as(value(), Double.class);
+			double removeZ = Math.max(100000.0, 1.0/step);
+			double val = Cast.asFloat(null, value());
 			if ( val >= min + step ) {
-				final double valLow = (int) ((val - step) * 100000 + 0.5) / 100000.0;
+				final double valLow = (Math.round(((val - step) * removeZ))) / removeZ;
 				neighbourValues.add(valLow);
 			}
-			if ( ((Double) this.value()).doubleValue() <= max - step ) {
-				final double valHigh = (int) ((val + step) * 100000 + 0.5) / 100000.0;
+			if ( val <= max - step ) {
+				final double valHigh = (Math.round(((val + step) * removeZ))) / removeZ;
 				neighbourValues.add(valHigh);
 			}
 		}
