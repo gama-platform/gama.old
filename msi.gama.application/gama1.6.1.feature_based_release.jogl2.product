@@ -11,7 +11,7 @@ Generic Agent-based Modelling Architecture
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
-(c) 2012-2013 UMI 209 UMMISCO IRD/UPMC &amp; Partners
+(c) 2012-2014 UMI 209 UMMISCO IRD/UPMC &amp; Partners
 Visit http://code.google.com/p/gama-platform/
       </text>
    </aboutInfo>
@@ -60,7 +60,7 @@ openFile</programArgs>
    </launcher>
 
    <vm>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
    </vm>
 
    <license>
@@ -249,15 +249,14 @@ openFile</programArgs>
    </plugins>
 
    <features>
+      <feature id="ummisco.gama.feature.dependencies" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.core" version="1.6.1.qualifier"/>
       <feature id="ummisco.gama.feature.models" version="1.6.1.qualifier"/>
-      <feature id="ummisco.gama.feature.dependencies" version="1.6.1.qualifier"/>
-      <feature id="org.eclipse.equinox.p2.core.feature" version="1.0.1.v20110906-1605-8290FZ9FVKHVRKtmx3fpNuo02129"/>
-      <feature id="org.eclipse.equinox.p2.discovery.feature" version="1.0.101.R37x_v20110909-4-8_9oB5885K5B28WKK"/>
-      <feature id="org.eclipse.equinox.p2.extras.feature" version="1.0.1.v20110906-1605-7A4FD4DiVOMap8cHSc6vPuny4gqO"/>
-      <feature id="org.eclipse.equinox.p2.rcp.feature" version="1.0.1.v20110906-1605-782EqBqNKGVkiV-PUsgz-uny4gqO"/>
-      <feature id="org.eclipse.equinox.p2.user.ui" version="2.1.2.R37x_v20110815-1155-6-Bk8pYWZz0qUTX5I15GZWwbXkrl"/>
       <feature id="ummisco.gama.feature.opengl.jogl2" version="1.6.1.qualifier"/>
+      <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
+      <feature id="org.eclipse.equinox.p2.user.ui"/>
    </features>
 
    <configurations>
