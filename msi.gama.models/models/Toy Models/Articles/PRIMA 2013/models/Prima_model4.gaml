@@ -5,7 +5,7 @@
 model model4 
 
 global {
-	file roads_shapefile <- file("../includes/road.shp");
+	file roads_shapefile <- shape_file("../includes/road.shp");
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
