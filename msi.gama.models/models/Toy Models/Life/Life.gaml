@@ -7,10 +7,10 @@ global torus: torus_environment {
 	int density <- 25 min: 1 max: 99;
 	list<int> living_conditions <- [2, 3];
 	list<int> birth_conditions <- [3];
-	rgb livingcolor <- rgb('white');
-	rgb dyingcolor <- rgb('red');
-	rgb emergingcolor <- rgb('orange');
-	rgb deadcolor <- rgb('black');
+	rgb livingcolor <- °white;
+	rgb dyingcolor <- °red;
+	rgb emergingcolor <- °orange;
+	rgb deadcolor <- °black;
 	geometry shape <- rectangle(environment_width, environment_height);
 	init {
 		do description;
@@ -61,7 +61,7 @@ entities {
 
 }
 
-experiment life type: gui {
+experiment toto type: gui {
 	parameter 'Width:' var: environment_width category: 'Board';
 	parameter 'Height:' var: environment_height category: 'Board';
 	parameter 'Torus?:' var: torus_environment category: 'Board';
@@ -73,7 +73,7 @@ experiment life type: gui {
 	parameter 'Color of emerging cells:' var: emergingcolor category: 'Colors';
 	parameter 'Color of dead cells:' var: deadcolor category: 'Colors';
 	output {
-		display Life {
+		display Life{
 			grid life_cell;
 		}
 
