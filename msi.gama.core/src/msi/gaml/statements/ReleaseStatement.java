@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -25,6 +25,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,10 +40,29 @@ import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = { @facet(name = IKeyword.TARGET, type = { IType.AGENT, IType.LIST }, optional = false),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true),
-	@facet(name = IKeyword.IN, type = { IType.AGENT }, optional = true),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.TARGET)
+@facets(value = { @facet(name = IKeyword.TARGET, type = { IType.AGENT, IType.LIST }, optional = false, doc = @doc("an expression that is evaluated as an agent or a list of the agents to be released")),
+	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc=@doc("an expression that is evaluated as a species in which the micro-agent will be released")),
+	@facet(name = IKeyword.IN, type = { IType.AGENT }, optional = true, doc = @doc("an expresion that is evaluated as an agent that will be the macro-agent in which micro-agent will be released, i.e. their new host")),
+	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc=@doc("a new variable containing a list of the newly released agent(s)")) }, omissible = IKeyword.TARGET)
+@doc(value="Allows an agent to release its micro-agent(s). The preliminary for an agent to release its micro-agents is that species of these micro-agents are sub-species of other species (cf. [Species161#Nesting_species Nesting species]). The released agents won't be micro-agents of the calling agent anymore. Being released from a macro-agent, the micro-agents will change their species and host (macro-agent).",usages = {
+	@usage(value="We consider the following species. Agents of \"C\" species can be released from a \"B\" agent to become agents of \"A\" species. Agents of \"D\" species cannot be released from the \"A\" agent because species \"D\" has no parent species.", examples={
+		@example(value="species A {",isExecutable=false),
+		@example(value="...",isExecutable=false),
+		@example(value="}",isExecutable=false),
+		@example(value="species B {",isExecutable=false),
+		@example(value="...",isExecutable=false),
+		@example(value="   species C parent: A {",isExecutable=false),
+		@example(value="   ...",isExecutable=false),
+		@example(value="   }",isExecutable=false),
+		@example(value="   species D {",isExecutable=false),
+		@example(value="   ...",isExecutable=false),
+		@example(value="   }",isExecutable=false),		
+		@example(value="...",isExecutable=false),
+		@example(value="}",isExecutable=false)}),
+	@usage(value = "To release all \"C\" agents from a \"B\" agent, agent \"C\" has to execute the following statement. The \"C\" agent will change to \"A\" agent. The won't consider \"B\" agent as their macro-agent (host) anymore. Their host (macro-agent) will the be the host (macro-agent) of the \"B\" agent.", examples = {
+		@example(value="release list(C);",isExecutable=false)}),
+	@usage(value="The modeler can specify the new host and the new species of the released agents:", examples = @example(value="release list (C) as: new_species in: new host;",isExecutable=false))
+	},see="capture")
 public class ReleaseStatement extends AbstractStatementSequence {
 
 	private final IExpression target;

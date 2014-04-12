@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
-<xsl:variable name="html_menu" select="''"/>
-<xsl:variable name="html_doc" select="''"/>
-<xsl:variable name="html_iterator" select="0"/>
-<xsl:variable name="emptyStr" select="''"/>
+<xsl:variable name="fileAK" select="'OperatorsAK161'"/>
+<xsl:variable name="fileLZ" select="'OperatorsLZ161'"/>
 
 <xsl:template match="/">
  	<xsl:text>#summary Operators(Modeling Guide)

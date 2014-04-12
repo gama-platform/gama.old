@@ -26,6 +26,9 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,7 +47,18 @@ import com.google.common.collect.Iterables;
  */
 @symbol(name = IKeyword.SWITCH, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = false) }, omissible = IKeyword.VALUE)
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("an expression")) }, omissible = IKeyword.VALUE)
+@doc(value="The \"switch... match\" statement is a powerful replacement for imbricated \"if ... else ...\" constructs. All the blocks that match are executed in the order they are defined. The block prefixed by default is executed only if none have matched (otherwise it is not).", usages = {
+	@usage(value="The prototypical syntax is as follows:",examples ={
+		@example(value="switch an_expression {",isExecutable=false), @example(value="        match value1 {...}",isExecutable=false), @example(value="        match_one [value1, value2, value3] {...}",isExecutable=false), @example(value="        match_between [value1, value2] {...}",isExecutable=false), @example(value="        default {...}",isExecutable=false), @example(value="}",isExecutable=false)
+	}),
+	@usage(value="Example:",examples ={
+		@example(value="switch 3 {",test=false), @example(value="   match 1 {write \"Match 1\"; }",test=false), @example(value="   match 2 {write \"Match 2\"; }",test=false), @example(value="   match 3 {write \"Match 3\"; }",test=false), @example(value="   match_one [4,4,6,3,7]  {write \"Match one_of\"; }",test=false), @example(value="   match_between [2, 4] {write \"Match between\"; }",test=false), @example(value="   default {write \"Match Default\"; }",test=false), @example(value="}",test=false),			
+		@example(value="string val1 <- \"\";",test=false,isTestOnly=true),@example(value="switch 1 {",test=false,isTestOnly=true), @example(value="   match 1 {val1 <- val1 + \"1\"; }",test=false,isTestOnly=true), @example(value="   match 2 {val1 <- val1 + \"2\"; }",test=false,isTestOnly=true), @example(value="   match_one [1,1,6,4,7]  {val1 <- val1 + \"One_of\"; }",test=false,isTestOnly=true), @example(value="   match_between [2, 4] {val1 <- val1 + \"Between\"; }",test=false,isTestOnly=true), @example(value="   default {val1 <- val1 + \"Default\"; }",test=false,isTestOnly=true), @example(value="}",test=false,isTestOnly=true), @example(var="val1",equals="'1One_of'",isTestOnly=true),			
+		@example(value="string val2 <- \"\";",test=false,isTestOnly=true),@example(value="switch 2 {",test=false,isTestOnly=true), @example(value="   match 1 {val2 <- val2 + \"1\"; }",test=false,isTestOnly=true), @example(value="   match 2 {val2 <- val2 + \"2\"; }",test=false,isTestOnly=true), @example(value="   match_one [1,1,6,4,7]  {val2 <- val2 + \"One_of\"; }",test=false,isTestOnly=true), @example(value="   match_between [2, 4] {val2 <- val2 + \"Between\"; }",test=false,isTestOnly=true), @example(value="   default {val2 <- val2 + \"Default\"; }",test=false,isTestOnly=true), @example(value="}",test=false,isTestOnly=true), @example(var="val2",equals="'2Between'",isTestOnly=true),			
+		@example(value="string val10 <- \"\";",test=false,isTestOnly=true),@example(value="switch 10 {",test=false,isTestOnly=true), @example(value="   match 1 {val10 <- val10 + \"1\"; }",test=false,isTestOnly=true), @example(value="   match 2 {val10 <- val10 + \"2\"; }",test=false,isTestOnly=true), @example(value="   match_one [1,1,6,4,7]  {val10 <- val10 + \"One_of\"; }",test=false,isTestOnly=true), @example(value="   match_between [2, 4] {val10 <- val10 + \"Between\"; }",test=false,isTestOnly=true), @example(value="   default {val10 <- val10 + \"Default\"; }",test=false,isTestOnly=true), @example(value="}",test=false,isTestOnly=true), @example(var="val10",equals="'Default'",isTestOnly=true)			
+	})
+})
 @validator(SwitchValidator.class)
 public class SwitchStatement extends AbstractStatementSequence {
 

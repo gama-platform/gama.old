@@ -49,23 +49,21 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true, doc=@doc("the species that the captured agent(s) will become, this is a micro-species of the calling agent's species")),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a list of the newly captured agent(s)")) }, omissible = IKeyword.TARGET)
 @doc(value = "Allows an agent to capture other agent(s) as its micro-agent(s).", usages = {
-		@usage(value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).",
-			examples = {@example(value="species B {",isExecutable=false),
-						@example(value="...",isExecutable=false),
-						@example(value="}",isExecutable=false),
-						@example(value="species A {",isExecutable=false),
-						@example(value="...",isExecutable=false),
-						@example(value="   species C parent: B {",isExecutable=false),
-						@example(value="   ...",isExecutable=false),
-						@example(value="   }",isExecutable=false),
-						@example(value="...",isExecutable=false),
-						@example(value="}",isExecutable=false)						
-			}),
-		@usage(value = "To capture all \"B\" agents as \"C\" agents, we can ask an \"A\" agent to execute the following statement:", 
-			examples = {@example(value="capture list(A) as: C;",isExecutable=false)}), 
-		@usage(value = "Deprecated writing:", 
-			examples = {@example(value="capture target: list (A) as: C;",isExecutable=false)})}, see ={"release"})
-
+	@usage(value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).", examples = {
+		@example(value="species A {",isExecutable=false),
+		@example(value="...",isExecutable=false),
+		@example(value="}",isExecutable=false),
+		@example(value="species B {",isExecutable=false),
+		@example(value="...",isExecutable=false),
+		@example(value="   species C parent: A {",isExecutable=false),
+		@example(value="   ...",isExecutable=false),
+		@example(value="   }",isExecutable=false),
+		@example(value="...",isExecutable=false),
+		@example(value="}",isExecutable=false)}),
+	@usage(value = "To capture all \"A\" agents as \"C\" agents, we can ask an \"B\" agent to execute the following statement:", examples = {
+		@example(value="capture list(B) as: C;",isExecutable=false)}), 
+	@usage(value = "Deprecated writing:", examples = {
+		@example(value="capture target: list (B) as: C;",isExecutable=false)})}, see ={"release"})
 @validator(CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
 

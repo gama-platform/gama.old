@@ -165,7 +165,7 @@ public class Files {
 
 	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING, category=IOperatorCategory.FILE)
 	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", usages = {@usage("If the specified string does not refer to an existing repository, the repository is created."), @usage("If the string refers to an existing file, an exception is risen.")}, examples = {
-		@example("file dirNewT <- new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\""),
+		@example("file dirNewT <- new_folder(\"incl/\");   	// dirNewT represents the repository \"../incl/\""),
 		@example("												// eventually creates the directory ../incl") }, see = { "folder", "file" })
 	public static IGamaFile newFolder(final IScope scope, final String folder) throws GamaRuntimeException {
 		IModel model = scope.getSimulationScope().getModel();

@@ -80,9 +80,7 @@ import msi.gaml.types.*;
 		@example(value="add edge: {1,5}::{2,3} to: g;",returnType="null",var="g", equals="as_edge_graph([{1,5}::{12,45},{1,5}::{2,3}])"),
 		@example(value="add node: {5,5} to: g;"),
 		@example(value="g.vertices",returnType=IKeyword.LIST,equals="[{1.0,5.0},{12.0,45.0},{2.0,3.0},{5.0,5.0}]"),
-		@example(value="g.edges",returnType=IKeyword.LIST,equals="[polyline({1.0,5.0}::{12.0,45.0}),polyline({2.0,3.0}::{5.0,5.0})]"),		
-	})
-	})
+		@example(value="g.edges",returnType=IKeyword.LIST,equals="[polyline({1.0,5.0}::{12.0,45.0}),polyline({2.0,3.0}::{5.0,5.0})]")})}, see={"put","remove"})
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AddValidator.class)

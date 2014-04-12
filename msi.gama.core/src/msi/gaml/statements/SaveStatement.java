@@ -32,6 +32,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -67,12 +70,22 @@ import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true),
-	@facet(name = IKeyword.DATA, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TO, type = IType.STRING, optional = false),
-	@facet(name = "crs", type = IType.NONE, optional = true),
-	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true) }, omissible = IKeyword.DATA)
+@facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"text\" or \"csv\") ")),
+	@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
+	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
+	@facet(name = IKeyword.TO, type = IType.STRING, optional = false, doc = @doc("an expression that evaluates to an string, the path to the file")),
+	@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projectsion, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
+	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true, doc = @doc("")) }, omissible = IKeyword.DATA)
+@doc(value="Allows to save data in a file. The type of file can be \"shp\", \"text\" or \"csv\".", usages = { 
+	@usage(value="Its simple syntax is:", examples = {@example(value="save data to: output_file type: a_type_file;",isExecutable=false)}),
+	@usage(value="To save data in a text file:", examples = {
+		@example(value="save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";")}),
+	@usage(value="To save the values of some attributes of the current agent in csv file:", examples = {
+		@example(value="save [name, location, host] to: \"save_data.csv\" type: \"csv\";")}),	
+	@usage(value="To save the geometries of all the agents of a species into a shapefile (with optional attributes):", examples = {
+		@example(value="save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";")}),
+	@usage(value="The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.")
+})
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;
