@@ -296,12 +296,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final List<Object> liste = new GamaList<Object>();
 			Geometry geom = (Geometry) ag.getInnerGeometry().clone();
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
-			if (gis != null)
-				geom = gis.inverseTransform(geom);
+
+			geom = gis.inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( final Object e : attributes.values() ) {
-					liste.add(ag.getAttribute(e.toString()));
+					liste.add(ag.getDirectVarValue(scope, e.toString()));
 				}
 			}
 
@@ -314,8 +314,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		t.commit();
 		t.close();
 		store.dispose();
-		if (gis != null)
-			writePRJ(scope, path, gis);
+		writePRJ(scope, path, gis);
 	}
 
 	private void writePRJ(final IScope scope, final String path, final IProjection gis) {
