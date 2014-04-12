@@ -10,7 +10,7 @@ global {
 	rgb color_7 <- rgb ("magenta") parameter: "Color of group 7:" category: "User interface";
 	rgb color_8 <- rgb ("cyan") parameter: "Color of group 8:" category: "User interface";
 	const black type: rgb <- rgb ("black");
-	list colors <- [color_1, color_2, color_3, color_4, color_5, color_6, color_7, color_8] of: rgb;
+	list colors <- [°yellow, °red, °blue, °orange, °green, °pink, °magenta, °cyan] of: rgb;
 	int number_of_groups <- 2 max: 8 parameter: "Number of groups:" category: "Population";
 	float density_of_people <- 0.7 parameter: "Density of people:" category: "Population" min: 0.01 max: 0.99;
 	float percent_similar_wanted <- 0.5 min: float (0) max: float (1) parameter: "Desired percentage of similarity:" category: "Population";
