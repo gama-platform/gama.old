@@ -17,7 +17,8 @@ global {
 
 entities {
 	grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
-		rgb color <- rgb('white') update: (center closest_to (self)).color;
+		center closest_center <- nil update: center closest_to(self);
+		rgb color <- rgb('white') update: (closest_center).color;
 	}
 	
 	species center skills: [moving] { 
@@ -39,8 +40,8 @@ experiment voronoi type: gui{
 	
 	output {
 		display Voronoi type: opengl {
-			grid cell;
-			species center aspect: base;
+			grid cell triangulation: true elevation: closest_center = nil ? 0 : env_width/3 - self distance_to (closest_center);
+			species center aspect: base ;
 		}
 	}	
 }
