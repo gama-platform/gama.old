@@ -126,9 +126,15 @@ public class GamlDocProcessor {
 		root.appendChild(this.processDocXMLSpecies(setSpecies, doc));
 
 		// ////////////////////////////////////////////////
+		// /// Parsing of Inside statements	(kinds and symbols)
+		Set<? extends Element> setStatementsInside = env.getElementsAnnotatedWith(symbol.class);
+		root.appendChild(this.processDocXMLStatementsInsideKind(setStatementsInside, doc));
+		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatementsInside, doc));
+		
+		// ////////////////////////////////////////////////
 		// /// Parsing of Statements
-		Set<? extends Element> setCmds = env.getElementsAnnotatedWith(symbol.class);
-		root.appendChild(this.processDocXMLStatements(setCmds, doc));
+		Set<? extends Element> setStatements = env.getElementsAnnotatedWith(symbol.class);
+		root.appendChild(this.processDocXMLStatements(setStatements, doc));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types 
@@ -571,6 +577,55 @@ public class GamlDocProcessor {
 		return species;
 	}
 
+	private org.w3c.dom.Element processDocXMLStatementsInsideSymbol(final Set<? extends Element> setStatement,
+			final Document doc) {
+			org.w3c.dom.Element statementsInsideSymbolElt = doc.createElement(XMLElements.INSIDE_STAT_SYMBOLS);
+			ArrayList<String> insideStatementSymbol = new ArrayList<String>();
+			
+			for ( Element e : setStatement ) {
+				inside insideAnnot = e.getAnnotation(inside.class);
+				
+				if(insideAnnot != null){
+					for(String sym : insideAnnot.symbols()){
+						if( !insideStatementSymbol.contains(sym) ) { insideStatementSymbol.add(sym); }
+					}		
+				}					
+			}
+			
+			for(String insName : insideStatementSymbol) {
+				org.w3c.dom.Element insideStatElt = doc.createElement(XMLElements.INSIDE_STAT_SYMBOL);		
+				insideStatElt.setAttribute(XMLElements.ATT_INSIDE_STAT_SYMBOL, insName);
+				statementsInsideSymbolElt.appendChild(insideStatElt);
+			}
+			
+		return statementsInsideSymbolElt;
+	}
+
+	private org.w3c.dom.Element processDocXMLStatementsInsideKind(final Set<? extends Element> setStatement,
+			final Document doc) {
+			org.w3c.dom.Element statementsInsideKindElt = doc.createElement(XMLElements.INSIDE_STAT_KINDS);
+			ArrayList<String> insideStatementKind = new ArrayList<String>();
+			
+			for ( Element e : setStatement ) {
+				inside insideAnnot = e.getAnnotation(inside.class);
+				
+				if(insideAnnot != null){
+					for(int kind : insideAnnot.kinds()){
+						String kindStr = tc.getSymbolKindStringFromISymbolKind(kind);
+						if( !insideStatementKind.contains(kindStr) ) { insideStatementKind.add(kindStr); }						
+					}			
+				}					
+			}
+			
+			for(String insName : insideStatementKind) {
+				org.w3c.dom.Element insideStatElt = doc.createElement(XMLElements.INSIDE_STAT_KIND);		
+				insideStatElt.setAttribute(XMLElements.ATT_INSIDE_STAT_SYMBOL, insName);
+				statementsInsideKindElt.appendChild(insideStatElt);
+			}
+			
+		return statementsInsideKindElt;
+	}	
+	
 	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement,
 		final Document doc) {
 		org.w3c.dom.Element statementsElt = doc.createElement(XMLElements.STATEMENTS);
@@ -585,7 +640,7 @@ public class GamlDocProcessor {
 				// TODO : case of variables declarations ... Variable, ContainerVariable,
 				// NumberVariable
 			}
-			statElt.setAttribute(XMLElements.ATT_STAT_KIND, "" + e.getAnnotation(symbol.class).kind());
+			statElt.setAttribute(XMLElements.ATT_STAT_KIND, tc.getSymbolKindStringFromISymbolKind(e.getAnnotation(symbol.class).kind()));
 
 			// Parsing of facets
 			org.w3c.dom.Element facetsElt = 
@@ -603,7 +658,7 @@ public class GamlDocProcessor {
 
 			// Parsing of inside
 			org.w3c.dom.Element insideElt = 
-				DocProcessorAnnotations.getInsideElt(e.getAnnotation(inside.class), doc);
+				DocProcessorAnnotations.getInsideElt(e.getAnnotation(inside.class), doc, tc);
 			if(insideElt != null){
 				statElt.appendChild(insideElt);
 			}

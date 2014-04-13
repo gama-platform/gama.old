@@ -54,6 +54,10 @@ public class XMLElements {
 	public static final String SPECIES = "species";
 	public static final String STATEMENTS = "statements";
 	public static final String STATEMENT = "statement";
+	public static final String INSIDE_STAT_KINDS = "insideStatementKinds";
+	public static final String INSIDE_STAT_KIND = "insideStatementKind";
+	public static final String INSIDE_STAT_SYMBOLS = "insideStatementSymbols";
+	public static final String INSIDE_STAT_SYMBOL = "insideStatementSymbol";	
 	public static final String CONSTANTS_CATEGORIES = "constantsCategories";
 	
 	// Attributes of CATEGORY element
@@ -140,4 +144,7 @@ public class XMLElements {
 	public static final String ATT_STAT_ID = "id";
 	public static final String ATT_STAT_NAME = "name";
 	public static final String ATT_STAT_KIND = "kind";
+	
+	// Attributes of INSIDE_STAT element
+	public static final String ATT_INSIDE_STAT_SYMBOL = "symbol";
 }

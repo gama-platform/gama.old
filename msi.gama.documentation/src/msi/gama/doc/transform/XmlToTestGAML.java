@@ -119,10 +119,13 @@ public class XmlToTestGAML {
 	// Cleaning means:
 	// - Category: remove space and minus characters in the category name to be able to use it in the model	
 	// - Operators: replace special characters like +, -, *, /
+	// - Operators and statements: addition of an index to have different variables
 	public static Document cleanDocumentTest(Document doc){
 		NameOperatorConverter nameConverter = new NameOperatorConverter();
 		NodeList nLCategories = doc.getElementsByTagName(XMLElements.CATEGORY);
 		NodeList nLOperators = doc.getElementsByTagName(XMLElements.OPERATOR);
+		NodeList nLStatements = doc.getElementsByTagName(XMLElements.STATEMENT);
+		
 		
 		for(int i =0; i< nLCategories.getLength() ; i++){
 			org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
@@ -141,7 +144,17 @@ public class XmlToTestGAML {
 				org.w3c.dom.Element eltExample = (org.w3c.dom.Element) nLExamples.item(k);
 				eltExample.setAttribute(XMLElements.ATT_EXAMPLE_INDEX, ""+k);
 			}
-		}		
+		}	
+		
+		for(int j = 0; j < nLStatements.getLength(); j++){
+			org.w3c.dom.Element eltStatement = (org.w3c.dom.Element) nLStatements.item(j);
+			
+			NodeList nLExamples = eltStatement.getElementsByTagName(XMLElements.EXAMPLE);
+			for(int k = 0; k < nLExamples.getLength(); k++){
+				org.w3c.dom.Element eltExample = (org.w3c.dom.Element) nLExamples.item(k);
+				eltExample.setAttribute(XMLElements.ATT_EXAMPLE_INDEX, ""+k);
+			}
+		}			
 		
 		return doc;
 	}

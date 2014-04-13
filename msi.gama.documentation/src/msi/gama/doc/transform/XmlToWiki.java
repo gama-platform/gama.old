@@ -9,8 +9,10 @@ import javax.xml.transform.TransformerException;
 
 import msi.gama.doc.Constants;
 import msi.gama.doc.util.DocTransformer;
+import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
@@ -74,6 +76,17 @@ public class XmlToWiki {
 		DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
 		File fileXml = new File(xml);
 		Document document = constructeur.parse(fileXml);
+		
+		// We add index to example to distinguish variables in the doc 
+		NodeList nLOperators = document.getElementsByTagName(XMLElements.OPERATOR);
+		for(int j = 0; j < nLOperators.getLength(); j++){
+			org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);
+			NodeList nLExamples = eltOperator.getElementsByTagName(XMLElements.EXAMPLE);
+			for(int k = 0; k < nLExamples.getLength(); k++){
+				org.w3c.dom.Element eltExample = (org.w3c.dom.Element) nLExamples.item(k);
+				eltExample.setAttribute(XMLElements.ATT_EXAMPLE_INDEX, ""+k);
+			}
+		}		
 		
 		DocTransformer.transformDocument(document, xsl, wiki); 		
 		

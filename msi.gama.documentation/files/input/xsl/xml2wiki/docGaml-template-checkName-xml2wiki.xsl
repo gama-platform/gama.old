@@ -6,7 +6,7 @@
  		<xsl:when test="@name = '*'"><xsl:text>`*`</xsl:text></xsl:when>
  		<xsl:when test="@name = '**'"><xsl:text>`**`</xsl:text></xsl:when>
  		<xsl:when test="@name = '&lt;-&gt;'"><xsl:text>`&lt;-&gt;`</xsl:text></xsl:when>
- 		<xsl:when test="@name = '='"><xsl:text>Equals</xsl:text></xsl:when>  		
+ 		<xsl:when test="@name = '='"><xsl:text>`=`</xsl:text></xsl:when>  		
  		<xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
  	</xsl:choose>
  </xsl:template>

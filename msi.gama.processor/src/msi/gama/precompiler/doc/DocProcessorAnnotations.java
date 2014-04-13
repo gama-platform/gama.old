@@ -337,7 +337,9 @@ public class DocProcessorAnnotations {
 			org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
 			facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
 			// TODO : check several types
-			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, String.valueOf(f.type()[0]));
+			String facetTypes = tc.getTypeString(f.type()[0]);
+			for(int i = 1 ; i < f.type().length ; i ++) {facetTypes = facetTypes + ", " + tc.getTypeString(f.type()[i]); }
+			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, facetTypes );
 			facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
 			facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
 				f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
@@ -352,7 +354,7 @@ public class DocProcessorAnnotations {
 		return facetsElt;
 	}
 	
-	public static org.w3c.dom.Element getInsideElt(inside insideAnnot, Document doc){
+	public static org.w3c.dom.Element getInsideElt(inside insideAnnot, Document doc, TypeConverter tc){
 		if(insideAnnot == null){
 			return null;
 		}
@@ -370,7 +372,7 @@ public class DocProcessorAnnotations {
 		org.w3c.dom.Element kindsElt = doc.createElement(XMLElements.KINDS);
 		for(int kind : insideAnnot.kinds()){
 			org.w3c.dom.Element kindElt = doc.createElement(XMLElements.KIND);
-			kindElt.setTextContent(""+kind);
+			kindElt.setTextContent(tc.getSymbolKindStringFromISymbolKind(kind));
 			kindsElt.appendChild(kindElt);
 		}
 		insideElt.appendChild(kindsElt);

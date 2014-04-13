@@ -20,39 +20,81 @@ public class TypeConverter {
 	HashMap<String, String> properNameTypeMap;
 	HashMap<String, String> properCategoryNameMap;
 	HashMap<Integer, String> typeStringFromIType;
-
+	HashMap<Integer, String> symbolKindStringFromISymbolKind;
+	
 	public TypeConverter(){
 		properNameTypeMap = initProperNameTypeMap();
 		properCategoryNameMap = initProperNameCategoriesMap();
-		typeStringFromIType = getNameTypeFromIType();
+		typeStringFromIType = initNameTypeFromIType();
+		symbolKindStringFromISymbolKind = initSymbolKindStringFromISymbolKind();
+	}
+
+	private HashMap<Integer, String> initSymbolKindStringFromISymbolKind() {
+		HashMap<Integer, String> hm = new HashMap<Integer, String>();
+		hm.put(0, "species");
+		hm.put(1, "model");
+		hm.put(2, "single_statement");
+		hm.put(3, "behavior");
+		hm.put(4, "parameter");
+		hm.put(5, "output");
+		hm.put(6, "layer");
+		hm.put(7, "skill");
+		hm.put(8, "batch_section");
+		hm.put(9, "batch_method");
+		hm.put(10, "environment");
+		hm.put(11, "sequence_statement or action");
+		hm.put(13, "experiment");
+		hm.put(14, "abstract_section");
+		
+		return hm;
 	}
 	
 	private HashMap<String, String> initProperNameTypeMap() {
 		HashMap<String, String> hm = new HashMap<String, String>();
 		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
-		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
-		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
-		hm.put("msi.gama.util.matrix.GamaIntMatrix", "matrix");
+		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");
+		
 		hm.put("java.lang.Integer", "int");
 		hm.put("java.lang.Double", "float");	
 		hm.put("java.lang.Long", "float");		
+		// Matrix
+		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
+		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
+		hm.put("msi.gama.util.matrix.GamaMatrix", "matrix");		
+		hm.put("msi.gama.util.matrix.GamaIntMatrix", "matrix");
+		hm.put("msi.gama.util.matrix.GamaMatrix<T>", "matrix");
+		hm.put("msi.gama.util.matrix.GamaMatrix<java.lang.Double>", "matrix<float>");
+		// Files
 		hm.put("msi.gama.util.file.IGamaFile", "file");
+		hm.put("msi.gama.util.file.GamaFile", "file");		
+		hm.put("msi.gama.jogl.files.Gama3DSFile", "file");
+		hm.put("msi.gama.jogl.files.GamaObjFile", "file");
+		// Colors
 		hm.put("msi.gama.util.GamaColor", "rgb");
+		// List
 		hm.put("msi.gama.util.IList", "list");
 		hm.put("msi.gama.util.GamaList", "list");
 		hm.put("java.util.List", "list");
 		hm.put("java.util.List<T>", "list");
 		hm.put("msi.gama.util.IList<T>", "list");
+		hm.put("msi.gama.util.IList<java.lang.Object>", "list");
+		hm.put("java.util.List<java.lang.Object>", "list");
 		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list<list>");
 		hm.put("java.util.List<java.util.List>", "list<list>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list<point>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
-		hm.put("java.util.List<java.util.List<msi.gama.metamodel.agent.IAgent>>", "list<lists<agent>>");
-		hm.put("msi.gama.util.IList<msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>>", "list<lists<agent>>");
+		hm.put("java.util.List<java.util.List<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
+		hm.put("msi.gama.util.IList<msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
 		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
 		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
+		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList<msi.gama.metamodel.shape.GamaPoint>>","list<list<point>>");
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");		
+		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");
+		
 		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list<float>");
+		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
+		
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
 		hm.put("msi.gama.metamodel.shape.ILocation", "point");
 		hm.put("java.lang.Object", "unknown");
@@ -69,21 +111,25 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer", "container");
 		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
 		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container<geometry>");
-		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");
+		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.agent.IAgent>", "container<agent>");
+		
 		hm.put("java.util.Map", "map");
 		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
+		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
+		
 		hm.put("msi.gama.util.IPath", "path");		
 		hm.put("msi.gama.util.path.IPath", "path");
-		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		hm.put("double", "float");	
 		hm.put("boolean", "bool");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");
+		
+		hm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>","???");
 		return hm;
 	}
 	
-	private HashMap<Integer,String> getNameTypeFromIType(){
+	// FROM IType.java
+	private HashMap<Integer,String> initNameTypeFromIType(){
 		HashMap<Integer, String> hm = new HashMap<Integer, String>();
-		hm.put(0, "NONE");
+		hm.put(0, "unknown");  // NONE
 		hm.put(1, "int");
 		hm.put(2, "float");
 		hm.put(3, "boolean");
@@ -105,6 +151,12 @@ public class TypeConverter {
 		hm.put(50, "available_types");
 		hm.put(99, "message");
 		hm.put(100, "species_types");
+		
+		hm.put(-200, "label");
+		hm.put(-201, "variable id");
+		hm.put(-202, "type_id");
+		hm.put(-203, "new variable id");
+		hm.put(-204, "new temp variable id");
 		return hm;
 	}
 	
@@ -177,5 +229,12 @@ public class TypeConverter {
 			return ""+i;
 		}		
 	}	
-	
+
+	public String getSymbolKindStringFromISymbolKind(Integer i){
+		if ( symbolKindStringFromISymbolKind.containsKey(i) ) {
+			return symbolKindStringFromISymbolKind.get(i);
+		} else {
+			return ""+i;
+		}		
+	}
 }
