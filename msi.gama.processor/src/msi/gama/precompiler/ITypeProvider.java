@@ -5,14 +5,14 @@
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
 package msi.gama.precompiler;
 
 /**
- * Written by drogoul Modified on 2 ao�t 2010
+ * Written by drogoul Modified on 2 ao�t 2010. See IType
  * 
  * @todo Description
  * 
@@ -33,6 +33,7 @@ public interface ITypeProvider {
 	 * The content type is provided by the type of the first child of the expression
 	 */
 	static final int FIRST_TYPE = -18;
+	static final int DELEGATE_TYPE = -10;
 	/*
 	 * The content type is provided by the type of the second child of the expression
 	 */

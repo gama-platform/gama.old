@@ -1,11 +1,11 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * 
+ * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
@@ -61,7 +61,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private GamlProperties gp;
 	// JavaAgentBaseWriter jabw;
 
-	boolean alwaysDoc = true;
+	boolean alwaysDoc = false;
 	GamlDocProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
@@ -326,6 +326,12 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(f.name()).append(SEP);
 			// class
 			sb.append(rawNameOf(e)).append(SEP);
+			// buffer type
+			sb.append(f.buffer_type()).append(SEP);
+			// buffer contents type
+			sb.append(f.buffer_content()).append(SEP);
+			// buffer key type
+			sb.append(f.buffer_index()).append(SEP);
 			// suffixes
 			String[] names = f.extensions();
 			sb.append(arrayToString(names)).append(SEP);
@@ -454,7 +460,8 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(s).append(SEP);
 			}
 			sb.setLength(sb.length() - 1);
-			gp.put(sb.toString(), docToString(symbol.doc())); /* doc */
+			doc doc = e.getAnnotation(doc.class);
+			gp.put(sb.toString(), docToString(doc)); /* doc */
 		}
 	}
 
@@ -512,13 +519,14 @@ public class GamaProcessor extends AbstractProcessor {
 		return sb.toString();
 	}
 
-	// Format: 1.name 2.[type,]+ 3.[value,]* 4.optional 5.doc
+	// Format: 1.name 2.[type,]+ 3.[value,]* 4.optional 5. internal 6.doc
 	private String facetToString(final facet facet) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(facet.name()).append(SEP);
 		sb.append(arrayToString(facet.type())).append(SEP);
 		sb.append(arrayToString(facet.values())).append(SEP);
 		sb.append(facet.optional()).append(SEP);
+		sb.append(facet.internal()).append(SEP);
 		sb.append(docToString(facet.doc()));
 		return sb.toString();
 	}
@@ -722,11 +730,9 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (Exception e1) {
-				processingEnv.getMessager().printMessage(
-					Kind.ERROR,
-					"Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
-						"; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
-						"; begin: " + begin + "; shift: " + shift);
+				processingEnv.getMessager().printMessage(Kind.ERROR, "Error in processing operator " + declClass + " " +
+					methodName + " " + Arrays.toString(args) + "; number of Java parameters: " + n +
+					"; number of Gaml parameters:" + actual_args_number + "; begin: " + begin + "; shift: " + shift);
 			}
 
 			String ret = rawNameOf(ex.getReturnType(), ex);
@@ -887,8 +893,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null)
-				.openWriter();
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
@@ -897,21 +902,11 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createDocSourceWriter() {
 		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
-				.openWriter();
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null).openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
 		return null;
 	}
-	//
-	// private Writer createAgentBaseSourceWriter() {
-	// try {
-	// return processingEnv.getFiler()
-	// .createSourceFile("gaml.additions.JavaBasedAgent", (Element[]) null).openWriter();
-	// } catch (Exception e) {
-	// processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
-	// }
-	// return null;
-	// }
+
 }

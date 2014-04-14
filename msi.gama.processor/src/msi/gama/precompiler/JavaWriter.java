@@ -5,7 +5,7 @@
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
@@ -30,8 +30,8 @@ public class JavaWriter {
 	public final static String FILE_PREFIX = "+";
 	public final static String DOC_PREFIX = "@";
 	public final static String CONSTANT_PREFIX = "£";
-	public final static String DOC_SEP = "€";
-	public final static String DOC_REGEX = "\\€";
+	public final static String DOC_SEP = "~";
+	public final static String DOC_REGEX = "\\~";
 	public final static String SEP = "$";
 	static String ln = "\n";
 	static String tab = "\t";
@@ -67,12 +67,13 @@ public class JavaWriter {
 	// Keeps track of the current index of the documentation in the GamlDocumentation.contents list
 	int docCount = 0;
 
-	public String write(final String packageName, final GamlProperties props, final StringBuilder sb,
-		final StringBuilder doc) {
+	public String write(final String packageName, final GamlProperties props, final StringBuilder sb, final StringBuilder doc) {
 		writeHeader(sb, packageName);
 		writeDocHeader(doc, packageName);
 		sb.append(ln);
 		writeTypesInitialization(props, sb, doc);
+		sb.append(ln);
+		writeSpeciesInitialization(props, sb, doc);
 		sb.append(ln);
 		writeSymbolsInitialization(props, sb, doc);
 		sb.append(ln);
@@ -85,8 +86,6 @@ public class JavaWriter {
 		writeActionsInitialization(props, sb, doc);
 		sb.append(ln);
 		writeSkillsInitialization(props, sb, doc);
-		sb.append(ln);
-		writeSpeciesInitialization(props, sb, doc);
 		sb.append(ln);
 		writeDisplaysInitialization(props, sb, doc);
 		sb.append(ln);
@@ -108,9 +107,8 @@ public class JavaWriter {
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
 		sb.append(ln).append(ln).append(classDefinition()).append(" {");
 		sb.append(ln).append(tab);
-		sb.append(
-			"	protected static GamlElementDocumentation DOC(int i) { return GamlDocumentation.getInstance().contents.get(i);}")
-			.append(ln).append(ln);
+		sb.append("static int base = GamlDocumentation.getCount(); static GamlDocumentation _doc = GamlDocumentation.getInstance();").append(ln);
+		sb.append("	protected static int DOC(int i) { return base + i;}").append(ln).append(ln);
 
 		sb.append("public void initialize() {");
 		sb.append(ln).append(tab).append("initializeTypes();");
@@ -293,23 +291,23 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeFileAddition(final StringBuilder sb, final StringBuilder docBuilder, final String file,
-		final String doc) {
+	protected void writeFileAddition(final StringBuilder sb, final StringBuilder docBuilder, final String file, final String doc) {
 		String[] segments = file.split("\\$");
 		String name = toJavaString(segments[0]);
 		String clazz = segments[1];
-		String suffixes = toArrayOfStrings(segments[2]);
+		String type = segments[2];
+		String contentType = segments[3];
+		String keyType = segments[4];
+		String suffixes = toArrayOfStrings(segments[5]);
 		String helper = buildFileConstructor(new String[] { "String" }, clazz);
-		sb.append(in).append("_file(").append(name).append(',').append(toClassObject(clazz)).append(',').append(helper)
-			.append(",").append(suffixes).append(");");
+		sb.append(in).append("_file(").append(name).append(',').append(toClassObject(clazz)).append(',').append(helper).append(",").append(type).append(",").append(keyType).append(",").append(contentType).append(",").append(suffixes).append(");");
 		writeIsFileOperator(sb, name);
-		for ( int i = 3; i < segments.length; i++ ) {
-			writeCreateFileOperator(sb, name, clazz, segments[i]);
+		for ( int i = 6; i < segments.length; i++ ) {
+			writeCreateFileOperator(sb, name, clazz, segments[i], contentType, keyType);
 		}
 	}
 
-	protected void writeVarAddition(final StringBuilder sb, final StringBuilder docBuilder, final String var,
-		final String doc) {
+	protected void writeVarAddition(final StringBuilder sb, final StringBuilder docBuilder, final String var, final String doc) {
 		String[] segments = var.split("\\$");
 		String type = segments[0];
 		String contentType = segments[1];
@@ -331,15 +329,12 @@ public class JavaWriter {
 
 			if ( isField ) {
 				getterHelper =
-					concat("new GamaHelper(){", OVERRIDE, "public ", ret, " run(", ISCOPE, " scope, ", OBJECT,
-						"... v){return (v==null||v.length==0)?", returnWhenNull(ret), ":((", clazz, ") v[0]).",
-						getterName, scope ? "(scope);}}" : "();}}");
+					concat("new GamaHelper(){", OVERRIDE, "public ", ret, " run(", ISCOPE, " scope, ", OBJECT, "... v){return (v==null||v.length==0)?", returnWhenNull(ret), ":((", clazz, ") v[0]).", getterName, scope
+						? "(scope);}}" : "();}}");
 			} else {
 				getterHelper =
-					concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ", ret, " run(", ISCOPE,
-						" scope, ", IAGENT, " a, ", ISKILL, " t, Object... v) {return t == null?", returnWhenNull(ret),
-						":((", clazz, ")t).", getterName, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") +
-							"a);}}" : ");}}");
+					concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ", ret, " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISKILL, " t, Object... v) {return t == null?", returnWhenNull(ret), ":((", clazz, ")t).", getterName, "(", scope
+						? "scope" : "", dynamic ? (scope ? "," : "") + "a);}}" : ");}}");
 			}
 
 			// initer
@@ -356,16 +351,13 @@ public class JavaWriter {
 			boolean dyn = segments[i + 2].equals("true");
 			boolean scope = segments[i + 3].equals("true");
 			setterHelper =
-				concat("new GamaHelper(", toClassObject(clazz), ")", "{", OVERRIDE, "public Object ",
-					"run(IScope scope, IAgent a, ISkill t, Object... arg)", " {if (t != null) ((", clazz, ") t).",
-					setterName, "(", scope ? "scope," : "", dyn ? "a, " : "", "(" + param +
-						") arg[0]); return null; }}");
+				concat("new GamaHelper(", toClassObject(clazz), ")", "{", OVERRIDE, "public Object ", "run(IScope scope, IAgent a, ISkill t, Object... arg)", " {if (t != null) ((", clazz, ") t).", setterName, "(", scope
+					? "scope," : "", dyn ? "a, " : "", "(" + param + ") arg[0]); return null; }}");
 
 		}
 		sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz)).append(",");
 		if ( isField ) {
-			sb.append("new TypeFieldExpression(").append(name).append(",").append(type).append(",").append(contentType)
-				.append(",").append(keyType).append(",").append(getterHelper).append(")");
+			sb.append("new OperatorProto(").append(name).append(",").append(getterHelper).append(", false, true, -1, ").append(type).append(",").append(toClassObject(clazz)).append(", false, ").append(type).append(",").append(contentType).append(",").append(keyType).append(",").append(toArrayOfInts(null)).append(")");
 		} else {
 			sb.append("desc(").append(type).append(",");
 			sb.append(toArrayOfStrings(facets)).append("),").append(getterHelper);
@@ -374,8 +366,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeSymbolAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
-		final String doc) {
+	protected void writeSymbolAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String validator = segments[0];
 		if ( validator.isEmpty() ) {
@@ -424,6 +415,8 @@ public class JavaWriter {
 				facets += toArrayOfStrings(values) + ",";
 				// optional
 				facets += segments[pointer++] + ',';
+				// internal
+				facets += segments[pointer++] + ',';
 				// doc
 				facets += toJavaString(segments[pointer++]);
 				facets += ")";
@@ -451,16 +444,15 @@ public class JavaWriter {
 		String omissible = segments[pointer++];
 
 		String sc =
-			concat("new ISymbolConstructor() {", OVERRIDE, "public ISymbol create(" + IDESC + " d) {return new ",
-				clazz, "(d);}}");
-		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",").append(validator).append(",")
-			.append(kind).append(',').append(remote).append(',').append(args).append(',').append(scope).append(',')
-			.append(sequence).append(',').append(unique).append(',').append(name_unique).append(',')
-			.append(parentSymbols).append(",").append(parentKinds).append(',').append(facets).append(',')
-			.append(toJavaString(omissible)).append(',').append("new String[][]{").append(combinations).append("},")
-			// .append("new String[][]{}").append(",")
-			// .append("Collections.<String[]> emptyList()").append(",")
-			.append(sc);
+			concat("new ISymbolConstructor() {", OVERRIDE, "public ISymbol create(" + IDESC + " d) {return new ", clazz, "(d);}}");
+		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",");
+		sb.append("DOC(").append(addDoc(docBuilder, toArrayOfStrings(doc, DOC_REGEX))).append("),").append(validator);
+		sb.append(",").append(kind).append(',').append(remote).append(',').append(args).append(',').append(scope).append(',');
+		sb.append(sequence).append(',').append(unique).append(',').append(name_unique).append(',').append(parentSymbols).append(",");
+		sb.append(parentKinds).append(',').append(facets).append(',').append(toJavaString(omissible)).append(',').append("new String[][]{").append(combinations).append("},")
+		// .append("new String[][]{}").append(",")
+		// .append("Collections.<String[]> emptyList()").append(",")
+		.append(sc);
 		if ( segments.length > pointer ) {
 			for ( int i = pointer; i < segments.length; i++ ) {
 				sb.append(',').append(toJavaString(segments[i]));
@@ -479,8 +471,7 @@ public class JavaWriter {
 		String id = segments[1];
 		String varKind = segments[2];
 		String clazz = segments[3];
-		sb.append(in).append("_type(").append(toJavaString(keyword)).append(",new ").append(clazz).append("(),")
-			.append(id).append(',').append(varKind);
+		sb.append(in).append("_type(").append(toJavaString(keyword)).append(",new ").append(clazz).append("(),").append(id).append(',').append(varKind);
 		if ( segments.length > 4 ) {
 			for ( int i = 4; i < segments.length; i++ ) {
 				sb.append(',').append(toClassObject(segments[i]));
@@ -489,8 +480,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeOperatorAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
-		final String doc) {
+	protected void writeOperatorAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		int arg_number = Integer.decode(segments[0]);
 		String[] classes = new String[arg_number];
@@ -538,23 +528,17 @@ public class JavaWriter {
 		}
 		content_type_expected += ")";
 		String helper =
-			concat("new GamaHelper(){", OVERRIDE, "public ", checkPrim(ret), " run(", ISCOPE, " s,Object... o)",
-				buildNAry(classes, m, ret, stat, scope), "}");
+			concat("new GamaHelper(){", OVERRIDE, "public ", checkPrim(ret), " run(", ISCOPE, " s,Object... o)", buildNAry(classes, m, ret, stat, scope), "}");
 
-		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',').append(classNames)
-			.append(",").append(content_type_expected).append(",").append(toClassObject(ret)).append(',')
-			.append(canBeConst).append(',').append(type).append(',').append(contentType).append(',').append(indexType)
-			.append(',').append(helper).append(',').append("DOC(")
-			.append(addDoc(docBuilder, toArrayOfStrings(doc, DOC_REGEX))).append("));");
+		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',').append(classNames).append(",").append(content_type_expected).append(",").append(toClassObject(ret)).append(',').append(canBeConst).append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',').append(helper).append(',').append("DOC(").append(addDoc(docBuilder, toArrayOfStrings(doc, DOC_REGEX))).append("));");
 	}
 
 	protected void writeSpecies(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
-		sb.append(in).append("_species(").append(toJavaString(name)).append(",").append(toClassObject(clazz))
-			.append(", new IAgentConstructor(){" + OVERRIDE + "public ").append(IAGENT).append(" createOneAgent(")
-			.append(IPOPULATION).append(" p) {return new ").append(clazz).append("(p);}}");
+		sb.append(in).append("_species(").append(toJavaString(name)).append(",").append(toClassObject(clazz)).append(", new IAgentConstructor(){" +
+			OVERRIDE + "public ").append(IAGENT).append(" createOneAgent(").append(IPOPULATION).append(" p) {return new ").append(clazz).append("(p);}}");
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJavaString(segments[i]));
 		}
@@ -567,14 +551,11 @@ public class JavaWriter {
 	 */
 	private void writeIsFileOperator(final StringBuilder sb, final String name) {
 		String helper =
-			concat("new GamaHelper(){", OVERRIDE, "public Boolean run(", ISCOPE,
-				" s,Object... o) { return GamaFileType.verifyExtension(", name, ",(String)o[0]);}}");
-		sb.append(in).append("_operator(S(").append(toJavaString("is_")).append("+").append(name)
-			.append("),C(S),I(0),B,true,3,0,0,").append(helper).append(",null);");
+			concat("new GamaHelper(){", OVERRIDE, "public Boolean run(", ISCOPE, " s,Object... o) { return GamaFileType.verifyExtension(", name, ",(String)o[0]);}}");
+		sb.append(in).append("_operator(S(").append(toJavaString("is_")).append("+").append(name).append("),C(S),I(0),B,true,3,0,0,").append(helper).append(",-1);");
 	}
 
-	private void writeCreateFileOperator(final StringBuilder sb, final String name, final String clazz,
-		final String classes) {
+	private void writeCreateFileOperator(final StringBuilder sb, final String name, final String clazz, final String classes, final String contentType, final String keyType) {
 		String[] names = classes.split(",");
 		String helper = buildFileConstructor(names, clazz);
 		String classNames = "C(";
@@ -585,14 +566,13 @@ public class JavaWriter {
 			}
 		}
 		classNames += ")";
-		sb.append(in).append("_operator(S(").append(name).append("+").append(toJavaString("_file")).append("),")
-			.append(classNames).append(",I(0),GF,true,12,0,0,").append(helper).append(",null);");
+		// AD 13/04/14: Changed true to false in the "can_be_const" parameter
+		sb.append(in).append("_operator(S(").append(name).append("+").append(toJavaString("_file")).append("),").append(classNames).append(",I(0),GF,false,12,").append(contentType).append(",").append(keyType).append(",").append(helper).append(",-1);");
 	}
 
 	protected String buildFileConstructor(final String[] classes, final String className) {
 		String body =
-			concat("new GamaHelper(){", OVERRIDE, "public IGamaFile run(", ISCOPE, " s,Object... o) {return new ",
-				className, "(s");
+			concat("new GamaHelper(){", OVERRIDE, "public IGamaFile run(", ISCOPE, " s,Object... o) {return new ", className, "(s");
 		for ( int i = 0; i < classes.length; i++ ) {
 			body += ",";
 			body += param(classes[i], "o[" + i + "]");
@@ -601,8 +581,7 @@ public class JavaWriter {
 		return body;
 	}
 
-	protected void writeActionAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
-		final String doc) {
+	protected void writeActionAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String method = segments[0];
 		String clazz = segments[1];
@@ -631,21 +610,18 @@ public class JavaWriter {
 		}
 		args += "))";
 		String desc =
-			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJavaString(name) + ",TYPE, " + "T(" + toClassObject(ret) +
-				").toString(), VIRTUAL," + toJavaString(virtual) + ")";
-		sb.append(concat(in, "_action(", toJavaString(method), ",", toClassObject(clazz), ",new GamaHelper(T(",
-			toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE, "public ", ret.equals("void") ? "Object"
-				: ret, " run(", ISCOPE, " s, ", IAGENT, " a,", ISKILL, " t, Object... v){ ", !ret.equals("void")
-				? "return" : "", " ((", clazz, ") t).", method, "(s); ", ret.equals("void") ? "return null;" : "",
-			"} },", desc, ");"));
+			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJavaString(name) + ",TYPE, " + "Ti(" + toClassObject(ret) +
+				"), VIRTUAL," + toJavaString(virtual) + ")";
+		sb.append(concat(in, "_action(", toJavaString(method), ",", toClassObject(clazz), ",new GamaHelper(T(", toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE, "public ", ret.equals("void")
+			? "Object" : ret, " run(", ISCOPE, " s, ", IAGENT, " a,", ISKILL, " t, Object... v){ ", !ret.equals("void")
+			? "return" : "", " ((", clazz, ") t).", method, "(s); ", ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
 	}
 
 	protected void writeSkill(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
-		sb.append(concat(in, "_skill(", toJavaString(name), ",", toClassObject(clazz), ", new ISkillConstructor(){",
-			OVERRIDE, "public ISkill newInstance(){return new ", clazz, "();}}"));
+		sb.append(concat(in, "_skill(", toJavaString(name), ",", toClassObject(clazz), ", new ISkillConstructor(){", OVERRIDE, "public ISkill newInstance(){return new ", clazz, "();}}"));
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJavaString(segments[i]));
 		}
@@ -656,23 +632,16 @@ public class JavaWriter {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
-		sb.append(concat(in, "_display(", toJavaString(name), ",", toClassObject(clazz), ", new IDisplayCreator(){",
-			OVERRIDE, "public IDisplaySurface create(Object...args){return new ", clazz, "(args);}}"));
+		sb.append(concat(in, "_display(", toJavaString(name), ",", toClassObject(clazz), ", new IDisplayCreator(){", OVERRIDE, "public IDisplaySurface create(Object...args){return new ", clazz, "(args);}}"));
 		sb.append(");");
 	}
 
 	protected void writeDocHeader(final StringBuilder sb, final String packageName) {
 		sb.append("package ").append(packageName).append(';');
 		sb.append(ln).append("import ").append("java.util").append(".*;");
-		sb.append(ln).append("import msi.gaml.compilation.GamlElementDocumentation;");
+		sb.append(ln).append("import msi.gaml.compilation.*;");
 		sb.append(ln).append(ln).append(docDefinition()).append(" {");
-		sb.append(ln).append(tab);
-		sb.append("protected final static GamlElementDocumentation AS = new GamlElementDocumentation(null);")
-			.append(ln);
-		sb.append(
-			"protected static GamlElementDocumentation S(final String ... strings) { return new GamlElementDocumentation(strings);}")
-			.append(ln).append(ln);
-		sb.append("public final List<GamlElementDocumentation> contents = new ArrayList();");
+		sb.append(ln);
 		sb.append("static GamlDocumentation instance;");
 		sb.append("static GamlDocumentation getInstance() {if (instance == null) {	instance = new GamlDocumentation(); instance.initialize();} return instance;}");
 		sb.append(ln).append(tab).append(" void initialize() {");
@@ -682,8 +651,8 @@ public class JavaWriter {
 	protected int addDoc(final StringBuilder sb, final String doc) {
 		// doc already formatted as a java array of strings
 		// sb.append("contents.add(").append("S(\"\") ").append(");");
-		sb.append("contents.add(").append(doc).append(");");
-		sb.append(ln);
+		String s = "AS".equals(doc) ? doc + "()" : doc;
+		sb.append(s).append(";").append(ln);
 		return docCount++;
 	}
 
@@ -692,7 +661,7 @@ public class JavaWriter {
 	}
 
 	protected String docDefinition() {
-		return "public class GamlDocumentation";
+		return "public class GamlDocumentation extends AbstractGamlDocumentation";
 	}
 
 	protected String docClassName() {
@@ -758,14 +727,14 @@ public class JavaWriter {
 		return " null";
 	}
 
-	protected String buildNAry(final String[] classes, final String name, final String retClass, final boolean stat,
-		final boolean scope) {
+	protected String buildNAry(final String[] classes, final String name, final String retClass, final boolean stat, final boolean scope) {
 		String ret = checkPrim(retClass);
 		int index = stat ? 0 : 1;
 		String firstArg = scope ? "s" : "";
 		String body =
-			stat ? concat("{return ", name, "(", firstArg) : concat("{return o[0]", " == null?", returnWhenNull(ret),
-				":((", classes[0], ")o[0]).", name, "(", firstArg);
+			stat
+				? concat("{return ", name, "(", firstArg)
+				: concat("{return o[0]", " == null?", returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(", firstArg);
 		if ( index < classes.length ) {
 			if ( scope ) {
 				body += ",";

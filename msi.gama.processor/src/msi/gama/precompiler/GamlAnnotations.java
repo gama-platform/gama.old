@@ -5,7 +5,7 @@
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
@@ -714,17 +714,6 @@ public final class GamlAnnotations {
 		int[] expected_content_type() default {};
 
 		/**
-		 * @return the respective priority of the operator w.r.t. to the others. Priorities are
-		 *         classified in several categories, and specified using one of the constants
-		 *         declared in IPriority.
-		 * @deprecated This annotation is now deprecated as it is not used anymore by the parser. It
-		 *             can be safely removed.
-		 * @see IPriority
-		 */
-		// @Deprecated
-		// short priority() default IPriority.DEFAULT;
-
-		/**
 		 * 
 		 * @return the type of the expression if it cannot be determined at compile time (i.e. when
 		 *         the return type is "Object"). Can be directly a type in IType or one of the
@@ -858,7 +847,7 @@ public final class GamlAnnotations {
 		 * masterDoc.
 		 * 
 		 * @return a boolean representing the fact whether this instance of the operator is the master one,
-		 *  that is whether its value will subsume the value of all other instances of it.
+		 *         that is whether its value will subsume the value of all other instances of it.
 		 */
 		boolean masterDoc() default false;
 
@@ -945,7 +934,7 @@ public final class GamlAnnotations {
 		 */
 		example[] examples() default {};
 	}
-	
+
 	@Retention(RetentionPolicy.SOURCE)
 	// @Target({ ElementType.TYPE, ElementType.METHOD })
 	@Inherited
@@ -954,7 +943,7 @@ public final class GamlAnnotations {
 		/**
 		 * Value.
 		 * 
-		 * @return a String representing the expression to 
+		 * @return a String representing the expression to
 		 */
 		String value() default "";
 
@@ -963,15 +952,15 @@ public final class GamlAnnotations {
 		 * 
 		 * @return The variable that will be tested in the equals, if it is omitted a default variable will be used.
 		 */
-		String var() default "";			
-		
+		String var() default "";
+
 		/**
 		 * equals
 		 * 
 		 * @return The value to which the value will be compared
 		 */
 		String equals() default "";
-		
+
 		/**
 		 * returnType
 		 * 
@@ -985,34 +974,34 @@ public final class GamlAnnotations {
 		 * @return The value to which the value will be compared
 		 */
 		String isNot() default "";
-		
+
 		/**
 		 * raises
 		 * 
 		 * @return The exception or warning that the expression could raise.
 		 */
-		String raises() default "";	
-		
+		String raises() default "";
+
 		/**
 		 * isTestOnly
 		 * 
 		 * @return isTestOnly specifies that the example should not be included into the documentation.
 		 */
-		boolean isTestOnly() default false;		
-		
+		boolean isTestOnly() default false;
+
 		/**
 		 * isExecutable
 		 * 
 		 * @return isExecutable specifies that the example is correct GAML code that can be executed.
 		 */
 		boolean isExecutable() default true;
-		
+
 		/**
 		 * test
 		 * 
 		 * @return test specifies that the example is will be tested with the equals.
 		 */
-		boolean test() default true;			
+		boolean test() default true;
 	}
 
 	@Retention(RetentionPolicy.SOURCE)
@@ -1039,8 +1028,37 @@ public final class GamlAnnotations {
 		 */
 		String[] extensions();
 
+		/**
+		 * @return the type of the content of the buffer. Can be directly a
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the content type is searched using this provider).
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		int buffer_content() default ITypeProvider.NONE;
+
+		/**
+		 * @return the type of the index of the buffer. Can be directly a
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the index type is searched using this provider).
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		int buffer_index() default ITypeProvider.NONE;
+
+		/**
+		 * 
+		 * @return the type of the buffer. Can be directly a type in IType or one of the
+		 *         constants declared in ITypeProvider (in which case, the type is searched using
+		 *         this provider).
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		int buffer_type() default ITypeProvider.NONE;
+
 		doc[] doc() default {};
 	}
+
 	/**
 	 * Written by gaudou Modified on 24 mars 2014
 	 * 
@@ -1071,7 +1089,7 @@ public final class GamlAnnotations {
 		 * 
 		 **/
 		String[] altNames() default {};
-		
+
 		/**
 		 * Doc.
 		 * 

@@ -1,11 +1,11 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlProperties.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * 
+ * 'GamlProperties.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
@@ -30,7 +30,7 @@ public class GamlProperties {
 	public final static String SYMBOLS = "symbols";
 	public final static String FACTORIES = "factories";
 	public final static String SPECIES = "species";
-	public final static String SEPARATOR = "�";
+	public final static String SEPARATOR = JavaWriter.DOC_SEP;
 
 	static final String NULL = "";
 
@@ -84,8 +84,7 @@ public class GamlProperties {
 	}
 
 	public void putAll(final GamlProperties m) {
-		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = m.map.entrySet().iterator(); it
-			.hasNext(); ) {
+		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = m.map.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, LinkedHashSet<String>> entry = it.next();
 			put(entry.getKey(), (LinkedHashSet<String>) entry.getValue().clone());
 		}
@@ -93,8 +92,7 @@ public class GamlProperties {
 
 	public void store(final Writer writer) {
 		Properties prop = new Properties();
-		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = map.entrySet().iterator(); it
-			.hasNext(); ) {
+		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = map.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, LinkedHashSet<String>> entry = it.next();
 			prop.setProperty(entry.getKey(), toString(entry.getValue()));
 		}
