@@ -3,18 +3,19 @@ package ummisco.miro.extension.transportation.skill;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.ILocated;
+import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -84,9 +85,7 @@ public class TransportationSkill extends Skill {
 
 	@action(name = "loadFile", args = {
 		@arg(name = "source", type = IType.STRING, optional = false, doc = @doc("Path of the source file")),
-		@arg(name = "datatype", type = IType.STRING, optional = true, doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) }, 
-		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
-			@example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+		@arg(name = "datatype", type = IType.STRING, optional = true, doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	public void loadFile(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
@@ -134,7 +133,7 @@ public class TransportationSkill extends Skill {
 	}
 
 	private void loadBusMatrixDb(final IScope scope, final String fileLocation) {
-		String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(fileLocation, true);
+		String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, fileLocation, true);
 		File inputFile = new File(DBRelativeLocation);
 
 		try {
@@ -151,7 +150,7 @@ public class TransportationSkill extends Skill {
 	}
 
 	private void loadBusDb(final IScope scope, final String fileLocation) {
-		String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(fileLocation, true);
+		String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, fileLocation, true);
 		File inputFile = new File(DBRelativeLocation);
 		try {
 			loadTemporalGraphFile(inputFile);
@@ -161,40 +160,40 @@ public class TransportationSkill extends Skill {
 		} catch (IOException e) {
 			System.out.println(e);
 			e.printStackTrace();
-			throw new GamaRuntimeException(new Exception("Bus db loading error"));
+			throw GamaRuntimeException.error("Bus db loading error", scope);
 		}
 	}
 
 	private void loadMatrix(final File in) throws NumberFormatException, IOException {
 		BufferedReader stream = new BufferedReader(new FileReader(in));
+		try {
+			while (stream.ready()) {
+				String data = stream.readLine();
+				String[] spl = data.split(";");
+				String OriStation = spl[0];
+				String DestStation = spl[1];
+				Double delay = new Double(spl[2]);
 
-		while (stream.ready()) {
-			String data = stream.readLine();
-			String[] spl = data.split(";");
-			String OriStation = spl[0];
-			String DestStation = spl[1];
-			Double delay = new Double(spl[2]);
-
-			if ( this.ODMatrix.containsKey(OriStation) == false ) {
+				if ( this.ODMatrix.containsKey(OriStation) == false ) {
+					System.out.println("O:" + OriStation + " D:" + DestStation + " delay:" + delay);
+					this.ODMatrix.put(OriStation, new HashMap<String, Double>());
+				}
+				HashMap<String, Double> dest = this.ODMatrix.get(OriStation);
+				dest.put(DestStation, delay);
 				System.out.println("O:" + OriStation + " D:" + DestStation + " delay:" + delay);
-				this.ODMatrix.put(OriStation, new HashMap<String, Double>());
+
 			}
-			HashMap<String, Double> dest = this.ODMatrix.get(OriStation);
-			dest.put(DestStation, delay);
-			System.out.println("O:" + OriStation + " D:" + DestStation + " delay:" + delay);
-
+			System.out.println("bus loading db completed");
+		} finally {
+			stream.close();
 		}
-		System.out.println("bus loading db completed");
-
 	}
 
 	@action(name = "travel_arrival", args = {
 		@arg(name = "from", type = IType.STRING, optional = false, doc = @doc("departure station ID")),
 		@arg(name = "to", type = IType.STRING, optional = false, doc = @doc("arrival Station ID")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) }, 
-		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { 
-			@example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+		@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	public GamaMap computTravel(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);

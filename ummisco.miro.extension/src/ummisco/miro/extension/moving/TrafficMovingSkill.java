@@ -1,5 +1,6 @@
 package ummisco.miro.extension.moving;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -8,8 +9,8 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -27,9 +28,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
 		@arg(name = "duration", type = IType.FLOAT, optional = true, doc = @doc("duration of the moving")),
 		@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")),
-		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")) }, 
-		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { 
-			@example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
 	public void primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
@@ -49,7 +48,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		float maxSpeed = ((Double) scope.getArg("max_speed", IType.FLOAT)).floatValue();
 
 		System.out.println("current path  " + path);
-		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ||
+		if ( path == null || !path.getTopology(scope).equals(topo) || !path.getEndVertex().equals(goal) ||
 			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 		} else {
@@ -87,9 +86,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		@arg(name = "from", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = "to", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")) }, 
-		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { 
-			@example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+		@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
 	public Float computeTheoricalTransportationTime(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = computeFrom(scope, agent);
@@ -179,7 +176,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 		GamaList<IShape> segments = new GamaList();
 		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
-		GamaMap agents = new GamaMap();
+		THashMap agents = new THashMap();
 		IShape oldline = null;
 		IShape oldlineAg = null;
 		if ( index < nb ) {
