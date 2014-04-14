@@ -92,6 +92,9 @@ public class Maths {
 
 	public static void main(final String[] args) {
 		java.lang.System.out.println("Various arithmetic tests");
+		java.lang.System.out.println("cos(PI) = " + Maths.cos_rad(PI));
+		java.lang.System.out.println("sin_rad(0.0) = " + sin_rad(0.0));
+		java.lang.System.out.println("tan_rad(0.0) = " + tan_rad(0.0));
 		java.lang.System.out.println("sin(360) = " + sin(360));
 		java.lang.System.out.println("sin(-720) = " + sin(-720));
 		java.lang.System.out.println("sin(360.0) = " + sin(360.0));
@@ -308,6 +311,30 @@ public class Maths {
 		return Math.tanh(rv);
 	}
 
+	// hqnghi & Tri 14/04/2013
+	@operator(value = "cos_rad", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
+	@doc(value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.", masterDoc = true, special_cases = "Operand values out of the range [0-359] are normalized.", see = {
+		"sin", "tan" })
+	public static Double cos_rad(final Double rv) {
+		return Math.cos(rv);
+	}
+	@operator(value = "sin_rad", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
+	@doc(value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.", masterDoc = true, usages = @usage("Operand values out of the range [0-359] are normalized."), examples = { @example(value="sin(360)",equals="0.0") }, see = {
+		"cos", "tan" })
+	public static Double sin_rad(final Double rv) {
+		return Math.sin(rv);
+	}
+
+	@operator(value = "tan_rad", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
+	@doc(value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.", masterDoc = true, usages = {
+		@usage(value="Operand values out of the range [0-359] are normalized. Notice that tan(360) does not return 0.0 but -2.4492935982947064E-16"),
+		@usage(value="The tangent is only defined for any real number except 90 + k `*` 180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity).") }, see = {
+		"cos", "sin" })
+	public static Double tan_rad(final Double v) {
+		return Math.tan(v);
+	}
+	//end  hqnghi & Tri 14/04/2013
+	
 	@operator(value = "cos", can_be_const = true, category={IOperatorCategory.ARITHMETIC})
 	@doc(value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.", masterDoc = true, special_cases = "Operand values out of the range [0-359] are normalized.", see = {
 		"sin", "tan" })
