@@ -8,9 +8,9 @@ Entry:
 
 StringEvaluator:
 	toto=ID "<-" expr=Expression;
-	
+
 ActionEditor:
-	"$$$" action=S_Definition;		
+	"$$$" action=S_Definition;
 
 
 Model:
@@ -21,7 +21,7 @@ Import:
 
 
 /**
- * Statements 
+ * Statements
  */
 Statement:
 	S_Display | (=> S_Declaration |
@@ -44,6 +44,8 @@ S_Other:
 
 S_Return:
 	key='return' (firstFacet="value:")? expr=Expression? ';';
+
+
 	/*
  * DECLARATIONS
  */
@@ -51,7 +53,7 @@ S_Declaration:
 	S_Species | S_Experiment | S_Reflex | S_Definition | S_Action | S_Var | S_Loop;
 
 S_Species:
-	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';')); 
+	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';'));
 S_Experiment:
 	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=Block;
 
@@ -66,6 +68,7 @@ S_Action returns S_Definition:
 
 S_Var returns S_Definition:
 	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
+
 
 	/*
  * ASSIGNMENTS
@@ -87,7 +90,17 @@ S_Equation returns S_Assignment:
 
 S_Solve:
 	key=_SolveKey (firstFacet="equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
-	
+
+
+
+/**
+ * DISPLAYS
+ */
+
+S_Monitor:
+	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
+;
+
 S_Display:
 	key="display" (firstFacet="name:")? name=(Valid_ID|STRING) (facets+=Facet)* block=displayBlock
 ;
@@ -118,7 +131,7 @@ _SpeciesKey:
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one";
+	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" ;
 
 _LayerKey:
 	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
@@ -127,11 +140,11 @@ _DoKey:
 	"do";
 
 _VarOrConstKey:
-	"var" | "const" | "let" | "arg";
+	"var" | "const" | "let" | "arg" | "signal" ;
 
 _ReflexKey:
-	"init" | "reflex";
-	
+	"init" | "reflex" | "aspect";
+
 _AssignmentKey:
 	"<-" | "<<" | '>' '>' | "<<+" | '>''>-' | "+<-" | "<+" | ">-" ;
 
@@ -155,7 +168,7 @@ Facet:
 
 FirstFacetKey:
 	DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
-	
+
 ClassicFacetKey: (ID ':');
 
 DefinitionFacetKey:
@@ -168,11 +181,11 @@ TypeFacetKey:
 
 SpecialFacetKey:
 	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"environment:" | 'text:' | 'image:' | 'using:';
+	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:";
 
 ActionFacetKey:
 	"action:";
-	
+
 VarFacetKey:
 	"var:";
 
@@ -190,7 +203,7 @@ TypeFacet returns Facet:
 
 ActionFacet returns Facet:
 	key=ActionFacetKey expr=ActionRef;
-	
+
 VarFacet returns Facet:
 	key= VarFacetKey expr=VariableRef;
 
@@ -238,7 +251,7 @@ And returns Expression:
 	({Expression.left=current}
 	op='and'
 	right=Cast)*;
-	
+
 Cast returns Expression:
 	Comparison
 	(({Cast.left = current}
@@ -260,7 +273,7 @@ Addition returns Expression:
 Multiplication returns Expression:
 	Exponentiation
 	(({Expression.left=current} op=('*' | '/' )) right=Exponentiation)*;
-	
+
 Exponentiation returns Expression:
 	Binary
 	(({Expression.left=current} op=('^')) right=Binary)*
@@ -279,7 +292,7 @@ Unary returns Expression:
 	Access |
 	{Unary} ((op=('°'|'#') right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
-	
+
 Access returns Expression:
 	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
 ;
@@ -299,11 +312,11 @@ AbstractRef returns Expression:
 
 Function returns Expression:
 	{Function} (action=ActionRef) '(' (parameters=Parameters | args=ExpressionList) ')';
-	
+
 CastingFunction returns Function:
 	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
 
-	
+
 Parameter returns Expression:
 	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey)) |
 	(left=VariableRef ':')) right=Expression;
@@ -326,7 +339,7 @@ TypeRef returns Expression:
 SpeciesRef:
 	name="species" parameter=TypeInfo?;
 
-TypeInfo: 
+TypeInfo:
 	('<' first=TypeRef ("," second=TypeRef)? =>'>')
 ;
 SkillRef returns Expression:
@@ -346,7 +359,7 @@ EquationDefinition:
 
 TypeDefinition:
 	S_Species /*| S_Experiment |*/| TypeFakeDefinition;
-	
+
 
 VarDefinition:
 	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);

@@ -1,16 +1,29 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'GamlCompatibilityConverter.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.*;
+import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 /**
@@ -27,17 +40,35 @@ public class GamlCompatibilityConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	public static ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
+	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if ( !(root instanceof Model) ) { return null; }
-		Model m = (Model) root;
-		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m));
+		ModelImpl m = (ModelImpl) root;
+		Object[] imps;
+		if ( m.eIsSet(GamlPackage.MODEL__IMPORTS) ) {
+			// GamlResource r = (GamlResource) root.eResource();
+			List<Import> imports = m.getImports();
+			imps = new Object[imports.size()];
+			for ( int i = 0; i < imps.length; i++ ) {
+				URI uri = URI.createURI(imports.get(i).getImportURI());
+				imps[i] = uri;
+				// if ( EcoreUtil2.isValidUri(r, uri) ) {
+				// imps[i] = uri;
+				// }
+				// imps[i] = imports.get(i).getImportURI();
+			}
+		} else {
+			imps = new Object[0];
+		}
+
+		SyntacticModelElement syntacticContents =
+			(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), imps);
 		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
 	}
 
 	private static boolean doesNotDefineAttributes(final String keyword) {
-		SymbolProto p = DescriptionFactory.getProto(keyword);
+		SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		if ( p == null ) { return true; }
 		int kind = p.getKind();
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
@@ -72,7 +103,8 @@ public class GamlCompatibilityConverter {
 			convertBlock(stm, upper, errors);
 		} else if ( stm instanceof S_Assignment ) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
-		} else if ( stm instanceof S_Definition && !SymbolProto.nonTypeStatements.contains(keyword) ) {
+			// } else if ( stm instanceof S_Definition && !SymbolProto.nonTypeStatements.contains(keyword) ) {
+		} else if ( stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword) ) {
 			S_Definition def = (S_Definition) stm;
 			// If we define a variable with this statement
 			TypeRef t = (TypeRef) def.getTkey();
@@ -102,7 +134,7 @@ public class GamlCompatibilityConverter {
 		} else if ( stm instanceof S_Do ) {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1: V1, ID2:V2)"
 			Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convertToConstantString(null, EGaml.getKeyOf(e)), errors);
+			addFacet(elt, ACTION, convertToConstantString(e, EGaml.getKeyOf(e)), errors);
 			if ( e instanceof Function ) {
 				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				Function f = (Function) e;
@@ -220,7 +252,8 @@ public class GamlCompatibilityConverter {
 	private static void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt,
 		final Set<Diagnostic> errors) {
 		// COMPATIBILITY with the definition of environment
-		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
+		// if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
+		if ( !DescriptionFactory.isStatementProto(keyword) ) {
 			Set<String> s = varDependenciesOf(stm);
 			if ( s != null && !s.isEmpty() ) {
 				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
@@ -353,7 +386,7 @@ public class GamlCompatibilityConverter {
 
 	private static void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
 		final Set<Diagnostic> errors) {
-		SymbolProto p = DescriptionFactory.getProto(keyword);
+		SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		for ( Facet f : EGaml.getFacetsOf(stm) ) {
 			String fname = EGaml.getKey.caseFacet(f);
 
@@ -425,6 +458,7 @@ public class GamlCompatibilityConverter {
 
 	final static IExpressionDescription convertToConstantString(final EObject target, final String string) {
 		IExpressionDescription ed = LabelExpressionDescription.create(string);
+		ed.setTarget(target);
 		if ( target != null ) {
 			DescriptionFactory.setGamlDocumentation(target, ed.getExpression());
 		}
@@ -445,7 +479,7 @@ public class GamlCompatibilityConverter {
 		if ( stm == null ) { return null; }
 		// The order below should be important
 		String name = EGaml.getNameOf(stm);
-		if ( name != null ) { return convertToConstantString(null, name); }
+		if ( name != null ) { return convertToConstantString(stm, name); }
 		Expression expr = stm.getExpr();
 		if ( expr != null ) { return convExpr(expr, errors); }
 

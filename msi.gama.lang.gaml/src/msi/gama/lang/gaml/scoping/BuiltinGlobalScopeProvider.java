@@ -1,15 +1,28 @@
-// EasyXtext
+/*********************************************************************************************
+ * 
+ * 
+ * 'BuiltinGlobalScopeProvider.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.EGaml;
+import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
-import msi.gaml.factories.*;
-import msi.gaml.factories.DescriptionFactory.Documentation;
+import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
@@ -38,11 +51,185 @@ import com.google.inject.Inject;
  */
 public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
-	public class MapBasedScope extends AbstractScope {
+	@Inject
+	private ImportUriGlobalScopeProvider uriScopeProvider;
+	@Inject
+	private ResourceSetGlobalScopeProvider resourceSetScopeProvider;
 
-		private final Map<QualifiedName, IEObjectDescription> elements;
+	private static THashMap<EClass, Resource> resources;
+	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
+	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
-		protected MapBasedScope(final IScope parent, final Map<QualifiedName, IEObjectDescription> elements) {
+	public static class AllImportUriGlobalScopeProvider extends ImportUriGlobalScopeProvider {
+
+		@Override
+		protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
+			return ((GamlResource) resource).computeAllImportedURIs();
+		}
+	}
+
+	public static class ImmutableMap implements Map<String, String> {
+
+		private final String[] contents;
+
+		public ImmutableMap(final String ... strings) {
+			contents = strings == null ? new String[0] : strings;
+		}
+
+		/**
+		 * Method size()
+		 * @see java.util.Map#size()
+		 */
+		@Override
+		public int size() {
+			return contents.length;
+		}
+
+		/**
+		 * Method isEmpty()
+		 * @see java.util.Map#isEmpty()
+		 */
+		@Override
+		public boolean isEmpty() {
+			return contents.length == 0;
+		}
+
+		/**
+		 * Method containsKey()
+		 * @see java.util.Map#containsKey(java.lang.Object)
+		 */
+		@Override
+		public boolean containsKey(final Object key) {
+			for ( int i = 0; i < contents.length; i += 2 ) {
+				String k = contents[i];
+				if ( k.equals(key) ) { return true; }
+			}
+			return false;
+		}
+
+		/**
+		 * Method containsValue()
+		 * @see java.util.Map#containsValue(java.lang.Object)
+		 */
+		@Override
+		public boolean containsValue(final Object value) {
+			for ( int i = 1; i < contents.length; i += 2 ) {
+				String k = contents[i];
+				if ( k.equals(value) ) { return true; }
+			}
+			return false;
+
+		}
+
+		/**
+		 * Method get()
+		 * @see java.util.Map#get(java.lang.Object)
+		 */
+		@Override
+		public String get(final Object key) {
+			for ( int i = 0; i < contents.length; i += 2 ) {
+				String k = contents[i];
+				if ( k.equals(key) ) { return contents[i + 1]; }
+			}
+			return null;
+
+		}
+
+		/**
+		 * Method put()
+		 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public String put(final String key, final String value) {
+			// Only replace
+			for ( int i = 0; i < contents.length; i += 2 ) {
+				String k = contents[i];
+				if ( k.equals(key) ) {
+					String oldValue = contents[i + 1];
+					contents[i + 1] = value;
+					return oldValue;
+				}
+			}
+
+			return null;
+
+		}
+
+		/**
+		 * Method remove()
+		 * @see java.util.Map#remove(java.lang.Object)
+		 */
+		@Override
+		public String remove(final Object key) {
+			// No remove
+			return null;
+		}
+
+		/**
+		 * Method putAll()
+		 * @see java.util.Map#putAll(java.util.Map)
+		 */
+		@Override
+		public void putAll(final Map<? extends String, ? extends String> m) {
+			for ( Map.Entry<? extends String, ? extends String> entry : m.entrySet() ) {
+				put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		/**
+		 * Method clear()
+		 * @see java.util.Map#clear()
+		 */
+		@Override
+		public void clear() {}
+
+		/**
+		 * Method keySet()
+		 * @see java.util.Map#keySet()
+		 */
+		@Override
+		public Set<String> keySet() {
+			THashSet<String> keys = new THashSet();
+			for ( int i = 0; i < contents.length; i += 2 ) {
+				keys.add(contents[i]);
+			}
+			return keys;
+		}
+
+		/**
+		 * Method values()
+		 * @see java.util.Map#values()
+		 */
+		@Override
+		public Collection<String> values() {
+			THashSet<String> values = new THashSet();
+			for ( int i = 1; i < contents.length; i += 2 ) {
+				values.add(contents[i]);
+			}
+			return values;
+		}
+
+		/**
+		 * Method entrySet()
+		 * @see java.util.Map#entrySet()
+		 */
+		@Override
+		public Set<java.util.Map.Entry<String, String>> entrySet() {
+			THashSet<Map.Entry<String, String>> keys = new THashSet();
+			for ( int i = 0; i < contents.length; i += 2 ) {
+				Map.Entry<String, String> entry = new GamaPair<String, String>(contents[i], contents[i + 1]);
+				keys.add(entry);
+			}
+			return keys;
+		}
+
+	}
+
+	public static class MapBasedScope extends AbstractScope {
+
+		private final THashMap<QualifiedName, IEObjectDescription> elements;
+
+		protected MapBasedScope(final IScope parent, final THashMap<QualifiedName, IEObjectDescription> elements) {
 			super(parent, false);
 			this.elements = elements;
 		}
@@ -71,13 +258,6 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	// @Inject
 	// private XtextResourceSet rs;
 
-	@Inject
-	private ImportUriGlobalScopeProvider uriScopeProvider;
-
-	private static Map<EClass, Resource> resources;
-	private static Map<EClass, Map<QualifiedName, IEObjectDescription>> descriptions = null;
-	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
-
 	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri), false);
 		if ( r == null ) {
@@ -93,20 +273,20 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		resources = new LinkedHashMap();
+		resources = new THashMap();
 		resources.put(eType, createResource("types.xmi"));
 		resources.put(eVar, createResource("vars.xmi"));
 		resources.put(eSkill, createResource("skills.xmi"));
 		resources.put(eUnit, createResource("units.xmi"));
 		resources.put(eAction, createResource("actions.xmi"));
 		resources.put(eEquation, createResource("equations.xmi"));
-		descriptions = new HashMap();
-		descriptions.put(eVar, new LinkedHashMap());
-		descriptions.put(eType, new LinkedHashMap());
-		descriptions.put(eSkill, new LinkedHashMap());
-		descriptions.put(eUnit, new LinkedHashMap());
-		descriptions.put(eAction, new LinkedHashMap());
-		descriptions.put(eEquation, new LinkedHashMap());
+		descriptions = new THashMap();
+		descriptions.put(eVar, new THashMap());
+		descriptions.put(eType, new THashMap());
+		descriptions.put(eSkill, new THashMap());
+		descriptions.put(eUnit, new THashMap());
+		descriptions.put(eAction, new THashMap());
+		descriptions.put(eEquation, new THashMap());
 	}
 
 	public static boolean contains(final QualifiedName name) {
@@ -131,18 +311,18 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// }
 	}
 
-	static void add(final EClass eClass, final String t, final IOperator o) {
+	static void add(final EClass eClass, final String t, final OperatorProto o) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Documentation d = DescriptionFactory.getGamlDocumentation(o);
-		Map<String, String> doc = new HashMap();
+		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc;
 		if ( d != null ) {
-			doc.put("doc", d.getDocumentation());
-			doc.put("title", d.getTitle());
+			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "operator");
+		} else {
+			doc = new ImmutableMap("type", "operator");
 		}
-		doc.put("type", "operator");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -153,13 +333,13 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Documentation d = DescriptionFactory.getGamlDocumentation(o);
-		Map<String, String> doc = new HashMap();
+		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc;
 		if ( d != null ) {
-			doc.put("doc", d.getDocumentation());
-			doc.put("title", d.getTitle());
+			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", keyword);
+		} else {
+			doc = new ImmutableMap("type", keyword);
 		}
-		doc.put("type", keyword);
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -170,13 +350,13 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Documentation d = DescriptionFactory.getGamlDocumentation(o);
-		Map<String, String> doc = new HashMap();
+		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc;
 		if ( d != null ) {
-			doc.put("doc", d.getDocumentation());
-			doc.put("title", d.getTitle());
+			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
+		} else {
+			doc = new ImmutableMap("type", "action");
 		}
-		doc.put("type", "action");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -186,9 +366,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Map<String, String> doc = new HashMap();
-		doc.put("title", "Unit " + t + " of value " + value);
-		doc.put("type", "unit");
+		Map<String, String> doc = new ImmutableMap("title", "Unit " + t + " of value " + value, "type", "unit");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -199,9 +377,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Map<String, String> doc = new HashMap();
-		doc.put("title", "Type " + type);
-		doc.put("type", "type");
+		Map<String, String> doc = new ImmutableMap("title", "Type " + type, "type", "type");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -210,7 +386,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
-	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
+	public THashMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
 		createDescriptions();
 		return descriptions.get(eClass);
 	}
@@ -230,8 +406,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			for ( String t : IUnits.UNITS.keySet() ) {
 				addUnit(eUnit, t, IUnits.UNITS.get(t));
 			}
-			for ( TypeFieldExpression t : AbstractGamlAdditions.getAllFields() ) {
-				addVar(eVar, t.getName(), t, "field");
+			for ( OperatorProto t : AbstractGamlAdditions.getAllFields() ) {
+				addVar(eVar, t.name, t, "field");
 			}
 			for ( IDescription t : AbstractGamlAdditions.getAllVars() ) {
 				addVar(eVar, t.getName(), t, "variable");
@@ -244,8 +420,15 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				addAction(eAction, t.getName(), t);
 				add(eVar, t.getName());
 			}
-			for ( Map.Entry<String, Map<Signature, IOperator>> t : IExpressionCompiler.OPERATORS.entrySet() ) {
-				add(eAction, t.getKey(), new ArrayList<IOperator>(t.getValue().values()).get(0));
+			for ( Map.Entry<String, Map<Signature, OperatorProto>> t : IExpressionCompiler.OPERATORS.entrySet() ) {
+				List<OperatorProto> ccc = new ArrayList<OperatorProto>(t.getValue().values());
+				OperatorProto p;
+				if ( ccc.isEmpty() ) {
+					p = null;
+				} else {
+					p = ccc.get(0);
+				}
+				add(eAction, t.getKey(), p);
 			}
 		}
 	}
@@ -254,6 +437,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		createDescriptions();
 	}
 
+	static final THashMap EMPTY_MAP = new THashMap();
+
 	/**
 	 * Implementation of IGlobalScopeProvider.
 	 */
@@ -261,13 +446,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	public IScope getScope(final Resource context, final EReference reference,
 		final Predicate<IEObjectDescription> filter) {
 		EClass eclass = reference.getEReferenceType();
-		Map<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eclass);
+		THashMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eclass);
 		if ( descriptions == null ) {
-			descriptions = Collections.EMPTY_MAP;
+			descriptions = EMPTY_MAP;
 		}
 		IScope parent;
 		try {
 			parent = uriScopeProvider.getScope(context, reference, filter);
+			// parent = resourceSetScopeProvider.getScope(context, reference, filter);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 			Diagnostic d =
@@ -276,6 +462,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			context.getErrors().add(d);
 			return IScope.NULLSCOPE;
 		}
+
 		return new MapBasedScope(parent, descriptions);
 	}
 }

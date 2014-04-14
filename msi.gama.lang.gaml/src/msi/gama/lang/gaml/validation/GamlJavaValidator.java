@@ -1,350 +1,114 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlJavaValidator.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import static msi.gaml.factories.DescriptionFactory.getModelFactory;
-import java.net.URLDecoder;
-import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.utils.GamlExpressionCompiler;
-import msi.gama.util.*;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.ModelDescription;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.emf.common.util.URI;
+import msi.gama.lang.gaml.gaml.impl.StatementImpl;
+import msi.gama.lang.gaml.resource.*;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ErrorCollector;
 import org.eclipse.emf.ecore.*;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.util.Arrays;
-import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.*;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	static {
-		GuiUtils.debug(">> Registering GAML expression compiler.");
-		GAML.getExpressionFactory().registerParser(new GamlExpressionCompiler());
-	}
-
-	// static {
-	// GAML.getExpressionFactory().registerParser(new GamlExpressionCompiler());
+	// private GamlResource currentResource;
+	//
+	// public void setCurrentResource(final GamlResource resource) {
+	// currentResource = resource;
 	// }
-
-	private final static XtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
-
-	// AD 22/1/13 : set to false to avoid lags in compilation.
-	static boolean FORCE_VALIDATION = false;
-
-	// AD 15/9/13 : suppression of currentResource to avoid threading problems between validators
-	// GamlResource currentResource;
-
-	// private DiagnosticChain diagnosticsChain;
-
+	//
 	@Check()
-	public synchronized void validate(final Model model) {
-		try {
-			final GamlResource r = (GamlResource) model.eResource();
-			Map<Object, Object> context = getContext();
-			// AD 15/9/13 Addition of a check in the current context to verify if this validator (or any other) is not
-			// already validating the resource
-			// if ( context.containsKey(r) ) {
-			// // r is already validated
-			// return;
-			// }
-			// context.put(r, this);
-			// currentResource = r;
-			ModelDescription result = null;
-			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
-				final long begin = System.nanoTime();
-				final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
-				result = parse(r, resourceSet, true);
-				if ( r.getErrors().isEmpty() ) {
-					result.validate();
-				}
-				GuiUtils.debug("=> " + result + " in " + (System.nanoTime() - begin) / 1000000d + " ms.");
+	public void validate(final Model model) {
+		GamlResource newResource = (GamlResource) model.eResource();
+		if ( newResource.isValidating() ) { return; }
+		ErrorCollector errors = GamlResourceBuilder.getInstance().validate(newResource);
+		if ( !errors.hasInternalSyntaxErrors() ) {
+			if ( errors.hasInternalErrors() ) {
+				GuiUtils.debug("GamlJavaValidator.validate");
 			}
-			if ( result != null ) {
-				final boolean hasError = result.hasErrors();
-				for ( final GamlCompilationError error : result.getErrors() ) {
-					add(error);
-				}
-				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
-				// AD 7/9/2013: Addition of a force disposal to get rid of the description
-				result.dispose();
-			} else {
-				r.updateWith(true, Collections.EMPTY_SET);
+			for ( GamlCompilationError error : errors ) {
+				manageCompilationIssue(error);
 			}
-		} catch (final Exception e) {
-			e.printStackTrace();
 		}
 	}
 
-	public IModel build(final EObject object) {
-		if ( !(object instanceof Model) ) { return null; }
-		Model model = (Model) object;
-		final GamlResource r = (GamlResource) model.eResource();
-		try {
-			ModelDescription description = parse(r, buildResourceSet, false);
-			if ( r.getErrors().isEmpty() ) {
-				final IModel result_model = (IModel) description.compile();
-				return result_model;
-			}
-		} catch (Exception e) {
-			error("Cannot compile file because of : " + e.getMessage(), r.getContents().get(0), null);
-			return null;
-		} finally {
-			cleanResourceSet(buildResourceSet, true);
-		}
-		return null;
+	private GamlResource getCurrentResource() {
+		EObject object = this.getCurrentObject();
+		if ( object == null ) { return null; }
+		return (GamlResource) object.eResource();
+
 	}
 
-	public List<GamlCompilationError> validateModel(final EObject object) {
-		if ( !(object instanceof Model) ) { return null; }
-		List<GamlCompilationError> errors = new GamaList<GamlCompilationError>();
-		Model model = (Model) object;
-		final GamlResource r = (GamlResource) model.eResource();
-		try {
-			ModelDescription result = parse(r, buildResourceSet, false);
-			final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
-			if ( r.getErrors().isEmpty() ) {
-				result.validate();
-			}
-			if ( result != null ) {
-				final boolean hasError = result.hasErrors();
-				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentTitles());
-				errors.addAll(result.getErrors());
-				result.dispose();
-			} else {
-				r.updateWith(true, Collections.EMPTY_SET);
-				return null;
-			}
-			return errors;
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	private boolean sameResource(final EObject object) {
+		if ( object == null ) { return false; }
+		return object.eResource() == getCurrentResource();
 	}
 
-	// TODO : Verify the behavior in case of compilation errors.
-	public IModel build(final GamlResource resource) {
-		try {
-			final ModelDescription description = parse(resource, buildResourceSet, true);
-			if ( resource.getErrors().isEmpty() ) {
-				final IModel model = (IModel) description.compile();
-				return model;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			GuiUtils
-				.debug("Cannot compile file because of : " + e.getMessage()/* , resource.getContents().get(0), null */);
-			return null;
-		} finally {
-			cleanResourceSet(buildResourceSet, true);
-		}
-		return null;
-	}
-
-	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
-		final ResourceSet resourceSet, final boolean forceReload) {
-		final Map<URI, ISyntacticElement> models = new LinkedHashMap();
-		final LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
-		final LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
-		// Forcing the resource set to reload the primary resource, even though it has been
-		// passed, in order to be sure that all resources will belong to the same resource set.
-		final GamlResource first;
-		if ( forceReload ) {
-			first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
-		} else {
-			first = resource;
-		}
-
-		newResources.add(first);
-		while (!newResources.isEmpty()) {
-			final List<GamlResource> resourcesToConsider = new ArrayList<GamlResource>(newResources);
-			newResources.clear();
-			for ( final GamlResource gr : resourcesToConsider ) {
-				if ( totalResources.add(gr) ) {
-					final LinkedHashSet<GamlResource> imports = listImports(gr, resourceSet);
-					newResources.addAll(imports);
-				}
-			}
-		}
-		for ( final GamlResource r : totalResources ) {
-			ISyntacticElement s = r.getSyntacticContents();
-			// GuiUtils.debug("Building " + r + " as part of the validation of " + resource);
-			if ( s != null ) {
-				models.put(r.getURI(), s);
-			}
-		}
-		return models;
-	}
-
-	public LinkedHashSet<GamlResource> listImports(final GamlResource resource, final ResourceSet resourceSet) {
-		final LinkedHashSet<GamlResource> imports = new LinkedHashSet();
-		final Model model = (Model) resource.getContents().get(0);
-		for ( final Import imp : model.getImports() ) {
-			final String importUri = imp.getImportURI();
-			final URI iu = URI.createURI(importUri).resolve(resource.getURI());
-			try {
-				final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
-				if ( !ir.getErrors().isEmpty() ) {
-					add(new GamlCompilationError("Imported file " + ir.getURI().lastSegment() +
-						" has errors. Fix them first.", IGamlIssue.IMPORT_ERROR, imp, false, false));
-				} else {
-					imports.add(ir);
-				}
-			} catch (Exception e) {
-				GuiUtils.debug("Error in validation: XText cannot load " + iu);
-			}
-
-		}
-		return imports;
-	}
-
-	@SuppressWarnings("restriction")
-	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet,
-		final boolean forceReload) {
-		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet, forceReload);
-		GAML.getExpressionFactory().getParser().reset();
-		IPath path;
-		boolean isFile = false;
-		if ( resource.getURI().isPlatform() ) {
-			path = new Path(resource.getURI().toPlatformString(false));
-		} else if ( resource.getURI().isFile() ) {
-			isFile = true;
-			path = new Path(resource.getURI().toFileString());
-		} else {
-			path = new Path(resource.getURI().path());
-		}
-		path = new Path(URLDecoder.decode(path.toOSString()));
-
-		String modelPath, projectPath;
-
-		if ( isFile ) {
-			modelPath = path.toOSString();
-			projectPath = modelPath; // removeLastSegment(1) ?
-		} else {
-			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			IPath fullPath = file.getLocation();
-			modelPath = fullPath == null ? "" : fullPath.toOSString();
-			fullPath = file.getProject().getLocation();
-			projectPath = fullPath == null ? "" : fullPath.toOSString();
-		}
-		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
-	}
-
-	private void cleanResourceSet(final XtextResourceSet resourceSet, final boolean clear) {
-		// for ( Resource r : resourceSet.getResources() ) {
-		// // if ( !r.getErrors().isEmpty() ) {
-		// // ((GamlResource) r).eraseSyntacticContents();
-		// // }
-		// }
-		if ( clear ) {
-			resourceSet.getResources().clear();
-		}
-	}
-
-	// public GamlResource getCurrentRessource() {
-	// return currentResource;
-	// }
-
-	public void add(final GamlCompilationError e) {
+	private void manageCompilationIssue(final GamlCompilationError e) {
 		final EObject object = e.getStatement();
 		if ( object == null ) {
-			GuiUtils.debug("*** Internal compilation problem : " + e.toString());
+			System.err.println("*** Internal compilation problem : " + e.toString());
 			return;
-		}
-		if ( object.eResource() == null ) { throw new RuntimeException(
+		} else if ( object.eResource() == null ) { throw new RuntimeException(
 			"Error detected in a syntethic object. Please debug to understand the cause"); }
-		boolean isCurrentResource = true;
-		try {
-			checkIsFromCurrentlyCheckedResource(object);
-		} catch (IllegalArgumentException ex) {
-			isCurrentResource = false;
-		}
-		if ( !isCurrentResource ) {
-			if ( !e.isWarning() && !e.isInfo() ) {
-				final EObject imp = findImport(object.eResource().getURI());
-				if ( imp != null ) {
-					importedError("Error detected in imported file " + ": " + e.toString(), imp,
-						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object.eResource().getURI()
-							.toString());
-				} else {
-					importedError("Errors detected in indirectly imported file " + object.eResource().getURI() + ": " +
-						e.toString(), getCurrentObject(), GamlPackage.Literals.GAML_DEFINITION__NAME,
-						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
-				}
-			}
+
+		if ( !sameResource(object) ) {
+			// if ( e.isError() ) {
+			// URI uri = object.eResource().getURI();
+			// final EObject imp = getCurrentResource().findImport(uri);
+			// EObject warningContainer;
+			// String msg;
+			// EAttribute feature;
+			// if ( imp != null ) {
+			// warningContainer = imp;
+			// msg = "Error detected in imported file " + ": " + e.toString();
+			// feature = GamlPackage.Literals.IMPORT__IMPORT_URI;
+			//
+			// } else {
+			// warningContainer = getCurrentObject();
+			// msg = "Errors detected in indirectly imported file " + uri + ": " + e.toString();
+			// feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
+			// }
+			// acceptWarning(msg, warningContainer, feature, ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
+			// IGamlIssue.IMPORT_ERROR, uri.toString());
+			// }
 			return;
 		}
 		EStructuralFeature feature = null;
-		if ( e instanceof Statement ) {
-			feature = GamlPackage.Literals.STATEMENT__KEY;
+		if ( object instanceof Statement ) {
+			StatementImpl s = (StatementImpl) object;
+			if ( s.eIsSet(GamlPackage.Literals.STATEMENT__KEY) ) {
+				feature = GamlPackage.Literals.STATEMENT__KEY;
+			} else if ( s.eIsSet(GamlPackage.Literals.SDEFINITION__TKEY) ) {
+				feature = GamlPackage.Literals.SDEFINITION__TKEY;
+			}
+		} else if ( object instanceof Model ) {
+			feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
 		}
 		if ( !Arrays.contains(e.getData(), null) ) {
+			int index = ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
 			if ( e.isInfo() ) {
-				info(e.toString(), object, feature, 0, e.getCode(), e.getData());
+				acceptInfo(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else if ( e.isWarning() ) {
-				warning(e.toString(), object, feature, 0, e.getCode(), e.getData());
+				acceptWarning(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else {
-				error(e.toString(), object, feature, 0, e.getCode(), e.getData());
+				System.out.println("One compilation error accepted: " + e.toString() + " thread: " +
+					Thread.currentThread().getName());
+				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}
-	}
-
-	/**
-	 * @param string
-	 * @param currentObject
-	 * @param gamlDefinitionName
-	 * @param importError
-	 * @param string2
-	 */
-	private void importedError(final String string, final EObject currentObject, final EAttribute gamlDefinitionName,
-		final String importError, final String uri) {
-		Map<Object, Object> context = getContext();
-		if ( context.containsKey(currentObject) ) {
-			Set<String> importsWithErrors = (Set<String>) context.get(currentObject);
-			if ( importsWithErrors.contains(uri) ) { return; }
-		} else {
-			Set<String> importsWithErrors = new HashSet();
-			importsWithErrors.add(uri);
-			context.put(currentObject, importsWithErrors);
-			warning(string, currentObject, gamlDefinitionName, importError, uri);
-		}
-	}
-
-	private EObject findImport(final URI uri) {
-		Model m;
-		try {
-			m = (Model) getCurrentObject();
-		} catch (final NullPointerException ex) {
-			return null;
-		}
-		for ( final Import imp : m.getImports() ) {
-			final URI iu = URI.createURI(imp.getImportURI()).resolve(m.eResource().getURI());
-			if ( uri.equals(iu) ) { return imp; }
-		}
-		return null;
 	}
 
 }

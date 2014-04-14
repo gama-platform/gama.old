@@ -42,6 +42,7 @@ import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Loop;
+import msi.gama.lang.gaml.gaml.S_Monitor;
 import msi.gama.lang.gaml.gaml.S_Other;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Return;
@@ -758,6 +759,12 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				   context == grammarAccess.getStatementRule() ||
 				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_S_Loop(context, (S_Loop) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.SMONITOR:
+				if(context == grammarAccess.getS_MonitorRule()) {
+					sequence_S_Monitor(context, (S_Monitor) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1652,6 +1659,15 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (key='loop' name=ID? facets+=Facet* block=Block)
 	 */
 	protected void sequence_S_Loop(EObject context, S_Loop semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (key='monitor' firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet)
+	 */
+	protected void sequence_S_Monitor(EObject context, S_Monitor semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

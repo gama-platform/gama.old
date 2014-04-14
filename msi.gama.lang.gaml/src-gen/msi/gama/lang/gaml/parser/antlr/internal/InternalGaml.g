@@ -2435,6 +2435,8 @@ ruleS_Solve returns [EObject current=null]
 
 
 
+
+
 // Entry rule entryRuleS_Display
 entryRuleS_Display returns [EObject current=null] 
 	:
@@ -3009,6 +3011,13 @@ rule_1Expr_Facets_BlockOrEnd_Key returns [AntlrDatatypeRuleToken current=new Ant
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getMatch_oneKeyword_21()); 
     }
+
+    |
+	kw='parameter' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getParameterKeyword_22()); 
+    }
 )
     ;
 
@@ -3188,6 +3197,13 @@ rule_VarOrConstKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRule
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_VarOrConstKeyAccess().getArgKeyword_3()); 
     }
+
+    |
+	kw='signal' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); 
+    }
 )
     ;
 
@@ -3221,6 +3237,13 @@ rule_ReflexKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToke
     {
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_ReflexKeyAccess().getReflexKeyword_1()); 
+    }
+
+    |
+	kw='aspect' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_ReflexKeyAccess().getAspectKeyword_2()); 
     }
 )
     ;
@@ -3928,6 +3951,20 @@ ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
     {
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_12()); 
+    }
+
+    |
+	kw='parameter:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getParameterKeyword_13()); 
+    }
+
+    |
+	kw='aspect:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_14()); 
     }
 )
     ;

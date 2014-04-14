@@ -1,7 +1,4 @@
 /**
- * <copyright>
- * </copyright>
- *
  */
 package msi.gama.lang.gaml.gaml.impl;
 
@@ -33,7 +30,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     try
     {
-      GamlFactory theGamlFactory = (GamlFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.gama.msi/lang/gaml/Gaml"); 
+      GamlFactory theGamlFactory = (GamlFactory)EPackage.Registry.INSTANCE.getEFactory(GamlPackage.eNS_URI);
       if (theGamlFactory != null)
       {
         return theGamlFactory;
@@ -88,6 +85,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSET: return createS_Set();
       case GamlPackage.SEQUATIONS: return createS_Equations();
       case GamlPackage.SSOLVE: return createS_Solve();
+      case GamlPackage.SMONITOR: return createS_Monitor();
       case GamlPackage.SDISPLAY: return createS_Display();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
@@ -371,6 +369,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_SolveImpl s_Solve = new S_SolveImpl();
     return s_Solve;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Monitor createS_Monitor()
+  {
+    S_MonitorImpl s_Monitor = new S_MonitorImpl();
+    return s_Monitor;
   }
 
   /**

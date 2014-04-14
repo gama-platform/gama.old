@@ -1,9 +1,24 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'GamlSyntacticParser.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import java.util.*;
 import msi.gama.lang.gaml.parser.antlr.GamlParser;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gaml.compilation.*;
 import org.antlr.runtime.CharStream;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.impl.NodeModelBuilder;
 import org.eclipse.xtext.parser.*;
@@ -14,7 +29,7 @@ public class GamlSyntacticParser extends GamlParser {
 	// A "wrapped" parse result which contains both the result of the parsing and the syntactic elements needed by GAML
 	public static class GamlParseResult extends ParseResult {
 
-		final ISyntacticElement element;
+		final SyntacticModelElement element;
 		final Set<Diagnostic> errors = new HashSet();
 
 		public GamlParseResult(final IParseResult result) {
@@ -34,6 +49,23 @@ public class GamlSyntacticParser extends GamlParser {
 			return errors;
 		}
 
+		/**
+		 * @param uri
+		 */
+		public void fixURIsWith(final GamlResource r) {
+			if ( element == null ) { return; }
+			if ( element.areURIFixed() ) { return; }
+			Set<URI> set = element.getImports();
+			if ( set.isEmpty() ) { return; }
+			Set<URI> newSet = new TLinkedHashSet();
+			for ( URI u : set ) {
+				URI newUri = u.resolve(r.getURI());
+				if ( EcoreUtil2.isValidUri(r, newUri) ) {
+					newSet.add(newUri);
+				}
+			}
+			element.setImports(newSet);
+		}
 	}
 
 	@Override

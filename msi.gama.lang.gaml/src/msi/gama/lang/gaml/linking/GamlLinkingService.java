@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 10 mai 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'GamlLinkingService.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.linking;
 
 import java.util.*;
@@ -49,6 +56,9 @@ public class GamlLinkingService extends DefaultLinkingService {
 	public List<EObject> addSymbol(final String name, final EClass clazz) {
 		List<EObject> list = stubbedRefs.get(name);
 		if ( list == null ) {
+			System.out.println("Adding stub reference to " + name + " as a " + clazz.getName());
+			System.out.println("****************************************************");
+
 			GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
 			stub.setName(name);
 			getResource().getContents().add(stub);

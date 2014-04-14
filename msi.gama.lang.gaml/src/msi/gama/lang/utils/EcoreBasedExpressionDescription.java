@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 31 mars 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'EcoreBasedExpressionDescription.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.utils;
 
 import java.util.*;
@@ -40,9 +47,10 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
-		String type = skills ? "skill" : "attribute";
 		if ( target == null ) { return Collections.EMPTY_SET; }
 		if ( !(target instanceof Array) ) {
+			String type = skills ? "skill" : "attribute";
+
 			if ( target instanceof VariableRef ) {
 				String skillName = EGaml.getKey.caseVariableRef((VariableRef) target);
 				context.warning(type + "s should be provided as a list of identifiers, for instance [" + skillName +
@@ -64,6 +72,8 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		Set<String> result = new HashSet();
 		Array array = (Array) target;
 		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
+			String type = skills ? "skill" : "attribute";
+
 			String name = EGaml.getKeyOf(expr);
 			if ( skills && !AbstractGamlAdditions.getSkillClasses().containsKey(name) ) {
 				context.error("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
@@ -105,21 +115,21 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				currentErrors.add(d);
 				ed = ConstantExpressionDescription.create(0d);
 			}
-			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+			// DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 
 		@Override
 		public IExpressionDescription caseStringLiteral(final StringLiteral object) {
 			IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
-			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+			// DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 
 		@Override
 		public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 			IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
-			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+			// DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 

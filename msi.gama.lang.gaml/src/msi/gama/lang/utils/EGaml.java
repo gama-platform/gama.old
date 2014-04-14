@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 7 f�vr. 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'EGaml.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.utils;
 
 import java.util.*;
@@ -310,5 +317,39 @@ public class EGaml {
 		return null;
 
 	}
+	//
+	// public static int getGamlDocIndex(final EObject object) {
+	// if ( object == null ) { return -1; }
+	// if ( object instanceof Statement ) { return ((Statement) object).getGamlDoc(); }
+	// if ( object instanceof Expression ) { return ((Expression) object).getGamlDoc(); }
+	// if ( object instanceof Facet ) { return ((Facet) object).getGamlDoc(); }
+	// if ( object instanceof Model ) { return ((Model) object).getGamlDoc(); }
+	// System.err.println(">>> Trying to get the gaml doc from object of type " + object.getClass());
+	// return -1;
+	// }
+	//
+	// // Returns the index if ok or -1 if not
+	//
+	// public static int setGamlDocIndex(final EObject object, final int index) {
+	// if ( object == null ) { return -1; }
+	// if ( object instanceof Statement ) {
+	// ((Statement) object).setGamlDoc(index);
+	// return index;
+	// }
+	// if ( object instanceof Expression ) {
+	// ((Expression) object).setGamlDoc(index);
+	// return index;
+	// }
+	// if ( object instanceof Facet ) {
+	// ((Facet) object).setGamlDoc(index);
+	// return index;
+	// }
+	// if ( object instanceof Model ) {
+	// ((Model) object).setGamlDoc(index);
+	// return index;
+	// }
+	// System.err.println(">>> Trying to set the gaml doc to object of type " + object.getClass());
+	// return -1;
+	// }
 
 }

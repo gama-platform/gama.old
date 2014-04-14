@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<genmodel:GenModel xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/msi.gama.lang.gaml/src-gen"
-    editDirectory="/msi.gama.lang.gaml.edit/src" editorDirectory="/msi.gama.lang.gaml.editor/src"
-    modelPluginID="msi.gama.lang.gaml" forceOverwrite="true" modelName="Gaml" updateClasspath="false"
-    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" complianceLevel="5.0"
-    copyrightFields="false" editPluginID="msi.gama.lang.gaml.edit" editorPluginID="msi.gama.lang.gaml.editor"
-    runtimeVersion="2.7">
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/msi.gama.lang.gaml/src-gen" editDirectory="/msi.gama.lang.gaml.edit/src"
+    editorDirectory="/msi.gama.lang.gaml.editor/src" modelPluginID="msi.gama.lang.gaml"
+    forceOverwrite="true" modelName="Gaml" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="msi.gama.lang.gaml.edit"
+    editorPluginID="msi.gama.lang.gaml.editor" runtimeVersion="2.9">
   <genPackages prefix="Gaml" basePackage="msi.gama.lang.gaml" disposableProviderFactory="true"
       ecorePackage="Gaml.ecore#/">
     <genClasses ecoreClass="Gaml.ecore#//Entry"/>
@@ -55,6 +53,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Equations/equations"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Solve"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Monitor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/firstFacet"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Monitor/facets"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Display">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Display/name"/>
     </genClasses>
