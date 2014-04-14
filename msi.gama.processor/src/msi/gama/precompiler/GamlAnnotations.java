@@ -131,6 +131,13 @@ public final class GamlAnnotations {
 		boolean optional() default false;
 
 		/**
+		 * internal.
+		 * 
+		 * @return whether this facet is for internal use only.
+		 */
+		boolean internal() default false;		
+		
+		/**
 		 * Doc.
 		 * 
 		 * @return the documentation associated to the facet.
@@ -188,9 +195,15 @@ public final class GamlAnnotations {
 		/**
 		 * @return the kind of Variable used to store this type. see ISymbolKind.Variable.
 		 */
-
 		int kind() default ISymbolKind.Variable.REGULAR;
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this type is for internal use only.
+		 */
+		boolean internal() default false;			
+		
 		/**
 		 * Doc.
 		 * 
@@ -232,6 +245,13 @@ public final class GamlAnnotations {
 		 */
 		String[] attach_to() default {};
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this skill is for internal use only.
+		 */
+		boolean internal() default false;	
+		
 		/**
 		 * Doc.
 		 * 
@@ -295,6 +315,13 @@ public final class GamlAnnotations {
 		 */
 		String[] skills() default {};
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this species is for internal use only.
+		 */
+		boolean internal() default false;	
+		
 		/**
 		 * Doc.
 		 * 
@@ -360,6 +387,13 @@ public final class GamlAnnotations {
 		 */
 		arg[] args() default {};
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this action is for internal use only.
+		 */
+		boolean internal() default false;	
+		
 		/**
 		 * Doc.
 		 * 
@@ -508,6 +542,13 @@ public final class GamlAnnotations {
 		String species() default "";
 
 		/**
+		 * internal.
+		 * 
+		 * @return whether this var is for internal use only.
+		 */
+		boolean internal() default false;	
+		
+		/**
 		 * Doc.
 		 * 
 		 * @return the documentation attached to this variable
@@ -585,6 +626,13 @@ public final class GamlAnnotations {
 		 */
 		doc[] doc() default {};
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this symbol is for internal use only.
+		 */
+		boolean internal() default false;	
+		
 		/**
 		 * 
 		 * @return Indicates that this statement must be unique in its super context (for example,
@@ -687,6 +735,13 @@ public final class GamlAnnotations {
 		 */
 		int type() default ITypeProvider.NONE;
 
+		/**
+		 * internal.
+		 * 
+		 * @return whether this operator is for internal use only.
+		 */
+		boolean internal() default false;	
+		
 		/**
 		 * Doc.
 		 * 

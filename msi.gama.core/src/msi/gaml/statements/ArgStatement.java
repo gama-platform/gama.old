@@ -35,11 +35,11 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = false, doc=@doc("the name of the action argument ")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc=@doc("the type of the action argument (only in an action statement)")),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true, doc=@doc("the type of the content of the argument, if its type is a container (only in an action statement)")),
-	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true, doc=@doc("")),
+	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true, doc=@doc("the type of the key of the argument, if its type is a map (only in an action statement)")),
 	@facet(name = IKeyword.OPTIONAL, type = IType.BOOL, optional = true, doc=@doc("a boolean specifying if the argument is optional (false by default) (only in an action statement)")),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = true, doc=@doc("the value of the argument (only in a do statement)")),
 	@facet(name = IKeyword.DEFAULT, type = { IType.NONE }, optional = true, doc=@doc("the default value of the argument (only in an action statement)")) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true)
+@symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true, internal=true)
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
 @validator(ValidNameValidator.class)
 @doc(value="This statement to define the arguments of an action.", usages={
