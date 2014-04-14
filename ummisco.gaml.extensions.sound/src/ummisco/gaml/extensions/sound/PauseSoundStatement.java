@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'PauseSoundStatement.java', in plugin 'ummisco.gaml.extensions.sound', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package ummisco.gaml.extensions.sound;
 
 import java.util.List;
