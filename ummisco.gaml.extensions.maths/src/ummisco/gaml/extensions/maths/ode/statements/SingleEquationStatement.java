@@ -1,7 +1,18 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'SingleEquationStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import java.util.*;
+import java.util.Map;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -25,11 +36,11 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 @symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = EQUATION)
 /**
- * 
- * The class SingleEquationStatement. 
+ *
+ * The class SingleEquationStatement.
  * Implements an Equation in the form function(n, t) = expression;
  * The left function is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.
- * @comment later, the order will be used as it will require a different integrator to solve the equation. For the moment, it is just 
+ * @comment later, the order will be used as it will require a different integrator to solve the equation. For the moment, it is just
  * here to show how to compute it from the function used
  *
  * @author Alexis Drogoul, Huynh Quang Nghi
@@ -39,7 +50,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 @validator(SingleEquationValidator.class)
 public class SingleEquationStatement extends AbstractStatement {
 
-	public static final Map<String, Integer> orderNames = new LinkedHashMap();
+	public static final Map<String, Integer> orderNames = new TOrderedHashMap();
 	static {
 		orderNames.put(ZERO, 0);
 		orderNames.put(DIFF, 1);
