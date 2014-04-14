@@ -1,14 +1,17 @@
-/*
- * Copyright (c) 2011 Google Inc.
+/*********************************************************************************************
  * 
- * All rights reserved. This program and the accompanying materials are made available under the
- * terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ *
+ * 'ImportHyperlink.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * http://www.eclipse.org/legal/epl-v10.html
- */
-package msi.gama.lang.gaml.ui;
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
+package msi.gama.lang.gaml.ui.editor;
 
+import msi.gama.lang.gaml.ui.FileOpener;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.IRegion;
@@ -38,7 +41,7 @@ class ImportHyperlink implements IHyperlink {
 	public void open() {
 		try {
 			if ( importUri.isPlatformResource() ) {
-				fileOpener.openProtoFileInWorkspace(importUri);
+				fileOpener.openFileInWorkspace(importUri);
 				return;
 			}
 

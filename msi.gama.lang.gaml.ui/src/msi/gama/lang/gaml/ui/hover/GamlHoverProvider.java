@@ -1,14 +1,20 @@
-/**
- * Created by drogoul, 5 f�vr. 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'GamlHoverProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
-import msi.gaml.descriptions.SymbolProto;
-import msi.gaml.factories.*;
-import msi.gaml.factories.DescriptionFactory.Documentation;
+import msi.gaml.descriptions.*;
+import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.text.*;
@@ -152,21 +158,6 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			} else {
 				return new DefaultInformationControl(parent, tooltipAffordanceString);
 			}
-
-			// final XtextBrowserInformationControl c =
-			// (XtextBrowserInformationControl) super.doCreateInformationControl(parent);
-			// c.addFocusListener(new FocusListener() {
-			//
-			// @Override
-			// public void focusGained(final FocusEvent e) {
-			// c.setLocation(Display.getDefault().getCursorLocation());
-			// }
-			//
-			// @Override
-			// public void focusLost(final FocusEvent e) {}
-			//
-			// });
-			// return c;
 		}
 	}
 
@@ -188,32 +179,64 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	}
 
+	//
+	// @Override
+	// protected String getHoverInfoAsHtml(final EObject o) {
+	// String s = super.getHoverInfoAsHtml(o);
+	// if ( s == null || s.trim().isEmpty() ) { return null; }
+	// return s;
+	// }
+
 	@Override
 	protected boolean hasHover(final EObject o) {
 		return true;
+		// String s = getFirstLine(o);
+		// return s != null && !s.isEmpty();
 	}
 
 	@Override
 	protected String getFirstLine(final EObject o) {
-		if(o == null){return "";}
-		Documentation description = DescriptionFactory.getGamlDocumentation(o);
+		if ( o == null ) { return ""; }
+		Statement s = EGaml.getStatement(o);
+		if ( o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o ) { return getFirstLine(s); }
+		IGamlDescription description = DescriptionFactory.getGamlDocumentation(o);
 		if ( description == null ) {
-			Statement s = EGaml.getStatement(o);
-			if ( s != null && SymbolProto.nonTypeStatements.contains(EGaml.getKeyOf(o)) ) {
-				if(s==o){return "";}
+			if ( o instanceof Facet ) { return "<b>" + getFirstLineOf((Facet) o) + "</b>"; }
+
+			if ( s != null && DescriptionFactory.isStatementProto(EGaml.getKeyOf(o)) ) {
+				if ( s == o ) { return ""; }
 				return getFirstLine(s);
 			} else {
 				if ( o instanceof TypeRef ) {
-					return "type " + EGaml.getKeyOf(o);
+					return "Type " + EGaml.getKeyOf(o);
 				} else {
 					return "";
 				}
 			}
 		} else {
 			String result = description.getTitle();
+			if ( result == null || result.isEmpty() ) { return ""; }
 			result = "<b>" + result + "</b>";
 			return result;
 		}
 	}
 
+	/**
+	 * @param o
+	 * @return
+	 */
+	private String getFirstLineOf(final Facet o) {
+
+		String facetName = o.getKey();
+		facetName = facetName.substring(0, facetName.length() - 1);
+		EObject cont = o.eContainer();
+		String key = EGaml.getKeyOf(cont);
+		SymbolProto p = DescriptionFactory.getProto(key, null);
+		if ( p != null ) {
+			FacetProto f = p.getPossibleFacets().get(facetName);
+			if ( f != null ) { return f.getTitle(); }
+		}
+		return "Facet " + o.getKey();
+
+	}
 }

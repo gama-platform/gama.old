@@ -5,7 +5,7 @@
 <extension point="org.eclipse.core.contenttype.contentTypes">
 <content-type id="gaml.encoding" name="GAML encoding"
 base-type="org.eclipse.core.runtime.text"
-priority="high"	
+priority="high"
 file-extensions="gaml"
 default-charset="UTF-8">
 </content-type>
@@ -47,10 +47,10 @@ default-charset="UTF-8">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
-                    <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="msi.gama.lang.gaml.Gaml" 
+                    <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName"
+                        value="msi.gama.lang.gaml.Gaml"
                         forcePluginActivation="true"/>
-                </with>        
+                </with>
             </and>
         </definition>
     </extension>
@@ -116,7 +116,7 @@ default-charset="UTF-8">
                     definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
                 </reference>
             </visibleWhen>
-         </command>  
+         </command>
          </menuContribution>
         <menuContribution
               allPopups="true"
@@ -155,7 +155,7 @@ default-charset="UTF-8">
                 </reference>
             </activeWhen>
         </handler>
-    </extension>   
+    </extension>
 
 <!-- adding resource factories -->
 
@@ -185,7 +185,7 @@ default-charset="UTF-8">
 	<!-- Quick Outline -->
 	<extension
 		point="org.eclipse.ui.handlers">
-		<handler 
+		<handler
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
@@ -225,7 +225,7 @@ default-charset="UTF-8">
 
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
-		<handler 
+		<handler
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
@@ -275,7 +275,7 @@ default-charset="UTF-8">
             extensions="gaml">
     </provider>
   </extension>
-    <extension point="org.eclipse.ui.decorators"> 
+    <extension point="org.eclipse.ui.decorators">
            <decorator
                  adaptable="true"
                  class="msi.gama.lang.gaml.ui.decorators.GamlDecorator"
@@ -294,6 +294,7 @@ default-charset="UTF-8">
           </enablement>
        </decorator>
 	</extension>
+
 
 
 </plugin>

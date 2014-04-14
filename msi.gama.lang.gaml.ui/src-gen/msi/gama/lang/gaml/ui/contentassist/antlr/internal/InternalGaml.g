@@ -757,6 +757,8 @@ finally {
 
 
 
+
+
 // Entry rule entryRuleS_Display
 entryRuleS_Display 
 :
@@ -3298,6 +3300,7 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+
 rule__S_Display__NameAlternatives_2_0
     @init {
 		int stackSize = keepStackSize();
@@ -3571,6 +3574,14 @@ rule___1Expr_Facets_BlockOrEnd_Key__Alternatives
 { after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getMatch_oneKeyword_21()); }
 )
 
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getParameterKeyword_22()); }
+
+	'parameter' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getParameterKeyword_22()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -3719,6 +3730,14 @@ rule___VarOrConstKey__Alternatives
 { after(grammarAccess.get_VarOrConstKeyAccess().getArgKeyword_3()); }
 )
 
+    |(
+{ before(grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); }
+
+	'signal' 
+
+{ after(grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -3743,6 +3762,14 @@ rule___ReflexKey__Alternatives
 	'reflex' 
 
 { after(grammarAccess.get_ReflexKeyAccess().getReflexKeyword_1()); }
+)
+
+    |(
+{ before(grammarAccess.get_ReflexKeyAccess().getAspectKeyword_2()); }
+
+	'aspect' 
+
+{ after(grammarAccess.get_ReflexKeyAccess().getAspectKeyword_2()); }
 )
 
 ;
@@ -4115,6 +4142,22 @@ rule__SpecialFacetKey__Alternatives
 	'using:' 
 
 { after(grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_12()); }
+)
+
+    |(
+{ before(grammarAccess.getSpecialFacetKeyAccess().getParameterKeyword_13()); }
+
+	'parameter:' 
+
+{ after(grammarAccess.getSpecialFacetKeyAccess().getParameterKeyword_13()); }
+)
+
+    |(
+{ before(grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_14()); }
+
+	'aspect:' 
+
+{ after(grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_14()); }
 )
 
 ;
@@ -8419,6 +8462,7 @@ rule__S_Solve__Group__4__Impl
 finally {
 	restoreStackSize(stackSize);
 }
+
 
 
 
@@ -16957,6 +17001,10 @@ rule__S_Solve__BlockAssignment_4_0
 finally {
 	restoreStackSize(stackSize);
 }
+
+
+
+
 
 rule__S_Display__KeyAssignment_0
     @init {

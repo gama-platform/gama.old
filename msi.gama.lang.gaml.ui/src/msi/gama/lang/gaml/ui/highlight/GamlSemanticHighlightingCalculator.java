@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlSemanticHighlightingCalculator.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
 import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.*;
@@ -24,7 +17,6 @@ import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.utils.EGaml;
-import msi.gaml.descriptions.SymbolProto;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.*;
@@ -59,9 +51,12 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 
 	@Override
 	public Object caseStatement(final Statement object) {
+
 		setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
-		setStyle(object, FACET_ID, object.getFirstFacet());
-		return setStyle(object, KEYWORD_ID, object.getKey());
+
+		setStyle(object, KEYWORD_ID, object.getKey());
+		// Doesnt seem to work
+		return setStyle(object, FACET_ID, object.getFirstFacet());
 	}
 
 	@Override
@@ -133,8 +128,9 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	@Override
 	public Object caseTypeRef(final TypeRef object) {
 		Statement s = EGaml.getStatement(object);
-		if ( s != null && SymbolProto.nonTypeStatements.contains(EGaml.getKeyOf(object)) ) { return setStyle(
-			KEYWORD_ID, NodeModelUtils.getNode(object)); }
+		if ( s instanceof S_Definition && ((S_Definition) s).getTkey() == object ) {
+			setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
+		}
 		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
 	}
 
@@ -191,7 +187,9 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 			if ( n == null ) { return false; }
 			for ( ILeafNode node : n.getLeafNodes() ) {
 				if ( !node.isHidden() ) {
-					if ( NodeModelUtils.getTokenText(node).equals(text) ) {
+					String sNode = NodeModelUtils.getTokenText(node);
+					String fsNode = sNode + ":";
+					if ( text.equals(sNode) || text.equals(fsNode) ) {
 						n = node;
 						break;
 					}

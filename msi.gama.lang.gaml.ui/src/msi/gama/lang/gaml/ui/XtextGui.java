@@ -1,22 +1,30 @@
-/**
- * Created by drogoul, 21 janv. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'XtextGui.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
+import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GamlCompilationError;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import com.google.inject.Injector;
 
@@ -52,12 +60,11 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
 			ResourceSet rs = new SynchronizedXtextResourceSet();
 			GamlResource resource = (GamlResource) rs.getResource(uri, true);
-			GamlJavaValidator validator =
-				IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(resource.getURI()).get(
-					GamlJavaValidator.class);
-			IModel model = validator.build(resource);
+			List<GamlCompilationError> errors = new ArrayList();
+			IModel model = GamlResourceBuilder.getInstance().build(resource, errors);
 			if ( model == null ) {
-				error("File " + file.getFullPath().toString() + " cannot be built");
+				error("File " + file.getFullPath().toString() + " cannot be built because of " + errors.size() +
+					" compilation errors");
 				return;
 			}
 			GuiUtils.openSimulationPerspective();

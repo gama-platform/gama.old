@@ -1,40 +1,31 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlUiModule.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.ui.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.contentassist.*;
+import msi.gama.lang.gaml.ui.editor.*;
+import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.GamlEncodingProvider;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
-import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.eclipse.xtext.service.*;
+import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.contentassist.*;
@@ -62,7 +53,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public void configure(final Binder binder) {
 		super.configure(binder);
-		binder.bind(ILocationInFileProvider.class).to(GamlLocationInFileProvider.class);
 		binder
 			.bind(String.class)
 			.annotatedWith(
@@ -70,15 +60,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.toInstance(".");
 	}
 
-	@SingletonBinding(eager = true)
-	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
-		return GamlJavaValidator.class;
-	}
-
-	@Override
-	public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
-		return GamlContentAssistProcessor.class;
-	}
+	// @SingletonBinding(eager = true)
+	// public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+	// return GamlJavaValidator.class;
+	// }
 
 	@Override
 	public void configureUiEncodingProvider(final Binder binder) {
@@ -93,6 +78,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return ContentAssistContextFactory.class;
 	}
 
+	@Override
 	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
 		return GamlTemplateProposalProvider.class;
 	}
@@ -134,7 +120,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
 		// TODO Verify this as it is only needed, normally, for languages that do not use the builder infrastructure
 		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
-		// return ValidatingEditorCallback.class;
 		return GamlEditorCallback.class;
 	}
 

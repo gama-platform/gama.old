@@ -1,8 +1,15 @@
-/**
- * Created by drogoul, 15 sept. 2013
+/*********************************************************************************************
  * 
- */
-package msi.gama.lang.gaml.ui;
+ *
+ * 'GamlSyntaxErrorMessageProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
+package msi.gama.lang.gaml.ui.editor;
 
 import org.antlr.runtime.*;
 import org.eclipse.emf.ecore.EObject;

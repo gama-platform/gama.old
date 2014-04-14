@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'NavigatorRunMenu.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
 import java.util.*;
@@ -6,12 +17,11 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.VirtualFolder;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.gaml.resource.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISyntacticElement;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -23,7 +33,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 
 public class NavigatorRunMenu extends ContributionItem implements IWorkbenchContribution {
 
@@ -170,10 +180,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 			if ( uri != null && exp != null ) {
 				ResourceSet rs = new SynchronizedXtextResourceSet();
 				GamlResource resource = (GamlResource) rs.getResource(uri, true);
-				GamlJavaValidator validator =
-					IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(resource.getURI()).get(
-						GamlJavaValidator.class);
-				IModel model = validator.build(resource);
+				IModel model = GamlResourceBuilder.getInstance().build(resource);
 				if ( model == null ) { return; }
 				GuiUtils.openSimulationPerspective();
 				GAMA.controller.newExperiment(exp, model);
@@ -182,7 +189,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 	};
 
 	private Map<URI, List<String>> grabExperiments(final List<URI> uris) {
-		final Map<URI, List<String>> map = new LinkedHashMap();
+		final Map<URI, List<String>> map = new TOrderedHashMap();
 		ResourceSet rs = new SynchronizedXtextResourceSet();
 		for ( URI uri : uris ) {
 			GamlResource xr = (GamlResource) rs.getResource(uri, true);

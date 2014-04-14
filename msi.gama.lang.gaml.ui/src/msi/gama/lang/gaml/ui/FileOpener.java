@@ -1,12 +1,14 @@
-/*
- * Copyright (c) 2011 Google Inc.
+/*********************************************************************************************
  * 
- * All rights reserved. This program and the accompanying materials are made available under the
- * terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ *
+ * 'FileOpener.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * http://www.eclipse.org/legal/epl-v10.html
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
 import msi.gama.gui.swt.SwtGui;
@@ -25,7 +27,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class FileOpener {
 
-	public IEditorPart openProtoFileInWorkspace(final URI uri) throws PartInitException {
+	public IEditorPart openFileInWorkspace(final URI uri) throws PartInitException {
 		IFile file = referredFile(uri);
 		IEditorInput editorInput = new FileEditorInput(file);
 		return openFile(editorInput);

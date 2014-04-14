@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlProposalProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
@@ -272,10 +265,19 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			// BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in unit)"), null);
 			// proposals.add(cp);
 			// }
-			for ( String t : DescriptionFactory.getProtos().keySet() ) {
-				SymbolProto s = DescriptionFactory.getProtos().get(t);
+			for ( String t : DescriptionFactory.getStatementProtoNames() ) {
+				SymbolProto s = DescriptionFactory.getProto(t, null);
 				statements.add(t);
-				String title = SymbolProto.nonTypeStatements.contains(t) ? " (Statement)" : " (Declaration)";
+				String title = " (Statement)";
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + title), null);
+				proposals.add(cp);
+				cp.setDoc(s.getDocumentation());
+			}
+
+			for ( String t : DescriptionFactory.getVarProtoNames() ) {
+				SymbolProto s = DescriptionFactory.getVarProto(t, null);
+				statements.add(t);
+				String title = " (Declaration)";
 				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + title), null);
 				proposals.add(cp);
 				cp.setDoc(s.getDocumentation());

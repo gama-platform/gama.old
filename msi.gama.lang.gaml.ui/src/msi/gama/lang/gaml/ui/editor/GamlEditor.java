@@ -1,19 +1,28 @@
-/**
- * Created by drogoul, 4 mars 2012
+/*********************************************************************************************
  * 
- */
-package msi.gama.lang.gaml.ui;
+ * 
+ * 'GamlEditor.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
+package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.ErrorCollector;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -58,7 +67,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	Button menu;
 	List<String> completeNamesOfExperiments = new ArrayList();
 	List<String> abbreviations = new ArrayList();
-	boolean wasOK = true, inited = false;
+	boolean inited = false;
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
@@ -227,7 +236,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					public IModel exec(final XtextResource state) throws Exception {
 						ResourceSet rs = state.getResourceSet();
 						GamlResource resource = (GamlResource) rs.getResource(uri, true);
-						return validator.build(resource);
+						return GamlResourceBuilder.getInstance().build(resource);
 					}
 
 				});
@@ -272,7 +281,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	 * @return
 	 */
 	private Map<URI, List<String>> grabProjectModelsAndExperiments() {
-		final Map<URI, List<String>> map = new LinkedHashMap();
+		final Map<URI, List<String>> map = new TOrderedHashMap();
 		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
@@ -366,7 +375,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 					@Override
 					public IModel exec(final XtextResource state) throws Exception {
-						return validator.build((GamlResource) state);
+						List<GamlCompilationError> errors = new ArrayList();
+						return GamlResourceBuilder.getInstance().build((GamlResource) state);
 					}
 
 				});
@@ -395,14 +405,19 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		b.setVisible(false);
 	}
 
-	private void setStatus(final String text, final boolean ok) {
-		Color c =
-			ok ? abbreviations.size() == 0 ? SwtGui.getWarningColor() : SwtGui.getOkColor() : SwtGui.getErrorColor();
+	private void setStatus(final String text, final Color c) {
 		indicator.setBackground(c);
 		status.setText(text);
 	}
 
-	private void updateToolbar(final boolean ok) {
+	private Color getColor(final ErrorCollector status) {
+		if ( status.hasInternalErrors() ) { return SwtGui.getErrorColor(); }
+		if ( status.hasImportedErrors() ) { return SwtGui.getImportedErrorColor(); }
+		if ( abbreviations.size() == 0 ) { return SwtGui.getWarningColor(); }
+		return SwtGui.getOkColor();
+	}
+
+	private void updateToolbar(final ErrorCollector status) {
 
 		Display.getDefault().asyncExec(new Runnable() {
 
@@ -410,23 +425,30 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			public void run() {
 				if ( toolbar == null || toolbar.isDisposed() ) { return; }
 				for ( Button b : buttons ) {
-					if ( b.isVisible() ) {
-						hideButton(b);
-					}
+					// if ( b.isVisible() ) {
+					hideButton(b);
+					// }
 				}
-				if ( ok ) {
+				Color c = getColor(status);
+				if ( !status.hasErrors() ) {
 					int size = abbreviations.size();
 					if ( size == 0 ) {
-						setStatus("Model is functional, but no experiments have been defined.", ok);
+						setStatus("This model is functional, but no experiments have been defined.", c);
 					} else {
-						setStatus(size == 1 ? "Run :" : "Run :", ok);
+						setStatus("Run :", c);
 					}
 					int i = 0;
 					for ( String e : abbreviations ) {
 						enableButton(i++, e);
 					}
-				} else {
-					setStatus("Error(s) detected. Impossible to run any experiment", ok);
+				} else if ( status.hasInternalErrors() || status.hasInternalSyntaxErrors() ) {
+					setStatus("Error(s) were detected. Impossible to run any experiment", c);
+				} else if ( status.hasImportedErrors() ) {
+					String msg = "This model is functional but error(s) were detected in imported files.";
+					if ( abbreviations.size() != 0 ) {
+						msg += " Impossible to run any experiment";
+					}
+					setStatus(msg, c);
 				}
 
 				toolbar.layout(true);
@@ -435,15 +457,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	}
 
-	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
-		if ( withErrors == true && wasOK == false ) { return; }
-		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
-		if ( inited && wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
-		inited = true;
-		wasOK = !withErrors;
+	private void updateExperiments(final Set<String> newExperiments, final ErrorCollector status) {
+		// if ( status.hasErrors() && status.isEquivalentTo(previousStatus) ) { return; }
+		// Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
+		// if ( inited && !previousStatus.hasErrors() && !status.hasErrors() && oldNames.equals(newExperiments) ) {
+		// return; }
+		// inited = true;
 		completeNamesOfExperiments = new ArrayList(newExperiments);
 		buildAbbreviations();
-		updateToolbar(wasOK);
+		updateToolbar(status);
 	}
 
 	private void buildAbbreviations() {
@@ -470,8 +492,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	 * @see msi.gama.common.interfaces.IGamlBuilder.Listener#validationEnded(boolean)
 	 */
 	@Override
-	public void validationEnded(final Set<String> newExperiments, final boolean withErrors) {
-		updateExperiments(newExperiments, withErrors);
+	public void validationEnded(final Set<String> newExperiments, final ErrorCollector status) {
+		updateExperiments(newExperiments, status);
 	}
 
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {

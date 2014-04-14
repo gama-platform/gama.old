@@ -1,11 +1,19 @@
-/**
- * Created by drogoul, 9 avr. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'ContentAssistContextFactory.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.util.TOrderedHashMap;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.*;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.FollowElementCalculator;
@@ -36,7 +44,7 @@ public class ContentAssistContextFactory extends StatefulFactory {
 		super.computeFollowElements(calculator, element);
 	}
 
-	Map<AbstractElement, Integer> recurse = new LinkedHashMap();
+	Map<AbstractElement, Integer> recurse = new TOrderedHashMap();
 	boolean stop = false;
 
 	/**
