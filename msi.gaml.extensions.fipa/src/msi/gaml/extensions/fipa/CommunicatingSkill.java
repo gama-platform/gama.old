@@ -1,19 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
  * 
- * Developers :
+ * 'CommunicatingSkill.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
- * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
- * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
- * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
- * - Romain Lavaud, IRD (project-based environment), 2010
- * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
- * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
@@ -31,7 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Agents capable of communicate are equipped with this skill. The CommunicatingSkill supplies the
@@ -39,7 +34,8 @@ import msi.gaml.types.*;
  */
 @doc("The communicating skill offers some primitives and built-in variables which enable agent to communicate with each other using the FIPA interaction protocol. ")
 @skill(name = "communicating")
-@vars({ @var(name = "conversations", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]", doc = @doc("A list containing the current conversations of agent. Ended conversations are automatically removed from this list.")),
+@vars({
+	@var(name = "conversations", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]", doc = @doc("A list containing the current conversations of agent. Ended conversations are automatically removed from this list.")),
 	@var(name = "messages", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]", doc = @doc("The mailbox of the agent, a list of messages of all types of performatives.")),
 	@var(name = "accept_proposals", type = IType.LIST, of = MessageType.MESSAGE_ID, doc = @doc("A list of 'accept_proposal' performative messages of the agent's mailbox having .")),
 	@var(name = "agrees", type = IType.LIST, of = MessageType.MESSAGE_ID, doc = @doc("A list of 'accept_proposal' performative messages.")),
@@ -91,16 +87,14 @@ public class CommunicatingSkill extends Skill {
 		@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("A list of receiver agents")),
 		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the message. A list of any GAML type")),
 		@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("A string, representing the message performative")),
-		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) },
-		doc = @doc(value = "Starts a conversation/interaction protocol."))
+		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) }, doc = @doc(value = "Starts a conversation/interaction protocol."))
 	public Message primStartConversation(final IScope scope) throws GamaRuntimeException {
-		
+
 		Message message = new Message();
 
 		final IList receivers = Cast.asList(scope, scope.getArg("receivers", IType.LIST));
-		if ( receivers == null || receivers.isEmpty() || receivers.contains(null) ) {
-			throw GamaRuntimeException.error("receivers can not be empty or null", scope);
-		}
+		if ( receivers == null || receivers.isEmpty() || receivers.contains(null) ) { throw GamaRuntimeException.error(
+			"receivers can not be empty or null", scope); }
 		message.setReceivers(new GamaList(receivers));
 
 		message.setSender(getCurrentAgent(scope));
@@ -117,31 +111,27 @@ public class CommunicatingSkill extends Skill {
 		} else {
 			throw GamaRuntimeException.error("performative can can null", scope);
 		}
-		
-		
-		if ( message.getPerformative() == -1 ) {
-			throw GamaRuntimeException.error(performative + " performative is unknown", scope);
-		}
+
+		if ( message.getPerformative() == -1 ) { throw GamaRuntimeException.error(performative +
+			" performative is unknown", scope); }
 
 		String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
 		if ( protocol == null ) {
 			protocol = FIPAConstants.Protocols.NO_PROTOCOL_STR;
 		}
 		MessageBroker.getInstance().scheduleForDelivery(scope, message, protocolIndexes.get(protocol));
-			
+
 		return message;
 	}
-	
+
 	@action(name = "send", args = {
-			@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("A list of receiver agents")),
-			@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the message. A list of any GAML type")),
-			@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("A string, representing the message performative")),
-			@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) },
-			doc = @doc(deprecated = "It is preferable to use 'start_conversation' instead to start a conversation", value = "Starts a conversation/interaction protocol."))
+		@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("A list of receiver agents")),
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the message. A list of any GAML type")),
+		@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("A string, representing the message performative")),
+		@arg(name = "protocol", type = IType.STRING, optional = true, doc = @doc("A string representing the name of interaction protocol")) }, doc = @doc(deprecated = "It is preferable to use 'start_conversation' instead to start a conversation", value = "Starts a conversation/interaction protocol."))
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		return primStartConversation(scope);
 	}
-	
 
 	/**
 	 * @throws GamaRuntimeException Primitive reply. Replies a message. Retrieves the conversation
@@ -157,19 +147,15 @@ public class CommunicatingSkill extends Skill {
 	@action(name = "reply", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
 		@arg(name = "performative", type = IType.STRING, optional = false, doc = @doc("The performative of the replying message")),
-		@arg(name = "content", type = IType.LIST, optional = true, doc = @doc("The content of the replying message")) },
-		doc = @doc(value = "Replies a message. This action should be only used to reply a message in a 'no-protocol' conversation and with a 'user defined performative'. For performatives supported by GAMA (i.e., standard FIPA performatives), please use the 'action' with the same name of 'performative'. For example, to reply a message with a 'request' performative message, the modeller should use the 'request' action."))
+		@arg(name = "content", type = IType.LIST, optional = true, doc = @doc("The content of the replying message")) }, doc = @doc(value = "Replies a message. This action should be only used to reply a message in a 'no-protocol' conversation and with a 'user defined performative'. For performatives supported by GAMA (i.e., standard FIPA performatives), please use the 'action' with the same name of 'performative'. For example, to reply a message with a 'request' performative message, the modeller should use the 'request' action."))
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
-		if ( performative == null ) {
-			throw GamaRuntimeException.error("'performative' argument is mandatory", scope);
-		}
-		
+		if ( performative == null ) { throw GamaRuntimeException.error("'performative' argument is mandatory", scope); }
+
 		return replyMessage(scope, originals, performativeIndexes.get(performative), getContentArg(scope));
 	}
 
@@ -229,13 +215,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "accept_proposal", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with an 'accept_proposal' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with an 'accept_proposal' performative message."))
 	public Object primAcceptProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, ACCEPT_PROPOSAL, getContentArg(scope));
 	}
@@ -251,12 +235,10 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "agree", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with an 'agree' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with an 'agree' performative message."))
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-		}
+		if ( originals == null || originals.size() == 0 ) {}
 
 		return replyMessage(scope, originals, AGREE, getContentArg(scope));
 	}
@@ -272,13 +254,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "cancel", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'cancel' peformative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'cancel' peformative message."))
 	public Object primCancel(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, CANCEL, getContentArg(scope));
 	}
@@ -294,13 +274,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "cfp", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'cfp' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'cfp' performative message."))
 	public Object primCfp(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, CFP, getContentArg(scope));
 	}
@@ -316,13 +294,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "end_conversation", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Reply a message with an 'end_conversation' peprformative message. This message marks the end of a conversation. In a 'no-protocol' conversation, it is the responsible of the modeler to explicitly send this message to mark the end of a conversation/interaction protocol."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Reply a message with an 'end_conversation' peprformative message. This message marks the end of a conversation. In a 'no-protocol' conversation, it is the responsible of the modeler to explicitly send this message to mark the end of a conversation/interaction protocol."))
 	public Object primEndConversation(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, FIPAConstants.Performatives.END_CONVERSATION, getContentArg(scope));
 	}
@@ -338,13 +314,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "failure", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'failure' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'failure' performative message."))
 	public Object primFailure(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, FAILURE, getContentArg(scope));
 	}
@@ -360,13 +334,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "inform", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @ doc("Replies a message with an 'inform' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with an 'inform' performative message."))
 	public Object primInform(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, INFORM, getContentArg(scope));
 	}
@@ -382,13 +354,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "propose", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'propose' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'propose' performative message."))
 	public Object primPropose(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, PROPOSE, getContentArg(scope));
 	}
@@ -404,13 +374,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "query", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'query' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'query' performative message."))
 	public Object primQuery(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, QUERY, getContentArg(scope));
 	}
@@ -426,13 +394,11 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@action(name = "refuse", args = {
 		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-		doc = @doc("Replies a message with a 'refuse' performative message."))
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'refuse' performative message."))
 	public Object primRefuse(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, REFUSE, getContentArg(scope));
 	}
@@ -447,14 +413,12 @@ public class CommunicatingSkill extends Skill {
 	 * @throws GamlException the gaml exception
 	 */
 	@action(name = "reject_proposal", args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-			@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-			doc = @doc("Replies a message with a 'reject_proposal' performative message."))
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'reject_proposal' performative message."))
 	public Object primRejectProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, REJECT_PROPOSAL, getContentArg(scope));
 	}
@@ -469,14 +433,12 @@ public class CommunicatingSkill extends Skill {
 	 * @throws GamlException the gaml exception
 	 */
 	@action(name = "request", args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-			@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-			doc = @doc("Replies a message with a 'request' performative message."))
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'request' performative message."))
 	public Object primRequest(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, REQUEST, getContentArg(scope));
 	}
@@ -491,14 +453,12 @@ public class CommunicatingSkill extends Skill {
 	 * @throws GamlException the gaml exception
 	 */
 	@action(name = "subscribe", args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
-			@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) },
-			doc = @doc("Replies a message with a 'subscribe' performative message."))
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_ID, optional = false, doc = @doc("The message to be replied")),
+		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("The content of the replying message")) }, doc = @doc("Replies a message with a 'subscribe' performative message."))
 	public Object primSubscribe(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if ( originals == null || originals.size() == 0 ) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if ( originals == null || originals.size() == 0 ) { throw GamaRuntimeException.error("No message to reply",
+			scope); }
 
 		return replyMessage(scope, originals, SUBSCRIBE, getContentArg(scope));
 
@@ -510,10 +470,9 @@ public class CommunicatingSkill extends Skill {
 	 * @return the messages
 	 */
 	@getter("messages")
-	public IList<Message> getMessages(final IAgent agent) {
+	public IList<Message> getMessages(final IScope scope, final IAgent agent) {
 		final IList<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
-
-		final List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
+		final List<Message> received = MessageBroker.getInstance().deliverMessagesFor(scope, agent);
 		result.addAll(received);
 		for ( final Iterator<Message> it = result.iterator(); it.hasNext(); ) {
 			final Message m = it.next();
@@ -532,8 +491,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the accept proposal msgs
 	 */
 	@getter("accept_proposals")
-	public IList<Message> getAcceptProposalMsgs(final IAgent agent) {
-		return filter(agent, ACCEPT_PROPOSAL);
+	public IList<Message> getAcceptProposalMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, ACCEPT_PROPOSAL);
 	}
 
 	/**
@@ -542,8 +501,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the agree msgs
 	 */
 	@getter("agrees")
-	public IList<Message> getAgreeMsgs(final IAgent agent) {
-		return filter(agent, AGREE);
+	public IList<Message> getAgreeMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, AGREE);
 	}
 
 	/**
@@ -552,8 +511,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the cancel msgs
 	 */
 	@getter("cancels")
-	public IList<Message> getCancelMsgs(final IAgent agent) {
-		return filter(agent, CANCEL);
+	public IList<Message> getCancelMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, CANCEL);
 	}
 
 	/**
@@ -562,8 +521,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the cfp msgs
 	 */
 	@getter("cfps")
-	public IList<Message> getCfpMsgs(final IAgent agent) {
-		final IList cfps = filter(agent, CFP);
+	public IList<Message> getCfpMsgs(final IScope scope, final IAgent agent) {
+		final IList cfps = filter(scope, agent, CFP);
 		return cfps;
 	}
 
@@ -573,8 +532,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the failure msgs
 	 */
 	@getter("failures")
-	public IList<Message> getFailureMsgs(final IAgent agent) {
-		return filter(agent, FAILURE);
+	public IList<Message> getFailureMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, FAILURE);
 	}
 
 	/**
@@ -583,8 +542,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the inform msgs
 	 */
 	@getter("informs")
-	public IList<Message> getInformMsgs(final IAgent agent) {
-		final IList informs = filter(agent, INFORM);
+	public IList<Message> getInformMsgs(final IScope scope, final IAgent agent) {
+		final IList informs = filter(scope, agent, INFORM);
 		return informs;
 	}
 
@@ -594,8 +553,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the propose msgs
 	 */
 	@getter("proposes")
-	public IList<Message> getProposeMsgs(final IAgent agent) {
-		return filter(agent, PROPOSE);
+	public IList<Message> getProposeMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, PROPOSE);
 	}
 
 	/**
@@ -604,8 +563,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the query msgs
 	 */
 	@getter("queries")
-	public IList<Message> getQueryMsgs(final IAgent agent) {
-		return filter(agent, QUERY);
+	public IList<Message> getQueryMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, QUERY);
 	}
 
 	/**
@@ -614,8 +573,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the refuses msgs
 	 */
 	@getter("refuses")
-	public IList<Message> getRefusesMsgs(final IAgent agent) {
-		return filter(agent, REFUSE);
+	public IList<Message> getRefusesMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, REFUSE);
 	}
 
 	/**
@@ -624,8 +583,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the reject proposal msgs
 	 */
 	@getter("reject_proposals")
-	public IList<Message> getRejectProposalMsgs(final IAgent agent) {
-		return filter(agent, REJECT_PROPOSAL);
+	public IList<Message> getRejectProposalMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, REJECT_PROPOSAL);
 	}
 
 	/**
@@ -634,8 +593,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the request msgs
 	 */
 	@getter("requests")
-	public IList<Message> getRequestMsgs(final IAgent agent) {
-		final IList requests = filter(agent, REQUEST);
+	public IList<Message> getRequestMsgs(final IScope scope, final IAgent agent) {
+		final IList requests = filter(scope, agent, REQUEST);
 		return requests;
 	}
 
@@ -645,8 +604,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the request when msgs
 	 */
 	@getter("requestWhens")
-	public IList<Message> getRequestWhenMsgs(final IAgent agent) {
-		return filter(agent, REQUEST_WHEN);
+	public IList<Message> getRequestWhenMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, REQUEST_WHEN);
 	}
 
 	/**
@@ -655,8 +614,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the subscribe msgs
 	 */
 	@getter("subscribes")
-	public IList<Message> getSubscribeMsgs(final IAgent agent) {
-		return filter(agent, SUBSCRIBE);
+	public IList<Message> getSubscribeMsgs(final IScope scope, final IAgent agent) {
+		return filter(scope, agent, SUBSCRIBE);
 	}
 
 	/**
@@ -666,10 +625,11 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	protected void receiveMessage(final IAgent agent, final Message message) throws GamaRuntimeException {
+	protected void receiveMessage(final IScope scope, final IAgent agent, final Message message)
+		throws GamaRuntimeException {
 		Message messageToAdd;
 		messageToAdd = new Message(message);
-		getMessages(agent).add(messageToAdd);
+		getMessages(scope, agent).add(messageToAdd);
 	}
 
 	/**
@@ -679,8 +639,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the gama list< i message>
 	 */
-	private IList<Message> filter(final IAgent agent, final int performative) {
-		final IList<Message> inBox = getMessages(agent);
+	private IList<Message> filter(final IScope scope, final IAgent agent, final int performative) {
+		final IList<Message> inBox = getMessages(scope, agent);
 		if ( inBox.isEmpty() ) { return GamaList.EMPTY_LIST; }
 		final GamaList<Message> result = new GamaList();
 		for ( final Message m : inBox ) {

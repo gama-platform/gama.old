@@ -1,22 +1,18 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC 
  * 
- * Developers :
+ * 'FIPAProtocol.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
- * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
- * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
- * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
- * - Romain Lavaud, IRD (project-based environment), 2010
- * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
- * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 
 /**
@@ -96,7 +92,7 @@ abstract public class FIPAProtocol {
 		final List<ProtocolNode> tree = new GamaList<ProtocolNode>();
 		for ( int i = 0; i < root.length / 4; i++ ) {
 			final ProtocolNode node = new ProtocolNode();
-			node.setPerformative((Integer) root[(4 * i)]);
+			node.setPerformative((Integer) root[4 * i]);
 			node.setConversationState(((Integer) root[4 * i + 1]).intValue());
 			node.setSentByInitiator(((Integer) root[4 * i + 2]).equals(INITIATOR));
 
@@ -106,8 +102,7 @@ abstract public class FIPAProtocol {
 					node.setFollowingNodes(previousNodes.get(root[4 * i + 3]));
 				} else {
 					previousNodes.put(root, tree);
-					List<ProtocolNode> subTree =
-						getProtocolTree((Object[]) root[4 * i + 3], previousNodes);
+					List<ProtocolNode> subTree = getProtocolTree((Object[]) root[4 * i + 3], previousNodes);
 					node.setFollowingNodes(subTree);
 				}
 			} else {
@@ -147,7 +142,7 @@ abstract public class FIPAProtocol {
 	 * @return the index
 	 */
 	abstract public int getIndex();
-	
+
 	abstract public String getName();
 
 	/**
@@ -184,12 +179,12 @@ abstract public class FIPAProtocol {
 	 * 
 	 * @throws ProtocolErrorException the protocol error exception
 	 */
-	protected ProtocolNode getNode(final Message message, final ProtocolNode currentNode, final int performative,
-		final boolean senderIsInitiator) throws ProtocolErrorException {
+	protected ProtocolNode getNode(final IScope scope, final Message message, final ProtocolNode currentNode,
+		final int performative, final boolean senderIsInitiator) throws ProtocolErrorException {
 		if ( currentNode == null ) { return getRootNode(performative); }
 		final List<ProtocolNode> followingNodes = currentNode.getFollowingNodes();
 
-		if ( followingNodes.size() == 0 ) { throw new ProtocolErrorException(
+		if ( followingNodes.size() == 0 ) { throw new ProtocolErrorException(scope,
 			"Message received in conversation which has already ended!"); }
 
 		final List<ProtocolNode> potentialMatchingNodes = new GamaList<ProtocolNode>();
@@ -199,8 +194,8 @@ abstract public class FIPAProtocol {
 			}
 		}
 
-		if ( potentialMatchingNodes.isEmpty() ) { throw new ProtocolErrorException("Protocol : " + this.getName() +
-			". Unexpected message received of performative : " + message.getPerformativeName()); }
+		if ( potentialMatchingNodes.isEmpty() ) { throw new ProtocolErrorException(scope, "Protocol : " +
+			this.getName() + ". Unexpected message received of performative : " + message.getPerformativeName()); }
 
 		ProtocolNode matchingNode = null;
 		for ( final ProtocolNode potentialMatchingNode : potentialMatchingNodes ) {
@@ -212,7 +207,7 @@ abstract public class FIPAProtocol {
 			}
 		}
 
-		if ( matchingNode == null ) { throw new ProtocolErrorException(
+		if ( matchingNode == null ) { throw new ProtocolErrorException(scope,
 			"Couldn't match expected message types and participant"); }
 		return matchingNode;
 

@@ -1,19 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
  * 
- * Developers :
+ * 'MessageBroker.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
- * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
- * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
- * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
- * - Romain Lavaud, IRD (project-based environment), 2010
- * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
- * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
@@ -48,7 +43,7 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public IList<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
+	public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
 		if ( messagesForA == null ) { return GamaList.EMPTY_LIST; }
 
@@ -58,7 +53,7 @@ public class MessageBroker {
 		for ( Message m : messagesForA ) {
 			Conversation conv = m.getConversation();
 			try {
-				conv.addMessage(m);
+				conv.addMessage(scope, m);
 			} catch (GamaRuntimeException e) {
 				failedDeliveries.add(m);
 				failureMessageInReplyTo(m);
@@ -128,7 +123,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final IScope scope, final Message m, final Integer protocol) {
 		Conversation conv;
-		conv = new Conversation(protocol, m);
+		conv = new Conversation(scope, protocol, m);
 		m.setConversation(conv);
 		scheduleForDelivery(scope, m);
 	}

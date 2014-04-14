@@ -1,6 +1,16 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'ConversationType.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -16,9 +26,9 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	public ConversationType() {}
 
-	
 	@Override
-	public Conversation cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType) throws GamaRuntimeException {
+	public Conversation cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentType) throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
 		// if ( obj instanceof Message ) { return new
 		// Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
@@ -30,17 +40,21 @@ public class ConversationType extends GamaContainerType<Conversation> {
 		return Types.get(Message.class);
 	}
 
-	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category={IOperatorCategory.FIPA})
-	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = {  })
-	public static Conversation asMessage(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category = { IOperatorCategory.FIPA })
+	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = { })
+	public static Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return ConversationType.staticCast(scope, val, null);
 	}
 
-	public static Conversation staticCast(IScope scope, Object val, Object object) {
+	public static Conversation staticCast(final IScope scope, final Object val, final Object object) {
 		if ( val instanceof Conversation ) { return (Conversation) val; }
 		if ( val instanceof Message ) { return ((Message) val).getConversation(); }
 		// ???
 		return null;
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return false;
 	}
 }

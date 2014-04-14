@@ -1,19 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
  * 
- * Developers :
+ * 'Conversation.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
- * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
- * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
- * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
- * - Romain Lavaud, IRD (project-based environment), 2010
- * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
- * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
@@ -36,8 +31,7 @@ import msi.gaml.types.IType;
  */
 
 @vars({ @var(name = Conversation.MESSAGES, type = IType.LIST, of = MessageType.MESSAGE_ID),
-	@var(name = Conversation.PROTOCOL, type = IType.STRING),
-	@var(name = Conversation.INITIATOR, type = IType.AGENT),
+	@var(name = Conversation.PROTOCOL, type = IType.STRING), @var(name = Conversation.INITIATOR, type = IType.AGENT),
 	@var(name = Conversation.PARTICIPANTS, type = IType.LIST, of = IType.AGENT),
 	@var(name = Conversation.ENDED, type = IType.BOOL, init = "false") })
 public class Conversation extends GamaList<Message> {
@@ -58,12 +52,10 @@ public class Conversation extends GamaList<Message> {
 	private final GamaList<IAgent> participants = new GamaList();
 
 	/** The protocol node participant map. */
-	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap =
-		new HashMap<IAgent, ProtocolNode>();
+	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<IAgent, ProtocolNode>();
 
 	/** The no protocol node participant map. */
-	private final Map<IAgent, Message> noProtocolNodeParticipantMap =
-		new HashMap<IAgent, Message>();
+	private final Map<IAgent, Message> noProtocolNodeParticipantMap = new HashMap<IAgent, Message>();
 
 	/** The current node in the protocol tree. */
 	// private ProtocolNode currentNode;
@@ -93,11 +85,11 @@ public class Conversation extends GamaList<Message> {
 	 * @exception UnknownProtocolException Thrown if a Conversation class cannot be loaded for the
 	 *                given class
 	 */
-	protected Conversation(final Integer p, final Message message) throws GamaRuntimeException {
+	protected Conversation(final IScope scope, final Integer p, final Message message) throws GamaRuntimeException {
 
 		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;
 		protocol = FIPAProtocol.named(proto);
-		if ( protocol == null ) { throw new UnknownProtocolException(proto); }
+		if ( protocol == null ) { throw new UnknownProtocolException(scope, proto); }
 		initiator = message.getSender();
 		participants.addAll(message.getReceivers()); // @ANVD : verify the number of
 		// participants with the
@@ -105,8 +97,7 @@ public class Conversation extends GamaList<Message> {
 
 		if ( participants == null || participants.isEmpty() || participants.contains(null) ) {
 			// + participants);
-			throw new ProtocolErrorException("The message : " + message.toString() +
-				" has no receivers.");
+			throw new ProtocolErrorException(scope, "The message : " + message.toString() + " has no receivers.");
 		}
 
 		// TODO A REVOIR COMPLETEMENT
@@ -148,14 +139,14 @@ public class Conversation extends GamaList<Message> {
 	 *                different to that of the conversation
 	 * @exception ConversationFinishedException Thrown when the conversation has already finished
 	 */
-	protected void addMessage(final Message message) throws ProtocolErrorException,
+	protected void addMessage(final IScope scope, final Message message) throws ProtocolErrorException,
 		InvalidConversationException, ConversationFinishedException {
 
 		// OutputManager.debug(name + " adds message " + message);
 
 		// Check if the message belongs to this conversation
 		final Conversation msgConv = message.getConversation();
-		if ( msgConv == null || msgConv != this ) { throw new InvalidConversationException(
+		if ( msgConv == null || msgConv != this ) { throw new InvalidConversationException(scope,
 			"Conversation is invalid or not specified"); }
 
 		if ( protocol.hasProtocol() ) {
@@ -170,12 +161,12 @@ public class Conversation extends GamaList<Message> {
 				for ( final IAgent receiver : msgReceivers ) {
 					if ( protocolNodeParticipantMap.containsKey(receiver) ) {
 						currentNode = protocolNodeParticipantMap.remove(receiver);
-						protocolNodeParticipantMap.put(receiver, protocol.getNode(message,
-							currentNode, message.getPerformative(), senderIsInitiator));
+						protocolNodeParticipantMap
+							.put(receiver, protocol.getNode(scope, message, currentNode, message.getPerformative(),
+								senderIsInitiator));
 					} else {
 						currentNode =
-							protocol.getNode(message, null, message.getPerformative(),
-								senderIsInitiator);
+							protocol.getNode(scope, message, null, message.getPerformative(), senderIsInitiator);
 
 						if ( currentNode != null ) {
 							protocolNodeParticipantMap.put(receiver, currentNode);
@@ -185,12 +176,10 @@ public class Conversation extends GamaList<Message> {
 			} else if ( participants.contains(message.getSender()) ) {
 				if ( protocolNodeParticipantMap.containsKey(message.getSender()) ) {
 					currentNode = protocolNodeParticipantMap.remove(message.getSender());
-					protocolNodeParticipantMap.put(message.getSender(), protocol.getNode(message,
-						currentNode, message.getPerformative(), senderIsInitiator));
+					protocolNodeParticipantMap.put(message.getSender(),
+						protocol.getNode(scope, message, currentNode, message.getPerformative(), senderIsInitiator));
 				} else {
-					currentNode =
-						protocol.getNode(message, null, message.getPerformative(),
-							senderIsInitiator);
+					currentNode = protocol.getNode(scope, message, null, message.getPerformative(), senderIsInitiator);
 
 					if ( currentNode != null ) {
 						protocolNodeParticipantMap.put(message.getSender(), currentNode);
@@ -208,8 +197,7 @@ public class Conversation extends GamaList<Message> {
 
 					if ( currentMessage != null &&
 						currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION ) { throw new ConversationFinishedException(
-						"Message received in conversation which has already ended." + message +
-							this); }
+						scope, "Message received in conversation which has already ended." + message + this); }
 
 					if ( currentMessage != null ) {
 						noProtocolNodeParticipantMap.remove(receiver);
@@ -221,7 +209,7 @@ public class Conversation extends GamaList<Message> {
 
 				if ( currentMessage != null &&
 					currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION ) { throw new ConversationFinishedException(
-					"Message received in conversation which has already ended." + message + this); }
+					scope, "Message received in conversation which has already ended." + message + this); }
 
 				if ( currentMessage != null ) {
 					noProtocolNodeParticipantMap.remove(message.getSender());
@@ -333,7 +321,7 @@ public class Conversation extends GamaList<Message> {
 	@Override
 	public String toGaml() {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
-				this.getParticipants();
+			this.getParticipants();
 	}
 
 	//
@@ -343,7 +331,7 @@ public class Conversation extends GamaList<Message> {
 	// }
 
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
 			this.getParticipants();

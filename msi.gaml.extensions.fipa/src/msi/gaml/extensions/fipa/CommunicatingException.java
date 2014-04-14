@@ -1,21 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
  * 
- * Developers :
+ * 'CommunicatingException.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
- * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
- * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
- * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
- * - Romain Lavaud, IRD (project-based environment), 2010
- * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
- * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -31,8 +27,8 @@ public class CommunicatingException extends GamaRuntimeException {
 	 * 
 	 * @param message the message
 	 */
-	protected CommunicatingException(final String message) {
-		super(message, true);
+	protected CommunicatingException(final IScope scope, final String message) {
+		super(scope, message, true);
 	}
 
 }

@@ -1,10 +1,20 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MessageType.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaType;
@@ -27,8 +37,8 @@ public class MessageType extends GamaType<Message> {
 		return true;
 	}
 
-	@operator(value = MessageType.MESSAGE_STR, can_be_const = true, category={IOperatorCategory.FIPA})
-	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = {  })
+	@operator(value = MessageType.MESSAGE_STR, can_be_const = true, category = { IOperatorCategory.FIPA })
+	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = {})
 	public static Message asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return MessageType.staticCast(scope, val, null);
 	}
@@ -41,8 +51,12 @@ public class MessageType extends GamaType<Message> {
 	}
 
 	@Override
-	public Message cast(IScope scope, Object obj, Object param)
-			throws GamaRuntimeException {
+	public Message cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return true;
 	}
 }
