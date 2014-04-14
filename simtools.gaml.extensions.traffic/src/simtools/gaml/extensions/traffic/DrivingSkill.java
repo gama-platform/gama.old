@@ -1,5 +1,17 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'DrivingSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
+import gnu.trove.map.hash.THashMap;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
@@ -11,12 +23,12 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -187,7 +199,7 @@ public class DrivingSkill extends MovingSkill {
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ||
+		if ( path == null || !path.getTopology(scope).equals(topo) || !path.getEndVertex().equals(goal) ||
 			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 		} else {
@@ -413,7 +425,7 @@ public class DrivingSkill extends MovingSkill {
 		double distance = _distance;
 		final GamaList<IShape> segments = new GamaList();
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaMap agents = new GamaMap();
+		final THashMap agents = new THashMap();
 		for ( int i = index; i < nb; i++ ) {
 			final IShape line = edges.get(i);
 			final IShape lineAg = path.getRealObject(line);
