@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'Physics3DSkill.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package simtools.gaml.extensions.physics;
 
 import msi.gama.metamodel.agent.IAgent;
