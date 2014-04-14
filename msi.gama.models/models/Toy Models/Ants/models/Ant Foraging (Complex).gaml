@@ -15,7 +15,7 @@ global {
 	var food_placed type: int <- 1;
 	const background type: rgb <- rgb(#99CC66);
 	const food_color type: rgb <- rgb(#312200);
-	const nest_color type: rgb <- rgb(#000000);
+	const nest_color type: rgb <- rgb(#000000); 
 
 	geometry shape <- square(gridsize);
 	init {
@@ -26,8 +26,8 @@ global {
 				if food = 0 {
 					food <- 5;
 					food_placed <- food_placed + 5;
-					color <- food_color;
-				}
+					color <- food_color;  
+				}                                           
 			}
 		}
 		create ant number: ants_number with: (location: center);
@@ -227,14 +227,14 @@ experiment Complete type: gui {
 }
 
 experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 400) {
-	parameter name: 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
-	parameter name: 'Number:' var: ants_number init: 200 unit: 'ants';
-	parameter name: 'Evaporation:' var: evaporation_rate among: [0.1, 0.2, 0.5, 0.8, 1.0] unit: 'rate every cycle (1.0 means 100%)';
-	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.3;
+	parameter 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
+	parameter  'Number:' var: ants_number init: 200 unit: 'ants';
+	parameter  'Evaporation:' var: evaporation_rate among: [0.1, 0.2, 0.5, 0.8, 1.0] unit: 'rate every cycle (1.0 means 100%)';
+	parameter  'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.3;
 	method exhaustive maximize: food_gathered;
 	
 	reflex info_sim{
-		write "Running a new simulation " + simulation;
+		write "Running a new simulation " + simulation; 
 	}
 	
 	permanent {

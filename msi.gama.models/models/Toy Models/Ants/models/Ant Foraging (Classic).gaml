@@ -14,7 +14,7 @@ global {
 	const C00CC00 type: rgb <- rgb('#00CC00') ;    
 	const C009900 type: rgb <- rgb('#009900') ; 
 	const C005500 type: rgb <- rgb('#005500') ; 
-	int food_gathered <- 0 ;   
+	int food_gathered <- 0 ;    
 	geometry shape <- square(gridsize);
 	init{  
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
@@ -39,6 +39,9 @@ entities {
 		ant_grid place update: ant_grid (location ); 
 		string im <- 'ant_shape_empty' ;
 		bool hasFood <- false ;
+		/**
+		 * This variable defines the chemical signal that will be followed by the ants
+		 */
 		signal road update: hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
 		action pick {
 			im <- ant_shape_full ;
@@ -46,26 +49,28 @@ entities {
 			place.food <- place.food - 1 ;
 		}
 		action drop {
-			food_gathered <- food_gathered + 1 ;
+			food_gathered <- food_gathered + 1 ;  
 			hasFood <- false ;
 			heading <- heading - 180 ;
 		}
-		action choose_best_place type: ant_grid {
+		action choose_best_place type: ant_grid {  
 			list<ant_grid> list_places <- place.neighbours ;
-			if (list_places count (each.food > 0)) > 0  {
+			if (list_places count (each.food > 0)) > 0  { 
 				return (list_places first_with (each.food > 0)) ;
 			} else {
 					let min_nest  <-  (list_places min_of (each.nest)) ;
 					list_places <- list_places sort ((each.nest = min_nest) ? each.road :  0.0) ;
 					return last(list_places) ;
 				}
-		}
-		state wandering initial: true {
+		} 
+		state wandering initial: true { 
 			do wander amplitude:120 ;
 			transition to: carryingFood when: place.food > 0 {
+				
+				 
 				do pick ;
 			}
-			transition to: followingRoad when: place.road > 0.05 ;
+			transition to: followingRoad when: place.road > 0.05 ; 
 		}
 		state carryingFood {
 			do goto target: center ;
@@ -74,7 +79,7 @@ entities {
 			}
 		}
 		state followingRoad {
-			location <- (self choose_best_place []) as point ;
+			location <- (self choose_best_place()) as point ;
 			transition to: carryingFood when: place.food > 0 {
 				do pick ;
 			}
@@ -89,10 +94,10 @@ entities {
 			if condition: display_state {
 				draw state at: location + {-3,1.5} color: °white size: 0.8 ;
 			}
-		}
+		} 
 		aspect default {
 			draw shape: circle(1.0) empty: !hasFood color: rgb('orange') ; 
-		}
+		}           
 	}
 }
 experiment Ant type: gui {

@@ -318,9 +318,9 @@ global skills: [moving] control: fsm {
 
 }
 
-// Species can "mirror" a list of agents (or another species). That is, their population is dynamically computed after the list or species mirrored.
-// Their instances, which are actually "proxy" agents, possess an attribute called "target" that points towards the agent they mirror. Very useful for building graphs, for instance.
-// The update of the population tries to preserve, as much as possible, the existing mapping (that is, proxy agents do not change targets if they do not die or disappear from the list).
+/** Species can "mirror" a list of agents (or another species). That is, their population is dynamically computed after the list or species mirrored.
+* Their instances, which are actually "proxy" agents, possess an attribute called "target" that points towards the agent they mirror. Very useful for building graphs, for instance.
+* The update of the population tries to preserve, as much as possible, the existing mapping (that is, proxy agents do not change targets if they do not die or disappear from the list) */
 species species0 {
 	float speed <- float(rnd(1000));
 }

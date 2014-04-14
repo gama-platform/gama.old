@@ -86,7 +86,7 @@ entities {
 			hasFood <- false ;
 			heading <- heading - 180 ;
 		}
-		aspect name: 'default' {
+		aspect default {
 			draw circle(2.0) color: color;
 		}
 		
