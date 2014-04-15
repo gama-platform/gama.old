@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'TabuSearchReactive.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.batch;
 
 import java.util.*;
@@ -26,8 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -73,62 +65,57 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	int iterMax = 100;
 
 	@Override
-	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
-		super.initializeFor(agent);
-		GAMA.run(new InScope.Void() {
+	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
+		super.initializeFor(scope, agent);
 
-			@Override
-			public void process(final IScope scope) {
-				final IExpression maxIt = getFacet(ITER_MAX);
-				if ( maxIt != null ) {
-					iterMax = Cast.asInt(scope, maxIt.value(scope));
-					stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
-				}
-				final IExpression listSizeInit = getFacet(LIST_SIZE_INIT);
-				if ( listSizeInit != null ) {
-					tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope));
-				}
-				final IExpression listSizeMax = getFacet(LIST_SIZE_MAX);
-				if ( listSizeMax != null ) {
-					tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope));
-				}
-				final IExpression listSizeMin = getFacet(LIST_SIZE_MIN);
-				if ( listSizeMin != null ) {
-					tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope));
-				}
-				final IExpression nbTestWtoutColMax = getFacet(NB_TESTS_MAX);
-				if ( nbTestWtoutColMax != null ) {
-					nbTestWithoutCollisionMax = Cast.asInt(scope, nbTestWtoutColMax.value(scope));
-				}
-				final IExpression cycleMax = getFacet(CYCLE_SIZE_MAX);
-				if ( cycleMax != null ) {
-					cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope));
-				}
-				final IExpression cycleMin = getFacet(CYCLE_SIZE_MIN);
-				if ( cycleMin != null ) {
-					cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
-				}
+		final IExpression maxIt = getFacet(ITER_MAX);
+		if ( maxIt != null ) {
+			iterMax = Cast.asInt(scope, maxIt.value(scope));
+			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
+		}
+		final IExpression listSizeInit = getFacet(LIST_SIZE_INIT);
+		if ( listSizeInit != null ) {
+			tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope));
+		}
+		final IExpression listSizeMax = getFacet(LIST_SIZE_MAX);
+		if ( listSizeMax != null ) {
+			tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope));
+		}
+		final IExpression listSizeMin = getFacet(LIST_SIZE_MIN);
+		if ( listSizeMin != null ) {
+			tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope));
+		}
+		final IExpression nbTestWtoutColMax = getFacet(NB_TESTS_MAX);
+		if ( nbTestWtoutColMax != null ) {
+			nbTestWithoutCollisionMax = Cast.asInt(scope, nbTestWtoutColMax.value(scope));
+		}
+		final IExpression cycleMax = getFacet(CYCLE_SIZE_MAX);
+		if ( cycleMax != null ) {
+			cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope));
+		}
+		final IExpression cycleMin = getFacet(CYCLE_SIZE_MIN);
+		if ( cycleMin != null ) {
+			cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
+		}
 
-			}
-		});
 	}
 
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
-		testedSolutions = new Hashtable<ParametersSet, Double>();
+		initializeTestedSolutions();
 		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
 		int tabuListSize = tabuListSizeInit;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
-		testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
-		
+		testedSolutions.put(bestSolutionAlgo, currentFitness);
+
 		double bestFitnessAlgo = currentFitness;
 
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
 
-		testedSolutions.put(getBestSolution(), new Double(currentFitness));
+		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
 		int nbTestWithoutCollision = 0;
 		int currentCycleSize = 0;
@@ -138,7 +125,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			nbTestWithoutCollision++;
-			final List<ParametersSet> neighbors = neighborhood.neighbor(getBestSolution());
+			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, getBestSolution());
 			neighbors.removeAll(tabuList);
 			if ( neighbors.isEmpty() ) {
 				break;
@@ -160,18 +147,19 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 						tabuListSize++;
 					}
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == null ) {
-					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+				double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == Double.MAX_VALUE ) {
+					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo || !isMaximize() &&
-					neighborFitness.doubleValue() < bestFitnessAlgo ) {
+				if ( isMaximize() && neighborFitness > bestFitnessAlgo || !isMaximize() &&
+					neighborFitness < bestFitnessAlgo ) {
 					bestNeighbor = neighborSol;
-					bestFitnessAlgo = neighborFitness.doubleValue();
+					bestFitnessAlgo = neighborFitness;
 				}
-				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() &&
+					currentFitness < getBestFitness() ) {
 					setBestSolution(new ParametersSet(bestSolutionAlgo));
 					setBestFitness(currentFitness);
 				}
@@ -183,7 +171,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			if ( bestNeighbor == null ) {
 				break;
 			}
-			if ( this.testedSolutions.keySet().contains(bestNeighbor) ) {
+			if ( this.testedSolutions.contains(bestNeighbor) ) {
 				currentCycleSize++;
 			} else {
 				startingCycle = null;
@@ -196,22 +184,23 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 				if ( startingCycle != null && !startingCycle.equals(bestNeighbor) ) {
 					cycleSize++;
 				} else {
-					final int depl = (int) (1 + GAMA.getRandom().next() * cycleSize / 2.0);
+					final int depl = (int) (1 + scope.getRandom().next() * cycleSize / 2.0);
 					for ( int i = 0; i < depl; i++ ) {
-						final List<ParametersSet> neighborsAlea = neighborhood.neighbor(bestSolutionAlgo);
+						final List<ParametersSet> neighborsAlea = neighborhood.neighbor(scope, bestSolutionAlgo);
 						neighborsAlea.removeAll(tabuList);
 						if ( neighborsAlea.isEmpty() ) {
 							break;
 						}
-						bestSolutionAlgo = neighborsAlea.get(GAMA.getRandom().between(0, neighborsAlea.size() - 1));
+						bestSolutionAlgo = neighborsAlea.get(scope.getRandom().between(0, neighborsAlea.size() - 1));
 						if ( tabuList.size() == tabuListSize ) {
 							tabuList.remove(0);
 						}
 						tabuList.add(bestSolutionAlgo);
 					}
 					currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
-					testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
-					if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+					testedSolutions.put(bestSolutionAlgo, currentFitness);
+					if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() &&
+						currentFitness < getBestFitness() ) {
 						setBestSolution(new ParametersSet(bestSolutionAlgo));
 						setBestFitness(currentFitness);
 					}
@@ -244,7 +233,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public void addParametersTo(final List<IParameter.Batch> params, BatchAgent agent) {
+	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
 		params.add(new ParameterAdapter("Tabu list initial size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 

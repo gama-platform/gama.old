@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'BatchAgent.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.*;
@@ -83,7 +76,7 @@ public class BatchAgent extends ExperimentAgent {
 			boolean keepSeed = Cast.asBool(getScope(), expr.value(getScope()));
 			if ( keepSeed ) {
 				for ( int i = 0; i < seeds.length; i++ ) {
-					getSeeds()[i] = GAMA.getRandom().between(0d, Long.MAX_VALUE);
+					getSeeds()[i] = getScope().getRandom().between(0d, Long.MAX_VALUE);
 				}
 			}
 		}
@@ -93,7 +86,7 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 
-		getSpecies().getExplorationAlgorithm().initializeFor(this);
+		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
 		return this;
 	}
 
@@ -143,11 +136,10 @@ public class BatchAgent extends ExperimentAgent {
 		return true;
 	}
 
-	public int getRunNumber()
-	{
+	public int getRunNumber() {
 		return this.runNumber;
 	}
-	
+
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		currentSolution = new ParametersSet(sol);
@@ -157,7 +149,7 @@ public class BatchAgent extends ExperimentAgent {
 		for ( Map.Entry<String, Object> entry : sol.entrySet() ) {
 			IParameter p = getSpecies().getExplorableParameters().get(entry.getKey());
 			if ( p != null ) {
-				p.setValue(entry.getValue());
+				p.setValue(simulation.getScope(), entry.getValue());
 			}
 		}
 		// We then run a number of simulations with the same solution
@@ -280,7 +272,7 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String value() {
 				Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
-				if (params.isEmpty())  return "";
+				if ( params.isEmpty() ) { return ""; }
 				String result = "";
 				int dim = 1;
 				for ( Map.Entry<String, IParameter.Batch> entry : params.entrySet() ) {

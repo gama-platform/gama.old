@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlModelSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.model;
 
 import java.util.*;
@@ -27,7 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.*;
@@ -49,8 +42,8 @@ import org.apache.commons.lang.StringUtils;
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
-	protected final Map<String, IExperimentSpecies> experiments = new LinkedHashMap<String, IExperimentSpecies>();
-	protected final Map<String, IExperimentSpecies> titledExperiments = new LinkedHashMap<String, IExperimentSpecies>();
+	protected final Map<String, IExperimentSpecies> experiments = new TOrderedHashMap();
+	protected final Map<String, IExperimentSpecies> titledExperiments = new TOrderedHashMap();
 	protected Map<String, ISpecies> allSpecies;
 
 	public GamlModelSpecies(final IDescription description) {
@@ -63,10 +56,15 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		return (ModelDescription) description;
 	}
 
-	@Override
-	public String getRelativeFilePath(final String filePath, final boolean shouldExist) {
-		return getDescription().constructModelRelativePath(filePath, shouldExist);
-	}
+	// @Override
+	// public String getRelativeFilePath(final IScope scope, final String filePath, final boolean shouldExist) {
+	// try {
+	// return FileUtils.constructAbsoluteFilePath(scope, filePath, shouldExist);
+	// } catch (final GamaRuntimeException e) {
+	// GAMA.reportAndThrowIfNeeded(scope, e, false);
+	// return filePath;
+	// }
+	// }
 
 	@Override
 	public boolean isTorus() {
@@ -74,7 +72,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public String getFolderPath() {
+	public String getWorkingPath() {
 		return getDescription().getModelFolderPath();
 	}
 
@@ -150,7 +148,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	@Override
 	public Map<String, ISpecies> getAllSpecies() {
 		if ( allSpecies == null ) {
-			allSpecies = new LinkedHashMap();
+			allSpecies = new TOrderedHashMap();
 			final Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
 			speciesStack.push(this);
 			ISpecies currentSpecies;
@@ -192,4 +190,5 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			exp.setChildren(forExperiment);
 		}
 	}
+
 }

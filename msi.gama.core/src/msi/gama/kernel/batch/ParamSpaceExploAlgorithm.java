@@ -1,29 +1,23 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ParamSpaceExploAlgorithm.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.batch;
 
-import java.util.*;
+import gnu.trove.map.hash.TObjectDoubleHashMap;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
@@ -47,10 +41,11 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	private NumberGenerator<Double> randUniform;
-	protected Map<ParametersSet, Double> testedSolutions;
+	protected TObjectDoubleHashMap<ParametersSet> testedSolutions;
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
+	protected IScope scope;
 	private ParametersSet bestSolution;
 	private Double bestFitness;
 	protected short combination;
@@ -58,20 +53,25 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected abstract ParametersSet findBestSolution() throws GamaRuntimeException;
 
 	@Override
-	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
+	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		currentExperiment = agent;
+		this.scope = scope;
 	}
 
 	protected NumberGenerator<Double> getRandUniform() {
 		if ( randUniform == null ) {
-			randUniform = GAMA.getRandom().createUniform(0., 1.);
+			randUniform = scope.getRandom().createUniform(0., 1.);
 		}
 		return randUniform;
 	}
 
+	protected void initializeTestedSolutions() {
+		testedSolutions = new TObjectDoubleHashMap<ParametersSet>(100, 0.75f, Double.MAX_VALUE);
+	}
+
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
 		super(desc);
-		testedSolutions = new HashMap<ParametersSet, Double>();
+		initializeTestedSolutions();
 		fitnessExpression = getFacet(IKeyword.MAXIMIZE, IKeyword.MINIMIZE);
 		isMaximize = hasFacet(IKeyword.MAXIMIZE);
 		String ag = getLiteral(IKeyword.AGGREGATION);
@@ -87,6 +87,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public void run() {
 		try {
+			IScope scope = currentExperiment.getScope();
 			findBestSolution();
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e, false);
@@ -113,10 +114,12 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 			public Object value() {
 				List<Class> classes = new GamaList(CLASSES);
 				String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
-				String fit = fitnessExpression == null ? "" : ("fitness = " + (isMaximize ? " maximize " : " minimize ") + fitnessExpression.toGaml());
-				String sim =fitnessExpression == null ? "" :(
-					(combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of " +
-						agent.getSeeds().length + " simulations");
+				String fit =
+					fitnessExpression == null ? "" : "fitness = " + (isMaximize ? " maximize " : " minimize ") +
+						fitnessExpression.toGaml();
+				String sim =
+					fitnessExpression == null ? "" : (combination == C_MAX ? " max " : combination == C_MIN ? " min "
+						: " average ") + "of " + agent.getSeeds().length + " simulations";
 				return "Method " + name + " | " + fit + " | " + "compute the" + sim + " for each solution";
 			}
 

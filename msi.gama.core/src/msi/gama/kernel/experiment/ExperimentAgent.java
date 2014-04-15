@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'ExperimentAgent.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.net.URL;
@@ -20,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.types.*;
 import org.eclipse.core.runtime.Platform;
 
@@ -34,6 +45,7 @@ import org.eclipse.core.runtime.Platform;
  */
 @species(name = IKeyword.EXPERIMENT)
 @vars({
+
 	@var(name = IKeyword.SIMULATION, type = IType.AGENT, doc = @doc(value = "contains a reference to the current simulation being run by this experiment", comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 	// @var(name = GAMA._FATAL, type = IType.BOOL),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL),
@@ -48,7 +60,7 @@ import org.eclipse.core.runtime.Platform;
 		" is another choice. Much faster than the previous ones, but with short sequences; and " +
 		IKeyword.JAVA +
 		" invokes the standard Java generator")),
-
+	@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION, type = IType.FLOAT, doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')", comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 	@var(name = ExperimentAgent.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
 	@var(name = ExperimentAgent.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
@@ -56,20 +68,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public static final String MODEL_PATH = "model_path";
 	public static final String WORKSPACE_PATH = "workspace_path";
 	public static final String PROJECT_PATH = "project_path";
+	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
 	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
 
 	private final IScope scope;
 	protected SimulationAgent simulation;
-	final Map<String, Object> extraParametersMap = new LinkedHashMap();
+	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
+	// protected Double minimumDuration = 0d;
 	protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
 		: (Double) null;
 	protected String rng = GamaPreferences.CORE_RNG.getValue();
-	// protected boolean isLoading;
 	protected ExperimentClock clock = new ExperimentClock();
-	// protected boolean revealAndStop = GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
+	protected String ownModelPath;
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -86,13 +99,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void reset() {
 		// We close any simulation that might be running
 		closeSimulation();
-		// We create a fresh new scope
-		// GAMA.releaseScope(scope);
-		// scope = obtainNewScope();
 		// We initialize the population that will host the simulation
 		createSimulationPopulation();
 		// We initialize a new random number generator
-		// random = new RandomUtils(getSpecies().getCurrentSeed());
 		random = new RandomUtils(seed, rng);
 	}
 
@@ -118,17 +127,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void dispose() {
 		if ( dead ) { return; }
 		super.dispose();
-		// GAMA.releaseScope(scope);
 		closeSimulation();
 		if ( getSimulation() != null ) {
 			getSimulation().dispose();
 		}
 	}
-
-	// @Override
-	// public boolean isLoading() {
-	// return isLoading;
-	// }
 
 	/**
 	 * Redefinition of the callback method
@@ -138,18 +141,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Object _init_(final IScope scope) {
 		// GuiUtils.debug("ExperimentAgent._init_");
 		if ( scope.interrupted() ) { return null; }
-		// We execute any behavior defined in GAML. The simulation is not yet defined (only the 'fake' one).
+		// We execute any behavior defined in GAML.
 		super._init_(scope);
-		// We gather the parameters set in the experiment
-		// final ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
-		// Add the ones set during the "fake" simulation episode
-		// parameters.putAll(extraParametersMap);
-		// This is where the simulation agent is created
-		// isLoading = true;
-		// final IPopulation pop = getMicroPopulation(getModel());
-		// 'simulation' is set by a callback call to setSimulation()
-		// pop.createAgents(scope, 1, GamaList.with(getParameterValues()), false);
-		// isLoading = false;
 		createSimulation(getParameterValues(), true);
 		return this;
 	}
@@ -253,9 +246,34 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			IExperimentSpecies.SYSTEM_CATEGORY_PREFIX + " '" + getSpecies().getName() + "'";
 	}
 
-	@getter(ExperimentAgent.MODEL_PATH)
-	public String getModelPath() {
-		return getModel().getFolderPath() + "/";
+	@getter(value = ExperimentAgent.MINIMUM_CYCLE_DURATION, initializer = true)
+	public Double getMinimumDuration() {
+		//
+		return GAMA.getDelayInMilliseconds() / 1000;
+	}
+
+	@setter(ExperimentAgent.MINIMUM_CYCLE_DURATION)
+	public void setMinimumDuration(final Double d) {
+		// d is in seconds, but the slider expects milleseconds
+		GAMA.setDelayFromExperiment(d);
+	}
+
+	@Override
+	@getter(value = ExperimentAgent.MODEL_PATH, initializer = true)
+	public String getWorkingPath() {
+		if ( ownModelPath == null ) {
+			ownModelPath = getModel().getWorkingPath() + "/";
+		}
+		return ownModelPath;
+	}
+
+	@setter(ExperimentAgent.MODEL_PATH)
+	public void setWorkingPath(final String p) {
+		if ( p.endsWith("/") ) {
+			ownModelPath = p;
+		} else {
+			ownModelPath = p + "/";
+		}
 	}
 
 	@getter(value = WORKSPACE_PATH, initializer = true)
@@ -337,6 +355,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 			simulation = (SimulationAgent) sim;
 			simulation.setOutputs(getSpecies().getSimulationOutputs());
+			// simulation.getClock().setDelay(this.minimumDuration);
 		}
 	}
 
@@ -344,11 +363,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public boolean step(final IScope scope) {
 		clock.beginCycle();
 		boolean result;
-		// A simulation always runs in its own scope
+		// An experiment always runs in its own scope
 		try {
 			result = super.step(this.scope);
 		} finally {
-			clock.step();
+			clock.step(this.scope);
 		}
 		return result;
 	}
@@ -389,6 +408,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		@Override
 		public SimulationAgent getSimulationScope() {
 			return (SimulationAgent) getSimulation();
+		}
+
+		@Override
+		public IExperimentAgent getExperiment() {
+			return ExperimentAgent.this;
 		}
 
 		@Override

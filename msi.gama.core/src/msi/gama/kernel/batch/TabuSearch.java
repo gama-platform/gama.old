@@ -1,33 +1,25 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'TabuSearch.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.batch;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -57,12 +49,12 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
-		testedSolutions = new Hashtable<ParametersSet, Double>();
+		initializeTestedSolutions();
 		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
-		testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
+		testedSolutions.put(bestSolutionAlgo, currentFitness);
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
 
@@ -71,14 +63,14 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
-			GuiUtils.debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
-			final List<ParametersSet> neighbors = neighborhood.neighbor(bestSolutionAlgo);
+			// GuiUtils.debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
+			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, bestSolutionAlgo);
 			neighbors.removeAll(tabuList);
 			if ( neighbors.isEmpty() ) {
 				if ( tabuList.isEmpty() ) {
 					break;
 				}
-				neighbors.add(tabuList.get(GAMA.getRandom().between(0, tabuList.size() - 1)));
+				neighbors.add(tabuList.get(scope.getRandom().between(0, tabuList.size() - 1)));
 			}
 			if ( isMaximize() ) {
 				bestFitnessAlgo = -Double.MAX_VALUE;
@@ -88,12 +80,12 @@ public class TabuSearch extends LocalSearchAlgorithm {
 			ParametersSet bestNeighbor = null;
 
 			for ( final ParametersSet neighborSol : neighbors ) {
-				GuiUtils.debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
+				// GuiUtils.debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
 				if ( neighborSol == null ) {
 					continue;
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == null ) {
+				double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == Double.MAX_VALUE ) {
 					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 					nbIt++;
 				} else {
@@ -101,13 +93,13 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				GuiUtils.debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness.doubleValue() +
-					" bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
-					" current fitness = " + currentFitness);
-				boolean neighFitnessGreaterThanBest = neighborFitness.doubleValue() > bestFitnessAlgo;
+				// GuiUtils.debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness +
+				// " bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
+				// " current fitness = " + currentFitness);
+				boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
 				if ( isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest ) {
 					bestNeighbor = neighborSol;
-					bestFitnessAlgo = neighborFitness.doubleValue();
+					bestFitnessAlgo = neighborFitness;
 				}
 				boolean curFitnessGreaterThanBest = currentFitness > getBestFitness();
 
@@ -140,16 +132,16 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	int iterMax = 50;
 
 	@Override
-	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
-		super.initializeFor(agent);
+	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
+		super.initializeFor(scope, agent);
 		final IExpression maxIt = getFacet(ITER_MAX);
 		if ( maxIt != null ) {
-			iterMax = Cast.as(maxIt, Integer.class);
+			iterMax = Cast.asInt(scope, maxIt.value(scope));
 			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
 		}
 		final IExpression listsize = getFacet(LIST_SIZE);
 		if ( listsize != null ) {
-			tabuListSize = Cast.as(listsize, Integer.class);
+			tabuListSize = Cast.asInt(scope, listsize.value(scope));
 		}
 	}
 

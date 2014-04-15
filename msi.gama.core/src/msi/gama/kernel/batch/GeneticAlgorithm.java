@@ -1,23 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GeneticAlgorithm.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.batch;
 
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
@@ -26,8 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -69,71 +62,65 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	}
 
 	@Override
-	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
-		super.initializeFor(agent);
-		GAMA.run(new InScope.Void() {
+	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
+		super.initializeFor(scope, agent);
 
-			@Override
-			public void process(final IScope scope) {
-				initPop = new InitializationUniform();
-				crossOverOp = new CrossOver1Pt();
-				mutationOp = new Mutation1Var();
-				selectionOp = new SelectionRoulette();
-				final IExpression popDim = getFacet(POP_DIM);
-				if ( popDim != null ) {
-					populationDim = Cast.asInt(scope, popDim.value(scope));
-				}
-				final IExpression crossOverPb = getFacet(CROSSOVER_PROB);
-				if ( crossOverPb != null ) {
-					crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope));
-				}
-				final IExpression mutationPb = getFacet(MUTATION_PROB);
-				if ( mutationPb != null ) {
-					mutationProb = Cast.asFloat(scope, mutationPb.value(scope));
-				}
-				final IExpression nbprelimgen = getFacet(NB_GEN);
-				if ( nbprelimgen != null ) {
-					nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope));
-				}
-				final IExpression maxgen = getFacet(MAX_GEN);
-				if ( maxgen != null ) {
-					maxGenerations = Cast.asInt(scope, maxgen.value(scope));
-				}
-
-			}
-		});
+		initPop = new InitializationUniform();
+		crossOverOp = new CrossOver1Pt();
+		mutationOp = new Mutation1Var();
+		selectionOp = new SelectionRoulette();
+		final IExpression popDim = getFacet(POP_DIM);
+		if ( popDim != null ) {
+			populationDim = Cast.asInt(scope, popDim.value(scope));
+		}
+		final IExpression crossOverPb = getFacet(CROSSOVER_PROB);
+		if ( crossOverPb != null ) {
+			crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope));
+		}
+		final IExpression mutationPb = getFacet(MUTATION_PROB);
+		if ( mutationPb != null ) {
+			mutationProb = Cast.asFloat(scope, mutationPb.value(scope));
+		}
+		final IExpression nbprelimgen = getFacet(NB_GEN);
+		if ( nbprelimgen != null ) {
+			nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope));
+		}
+		final IExpression maxgen = getFacet(MAX_GEN);
+		if ( maxgen != null ) {
+			maxGenerations = Cast.asInt(scope, maxgen.value(scope));
+		}
 
 	}
 
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
 		List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		testedSolutions = new Hashtable<ParametersSet, Double>();
+		initializeTestedSolutions();
 		List<Chromosome> population =
 			initPop.initializePop(variables, currentExperiment, populationDim, nbPrelimGenerations, isMaximize());
 		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
-			Set<Chromosome> children = new HashSet<Chromosome>();
+			Set<Chromosome> children = new THashSet<Chromosome>();
 			for ( final Chromosome chromosome : population ) {
-				if ( getRandUniform().nextValue() < crossoverProb &&   !variables.isEmpty()) {
-					children.addAll(crossOverOp.crossOver(chromosome,
-						population.get(GAMA.getRandom().between(0, population.size() - 1))));
+				if ( getRandUniform().nextValue() < crossoverProb && !variables.isEmpty() ) {
+					children.addAll(crossOverOp.crossOver(scope, chromosome,
+						population.get(scope.getRandom().between(0, population.size() - 1))));
 				}
 			}
 			population.addAll(children);
 			children = null;
 
-			Set<Chromosome> mutatePop = new HashSet<Chromosome>();
+			Set<Chromosome> mutatePop = new THashSet<Chromosome>();
 			for ( final Chromosome chromosome : population ) {
-				if ( getRandUniform().nextValue() < mutationProb && !variables.isEmpty()) {
-					mutatePop.add(mutationOp.mutate(chromosome, variables));
+				if ( getRandUniform().nextValue() < mutationProb && !variables.isEmpty() ) {
+					mutatePop.add(mutationOp.mutate(scope, chromosome, variables));
 				}
 			}
 			population.addAll(mutatePop);
 			mutatePop = null;
 			computePopFitness(population);
-			population = selectionOp.select(population, populationDim, isMaximize());
+			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
 		}
 		// System.out.println("Best solution : " + bestSolution + "  fitness : "
@@ -144,23 +131,22 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	private void computePopFitness(final List<Chromosome> population) throws GamaRuntimeException {
 		for ( final Chromosome chromosome : population ) {
 			final ParametersSet sol = chromosome.convertToSolution(currentExperiment.getParametersToExplore());
-			Double fitness = testedSolutions.get(sol);
-			if ( fitness == null ) {
-				fitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(sol));
+			double fitness = testedSolutions.get(sol);
+			if ( fitness == Double.MAX_VALUE ) {
+				fitness = currentExperiment.launchSimulationsWithSolution(sol);
 			}
 			testedSolutions.put(sol, fitness);
 
-			chromosome.setFitness(fitness.doubleValue());
-			if ( isMaximize() && fitness.doubleValue() > getBestFitness() || !isMaximize() &&
-				fitness.doubleValue() < getBestFitness() ) {
-				setBestFitness(fitness.doubleValue());
+			chromosome.setFitness(fitness);
+			if ( isMaximize() && fitness > getBestFitness() || !isMaximize() && fitness < getBestFitness() ) {
+				setBestFitness(fitness);
 				setBestSolution(sol);
 			}
 		}
 	}
 
 	@Override
-	public void addParametersTo(final List<IParameter.Batch> params, BatchAgent agent) {
+	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
 		params.add(new ParameterAdapter("Mutation probability", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 

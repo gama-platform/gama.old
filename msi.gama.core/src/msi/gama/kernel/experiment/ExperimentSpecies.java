@@ -1,26 +1,19 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ExperimentSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.batch.*;
 import msi.gama.kernel.experiment.ExperimentSpecies.BatchValidator;
 import msi.gama.kernel.model.IModel;
@@ -35,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -93,8 +87,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	protected IOutputManager simulationOutputs;
 	protected IOutputManager experimentOutputs;
 	private ItemList parametersEditors;
-	protected final Map<String, IParameter> parameters = new LinkedHashMap();
-	protected final Map<String, IParameter.Batch> explorableParameters = new LinkedHashMap();
+	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
+	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
 	protected final Scope stack = new Scope(null);
 	protected IModel model;
@@ -111,7 +105,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		super(description);
 		setName(description.getName());
 		String type = description.getFacets().getLabel(IKeyword.TYPE);
-		if (type.equals(IKeyword.BATCH) ) {
+		if ( type.equals(IKeyword.BATCH) ) {
 			exploration = new ExhaustiveSearch(null);
 		}
 	}
@@ -202,7 +196,6 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			children.remove(exploration);
 		}
 
-		
 		BatchOutput fileOutputDescription = null;
 		for ( final ISymbol s : children ) {
 			if ( s instanceof BatchOutput ) {
@@ -315,8 +308,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	// }
 
 	// @Override
-	public void setParameterValue(final String name, final Object val) throws GamaRuntimeException {
-		checkGetParameter(name).setValue(val);
+	public void setParameterValue(final IScope scope, final String name, final Object val) throws GamaRuntimeException {
+		checkGetParameter(name).setValue(scope, val);
 	}
 
 	// @Override
@@ -341,7 +334,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		final String name = p.getName();
 		IParameter already = parameters.get(name);
 		if ( already != null ) {
-			p.setValue(already.getInitialValue(stack));
+			p.setValue(stack, already.getInitialValue(stack));
 		}
 		parameters.put(name, p);
 	}
@@ -397,7 +390,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if ( hasParameter(name) ) {
-				setParameterValue(name, v);
+				setParameterValue(this, name, v);
 				GuiUtils.updateParameterView(ExperimentSpecies.this);
 				return;
 			}
@@ -421,6 +414,11 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		}
 
 		@Override
+		public IExperimentAgent getExperiment() {
+			return (ExperimentAgent) root;
+		}
+
+		@Override
 		public IModel getModel() {
 			return ExperimentSpecies.this.getModel();
 		}
@@ -438,6 +436,17 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		@Override
 		public IScope copy() {
 			return new Scope(root);
+		}
+
+		/**
+		 * Method getRandom()
+		 * @see msi.gama.runtime.IScope#getRandom()
+		 */
+		@Override
+		public RandomUtils getRandom() {
+			SimulationAgent a = getCurrentSimulation();
+			if ( a != null ) { return a.getExperiment().getRandomGenerator(); }
+			return null;
 		}
 
 	}

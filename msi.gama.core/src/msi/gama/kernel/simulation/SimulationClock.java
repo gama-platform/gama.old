@@ -1,23 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'SimulationClock.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Strings;
 
@@ -31,12 +25,18 @@ import msi.gaml.operators.Strings;
 public class SimulationClock {
 
 	/**
+	 * OLD
 	 * The delay, a value between 0 and 1, that can be introduced by the user (through the graphical
 	 * interface) for each cycle. A value of 1 means no delay, while a delay of 0 will pause the
 	 * simulation during 1 second for each cycle. Any intermediate value will be treated as a
 	 * percentage of a second equal to (1 - delay) * 100
+	 * OLD
+	 * 
+	 * delay is the number of milliseconds that represents the minimum duration of a simulation cycle. It can be defined
+	 * through the user interface or by the model. A value of 0 now means no delay, a value of 1 means 1 second of
+	 * delay, and any value above the exact number of milliiseconds
 	 */
-	private double delay = 1d;
+	// private double delay = 0d;
 
 	/** The number of simulation cycles elapsed so far. */
 	private int cycle = 0;
@@ -190,7 +190,7 @@ public class SimulationClock {
 		return total_duration;
 	}
 
-	public void step() {
+	public void step(final IScope scope) {
 		setCycle(cycle + 1);
 		setTime(time + step);
 		computeDuration();
@@ -198,11 +198,12 @@ public class SimulationClock {
 	}
 
 	public void waitDelay() {
-		if ( delay == 1d ) { return; }
+		double delay = GAMA.getDelayInMilliseconds();
+		if ( delay == 0d ) { return; }
 		try {
-			long max = (long) (1000 - delay * 1000);
-			if ( duration >= max ) { return; }
-			Thread.sleep((max - duration));
+			// GuiUtils.debug("SimulationClock.waitDelay " + delay + "ms");
+			if ( duration >= delay ) { return; }
+			Thread.sleep((long) delay - duration);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -211,22 +212,22 @@ public class SimulationClock {
 	public void reset() throws GamaRuntimeException {
 		setCycle(0);
 		setTime(0d);
-		setDelay(1d);
+		// setDelay(1d);
 		total_duration = 0;
 		step = 1;
 	}
 
 	/**
-	 * @param selection
+	 * The delay should be expressed in milliseconds
 	 */
-	public void setDelay(final double value) {
-		// From 0 (slowest) to 1 (fastest)
-		delay = value < 0 ? 0d : value > 1d ? 1d : value;
-	}
+	// public void setDelay(final double milliseconds) {
+	// // From 0 (slowest) to 1 (fastest)
+	// delay = milliseconds <= 0 ? 0d : milliseconds;
+	// }
 
-	public double getDelay() {
-		return delay;
-	}
+	// public double getDelay() {
+	// return delay;
+	// }
 
 	public void toggleDisplay() {
 		displayCycles = !displayCycles;
@@ -248,6 +249,9 @@ public class SimulationClock {
 	}
 
 	public static class ExperimentClock extends SimulationClock {
+
+		@Override
+		public void waitDelay() {}
 		//
 		// @Override
 		// public void beginCycle() {

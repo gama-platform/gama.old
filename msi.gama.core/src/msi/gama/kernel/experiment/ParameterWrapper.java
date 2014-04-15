@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 2 sept. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'ParameterWrapper.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.List;
@@ -56,8 +63,8 @@ public abstract class ParameterWrapper implements IParameter {
 	}
 
 	@Override
-	public void setValue(final Object value) {
-		wrapped.setValue(value);
+	public void setValue(final IScope scope, final Object value) {
+		wrapped.setValue(scope, value);
 	}
 
 	@Override

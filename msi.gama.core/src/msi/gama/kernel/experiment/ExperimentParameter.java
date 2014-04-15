@@ -1,30 +1,24 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ExperimentParameter.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -34,6 +28,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+import msi.gaml.variables.Variable;
 
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
@@ -47,6 +42,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
+@validator(Variable.VarValidator.class)
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -134,7 +130,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setName(p.getName());
 		setCategory(category);
 		setType(p.getType());
-		setValue(p.getInitialValue(scope));
+		setValue(scope, p.getInitialValue(scope));
 		setEditable(p.isEditable());
 		// isLabel = p.isLabel();
 	}
@@ -199,14 +195,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void setValue(final Object val) {
+	public void setValue(final IScope scope, final Object val) {
 		if ( val == UNDEFINED ) {
 			if ( getAmongValue() != null ) {
-				value = getAmongValue().get(GAMA.getRandom().between(0, getAmongValue().size() - 1));
+				value = getAmongValue().get(scope.getRandom().between(0, getAmongValue().size() - 1));
 			} else if ( type.id() == IType.INT || type.id() == IType.FLOAT ) {
-				value = drawRandomValue();
+				value = drawRandomValue(scope);
 			} else if ( type.id() == IType.BOOL ) {
-				value = GAMA.getRandom().between(1, 100) > 50;
+				value = scope.getRandom().between(1, 100) > 50;
 			} else {
 				value = null;
 			}
@@ -216,22 +212,22 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void reinitRandomly() {
-		setValue(UNDEFINED);
+	public void reinitRandomly(final IScope scope) {
+		setValue(scope, UNDEFINED);
 	}
 
 	public void tryToInit(final IScope scope) {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
-		setValue(init.value(scope));
+		setValue(scope, init.value(scope));
 	}
 
-	private Number drawRandomValue() {
+	private Number drawRandomValue(final IScope scope) {
 		double step = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			final int val = (int) (RandomUtils.getDefault().between(0., max - min) + 0.5);
+			final int val = (int) (scope.getRandom().between(0., max - min) + 0.5);
 			final int nbStep = (int) (val / step);
 			final int high = (int) ((nbStep + 1) * step);
 			final int low = (int) (nbStep * step);
@@ -239,7 +235,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 		double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-		final double val = GAMA.getRandom().between(0., max - min) + 0.5;
+		final double val = scope.getRandom().between(0., max - min) + 0.5;
 		final int nbStep = (int) (val / step);
 		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000 + 0.5) / 1000000.0;
 		final double low = (int) ((min + nbStep * step) * 1000000 + 0.5) / 1000000.0;
@@ -273,14 +269,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if ( type.id() == IType.FLOAT ) {
 			double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 			double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			double removeZ = Math.max(100000.0, 1.0/step);
+			double removeZ = Math.max(100000.0, 1.0 / step);
 			double val = Cast.asFloat(null, value());
 			if ( val >= min + step ) {
-				final double valLow = (Math.round(((val - step) * removeZ))) / removeZ;
+				final double valLow = Math.round((val - step) * removeZ) / removeZ;
 				neighbourValues.add(valLow);
 			}
 			if ( val <= max - step ) {
-				final double valHigh = (Math.round(((val + step) * removeZ))) / removeZ;
+				final double valHigh = Math.round((val + step) * removeZ) / removeZ;
 				neighbourValues.add(valHigh);
 			}
 		}
