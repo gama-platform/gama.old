@@ -65,8 +65,7 @@ public class MovingSkill extends Skill {
 	@getter(IKeyword.DESTINATION)
 	public ILocation getDestination(final IAgent agent) {
 		final ILocation actualLocation = agent.getLocation();
-		// if ( actualLocation == null ) { return null; }
-		final double dist = getSpeed(agent) /* agent.getSimulation().getScheduler().getStep() */;
+		final double dist = getSpeed(agent);
 		final ITopology topology = getTopology(agent);
 		return topology.getDestination(actualLocation, agent.getHeading(), dist, false);
 	}
@@ -161,7 +160,6 @@ public class MovingSkill extends Skill {
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = IKeyword.BOUNDS, type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { @example("do wander speed: speed - 10 amplitude: 120 bounds: agentA;") }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
-
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final int heading = computeHeadingFromAmplitude(scope, agent);
