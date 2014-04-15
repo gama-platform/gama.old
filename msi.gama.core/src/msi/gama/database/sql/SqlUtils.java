@@ -1,9 +1,20 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.database.sql;
 
 import java.io.*;
 import java.util.Map;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -38,9 +49,9 @@ public class SqlUtils {
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
 		String extension = (String) params.get("extension");
-		// thai.truongminh@gmail.com 
-		//     Move transform arg of select to a key in params
-		//boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
+		// thai.truongminh@gmail.com
+		// Move transform arg of select to a key in params
+		// boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
 		boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		if ( DEBUG ) {
@@ -50,7 +61,7 @@ public class SqlUtils {
 		SqlConnection sqlConn;
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
 			String EXTRelativeLocation = ((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
 			if ( !EXTRelativeLocation.equalsIgnoreCase("") && EXTRelativeLocation != null ) {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, EXTRelativeLocation, transform);

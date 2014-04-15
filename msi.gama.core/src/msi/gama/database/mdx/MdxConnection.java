@@ -1,44 +1,33 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MdxConnection.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.database.mdx;
 
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-
-import org.olap4j.Axis;
-import org.olap4j.Cell;
-import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
-import org.olap4j.CellSetAxisMetaData;
-import org.olap4j.CellSetMetaData;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapDatabaseMetaData;
-import org.olap4j.OlapException;
-import org.olap4j.OlapStatement;
-import org.olap4j.Position;
-import org.olap4j.PreparedOlapStatement;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
-import org.olap4j.metadata.Property;
+import org.olap4j.*;
+import org.olap4j.metadata.*;
 
 /*
- * @Author  
- *     TRUONG Minh Thai
- *     Fredric AMBLARD
- *     Benoit GAUDOU
- *     Christophe Sibertin-BLANC
+ * @Author
+ * TRUONG Minh Thai
+ * Fredric AMBLARD
+ * Benoit GAUDOU
+ * Christophe Sibertin-BLANC
  * 
  * 
- * SQLConnection:   supports the method
+ * SQLConnection: supports the method
  * - connectDB: make a connection to DBMS.
  * - selectDB: connect to DBMS and run executeQuery to select data from DBMS.
  * - executeUpdateDB: connect to DBMS and run executeUpdate to update/insert/delete/drop/create data
@@ -46,184 +35,194 @@ import org.olap4j.metadata.Property;
  * 
  * Created date: 18-Jan-2013
  * Modified:
- *     03-05-2013: add selectMDB methods
- *         
+ * 03-05-2013: add selectMDB methods
+ * 
  * Last Modified: 02-07-2013
  */
 public abstract class MdxConnection {
+
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
-	protected static final String MONDRIAN ="mondrian";
-	protected static final String MONDRIANXMLA ="mondrian/xmla";
-	protected static final String MSAS ="ssas/xmla"; //Micrsoft SQL Server Analysis Services
+	protected static final String MONDRIAN = "mondrian";
+	protected static final String MONDRIANXMLA = "mondrian/xmla";
+	protected static final String MSAS = "ssas/xmla"; // Micrsoft SQL Server Analysis Services
 	protected static final String MYSQL = "mysql";
 	protected static final String POSTGRES = "postgres";
 	protected static final String POSTGIS = "postgis";
 	protected static final String MSSQL = "sqlserver";
 	protected static final String SQLITE = "sqlite";
 
-	protected static final String GEOMETRYTYPE="GEOMETRY";
+	protected static final String GEOMETRYTYPE = "GEOMETRY";
 	protected static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
-	//static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	// static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 	protected static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
 	protected static final String SQLITEDriver = new String("org.sqlite.JDBC");
 	protected static final String POSTGRESDriver = new String("org.postgresql.Driver");
-		
-	protected String vender="";
-	protected String dbtype=POSTGRES;	
-	protected String url="";
-	protected String port="";
-	protected String dbName="";
-	protected String catalog="";
-	protected String userName="";
-	protected String password="";
-	
+
+	protected String vender = "";
+	protected String dbtype = POSTGRES;
+	protected String url = "";
+	protected String port = "";
+	protected String dbName = "";
+	protected String catalog = "";
+	protected String userName = "";
+	protected String password = "";
+
 	protected OlapConnection olapConnection;
-	//protected Connection connection;
 
-	public MdxConnection()
-	{
-	}
-	
-	public MdxConnection(String vender)
-	{
-		this.vender=vender;
-	}
-	public MdxConnection(String venderName,String database)
-	{
-		this.vender=venderName;
-		this.dbName=database;
-	}
-	public MdxConnection(String venderName,String dbtype,String url)
-	{
-		this.vender=venderName;
-		this.dbtype=dbtype;
-		this.dbName=url;
+	// protected Connection connection;
+
+	public MdxConnection() {}
+
+	public MdxConnection(final String vender) {
+		this.vender = vender;
 	}
 
-	public MdxConnection(String venderName,String url,String port,
-			String dbName, String userName,String password)  
-	{
-		this.vender=venderName;
-		this.url=url;
-		this.port=port;
-		this.dbName=dbName;
-		this.userName=userName;
-		this.password=password;	
+	public MdxConnection(final String venderName, final String database) {
+		this.vender = venderName;
+		this.dbName = database;
 	}
-	public MdxConnection(String venderName, String url,String port,
-			String dbName, String catalog, String userName,String password)  
-	{
-		this.vender=venderName;
-		this.url=url;
-		this.port=port;
-		this.dbName=dbName;
-		this.catalog=catalog;
-		this.userName=userName;
-		this.password=password;	
+
+	public MdxConnection(final String venderName, final String dbtype, final String url) {
+		this.vender = venderName;
+		this.dbtype = dbtype;
+		this.dbName = url;
 	}
-	
-	public MdxConnection(String venderName,String dbtype, String url,String port,
-			String dbName, String catalog, String userName,String password)  
-	{
-		this.vender=venderName;
-		this.dbtype=dbtype;
-		this.url=url;
-		this.port=port;
-		this.dbName=dbName;
-		this.catalog=catalog;
-		this.userName=userName;
-		this.password=password;	
+
+	public MdxConnection(final String venderName, final String url, final String port, final String dbName,
+		final String userName, final String password) {
+		this.vender = venderName;
+		this.url = url;
+		this.port = port;
+		this.dbName = dbName;
+		this.userName = userName;
+		this.password = password;
 	}
-	
-	/*
-	 * Make a connection to Multidimensional Database Server
-	 */
-	public abstract OlapConnection connectMDB() throws GamaRuntimeException ;
+
+	public MdxConnection(final String venderName, final String url, final String port, final String dbName,
+		final String catalog, final String userName, final String password) {
+		this.vender = venderName;
+		this.url = url;
+		this.port = port;
+		this.dbName = dbName;
+		this.catalog = catalog;
+		this.userName = userName;
+		this.password = password;
+	}
+
+	public MdxConnection(final String venderName, final String dbtype, final String url, final String port,
+		final String dbName, final String catalog, final String userName, final String password) {
+		this.vender = venderName;
+		this.dbtype = dbtype;
+		this.url = url;
+		this.port = port;
+		this.dbName = dbName;
+		this.catalog = catalog;
+		this.userName = userName;
+		this.password = password;
+	}
 
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
-	public abstract OlapConnection connectMDB(String dbName) throws GamaRuntimeException ;
+	public abstract OlapConnection connectMDB() throws GamaRuntimeException;
+
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
-	public abstract OlapConnection connectMDB(String dbName, String catalog) throws GamaRuntimeException ;
-	
-	public void setConnection(){
-		this.olapConnection=this.connectMDB();
-		
+	public abstract OlapConnection connectMDB(String dbName) throws GamaRuntimeException;
+
+	/*
+	 * Make a connection to Multidimensional Database Server
+	 */
+	public abstract OlapConnection connectMDB(String dbName, String catalog) throws GamaRuntimeException;
+
+	public void setConnection() {
+		this.olapConnection = this.connectMDB();
+
 	}
-	
-	public void setConnection(OlapConnection oConn){
-		this.olapConnection=oConn;
-		
+
+	public void setConnection(final OlapConnection oConn) {
+		this.olapConnection = oConn;
+
 	}
-	public OlapConnection getConnection(){
+
+	public OlapConnection getConnection() {
 		return this.olapConnection;
 	}
-	
-	public boolean isConnected(){
-		if (this.olapConnection!=null){
+
+	public boolean isConnected() {
+		if ( this.olapConnection != null ) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
-	
-	public String getVender(){
+
+	public String getVender() {
 		return this.vender;
 	}
-	public String getdbType(){
+
+	public String getdbType() {
 		return this.dbtype;
 	}
-	public String getdbName(){
+
+	public String getdbName() {
 		return this.dbName;
 	}
-	public String getURL(){
+
+	public String getURL() {
 		return this.url;
 	}
-	public String getport(){
+
+	public String getport() {
 		return this.port;
 	}
-	public String getCatalog(){
+
+	public String getCatalog() {
 		return this.catalog;
 	}
 
-	public String getUser(){
+	public String getUser() {
 		return this.userName;
 	}
-	public String getPassword(){
+
+	public String getPassword() {
 		return this.password;
 	}
 
-	public void setVender(String vender){
-		this.vender=vender;
-	}
-	public void setdbType(String dbType){
-		this.dbtype=dbType;
-	}
-	public void setdbName(String dbName){
-		this.dbName=dbName;
-	}
-	public void setURL(String url){
-		this.url=url;
-	}
-	public void setport(String port){
-		this.port=port;
-	}
-	public void setCatalog(String catalog){
-		this.catalog=catalog;
+	public void setVender(final String vender) {
+		this.vender = vender;
 	}
 
-	public void setUser(String userName){
-		this.userName=userName;
+	public void setdbType(final String dbType) {
+		this.dbtype = dbType;
 	}
-	public void getPassword(String password){
-		this.password=password;
+
+	public void setdbName(final String dbName) {
+		this.dbName = dbName;
 	}
-	
-	public String getDatabase() throws GamaRuntimeException
-	{
+
+	public void setURL(final String url) {
+		this.url = url;
+	}
+
+	public void setport(final String port) {
+		this.port = port;
+	}
+
+	public void setCatalog(final String catalog) {
+		this.catalog = catalog;
+	}
+
+	public void setUser(final String userName) {
+		this.userName = userName;
+	}
+
+	public void getPassword(final String password) {
+		this.password = password;
+	}
+
+	public String getDatabase() throws GamaRuntimeException {
 		try {
 			return olapConnection.getDatabase();
 		} catch (OlapException e) {
@@ -232,9 +231,8 @@ public abstract class MdxConnection {
 			throw GamaRuntimeException.error(e.toString());
 		}
 	}
-	
-	public OlapDatabaseMetaData getMetaData() throws GamaRuntimeException
-	{
+
+	public OlapDatabaseMetaData getMetaData() throws GamaRuntimeException {
 		try {
 			return olapConnection.getMetaData();
 		} catch (OlapException e) {
@@ -247,13 +245,12 @@ public abstract class MdxConnection {
 	/*
 	 * Select data source with connection was established
 	 */
-	
-	public CellSet select(String selectComm)
-	{
-		CellSet resultCellSet=null;
-		OlapConnection oConn=null;
+
+	public CellSet select(final String selectComm) {
+		CellSet resultCellSet = null;
+		OlapConnection oConn = null;
 		try {
-			oConn = (OlapConnection) connectMDB();
+			oConn = connectMDB();
 			resultCellSet = select(oConn, selectComm);
 			oConn.close();
 		} catch (SQLException e) {
@@ -262,14 +259,13 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(String selectComm, GamaList<Object> condition_values )
-	{
-		CellSet resultCellSet=null;
-		OlapConnection oConn=null;
+	public CellSet select(final String selectComm, final GamaList<Object> condition_values) {
+		CellSet resultCellSet = null;
+		OlapConnection oConn = null;
 		try {
-			//Connection conn = connectMDB();
-			String mdxStr= parseMdx(selectComm,  condition_values);
-			oConn=	(OlapConnection) connectMDB();
+			// Connection conn = connectMDB();
+			String mdxStr = parseMdx(selectComm, condition_values);
+			oConn = connectMDB();
 			resultCellSet = select(oConn, mdxStr);
 			oConn.close();
 		} catch (SQLException e) {
@@ -278,211 +274,212 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(OlapConnection connection, String selectComm) throws GamaRuntimeException 
-	{
-		 CellSet resultCellSet=null;
-		 OlapStatement statement;
+	public CellSet select(final OlapConnection connection, final String selectComm) throws GamaRuntimeException {
+		CellSet resultCellSet = null;
+		OlapStatement statement;
 		try {
-			statement = (OlapStatement) connection.createStatement();
-			resultCellSet=statement.executeOlapQuery(selectComm);
+			statement = connection.createStatement();
+			resultCellSet = statement.executeOlapQuery(selectComm);
 
-	        statement.close();
-	        //connection.close();
-		}catch (OlapException e){
+			statement.close();
+			// connection.close();
+		} catch (OlapException e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		 return resultCellSet;
+		return resultCellSet;
 	}
-	
+
 	/*
 	 * Select data source with connection was established
 	 */
-	public GamaList<Object> selectMDB(String selectComm,GamaList<Object> condition_values)  
-	{
-		 CellSet cellSet=select(selectComm, condition_values);
-		 return cellSet2List(cellSet);
-	}
-	public GamaList<Object> selectMDB(String selectComm)  
-	{
-		 CellSet cellSet=select(selectComm);
-		 return cellSet2List(cellSet);
-	}
-	public GamaList<Object> selectMDB(OlapConnection connection, String selectComm)  
-	{
-		 CellSet cellSet=select(connection,selectComm);
-		 return cellSet2List(cellSet);
+	public GamaList<Object> selectMDB(final String selectComm, final GamaList<Object> condition_values) {
+		CellSet cellSet = select(selectComm, condition_values);
+		return cellSet2List(cellSet);
 	}
 
-	public GamaList<Object> selectMDB(String onColumns, String onRows, String from){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from ;
-		return  selectMDB(mdxStr);
+	public GamaList<Object> selectMDB(final String selectComm) {
+		CellSet cellSet = select(selectComm);
+		return cellSet2List(cellSet);
 	}
-	 
-	public GamaList<Object> selectMDB(OlapConnection connection, String onColumns, String onRows, String from){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from ;
-		return  selectMDB(connection, mdxStr);
+
+	public GamaList<Object> selectMDB(final OlapConnection connection, final String selectComm) {
+		CellSet cellSet = select(connection, selectComm);
+		return cellSet2List(cellSet);
 	}
-	
-	public GamaList<Object> selectMDB(String onColumns, String onRows, String from, String where){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from + " WHERE " + where;
-		return  selectMDB(mdxStr);
+
+	public GamaList<Object> selectMDB(final String onColumns, final String onRows, final String from) {
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
+		return selectMDB(mdxStr);
 	}
-	
-	public GamaList<Object> selectMDB(OlapConnection connection, String onColumns, String onRows, String from, String where){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from + " WHERE " + where;
-		return  selectMDB(connection, mdxStr);
+
+	public GamaList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
+		final String from) {
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
+		return selectMDB(connection, mdxStr);
 	}
-	
-	
+
+	public GamaList<Object> selectMDB(final String onColumns, final String onRows, final String from, final String where) {
+		String mdxStr =
+			"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
+		return selectMDB(mdxStr);
+	}
+
+	public GamaList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
+		final String from, final String where) {
+		String mdxStr =
+			"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
+		return selectMDB(connection, mdxStr);
+	}
+
 	/*
-	 *  Format of Olap query result (GamaList<Object>:
-	 *      Result of OLAP query is transformed to Gamalist<Object> with order:
-	 *      (0): GamaList<String>: List of column names.
-	 *      (1): GamaList<Object>: Row data. it contains List of list and it look like a matrix with structure:
-	 *          (0): the first row data
-	 *          (1): the second row data 
-	 *          ...
-	 *          Each row data contains two element:
-	 *           (0): rowMembers (GamaList<String>: this is a list of members in the row. 
-	 *           (1): cellValues (Gamalist<Object>): This is a list of values in cell column or (we can call measures) 
-	 *      
+	 * Format of Olap query result (GamaList<Object>:
+	 * Result of OLAP query is transformed to Gamalist<Object> with order:
+	 * (0): GamaList<String>: List of column names.
+	 * (1): GamaList<Object>: Row data. it contains List of list and it look like a matrix with structure:
+	 * (0): the first row data
+	 * (1): the second row data
+	 * ...
+	 * Each row data contains two element:
+	 * (0): rowMembers (GamaList<String>: this is a list of members in the row.
+	 * (1): cellValues (Gamalist<Object>): This is a list of values in cell column or (we can call measures)
 	 */
-	public GamaList<Object> cellSet2List(CellSet cellSet){
-		 GamaList<Object> olapResult = new GamaList<Object>();
-		 olapResult.add(this.getColumnsName(cellSet));
-		 olapResult.add(this.getRowsData(cellSet));
-		 return olapResult;
+	public GamaList<Object> cellSet2List(final CellSet cellSet) {
+		GamaList<Object> olapResult = new GamaList<Object>();
+		olapResult.add(this.getColumnsName(cellSet));
+		olapResult.add(this.getRowsData(cellSet));
+		return olapResult;
 	}
-	
-	protected GamaList<Object> getColumnsName(CellSet cellSet){
+
+	protected GamaList<Object> getColumnsName(final CellSet cellSet) {
 		GamaList<Object> columnsName = new GamaList<Object>();
-		 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
-		  // get headings.
-		 CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
-	     for (Position position : columnsAxis.getPositions()) {
-	            Member measure = position.getMembers().get(0);
-	            columnsName.add(measure.getName());
-	      }
-		return columnsName;
-	     
-	}
-	protected GamaList<Object> getRowsData(CellSet cellSet){
-		GamaList<Object> rowsData = new GamaList<Object>();
-		
 		List<CellSetAxis> cellSetAxes = cellSet.getAxes();
-        CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
-        CellSetAxis rowsAxis = cellSetAxes.get(Axis.ROWS.axisOrdinal());
-        int cellOrdinal = 0;
-		if (DEBUG){
-			List<Hierarchy> h=rowsAxis.getAxisMetaData().getHierarchies();
-			int n=h.size();
-			for (int i=0; i<n;++i){
-				GuiUtils.debug("MdxConnection.getRowsData.getCaption:"+h.get(i).getCaption()); 
+		// get headings.
+		CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
+		for ( Position position : columnsAxis.getPositions() ) {
+			Member measure = position.getMembers().get(0);
+			columnsName.add(measure.getName());
+		}
+		return columnsName;
+
+	}
+
+	protected GamaList<Object> getRowsData(final CellSet cellSet) {
+		GamaList<Object> rowsData = new GamaList<Object>();
+
+		List<CellSetAxis> cellSetAxes = cellSet.getAxes();
+		CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
+		CellSetAxis rowsAxis = cellSetAxes.get(Axis.ROWS.axisOrdinal());
+		int cellOrdinal = 0;
+		if ( DEBUG ) {
+			List<Hierarchy> h = rowsAxis.getAxisMetaData().getHierarchies();
+			int n = h.size();
+			for ( int i = 0; i < n; ++i ) {
+				GuiUtils.debug("MdxConnection.getRowsData.getCaption:" + h.get(i).getCaption());
 			}
-		     
+
 		}
 
-        for (Position rowPosition : rowsAxis.getPositions()) {
-        	GamaList<Object> row = new GamaList<Object>();
-        	GamaList<Object> rowMembers = new GamaList<Object>();
-            // get member on each row
-            for (Member member : rowPosition.getMembers()) {
-            	rowMembers.add(member.getName());
-            }
-            // get value of the cell in each column.
-            GamaList<Object> cellValues = new GamaList<Object>();
-            for (Position columnPosition : columnsAxis.getPositions()) {
-                // Access the cell via its ordinal. The ordinal is kept in step
-                // because we increment the ordinal once for each row and
-                // column.
-                Cell cell = cellSet.getCell(cellOrdinal);
-                // Just for kicks, convert the ordinal to a list of coordinates.
-                // The list matches the row and column positions.
-                List<Integer> coordList =
-                    cellSet.ordinalToCoordinates(cellOrdinal);
-                assert coordList.get(0) == rowPosition.getOrdinal();
-                assert coordList.get(1) == columnPosition.getOrdinal();
+		for ( Position rowPosition : rowsAxis.getPositions() ) {
+			GamaList<Object> row = new GamaList<Object>();
+			GamaList<Object> rowMembers = new GamaList<Object>();
+			// get member on each row
+			for ( Member member : rowPosition.getMembers() ) {
+				rowMembers.add(member.getName());
+			}
+			// get value of the cell in each column.
+			GamaList<Object> cellValues = new GamaList<Object>();
+			for ( Position columnPosition : columnsAxis.getPositions() ) {
+				// Access the cell via its ordinal. The ordinal is kept in step
+				// because we increment the ordinal once for each row and
+				// column.
+				Cell cell = cellSet.getCell(cellOrdinal);
+				// Just for kicks, convert the ordinal to a list of coordinates.
+				// The list matches the row and column positions.
+				List<Integer> coordList = cellSet.ordinalToCoordinates(cellOrdinal);
+				assert coordList.get(0) == rowPosition.getOrdinal();
+				assert coordList.get(1) == columnPosition.getOrdinal();
 
-                ++cellOrdinal;
-                cellValues.add(cell.getFormattedValue());
-            }
-            // Add member and value to row 
-            row.add(rowMembers);
-            row.add(cellValues);
-            // Add row to rowsData
-            rowsData.add(row);
-        }
-        return rowsData;
-	     
+				++cellOrdinal;
+				cellValues.add(cell.getFormattedValue());
+			}
+			// Add member and value to row
+			row.add(rowMembers);
+			row.add(cellValues);
+			// Add row to rowsData
+			rowsData.add(row);
+		}
+		return rowsData;
+
 	}
+
 	/*
-	 *  Get all column names of OLAP query
+	 * Get all column names of OLAP query
 	 */
-	public GamaList<Object> getAllColummsName(GamaList<Object> olapResult){
+	public GamaList<Object> getAllColummsName(final GamaList<Object> olapResult) {
 		return (GamaList<Object>) olapResult.get(0);
 	}
+
 	/*
-	 *  Get all column names of OLAP query
+	 * Get all column names of OLAP query
 	 */
-	public Object getColummNameAt(GamaList<Object> olapResult, int cIndex){
+	public Object getColummNameAt(final GamaList<Object> olapResult, final int cIndex) {
 		return this.getAllColummsName(olapResult).get(cIndex);
 	}
 
 	/*
-	 * Get  all rows data 
+	 * Get all rows data
 	 */
-	public GamaList<Object> getAllRowsData(GamaList<Object> olapResult){
+	public GamaList<Object> getAllRowsData(final GamaList<Object> olapResult) {
 		return (GamaList<Object>) olapResult.get(1);
-	}	
+	}
+
 	/*
-	 * Get  row data (row members + cell values)  at row index(rIndex) 
+	 * Get row data (row members + cell values) at row index(rIndex)
 	 */
-	public GamaList<Object> getRowDataAt(GamaList<Object> olapResult, int rIndex){
+	public GamaList<Object> getRowDataAt(final GamaList<Object> olapResult, final int rIndex) {
 		return (GamaList<Object>) getAllRowsData(olapResult).get(rIndex);
 	}
 
 	/*
-	 * Get all row members at row(index) 
+	 * Get all row members at row(index)
 	 */
-	public GamaList<Object> getAllMembersAt(GamaList<Object> olapResult, int rIndex){
-		return (GamaList<Object>) getRowDataAt(olapResult,rIndex).get(0);
+	public GamaList<Object> getAllMembersAt(final GamaList<Object> olapResult, final int rIndex) {
+		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(0);
 	}
+
 	/*
-	 * Get  row member at  row index:rIndex ,member index:mIndex) 
+	 * Get row member at row index:rIndex ,member index:mIndex)
 	 */
-	public Object getRowMemberAt(GamaList<Object> olapResult, int rIndex, int mIndex){
-		return (Object) getAllMembersAt(olapResult,rIndex).get(mIndex);
+	public Object getRowMemberAt(final GamaList<Object> olapResult, final int rIndex, final int mIndex) {
+		return getAllMembersAt(olapResult, rIndex).get(mIndex);
 	}
-	
+
 	/*
-	 * Get all cell values at index row 
+	 * Get all cell values at index row
 	 */
-	public GamaList<Object> getAllCellValuesAt(GamaList<Object> olapResult, int rIndex){
-		return (GamaList<Object>) getRowDataAt(olapResult,rIndex).get(1);
+	public GamaList<Object> getAllCellValuesAt(final GamaList<Object> olapResult, final int rIndex) {
+		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(1);
 	}
+
 	/*
-	 * Get  cell value at  row index:rIndex ,cell index:cIndex) 
+	 * Get cell value at row index:rIndex ,cell index:cIndex)
 	 */
-	public Object getCellValueAt(GamaList<Object> olapResult, int rIndex, int cIndex){
-		return (Object) getAllCellValuesAt(olapResult,rIndex).get(cIndex);
+	public Object getCellValueAt(final GamaList<Object> olapResult, final int rIndex, final int cIndex) {
+		return getAllCellValuesAt(olapResult, rIndex).get(cIndex);
 	}
-	
+
 	/*
 	 * Get cubes of OlapConnection
 	 */
-	public NamedList<Cube> getCubes(OlapConnection connection){
-		NamedList<Cube> cubes=null;
+	public NamedList<Cube> getCubes(final OlapConnection connection) {
+		NamedList<Cube> cubes = null;
 		try {
-			 cubes = connection.getOlapSchema().getCubes();
-			
+			cubes = connection.getOlapSchema().getCubes();
+
 		} catch (OlapException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -490,134 +487,128 @@ public abstract class MdxConnection {
 		return cubes;
 	}
 
-	public void getCellSetMetaData(CellSet cellSet){
-		CellSetMetaData cellSetMD=null;
-		NamedList<CellSetAxisMetaData> cellSetAxisMD=null;
-		NamedList<Property> properties =null;
-		Cube cube=null;
-		CellSetAxisMetaData filterAxisMD=null;
+	public void getCellSetMetaData(final CellSet cellSet) {
+		CellSetMetaData cellSetMD = null;
+		NamedList<CellSetAxisMetaData> cellSetAxisMD = null;
+		NamedList<Property> properties = null;
+		Cube cube = null;
+		CellSetAxisMetaData filterAxisMD = null;
 		try {
-			cellSetMD= cellSet.getMetaData();
-			cellSetAxisMD=cellSetMD.getAxesMetaData(); //MAP<K,V>
-			properties=cellSetMD.getCellProperties();
-			cube=cellSetMD.getCube();
-			// print 
+			cellSetMD = cellSet.getMetaData();
+			cellSetAxisMD = cellSetMD.getAxesMetaData(); // MAP<K,V>
+			properties = cellSetMD.getCellProperties();
+			cube = cellSetMD.getCube();
+			// print
 			System.out.println("CellSetAxis Meta Data");
-			int m=cellSetAxisMD.size();
-			for (int i=0;i<m;i++){
-				CellSetAxisMetaData cellMD=cellSetAxisMD.get(i);
-				List<Hierarchy> hierarchy =cellMD.getHierarchies();
-				List<Property> property=cellMD.getProperties();
+			int m = cellSetAxisMD.size();
+			for ( int i = 0; i < m; i++ ) {
+				CellSetAxisMetaData cellMD = cellSetAxisMD.get(i);
+				List<Hierarchy> hierarchy = cellMD.getHierarchies();
+				List<Property> property = cellMD.getProperties();
 				System.out.println("Hierarchy");
-				int n=hierarchy.size();
-				for (int j=0;j<n;++j){
-					System.out.print(hierarchy.get(j).getName()+"\t");
+				int n = hierarchy.size();
+				for ( int j = 0; j < n; ++j ) {
+					System.out.print(hierarchy.get(j).getName() + "\t");
 				}
 				System.out.println("\n Properties");
-				n=property.size();
-				for (int j=0;j<n;++j){
-					System.out.print(property.get(j).getName()+"\t");
+				n = property.size();
+				for ( int j = 0; j < n; ++j ) {
+					System.out.print(property.get(j).getName() + "\t");
 				}
 
-				
 			}
 			System.out.println("\n End Cell Set Meta Data ------------");
-			System.out.println("Cell Set Axis Meta Data:"+cellSetAxisMD.iterator().toString());
-			System.out.println("propertis Meta Data:"+properties.iterator().toString());
-			System.out.println("cubes Meta Data:"+cube.toString());
+			System.out.println("Cell Set Axis Meta Data:" + cellSetAxisMD.iterator().toString());
+			System.out.println("propertis Meta Data:" + properties.iterator().toString());
+			System.out.println("cubes Meta Data:" + cube.toString());
 		} catch (OlapException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	/*
-	 *  print all row data
-	 */
-//	public void printOlapResul(GamaList<Object> rowsData){
-//        int m=rowsData.size();
-//        for (int i=0; i<m;++i){
-//       		System.out.print("row"+ i+":\t");
-//       		GamaList<Object> row= (GamaList<Object>) rowsData.get(i);
-//       		GamaList<Object> members= (GamaList<Object>) row.get(0);
-//       		GamaList<Object> values= (GamaList<Object>) row.get(1);
-//       		// print member
-//       		int k = members.size();
-//       		for (int j=0;j<k;j++){
-//       			System.out.print(members.get(j).toString()+"\t");
-//       		}
-//       		//print value
-//       		int l = values.size();
-//       		for (int j=0;j<l;j++){
-//       			System.out.print(values.get(j).toString()+"\t");
-//       		}
-//       		System.out.println();
-//       	}
-//	}
-//	
-	/*
-	 *  print all row data
-	 */
-	public void printRowsData(GamaList<Object> olapResult){
-		
-        int m=this.getAllRowsData(olapResult).size();
-        for (int rIndex=0; rIndex<m;++rIndex){
-       		System.out.print("row"+ rIndex+":\t");
-       		// print member
-       		int k = this.getAllMembersAt(olapResult, rIndex).size();
-       		for (int mIndex=0;mIndex<k;mIndex++){
-       			System.out.print(this.getRowMemberAt(olapResult, rIndex, mIndex).toString()+"\t");
-       		}
-       		//print value
-       		int l = this.getAllCellValuesAt(olapResult, rIndex).size();
-       		for (int cIndex=0;cIndex<l;++cIndex){
-       			System.out.print(this.getCellValueAt(olapResult, rIndex, cIndex).toString()+"\t");
-       		}
-       		System.out.println();
-       	}
-	}
-	/*
-	 *  print all column names
-	 */
-	
-	public void prinColumnsName(GamaList<Object> olapResult){
-		int m=this.getAllColummsName(olapResult).size();
-		for (int cIndex=0; cIndex<m; ++ cIndex){
-			System.out.print(this.getColummNameAt(olapResult, cIndex).toString()+"\t");
-		}
-		
-	}
-	
-	
-	
-	public void prinCubesName(NamedList<Cube> cubes){
-		int m=cubes.size();
-		for (int i=0; i<m; ++ i){
-			List<Cube> cube=(List<Cube>) cubes.get(i);
-			int n=cube.size();
-			System.out.print(cube.get(i).toString()+"\t");
-		}
-		
-	}
 
-	
-	public String parseMdx(String queryStr, GamaList<Object> condition_values)
-			throws GamaRuntimeException {
-			
-			int condition_count = condition_values.size();
-				// set value for each condition
-			for ( int i = 0; i < condition_count; i++ ) {
+	/*
+	 * print all row data
+	 */
+	// public void printOlapResul(GamaList<Object> rowsData){
+	// int m=rowsData.size();
+	// for (int i=0; i<m;++i){
+	// System.out.print("row"+ i+":\t");
+	// GamaList<Object> row= (GamaList<Object>) rowsData.get(i);
+	// GamaList<Object> members= (GamaList<Object>) row.get(0);
+	// GamaList<Object> values= (GamaList<Object>) row.get(1);
+	// // print member
+	// int k = members.size();
+	// for (int j=0;j<k;j++){
+	// System.out.print(members.get(j).toString()+"\t");
+	// }
+	// //print value
+	// int l = values.size();
+	// for (int j=0;j<l;j++){
+	// System.out.print(values.get(j).toString()+"\t");
+	// }
+	// System.out.println();
+	// }
+	// }
+	//
+	/*
+	 * print all row data
+	 */
+	public void printRowsData(final GamaList<Object> olapResult) {
 
-				queryStr=queryStr.replaceFirst("\\?", condition_values.get(i).toString());
+		int m = this.getAllRowsData(olapResult).size();
+		for ( int rIndex = 0; rIndex < m; ++rIndex ) {
+			System.out.print("row" + rIndex + ":\t");
+			// print member
+			int k = this.getAllMembersAt(olapResult, rIndex).size();
+			for ( int mIndex = 0; mIndex < k; mIndex++ ) {
+				System.out.print(this.getRowMemberAt(olapResult, rIndex, mIndex).toString() + "\t");
 			}
-	
-			if ( DEBUG ) {
-				GuiUtils.debug("Parsed Mdx:" + queryStr);
+			// print value
+			int l = this.getAllCellValuesAt(olapResult, rIndex).size();
+			for ( int cIndex = 0; cIndex < l; ++cIndex ) {
+				System.out.print(this.getCellValueAt(olapResult, rIndex, cIndex).toString() + "\t");
 			}
-			return queryStr;
+			System.out.println();
+		}
+	}
+
+	/*
+	 * print all column names
+	 */
+
+	public void prinColumnsName(final GamaList<Object> olapResult) {
+		int m = this.getAllColummsName(olapResult).size();
+		for ( int cIndex = 0; cIndex < m; ++cIndex ) {
+			System.out.print(this.getColummNameAt(olapResult, cIndex).toString() + "\t");
+		}
 
 	}
-	
-	
-	
+
+	public void prinCubesName(final NamedList<Cube> cubes) {
+		int m = cubes.size();
+		for ( int i = 0; i < m; ++i ) {
+			List<Cube> cube = (List<Cube>) cubes.get(i);
+			int n = cube.size();
+			System.out.print(cube.get(i).toString() + "\t");
+		}
+
+	}
+
+	public String parseMdx(String queryStr, final GamaList<Object> condition_values) throws GamaRuntimeException {
+
+		int condition_count = condition_values.size();
+		// set value for each condition
+		for ( int i = 0; i < condition_count; i++ ) {
+
+			queryStr = queryStr.replaceFirst("\\?", condition_values.get(i).toString());
+		}
+
+		if ( DEBUG ) {
+			GuiUtils.debug("Parsed Mdx:" + queryStr);
+		}
+		return queryStr;
+
+	}
+
 }// end class
