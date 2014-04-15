@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 23 janv. 2012
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaClassLoader.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.compilation;
 
 import java.io.IOException;
@@ -32,8 +39,7 @@ public class GamaClassLoader extends ClassLoader {
 		}
 
 		@Override
-		protected synchronized Class loadClass(final String name, final boolean resolve)
-			throws ClassNotFoundException {
+		protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
 			Class clazz = findClass(name);
 			if ( resolve ) {
 				resolveClass(clazz);
@@ -51,7 +57,7 @@ public class GamaClassLoader extends ClassLoader {
 
 	}
 
-	public class BundleClassLoader extends ClassLoader {
+	public static class BundleClassLoader extends ClassLoader {
 
 		private final Bundle bundle;
 
@@ -72,11 +78,9 @@ public class GamaClassLoader extends ClassLoader {
 			try {
 				return bundle.loadClass(name);
 			} catch (ClassNotFoundException cnfe) {
-				throw new ClassNotFoundException(name + " not found in [" +
-					bundle.getSymbolicName() + "]", cnfe);
+				throw new ClassNotFoundException(name + " not found in [" + bundle.getSymbolicName() + "]", cnfe);
 			} catch (NoClassDefFoundError ncdfe) {
-				throw new ClassNotFoundException(name + " not defined in [" +
-					bundle.getSymbolicName() + "]", ncdfe);
+				throw new ClassNotFoundException(name + " not defined in [" + bundle.getSymbolicName() + "]", ncdfe);
 			}
 		}
 
@@ -96,8 +100,7 @@ public class GamaClassLoader extends ClassLoader {
 		}
 
 		@Override
-		protected synchronized Class loadClass(final String name, final boolean resolve)
-			throws ClassNotFoundException {
+		protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
 			Class clazz = findClass(name);
 			if ( resolve ) {
 				resolveClass(clazz);
@@ -107,7 +110,7 @@ public class GamaClassLoader extends ClassLoader {
 
 	}
 
-	private static GamaClassLoader loader;
+	private volatile static GamaClassLoader loader;
 	private final List<ClassLoader> loaders = new ArrayList();
 
 	public static GamaClassLoader getInstance() {
@@ -179,8 +182,7 @@ public class GamaClassLoader extends ClassLoader {
 	}
 
 	@Override
-	protected synchronized Class loadClass(final String name, final boolean resolve)
-		throws ClassNotFoundException {
+	protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
 		Class clazz = findClass(name);
 		if ( resolve ) {
 			resolveClass(clazz);

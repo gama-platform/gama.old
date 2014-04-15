@@ -1,7 +1,20 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'AbstractGamlAdditions.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
@@ -11,7 +24,6 @@ import msi.gama.util.file.IGamaFile;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
-import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
 import msi.gaml.factories.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
@@ -27,12 +39,12 @@ import msi.gaml.types.*;
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public final static List<String> ARCHITECTURES = new ArrayList();
-	private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS = new HashMap();
-	private final static Map<String, Class> SKILL_CLASSES = new HashMap();
+	private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS = new THashMap();
+	private final static Map<String, Class> SKILL_CLASSES = new THashMap();
 	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
-	private final static Map<Class, ISkill> SKILL_INSTANCES = new HashMap();
-	private final static Map<Class, List<IDescription>> ADDITIONS = new HashMap();
-	private final static Map<Class, List<TypeFieldExpression>> FIELDS = new HashMap();
+	private final static Map<Class, ISkill> SKILL_INSTANCES = new THashMap();
+	private final static Map<Class, List<IDescription>> ADDITIONS = new THashMap();
+	private final static Map<Class, List<OperatorProto>> FIELDS = new THashMap();
 
 	protected static String[] S(final String ... strings) {
 		return strings;
@@ -54,6 +66,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return Types.get(c);
 	}
 
+	protected static String Ti(final Class c) {
+		return String.valueOf(Types.get(c).id());
+	}
+
+	protected static String Ts(final Class c) {
+		return Types.get(c).toString();
+	}
+
 	protected static IType T(final String c) {
 		return Types.get(c);
 	}
@@ -62,7 +82,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return Types.get(c);
 	}
 
-	public final static Map<Integer, Set<String>> VARTYPE2KEYWORDS = new LinkedHashMap();
+	public final static Map<Integer, Set<String>> VARTYPE2KEYWORDS = new TOrderedHashMap();
 
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
 		CONSTANTS.add(string);
@@ -71,6 +91,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String ... skills) {
 		SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
+		DescriptionFactory.addSpeciesNameAsType(name);
 		tempSpecies.put(name, proto);
 
 	}
@@ -140,6 +161,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			}
 		}
 		for ( IDescription d : additions ) {
+			// d.resetOriginName();
 			d.setOriginName("built-in species " + name);
 		}
 		desc.copyJavaAdditions();
@@ -162,14 +184,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	final static Map<String, SpeciesProto> tempSpecies = new LinkedHashMap();
+	final static Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper, final String[] s) {
+	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper,
+		final int innerType, final int keyType, final int contentType, final String[] s) {
 		GamaFileType.addFileTypeDefinition(string, clazz, helper, s);
 	}
 
@@ -201,14 +224,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// combinations and doc missing
-	protected void _symbol(final Class c, final IDescriptionValidator validator, final int sKind, final boolean remote,
-		final boolean args, final boolean scope, final boolean sequence, final boolean unique,
+	protected void _symbol(final Class c, final int docIndex, final IDescriptionValidator validator, final int sKind,
+		final boolean remote, final boolean args, final boolean scope, final boolean sequence, final boolean unique,
 		final boolean name_unique, final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd,
 		final String omissible, final String[][] combinations, final ISymbolConstructor sc, final String ... names) {
 
-		Set<String> contextKeywords = new HashSet();
-		Set<Integer> contextKinds = new HashSet();
-		final Map<String, FacetProto> facets = new HashMap();
+		Set<String> contextKeywords = new THashSet();
+		TIntHashSet contextKinds = new TIntHashSet();
+		final Map<String, FacetProto> facets = new THashMap();
 		if ( fmd != null ) {
 			for ( FacetProto f : fmd ) {
 				facets.put(f.name, f);
@@ -244,55 +267,65 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 		SymbolProto md =
 			new SymbolProto(sequence, args, sKind, !scope, facets, omissible, combinations, contextKeywords,
-				contextKinds, remote, unique, name_unique, sc, validator);
+				contextKinds, remote, unique, name_unique, sc, validator, docIndex);
+		if ( names == null || names.length == 0 ) {
+			md.setName("variable declaration");
+		} else {
+			md.setName(names[0]);
+		}
 		DescriptionFactory.addProto(md, keywords);
 	}
 
 	public void _iterator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
 		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		final GamlElementDocumentation doc) {
+		final int doc) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
 		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, index, helper, doc);
 	}
 
 	public void _operator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
 		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		final GamlElementDocumentation doc) {
+		final int doc) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
-
-			if ( !OPERATORS.containsKey(kw) ) {
-				OPERATORS.put(kw, new GamaMap());
-			}
-			Map<Signature, IOperator> map = OPERATORS.get(kw);
+			OPERATORS.putIfAbsent(kw, new THashMap());
+			Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if ( !map.containsKey(signature) ) {
-				IOperator exp;
+				OperatorProto proto;
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					exp =
-						new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
-							IExpression.class.equals(classes[0]), signature);
+					proto =
+						new OperatorProto(kw, helper, c, false, doc, rt, signature,
+							IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes);
+					// new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
+					// IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
 					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType() ) {
-						exp =
-							new BinaryVarOperator(rt, helper, c, t, content, index,
-								IExpression.class.equals(classes[1]), expectedContentTypes, signature);
+						proto =
+							new OperatorProto(kw, helper, c, true, doc, rt, signature,
+								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
+						// new BinaryVarOperator(rt, helper, c, t, content, index,
+						// IExpression.class.equals(classes[1]), expectedContentTypes, signature);
 					} else {
-						exp =
-							new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
-								expectedContentTypes, signature);
+						proto =
+							new OperatorProto(kw, helper, c, false, doc, rt, signature,
+								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
+						// new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
+						// expectedContentTypes, signature);
 					}
 				} else {
-					exp =
-						new NAryOperator(rt, helper, c, t, content, index,
-							IExpression.class.equals(classes[classes.length - 1]), expectedContentTypes, signature);
+					proto =
+						new OperatorProto(kw, helper, c, false, doc, rt, signature,
+							IExpression.class.equals(classes[classes.length - 1]), t, content, index,
+							expectedContentTypes);
+					// new NAryOperator(rt, helper, c, t, content, index,
+					// IExpression.class.equals(classes[classes.length - 1]), expectedContentTypes, signature);
 					// FIXME The lazy attribute is completely wrong here: it only applies to the last argument
 				}
-				// FIXME Need to create an operator description or prototype rather than copying
-				exp.setName(kw);
-				exp.setDoc(doc);
-				map.put(signature, exp);
+				// exp.setName(kw);
+				// exp.setDoc(doc);
+				map.put(signature, proto);
 			}
 		}
 
@@ -305,7 +338,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		ADDITIONS.get(clazz).add(desc);
 	}
 
-	private void add(final Class clazz, final TypeFieldExpression expr) {
+	private void add(final Class clazz, final OperatorProto expr) {
 		if ( !FIELDS.containsKey(clazz) ) {
 			FIELDS.put(clazz, new ArrayList());
 		}
@@ -319,7 +352,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		((VariableDescription) desc).addHelpers(get, init, set);
 	}
 
-	protected void _field(final Class clazz, final TypeFieldExpression getter) {
+	protected void _field(final Class clazz, final OperatorProto getter) {
 		add(clazz, getter);
 	}
 
@@ -370,16 +403,16 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return ADDITIONS.get(clazz);
 	}
 
-	public static Map<String, TypeFieldExpression> getAllFields(final Class clazz) {
+	public static Map<String, OperatorProto> getAllFields(final Class clazz) {
 		List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
-		Map<String, TypeFieldExpression> fieldsMap = new LinkedHashMap();
+		Map<String, OperatorProto> fieldsMap = new TOrderedHashMap();
 		for ( Class c : classes ) {
-			List<TypeFieldExpression> fields = FIELDS.get(c);
+			List<OperatorProto> fields = FIELDS.get(c);
 			if ( fields == null ) {
 				continue;
 			}
-			for ( TypeFieldExpression desc : fields ) {
-				fieldsMap.put(desc.getName(), desc);
+			for ( OperatorProto desc : fields ) {
+				fieldsMap.put(desc.name, desc);
 			}
 		}
 		return fieldsMap;
@@ -440,9 +473,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return skills;
 	}
 
-	public static Collection<TypeFieldExpression> getAllFields() {
-		Set<TypeFieldExpression> result = new HashSet();
-		for ( List<TypeFieldExpression> list : FIELDS.values() ) {
+	public static Collection<OperatorProto> getAllFields() {
+		Set<OperatorProto> result = new HashSet();
+		for ( List<OperatorProto> list : FIELDS.values() ) {
 			result.addAll(list);
 		}
 		return result;
@@ -519,7 +552,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 */
 	public static boolean isUnaryOperator(final String name) {
 		if ( !OPERATORS.containsKey(name) ) { return false; }
-		Map<Signature, IOperator> map = OPERATORS.get(name);
+		Map<Signature, OperatorProto> map = OPERATORS.get(name);
 		for ( Signature s : map.keySet() ) {
 			if ( s.isUnary() ) { return true; }
 		}

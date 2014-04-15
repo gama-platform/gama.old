@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 9 sept. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'SyntacticFactory.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
@@ -17,18 +24,22 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class SyntacticFactory {
 
-	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren) {
-		return create(keyword, null, statement, withChildren);
+	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren,
+		final Object ... data) {
+		return create(keyword, null, statement, withChildren, data);
 	}
 
-	public static ISyntacticElement create(final String keyword, final Facets facets, final boolean withChildren) {
-		return create(keyword, facets, null, withChildren);
+	public static ISyntacticElement create(final String keyword, final Facets facets, final boolean withChildren,
+		final Object ... data) {
+		return create(keyword, facets, null, withChildren, data);
 	}
 
 	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement,
-		final boolean withChildren) {
+		final boolean withChildren, final Object ... data) {
 		if ( keyword.equals(GLOBAL) ) {
 			return new SyntacticGlobalElement(keyword, facets, statement);
+		} else if ( keyword.equals(MODEL) ) {
+			return new SyntacticModelElement(keyword, facets, statement, data);
 		} else if ( keyword.equals(SPECIES) || keyword.equals(GRID) ) {
 			return new SyntacticSpeciesElement(keyword, facets, statement);
 		} else if ( keyword.equals(EXPERIMENT) ) { return new SyntacticExperimentElement(keyword, facets, statement); }
