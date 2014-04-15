@@ -322,6 +322,15 @@ public abstract class AbstractTopology implements ITopology {
 		final double sin = distance * Maths.sin(direction);
 		return normalizeLocation(new GamaPoint(source.getX() + cos, source.getY() + sin), nullIfOutside);
 	}
+	
+	@Override
+	public ILocation getDestination3D(final ILocation source, final int heading,final int pitch, final double distance,
+		final boolean nullIfOutside) {		
+		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
+		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
+		final double z = distance * Maths.sin(pitch);
+		return normalizeLocation(new GamaPoint(source.getX() + x, source.getY() + y,  source.getZ() + z),nullIfOutside);
+	}
 
 	@Override
 	public ITopology copy(final IScope scope) throws GamaRuntimeException {

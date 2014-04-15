@@ -163,6 +163,18 @@ public class AmorphousTopology implements ITopology {
 		return new GamaPoint(source.getX() + cos, source.getY() + sin);
 
 	}
+	
+	/**
+	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
+	 */
+	@Override
+	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch, final double distance,
+		final boolean nullIfOutside) {
+		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
+		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
+		final double z = distance * Maths.sin(pitch);
+		return new GamaPoint(source.getX() + x, source.getY() + y,  source.getZ() + z);
+	}
 
 	/**
 	 * @see msi.gama.environment.ITopology#getRandomLocation()

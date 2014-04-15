@@ -112,6 +112,21 @@ public interface ITopology extends IValue {
 	 */
 	public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
 		boolean nullIfOutside);
+	
+	/**
+	 * Return the location corresponding to a displacement from source, with an angle (in degrees)
+	 * given by direction and a given distance.
+	 * The returned point is a valid local location of this topology or null.
+	 * 
+	 * @param source the point from which the destination is computed
+	 * @param direction an angle in degrees (between 0 and 360 -- other values will be normalized
+	 * @param distance the distance that should separate the actual location and the destination
+	 * @param nullIfOutside tells wether to return the destination point or null if
+	 *            the destination is outside the topology
+	 * @return a point or null if no random locations are available
+	 */
+	public abstract ILocation getDestination3D(final ILocation source, final int heading, final int pitch ,final double distance,
+		boolean nullIfOutside);
 
 	/**
 	 * Return a random location inside the bounds of the environment's shape.

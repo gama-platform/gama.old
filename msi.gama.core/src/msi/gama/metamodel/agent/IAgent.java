@@ -122,6 +122,14 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public void setHeading(Integer heading);
 
 	public Integer getHeading();
+	
+	public void setPitch(Integer pitch);
+
+	public Integer getPitch();
+	
+	public void setRoll(Integer roll);
+
+	public Integer getRoll();
 
 	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 

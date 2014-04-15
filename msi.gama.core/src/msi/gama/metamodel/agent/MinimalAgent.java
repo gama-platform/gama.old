@@ -396,6 +396,38 @@ public abstract class MinimalAgent implements IAgent {
 	public void setHeading(final Integer newHeading) {
 		setAttribute(IKeyword.HEADING, newHeading);
 	}
+	
+	@Override
+	public Integer getPitch() {
+		Integer p = (Integer) getAttribute(IKeyword.PITCH);
+		if ( p == null ) {
+			p = RandomUtils.getDefault().between(0, 359);
+			setPitch(p);
+		}
+		return Maths.checkHeading(p);
+	}
+
+	@Override
+	public void setPitch(final Integer newPitch) {
+		setAttribute(IKeyword.PITCH, newPitch);
+	}
+	
+	@Override
+	public Integer getRoll() {
+		Integer r = (Integer) getAttribute(IKeyword.ROLL);
+		if ( r == null ) {
+			r = RandomUtils.getDefault().between(0, 359);
+			setRoll(r);
+		}
+		return Maths.checkHeading(r);
+	}
+
+	@Override
+	public void setRoll(final Integer newRoll) {
+		setAttribute(IKeyword.ROLL, newRoll);
+	}
+	
+	
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {

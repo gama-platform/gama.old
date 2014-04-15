@@ -243,6 +243,7 @@ public interface IKeyword {
 	public static final String MOUSE_UP = "mouse_up";
 	public static final String MOUSE_CLICKED = "mouse_click";
 	public static final String MOVING_SKILL = "moving";
+	public static final String MOVING_3D_SKILL = "moving3D";
 	public final static String MULTIPLY = "*";
 	public final static String MULTICORE = "multicore";
 	public static final String MY = "my";
@@ -274,6 +275,7 @@ public interface IKeyword {
 	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
 	public static final String PERTINENCE = "pertinence";
 	public static final String PIE = "pie";
+	public static final String PITCH = "pitch";
 	public static final String PLACES = "places";
 	public final static String PLUS = "+";
 	public final static String POLYGONMODE = "polygonmode";
@@ -305,6 +307,7 @@ public interface IKeyword {
 	public static final String RIGHT = "right";
 	public static final String RING = "ring";
 	public static final String RNG = "rng";
+	public static final String ROLL = "roll";
 	public static final String ROUNDED = "rounded";
 	public static final String ROTATE = "rotate";
 	public static final String SAVE = "save";
