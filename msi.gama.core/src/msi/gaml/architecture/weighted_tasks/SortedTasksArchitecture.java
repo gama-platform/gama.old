@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 22 dŽc. 2011
+/*********************************************************************************************
  * 
- */
+ *
+ * 'SortedTasksArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
@@ -15,7 +22,7 @@ import msi.gaml.compilation.ISymbol;
  * the order specified by their weights (biggest first)
  * 
  * @author drogoul
- * @since 22 dŽc. 2011
+ * @since 22 dï¿½c. 2011
  * 
  */
 @skill(name = SortedTasksArchitecture.ST)

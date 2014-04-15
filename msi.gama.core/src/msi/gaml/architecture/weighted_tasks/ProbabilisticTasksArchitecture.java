@@ -1,12 +1,19 @@
-/**
- * Created by drogoul, 22 dŽc. 2011
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'ProbabilisticTasksArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 
@@ -16,7 +23,7 @@ import msi.gaml.compilation.ISymbol;
  * have the same weight, one is randomly chosen each step.
  * 
  * @author drogoul
- * @since 22 dŽc. 2011
+ * @since 22 dï¿½c. 2011
  * 
  */
 @skill(name = ProbabilisticTasksArchitecture.PT)
@@ -33,7 +40,7 @@ public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 			sum += weight;
 			weights[i] = weight;
 		}
-		Double choice = GAMA.getRandom().between(0d, sum);
+		Double choice = scope.getRandom().between(0d, sum);
 		sum = 0d;
 		for ( int i = 0; i < weights.length; i++ ) {
 			double weight = weights[i];

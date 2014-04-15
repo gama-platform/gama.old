@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'UserControlArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.architecture.user;
 
 import java.util.ArrayList;
@@ -23,7 +34,7 @@ public abstract class UserControlArchitecture extends FsmArchitecture {
 		super.verifyBehaviors(context);
 		if ( initialState == null && states.size() == 1 ) {
 			initialState = new ArrayList<FsmStateStatement>(states.values()).get(0);
-			context.getVar(IKeyword.STATE).setValue(initialState.getName());
+			context.getVar(IKeyword.STATE).setValue(null, initialState.getName());
 		}
 		for ( final FsmStateStatement s : states.values() ) {
 			if ( s instanceof UserInitPanelStatement ) {
