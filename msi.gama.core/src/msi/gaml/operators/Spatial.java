@@ -213,6 +213,7 @@ public abstract class Spatial {
 			return GamaGeometryType.buildTeapot(size, location);
 		}
 
+		@operator(value = "cone", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { @example(value = "cone({0, 45})", equals = "a geometry as a cone with min angle is 0 and max angle is 45.", test = false) }, see = {
 			"around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 			"triangle" })

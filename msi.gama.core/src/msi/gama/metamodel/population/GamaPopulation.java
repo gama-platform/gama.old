@@ -287,7 +287,11 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			if ( initialValues != null && !initialValues.isEmpty() ) {
 				final Map<Object, Object> init = initialValues.get(i);
 				if ( init.containsKey(IKeyword.SHAPE) ) {
-					a.setGeometry((GamaShape) init.get(IKeyword.SHAPE));
+					Object val = init.get(IKeyword.SHAPE);
+					if (val instanceof GamaPoint)
+						a.setGeometry(new GamaShape((IShape)val));
+					else
+						a.setGeometry((GamaShape)val);
 					init.remove(IKeyword.SHAPE);
 				} else if ( init.containsKey(IKeyword.LOCATION) ) {
 					a.setLocation((GamaPoint) init.get(IKeyword.LOCATION));
