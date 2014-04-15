@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'WebDisplaySurface.java', in plugin 'msi.gama.display.web', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.display.web;
 
 import java.awt.*;
@@ -7,11 +18,12 @@ import msi.gama.common.interfaces.*;
 import msi.gama.display.web.utils.Logger;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.LayeredDisplayView.WebDisplayView;
+import msi.gama.gui.views.WebDisplayView;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.ui.*;
@@ -23,6 +35,11 @@ public class WebDisplaySurface implements IDisplaySurface {
 
 	public WebDisplaySurface(final Object ... args) {
 		Logger.mlog(TAG, "constructor");
+	}
+
+	@Override
+	public IScope getDisplayScope() {
+		return null;
 	}
 
 	/**
@@ -298,7 +315,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h, final LayeredDisplayOutput output) {
+	public void initialize(final IScope scope, final double w, final double h, final LayeredDisplayOutput output) {
 
 		final String viewId = output.getViewId();
 		String viewName = output.getViewName();
@@ -361,7 +378,8 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 *      msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {}
+	public void outputChanged(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {}
 
 	/**
 	 * Method getHighlightColor()
