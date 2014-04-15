@@ -9,8 +9,8 @@ model AugmentedGrid
 
  */
 global {
-	int width parameter : "width" min 1 <- 6 category: 'Initialization';
-	int height parameter : "height" min 1 <- 6 category: 'Initialization';
+	int width parameter: "width" min 1 <- 6 category: 'Initialization';
+	int height parameter: "height" min 1 <- 6 category: 'Initialization';
 	float hue parameter: 'Hue (between 0.0 and 1.0)' min: 0.0 max: 1.0 <- 0.66;
 	geometry shape <- rectangle(width, height);
 	init {
