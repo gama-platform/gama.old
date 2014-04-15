@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'XmlToTestGAML.java', in plugin 'msi.gama.documentation', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.doc.transform;
 
 import java.io.File;
@@ -65,7 +76,7 @@ public class XmlToTestGAML {
 			throws ParserConfigurationException, SAXException, IOException {		
 		DocTransformer.transformDocument(document, xsl, targetFolder + File.separator + targetFile); 		
 	}
-
+	
 	
 	
 	private static void createOperatorsTests(Document document, String xsl, String targetFolder) 
