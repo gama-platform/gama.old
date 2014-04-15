@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'SQLSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
 import java.sql.Connection;
@@ -31,25 +42,24 @@ import msi.gaml.types.IType;
  * - select(String select)
  * - executeUpdate(String updateComm)
  * - getParameter: return connection Parameter;
- *   Delete method: selectDB, executeUpdateDB
+ * Delete method: selectDB, executeUpdateDB
  * 25-Sep-2012: Add methods: timeStamp, helloWorld
  * 18-Feb-2013:
- *   Add public int insert(final IScope scope) throws GamaRuntimeException
+ * Add public int insert(final IScope scope) throws GamaRuntimeException
  * 21-Feb-2013:
- *   Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
- *   Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
- *   Modify public int insert(final IScope scope) throws GamaRuntimeException
+ * Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+ * Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
+ * Modify public int insert(final IScope scope) throws GamaRuntimeException
  * 10-Mar-2013:
- *   Modify select method: Add transform parameter
- *   Modify insert method: Add transform parameter
+ * Modify select method: Add transform parameter
+ * Modify insert method: Add transform parameter
  * 29-Apr-2013
- *   Remove import msi.gama.database.SqlConnection;
- *   Add import msi.gama.database.sql.SqlConnection;
- *   Change all method appropriately
+ * Remove import msi.gama.database.SqlConnection;
+ * Add import msi.gama.database.sql.SqlConnection;
+ * Change all method appropriately
  * 07-Jan-2014:
- *   Move arg "transform" of select and insert action as key of arg "Param"
+ * Move arg "transform" of select and insert action as key of arg "Param"
  * Last Modified: 07-Jan-2014
- *  
  */
 @skill(name = "SQLSKILL")
 public class SQLSkill extends Skill {
@@ -144,7 +154,7 @@ public class SQLSkill extends Skill {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
 			GuiUtils.debug(updateComm + " was run");
@@ -163,12 +173,13 @@ public class SQLSkill extends Skill {
 	 * @return an integer
 	 */
 	@action(name = "insert", args = {
-		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
-		,@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name"))
-		,@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table"))
-		,@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
-//		,@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) 
-		})
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
+		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
+		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
+	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		SqlConnection sqlConn;
@@ -188,7 +199,7 @@ public class SQLSkill extends Skill {
 			// conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString(), scope);
 		}
 		if ( DEBUG ) {
 			GuiUtils.debug("Insert into " + " was run");
@@ -218,10 +229,11 @@ public class SQLSkill extends Skill {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name = "select", args = {
-		 @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
-		,@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks"))
-		,@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
-//		,@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
+	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
 	})
 	public GamaList select_QM(final IScope scope) throws GamaRuntimeException {
@@ -229,10 +241,10 @@ public class SQLSkill extends Skill {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		// thai.truongminh@gmail.com 
-		//     Move transform arg of select to a key in params
-		//boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
-		//boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
+		// thai.truongminh@gmail.com
+		// Move transform arg of select to a key in params
+		// boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
+		// boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		SqlConnection sqlConn;
 		GamaList<? super GamaList<Object>> repRequest = new GamaList<Object>();
@@ -254,7 +266,7 @@ public class SQLSkill extends Skill {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString(), scope);
 		}
 
 		// ------------------------------------------------------------------------------------------

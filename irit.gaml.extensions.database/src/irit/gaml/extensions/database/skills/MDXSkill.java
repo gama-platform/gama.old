@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MDXSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
 import msi.gama.common.util.GuiUtils;
@@ -139,7 +150,7 @@ public class MDXSkill extends Skill {
 			// }
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("MDXSkill.select_QM: " + e.toString());
+			throw GamaRuntimeException.error("MDXSkill.select_QM: " + e.toString(), scope);
 		}
 
 		// ------------------------------------------------------------------------------------------
