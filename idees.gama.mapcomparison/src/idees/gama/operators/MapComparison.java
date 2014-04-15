@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MapComparison.java', in plugin 'idees.gama.mapcomparison', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package idees.gama.operators;
 
 import java.util.*;
@@ -5,30 +16,34 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.*;
 import msi.gaml.types.IType;
 
-
-
+//
+//
+// TODO Utiliser les collections Trove pour optimiser tout cela !
+//
+//
 public class MapComparison {
 
-	@operator(value = { "kappa" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.", 
-		examples = { @example(value="kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3])",isExecutable=false),@example(value="kappa([1,3,5,1,5],[1,1,1,1,5],[1,3,5])",equals="the similarity between 0 and 1", test=false),@example(value="kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])",equals="1.0") })
+	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20.", examples = {
+		@example(value = "kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3])", isExecutable = false),
+		@example(value = "kappa([1,3,5,1,5],[1,1,1,1,5],[1,3,5])", equals = "the similarity between 0 and 1", test = false),
+		@example(value = "kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])", equals = "1.0") })
 	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
 		final List<Object> categories) {
 		return kappa(scope, vals1, vals2, categories, null);
 	}
 
-	@operator(value = { "kappa" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories, weights). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20. ", 
-		examples = { @example(value="kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3], [1.0, 2.0, 3.0, 1.0, 5.0])",isExecutable=false) })
+	@operator(value = { "kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "kappa indicator for 2 map comparisons: kappa(list_vals1,list_vals2,categories, weights). Reference: Cohen, J. A coefficient of agreement for nominal scales. Educ. Psychol. Meas. 1960, 20. ", examples = { @example(value = "kappa([cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2],[cat1,cat2,cat3], [1.0, 2.0, 3.0, 1.0, 5.0])", isExecutable = false) })
 	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
 		final List<Object> categories, final IList<Object> weights) {
 		if ( vals1 == null || vals2 == null ) { return 1; }
@@ -79,17 +94,15 @@ public class MapComparison {
 		return (po - pe) / (1 - pe);
 	}
 
-	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).", 
-		examples = { @example(value="kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3])",isExecutable=false) })
+	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).", examples = { @example(value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3])", isExecutable = false) })
 	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
 		final IList<Object> valsSim, final List<Object> categories) {
 		return kappaSimulation(scope, valsInit, valsObs, valsSim, categories, null);
 	}
 
-	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)", 
-		examples = { @example(value="kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3],[1.0, 2.0, 3.0, 1.0, 5.0])",isExecutable=false) })
+	@operator(value = { "kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)", examples = { @example(value = "kappa([cat1,cat1,cat2,cat2,cat2],[cat2,cat1,cat2,cat1,cat3],[cat2,cat1,cat2,cat3,cat3], [cat1,cat2,cat3],[1.0, 2.0, 3.0, 1.0, 5.0])", isExecutable = false) })
 	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
 		final IList<Object> valsSim, final List<Object> categories, final IList<Object> weights) {
 		if ( valsInit == null || valsObs == null || valsSim == null ) { return 1; }
@@ -151,9 +164,8 @@ public class MapComparison {
 		return (po - pe) / (1 - pe);
 	}
 
-	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21", 
-		examples = { @example(value="fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)",isExecutable=false) })
+	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21", examples = { @example(value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)", isExecutable = false) })
 	public static double fuzzyKappa(final IScope scope,
 		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
 		final IList<Object> vals2, final IList<Double> similarities, final List<Object> categories,
@@ -161,9 +173,8 @@ public class MapComparison {
 		return fuzzyKappa(scope, agents, vals1, vals2, similarities, categories, fuzzycategories, distance, null);
 	}
 
-	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance, weights). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21", 
-		examples = { @example(value="fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2, [1.0,3.0,2.0,2.0,4.0])", isExecutable=false) })
+	@operator(value = { "fuzzy_kappa" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "fuzzy kappa indicator for 2 map comparisons: fuzzy_kappa(agents_list,list_vals1,list_vals2, output_similarity_per_agents,categories,fuzzy_categories_matrix, fuzzy_distance, weights). Reference: Visser, H., and T. de Nijs, 2006. The map comparison kit, Environmental Modelling & Software, 21", examples = { @example(value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2, [1.0,3.0,2.0,2.0,4.0])", isExecutable = false) })
 	public static double fuzzyKappa(final IScope scope,
 		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
 		final IList<Object> vals2, final IList<Double> similarities, final List<Object> categories,
@@ -200,9 +211,8 @@ public class MapComparison {
 		return (meanSimilarity - similarityExpected) / (1 - similarityExpected);
 	}
 
-	@operator(value = { "fuzzy_kappa_sim" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ", 
-		examples = { @example(value="fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2)",isExecutable=false) })
+	@operator(value = { "fuzzy_kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ", examples = { @example(value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2)", isExecutable = false) })
 	public static double fuzzyKappaSimulation(final IScope scope,
 		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
 		final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
@@ -212,9 +222,8 @@ public class MapComparison {
 
 	}
 
-	@operator(value = { "fuzzy_kappa_sim" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance, weights). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ", 
-		examples = { @example(value="fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2,[1.0,3.0,2.0,2.0,4.0])",isExecutable=false) })
+	@operator(value = { "fuzzy_kappa_sim" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "fuzzy kappa simulation indicator for 2 map comparisons: fuzzy_kappa_sim(agents_list,list_vals1,list_vals2, output_similarity_per_agents,fuzzy_transitions_matrix, fuzzy_distance, weights). Reference: Jasper van Vliet, Alex Hagen-Zanker, Jelle Hurkens, Hedwig van Delden, A fuzzy set approach to assess the predictive accuracy of land use simulations, Ecological Modelling, 24 July 2013, Pages 32-42, ISSN 0304-3800, ", examples = { @example(value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2,[1.0,3.0,2.0,2.0,4.0])", isExecutable = false) })
 	public static double fuzzyKappaSimulation(final IScope scope,
 		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
 		final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
@@ -649,9 +658,8 @@ public class MapComparison {
 
 	}
 
-	@operator(value = { "percent_absolute_deviation" }, content_type = IType.FLOAT, category={IOperatorCategory.MAP_COMPARAISON})
-	@doc(value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)", 
-		examples = { @example(value="percent_absolute_deviation([200,300,150,150,200],[250,250,100,200,200])",isExecutable=false) })
+	@operator(value = { "percent_absolute_deviation" }, content_type = IType.FLOAT, category = { IOperatorCategory.MAP_COMPARAISON })
+	@doc(value = "percent absolute deviation indicator for 2 series of values: percent_absolute_deviation(list_vals_observe,list_vals_sim)", examples = { @example(value = "percent_absolute_deviation([200,300,150,150,200],[250,250,100,200,200])", isExecutable = false) })
 	public static double percentAbsoluteDeviation(final IScope scope, final IList<Double> vals1,
 		final IList<Double> vals2) {
 		if ( vals1 == null || vals2 == null ) { return 1; }
