@@ -1,26 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'Variable.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.variables;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -142,25 +134,6 @@ public class Variable extends Symbol implements IVariable {
 					amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
 				return;
 			}
-			// for ( String s : valueFacetsList ) {
-			// IExpression expr = facets.getExpr(s);
-			// if ( expr == null ) {
-			// continue;
-			// }
-			// if ( type == null ) {
-			// type = expr.getType();
-			// firstValueFacet = s;
-			// } else {
-			// if ( !expr.getType().isAssignableFrom(type) ) {
-			// vd.warning("The types of facets '" + s + "' and '" + firstValueFacet + "' are different",
-			// IGamlIssue.SHOULD_CAST, s, type.toString());
-			// }
-			// }
-			// if ( type != vType && type != Types.NO_TYPE && vType != Types.NO_TYPE ) {
-			// vd.warning("Facet " + s + " of type " + type + " should be of type " + vType.toString(),
-			// IGamlIssue.SHOULD_CAST, s, vType.toString());
-			// }
-			// }
 		}
 
 		public void assertCanBeParameter(final VariableDescription cd) {
@@ -203,7 +176,8 @@ public class Variable extends Symbol implements IVariable {
 					.getType().toString());
 				return;
 			}
-			if ( !init.isConst() ) {
+			// AD 15/04/14: special case for files
+			if ( !init.isConst() && init.getType().id() != IType.FILE ) {
 				String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 				return;
@@ -288,7 +262,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public void setValue(final Object initial) {
+	public void setValue(final IScope scope, final Object initial) {
 		final IExpressionDescription desc = ConstantExpressionDescription.create(initial);
 		initExpression = desc.getExpression();
 		setFacet(IKeyword.INIT, desc);
@@ -385,9 +359,7 @@ public class Variable extends Symbol implements IVariable {
 
 	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object val;
-		if ( v == null && type.equals(Types.get(IType.MAP)) ) {
-			GuiUtils.debug("Variable._setVal");
-		}
+
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
 		// TODO Verify that the agent is in the scope
@@ -404,8 +376,8 @@ public class Variable extends Symbol implements IVariable {
 		if ( among == null ) { return val; }
 		if ( among.contains(val) ) { return val; }
 		if ( among.isEmpty() ) { return null; }
-		throw GamaRuntimeException
-			.error("Value " + val + " is not included in the possible values of variable " + name);
+		throw GamaRuntimeException.error(
+			"Value " + val + " is not included in the possible values of variable " + name, scope);
 	}
 
 	@Override

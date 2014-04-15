@@ -1,28 +1,21 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaFileType.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
+import gnu.trove.map.hash.THashMap;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -43,9 +36,9 @@ import org.eclipse.core.runtime.*;
 @type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	static Map<String, Set<String>> typesExtensions = new HashMap();
-	static Map<Class, Set<String>> classExtensions = new HashMap();
-	static Map<String, GamaHelper<IGamaFile>> extensionsToFiles = new HashMap();
+	static Map<String, Set<String>> typesExtensions = new THashMap();
+	static Map<Class, Set<String>> classExtensions = new THashMap();
+	static Map<String, GamaHelper<IGamaFile>> extensionsToFiles = new THashMap();
 
 	/**
 	 * Adds a new file type definition.
@@ -56,8 +49,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 */
 	public static void addFileTypeDefinition(final String string, final Class clazz,
 		final GamaHelper<IGamaFile> builder, final String[] extensions) {
-		GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
-			Arrays.toString(extensions));
+		// GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
+		// Arrays.toString(extensions));
 		Set<String> exts = new HashSet(Arrays.asList(extensions));
 		typesExtensions.put(string, exts);
 		classExtensions.put(clazz, exts);
@@ -145,13 +138,14 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		return getDefault();
 	}
 
-
-//	@doc(deprecated = "use 'is_property' instead", value = "the operator tests whether the operand represents the name of a supported properties file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
-//		"is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
-//		"is_properties(\"../includes/test.png\")            --:  false;",
-//		"is_properties(\"../includes/test.properties\")     --:  true;",
-//		"is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties", "is_text",
-//		"is_shape", "is_image" })
+	// @doc(deprecated = "use 'is_property' instead", value =
+	// "the operator tests whether the operand represents the name of a supported properties file", comment =
+	// "cf. file type definition for supported (espacially image) file extensions.", examples = {
+	// "is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
+	// "is_properties(\"../includes/test.png\")            --:  false;",
+	// "is_properties(\"../includes/test.properties\")     --:  true;",
+	// "is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties", "is_text",
+	// "is_shape", "is_image" })
 	@operator(value = "is_properties")
 	@doc(deprecated = "use 'is_property' instead")
 	@Deprecated
@@ -159,17 +153,24 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		return verifyExtension("property", f);
 	}
 
-//	@doc(deprecated = "use 'is_gaml' instead", value = "the operator tests whether the operand represents the name of a supported gamlfile", comment = "cf. file type definition for supported (espacially model) file extensions.", examples = {
-//		"is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
-//		"is_shape(\"../includes/test.png\")            --:  false;",
-//		"is_shape(\"../includes/test.properties\")     --:  false;",
-//		"is_shape(\"../includes/test.gaml\")            --:  true;" }, see = { "image", "is_text", "is_properties",
-//		"is_image" })
+	// @doc(deprecated = "use 'is_gaml' instead", value =
+	// "the operator tests whether the operand represents the name of a supported gamlfile", comment =
+	// "cf. file type definition for supported (espacially model) file extensions.", examples = {
+	// "is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
+	// "is_shape(\"../includes/test.png\")            --:  false;",
+	// "is_shape(\"../includes/test.properties\")     --:  false;",
+	// "is_shape(\"../includes/test.gaml\")            --:  true;" }, see = { "image", "is_text", "is_properties",
+	// "is_image" })
 	@operator(value = "is_GAML")
 	@doc(deprecated = "use 'is_gaml' instead")
 	@Deprecated
 	public static Boolean isGAML(final String f) {
 		return verifyExtension("gaml", f);
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return false;
 	}
 
 }

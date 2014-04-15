@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaGraphType.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.Map;
@@ -34,8 +27,8 @@ import msi.gaml.operators.Cast;
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
-	public IGraph cast(final IScope scope, final Object obj, final Object param, IType keyType, IType contentsType)
-		throws GamaRuntimeException {
+	public IGraph cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentsType) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -62,8 +55,8 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	public static IGraph from(final IScope scope, final Map<?, ?> obj, final boolean spatial) {
 		IGraph result =
-			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope)
-				: new GamaGraph(new GamaList(), false, false, null, null, scope);
+			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope) : new GamaGraph(
+				new GamaList(), false, false, null, null, scope);
 		GamaPair p = new GamaPair(null, null);
 		for ( Map.Entry<?, ?> k : obj.entrySet() ) {
 			p.key = k.getKey();
@@ -74,10 +67,10 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	}
 
 	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
-		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope)
-			: new GamaGraph(obj, false, false, null, null, scope);
+		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope) : new GamaGraph(obj, false, false,
+			null, null, scope);
 	}
-	
+
 	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {
 		source.setSaveComputedShortestPaths(useCache);
 		return source; // TODO Clone ?
@@ -91,6 +84,11 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	public static IGraph asUndirectedGraph(final IGraph source) {
 		source.setDirected(false);
 		return source; // TODO Clone ?
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return false;
 	}
 
 }

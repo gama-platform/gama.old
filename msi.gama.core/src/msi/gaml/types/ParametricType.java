@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 19 janv. 2014
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'ParametricType.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.Map;
@@ -93,7 +100,7 @@ public class ParametricType implements IContainerType {
 	 * @see msi.gaml.types.IType#getGetter(java.lang.String)
 	 */
 	@Override
-	public IExpression getGetter(final String name) {
+	public OperatorProto getGetter(final String name) {
 		return type.getGetter(name);
 	}
 
@@ -101,10 +108,10 @@ public class ParametricType implements IContainerType {
 	 * Method getFieldDescriptions()
 	 * @see msi.gaml.types.IType#getFieldDescriptions(msi.gaml.descriptions.ModelDescription)
 	 */
-	@Override
-	public Map getFieldDescriptions(final ModelDescription model) {
-		return type.getFieldDescriptions(model);
-	}
+	// @Override
+	// public Map getFieldDescriptions(final ModelDescription model) {
+	// return type.getFieldDescriptions(model);
+	// }
 
 	/**
 	 * Method isSpeciesType()
@@ -244,15 +251,6 @@ public class ParametricType implements IContainerType {
 	public void init(final int varKind, final int id, final String name, final Class ... supports) {}
 
 	/**
-	 * Method hasContents()
-	 * @see msi.gaml.types.IType#hasContents()
-	 */
-	// @Override
-	// public boolean hasContents() {
-	// return true;
-	// }
-
-	/**
 	 * Method isContainer()
 	 * @see msi.gaml.types.IType#isContainer()
 	 */
@@ -317,8 +315,8 @@ public class ParametricType implements IContainerType {
 
 	@Override
 	public String toString() {
-		if ( type.id() == IType.LIST || type.id() == IType.MATRIX ) { return type.toString() + "<" +
-			contentsType.toString() + ">"; }
+		if ( type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER &&
+			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
 	}
 
@@ -332,13 +330,6 @@ public class ParametricType implements IContainerType {
 		}
 		return this;
 	}
-
-	/**
-	 * Method dispose()
-	 * @see msi.gaml.descriptions.IGamlDescription#dispose()
-	 */
-	@Override
-	public void dispose() {}
 
 	/**
 	 * Method getTitle()
@@ -365,6 +356,11 @@ public class ParametricType implements IContainerType {
 	@Override
 	public String getName() {
 		return toString();
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return type.canCastToConst() && contentsType.canCastToConst() && keyType.canCastToConst();
 	}
 
 }

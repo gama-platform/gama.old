@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'NumberVariable.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -39,15 +32,15 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.INIT, type = { IType.INT, IType.FLOAT }, optional = true),
+	@facet(name = IKeyword.VALUE, type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
+	@facet(name = IKeyword.UPDATE, type = { IType.INT, IType.FLOAT }, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = { IType.INT, IType.FLOAT }, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.MIN, type = IType.INT, optional = true),
-	@facet(name = IKeyword.MAX, type = IType.INT, optional = true),
+	@facet(name = IKeyword.MIN, type = { IType.INT, IType.FLOAT }, optional = true),
+	@facet(name = IKeyword.MAX, type = { IType.INT, IType.FLOAT }, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)

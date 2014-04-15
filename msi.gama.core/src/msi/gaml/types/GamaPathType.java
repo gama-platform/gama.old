@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaPathType.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.*;
@@ -84,7 +77,7 @@ public class GamaPathType extends GamaType<IPath> {
 				break;
 			}
 		}
-		return graph.computeShortestPathBetween(s, t);
+		return graph.computeShortestPathBetween(scope, s, t);
 	}
 
 	public static IPath pathBetweenPoints(final IScope scope, final ILocation source, final ILocation target,
@@ -127,7 +120,7 @@ public class GamaPathType extends GamaType<IPath> {
 			path = PathFactory.newInstance(m, source, target, GamaList.with(edgeS));
 			return path;
 		}
-		path = graph.computeShortestPathBetween((IShape) s1, (IShape) t1);
+		path = graph.computeShortestPathBetween(scope, (IShape) s1, (IShape) t1);
 		if ( path == null ) { return null; }
 
 		return path;
@@ -150,6 +143,11 @@ public class GamaPathType extends GamaType<IPath> {
 			return PathFactory.newInstance(isEdges ? (IList<IShape>) obj : (IList<IShape>) list, isEdges);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return false;
 	}
 
 }

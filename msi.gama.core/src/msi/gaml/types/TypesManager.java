@@ -1,25 +1,19 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'TypesManager.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Strings;
 
@@ -30,10 +24,10 @@ public class TypesManager {
 	private final TypesManager parent;
 
 	// private int current_index = IType.CURRENT_INDEX;
-	private final Map<String, TypeDescription> modelSpecies = new LinkedHashMap(/* Types.BUILT_IN_SPECIES */);
-	private final Map<Integer, IType> idToIType = new LinkedHashMap(/* Types.ID2ITYPE */);
-	private final Map<String, IType> stringToIType = new LinkedHashMap(/* Types.STRING2ITYPE */);
-	private final Map<Class, IType> classToIType = new LinkedHashMap(/* Types.CLASS2ITYPE */);
+	private final Map<String, TypeDescription> modelSpecies = new TOrderedHashMap(/* Types.BUILT_IN_SPECIES */);
+	private final Map<Integer, IType> idToIType = new TOrderedHashMap(/* Types.ID2ITYPE */);
+	private final Map<String, IType> stringToIType = new TOrderedHashMap(/* Types.STRING2ITYPE */);
+	private final Map<Class, IType> classToIType = new TOrderedHashMap(/* Types.CLASS2ITYPE */);
 	private final TypeTree<IType> hierarchy = new TypeTree();
 
 	public TypesManager(final TypesManager parent) {
@@ -88,7 +82,7 @@ public class TypesManager {
 			TypeDescription parent = entry.getValue().getParent();
 			// Takes care of invalid species (see Issue 711)
 			// TODO Verify this test
-			type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));
+			type.setParent(parent == null /* || parent == entry */? get(IKeyword.AGENT) : get(parent.getName()));
 		}
 		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
 	}

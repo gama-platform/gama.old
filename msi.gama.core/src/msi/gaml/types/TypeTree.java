@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'TypeTree.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.types;
 
 /*
@@ -6,6 +17,7 @@ package msi.gaml.types;
  */
 
 import java.util.*;
+import msi.gama.util.TOrderedHashMap;
 
 public class TypeTree<T> {
 
@@ -19,11 +31,11 @@ public class TypeTree<T> {
 		super();
 	}
 
-	public TypeTree(TypeNode<T> root) {
+	public TypeTree(final TypeNode<T> root) {
 		setRoot(root);
 	}
 
-	public TypeTree(T root) {
+	public TypeTree(final T root) {
 		setRoot(new TypeNode(root));
 	}
 
@@ -35,7 +47,7 @@ public class TypeTree<T> {
 		this.root = root;
 	}
 
-	public TypeNode<T> setRoot(T root) {
+	public TypeNode<T> setRoot(final T root) {
 		TypeNode<T> result = new TypeNode(root);
 		setRoot(result);
 		return result;
@@ -149,7 +161,7 @@ public class TypeTree<T> {
 	}
 
 	public Map<TypeNode<T>, Integer> buildWithDepth(final TypeNode<T> node, final Order traversalOrder) {
-		Map<TypeNode<T>, Integer> traversalResult = new LinkedHashMap<TypeNode<T>, Integer>();
+		Map<TypeNode<T>, Integer> traversalResult = new TOrderedHashMap<TypeNode<T>, Integer>();
 
 		if ( traversalOrder == Order.PRE_ORDER ) {
 			buildPreOrderWithDepth(node, traversalResult, 0);
