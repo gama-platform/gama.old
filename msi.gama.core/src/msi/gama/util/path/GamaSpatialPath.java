@@ -1,24 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaSpatialPath.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.path;
 
-import java.util.*;
+import gnu.trove.map.hash.THashMap;
+import java.util.List;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -40,7 +34,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	GamaList<GamaShape> segments;
 	IShape shape = null;
-	Map<IShape, IShape> realObjects; // cle = bout de geometrie
+	THashMap<IShape, IShape> realObjects; // cle = bout de geometrie
 
 	// WARNING Cant hide an attribute like this !
 	// GamaSpatialGraph graph;
@@ -80,7 +74,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		this.graph = g;
 		this.segments = new GamaList<GamaShape>();
 
-		realObjects = new HashMap<IShape, IShape>();
+		realObjects = new THashMap<IShape, IShape>();
 		graphVersion = 0;
 
 		Geometry firstLine = _edges == null || _edges.isEmpty() ? null : _edges.get(0).getInnerGeometry();
@@ -155,7 +149,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			target = nodes.get(nodes.size() - 1);
 		}
 		segments = new GamaList<GamaShape>();
-		realObjects = new GamaMap<IShape, IShape>();
+		realObjects = new THashMap<IShape, IShape>();
 		graph = g;
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
@@ -367,13 +361,13 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	}
 
 	@Override
-	public ITopology getTopology() {
+	public ITopology getTopology(final IScope scope) {
 		if ( graph == null ) { return null; }
-		return ((GamaSpatialGraph) graph).getTopology();
+		return ((GamaSpatialGraph) graph).getTopology(scope);
 	}
 
 	@Override
-	public void setRealObjects(final Map<IShape, IShape> realObjects) {
+	public void setRealObjects(final THashMap<IShape, IShape> realObjects) {
 		this.realObjects = realObjects;
 	}
 

@@ -1,40 +1,27 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaMatrix.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.matrix;
 
 import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ITypeProvider;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  * Written by drogoul Modified on 18 nov. 2008
@@ -183,24 +170,25 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 
 	@Override
-	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category = { IOperatorCategory.MATRIX })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
-		if ((this instanceof GamaIntMatrix) && (b instanceof GamaIntMatrix))
-			return ((GamaIntMatrix)this)._opAppendVertically(scope, b);
-		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaFloatMatrix))
-			return ((GamaFloatMatrix)this)._opAppendVertically(scope, b);
-		if ((this instanceof GamaIntMatrix) && (b instanceof GamaFloatMatrix))
-			return (new GamaFloatMatrix(((GamaIntMatrix)this).getRealMatrix()))._opAppendVertically(scope, b);
-		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaIntMatrix))
-			return ((GamaFloatMatrix)this)._opAppendVertically(scope, (GamaFloatMatrix)(new GamaFloatMatrix(((GamaIntMatrix)b).getRealMatrix())));
-		if ((this instanceof GamaObjectMatrix) && (b instanceof GamaObjectMatrix))
-			return ((GamaObjectMatrix)this)._opAppendVertically(scope, b);
-/*		Object[] ma = this.getMatrix();
-		Object[] mb = b.getMatrix();
-		Object[] mab = ArrayUtils.addAll(ma, mb);
-
-		GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
-*/
+		if ( this instanceof GamaIntMatrix && b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)
+			._opAppendVertically(scope, b); }
+		if ( this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix ) { return ((GamaFloatMatrix) this)
+			._opAppendVertically(scope, b); }
+		if ( this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(
+			((GamaIntMatrix) this).getRealMatrix())._opAppendVertically(scope, b); }
+		if ( this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix ) { return ((GamaFloatMatrix) this)
+			._opAppendVertically(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
+		if ( this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix ) { return ((GamaObjectMatrix) this)
+			._opAppendVertically(scope, b); }
+		/*
+		 * Object[] ma = this.getMatrix();
+		 * Object[] mb = b.getMatrix();
+		 * Object[] mab = ArrayUtils.addAll(ma, mb);
+		 * 
+		 * GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
+		 */
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 		return this;
 	}
@@ -212,31 +200,33 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @param two matrix to concatenate
 	 * @return the matrix concatenated
 	 */
-	
+
 	@Override
-	@operator(value = IKeyword.APPEND_HORIZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
+	@operator(value = IKeyword.APPEND_HORIZONTALLY, content_type = ITypeProvider.BOTH, category = { IOperatorCategory.MATRIX })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
-		if ((this instanceof GamaIntMatrix) && (b instanceof GamaIntMatrix))
-			return ((GamaIntMatrix)this)._opAppendHorizontally(scope, b);
-		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaFloatMatrix))
-			return ((GamaFloatMatrix)this)._opAppendHorizontally(scope, b);
-		if ((this instanceof GamaIntMatrix) && (b instanceof GamaFloatMatrix))
-			return (new GamaFloatMatrix(((GamaIntMatrix)this).getRealMatrix()))._opAppendHorizontally(scope, b);
-		if ((this instanceof GamaFloatMatrix) && (b instanceof GamaIntMatrix))
-			return ((GamaFloatMatrix)this)._opAppendHorizontally(scope, (GamaFloatMatrix)(new GamaFloatMatrix(((GamaIntMatrix)b).getRealMatrix())));
-		if ((this instanceof GamaObjectMatrix) && (b instanceof GamaObjectMatrix))
-			return ((GamaObjectMatrix)this)._opAppendHorizontally(scope, b);
-/*		IMatrix a=this;
-		IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
-		aprime = a._reverse(scope);
-		// System.out.println("aprime = " + aprime);
-		IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = b._reverse(scope);
-		// System.out.println("bprime = " + bprime);
-		IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
-		// System.out.println("c = " + c);
-		IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
-		// System.out.println("cprime = " + cprime);*/
+		if ( this instanceof GamaIntMatrix && b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)
+			._opAppendHorizontally(scope, b); }
+		if ( this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix ) { return ((GamaFloatMatrix) this)
+			._opAppendHorizontally(scope, b); }
+		if ( this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(
+			((GamaIntMatrix) this).getRealMatrix())._opAppendHorizontally(scope, b); }
+		if ( this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix ) { return ((GamaFloatMatrix) this)
+			._opAppendHorizontally(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
+		if ( this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix ) { return ((GamaObjectMatrix) this)
+			._opAppendHorizontally(scope, b); }
+		/*
+		 * IMatrix a=this;
+		 * IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
+		 * aprime = a._reverse(scope);
+		 * // System.out.println("aprime = " + aprime);
+		 * IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
+		 * bprime = b._reverse(scope);
+		 * // System.out.println("bprime = " + bprime);
+		 * IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
+		 * // System.out.println("c = " + c);
+		 * IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
+		 * // System.out.println("cprime = " + cprime);
+		 */
 		return this;
 	}
 
@@ -487,10 +477,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// Put, that takes a mandatory index (also replaces the parameter)
 	@Override
 	public void setValueAtIndex(final IScope scope, final ILocation index, final T value) {
-		if ( index instanceof ILocation ) {
-			ILocation p = index;
-			set(scope, (int) p.getX(), (int) p.getY(), value);
-		}
+		ILocation p = index;
+		set(scope, (int) p.getX(), (int) p.getY(), value);
 
 	}
 
@@ -624,7 +612,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public T anyValue(final IScope scope) {
-		final RandomUtils r = GAMA.getRandom();
+		final RandomUtils r = scope.getRandom();
 		final int x = r.between(0, numCols - 1);
 		final int y = r.between(0, numRows - 1);
 		return this.get(scope, x, y);
