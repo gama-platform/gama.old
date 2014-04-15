@@ -1,26 +1,19 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GAMA.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
@@ -36,9 +29,11 @@ import com.google.common.collect.Lists;
  */
 public class GAMA {
 
-	public final static String VERSION = "GAMA 1.6";
+	public final static String VERSION = "GAMA 1.6.1";
 	// public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
+	// Minimum duration of a cycle in seconds
+	private static double CYCLE_DELAY = 0d;
 
 	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
 
@@ -76,16 +71,16 @@ public class GAMA {
 	}
 
 	public static SimulationClock getClock() {
-		final IScope scope = getDefaultScope();
+		final IScope scope = getRuntimeScope();
 		if ( scope == null ) { return new SimulationClock(); }
 		return scope.getClock();
 	}
 
-	public static RandomUtils getRandom() {
-		if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return RandomUtils
-			.getDefault(); }
-		return controller.getExperiment().getAgent().getRandomGenerator();
-	}
+	// public static RandomUtils getRandom() {
+	// if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return RandomUtils
+	// .getDefault(); }
+	// return controller.getExperiment().getAgent().getRandomGenerator();
+	// }
 
 	public static IModel getModel() {
 		if ( controller.getExperiment() == null ) { return null; }
@@ -147,12 +142,12 @@ public class GAMA {
 	}
 
 	public static IScope obtainNewScope() {
-		final IScope scope = getDefaultScope();
+		final IScope scope = getRuntimeScope();
 		if ( scope != null ) { return scope.copy(); }
 		return null;
 	}
 
-	private static IScope getDefaultScope() {
+	public static IScope getRuntimeScope() {
 		if ( controller.getExperiment() == null ) { return null; }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
 		if ( a == null || a.dead() ) { return controller.getExperiment().getExperimentScope(); }
@@ -189,4 +184,17 @@ public class GAMA {
 		}
 	}
 
+	public static double getDelayInMilliseconds() {
+		return CYCLE_DELAY * 1000;
+	}
+
+	public static void setDelayFromUI(final double newDelayInMilliseconds) {
+		CYCLE_DELAY = newDelayInMilliseconds / 1000;
+		// getExperiment().getAgent().setMinimumDuration(CYCLE_DELAY);
+	}
+
+	public static void setDelayFromExperiment(final double newDelayInSeconds) {
+		CYCLE_DELAY = newDelayInSeconds;
+		GuiUtils.updateSpeedDisplay(CYCLE_DELAY * 1000, false);
+	}
 }

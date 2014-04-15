@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'FrontEndController.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -51,7 +62,9 @@ public class FrontEndController implements Runnable {
 				final Integer i = commands.take();
 				if ( i == null ) { throw new InterruptedException("Internal error. Please retry"); }
 				processUserCommand(i);
-			} catch (final Exception e) {}
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -71,7 +84,7 @@ public class FrontEndController implements Runnable {
 				try {
 					experiment.open();
 				} catch (final Exception e) {
-					GuiUtils.debug("Error when opening the experiment: " + e.getMessage());
+					// GuiUtils.debug("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
 				} finally {
 					updateSimulationState();

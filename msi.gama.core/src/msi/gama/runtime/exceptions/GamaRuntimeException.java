@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaRuntimeException.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.runtime.exceptions;
 
 import java.util.*;
@@ -43,22 +36,37 @@ public class GamaRuntimeException extends RuntimeException {
 	protected boolean reported = false;
 
 	// Factory methods
-
+	/**
+	 * This call is deprecated. Use the equivalent method that passes the scope
+	 * @param s
+	 * @return
+	 */
+	@Deprecated
 	public static GamaRuntimeException create(final Throwable ex) {
-		if ( ex instanceof GamaRuntimeException ) { return create((GamaRuntimeException) ex); }
-		return new GamaRuntimeException(ex);
+		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+		// another simulation
+		return create(ex, GAMA.getRuntimeScope());
 	}
 
-	public static GamaRuntimeException create(final GamaRuntimeException ex) {
-		return ex;
+	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
+		if ( ex instanceof GamaRuntimeException ) { return (GamaRuntimeException) ex; }
+		return new GamaRuntimeException(scope, ex);
 	}
 
+	/**
+	 * This method is deprecated. Use the equivalent method that passes the scope
+	 * @param s
+	 * @return
+	 */
+	@Deprecated
 	public static GamaRuntimeException error(final String s) {
-		return new GamaRuntimeException(s, false);
+		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+		// another simulation
+		return error(s, GAMA.getRuntimeScope());
 	}
 
 	public static GamaRuntimeException error(final String s, final IScope scope) {
-		GamaRuntimeException ex = error(s);
+		GamaRuntimeException ex = new GamaRuntimeException(scope, s, false);
 		if ( scope == null ) { return ex; }
 		IStatement statement = scope.getStatement();
 		if ( statement != null ) {
@@ -68,32 +76,49 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public static GamaRuntimeException warning(final String s, final IScope scope) {
-		GamaRuntimeException ex = warning(s);
-		if ( scope == null ) { return ex; }
-		IStatement statement = scope.getStatement();
-		if ( statement != null ) {
-			ex.addContext(statement);
-		}
+		GamaRuntimeException ex = new GamaRuntimeException(scope, s, true);
 		return ex;
 	}
 
+	/**
+	 * This call is deprecated. Use the equivalent method that passes the scope
+	 * @param s
+	 * @return
+	 */
+	@Deprecated
 	public static GamaRuntimeException warning(final String s) {
-		return new GamaRuntimeException(s, true);
+		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+		// another simulation
+		return warning(s, GAMA.getRuntimeScope());
 	}
 
-	public GamaRuntimeException(final Throwable ex) {
+	// Constructors
+
+	public GamaRuntimeException(final IScope scope, final Throwable ex) {
 		super(ex.toString(), ex);
+		if ( scope != null ) {
+			IStatement statement = scope.getStatement();
+			if ( statement != null ) {
+				addContext(statement);
+			}
+		}
 		addContext(ex.toString());
 		for ( StackTraceElement element : ex.getStackTrace() ) {
 			addContext(element.toString());
 		}
-		cycle = computeCycle();
+		cycle = computeCycle(scope);
 
 	}
 
-	protected GamaRuntimeException(final String s, final boolean warning) {
+	protected GamaRuntimeException(final IScope scope, final String s, final boolean warning) {
 		super(s);
-		cycle = computeCycle();
+		if ( scope != null ) {
+			IStatement statement = scope.getStatement();
+			if ( statement != null ) {
+				addContext(statement);
+			}
+		}
+		cycle = computeCycle(scope);
 		isWarning = warning;
 	}
 
@@ -141,8 +166,8 @@ public class GamaRuntimeException extends RuntimeException {
 		return isWarning;
 	}
 
-	public static long computeCycle() {
-		SimulationClock clock = GAMA.getClock();
+	public long computeCycle(final IScope scope) {
+		SimulationClock clock = scope == null ? null : scope.getClock();
 		return clock == null ? 0l : clock.getCycle();
 	}
 

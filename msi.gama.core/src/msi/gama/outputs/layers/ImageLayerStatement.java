@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ImageLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
@@ -27,7 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaShapeFile;
@@ -101,21 +94,21 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 					tag = getFacet(IKeyword.FILE);
 				}
 				if ( tag == null ) { throw GamaRuntimeException.error("Missing properties " + IKeyword.NAME + " and " +
-					IKeyword.FILE); }
+					IKeyword.FILE, scope); }
 				if ( tag.isConst() ) {
 					setName(Cast.asString(scope, tag.value(scope)));
 				} else {
 					setName(tag.toGaml());
 				}
-				if ( imageFileExpression == null ) { throw GamaRuntimeException.error("Image file not defined"); }
+				if ( imageFileExpression == null ) { throw GamaRuntimeException.error("Image file not defined", scope); }
 				if ( imageFileExpression.isConst() ) {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
 					currentImage = constantImage;
 					try {
-						ImageUtils.getInstance().getImageFromFile(constantImage);
+						ImageUtils.getInstance().getImageFromFile(scope, constantImage);
 					} catch (final Exception ex) {
 						constantImage = null;
-						throw GamaRuntimeException.create(ex);
+						throw GamaRuntimeException.create(ex, scope);
 					}
 				}
 			}
@@ -166,15 +159,9 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	 * @throws GamaRuntimeException
 	 * @param newValue
 	 */
-	public void setGisLayerName(final String newValue) throws GamaRuntimeException {
+	public void setGisLayerName(final IScope scope, final String newValue) throws GamaRuntimeException {
 		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.get(IType.STRING));
-		IScope scope = GAMA.obtainNewScope();
-		try {
-			buildGisLayer(scope);
-		} finally {
-			GAMA.releaseScope(scope);
-		}
-
+		buildGisLayer(scope);
 	}
 
 	/**
@@ -185,7 +172,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void resetShapes() {
 		shapes = null;

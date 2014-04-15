@@ -1,10 +1,23 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'FrontEndScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.runtime;
 
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.TOrderedHashMap;
 
 public class FrontEndScheduler implements Runnable {
 
@@ -14,8 +27,8 @@ public class FrontEndScheduler implements Runnable {
 	// Flag indicating that the thread is set to be on hold, waiting for a user input
 	public volatile boolean on_user_hold = false;
 	/* The stepables that need to be stepped */
-	private final Map<IStepable, IScope> toStep = new LinkedHashMap();
-	private volatile Set<IStepable> toStop = new HashSet();
+	private final Map<IStepable, IScope> toStep = new TOrderedHashMap();
+	private volatile Set<IStepable> toStop = new THashSet();
 	private Thread executionThread;
 	volatile Semaphore lock = new Semaphore(1);
 
@@ -75,7 +88,7 @@ public class FrontEndScheduler implements Runnable {
 				e.printStackTrace();
 				if ( scope.interrupted() ) {
 
-					GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
+					// GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
 				} else {
 					// GAMA.reportError(e, true);
 				}
@@ -88,13 +101,13 @@ public class FrontEndScheduler implements Runnable {
 		synchronized (toStop) {
 			for ( final IStepable s : toStop ) {
 				final IScope scope = toStep.get(s);
-				
-				//hqnghi 11/Oct/13 in some cases scope of comodel's experiment is null 
-				if (scope == null) {
+
+				// hqnghi 11/Oct/13 in some cases scope of comodel's experiment is null
+				if ( scope == null ) {
 					continue;
 				}
-				//end-hqnghi
-				
+				// end-hqnghi
+
 				if ( !scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
@@ -180,19 +193,19 @@ public class FrontEndScheduler implements Runnable {
 
 	public void removeStepable(final String s) {
 
-		Set<IStepable> beRemoved = new HashSet();
-		for (IStepable ss : toStep.keySet()) {
-			if (ss.toString().contains(s)) {
+		Set<IStepable> beRemoved = new THashSet();
+		for ( IStepable ss : toStep.keySet() ) {
+			if ( ss.toString().contains(s) ) {
 
 				final IScope scope = toStep.get(ss);
-				if (!scope.interrupted()) {
+				if ( !scope.interrupted() ) {
 					scope.setInterrupted(true);
 				}
 				beRemoved.add(ss);
 			}
 
 		}
-		for (IStepable ss : beRemoved) {
+		for ( IStepable ss : beRemoved ) {
 			toStep.remove(ss);
 			toStop.remove(ss);
 		}

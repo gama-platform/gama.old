@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'LayeredDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.awt.Color;
@@ -149,8 +142,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean tesselation = true;
 	private int traceDisplay = 0;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
-	private boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
-	private boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
+	private final boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
+	private final boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
@@ -503,10 +496,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	protected void createSurface(final IScope scope, final Envelope env) {
 		if ( surface != null ) {
-			surface.outputChanged(envWidth, envHeight, this);
+			surface.outputChanged(scope, envWidth, envHeight, this);
 			return;
 		}
-		surface = GuiUtils.getDisplaySurfaceFor(displayType, this, envWidth, envHeight);
+		surface = GuiUtils.getDisplaySurfaceFor(scope, displayType, this, envWidth, envHeight);
 		if ( !GuiUtils.isInHeadLessMode() ) {
 			// FIXME These lines do nothing...
 			surface.setSnapshotFileName(GAMA.getModel().getName() + "_display_" + getName());
@@ -618,17 +611,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return draw_norm;
 	}
 
-	private void setDrawNorm(final boolean draw_norm) {
-		this.draw_norm = draw_norm;
-	}
+	// private void setDrawNorm(final boolean draw_norm) {
+	// this.draw_norm = draw_norm;
+	// }
 
 	public boolean getCubeDisplay() {
 		return cubeDisplay;
 	}
 
-	private void setCubeDisplay(final boolean c) {
-		this.cubeDisplay = c;
-	}
+	// private void setCubeDisplay(final boolean c) {
+	// this.cubeDisplay = c;
+	// }
 
 	public boolean getShowFPS() {
 		return showfps;

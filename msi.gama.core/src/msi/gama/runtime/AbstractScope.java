@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 23 mai 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'AbstractScope.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.runtime;
 
 import gnu.trove.map.hash.THashMap;
@@ -9,6 +16,7 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
@@ -66,7 +74,7 @@ public abstract class AbstractScope implements IScope {
 		trace = t;
 	}
 
-	final class NullRecord implements IRecord {
+	final static class NullRecord implements IRecord {
 
 		@Override
 		public void setVar(final String name, final Object value) {}
@@ -280,7 +288,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void writeTrace() {
 		StringBuilder sb = new StringBuilder();
@@ -431,7 +439,7 @@ public abstract class AbstractScope implements IScope {
 		try {
 			result = agent.step(this);
 		} catch (final Exception ex) {
-			GamaRuntimeException g = GamaRuntimeException.create(ex);
+			GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 			// if ( isAgent ) {
 			// g.addAgent(agent.toString());
 			// }
@@ -489,7 +497,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		final IRecord r = statements.peek();
+		// final IRecord r = statements.peek();
 		varsToSave.putAll(statements.peek().getMap());
 	}
 
@@ -742,6 +750,11 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public SimulationAgent getSimulationScope() {
 		return simulation;
+	}
+
+	@Override
+	public IExperimentAgent getExperiment() {
+		return simulation == null ? null : simulation.getExperiment();
 	}
 
 	/**

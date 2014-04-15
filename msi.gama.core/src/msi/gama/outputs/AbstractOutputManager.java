@@ -1,13 +1,21 @@
-/**
- * Created by drogoul, 9 juin 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'AbstractOutputManager.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import com.google.common.collect.*;
@@ -21,7 +29,7 @@ import com.google.common.collect.*;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
-	protected final Map<String, IOutput> outputs = new LinkedHashMap<String, IOutput>();
+	protected final Map<String, IOutput> outputs = new TOrderedHashMap<String, IOutput>();
 
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
@@ -59,8 +67,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	}
 
 	@Override
-	//hqnghi
-	//for instant, multi-simulation cannot have their owns outputs display at same time.
+	// hqnghi
+	// for instant, multi-simulation cannot have their owns outputs display at same time.
 	public void removeAllOutput() {
 		outputs.clear();
 	}
@@ -124,7 +132,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 						output.open();
 						output.update();
 					} catch (RuntimeException e) {
-						GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
+						e.printStackTrace();
 						return false;
 					}
 				}
@@ -151,7 +159,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 						try {
 							o.update();
 						} catch (RuntimeException e) {
-							GuiUtils.debug("AbstractOutputManager.step " + e.getMessage());
+							e.printStackTrace();
 							continue;
 						}
 						o.setNextTime(cycle + o.getRefreshRate());
