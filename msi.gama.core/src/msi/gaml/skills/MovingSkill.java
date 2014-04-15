@@ -1,23 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'MovingSkill.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.skills;
 
+import gnu.trove.map.hash.THashMap;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -28,13 +22,13 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
@@ -119,7 +113,7 @@ public class MovingSkill extends Skill {
 
 	protected int computeHeadingFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final int ampl = scope.hasArg("amplitude") ? scope.getIntArg("amplitude") : 359;
-		agent.setHeading(agent.getHeading() + GAMA.getRandom().between(-ampl / 2, ampl / 2));
+		agent.setHeading(agent.getHeading() + scope.getRandom().between(-ampl / 2, ampl / 2));
 		return agent.getHeading();
 	}
 
@@ -207,10 +201,10 @@ public class MovingSkill extends Skill {
 		final ILocation location = agent.getLocation();
 		final int heading = computeHeadingFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-		//By default the max z value is 100
-		double w= scope.getSimulationScope().getEnvelope().getWidth();
-		double h= scope.getSimulationScope().getEnvelope().getHeight();
-		final int z_max = (int) (scope.hasArg("z_max") ? scope.getIntArg("z_max") : w > h ? w: h);
+		// By default the max z value is 100
+		double w = scope.getSimulationScope().getEnvelope().getWidth();
+		double h = scope.getSimulationScope().getEnvelope().getHeight();
+		final int z_max = (int) (scope.hasArg("z_max") ? scope.getIntArg("z_max") : w > h ? w : h);
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 
 		if ( loc == null ) {
@@ -220,20 +214,21 @@ public class MovingSkill extends Skill {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
 				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
-				//java.lang.System.out.println("define bound w:" + geom.getEnvelope().getWidth() + "h:" + geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
+				// java.lang.System.out.println("define bound w:" + geom.getEnvelope().getWidth() + "h:" +
+				// geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
-			}
-			else{
+			} else {
 				final IShape geom = scope.getSimulationScope().getGeometry();
-				//java.lang.System.out.println("world bound w:" + geom.getEnvelope().getWidth() + "h:" + geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
+				// java.lang.System.out.println("world bound w:" + geom.getEnvelope().getWidth() + "h:" +
+				// geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
 			}
 			((GamaPoint) loc).z =
-			Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
+				Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
 			((GamaPoint) loc).z = Math.min(((GamaPoint) loc).z, z_max);
 			agent.setLocation(loc);
 		}
@@ -325,7 +320,7 @@ public class MovingSkill extends Skill {
 			recomputePath = true;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || path.getTopology() != null && !path.getTopology().equals(topo) ||
+		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 
@@ -526,7 +521,7 @@ public class MovingSkill extends Skill {
 			}
 		}
 		if ( currentLocation.equals(falseTarget) ) {
-			
+
 			currentLocation = (GamaPoint) Cast.asPoint(scope, path.getEndVertex());
 			index++;
 		}
@@ -557,7 +552,7 @@ public class MovingSkill extends Skill {
 		double distance = d;
 		final GamaList<IShape> segments = new GamaList();
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaMap agents = new GamaMap();
+		final THashMap agents = new THashMap();
 		for ( int i = index; i < nb; i++ ) {
 			final IShape line = edges.get(i);
 			final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
