@@ -90,7 +90,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		Double depth = 0d;
 		IList<String> textures = new GamaList<String>();
 		IShape.Type type = shape.getGeometricalType();
-		double ratio = 0;
+		IList<Double> ratio = new GamaList<Double>();
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
@@ -99,7 +99,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			textures = Cast.asList(scope, shape.getAttribute(IShape.TEXTURE_ATTRIBUTE));
 		}
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
-			ratio = Cast.asFloat(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
+			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
 		}
 		final Color color = highlight ? highlightColor : c;
 		if ( topo != null && topo.isTorus() ) {
@@ -123,7 +123,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final IList<String> textures, final double ratio) {
+		final IList<String> textures, final IList<Double> ratio) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio);
 
@@ -185,7 +185,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0, false,
-					IShape.Type.GRIDLINE, 0);
+					IShape.Type.GRIDLINE, null);
 			}
 		}
 	}

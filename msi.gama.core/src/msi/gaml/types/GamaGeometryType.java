@@ -356,6 +356,38 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
 		return g;
 	}
+	
+	public static IShape buildPieSphere(final double radius, final ILocation location, final IList<Double> ratio) {
+		final IShape g = buildCircle(radius, location);
+		g.setDepth(radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, PIESPHERE);
+		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
+		return g;
+	}
+	
+	public static IShape buildPacMan(final double radius, final ILocation location, final double ratio) {
+		final IShape g = buildCircle(radius, location);
+		g.setDepth(radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, PACMAN);
+		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
+		return g;
+	}
+	
+	public static IShape buildPac(final double radius, final ILocation location, final double ratio) {
+		final IShape g = buildCircle(radius, location);
+		g.setDepth(radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, PAC);
+		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
+		return g;
+	}
+	
+	public static IShape buildMan(final double radius, final ILocation location, final double ratio) {
+		final IShape g = buildCircle(radius, location);
+		g.setDepth(radius);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, MAN);
+		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
+		return g;
+	}
 
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);

@@ -59,7 +59,7 @@ public abstract class Spatial {
 	/**
 	 * The class Spatial.
 	 * 
-	 * @author Alexis Drogoul, Patrick Taillandier
+	 * @author Alexis Drogoul, Patrick Taillandier, Arnaud Grignard
 	 * @since 29 nov. 2011
 	 * 
 	 */
@@ -105,15 +105,88 @@ public abstract class Spatial {
 			return GamaGeometryType.buildSphere(radius, location);
 		}
 
-		@operator(value = "hemisphere", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value = "hemisphere(10,0.5)", equals = "a geometry as a circle of radius 10 but displays a sphere.", test = false) }, see = {
-			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
+		@operator(value="pac", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="pac(10,0.3)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle", "hemisphere", "pie3D" })
+		public static IShape hemispherePac(final IScope scope, final Double radius, final Double ratio) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildPac(radius, location, ratio);
+		}
+		
+		@operator(value="man", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="man(10,0.3)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
+		public static IShape hemisphereMan(final IScope scope, final Double radius, final Double ratio) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildMan(radius, location, ratio);
+		}
+		
+		@operator(value="pacman", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An pacman geometry which radius is equal to first argument.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="pacman(1)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
+		public static IShape pacMan(final IScope scope, final Double radius) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildPacMan(radius, location, 0.2);
+		}
+		
+		@operator(value="pacman", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An pacman geometry with a dynamic opening mouse which radius is equal to first argument.", 
+		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
+		examples = { @example(value="pacman(1,0.2)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, 
+		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere","pie3D" })
+		public static IShape pacMan(final IScope scope, final Double radius , final Double ratio) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildPacMan(radius, location, ratio);
+		}
+				
+		@operator(value="hemisphere", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An hemisphere geometry which radius is equal to the operand.", 
+		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "the centre of the hemisphere is by default the location of the current agent in which has been called this operator.", 
+		examples = { @example(value="hemisphere(10,0.5)",equals="a geometry as a circle of radius 10 but displays an hemisphere.", test=false) }, 
+		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere","pie3D" })
 		public static IShape hemisphere(final IScope scope, final Double radius, final Double ratio) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildHemiSphere(radius, location, ratio);
+		}
+		
+		@operator(value="pie3D", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.", 
+		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
+		examples = { @example(value="piesphere(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false) }, 
+		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
+		public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			
+			Double sum = 0.0;
+			for( Object curR :ratio){
+				sum = sum + Cast.asFloat(scope, curR);
+			}
+			for( int i=0;i<ratio.size();i++){
+				ratio.set(i, Cast.asFloat(scope, ratio.get(i))/sum); 
+			}
+			
+			return GamaGeometryType.buildPieSphere(radius, location, ratio);
 		}
 
 		@operator(value = "cone3D", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE,

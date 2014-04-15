@@ -44,7 +44,19 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				jtsDrawer.drawSphere(geometry);
 				break;
 			case HEMISPHERE:
-				jtsDrawer.drawHemiSphere(geometry);
+				jtsDrawer.drawHemiSphereChart(geometry);
+				break;
+			case PIESPHERE:
+				jtsDrawer.drawPieSphere(geometry);
+				break;
+			case PACMAN:
+				jtsDrawer.drawPacMan(geometry);
+				break;
+			case PAC:
+				jtsDrawer.drawPac(geometry);
+				break;
+			case MAN:
+				jtsDrawer.drawMan(geometry);
 				break;
 			case CONE:
 				jtsDrawer.drawCone3D(geometry);

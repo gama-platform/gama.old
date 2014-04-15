@@ -122,7 +122,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final double ratio) {
+		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio) {
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured, textureFileNames,
 				angle == null ? 0 : angle, height, roundCorner, type, ratio);

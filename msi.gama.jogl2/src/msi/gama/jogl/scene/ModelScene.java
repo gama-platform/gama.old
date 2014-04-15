@@ -126,7 +126,7 @@ public class ModelScene {
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final double ratio) {
+		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textureFileNames, angle, height,
 			roundCorner, type, ratio);
