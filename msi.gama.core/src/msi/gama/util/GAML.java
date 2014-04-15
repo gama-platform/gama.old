@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 16 mai 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'GAML.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util;
 
 import java.util.*;
@@ -26,17 +33,18 @@ import com.google.common.collect.*;
  */
 public class GAML {
 
-	public static <T> T nullCheck(final T object) {
-		return nullCheck(object, "Error: nil value detected");
+	public static <T> T nullCheck(final IScope scope, final T object) {
+		return nullCheck(scope, object, "Error: nil value detected");
 	}
 
-	public static <T> T nullCheck(final T object, final String error) {
-		if ( object == null ) { throw GamaRuntimeException.error(error); }
+	public static <T> T nullCheck(final IScope scope, final T object, final String error) {
+		if ( object == null ) { throw GamaRuntimeException.error(error, scope); }
 		return object;
 	}
 
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
-		if ( nullCheck(container).isEmpty(scope) ) { throw GamaRuntimeException.error("Error: the container is empty"); }
+		if ( nullCheck(scope, container).isEmpty(scope) ) { throw GamaRuntimeException.error(
+			"Error: the container is empty", scope); }
 		return container;
 	}
 
@@ -47,7 +55,7 @@ public class GAML {
 
 		public InContainer(final IScope s, final IContainer c) {
 			scope = s;
-			container = nullCheck(c);
+			container = nullCheck(s, c);
 		}
 
 		/**
@@ -257,7 +265,7 @@ public class GAML {
 
 	}
 
-	static Iterable it;
+	// static Iterable it;
 
 	public static IExpression compileExpression(final String expression, final IAgent agent)
 		throws GamaRuntimeException {

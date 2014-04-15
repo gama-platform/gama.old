@@ -1,69 +1,39 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaOsmFile.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import gnu.trove.set.hash.TLongHashSet;
+import java.io.*;
+import java.util.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
+import msi.gama.util.*;
 import msi.gaml.types.GamaGeometryType;
-
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
-import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
-import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
-import org.openstreetmap.osmosis.core.domain.v0_6.Node;
-import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
-import org.openstreetmap.osmosis.core.domain.v0_6.Way;
-import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
-import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
-import org.openstreetmap.osmosis.core.task.v0_6.Sink;
+import org.openstreetmap.osmosis.core.domain.v0_6.*;
+import org.openstreetmap.osmosis.core.task.v0_6.*;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
+import com.vividsolutions.jts.geom.*;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-
-/**
- * Written by drogoul
- * Modified on 13 nov. 2011
- * 
- * @todo Description
- * 
- */
 @file(name = "osm", extensions = { "osm", "pbf", "bz2", "gz" })
 public class GamaOsmFile extends GamaGisFile {
 
 	GamaMap<String, GamaList> filteringOptions;
+
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
@@ -76,36 +46,35 @@ public class GamaOsmFile extends GamaGisFile {
 	public GamaOsmFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
-	
+
 	public GamaOsmFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 
-	public GamaOsmFile(IScope scope, String pathName,
-			GamaMap<String, GamaList> filteringOptions) {
-		super(scope, pathName,  (Integer) null);
+	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOptions) {
+		super(scope, pathName, (Integer) null);
 		this.filteringOptions = filteringOptions;
 	}
 
-	public GamaOsmFile(IScope scope, String pathName,
-			GamaMap<String, GamaList> filteringOption, Integer code) {
+	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOption,
+		final Integer code) {
 		super(scope, pathName, code);
-		this.filteringOptions = filteringOptions;
+		this.filteringOptions = filteringOption;
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
 		final Map<Long, GamaShape> nodesPt = new GamaMap<Long, GamaShape>();
 		final List<Node> nodes = new GamaList<Node>();
 		final List<Way> ways = new GamaList<Way>();
-		final Set<Long> intersectionNodes = new HashSet<Long>();
-		final Set<Long> usedNodes = new HashSet<Long>();
+		final TLongHashSet intersectionNodes = new TLongHashSet();
+		final TLongHashSet usedNodes = new TLongHashSet();
 
 		Sink sinkImplementation = new Sink() {
 
 			@Override
 			public void process(final EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
-				boolean toFilter = filteringOptions != null && ! filteringOptions.isEmpty();  
+				boolean toFilter = filteringOptions != null && !filteringOptions.isEmpty();
 				if ( entity instanceof Bound ) {
 					Bound bound = (Bound) entity;
 					Envelope env = new Envelope(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop());
@@ -118,21 +87,21 @@ public class GamaOsmFile extends GamaGisFile {
 							gis.transform(new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
 						nodesPt.put(node.getId(), new GamaShape(g));
 					} else if ( entity instanceof Way ) {
-						if (toFilter) {
+						if ( toFilter ) {
 							boolean keepObject = false;
-							for (String keyN: filteringOptions.getKeys()) {
+							for ( String keyN : filteringOptions.getKeys() ) {
 								GamaList valsPoss = filteringOptions.get(keyN);
-								for (Tag tagN : ((Way) entity).getTags()) {
+								for ( Tag tagN : ((Way) entity).getTags() ) {
 
-									if (keyN.equals(tagN.getKey())) {
-										if (valsPoss.contains(tagN.getValue())) {
+									if ( keyN.equals(tagN.getKey()) ) {
+										if ( valsPoss.contains(tagN.getValue()) ) {
 											keepObject = true;
 											break;
 										}
-									} 
+									}
 								}
 							}
-							if (! keepObject) return;
+							if ( !keepObject ) { return; }
 						}
 						registerHighway((Way) entity, usedNodes, intersectionNodes);
 						ways.add((Way) entity);
@@ -167,7 +136,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public GamaList<IShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
-		final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
+		final TLongHashSet intersectionNodes, final Map<Long, GamaShape> nodesPt) {
 		GamaList<IShape> geometries = new GamaList();
 		for ( Node node : nodes ) {
 			GamaShape pt = nodesPt.get(node.getId());
@@ -207,7 +176,13 @@ public class GamaOsmFile extends GamaGisFile {
 					continue;
 				}
 				IShape geom = GamaGeometryType.buildPolygon(points);
-				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() && /* geom.getInnerGeometry().isValid() && */
+				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() && /*
+																											 * geom.
+																											 * getInnerGeometry
+																											 * (
+																											 * ).isValid
+																											 * () &&
+																											 */
 				geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
 						geom.setAttribute(key, values.get(key));
@@ -222,7 +197,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public List<IShape> createSplitRoad(final Way way, final Map<String, Object> values,
-		final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
+		final TLongHashSet intersectionNodes, final Map<Long, GamaShape> nodesPt) {
 		List<List<IShape>> pointsList = new GamaList<List<IShape>>();
 		List<IShape> points = new GamaList<IShape>();
 		GamaList<IShape> geometries = new GamaList();
@@ -273,7 +248,7 @@ public class GamaOsmFile extends GamaGisFile {
 		// TODO not sure that is is really interesting to save geographic as OSM file...
 	}
 
-	private void registerHighway(final Way way, final Set<Long> usedNodes, final Set<Long> intersectionNodes) {
+	private void registerHighway(final Way way, final TLongHashSet usedNodes, final TLongHashSet intersectionNodes) {
 		for ( Tag tg : way.getTags() ) {
 			String key = tg.getKey();
 			if ( key.equals("highway") ) {
@@ -327,7 +302,7 @@ public class GamaOsmFile extends GamaGisFile {
 			try {
 				readerThread.join();
 			} catch (InterruptedException e) {
-
+				e.printStackTrace();
 			}
 		}
 	}

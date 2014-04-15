@@ -1,37 +1,35 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'GamaGridFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
-
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
-import msi.gaml.types.GamaGeometryType;
-
+import msi.gama.util.*;
+import msi.gaml.types.*;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.PrjFileReader;
 import org.geotools.factory.Hints;
 import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.geometry.DirectPosition2D;
-import org.geotools.geometry.GeneralEnvelope;
+import org.geotools.geometry.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "grid", extensions = { "asc" })
+@file(name = "grid", extensions = { "asc" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
@@ -201,11 +199,13 @@ public class GamaGridFile extends GamaGisFile {
 
 		// does it exist?
 		final File prjFile = new File(prjFileName.toString());
+		FileInputStream fip = null;
 		if ( prjFile.exists() ) {
 			// it exists then we have to read it
 			PrjFileReader projReader = null;
 			try {
-				FileChannel channel = new FileInputStream(prjFile).getChannel();
+				fip = new FileInputStream(prjFile);
+				FileChannel channel = fip.getChannel();
 				projReader = new PrjFileReader(channel);
 				return projReader.getCoordinateReferenceSystem();
 			} catch (FileNotFoundException e) {
@@ -228,6 +228,13 @@ public class GamaGridFile extends GamaGisFile {
 						// warn about the error but proceed, it is not fatal
 						// we have at least the default crs to use
 						return null;
+					}
+					if ( fip != null ) {
+						try {
+							fip.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

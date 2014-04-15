@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaImageFile.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.awt.Graphics2D;
@@ -31,10 +24,10 @@ import msi.gama.util.matrix.*;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "image", extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" })
+@file(name = "image", extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
-	@file(name = "pgm", extensions = { "pgm" })
+	@file(name = "pgm", extensions = { "pgm" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)
 	public static class GamaPgmFile extends GamaImageFile {
 
 		/**
@@ -99,14 +92,14 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	private void loadImage(final IScope scope) {
 		if ( image == null ) {
 			try {
-				image = ImageUtils.getInstance().getImageFromFile(path);
+				image = ImageUtils.getInstance().getImageFromFile(scope, path);
 				if ( image == null ) { throw GamaRuntimeException
 					.error(
 						"This image format (." + getExtension() +
 							") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
 						scope); }
 			} catch (final IOException e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, scope);
 			}
 		}
 	}
@@ -232,7 +225,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
 				in.close();
 			} catch (Exception e) {
-				throw GamaRuntimeException.create(e);
+				throw GamaRuntimeException.create(e, scope);
 			}
 		}
 		double x1 = xllcorner;
@@ -250,14 +243,15 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		super.invalidateContents();
 		image = null;
 	}
+
 	// @Override
 	// public String getKeyword() {
 	// return Files.IMAGE;
 	// }
 
-	public void setImage(IScope scope, BufferedImage image2) {
-		// TODO Auto-generated method stub
-		image=image2;
+	public void setImage(final IScope scope, final BufferedImage image2) {
+		// AD QUESTION : Shouldnt we also erase the buffer in that case ?
+		image = image2;
 	}
 
 }

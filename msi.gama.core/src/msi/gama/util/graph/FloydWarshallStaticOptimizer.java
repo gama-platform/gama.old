@@ -1,20 +1,14 @@
-/*
- * GAMA - V1.2 alpha
- * Generic Agent-based Modelling Architecture
+/*********************************************************************************************
  * 
- * (c) 2007-2008 IRD-UR GEODES (France) & IFI-MSI (Vietnam)
- * (c) 2009-2010 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
+ *
+ * 'FloydWarshallStaticOptimizer.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developpers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, IRD (Kernel, Metamodel, GAML)
- * - Edouard Amouroux, IRD (C++ initial porting)
- * - Chu Thanh Quang, IRD (OpenMap integration)
- * - Francois Sempe, IRD & AUF (EMF behavioral model, Batch framework)
- * - Vo Duc An, IRD & AUF (SWT integration, GUI, FIPA extension)
- * - Guillaume Cherel, IRD (Batch framework)
- * - Patrick Taillandier, AUF & CNRS (Batch framework, GeoTools integration)
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.util.graph;
 
 import java.util.Collections;

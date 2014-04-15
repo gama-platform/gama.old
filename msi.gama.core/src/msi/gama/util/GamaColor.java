@@ -1,33 +1,27 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaColor.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util;
 
+import gnu.trove.map.hash.*;
 import java.awt.Color;
-import java.util.*;
+import java.util.Map;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.constant;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.constant;
-import msi.gama.precompiler.constants.*;
-import msi.gama.precompiler.IConstantCategory;
+import msi.gama.precompiler.*;
+import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 
@@ -41,11 +35,11 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.BRIGHTER, type = IType.COLOR), @var(name = IKeyword.DARKER, type = IType.COLOR) })
 public class GamaColor extends Color implements IValue/* implements IContainer<Integer, Integer> */{
 
-	@constant(value="the set of CSS colors", category=IConstantCategory.COLOR_CSS, doc=@doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
+	@constant(value = "the set of CSS colors", category = IConstantCategory.COLOR_CSS, doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
 	public final static Object[] array = ColorCSS.array;
 
-	public final static Map<String, GamaColor> colors = new HashMap();
-	public final static Map<Integer, GamaColor> int_colors = new HashMap();
+	public final static Map<String, GamaColor> colors = new THashMap();
+	public final static TIntObjectHashMap<GamaColor> int_colors = new TIntObjectHashMap();
 
 	public static GamaColor getInt(final int rgb) {
 		GamaColor result = int_colors.get(rgb);

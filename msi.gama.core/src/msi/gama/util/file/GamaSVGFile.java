@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 30 déc. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaSVGFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.awt.Shape;
@@ -12,8 +19,9 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 import msi.gaml.operators.Spatial;
+import msi.gaml.types.IType;
 import com.kitfox.svg.*;
 import com.vividsolutions.jts.awt.ShapeReader;
 import com.vividsolutions.jts.geom.Geometry;
@@ -26,7 +34,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 30 déc. 2013
  * 
  */
-@file(name = "svg", extensions = "svg")
+@file(name = "svg", extensions = "svg", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
 public class GamaSVGFile extends GamaGeometryFile {
 
 	GamaPoint size;
@@ -42,7 +50,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
-		return ((IList<IShape>) getBuffer()).get(0);
+		return getBuffer().get(0);
 	}
 
 	@Override

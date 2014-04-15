@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 9 janv. 2014
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'GamaCSVFile.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
 import java.io.*;
@@ -11,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.GamaMatrixType;
+import msi.gaml.types.*;
 import au.com.bytecode.opencsv.CSVReader;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -22,7 +29,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 9 janv. 2014
  * 
  */
-@file(name = "csv", extensions = { "csv", "tsv" })
+@file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX)
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
 
 	String csvSeparator = ",";
@@ -55,12 +62,21 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	public void fillBuffer(final IScope scope) {
 		if ( getBuffer() != null ) { return; }
 		if ( csvSeparator != null ) {
+			CSVReader reader = null;
 			try {
-				CSVReader reader = new CSVReader(new FileReader(getPath()), csvSeparator.charAt(0));
+				reader = new CSVReader(new FileReader(getPath()), csvSeparator.charAt(0));
 				List<String[]> strings = reader.readAll();
 				setBuffer(GamaMatrixType.fromCSV(scope, strings));
 			} catch (FileNotFoundException e) {} catch (IOException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e, scope);
+			} finally {
+				if ( reader != null ) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		} else {
 			GamaTextFile textFile = new GamaTextFile(scope, path);

@@ -1,28 +1,21 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaList.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util;
 
 import java.util.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
@@ -40,66 +33,66 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	public static final GamaList EMPTY_LIST = new Empty();
 	public static final HashSet EMPTY_SET = new HashSet();
 
-	private class IndexList extends AbstractIndexList<Integer> {
-
-		/**
-		 * Method checkBounds()
-		 * @see msi.gama.util.AbstractIndexList#checkBounds(msi.gama.runtime.IScope, java.lang.Object, boolean)
-		 */
-		@Override
-		public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-			// TODO Verify this as it should be an internal method
-			return GamaList.this.checkBounds(scope, index, forAdding);
-		}
-
-		/**
-		 * Method get()
-		 * @see msi.gama.util.AbstractIndexList#get(msi.gama.runtime.IScope, java.lang.Integer)
-		 */
-		@Override
-		public Integer get(final IScope scope, final Integer index) throws GamaRuntimeException {
-			return index;
-		}
-
-		/**
-		 * Method addContainerIndex()
-		 * @see msi.gama.util.AbstractIndexList#addContainerIndex(msi.gama.runtime.IScope, java.lang.Object)
-		 */
-		@Override
-		protected void addContainerIndex(final IScope scope, final Integer object) {}
-
-		/**
-		 * Method insertContainerIndex()
-		 * @see msi.gama.util.AbstractIndexList#insertContainerIndex(msi.gama.runtime.IScope, java.lang.Integer,
-		 *      java.lang.Object)
-		 */
-		@Override
-		protected void insertContainerIndex(final IScope scope, final Integer index, final Integer object) {}
-
-		/**
-		 * Method changeContainerIndex()
-		 * @see msi.gama.util.AbstractIndexList#changeContainerIndex(msi.gama.runtime.IScope, java.lang.Integer,
-		 *      java.lang.Object)
-		 */
-		@Override
-		protected void changeContainerIndex(final IScope scope, final Integer index, final Integer value) {}
-
-		/**
-		 * Method addContainerIndexes()
-		 * @see msi.gama.util.AbstractIndexList#addContainerIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
-		 */
-		@Override
-		protected void addContainerIndexes(final IScope scope, final IContainer values) {}
-
-		/**
-		 * Method getContainer()
-		 * @see msi.gama.util.AbstractIndexList#getContainer()
-		 */
-		@Override
-		protected IModifiableContainer<Integer, ?, Integer, ?> getContainer() {
-			return GamaList.this;
-		}
-	}
+	// private class IndexList extends AbstractIndexList<Integer> {
+	//
+	// /**
+	// * Method checkBounds()
+	// * @see msi.gama.util.AbstractIndexList#checkBounds(msi.gama.runtime.IScope, java.lang.Object, boolean)
+	// */
+	// @Override
+	// public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
+	// // TODO Verify this as it should be an internal method
+	// return GamaList.this.checkBounds(scope, index, forAdding);
+	// }
+	//
+	// /**
+	// * Method get()
+	// * @see msi.gama.util.AbstractIndexList#get(msi.gama.runtime.IScope, java.lang.Integer)
+	// */
+	// @Override
+	// public Integer get(final IScope scope, final Integer index) throws GamaRuntimeException {
+	// return index;
+	// }
+	//
+	// /**
+	// * Method addContainerIndex()
+	// * @see msi.gama.util.AbstractIndexList#addContainerIndex(msi.gama.runtime.IScope, java.lang.Object)
+	// */
+	// @Override
+	// protected void addContainerIndex(final IScope scope, final Integer object) {}
+	//
+	// /**
+	// * Method insertContainerIndex()
+	// * @see msi.gama.util.AbstractIndexList#insertContainerIndex(msi.gama.runtime.IScope, java.lang.Integer,
+	// * java.lang.Object)
+	// */
+	// @Override
+	// protected void insertContainerIndex(final IScope scope, final Integer index, final Integer object) {}
+	//
+	// /**
+	// * Method changeContainerIndex()
+	// * @see msi.gama.util.AbstractIndexList#changeContainerIndex(msi.gama.runtime.IScope, java.lang.Integer,
+	// * java.lang.Object)
+	// */
+	// @Override
+	// protected void changeContainerIndex(final IScope scope, final Integer index, final Integer value) {}
+	//
+	// /**
+	// * Method addContainerIndexes()
+	// * @see msi.gama.util.AbstractIndexList#addContainerIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
+	// */
+	// @Override
+	// protected void addContainerIndexes(final IScope scope, final IContainer values) {}
+	//
+	// /**
+	// * Method getContainer()
+	// * @see msi.gama.util.AbstractIndexList#getContainer()
+	// */
+	// @Override
+	// protected IModifiableContainer<Integer, ?, Integer, ?> getContainer() {
+	// return GamaList.this;
+	// }
+	// }
 
 	private static class Empty extends GamaList {
 
@@ -274,7 +267,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		final GamaMap result = new GamaMap();
 		final IType<GamaPair> pairType = Types.get(IType.PAIR);
 		for ( final E e : this ) {
-			result.add(pairType.cast(scope, e, null, keyType, contentsType));
+			result.addValue(scope, pairType.cast(scope, e, null, keyType, contentsType));
 		}
 		return result;
 	}
@@ -415,7 +408,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	public E anyValue(final IScope scope) {
 		if ( isEmpty() ) { return null; }
 
-		final int i = GAMA.getRandom().between(0, size() - 1);
+		final int i = scope.getRandom().between(0, size() - 1);
 		return get(i);
 	}
 

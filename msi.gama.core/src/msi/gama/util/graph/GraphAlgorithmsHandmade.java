@@ -1,6 +1,17 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'GraphAlgorithmsHandmade.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.graph;
 
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 
@@ -19,8 +30,8 @@ public class GraphAlgorithmsHandmade {
 	 * @param graph
 	 * @return
 	 */
-	public static Object getOneRandomNode(final IGraph graph) {
-		return graph.getVertices().get(GAMA.getRandom().between(0, graph.getVertices().size() - 1));
+	public static Object getOneRandomNode(final IScope scope, final IGraph graph) {
+		return graph.getVertices().get(scope.getRandom().between(0, graph.getVertices().size() - 1));
 	}
 
 	/**
@@ -29,13 +40,14 @@ public class GraphAlgorithmsHandmade {
 	 * @param excludedNode
 	 * @return
 	 */
-	public static Object getAnotherRandomNode(final IGraph graph, final Object excludedNode) {
+	public static Object getAnotherRandomNode(final IScope scope, final IGraph graph, final Object excludedNode) {
 
-		if ( graph.getVertices().size() < 2 ) { throw GamaRuntimeException.error("unable to find another node in this very small network"); }
+		if ( graph.getVertices().size() < 2 ) { throw GamaRuntimeException
+			.error("unable to find another node in this very small network"); }
 
 		Object proposedNode = null;
 		do {
-			proposedNode = getOneRandomNode(graph);
+			proposedNode = getOneRandomNode(scope, graph);
 		} while (proposedNode == excludedNode);
 
 		return proposedNode;
@@ -48,22 +60,21 @@ public class GraphAlgorithmsHandmade {
 	 * @param probability
 	 * @return
 	 */
-	public static IGraph rewireGraphProbability(final IGraph graph, final Double probability) {
+	public static IGraph rewireGraphProbability(final IScope scope, final IGraph graph, final Double probability) {
 
 		IList edges = graph.getEdges();
 		for ( int i = 0; i < edges.size(); i++ ) {
 
 			Object currentEdge = edges.get(i);
-			if ( GAMA.getRandom().between(0, 1.0) <= probability ) {
+			if ( scope.getRandom().between(0, 1.0) <= probability ) {
 
 				// rewire this edge
 				Object from = graph.getEdgeSource(currentEdge);
 
 				System.err.println("removing " + from);
 
-				Object toNode = getAnotherRandomNode(graph, from);
-				System.err
-					.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
+				Object toNode = getAnotherRandomNode(scope, graph, from);
+				System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
 
 				graph.removeEdge(currentEdge);
 
@@ -84,23 +95,22 @@ public class GraphAlgorithmsHandmade {
 	 * @param count
 	 * @return
 	 */
-	public static IGraph rewireGraphCount(final IGraph graph, final Integer count) {
+	public static IGraph rewireGraphCount(final IScope scope, final IGraph graph, final Integer count) {
 
 		IList edges = graph.getEdges();
 		for ( int i = 0; i < count; i++ ) {
 
-			Object currentEdge =
-				edges.get(GAMA.getRandom().between(0, graph.getEdges().length(null) - 1 // VERIFY
-																						// NULL
-																						// SCOPE
-					));
+			Object currentEdge = edges.get(scope.getRandom().between(0, graph.getEdges().length(null) - 1 // VERIFY
+																											// NULL
+																											// SCOPE
+				));
 
 			// rewire this edge
 			Object from = graph.getEdgeSource(currentEdge);
 
 			System.err.println("removing " + from);
 
-			Object toNode = getAnotherRandomNode(graph, from);
+			Object toNode = getAnotherRandomNode(scope, graph, from);
 			System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
 
 			graph.removeEdge(currentEdge);

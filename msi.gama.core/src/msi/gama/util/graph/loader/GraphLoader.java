@@ -1,7 +1,19 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'GraphLoader.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.graph.loader;
 
 import java.io.File;
 import java.util.Map;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.GamaGraph;
@@ -24,7 +36,7 @@ public class GraphLoader {
 		// locate the file
 		File f = null;
 		if ( scope != null ) {
-			f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
+			f = new File(FileUtils.constructAbsoluteFilePath(scope, filename, true));
 		} else {
 			f = new File(filename);
 		}
@@ -79,9 +91,11 @@ public class GraphLoader {
 						loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename,
 							spatial);
-					/*GAMA.reportError(GamaRuntimeException
-						.warning("Automatically detected the type of this graph from file extension ('" + extension +
-							"'). Hope this was the relevant type ?"), false);*/
+					/*
+					 * GAMA.reportError(GamaRuntimeException
+					 * .warning("Automatically detected the type of this graph from file extension ('" + extension +
+					 * "'). Hope this was the relevant type ?"), false);
+					 */
 					return res;
 				} catch (GamaRuntimeException e) {
 					e.addContext("attempted to detect the type of this graph from file extension ('" + extension +

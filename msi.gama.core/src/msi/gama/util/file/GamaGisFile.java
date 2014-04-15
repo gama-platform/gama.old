@@ -1,18 +1,22 @@
-/**
- * Created by drogoul, 12 déc. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaGisFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util.file;
 
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaGeometryType;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**

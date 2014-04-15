@@ -1,16 +1,28 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'PostponedWarningList.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util;
 
-import java.util.*;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.procedure.TObjectIntProcedure;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Receives warnings as Strings (hopefully, many times the same). Stores them.
- * Then, we asked for, reports all these warnings to GAMA by grouping them.
+ * Then, when asked for, reports all these warnings to GAMA by grouping them.
  * Result is like "errorA (10 times)" instead of displaying the same thing
  * 10 times.
  * 
- * Remember to use quiet generic messages. Else they will never be the same,
+ * Remember to use quite generic messages. Else they will never be the same,
  * and will not be grouped together. The comparison is based on the default
  * equals of the String class.
  * 
@@ -19,7 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class PostponedWarningList {
 
-	private final Map<String, Integer> warning2count = new HashMap<String, Integer>();
+	private final TObjectIntHashMap<String> warning2count = new TObjectIntHashMap();
 
 	public static boolean writeSystemOut = false;
 
@@ -28,14 +40,7 @@ public class PostponedWarningList {
 	}
 
 	public void addWarning(final String msg) {
-		Integer count = warning2count.get(msg);
-		if ( count == null ) {
-			count = 1;
-		} else {
-			count = count + 1;
-		}
-		warning2count.put(msg, count);
-
+		warning2count.adjustOrPutValue(msg, 1, 1);
 	}
 
 	/**
@@ -53,23 +58,24 @@ public class PostponedWarningList {
 		if ( header != null && !header.isEmpty() && warning2count.size() > 1 ) {
 			GAMA.reportError(GamaRuntimeException.error(header), true);
 		}
-		for ( String msg : warning2count.keySet() ) {
-			Integer times = warning2count.get(msg);
-			StringBuffer sb = new StringBuffer();
-			sb.append(msg).append(" (").append(times);
+		warning2count.forEachEntry(new TObjectIntProcedure<String>() {
 
-			if ( times == 1 ) {
-				sb.append(" time)");
-			} else {
-				sb.append(" times)");
+			@Override
+			public boolean execute(final String msg, final int times) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(msg).append(" (").append(times);
+				if ( times == 1 ) {
+					sb.append(" time)");
+				} else {
+					sb.append(" times)");
+				}
+				if ( writeSystemOut ) {
+					System.err.println(sb.toString());
+				}
+				GAMA.reportError(GamaRuntimeException.error(sb.toString()), true);
+				return true;
 			}
-
-			if ( writeSystemOut ) {
-				System.err.println(sb.toString());
-			}
-
-			GAMA.reportError(GamaRuntimeException.error(sb.toString()), true);
-		}
+		});
 
 	}
 }

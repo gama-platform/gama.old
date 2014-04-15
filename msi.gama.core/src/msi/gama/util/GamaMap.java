@@ -1,42 +1,28 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaMap.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.util;
 
 import static msi.gama.util.GAML.nullCheck;
-
 import java.util.*;
-
-import com.google.common.collect.Iterables;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.population.IPopulationSet;
-import msi.gama.metamodel.population.MetaPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import msi.gaml.types.*;
@@ -47,19 +33,13 @@ import msi.gaml.types.*;
 @vars({ @var(name = GamaMap.KEYS, type = IType.LIST, of = ITypeProvider.FIRST_KEY_TYPE),
 	@var(name = GamaMap.VALUES, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE),
 	@var(name = GamaMap.PAIRS, type = IType.LIST, of = IType.PAIR) })
-public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableContainer<K, V, K, GamaPair<K, V>>,
+public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableContainer<K, V, K, GamaPair<K, V>>,
 	IAddressableContainer<K, V, K, V> {
-
-	// @Override
-	// public Set<Map.Entry<K, V>> entrySet() {
-	// return super.entrySet();
-	// }
 
 	public static final String KEYS = "keys";
 	public static final String VALUES = "values";
 	public static final String PAIRS = "pairs";
 
-	// private static final GamaMap.ToStringProcedure toStringProcedure = new ToStringProcedure();
 	private static final GamaMap.ToMatrixProcedure toMatrixProcedure = new ToMatrixProcedure();
 	private static final GamaMap.ToReverseProcedure toReverseProcedure = new ToReverseProcedure();
 	public static final GamaMap EMPTY_MAP = new GamaMap();
@@ -136,85 +116,61 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		return result;
 	}
 
-	public void add(final GamaPair<K, V> v) {
-		put(v.getKey(), v.getValue());
-	}
-
 	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new map containing all the elements of both operands", examples = {
 		@example(value = "['a'::1,'b'::2] + ['c'::3]", equals = "['a'::1,'b'::2,'c'::3]"),
-		@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") }, see = { "" + IKeyword.MINUS })
+		@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") }, see = { "" +
+		IKeyword.MINUS })
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		// special case for the addition of two populations or meta-populations
-//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
-		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
-		res.addVallues(scope,m2);
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
+		res.addVallues(scope, m2);
 		return res;
 	}
-	
+
 	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of both operands",examples = {
+	@doc(value = "returns a new map containing all the elements of both operands", examples = {
 		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
-		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" + IKeyword.MINUS })
+		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" +
+		IKeyword.MINUS })
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
 		// special case for the addition of two populations or meta-populations
-//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
-		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
-		res.add(m2);
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
+		res.addValue(scope, m2);
 		return res;
 	}
-	
+
 	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand",examples = {
+	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand", examples = {
 		@example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
 		@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1]") }, see = { "" + IKeyword.MINUS })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		// special case for the addition of two populations or meta-populations
-//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
-		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
-		res.removeValues(scope,m2);
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
+		res.removeValues(scope, m2);
 		return res;
 	}
-	
+
 	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand",examples = {
+	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand", examples = {
 		@example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
 		@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") }, see = { "" + IKeyword.MINUS })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
 		// special case for the addition of two populations or meta-populations
-//		final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
-		final GamaMap res=(GamaMap) nullCheck(m1).copy(scope);
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
 		res.remove(m2.getKey());
 		return res;
-	}	
-	
-	
-	
-/*
-	// TODO plus / union / inter / minus on maps and graphs and maybe on lists
-
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = IOperatorCategory.CONTAINER)
-	@doc(usages = @usage(value = "if the right operand is an object of any type (except a container), " +
-		IKeyword.PLUS + " returns a list of the elemets of the left operand, to which this object has been added", examples = {
-		@example(value = "[1,2,3,4,5,6] + 2", equals = "[1,2,3,4,5,6,2]"),
-		@example(value = "[1,2,3,4,5,6] + 0", equals = "[1,2,3,4,5,6,0]") }))
-	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
-		final IList result = (IList) nullCheck(l1).listValue(scope, Types.NO_TYPE).copy(scope);
-		result.add(l);
-		return result;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category={IOperatorCategory.ARITHMETIC})
-	@doc(value = "the sum, union or concatenation of the two operands.", examples = @example(value="1.0 + 2.5",equals="3.5"))
-	public static Double opPlus(final Double a, final Double b) {
-		return a + b;
-	}
-	*/
 	@Override
 	public V anyValue(final IScope scope) {
 		if ( isEmpty() ) { return null; }
 		final V[] array = (V[]) values().toArray();
-		final int i = GAMA.getRandom().between(0, array.length - 1);
+		final int i = scope.getRandom().between(0, array.length - 1);
 		return array[i];
 	}
 
@@ -223,14 +179,8 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
-	public void addValue(final IScope scope, final GamaPair<K, V> value) {
-		// value is supposed to be a pair
-		// if ( value instanceof GamaPair ) {
-		this.add(value);
-		// }
-		// else ?
-		// We dont convert anymore, as it would lose the information about the key type / content type
-		// The ContainerStatements should handle this.
+	public void addValue(final IScope scope, final GamaPair<K, V> v) {
+		put(v.getKey(), v.getValue());
 	}
 
 	/**
@@ -239,9 +189,10 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 	 */
 	@Override
 	public void addValueAtIndex(final IScope scope, final K index, final GamaPair<K, V> value) {
-		if ( !containsKey(index) ) {
-			put(index, value.value);
-		}
+		// Cf. discussion on mailing-list about making "add" a synonym of "put" for maps
+		// if ( !containsKey(index) ) {
+		setValueAtIndex(scope, index, value);
+		// }
 	}
 
 	/**
@@ -335,64 +286,6 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		}
 	}
 
-	//
-	// @Override
-	// public void add(final IScope scope, final K index, final Object value, final Object param, final boolean all,
-	// final boolean add) {
-	// if ( index == null ) {
-	// if ( all ) {
-	// if ( value instanceof GamaMap ) {
-	// putAll((GamaMap) value);
-	// } else if ( value instanceof IContainer ) {
-	// for ( final Object o : ((IContainer) value).iterable(scope) ) {
-	// add(scope, null, o, null, false, false);
-	// }
-	// } else {
-	// for ( final Map.Entry e : entrySet() ) {
-	// e.setValue(value);
-	// }
-	// }
-	// } else {
-	// // 08/01/14: Removal of this useless test (handled by Cast.asPair())
-	// // if ( value instanceof GamaPair ) {
-	// // final GamaPair<K, V> p = (GamaPair) value;
-	// // // TODO Check type with class cast exception ?
-	// // put(p.getKey(), p.getValue());
-	// // } else
-	// if ( value instanceof GamaMap ) {
-	// putAll((GamaMap) value);
-	// } else {
-	// final GamaPair<K, V> p = Cast.asPair(scope, value);
-	// put(p.getKey(), p.getValue());
-	// }
-	// }
-	// } else {
-	// // TODO Check type with class cast exception ?
-	// put(index, (V) value);
-	// }
-	// }
-	//
-	// @Override
-	// public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
-	// if ( index == null ) {
-	// if ( all ) {
-	// if ( value instanceof IContainer ) {
-	// for ( final Object obj : ((IContainer) value).iterable(scope) ) {
-	// remove(scope, null, obj, true);
-	// }
-	// } else if ( value != null ) {
-	// remove(value);
-	// } else {
-	// clear();
-	// }
-	// } else {
-	// remove(value);
-	// }
-	// } else {
-	// remove(index);
-	// }
-	// }
-
 	@Override
 	public V firstValue(final IScope scope) {
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
@@ -462,24 +355,6 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 
 	}
 
-	// public static class ToStringProcedure {
-	//
-	// public String string;
-	//
-	// public boolean execute(final Object a, final Object b) {
-	//
-	// final StringBuilder res = new StringBuilder(50);
-	// res.append(string);
-	// res.append(a);
-	// res.append(',');
-	// res.append(b);
-	// res.append("; ");
-	// string = res.toString();
-	// return true;
-	// }
-	//
-	// }
-
 	@Override
 	public IContainer reverse(final IScope scope) {
 		toReverseProcedure.init(size());
@@ -515,29 +390,6 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IModifiableCon
 		final GamaMap result = new GamaMap(this);
 		return result;
 	}
-
-	/**
-	 * Returns an iterator that iterates on the list of VALUES (not GamaPairs anymore)
-	 * @see java.lang.Iterable#iterator()
-	 */
-	// @Override
-	// public Iterator<V> iterator() {
-	// return values().iterator();
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
-	 * java.lang.Object)
-	 */
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
-	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
-	 */
 
 	@Override
 	public V get(final IScope scope, final K index) throws GamaRuntimeException {
