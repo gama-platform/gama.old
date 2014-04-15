@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 13 sept. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'IGamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt;
 
 import msi.gama.gui.swt.GamaIcons.GamaIcon;
@@ -169,5 +176,13 @@ public interface IGamaIcons {
 	// Wizard
 
 	public static final GamaIcon GAMA_ICON = GamaIcons.create("launcher_icons/icon205");
+
+	// Browser
+	public static final GamaIcon BROWSER_BACK = GamaIcons.create("browser.back");
+	public static final GamaIcon BROWSER_FORWARD = GamaIcons.create("browser.forward");
+	public static final GamaIcon BROWSER_REFRESH = GamaIcons.create("browser.refresh");
+	public static final GamaIcon BROWSER_HOME = GamaIcons.create("browser.home");
+	public static final GamaIcon BROWSER_STOP = GamaIcons.create("browser.stop");
+	public static final GamaIcon BROWSER_ICON = GamaIcons.create("browser.icon");
 
 }

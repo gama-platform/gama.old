@@ -1,14 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*********************************************************************************************
  * 
- * Contributors:
- * SAS Institute Inc. - initial API and implementation
- * ILOG S.A. - initial API and implementation
- *******************************************************************************/
+ * 
+ * 'SwingControl.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.awt.*;
@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.swt.*;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.*;
@@ -208,7 +207,7 @@ public abstract class SwingControl extends Composite {
 			}
 		});
 
-		initCleanResizeListener();
+		// initCleanResizeListener(); @CHANGE: no need
 	}
 
 	// ========================================================================
@@ -249,7 +248,9 @@ public abstract class SwingControl extends Composite {
 
 		// Make sure Awt environment is initialized.
 		AwtEnvironment.getInstance(display);
-
+		if ( Platform.isCocoa() && Platform.JAVA_VERSION >= Platform.javaVersion(1, 7, 0) ) {
+			SWT_AWT.embeddedFrameClass = "sun.lwawt.macosx.CEmbeddedFrame";
+		}
 		frame = SWT_AWT.new_Frame(borderlessChild);
 
 		// if ( verboseSizeLayout )
@@ -1248,7 +1249,7 @@ public abstract class SwingControl extends Composite {
 	// ============================= Focus Management =============================
 	private FocusHandler focusHandler;
 	private boolean isSwtTabOrderExtended = true;
-	private boolean isAWTPermanentFocusLossForced = true;
+	private boolean isAWTPermanentFocusLossForced = true; //
 
 	protected void initializeFocusManagement() {
 		assert frame != null;
@@ -1665,8 +1666,8 @@ public abstract class SwingControl extends Composite {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				GuiUtils.debug("First resize actions. Frame has been resized to " + frame.getWidth() +
-					frame.getHeight());
+				// GuiUtils.debug("First resize actions. Frame has been resized to " + frame.getWidth() + " " +
+				// frame.getHeight());
 				scrollTextFields(frame);
 				// We care about only the first resize
 				frame.removeComponentListener(this);

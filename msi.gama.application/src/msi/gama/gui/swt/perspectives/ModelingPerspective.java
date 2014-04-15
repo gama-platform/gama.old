@@ -1,23 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'ModelingPerspective.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.perspectives;
 
+import msi.gama.gui.views.BrowserView;
 import org.eclipse.ui.*;
 
 public class ModelingPerspective implements IPerspectiveFactory {
@@ -27,9 +21,32 @@ public class ModelingPerspective implements IPerspectiveFactory {
 
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
-		layout.setEditorAreaVisible(true);
 
-		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, (float) 0.75, layout.getEditorArea());
+		layout.setFixed(false);
+		String editorId = layout.getEditorArea();
+		layout.setEditorAreaVisible(true);
+		String navId = "msi.gama.gui.view.GamaNavigator";
+		// Positioning the navigator
+		// IPlaceholderFolderLayout navFolder =
+		// layout.createPlaceholderFolder("NavFolder", IPageLayout.LEFT, 0.25f, editorId);
+		// navFolder.addPlaceholder(navId);
+		layout.addView(navId, IPageLayout.LEFT, 0.3f, editorId);
+		// IViewLayout v = layout.getViewLayout(navId);
+		// v.setMoveable(false);
+		// And the outline below it
+		// IPlaceholderFolderLayout outlineFolder =
+		// layout.createPlaceholderFolder("OutlineFolder", IPageLayout.BOTTOM, 0.5f, navId);
+		// outlineFolder.addPlaceholder(IPageLayout.ID_OUTLINE);
+		layout.addView(IPageLayout.ID_OUTLINE, IPageLayout.BOTTOM, 0.5f, navId);
+		// Positioning the problem view below
+		// IPlaceholderFolderLayout problemFolder =
+		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, 0.66f, editorId);
+		// problemFolder.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
+		// layout.addView
+		// And finally the browser
+		IPlaceholderFolderLayout browserFolder =
+			layout.createPlaceholderFolder("BrowserFolder", IPageLayout.RIGHT, 0.66f, editorId);
+		browserFolder.addPlaceholder(BrowserView.ID);
 
 		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewFileWizard");
 		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewProjectWizard");

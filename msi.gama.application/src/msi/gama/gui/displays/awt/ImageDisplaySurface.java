@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ImageDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
@@ -53,6 +46,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private String snapshotFileName;
 	public static String snapshotFolder = "/tmp/";
 	public double envWidth, envHeight;
+	protected IScope scope;
 
 	public ImageDisplaySurface() {}
 
@@ -62,8 +56,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h, final LayeredDisplayOutput output) {
-		outputChanged(w, h, output);
+	public void initialize(final IScope scope, final double w, final double h, final LayeredDisplayOutput output) {
+		outputChanged(scope, w, h, output);
+	}
+
+	@Override
+	public IScope getDisplayScope() {
+		return scope;
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @param scope
 	 * @param image
 	 */
-	public void save(final IScope scope, final RenderedImage image) {
+	public void save(final RenderedImage image) {
 		try {
 			Files.newFolder(scope, snapshotFolder);
 		} catch (final GamaRuntimeException e1) {
@@ -87,7 +86,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
 		} catch (final java.io.IOException ex) {
-			final GamaRuntimeException e = GamaRuntimeException.create(ex);
+			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(e, false);
 		} finally {
@@ -96,7 +95,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 					os.close();
 				}
 			} catch (final Exception ex) {
-				final GamaRuntimeException e = GamaRuntimeException.create(ex);
+				final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(e, false);
 			}
@@ -109,7 +108,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+	public void outputChanged(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {
+		this.scope = scope.copy();
 		widthHeightConstraint = env_height / env_width;
 		envWidth = env_width;
 		envHeight = env_height;
@@ -119,7 +120,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer));
+				manager.addLayer(LayerManager.createLayer(scope, (ILayerStatement) layer));
 			}
 		} else {
 			manager.outputChanged();
@@ -199,6 +200,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		if ( manager != null ) {
 			manager.dispose();
 		}
+		GAMA.releaseScope(scope);
 	}
 
 	@Override
@@ -332,9 +334,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		final IScope scope = GAMA.obtainNewScope();
-		save(scope, buffImage);
-		GAMA.releaseScope(scope);
+		save(buffImage);
 	}
 
 	/**

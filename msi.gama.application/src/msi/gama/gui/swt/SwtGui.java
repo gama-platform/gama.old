@@ -1,23 +1,17 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'SwtGui.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt;
 
+import gnu.trove.map.hash.THashMap;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -78,6 +72,7 @@ public class SwtGui implements IGui {
 		COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
 		COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
 		COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
+		COLOR_IMPORTED = new Color(Display.getDefault(), 0xFF, 0xD9, 0x00);
 		COLOR_NEUTRAL = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 
@@ -87,6 +82,7 @@ public class SwtGui implements IGui {
 
 	private static Color COLOR_ERROR;
 	private static Color COLOR_OK;
+	private static Color COLOR_IMPORTED;
 	private static Color COLOR_WARNING;
 	private static Color COLOR_NEUTRAL;
 	private static Font expandFont;
@@ -100,14 +96,15 @@ public class SwtGui implements IGui {
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
 	private static ThreadedStatusUpdater status = new ThreadedStatusUpdater();
+	private static ISpeedDisplayer speedStatus;
 	private Tell tell = new Tell();
 	private Error error = new Error();
 	private Views views = new Views();
-	private static ConsoleView console = null;
-	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
+	private ConsoleView console = null;
+	private final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
 	private final List<IDisplaySurface> surfaces = new ArrayList();
-	private IPartListener partListener;
+	private IPartListener2 partListener;
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -345,7 +342,7 @@ public class SwtGui implements IGui {
 		dialogReturnCode = i;
 	}
 
-	private static void writeToConsole(final String msg) {
+	private void writeToConsole(final String msg) {
 		if ( console != null ) {
 			console.append(msg);
 		} else {
@@ -440,7 +437,7 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
-	private IPartListener getPartListener() {
+	private IPartListener2 getPartListener() {
 		if ( partListener == null ) {
 			partListener = new GamaPartListener();
 		}
@@ -480,38 +477,58 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	public class GamaPartListener implements IPartListener {
-
-		// TODO implement IPartListener2 to be notified when views are hidden
-		@Override
-		public void partActivated(final IWorkbenchPart partRef) {}
+	public class GamaPartListener implements IPartListener2 {
 
 		@Override
-		public void partClosed(final IWorkbenchPart partRef) {
-			if ( partRef instanceof IGamaView ) {
+		public void partActivated(final IWorkbenchPartReference partRef) {}
+
+		@Override
+		public void partClosed(final IWorkbenchPartReference partRef) {
+			if ( partRef.getPart(false) instanceof IGamaView ) {
 				final IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
 				final IOutputManager m = s.getSimulationOutputs();
 				if ( m != null ) {
-					m.removeOutput(((IGamaView) partRef).getOutput());
+					m.removeOutput(((IGamaView) partRef.getPart(false)).getOutput());
 				}
 			}
 		}
 
 		@Override
-		public void partDeactivated(final IWorkbenchPart partRef) {}
+		public void partDeactivated(final IWorkbenchPartReference partRef) {}
 
 		@Override
-		public void partOpened(final IWorkbenchPart partRef) {
-			if ( partRef instanceof LayeredDisplayView ) {
-				LayeredDisplayView view = (LayeredDisplayView) partRef;
+		public void partOpened(final IWorkbenchPartReference partRef) {
+			if ( partRef.getPart(false) instanceof LayeredDisplayView ) {
+				LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
 				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
 			}
 		}
 
 		@Override
-		public void partBroughtToTop(final IWorkbenchPart part) {}
+		public void partBroughtToTop(final IWorkbenchPartReference part) {}
+
+		/**
+		 * Method partHidden()
+		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		@Override
+		public void partHidden(final IWorkbenchPartReference partRef) {}
+
+		/**
+		 * Method partVisible()
+		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		@Override
+		public void partVisible(final IWorkbenchPartReference partRef) {}
+
+		/**
+		 * Method partInputChanged()
+		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		@Override
+		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	}
 
 	static void initFonts() {
@@ -650,7 +667,7 @@ public class SwtGui implements IGui {
 
 	}
 
-	static final Map<String, Class> perspectiveClasses = new HashMap();
+	static final Map<String, Class> perspectiveClasses = new THashMap();
 
 	public final boolean loadPerspectives() {
 		if ( !perspectiveClasses.isEmpty() ) { return true; }
@@ -687,21 +704,20 @@ public class SwtGui implements IGui {
 
 	String currentPerspectiveId = null;
 
-	public final boolean changePerspective() {
-		System.out.println("change perspective " + this.currentPerspectiveId);
-		if ( currentPerspectiveId == PERSPECTIVE_SIMULATION_ID ) {
-			this.currentPerspectiveId = PERSPECTIVE_HPC_ID;
-			return openPerspective(PERSPECTIVE_HPC_ID);
-		} else {
-			if ( currentPerspectiveId == PERSPECTIVE_MODELING_ID ) {
-				this.currentPerspectiveId = PERSPECTIVE_SIMULATION_ID;
-				return openPerspective(PERSPECTIVE_SIMULATION_ID);
-			} else {
-				this.currentPerspectiveId = PERSPECTIVE_MODELING_ID;
-				return openPerspective(PERSPECTIVE_MODELING_ID);
-			}
-		}
-	}
+	// public final boolean changePerspective() {
+	// if ( currentPerspectiveId.equals(PERSPECTIVE_SIMULATION_ID) ) {
+	// this.currentPerspectiveId = PERSPECTIVE_HPC_ID;
+	// return openPerspective(PERSPECTIVE_HPC_ID);
+	// } else {
+	// if ( currentPerspectiveId == PERSPECTIVE_MODELING_ID ) {
+	// this.currentPerspectiveId = PERSPECTIVE_SIMULATION_ID;
+	// return openPerspective(PERSPECTIVE_SIMULATION_ID);
+	// } else {
+	// this.currentPerspectiveId = PERSPECTIVE_MODELING_ID;
+	// return openPerspective(PERSPECTIVE_MODELING_ID);
+	// }
+	// }
+	// }
 
 	@Override
 	public void run(final Runnable r) {
@@ -730,19 +746,19 @@ public class SwtGui implements IGui {
 		return EditorFactory.getInstance();
 	}
 
-	static final Map<String, Class> displayClasses = new HashMap();
+	static final Map<String, Class> displayClasses = new THashMap();
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
-		final double w, final double h, final Object ... args) {
+	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final String keyword,
+		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(args);
-			surface.initialize(w, h, layerDisplayOutput);
+			surface.initialize(scope, w, h, layerDisplayOutput);
 		} else {
-			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.");
+			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
 		}
 		return surface;
 	}
@@ -750,7 +766,7 @@ public class SwtGui implements IGui {
 	@Override
 	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
 		final Map<String, IType> types) {
-		final Map<String, Object> result = new HashMap();
+		final Map<String, Object> result = new THashMap();
 		run(new Runnable() {
 
 			@Override
@@ -940,6 +956,13 @@ public class SwtGui implements IGui {
 		return COLOR_OK;
 	}
 
+	public static Color getImportedErrorColor() {
+		if ( COLOR_IMPORTED == null ) {
+			initColors();
+		}
+		return COLOR_IMPORTED;
+	}
+
 	public static Color getErrorColor() {
 		if ( COLOR_ERROR == null ) {
 			initColors();
@@ -961,26 +984,26 @@ public class SwtGui implements IGui {
 		return COLOR_NEUTRAL;
 	}
 
-	@Override
-	public void cycleDisplayViews(final Set<String> names) {
-		final Set<String> names2 = new HashSet(names);
-		run(new Runnable() {
+	// @Override
+	// public void cycleDisplayViews(final Set<String> names) {
+	// final Set<String> names2 = new HashSet(names);
+	// run(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// for ( final String name : names2 ) {
+	// final IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
+	// if ( r != null ) {
+	// final IViewPart p = r.getView(false);
+	// // GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
+	// getPage().activate(p);
+	// }
+	// }
+	//
+	// }
+	// });
 
-			@Override
-			public void run() {
-				for ( final String name : names2 ) {
-					final IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
-					if ( r != null ) {
-						final IViewPart p = r.getView(false);
-						// GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
-						getPage().activate(p);
-					}
-				}
-
-			}
-		});
-
-	}
+	// }
 
 	/**
 	 * Method setSelectedAgent()
@@ -1088,6 +1111,21 @@ public class SwtGui implements IGui {
 		if ( surfaces.isEmpty() ) { return null; }
 		if ( surfaces.size() > 1 ) { return null; }
 		return surfaces.get(0);
+	}
+
+	public static void setSpeedControl(final ISpeedDisplayer d) {
+		speedStatus = d;
+	}
+
+	/**
+	 * Method updateSpeedDisplay()
+	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
+	 */
+	@Override
+	public void updateSpeedDisplay(final Double d, final boolean notify) {
+		if ( speedStatus != null ) {
+			speedStatus.setInit(d, notify);
+		}
 	}
 
 }

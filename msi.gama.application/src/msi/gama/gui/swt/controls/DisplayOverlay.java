@@ -1,12 +1,18 @@
-/**
- * Created by drogoul, 19 janv. 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'DisplayOverlay.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
@@ -147,7 +153,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 			try {
 				coord.setText(getView().getOverlayCoordInfo());
 			} catch (Exception e) {
-				GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+				// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
 				coord.setText("Not initialized yet");
 			}
 		}
@@ -155,7 +161,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 			try {
 				zoom.setText(getView().getOverlayZoomInfo());
 			} catch (Exception e) {
-				GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+				// GuiUtils.debug("Error in updating overlay: " + e.getMessage());
 				zoom.setText("Not initialized yet");
 			}
 		}
@@ -168,10 +174,10 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 	@Override
 	protected Point getLocation() {
 		Composite surfaceComposite = getView().getComponent();
-		Point p = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-		Point s = surfaceComposite.getSize();
+		Rectangle r = surfaceComposite.getClientArea();
+		Point p = surfaceComposite.toDisplay(r.x, r.y);
 		int x = p.x;
-		int y = p.y + s.y - (createExtraInfo ? 56 : 32);
+		int y = p.y + r.height - (createExtraInfo ? 56 : 32);
 		return new Point(x, y);
 	}
 
@@ -215,15 +221,6 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		if ( c != WHITE && c != color ) {
 			c.dispose();
 		}
-	}
-
-	/**
-	 * Method isDisposed()
-	 * @see msi.gama.gui.swt.controls.IUpdaterTarget#isDisposed()
-	 */
-	@Override
-	public boolean isDisposed() {
-		return super.isDisposed();
 	}
 
 	/**

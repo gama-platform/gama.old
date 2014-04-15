@@ -1,9 +1,17 @@
-/**
- * Created by drogoul, 19 janv. 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'DisplayedAgentsMenu.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
+import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.*;
@@ -29,7 +37,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	// private final Collection<IAgent> filteredList;
 
-	public static Map<Class, Image> layer_images = new HashMap();
+	public static Map<Class, Image> layer_images = new THashMap();
 
 	static {
 		layer_images.put(GridLayer.class, IGamaIcons.LAYER_GRID.image());
@@ -94,7 +102,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		return parent;
 	}
 
-	private class FocusOnSelection extends SelectionAdapter {
+	private static class FocusOnSelection extends SelectionAdapter {
 
 		IDisplaySurface surface;
 
@@ -130,34 +138,34 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	}
 
-	private class FollowSelection extends SelectionAdapter {
-
-		IDisplaySurface surface;
-
-		FollowSelection(final IDisplaySurface surface) {
-			this.surface = surface;
-		}
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			final MenuItem mi = (MenuItem) e.widget;
-			final IAgent a = (IAgent) mi.getData("agent");
-			if ( a != null && !a.dead() ) {
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						if ( !a.dead() ) {
-							surface.followAgent(a);
-						}
-
-					}
-				}).start();
-
-			}
-		}
-
-	}
+	// private class FollowSelection extends SelectionAdapter {
+	//
+	// IDisplaySurface surface;
+	//
+	// FollowSelection(final IDisplaySurface surface) {
+	// this.surface = surface;
+	// }
+	//
+	// @Override
+	// public void widgetSelected(final SelectionEvent e) {
+	// final MenuItem mi = (MenuItem) e.widget;
+	// final IAgent a = (IAgent) mi.getData("agent");
+	// if ( a != null && !a.dead() ) {
+	// new Thread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( !a.dead() ) {
+	// surface.followAgent(a);
+	// }
+	//
+	// }
+	// }).start();
+	//
+	// }
+	// }
+	//
+	// }
 
 	@Override
 	public boolean isDynamic() {
@@ -173,8 +181,8 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		final Collection<IAgent> filteredList) {
 		final LayeredDisplayView view = (LayeredDisplayView) this.view;
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
-		AgentsMenu.MenuAction follow =
-			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
+		// AgentsMenu.MenuAction follow =
+		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
 			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
@@ -212,7 +220,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 				if ( isSpeciesLayer ) {
 					pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
 				} else {
-					pop = ((AgentLayer) layer).getAgentsForMenu();
+					pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
 				}
 				pop = new ArrayList(pop);
 				if ( pop.isEmpty() ) {

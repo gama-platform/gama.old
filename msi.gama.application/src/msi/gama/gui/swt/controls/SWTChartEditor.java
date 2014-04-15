@@ -1,44 +1,14 @@
-/*
- * ===========================================================
- * JFreeChart : a free chart library for the Java(tm) platform
- * ===========================================================
+/*********************************************************************************************
  * 
- * (C) Copyright 2000-2008, by Object Refinery Limited and Contributors.
+ *
+ * 'SWTChartEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Project Info: http://www.jfree.org/jfreechart/index.html
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
  * 
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
- * USA.
- * 
- * [Java is a trademark or registered trademark of Sun Microsystems, Inc.
- * in the United States and other countries.]
- * 
- * -------------------
- * SWTChartEditor.java
- * -------------------
- * (C) Copyright 2006-2008, by Henry Proudhon and Contributors.
- * 
- * Original Author: Henry Proudhon (henry.proudhon AT ensmp.fr);
- * Contributor(s): David Gilbert (for Object Refinery Limited);
- * 
- * Changes
- * -------
- * 01-Aug-2006 : New class (HP);
- * 18-Dec-2008 : Use ResourceBundleWrapper - see patch 1607918 by
- * Jess Thrysoee (DG);
- */
+ **********************************************************************************************/
 
 package msi.gama.gui.swt.controls;
 
@@ -1460,9 +1430,6 @@ public class SWTChartEditor implements ChartEditor {
 					@Override
 					public void widgetSelected(final SelectionEvent event) {
 						switch (SWTPlotAppearanceEditor.this.orientation.getSelectionIndex()) {
-							case ORIENTATION_VERTICAL:
-								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.VERTICAL;
-								break;
 							case ORIENTATION_HORIZONTAL:
 								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.HORIZONTAL;
 								break;

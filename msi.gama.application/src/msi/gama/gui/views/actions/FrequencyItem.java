@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 19 janv. 2012
+/*********************************************************************************************
  * 
- */
+ *
+ * 'FrequencyItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.*;
@@ -70,7 +77,7 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 
 	@Override
 	public void resetToInitialState() {
-		((SpeedContributionItem) item).setInit(getInit());
+		((SpeedContributionItem) item).setInit(getInit(), true);
 		super.resetToInitialState();
 	}
 

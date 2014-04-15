@@ -1,4 +1,14 @@
-/* $Id: AwtEnvironment.java,v 1.27 2008/08/04 20:23:07 ghirsch Exp $ */
+/*********************************************************************************************
+ * 
+ * 
+ * 'AwtEnvironment.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 /*******************************************************************************
  * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
  * All rights reserved. This program and the accompanying materials
@@ -12,6 +22,7 @@
  *******************************************************************************/
 package msi.gama.gui.swt.swing;
 
+import gnu.trove.map.hash.THashMap;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -48,7 +59,7 @@ public final class AwtEnvironment {
 	// Map from Display to AwtEnvironment.
 	// This does not need to be a WeakHashMap: Display instances don't go away
 	// silently; they are disposed, and we install a Dispose listener.
-	private static Map /* Display -> AwtEnvironment */environmentMap = new HashMap();
+	private static Map<Display, AwtEnvironment> /* Display -> AwtEnvironment */environmentMap = new THashMap();
 
 	/**
 	 * Returns the single instance of AwtEnvironment for the given display. On
@@ -76,7 +87,7 @@ public final class AwtEnvironment {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		synchronized (environmentMap) {
-			AwtEnvironment instance = (AwtEnvironment) environmentMap.get(display);
+			AwtEnvironment instance = environmentMap.get(display);
 			if ( instance == null ) {
 				instance = new AwtEnvironment(display);
 				environmentMap.put(display, instance);
@@ -107,7 +118,7 @@ public final class AwtEnvironment {
 
 	static private void removeInstance(final Display display) {
 		synchronized (environmentMap) {
-			AwtEnvironment instance = (AwtEnvironment) environmentMap.remove(display);
+			AwtEnvironment instance = environmentMap.remove(display);
 			if ( instance != null ) {
 				instance.dispose();
 			}
@@ -195,7 +206,7 @@ public final class AwtEnvironment {
 	// ======================= Look&Feel initialization =======================
 	// Mostly delegated to the LookAndFeelHandler.
 
-	private static boolean isLookAndFeelInitialized = false;
+	// private static boolean isLookAndFeelInitialized = false;
 
 	// static private void setLookAndFeel() {
 	// assert EventQueue.isDispatchThread(); // On AWT event thread

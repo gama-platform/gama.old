@@ -1,23 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AgentLayer.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.displays.layers;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
@@ -71,7 +66,7 @@ public class AgentLayer extends AbstractLayer {
 		}
 	}
 
-	protected final Map<IAgent, Rectangle2D> shapes = new HashMap();
+	protected final Map<IAgent, Rectangle2D> shapes = new THashMap();
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
@@ -98,7 +93,7 @@ public class AgentLayer extends AbstractLayer {
 		}
 	}
 
-	public Collection<IAgent> getAgentsForMenu() {
+	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
 		if ( shapes.isEmpty() ) { return getAgentsToDisplay(); }
 		// Avoid recalculating the agents
 		return shapes.keySet();
@@ -113,7 +108,7 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> selectedAgents = new HashSet();
+		final Set<IAgent> selectedAgents = new THashSet();
 
 		// GamaGeometry selectionPoint = new GamaGeometry(getModelCoordinatesFrom(x, y));
 		// Envelope selectionEnvelope = selectionPoint.getEnvelope();

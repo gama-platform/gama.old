@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'DisplaySurfaceMenu.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
 import java.util.*;
@@ -20,33 +31,6 @@ public class DisplaySurfaceMenu {
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
 		surface = s;
 		swtControl = c;
-		// GuiUtils.run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// c.addMouseListener(new MouseListener() {
-		//
-		// @Override
-		// public void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
-		// GuiUtils.debug("Mouse up for SWT control");
-		//
-		// }
-		//
-		// @Override
-		// public void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-		// GuiUtils.debug("Mouse down for SWT control");
-		//
-		// }
-		//
-		// @Override
-		// public void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		// }
-		// });
-
 		menuBuilder = new DisplayedAgentsMenu(view);
 		((AbstractAWTDisplaySurface) s).setSWTMenuManager(this);
 
@@ -60,8 +44,6 @@ public class DisplaySurfaceMenu {
 			menu.dispose();
 		}
 		Set<IAgent> all = new LinkedHashSet();
-		// GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y, surface);
-		// all.add(GAMA.getSimulation());
 		for ( final ILayer display : displays ) {
 			final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
 			if ( agents.isEmpty() ) {

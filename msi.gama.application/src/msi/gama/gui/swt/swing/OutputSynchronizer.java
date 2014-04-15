@@ -1,8 +1,20 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'OutputSynchronizer.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.swing;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -26,7 +38,7 @@ public class OutputSynchronizer {
 	}
 
 	public static void incInitializingViews(final String view) {
-		GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
+		// GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
 		viewsScheduledToOpen.add(view);
 		viewsScheduledToClose.add(view);
 		viewsScheduledToBeActivated.add(0, view);
@@ -44,7 +56,7 @@ public class OutputSynchronizer {
 		// GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
-		GuiUtils.debug("Showing :" + view);
+		// GuiUtils.debug("Showing :" + view);
 		GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
 	}
 
@@ -56,11 +68,13 @@ public class OutputSynchronizer {
 					// Workaround for OpenGL views. Necessary to "show" the view
 					// even briefly so that OpenGL can call the init() method of the renderer
 					final List<String> names = new ArrayList(viewsScheduledToOpen);
-					GuiUtils.debug("Briefly showing :" + names.get(0));
+					// GuiUtils.debug("Briefly showing :" + names.get(0));
 					GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
 				}
 				Thread.sleep(100);
-			} catch (final InterruptedException e) {}
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		cleanResize();
 	}
@@ -86,21 +100,26 @@ public class OutputSynchronizer {
 	}
 
 	public static void cleanResize() {
+
 		final List<String> names = new ArrayList(viewsScheduledToBeActivated);
+		// GuiUtils.debug("OutputSynchronizer.cleanResize called on " + names);
 		if ( !GamaPreferences.CORE_DISPLAY_ORDER.getValue() ) {
 			Collections.reverse(names);
 		}
 		viewsScheduledToBeActivated.clear();
 		for ( String name : names ) {
-			GuiUtils.debug("Activating :" + name);
-			GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
+			// GuiUtils.debug("Activating :" + name);
+			final IGamaView v = GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		for ( Runnable r : cleanResizers ) {
 			GuiUtils.run(r);
 		}
+
 		cleanResizers.clear();
 		// GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, new ArrayList<String>(viewsScheduledToOpen).get(0));
 

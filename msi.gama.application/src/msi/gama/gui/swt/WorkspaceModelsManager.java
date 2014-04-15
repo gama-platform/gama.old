@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 16 nov. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'WorkspaceModelsManager.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt;
 
 import java.io.*;
@@ -144,7 +151,7 @@ public class WorkspaceModelsManager {
 
 	private IFile findOutsideWorkspace(final IPath originalPath) {
 		GuiUtils.debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
-		File modelFile = new File(originalPath.toOSString());
+		final File modelFile = new File(originalPath.toOSString());
 		// TODO If the file does not exist we return null (might be a good idea to check other locations)
 		if ( !modelFile.exists() ) { return null; }
 
@@ -165,7 +172,6 @@ public class WorkspaceModelsManager {
 			}
 		}
 
-		// TODO If no project has been found... we return null, but it might be possible to create a project on the fly
 		if ( dotFile == null || projectFileBean == null ) {
 			GuiUtils
 				.tell("The model '" +
@@ -191,6 +197,20 @@ public class WorkspaceModelsManager {
 						IProject proj = workspace.getRoot().getProject(pathToProject);
 						// If it does not exist, we create it
 						if ( !proj.exists() ) {
+							// If a project with the same name exists
+							IProject[] projects = workspace.getRoot().getProjects();
+							String name = description.getName();
+							for ( IProject p : projects ) {
+								if ( p.getName().equals(name) ) {
+									GuiUtils
+										.tell("A project with the same name already exists in the workspace. The model '" +
+											modelFile.getAbsolutePath() +
+											" will be imported as part of the 'Unclassified models' project.");
+									createUnclassifiedModelsProjectAndAdd(originalPath);
+									return;
+								}
+							}
+
 							proj.create(description, monitor);
 						} else {
 							// project exists but is not accessible, so we delete it and recreate it
@@ -211,7 +231,7 @@ public class WorkspaceModelsManager {
 					@Override
 					public void done() {
 						RefreshHandler.run();
-						GuiUtils.debug("Project " + workspace.getRoot().getProject(pathToProject).getName() +
+						GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
 							" has been imported");
 					}
 

@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'NewFileWizardPage.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.wizards.files;
 
 import java.net.InetAddress;
@@ -142,20 +135,22 @@ public class NewFileWizardPage extends WizardPage {
 
 			@Override
 			public void modifyText(final ModifyEvent e) {
-				Text t = (Text)e.getSource();
+				Text t = (Text) e.getSource();
 				String fname = t.getText();
 				int i = fname.lastIndexOf(".gaml");
-				if (i>0) {
+				if ( i > 0 ) {
 					// model title = filename less extension less all non alphanumeric characters
 					titleText.setText(fname.substring(0, i).replaceAll("[^\\p{Alnum}]", ""));
-				}/* else if (fname.length()>0) {
-					int pos = t.getSelection().x;
-					fname = fname.replaceAll("[[^\\p{Alnum}]&&[^_-]&&[^\\x2E]]", "_");
-					t.setText(fname+".gaml");
-					t.setSelection(pos);
-				} else {
-					t.setText("new.gaml");
-				}*/
+				}/*
+				 * else if (fname.length()>0) {
+				 * int pos = t.getSelection().x;
+				 * fname = fname.replaceAll("[[^\\p{Alnum}]&&[^_-]&&[^\\x2E]]", "_");
+				 * t.setText(fname+".gaml");
+				 * t.setSelection(pos);
+				 * } else {
+				 * t.setText("new.gaml");
+				 * }
+				 */
 				dialogChanged();
 			}
 		});
@@ -205,8 +200,7 @@ public class NewFileWizardPage extends WizardPage {
 		label = new Label(container, SWT.NULL);
 		label.setText("&Model description:");
 
-		descriptionText =
-			new Text(container, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		descriptionText = new Text(container, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		descriptionText.setBounds(0, 0, 250, 100);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.verticalSpan = 4;
@@ -254,10 +248,10 @@ public class NewFileWizardPage extends WizardPage {
 	 */
 	public static String getComputerFullName() {
 		String uname = System.getProperty("user.name");
-		if (uname == null || uname.isEmpty()) {
+		if ( uname == null || uname.isEmpty() ) {
 			try {
 				final InetAddress addr = InetAddress.getLocalHost();
-				uname = new String(addr.getHostName());
+				uname = addr.getHostName();
 			} catch (final Exception e) {}
 		}
 		return uname;
@@ -281,8 +275,7 @@ public class NewFileWizardPage extends WizardPage {
 
 	/** Tests if the current workbench selection is a suitable container to use. */
 	private void initialize() {
-		if ( selection != null && selection.isEmpty() == false &&
-			selection instanceof IStructuredSelection ) {
+		if ( selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection ) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if ( ssel.size() > 1 ) { return; }
 			Object obj = ssel.getFirstElement();
@@ -304,8 +297,8 @@ public class NewFileWizardPage extends WizardPage {
 	 */
 	private void handleBrowse() {
 		ContainerSelectionDialog dialog =
-			new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(),
-				false, "Select a project as a container");
+			new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
+				"Select a project as a container");
 		if ( dialog.open() == Window.OK ) {
 			Object[] result = dialog.getResult();
 			if ( result.length == 1 ) {
@@ -316,8 +309,11 @@ public class NewFileWizardPage extends WizardPage {
 
 	/** Ensures that controls are correctly set. */
 	private void dialogChanged() {
-		IResource resource =
-			ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		if ( resource == null ) {
+			updateStatus("File container must be specified");
+			return;
+		}
 		IContainer container = (IContainer) resource;
 		String fileName = getFileName();
 		String author = getAuthor();
@@ -330,7 +326,7 @@ public class NewFileWizardPage extends WizardPage {
 			updateStatus("File container must be specified");
 			return;
 		}
-		if ( resource == null || (resource.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0 ) {
+		if ( (resource.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0 ) {
 			updateStatus("File container must exist");
 			return;
 		}

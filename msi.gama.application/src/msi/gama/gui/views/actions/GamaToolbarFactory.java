@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 19 janv. 2012
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaToolbarFactory.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
 import msi.gama.common.util.GuiUtils;
@@ -64,6 +71,16 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new OpenGLItem(view);
 			case CLEAR:
 				return new ClearItem(view);
+			case BROWSER_BACK:
+				return new BrowserItem.Back(view);
+			case BROWSER_FORWARD:
+				return new BrowserItem.Forward(view);
+			case BROWSER_STOP:
+				return new BrowserItem.Stop(view);
+			case BROWSER_HOME:
+				return new BrowserItem.Home(view);
+			case BROWSER_REFRESH:
+				return new BrowserItem.Refresh(view);
 
 		}
 		return null;
@@ -73,11 +90,6 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		IToolBarManager manager = ((IViewSite) view.getSite()).getActionBars().getToolBarManager();
 		manager.removeAll();
 		buildToolbar(view, view.getToolbarActionsId());
-		// for ( IContributionItem item : manager.getItems() ) {
-		// if ( item instanceof GamaViewItem ) {
-		// ((GamaViewItem) item).resetToInitialState();
-		// }
-		// }
 	}
 
 	public static void buildToolbar(final GamaViewPart view, final Integer ... codes) {
@@ -90,7 +102,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				GuiUtils.debug("Item id " + i + " cannot be created for view " + view.getPartName());
 			}
 		}
-		manager.update(true);
+		manager.update(false);
 	}
 
 }

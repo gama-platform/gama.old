@@ -1,27 +1,22 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'ApplicationWorkbenchWindowAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.views.BrowserView;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import org.eclipse.core.runtime.Platform;
@@ -30,6 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.browser.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
@@ -134,7 +130,8 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
-		openGamaWebPage(false);
+		openWelcomePage(true);
+		// openGamaWebPage(false);
 
 	}
 
@@ -142,18 +139,53 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	 * 
 	 */
 
-	public static void openGamaWebPage(final boolean force) {
+	public static void openGamaWebPage(final String address, final boolean force) {
 		if ( isInternetReachable(force) ) {
-			try {
-				PlatformUI.getWorkbench().getBrowserSupport().createBrowser("GAMA Web Page")
-					.openURL(new URL("https://code.google.com/p/gama-platform/"));
-			} catch (PartInitException e) {
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+			BrowserView bv = (BrowserView) GuiUtils.showView("gama.browser.view", null, IWorkbenchPage.VIEW_VISIBLE);
+			if ( address != null && bv != null ) {
+				bv.getBrowser().setUrl(address);
+			}
+			return;
+		}
+	}
+
+	public void openWelcomePage(final boolean force) {
+		if ( this.getWindowConfigurer().getWindow().getActivePage().getActiveEditor() == null ) {
+			if ( isInternetReachable(force) ) {
+				try {
+					IWebBrowser wb =
+						PlatformUI.getWorkbench().getBrowserSupport()
+							.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "", "Welcome", "");
+					wb.openURL(new URL(
+						"http://gama-platform.googlecode.com/svn/branches/GAMA_CURRENT/msi.gama.application/welcome.html"));
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} finally {
+					// GamaPreferences.CORE_SHOW_PAGE.set(false).save();
+				}
 			}
 		}
 	}
+
+	// if ( isInternetReachable(force) ) {
+	//
+	// try {
+	// IWebBrowser wb =
+	// PlatformUI
+	// .getWorkbench()
+	// .getBrowserSupport()
+	// .createBrowser(
+	// IWorkbenchBrowserSupport.AS_VIEW ,"", "Welcome", "");
+	// wb.openURL(new URL("https://code.google.com/p/gama-platform/"));
+	// } catch (PartInitException e) {
+	// e.printStackTrace();
+	// } catch (MalformedURLException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// }
 
 	public static boolean isInternetReachable(final boolean force) {
 		if ( !force && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }

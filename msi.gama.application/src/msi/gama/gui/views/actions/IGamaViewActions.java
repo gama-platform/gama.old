@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 19 janv. 2012
+/*********************************************************************************************
  * 
- */
+ *
+ * 'IGamaViewActions.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
 /**
@@ -43,4 +50,9 @@ public interface IGamaViewActions {
 	public final static int INERTIA = 27;
 	public final static int CLEAR = 28;
 	public final static int SIDEBAR = 29;
+	public final static int BROWSER_BACK = 30;
+	public final static int BROWSER_FORWARD = 31;
+	public final static int BROWSER_REFRESH = 32;
+	public final static int BROWSER_HOME = 33;
+	public final static int BROWSER_STOP = 34;
 }

@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'GamaDecorator.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.navigator;
 
 import msi.gama.gui.swt.*;
@@ -7,11 +18,6 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
 
 public class GamaDecorator extends SVNLightweightDecorator {
-
-	@Override
-	public void dispose() {
-		super.dispose();
-	}
 
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {

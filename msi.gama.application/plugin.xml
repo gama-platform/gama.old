@@ -45,7 +45,7 @@
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.LayeredDisplayView$AWTDisplayView"
+            class="msi.gama.gui.views.AWTDisplayView"
             icon="icons/view.display.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
@@ -99,10 +99,19 @@
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.LayeredDisplayView$WebDisplayView"
+            class="msi.gama.gui.views.WebDisplayView"
             icon="icons/view.display.png"
             id="msi.gama.application.view.WebDisplayView"
             name="Web Display"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.BrowserView"
+            icon="icons/view.www.png"
+            id="gama.browser.view"
+            name="GAMA Home Page"
             restorable="true">
       </view>
 
@@ -122,12 +131,14 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="msi.gama.gui.swt.perspectives.ModelingPerspective"
+            fixed="false"
             icon="icons/perspective.modeling.png"
             id="msi.gama.application.perspectives.ModelingPerspective"
             name="Modeling">
       </perspective>
       <perspective
             class="msi.gama.gui.swt.perspectives.SimulationPerspective"
+            fixed="false"
             icon="icons/perspective.simulation.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
@@ -153,7 +164,7 @@
          </property>
          <property
                name="aboutText"
-               value="GAMA - V1.6.1&#x0A;Generic Agent-based Modelling Architecture&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2013 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;Visit http://code.google.com/p/gama-platform/">
+               value="GAMA - V1.6.1&#x0A;Generic Agent-based Modelling Architecture&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2014 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;Visit http://code.google.com/p/gama-platform/">
          </property>
          <property
                name="windowImages"
@@ -181,53 +192,6 @@
             targetID="msi.gama.application.perspectives.ModelingPerspective">
             <newWizardShortcut id="msi.gama.gui.wizards.newProjectWizard">
 </newWizardShortcut>
-         <view
-               closeable="false"
-               id="msi.gama.gui.view.GamaNavigator"
-               minimized="false"
-               moveable="true"
-               ratio="0.37f"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-		 </view>
-         <view
-               closeable="true"
-               id="org.eclipse.team.sync.views.SynchronizeView"
-               minimized="true"
-               moveable="true"
-               relationship="stack"
-               relative="msi.gama.gui.view.GamaNavigator"
-               showTitle="true"
-               standalone="false"
-               visible="false">
-         </view>
-         <view
-               closeable="true"
-               id="org.eclipse.ui.views.ContentOutline"
-               minimized="false"
-               moveable="true"
-               ratio="0.65f"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
-               id="org.eclipse.team.ui.GenericHistoryView"
-               minimized="true"
-               moveable="true"
-               ratio="0.60f"
-               relationship="bottom"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="false">
-         </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="*">
@@ -352,6 +316,28 @@
                   icon="icons/menu.show.png"
                   label="Display errors and warnings"
                   style="toggle">
+            </command>
+            <separator
+                  name="msi.gama.application.separator3"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="msi.gama.application.commands.Cancel"
+                  icon="icons/toolbar.stop.png"
+                  label="Force interrupt"
+                  style="push"
+                  tooltip="Interrupt the experiment and dispose of it. Use with extreme caution.">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
+               </visibleWhen>
             </command>
          </menu>
          <menu
@@ -564,28 +550,6 @@
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
-               </visibleWhen>
-            </command>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/toolbar.stop.png"
-                  label="Cancel"
-                  style="push"
-                  tooltip="Interrupt the experiment and dispose of it.">
-               <visibleWhen
-                     checkEnabled="false">
-                  <and>
-                     <reference
-                           definitionId="isInSimulationPerspective">
-                     </reference>
-                     <reference
-                           definitionId="isSimulationExisting">
-                     </reference>
-                  </and>
                </visibleWhen>
             </command>
          </toolbar>
@@ -1082,6 +1046,18 @@
                </with>
             </not>
          </enabledWhen>
+      </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.HelpHandler"
+            commandId="org.eclipse.ui.help.helpContents">
+         <activeWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </activeWhen>
       </handler>
    </extension>
    <extension

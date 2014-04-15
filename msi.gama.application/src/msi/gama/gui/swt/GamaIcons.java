@@ -1,10 +1,18 @@
-/**
- * Created by drogoul, 12 sept. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'GamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import java.util.*;
+import gnu.trove.map.hash.THashMap;
+import java.util.Map;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,11 +31,11 @@ public class GamaIcons /* implements IGamaIcons */{
 
 	static String DEFAULT_PATH = "/icons/";
 
-	static Map<String, GamaIcon> icons = new HashMap();
+	static Map<String, GamaIcon> icons = new THashMap();
 
 	public static class GamaIcon {
 
-		static Map<String, Image> cache = new HashMap();
+		static Map<String, Image> cache = new THashMap();
 
 		String code;
 		String path;

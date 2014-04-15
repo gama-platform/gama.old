@@ -1,28 +1,22 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'PopulationInspectView.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views;
 
+import gnu.trove.map.hash.THashMap;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
@@ -73,7 +67,7 @@ public class PopulationInspectView extends GamaViewPart {
 	// private CLabel sizeLabel;
 	private CTabItem currentTab;
 	private CTabFolder tabFolder;
-	Map<String, List<String>> selectedColumns = new HashMap();
+	Map<String, List<String>> selectedColumns = new THashMap();
 	final private AgentContentProvider provider = new AgentContentProvider();
 
 	@Override
@@ -635,7 +629,7 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 	}
 
-	public class NaturalOrderComparator implements Comparator {
+	public static class NaturalOrderComparator implements Comparator {
 
 		int compareRight(final String a, final String b) {
 			int bias = 0;
@@ -731,7 +725,7 @@ public class PopulationInspectView extends GamaViewPart {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void saveAsCSV() {
 		try {
@@ -744,9 +738,8 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 
 		String exportFileName =
-			GAMA.getModel().getRelativeFilePath(
-				exportFolder + "/" + getTabText(currentTab) + "_population" + output.getScope().getClock().getCycle() +
-					".csv", false);
+			FileUtils.constructAbsoluteFilePath(getOutput().getScope(), exportFolder + "/" + getTabText(currentTab) +
+				"_population" + output.getScope().getClock().getCycle() + ".csv", false);
 		File file = new File(exportFileName);
 		FileWriter fileWriter = null;
 		try {

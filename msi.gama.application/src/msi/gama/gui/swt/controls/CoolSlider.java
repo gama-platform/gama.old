@@ -1,7 +1,19 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'CoolSlider.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
 import java.util.*;
 import java.util.List;
+import msi.gaml.operators.Comparison;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -35,7 +47,7 @@ import org.eclipse.swt.widgets.*;
  * <br>
  * 
  * The <code>CoolSlider</code> can move its thumb smoothly (SMOOTH STYLE) or in fixed increments (SNAP STYLE). When
- * using SNAP_STYLE make sure that one calls the <code>setSnapValues<code> method. 
+ * using SNAP_STYLE make sure that one calls the <code>setSnapValues<code> method.
  * 
  * 
  * 
@@ -107,6 +119,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 
 	private Color popupColor;
 	private final Popup popup;
+	private boolean notify = true;
 
 	/**
 	 * The constructor for the <code>CoolSlider</code> to
@@ -490,7 +503,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	}
 
 	private void updatePositionListeners(final double perc) {
-		if ( previousPosition != -1 && perc != previousPosition ) {
+		if ( !notify ) { return; }
+		if ( Comparison.different(previousPosition, -1d) && Comparison.different(perc, previousPosition) ) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 				while (iter.hasNext()) {
@@ -719,7 +733,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 		final int total = horizontal ? getClientArea().width : getClientArea().height;
 		final double ratio = total * 1.0 / increments;
 		for ( int i = 0; i < increments; i++ ) {
-			snapPoints.add(new Integer((int) (ratio * i)));
+			snapPoints.add(Integer.valueOf((int) (ratio * i)));
 		}
 		snapPoints.add(new Integer(total));
 	}
@@ -729,8 +743,9 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	 * 
 	 * @param percentage between 0 and 1 (i.e 0% to 100%)
 	 */
-	public void updateSlider(double percentage) {
+	public void updateSlider(double percentage, final boolean notify) {
 		checkWidget();
+		this.notify = notify;
 		if ( percentage < 0 ) {
 			percentage = 0;
 		} else if ( percentage > 1 ) {
@@ -741,6 +756,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 		} else {
 			moveThumbVertically((int) (getClientArea().height * percentage));
 		}
+		this.notify = true;
 	}
 
 	/**

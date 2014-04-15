@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'AbstractOverlay.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.util.GuiUtils;
@@ -50,14 +61,14 @@ public abstract class AbstractOverlay {
 		}
 	};
 
-	Runnable doResize = new Runnable() {
-
-		@Override
-		public void run() {
-			relocate();
-			resize();
-		}
-	};
+	// Runnable doResize = new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// relocate();
+	// resize();
+	// }
+	// };
 
 	protected void run(final Runnable r) {
 		GuiUtils.run(r);
@@ -310,6 +321,8 @@ public abstract class AbstractOverlay {
 		if ( !popup.isDisposed() ) {
 			popup.setLocation(getLocation());
 		}
+
+		// GuiUtils.debug("Overlay relocated to " + popup.getLocation());
 	}
 
 	public void resize() {

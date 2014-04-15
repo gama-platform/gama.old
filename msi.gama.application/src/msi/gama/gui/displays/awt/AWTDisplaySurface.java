@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AWTDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
@@ -37,7 +30,7 @@ import msi.gaml.operators.Cast;
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	private Point snapshotDimension, mousePosition;
-	protected BufferedImage buffImage;
+	private BufferedImage buffImage;
 
 	private class DisplayMouseListener extends MouseAdapter {
 
@@ -103,13 +96,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
-			IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
-
-				@Override
-				public IShape run(final IScope scope) {
-					return Cast.asGeometry(scope, temp_focus.value(scope));
-				}
-			});
+			IShape geometry = Cast.asGeometry(scope, temp_focus.value(scope));
 			if ( geometry != null ) {
 				Rectangle2D r = this.getManager().focusOn(geometry, this);
 				System.out.println("Rectangle = " + r);
@@ -145,8 +132,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public void zoomOut() {
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-		double oldx = Math.round(getWidth() / 2 - origin.x);
-		double oldy = Math.round(getHeight() / 2 - origin.y);
+		double oldx = Math.round(getWidth() / 2d - origin.x);
+		double oldy = Math.round(getHeight() / 2d - origin.y);
 		double zoomFactor = applyZoom(1.0 - zoomIncrement);
 
 		// setOrigin((int) (origin.x + origin.x * (1 - zoomFactor) / 2),
@@ -166,11 +153,12 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void run() {
-
+				// System.err.println("Display surface entering displayBlock");
 				canBeUpdated(false);
 				drawDisplaysWithoutRepainting();
 				repaint();
 				canBeUpdated(true);
+				// System.err.println("Display surface leaving displayBlock");
 			}
 		};
 	}
@@ -194,9 +182,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void initialize(final double env_width, final double env_height,
+	public void initialize(final IScope scope, final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
-		super.initialize(env_width, env_height, layerDisplayOutput);
+		super.initialize(scope, env_width, env_height, layerDisplayOutput);
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -205,6 +193,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
+				// System.out.println("Display surface entering a resize event =" + e);
 				if ( buffImage == null || zoomFit ) {
 					zoomFit();
 				} else {
@@ -215,18 +204,20 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 					}
 					updateDisplay();
 				}
-
+				// System.out.println("Display surface leaving a resize event");
 				final double newZoom =
 					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
 				setZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
 			}
 		});
+		// OutputSynchronizer.decInitializingViews(getOutputName());
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
-		super.outputChanged(env_width, env_height, output);
+	public void outputChanged(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {
+		super.outputChanged(scope, env_width, env_height, output);
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		repaint();
@@ -282,8 +273,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
-
-		// ex[0] = null;
 		iGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(iGraphics);
 	}
@@ -305,6 +294,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( buffImage != null ) {
 			buffImage.flush();
 		}
+		GAMA.releaseScope(scope);
+		scope = null;
 	}
 
 	@Override
@@ -325,8 +316,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	public void centerOnViewCoordinates(final Point p) {
-		int translationX = p.x - Math.round(getWidth() / 2);
-		int translationY = p.y - Math.round(getHeight() / 2);
+		int translationX = p.x - Math.round(getWidth() / (float) 2);
+		int translationY = p.y - Math.round(getHeight() / (float) 2);
 		setOrigin(origin.x - translationX, origin.y - translationY);
 
 	}
@@ -344,36 +335,40 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 				resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
 					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
 		} catch (Exception e) {
-			System.gc();
-			GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			// System.gc();
+			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
 				success =
 					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
 						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
 			} catch (Exception e1) {
-				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// real_factor);
 				real_factor = 1;
 				success = true;
 			} catch (Error e1) {
-				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// real_factor);
 				real_factor = 1;
 				success = true;
 			}
 		} catch (Error e) {
 			System.gc();
-			GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
+			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
 			real_factor = MAX_ZOOM_FACTOR;
 			try {
 				success =
 					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
 						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
 			} catch (Exception e1) {
-				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// real_factor);
 				real_factor = 1;
 				success = true;
 			} catch (Error e1) {
-				GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" + real_factor);
+				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
+				// real_factor);
 				real_factor = 1;
 				success = true;
 			}
@@ -426,18 +421,13 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			super.snapshot();
 			return;
 		}
-		final IScope scope = GAMA.obtainNewScope();
-		try {
 
-			final BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
-			final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
-			tempGraphics.fillBackground(bgColor, 1);
-			manager.drawLayersOn(tempGraphics);
-			save(scope, newImage);
-			newImage.flush();
-		} finally {
-			GAMA.releaseScope(scope);
-		}
+		final BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+		final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
+		tempGraphics.fillBackground(bgColor, 1);
+		manager.drawLayersOn(tempGraphics);
+		save(scope, newImage);
+		newImage.flush();
 
 	}
 
@@ -461,18 +451,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	protected Double computeInitialZoomLevel() {
 		return 1.0;
-	}
-
-	@Override
-	public void setSize(final int x, final int y) {
-		// GuiUtils.debug("Set size called with " + x + " " + y);
-		super.setSize(x, y);
-	}
-
-	@Override
-	public void setSize(final Dimension d) {
-		// GuiUtils.debug("Set size called with " + d);
-		super.setSize(d);
 	}
 
 	@Override

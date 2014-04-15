@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'AbstractAWTDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
@@ -11,6 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.metamodel.agent.IAgent;
@@ -18,7 +30,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
@@ -54,6 +65,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private IZoomListener zoomListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected static final int MAX_ZOOM_FACTOR = 2;
+	protected IScope scope;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -70,18 +82,28 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	// / EXPERIMENTAL
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+	public void initialize(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {
 		setOutput(output);
 		setName(output.getName());
 		setOpaque(true);
 		setDoubleBuffered(false);
 		this.setLayout(new BorderLayout());
-		outputChanged(env_width, env_height, output);
+		outputChanged(scope, env_width, env_height, output);
 
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+	public IScope getDisplayScope() {
+		return scope;
+	}
+
+	@Override
+	public void outputChanged(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {
+		// We first copy the scope
+		this.scope = scope.copy();
+		//
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
@@ -92,7 +114,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			manager = new LayerManager(this);
 			final List<AbstractLayerStatement> layers = output.getLayers();
 			for ( final AbstractLayerStatement layer : layers ) {
-				manager.addLayer(LayerManager.createLayer(layer));
+				manager.addLayer(LayerManager.createLayer(scope, layer));
 			}
 		} else {
 			manager.outputChanged();
@@ -147,14 +169,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void snapshot() {
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(final IScope scope) {
-				save(scope, getImage());
-			}
-		});
-
+		save(scope, getImage());
 	}
 
 	/**
@@ -173,7 +188,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			return;
 		}
 		String snapshotFile =
-			scope.getSimulationScope().getModel().getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
+			FileUtils.constructAbsoluteFilePath(scope, snapshotFolder + "/" + snapshotFileName, false);
 
 		String file =
 			snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_" +
@@ -183,7 +198,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
 		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = GamaRuntimeException.create(ex);
+			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(e, false);
 		} finally {
@@ -192,7 +207,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 					os.close();
 				}
 			} catch (Exception ex) {
-				GamaRuntimeException e = GamaRuntimeException.create(ex);
+				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(e, false);
 			}
@@ -273,6 +288,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
+		// GuiUtils.debug("AbstractAWTDisplaySurface.setQualityRendering " + quality);
 		qualityRendering = quality;
 		if ( iGraphics == null ) { return; }
 		iGraphics.setQualityRendering(quality);
@@ -322,18 +338,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		// redrawNavigator();
 	}
 
-	// protected void redrawNavigator() {
-	// if ( !navigationImageEnabled ) { return; }
-	// GuiUtils.run(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// if ( navigator == null || navigator.isDisposed() ) { return; }
-	// navigator.redraw();
-	// }
-	// });
-	// }
-
 	private final Runnable displayRunnable = new Runnable() {
 
 		@Override
@@ -362,6 +366,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void updateDisplay() {
 
 		if ( !canBeUpdated() ) { return; }
+		// System.err.println("Display surface asked to update the display");
 		if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
 			runDisplay(false);
 			return;

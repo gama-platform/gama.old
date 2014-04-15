@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 31 août 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaPreferencesView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.util.*;
@@ -169,7 +176,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			IParameter p = new ParameterWrapper(e) {
 
 				@Override
-				public void setValue(final Object value) {
+				public void setValue(final IScope scope, final Object value) {
 					if ( e.acceptChange(value) ) {
 						modelValues.put(e.getKey(), value);
 						checkActivables(value);

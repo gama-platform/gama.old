@@ -1,22 +1,25 @@
-/**
- * Created by drogoul, 10 mai 2012
+/*********************************************************************************************
  * 
- */
+ *
+ * 'EditorsDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The class EditorsDialog.
@@ -66,8 +69,8 @@ public class EditorsDialog extends Dialog {
 				new InputParameter(entry.getKey(), entry.getValue(), types.get(entry.getKey())) {
 
 					@Override
-					public void setValue(final Object value) {
-						super.setValue(value);
+					public void setValue(final IScope scope, final Object value) {
+						super.setValue(scope, value);
 						values.put(getTitle(), value);
 					}
 

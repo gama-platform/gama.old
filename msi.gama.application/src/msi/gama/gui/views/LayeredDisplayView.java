@@ -1,293 +1,40 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'LayeredDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.gui.views;
 
 import java.awt.Color;
-import javax.swing.JComponent;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.swt.perspectives.ModelingPerspective;
-import msi.gama.gui.swt.swing.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom, ISizeProvider {
-
-	public static class AWTDisplayView extends LayeredDisplayView {
-
-		public static final String ID = GuiUtils.LAYER_VIEW_ID;
-
-		@Override
-		protected Composite createSurfaceComposite() {
-
-			// TODO do a test to know whether or not we are in a "simple" chart environment ?
-
-			final Runnable forceFocus = new Runnable() {
-
-				@Override
-				public void run() {
-					if ( surfaceComposite.getDisplay() != null && !surfaceComposite.isFocusControl() ) {
-						surfaceComposite.setFocus();
-					}
-				}
-			};
-
-			final Runnable displayOverlay = new Runnable() {
-
-				@Override
-				public void run() {
-					overlay.update();
-				}
-			};
-
-			final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionAdapter() {
-
-				@Override
-				public void mouseMoved(final java.awt.event.MouseEvent e) {
-					GuiUtils.asyncRun(displayOverlay);
-				}
-
-				@Override
-				public void mouseDragged(final java.awt.event.MouseEvent e) {
-					GuiUtils.asyncRun(displayOverlay);
-				}
-			};
-
-			final boolean isOpenGL = getOutput().isOpenGL();
-			final String outputName = getOutput().getName();
-
-			OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
-			surfaceComposite = new SwingControl(parent, SWT.NONE) {
-
-				@Override
-				protected JComponent createSwingComponent() {
-
-					final JComponent frameAwt = (JComponent) getOutput().getSurface();
-					frameAwt.addMouseMotionListener(mlAwt2);
-					return frameAwt;
-				}
-
-				@Override
-				public Composite getLayoutAncestor() {
-
-					// TODO CHECK THIS
-					return null;
-				}
-
-				@Override
-				public boolean isSwtTabOrderExtended() {
-					return false;
-				}
-
-				@Override
-				public boolean isAWTPermanentFocusLossForced() {
-					return false;
-				}
-
-				@Override
-				public void afterComponentCreatedSWTThread() {
-					if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
-						overlay.setHidden(false);
-					}
-				}
-
-				@Override
-				public void afterComponentCreatedAWTThread() {
-					if ( !isOpenGL ) {
-						// Deferred to the OpenGL renderer to signify its initialization
-						// see JOGLAWTGLRendered.init()
-						OutputSynchronizer.decInitializingViews(outputName);
-					}
-					// FIXME Hack to create a menu displayable on SWT
-					new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, AWTDisplayView.this);
-				}
-			};
-
-			perspectiveListener = new IPerspectiveListener() {
-
-				boolean previousState = false;
-
-				@Override
-				public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-					final String changeId) {}
-
-				@Override
-				public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-					if ( perspective.getId().equals(ModelingPerspective.ID) ) {
-						if ( getOutput() != null && getOutput().getSurface() != null ) {
-							previousState = getOutput().getSurface().isPaused();
-							getOutput().getSurface().setPaused(true);
-						}
-						if ( overlay != null && layersOverlay != null ) {
-							overlay.hide();
-							layersOverlay.hide();
-						}
-					} else {
-						if ( getOutput() != null && getOutput().getSurface() != null ) {
-							getOutput().getSurface().setPaused(previousState);
-						}
-						if ( overlay != null && layersOverlay != null ) {
-							overlay.update();
-							layersOverlay.update();
-						}
-					}
-				}
-			};
-			SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-			// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-			// data.minimumHeight = 100;
-			// surfaceComposite.setLayoutData(data);
-			return surfaceComposite;
-		}
-
-		@Override
-		public void fixSize() {
-
-			// AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT
-			// thread
-			// and run the sizing inside an AWT thread
-			OutputSynchronizer.cleanResize(new Runnable() {
-
-				@Override
-				public void run() {
-
-					Point p = parent.getSize();
-					final int x = p.x;
-					final int y = p.y;
-					java.awt.EventQueue.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-
-							((SwingControl) surfaceComposite).getFrame().setBounds(0, 0, x, y);
-							getOutput().getSurface().resizeImage(x, y);
-							getOutput().getSurface().setSize(x, y);
-							getOutput().getSurface().updateDisplay();
-						}
-					});
-
-				}
-			});
-		}
-
-		/**
-		 * Method getSizeFlags()
-		 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-		 */
-		@Override
-		public int getSizeFlags(final boolean width) {
-			return SWT.MIN;
-		}
-
-		/**
-		 * Method computePreferredSize()
-		 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-		 */
-		@Override
-		public int computePreferredSize(final boolean width, final int availableParallel,
-			final int availablePerpendicular, final int preferredResult) {
-			return 0;
-		}
-
-	}
-
-	public static class WebDisplayView extends LayeredDisplayView {
-
-		public static final String ID = GuiUtils.WEB_VIEW_ID;
-
-		@Override
-		protected Composite createSurfaceComposite() {
-			surfaceComposite = new Browser(parent, SWT.NONE);
-
-			perspectiveListener = new IPerspectiveListener() {
-
-				boolean previousState = false;
-
-				@Override
-				public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-					final String changeId) {}
-
-				@Override
-				public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-					if ( perspective.getId().equals(ModelingPerspective.ID) ) {
-						if ( getOutput() != null && getOutput().getSurface() != null ) {
-							previousState = getOutput().getSurface().isPaused();
-							getOutput().getSurface().setPaused(true);
-						}
-						if ( overlay != null && layersOverlay != null ) {
-							overlay.hide();
-							layersOverlay.hide();
-						}
-					} else {
-						if ( getOutput() != null && getOutput().getSurface() != null ) {
-							getOutput().getSurface().setPaused(previousState);
-						}
-						if ( overlay != null && layersOverlay != null ) {
-							overlay.update();
-							layersOverlay.update();
-						}
-					}
-				}
-			};
-			SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-			return surfaceComposite;
-		}
-
-		/**
-		 * Method getSizeFlags()
-		 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-		 */
-		@Override
-		public int getSizeFlags(final boolean width) {
-			return 0;
-		}
-
-		/**
-		 * Method computePreferredSize()
-		 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-		 */
-		@Override
-		public int computePreferredSize(final boolean width, final int availableParallel,
-			final int availablePerpendicular, final int preferredResult) {
-			return 0;
-		}
-
-	}
+public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
 	protected Composite surfaceComposite;
 	// private Composite leftComposite;
 	protected IPerspectiveListener perspectiveListener;
-	protected GridData data;
+	// protected GridData data;
 	protected DisplayOverlay overlay;
 	protected LayersOverlay layersOverlay;
 	protected Integer zoomLevel = null;
@@ -317,10 +64,10 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	public void ownCreatePartControl(final Composite c) {
 		super.ownCreatePartControl(c);
 		// c.setLayout(new GridLayout(1, true));
-		parent = c;
+		// parent = c;
 
-		// parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL);
-		// leftComposite = new Composite(parent, SWT.NONE);
+		parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL | SWT.BORDER);
+		/* Composite leftComposite = */new Composite(parent, SWT.NONE);
 		createSurfaceComposite();
 		Composite trueParent = parent;
 		layersOverlay = new LayersOverlay(this);
@@ -373,8 +120,8 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		displayItems();
 		overlay = new DisplayOverlay(this, getOutput().getOverlayProvider());
 		getOutput().getSurface().setZoomListener(this);
-		// ((SashForm) parent).setWeights(new int[] { 1, 2 });
-		// ((SashForm) parent).setMaximizedControl(surfaceComposite);
+		((SashForm) parent).setWeights(new int[] { 1, 2 });
+		((SashForm) parent).setMaximizedControl(surfaceComposite);
 		getViewer().addListener(SWT.Collapse, new Listener() {
 
 			@Override
@@ -393,12 +140,12 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		});
 
 		setSynchronized(GamaPreferences.CORE_SYNC.getValue());
-		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_SYNC.getValue());
+		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_ANTIALIAS.getValue());
 	}
 
 	@Override
 	public void setFocus() {
-
+		surfaceComposite.setFocus();
 	}
 
 	protected abstract Composite createSurfaceComposite();
@@ -785,14 +532,14 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void toggleSideBar() {
 		this.layersOverlay.toggle();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void toggleOverlay() {
 		this.overlay.toggle();
