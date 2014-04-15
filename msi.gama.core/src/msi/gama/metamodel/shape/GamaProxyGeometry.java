@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 18 mai 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaProxyGeometry.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
 import msi.gama.metamodel.agent.IAgent;

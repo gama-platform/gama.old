@@ -1,24 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaSpatialMatrix.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
 import gnu.trove.iterator.TIntIterator;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.*;
 import java.awt.Graphics2D;
 import java.util.*;
@@ -43,7 +37,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 
@@ -74,7 +68,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	int actualNumberOfCells;
 	int firstCell, lastCell;
-	UnmodifiableIterator<? extends IShape> iterator = null;
+	// UnmodifiableIterator<? extends IShape> iterator = null;
 	private ISpecies cellSpecies;
 	// private IAgentFilter cellFilter;
 
@@ -89,7 +83,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		gridValue = null;
 		matrix = null;
 		diffuser = null;
-		iterator = null;
+		// iterator = null;
 	}
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
@@ -900,9 +894,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public void setDepth(double depth) {
+		public void setDepth(final double depth) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}
@@ -1092,8 +1086,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-			if ( contentsType == null || contentsType.id() == IType.NONE ||
-				contentsType.getSpeciesName() == getSpecies().getName() ) { return GamaSpatialMatrix.this; }
+			if ( contentsType == null || contentsType.id() == IType.NONE || contentsType.getSpeciesName() != null &&
+				contentsType.getSpeciesName().equals(getSpecies().getName()) ) { return GamaSpatialMatrix.this; }
 			return GamaSpatialMatrix.this.matrixValue(scope, contentsType);
 		}
 
@@ -1101,7 +1095,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public IMatrix matrixValue(final IScope scope, final IType type, final ILocation size)
 			throws GamaRuntimeException {
 
-			if ( type == null || type.id() == IType.NONE || type.getSpeciesName() == getSpecies().getName() ) { return GamaSpatialMatrix.this; }
+			if ( type == null || type.id() == IType.NONE || type.getSpeciesName() != null &&
+				type.getSpeciesName().equals(getSpecies().getName()) ) { return GamaSpatialMatrix.this; }
 			return GamaSpatialMatrix.this.matrixValue(scope, type);
 		}
 
@@ -1244,9 +1239,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
-			public void setDepth(double depth) {
+			public void setDepth(final double depth) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 		}
@@ -1512,7 +1507,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			neighboursSize = neighbourhood.isVN() ? 4 : 8;
 		}
 
-		protected final Map<String, GridDiffusion> diffusions = new HashMap();
+		protected final Map<String, GridDiffusion> diffusions = new THashMap();
 
 		// public static final short GRADIENT = 1;
 		// public static final short DIFFUSION = 0;

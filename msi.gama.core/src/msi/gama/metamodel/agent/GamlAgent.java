@@ -1,26 +1,21 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlAgent.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -45,7 +40,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
-	
+
 	protected IShape geometry;
 	protected String name;
 
@@ -264,7 +259,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> migrateMicroAgents(final IScope scope, final ISpecies oldMicroSpecies,
 		final ISpecies newMicroSpecies) {
 		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
-		
+
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
 		final IList<IAgent> immigrants = new GamaList<IAgent>();
 		final Iterator<IAgent> it = oldMicroPop.iterator();
@@ -310,11 +305,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
 					continue;
 				}
-				
-				if (species.getVar(specVar).value(scope, agent) instanceof IPopulation) {
+
+				if ( species.getVar(specVar).value(scope, agent) instanceof IPopulation ) {
 					continue;
 				}
-					
+
 				if ( specVar.equals(IKeyword.SHAPE) ) {
 					// variables.put(specVar, geometry.copy());
 					// Changed 3/2/12: is it necessary to make the things below ?
@@ -333,7 +328,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		 * @throws GamaRuntimeException
 		 */
 		private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
-			innerPopulations = new HashMap<String, List<SavedAgent>>();
+			innerPopulations = new THashMap<String, List<SavedAgent>>();
 
 			for ( final IPopulation microPop : agent.getMicroPopulations() ) {
 				final List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
@@ -536,7 +531,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public/* synchronized */ILocation getLocation() {
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
-			final ILocation randomLocation = population.getTopology().getRandomLocation();
+			IScope scope = this.getScope();
+			final ILocation randomLocation = population.getTopology().getRandomLocation(scope);
 			if ( randomLocation == null ) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
 			return randomLocation;
@@ -559,7 +555,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IPopulation[] getMicroPopulations() {
 		Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
 		IPopulation[] pops = Iterables.toArray(it, IPopulation.class);
-			
+
 		return pops;
 	}
 
@@ -686,6 +682,16 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			return new Scope();
 		}
 
+		/**
+		 * Method getRandom()
+		 * @see msi.gama.runtime.IScope#getRandom()
+		 */
+		@Override
+		public RandomUtils getRandom() {
+			IExperimentAgent a = this.getExperiment();
+			return a == null ? null : a.getRandomGenerator();
+		}
+
 	}
 
 	/**
@@ -699,10 +705,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	public void setDepth(double depth) {
-		if ( geometry == null ) { return ; }
+	public void setDepth(final double depth) {
+		if ( geometry == null ) { return; }
 		geometry.setDepth(depth);
-		
+
 	}
 
 }

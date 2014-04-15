@@ -1,32 +1,24 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AmorphousTopology.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
 import java.awt.Graphics2D;
 import java.util.*;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
@@ -176,8 +168,8 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getRandomLocation()
 	 */
 	@Override
-	public GamaPoint getRandomLocation() {
-		return new GamaPoint(GAMA.getRandom().next(), GAMA.getRandom().next());
+	public GamaPoint getRandomLocation(final IScope scope) {
+		return new GamaPoint(scope.getRandom().next(), scope.getRandom().next());
 	}
 
 	/**
@@ -320,14 +312,15 @@ public class AmorphousTopology implements ITopology {
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k) {
+	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k) {
+	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+		final int k) {
 		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
 		paths.add(pathBetween(scope, source, target));
 		return paths;

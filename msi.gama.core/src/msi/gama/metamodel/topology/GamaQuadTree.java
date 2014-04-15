@@ -1,30 +1,24 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamaQuadTree.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 
 package msi.gama.metamodel.topology;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import java.awt.*;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import com.vividsolutions.jts.geom.*;
 
@@ -84,10 +78,10 @@ public class GamaQuadTree implements ISpatialIndex {
 		final IAgentFilter filter) {
 		// final java.util.List<IAgent> list = new ArrayList();
 		// Adresses Issue 722 by explicitely shuffling the results with GAMA random procedures and removing duplicates
-		final Set<IAgent> list = new LinkedHashSet();
+		final Set<IAgent> list = new TLinkedHashSet();
 		root.findIntersects(scope, source, r, list);
 		filter.filter(scope, source, list);
-		GAMA.getRandom().shuffle2(list);
+		scope.getRandom().shuffle2(list);
 		// CollectionUtils.removeDuplicates(list);
 		return list;
 	}
@@ -102,7 +96,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		Collection<IAgent> result = findIntersects(scope, source, env, f);
 		Iterator<IAgent> it = result.iterator();
 		while (it.hasNext()) {
-			if ( !(source.euclidianDistanceTo(it.next()) < dist) ) {
+			if ( source.euclidianDistanceTo(it.next()) > dist ) {
 				it.remove();
 			}
 		}
@@ -138,7 +132,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		private final Envelope bounds;
 		private final double hw, hh, minx, miny, halfx, halfy;
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered (by insertion order) **
-		private final Set<IAgent> objects = new LinkedHashSet();
+		private final Set<IAgent> objects = new TLinkedHashSet();
 		private volatile int size = 0;
 		private volatile boolean isLeaf = true;
 		private QuadNode ne;

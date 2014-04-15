@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'GamaSpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
@@ -91,8 +84,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	protected GamaSpatialPath pathFromEdges(final IShape source, final IShape target, final IList<IShape> edges) {
-		return PathFactory.newInstance(getTopology(), source, target, edges);
+	protected GamaSpatialPath pathFromEdges(final IScope scope, final IShape source, final IShape target,
+		final IList<IShape> edges) {
+		return PathFactory.newInstance(getTopology(scope), source, target, edges);
 		// return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
 	}
 
@@ -150,9 +144,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	public ITopology getTopology() {
+	public ITopology getTopology(final IScope scope) {
 		if ( topology == null ) {
-			setTopology(new GraphTopology(this));
+			setTopology(new GraphTopology(scope, this));
 		}
 		return topology;
 	}
@@ -248,8 +242,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
 		final Map<ILocation, IAgent> nodes = new GamaMap<ILocation, IAgent>();
-		for (Object ag : vertices.iterable(scope)) {
-			nodes.put(((IAgent)ag).getLocation(), (IAgent)ag);
+		for ( Object ag : vertices.iterable(scope) ) {
+			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
 		for ( final Object p : edges.iterable(scope) ) {
 			addDrivingEdge(scope, (IShape) p, nodes);
@@ -263,9 +257,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		IShape ptS = new GamaPoint(coord[0]);
 		IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		IAgent v1 = nodes.get(ptS);
-		if (v1 == null) v1 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
+		if ( v1 == null ) {
+			v1 = Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
+		}
 		IAgent v2 = nodes.get(ptT);
-		if (v2 == null)  v2 = (IAgent) Queries.closest_to(scope,  (IContainer<?, ? extends IShape>) nodes.values(), ptT);
+		if ( v2 == null ) {
+			v2 = Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptT);
+		}
 
 		IAgent ag = e.getAgent();
 		List v1ro = (List) v1.getAttribute("roads_out");
@@ -283,7 +281,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			e1.addContext("Impossible to create edge from " + StringUtils.toGaml(e) + " in graph " + this);
 			throw e1;
 		}
-		if ( edge == null ) { return false; }
+		// if ( edge == null ) { return false; }
 		edgeMap.put(e, edge);
 		dispatchEvent(new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;

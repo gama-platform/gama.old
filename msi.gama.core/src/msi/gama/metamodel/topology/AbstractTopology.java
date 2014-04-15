@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AbstractTopology.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology;
 
 import gnu.trove.set.hash.THashSet;
@@ -27,7 +20,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
@@ -87,7 +80,7 @@ public abstract class AbstractTopology implements ITopology {
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
 	protected double environmentWidth, environmentHeight;
-	protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
+	// protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
 
 	// VARIABLES USED IN TORUS ENVIRONMENT
 	protected double[] adjustedXVector;
@@ -161,10 +154,10 @@ public abstract class AbstractTopology implements ITopology {
 		// }
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
-		environmentMinX = environmentEnvelope.getMinX();
-		environmentMinY = environmentEnvelope.getMinY();
-		environmentMaxX = environmentEnvelope.getMaxX();
-		environmentMaxY = environmentEnvelope.getMaxY();
+		// environmentMinX = environmentEnvelope.getMinX();
+		// environmentMinY = environmentEnvelope.getMinY();
+		// environmentMaxX = environmentEnvelope.getMaxX();
+		// environmentMaxY = environmentEnvelope.getMaxY();
 
 		// NORTH virtual environment
 		adjustedXVector[0] = 0.0;
@@ -260,10 +253,10 @@ public abstract class AbstractTopology implements ITopology {
 		if ( environmentEnvelope == null ) { return; }
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
-		environmentMinX = environmentEnvelope.getMinX();
-		environmentMinY = environmentEnvelope.getMinY();
-		environmentMaxX = environmentEnvelope.getMaxX();
-		environmentMaxY = environmentEnvelope.getMaxY();
+		// environmentMinX = environmentEnvelope.getMinX();
+		// environmentMinY = environmentEnvelope.getMinY();
+		// environmentMaxX = environmentEnvelope.getMaxX();
+		// environmentMaxY = environmentEnvelope.getMaxY();
 	}
 
 	@Override
@@ -352,11 +345,11 @@ public abstract class AbstractTopology implements ITopology {
 	protected abstract ITopology _copy(IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public GamaPoint getRandomLocation() {
+	public GamaPoint getRandomLocation(final IScope scope) {
 		// IGeometry g = getRandomPlace();
 		// return GeometricFunctions.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 		// FIXME temporary restriction as places can evolve (since they are agents).
-		return GeometryUtils.pointInGeom(environment.getInnerGeometry(), GAMA.getRandom());
+		return GeometryUtils.pointInGeom(environment.getInnerGeometry(), scope.getRandom());
 	}
 
 	@Override
@@ -398,9 +391,10 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Collection<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		// if ( source.isPoint() ) { return getNeighboursOf(scope, source.getLocation(), distance, filter); }
-		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
 		if ( !isTorus() ) { return getSpatialIndex().allAtDistance(scope, source, distance, filter); }
+
+		// FOR TORUS ENVIRONMENTS ONLY
+
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Set<IAgent> agents = new THashSet<IAgent>();
 		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);

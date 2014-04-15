@@ -1,19 +1,14 @@
-/*
- * GeoTools - The Open Source Java GIS Toolkit
- * http://geotools.org
+/*********************************************************************************************
  * 
- * (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *
+ * 'Envelope3D.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License.
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
 import msi.gaml.types.GamaGeometryType;
@@ -48,8 +43,9 @@ public class Envelope3D extends Envelope {
 	public static Envelope3D of(final GamaShape s) {
 		Envelope3D env = of(s.getInnerGeometry());
 		if ( s.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
-			//Note: A.G 27/03/14 If I put center.setZ(center.z + d ) it gives the issue 898 (that was introduces by revision 9047);
-			//Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
+			// Note: A.G 27/03/14 If I put center.setZ(center.z + d ) it gives the issue 898 (that was introduces by
+			// revision 9047);
+			// Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
 			GamaPoint center = env.centre();
 			center.setZ(center.z);
 			env.expandToInclude(center);
@@ -377,7 +373,7 @@ public class Envelope3D extends Envelope {
 	 */
 	private boolean intersects(final double x, final double y, final double z) {
 		if ( isNull() ) { return false; }
-		return intersects(x, y) && !(z > maxz || z > maxz);
+		return intersects(x, y) && !(z < minz || z > maxz);
 	}
 
 	/**

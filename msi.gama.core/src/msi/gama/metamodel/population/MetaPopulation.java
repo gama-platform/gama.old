@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 8 déc. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'MetaPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.population;
 
 import java.util.*;
@@ -206,7 +213,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	@Override
 	public IAgent anyValue(final IScope scope) {
 		if ( populationSets.size() == 0 ) { return null; }
-		RandomUtils r = scope.getSimulationScope().getExperiment().getRandomGenerator();
+		RandomUtils r = scope.getRandom();
 		final int i = r.between(0, populationSets.size() - 1);
 		return populationSets.get(i).anyValue(scope);
 	}
@@ -303,7 +310,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 
 	private Map<String, IPopulation> getMapOfPopulations(final IScope scope) {
 		if ( setOfPopulations == null ) {
-			setOfPopulations = new LinkedHashMap();
+			setOfPopulations = new TOrderedHashMap();
 			for ( IPopulationSet pop : populationSets ) {
 				if ( pop instanceof MetaPopulation ) {
 					setOfPopulations.putAll(((MetaPopulation) pop).getMapOfPopulations(scope));

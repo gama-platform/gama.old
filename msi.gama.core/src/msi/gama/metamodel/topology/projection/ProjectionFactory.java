@@ -1,12 +1,19 @@
-/**
- * Created by drogoul, 17 déc. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'ProjectionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
-import java.util.*;
+import gnu.trove.map.hash.THashMap;
+import java.util.Map;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
 import org.geotools.referencing.CRS;
@@ -26,7 +33,7 @@ public class ProjectionFactory {
 	private static final String EPSGPrefix = "EPSG:";
 	private static final String defaultTargetCRS = String.valueOf(GamaPreferences.LIB_TARGET_CRS.getInitialValue(null));
 	private static final String defaultSaveCRS = String.valueOf(GamaPreferences.LIB_OUTPUT_CRS.getInitialValue(null));
-	private static Map<String, CoordinateReferenceSystem> CRSCache = new HashMap();
+	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap();
 
 	private IProjection world;
 	public CoordinateReferenceSystem targetCRS;
@@ -171,7 +178,7 @@ public class ProjectionFactory {
 		CoordinateReferenceSystem crs = null;
 		try {
 			crs = getCRS(code, lonFirst);
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			crs = null;
 		}
 		if ( crs == null ) {

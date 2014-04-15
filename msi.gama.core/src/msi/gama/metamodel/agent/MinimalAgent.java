@@ -1,6 +1,16 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MinimalAgent.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import static msi.gama.util.GAML.nullCheck;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
@@ -77,7 +87,8 @@ public abstract class MinimalAgent implements IAgent {
 	 *       not to be nil, this method can be safely overriden with a direct call to getPopulation()
 	 */
 	protected IPopulation checkedPopulation() {
-		return nullCheck(getPopulation(), "The agent's population is nil");
+		return getPopulation();
+		// return nullCheck(getPopulation(), "The agent's population is nil");
 	}
 
 	/**
@@ -87,7 +98,8 @@ public abstract class MinimalAgent implements IAgent {
 	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
 	 */
 	protected IShape checkedGeometry() {
-		return nullCheck(getGeometry(), "The agent's shape is nil");
+		return getGeometry();
+		// return nullCheck(getGeometry(), "The agent's shape is nil");
 	}
 
 	@Override

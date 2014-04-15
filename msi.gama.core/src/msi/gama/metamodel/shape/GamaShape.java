@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'GamaShape.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
@@ -108,7 +101,7 @@ public class GamaShape implements IShape /* , IContainer */{
 			setLocation(newLocation);
 		}
 	}
-	
+
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
 	 * coefficients.
@@ -117,13 +110,13 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * @param rotation can be null, expressed in degrees
 	 * @param newLocation can be null
 	 * @param isBoundingBox indicates whether the previous parameter should be considered as an absolute bounding box
-	 *            (width, height, 	) or as a set of coefficients.
+	 *            (width, height, ) or as a set of coefficients.
 	 */
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final GamaPoint bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
-		if ( bounds != null && !isPoint()) {
-			if(getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
+		if ( bounds != null && !isPoint() ) {
+			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
 				Envelope3D envelope = getEnvelope();
 				boolean flat = envelope.isFlat();
@@ -138,7 +131,8 @@ public class GamaShape implements IShape /* , IContainer */{
 			} else {
 				Double scaling = Math.min(Math.min(bounds.x, bounds.y), bounds.z);
 				Double box = Math.max(Math.max(bounds.x, bounds.y), bounds.z);
-				setAttribute(IShape.DEPTH_ATTRIBUTE, isBoundingBox ? box : ((Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling));
+				setAttribute(IShape.DEPTH_ATTRIBUTE, isBoundingBox ? box
+					: (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
 			}
 		}
 	}
@@ -153,8 +147,8 @@ public class GamaShape implements IShape /* , IContainer */{
 	public GamaShape(final IShape source, final Geometry geom, final Double rotation, final ILocation newLocation,
 		final Double scaling) {
 		this(source, geom, rotation, newLocation);
-		if ( scaling != null && !isPoint()) {
-			if(getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE) {
+		if ( scaling != null && !isPoint() ) {
+			if ( getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE ) {
 				GamaPoint previous = getLocation();
 				geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
 				envelope = null;
@@ -384,10 +378,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	@getter("depth")
 	public Double getDepth() {
 		return (Double) this.getAttribute(IShape.DEPTH_ATTRIBUTE);
-		//return getEnvelope().getDepth();
+		// return getEnvelope().getDepth();
 	}
-	
-	public void setDepth(double depth) {
+
+	@Override
+	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 		this.envelope = null;
 	}
@@ -397,6 +392,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		return new GamaShape(getEnvelope());
 	}
 
+	@Override
 	@getter("points")
 	public IList<? extends ILocation> getPoints() {
 		final GamaList<GamaPoint> result = new GamaList();
@@ -499,7 +495,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		double z = 0d;
 		Coordinate[] coords = geometry.getCoordinates();
 		for ( Coordinate c : coords ) {
-			if ( c.z == Double.NaN ) {
+			if ( Double.isNaN(c.z) ) {
 				continue;
 			}
 			z += c.z;

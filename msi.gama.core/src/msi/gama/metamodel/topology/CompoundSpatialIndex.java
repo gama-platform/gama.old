@@ -1,12 +1,24 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'CompoundSpatialIndex.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.metamodel.topology;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.THashSet;
 import java.awt.Graphics2D;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -14,11 +26,12 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	boolean disposed = false;
 	ISpatialIndex[] all;
-	final Map<ISpecies, Integer> indexes;
+	final TObjectIntHashMap<ISpecies> indexes;
 	final protected double[] steps;
 
 	public CompoundSpatialIndex(final Envelope bounds) {
-		indexes = new HashMap();
+		indexes = new TObjectIntHashMap(10, 0.75f, -1);
+		// noEntryValue is 0 by default
 		all = new ISpatialIndex[] { new GamaQuadTree(bounds) };
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest };
@@ -26,20 +39,28 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	private ISpatialIndex findSpatialIndex(final ISpecies s) {
 		if ( disposed ) { return null; }
-		Integer index = indexes.get(s);
-		if ( index == null ) {
+		int index = indexes.get(s);
+		if ( index == -1 ) {
+			index = 0;
 			indexes.put(s, 0);
-			return all[0];
-		} else {
-			return all[index];
 		}
+		return all[index];
+		// if ( index == null ) {
+		// indexes.put(s, 0);
+		// return all[0];
+		// } else {
+		// return all[index];
+		// }
 	}
 
 	// Returns the index of the spatial index to use. Return -1 if all spatial indexes are concerned
 	private int findSpatialIndexes(final IAgentFilter f) {
 		if ( disposed ) { return -1; }
-		final Integer si = indexes.get(f.getSpecies());
-		return si == null ? -1 : si;
+		ISpecies s = f.getSpecies();
+		return indexes.get(s);
+		// if (i ==)
+		// if ( indexes.containsKey(s) ) { return indexes.get(s); }
+		// return -1;
 	}
 
 	@Override
@@ -86,7 +107,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		}
 		if ( shapes.size() == 1 ) { return shapes.get(0); }
 		// Adresses Issue 722 by shuffling the returned list using GAMA random procedure
-		GAMA.getRandom().shuffle(shapes);
+		scope.getRandom().shuffle(shapes);
 		double min_dist = Double.MAX_VALUE;
 		IAgent min_agent = null;
 		for ( final IAgent s : shapes ) {
