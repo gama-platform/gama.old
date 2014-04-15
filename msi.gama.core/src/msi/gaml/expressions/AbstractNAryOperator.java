@@ -1,24 +1,19 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AbstractNAryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gaml.compilation.GamlElementDocumentation;
+import static msi.gama.precompiler.ITypeProvider.*;
+import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.*;
 
 /**
@@ -27,9 +22,91 @@ import msi.gaml.types.*;
  */
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
-	protected IExpression[] exprs;
-	protected GamlElementDocumentation doc;
-	protected Signature signature;
+	protected final IExpression[] exprs;
+	protected OperatorProto prototype;
+
+	public AbstractNAryOperator(final OperatorProto proto, final IExpression ... expressions) {
+		this.exprs = expressions;
+		this.prototype = proto;
+		if ( prototype != null ) {
+			type = prototype.returnType;
+			computeType();
+		} else {
+			type = Types.NO_TYPE;
+		}
+	}
+
+	@Override
+	public OperatorProto getPrototype() {
+		return prototype;
+	}
+
+	protected void computeType() {
+		type = computeType(prototype.typeProvider, type, _type);
+		if ( type.isContainer() ) {
+			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(), _content);
+			IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), _key);
+			type = GamaType.from(type, keyType, contentType);
+		}
+	}
+
+	protected IType computeType(final int t, final IType def, final int kind) {
+		switch (t) {
+			case NONE:
+				return def;
+			case BOTH:
+				return findCommonType(exprs, kind);
+			case FIRST_TYPE:
+				return exprs[0].getType();
+			case FIRST_CONTENT_TYPE_OR_TYPE:
+				IType leftType = exprs[0].getType();
+				final IType t2 = leftType.getContentType();
+				if ( t2 == Types.NO_TYPE ) { return leftType; }
+				return t2;
+			case SECOND_TYPE:
+				return exprs[1].getType();
+			case FIRST_CONTENT_TYPE:
+				return exprs[0].getType().getContentType();
+			case FIRST_KEY_TYPE:
+				return exprs[0].getType().getKeyType();
+			case SECOND_CONTENT_TYPE:
+				return exprs[1].getType().getContentType();
+			case SECOND_CONTENT_TYPE_OR_TYPE:
+				final IType rightType = exprs[1].getType();
+				final IType t3 = rightType.getContentType();
+				if ( t3 == Types.NO_TYPE ) { return rightType; }
+				return t3;
+			case SECOND_KEY_TYPE:
+				return exprs[1].getType().getKeyType();
+			default:
+				return t >= 0 ? Types.get(t) : def;
+		}
+	}
+
+	protected abstract AbstractNAryOperator copy();
+
+	@Override
+	public IOperator resolveAgainst(final IScope scope) {
+		final AbstractNAryOperator copy = copy();
+		for ( int i = 0; i < exprs.length; i++ ) {
+			copy.exprs[i] = exprs[i].resolveAgainst(scope);
+		}
+		return copy;
+	}
+
+	@Override
+	public boolean isConst() {
+		if ( !prototype.canBeConst ) { return false; }
+		for ( int i = 0; i < exprs.length; i++ ) {
+			if ( !exprs[i].isConst() ) { return false; }
+		}
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		return prototype.name;
+	}
 
 	@Override
 	public String toString() {
@@ -79,8 +156,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
-		} else if ( signature != null ) {
-			sb.append("Argument types: " + signature.toString());
+		} else if ( prototype.signature != null ) {
+			sb.append("Argument types: " + prototype.signature.toString());
 		}
 		sb.append(") returns ");
 		IType type = getType();
@@ -90,31 +167,15 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(200);
-		// TODO insert here a @documentation if possible
-		if ( doc != null ) {
-			sb.append(doc.getMain());
-			if ( doc.getDeprecated() != null ) {
-				sb.append("\n\n<b>Deprecated</b>: ");
-				sb.append("<i>");
-				sb.append(doc.getDeprecated());
-				sb.append("</i>");
-			}
-		}
-		return sb.toString();
-	}
-
-	@Override
-	public void setDoc(final GamlElementDocumentation doc) {
-		this.doc = doc;
+		return prototype.getDocumentation();
 	}
 
 	/**
 	 * Method getDocumentationObject()
 	 * @see msi.gaml.expressions.IOperator#getDocumentationObject()
 	 */
-	@Override
-	public GamlElementDocumentation getDocumentationObject() {
-		return doc;
-	}
+	// @Override
+	// public GamlElementDocumentation getDocumentationObject() {
+	// return prototype.doc;
+	// }
 }

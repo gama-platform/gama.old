@@ -1,29 +1,27 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'PrimitiveOperator.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.List;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
+import msi.gaml.types.IType;
+import com.google.common.base.Function;
+import com.google.common.collect.*;
 
 /**
  * PrimitiveOperator. An operator that wraps a primitive or an action.
@@ -34,33 +32,22 @@ import msi.gaml.statements.*;
 public class PrimitiveOperator extends AbstractNAryOperator {
 
 	// IStatement.WithArgs statement;
-	Arguments parameters;
+	final Arguments parameters;
+	final StatementDescription action;
 
-	public PrimitiveOperator(final String op) {
-		setName(op);
+	public PrimitiveOperator(final OperatorProto proto, final IDescription callerContext,
+		final StatementDescription action, final IExpression call, final Arguments args) {
+		super(proto, call);
+		name = action.getName();
+		type = action.getType();
+		this.action = action;
+		parameters = args;
+
 	}
 
 	@Override
-	public PrimitiveOperator init(final String op, final IDescription context, final IExpression ... args) {
-		final StatementDescription action = context.getAction(op);
-		return init(op, context, action, args);
-	}
-
-	public PrimitiveOperator init(final String op, final IDescription callerContext, final StatementDescription action,
-		final IExpression ... args) {
-		this.exprs = args;
-		type = action.getType();
-		// contentType = action.getContentType();
-		// keyType = action.getKeyType();
-		parameters = createArgs();
-		// final IDescription cd = DescriptionFactory.create(IKeyword.DO, action.getSpeciesContext(), IKeyword.ACTION,
-		// op);
-		action.verifyArgs(callerContext, parameters);
-		// statement = new DoStatement(cd);
-		// if ( statement != null ) {
-		// statement.setFormalArgs(param);
-		// }
-		return this;
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -84,21 +71,15 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		return null;
 	}
 
-	private Arguments createArgs() {
-		final Arguments result = new Arguments();
-		final IExpression right = arg(1); // FIXME A bit dangerous !
-		if ( !(right instanceof MapExpression) ) { return result; }
-		final IExpression[] keys = ((MapExpression) right).keysArray();
-		final IExpression[] values = ((MapExpression) right).valuesArray();
-		for ( int i = 0; i < keys.length; i++ ) {
-			result.put(keys[i].literalValue(), values[i]);
-		}
-		return result;
+	@Override
+	public PrimitiveOperator copy() {
+		// See what impact it has got.
+		return this;
 	}
 
 	@Override
-	public PrimitiveOperator copy() {
-		return new PrimitiveOperator(getName()/* , sd */);
+	protected IType computeType(final int t, final IType def, final int kind) {
+		return def;
 	}
 
 	@Override
@@ -109,7 +90,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
-		sb.append("action ").append(getName()).append(" of ").append(arg(0).getType().getSpeciesName())
+		sb.append("action ").append(getName()).append(" defined in species ").append(arg(0).getType().getSpeciesName())
 			.append(" returns ").append(getType().getTitle());
 		return sb.toString();
 
@@ -118,10 +99,32 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public String getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
-		// TODO insert here a @documentation if possible
-		sb.append("Returns a value of type ").append(type.getDocumentation()).append("<br>");
-		sb.append("Defined in ").append(arg(0).getType().getSpeciesName()).append("<br>");
+
+		if ( action.getArgNames().size() > 0 ) {
+			List<String> args =
+				ImmutableList.copyOf(Iterables.transform(action.getArgs(), new Function<IDescription, String>() {
+
+					@Override
+					public String apply(final IDescription desc) {
+						StringBuilder sb = new StringBuilder(100);
+						sb.append("<li><b>").append(tab).append(desc.getName()).append("</b> of type ")
+							.append(desc.getType());
+						if ( desc.getFacets().containsKey(IKeyword.DEFAULT) ) {
+							sb.append(" <i>(default: ").append(desc.getFacets().getExpr(IKeyword.DEFAULT).toGaml())
+								.append(")</i>");
+						}
+						sb.append("</li>").append(ln);
+
+						return sb.toString();
+					}
+				}));
+			sb.append("Arguments accepted : ").append("<br/><ul>").append(ln);
+			for ( String a : args ) {
+				sb.append(a);
+			}
+			sb.append("</ul><br/>");
+		}
+
 		return sb.toString();
 	}
-
 }

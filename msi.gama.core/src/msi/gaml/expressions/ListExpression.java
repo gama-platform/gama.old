@@ -1,27 +1,20 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ListExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.types.*;
 
 /**
@@ -30,6 +23,15 @@ import msi.gaml.types.*;
  * @author drogoul 23 août 07
  */
 public class ListExpression extends AbstractExpression {
+
+	public static IExpression create(final List<? extends IExpression> elements) {
+		ListExpression u = new ListExpression(elements);
+		if ( u.isConst() ) {
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+		}
+		return u;
+	}
 
 	final IExpression[] elements;
 	private final Object[] values;
@@ -40,10 +42,7 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
-		// keyType = Types.get(IType.INT);
-		// type = Types.get(IType.LIST);
-		type = GamaType.from(Types.get(IType.LIST), Types.get(IType.INT), findCommonType(elements, _type));
-		// contentType = findCommonType(elements, _type);
+		type = GamaType.from(Types.get(IType.LIST), Types.get(IType.INT), findCommonType(this.elements, _type));
 		isConst();
 	}
 
@@ -103,11 +102,6 @@ public class ListExpression extends AbstractExpression {
 	public String getTitle() {
 		return "literal list of type " + getType().getTitle();
 	}
-
-	// @Override
-	// public IType getKeyType() {
-	// return keyType;
-	// }
 
 	@Override
 	public String getDocumentation() {

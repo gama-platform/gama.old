@@ -1,24 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AbstractExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.*;
+import gnu.trove.set.hash.TLinkedHashSet;
+import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -64,10 +58,10 @@ public abstract class AbstractExpression implements IExpression {
 		return this;
 	}
 
-	protected IType findCommonType(final List<? extends IExpression> elements, final int kind) {
+	protected IType findCommonType(final IExpression[] elements, final int kind) {
 		IType result = Types.NO_TYPE;
-		if ( elements.isEmpty() ) { return result; }
-		final Set<IType> types = new LinkedHashSet();
+		if ( elements.length == 0 ) { return result; }
+		final Set<IType> types = new TLinkedHashSet();
 		for ( final IExpression e : elements ) {
 			// TODO Indicates a previous error in compiling expressions. Maybe we should cut this
 			// part

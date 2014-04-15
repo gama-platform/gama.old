@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 7 sept. 2013
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'TypeExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
@@ -9,53 +16,34 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 
 /**
- * Class CastingExpression.
+ * Class TypeExpression.
  * 
  * @author drogoul
  * @since 7 sept. 2013
  * 
  */
-public class CastingExpression extends AbstractExpression {
+public class TypeExpression extends AbstractExpression {
 
-	// final IType type;
-
-	public CastingExpression(final IType type) {
+	public TypeExpression(final IType type) {
 		this.type = type;
-		// this.keyType = keyType;
-		// this.contentType = contentsType;
 	}
 
-	/**
-	 * Method value()
-	 * @see msi.gaml.expressions.IExpression#value(msi.gama.runtime.IScope)
-	 */
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
+		// Normally never evaluated
 		return null;
 	}
 
-	/**
-	 * Method isConst()
-	 * @see msi.gaml.expressions.IExpression#isConst()
-	 */
 	@Override
 	public boolean isConst() {
-		return true;
+		return type.canCastToConst();
 	}
 
-	/**
-	 * Method toGaml()
-	 * @see msi.gaml.expressions.IExpression#toGaml()
-	 */
 	@Override
 	public String toGaml() {
 		return type.toString();
 	}
 
-	/**
-	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		return type.getTitle();
@@ -67,7 +55,7 @@ public class CastingExpression extends AbstractExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Represents a transformation of the argument to the type " + type.getTitle();
+		return "Represents the data type " + type.getTitle();
 	}
 
 	@Override

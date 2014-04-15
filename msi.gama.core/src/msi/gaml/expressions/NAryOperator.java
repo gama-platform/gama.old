@@ -1,31 +1,41 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'NAryOperator.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import java.util.Arrays;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaHelper;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.types.*;
+import msi.gama.util.GAML;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.types.IType;
 
-public class NAryOperator extends BinaryOperator {
+public class NAryOperator extends AbstractNAryOperator {
 
-	public NAryOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, final boolean lazy, final int[] expectedContentType,
-		final Signature signature) {
-		super(ret, exec, canBeConst, tProv, ctProv, iProv, lazy, expectedContentType, signature);
-	}
-
-	@Override
-	public boolean isConst() {
-		if ( !canBeConst ) { return false; }
-		for ( int i = 0; i < exprs.length; i++ ) {
-			if ( !exprs[i].isConst() ) { return false; }
+	public static IExpression create(final OperatorProto proto, final IExpression ... child) {
+		NAryOperator u = new NAryOperator(proto, child);
+		if ( u.isConst() ) {
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
-		return true;
+		return u;
+	}
+
+	public NAryOperator(final OperatorProto proto, final IExpression ... exprs) {
+		super(proto, exprs);
 	}
 
 	@Override
-	protected IType computeType(final IDescription context, final int t, final IType def, final int kind) {
+	protected IType computeType(final int t, final IType def, final int kind) {
 		int index = -1;
 		int kind_of_index = -1;
 		if ( t < INDEXED_TYPES ) {
@@ -51,14 +61,14 @@ public class NAryOperator extends BinaryOperator {
 				}
 			}
 		}
-		return super.computeType(context, t, def, kind);
+		return super.computeType(t, def, kind);
 	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		Object[] values = new Object[exprs.length];
 		try {
-			if ( lazy ) {
+			if ( prototype.lazy ) {
 				for ( int i = 0; i < values.length - 1; i++ ) {
 					values[i] = exprs[i].value(scope);
 				}
@@ -68,14 +78,14 @@ public class NAryOperator extends BinaryOperator {
 					values[i] = exprs[i].value(scope);
 				}
 			}
-			Object result = helper.run(scope, values);
+			Object result = prototype.helper.run(scope, values);
 			return result;
 		} catch (GamaRuntimeException e1) {
-			e1.addContext("when applying the " + literalValue() + " operator on " + values);
+			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw e1;
 		} catch (Exception e) {
 			GamaRuntimeException ee = GamaRuntimeException.create(e);
-			ee.addContext("when applying the " + literalValue() + " operator on " + values);
+			ee.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw ee;
 		}
 	}
@@ -87,11 +97,7 @@ public class NAryOperator extends BinaryOperator {
 
 	@Override
 	public NAryOperator copy() {
-		// FIXME Use prototypes not copies like this...
-		NAryOperator copy =
-			new NAryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider, lazy,
-				expectedContentType, signature);
-		copy.doc = doc;
+		NAryOperator copy = new NAryOperator(prototype, exprs);
 		return copy;
 	}
 

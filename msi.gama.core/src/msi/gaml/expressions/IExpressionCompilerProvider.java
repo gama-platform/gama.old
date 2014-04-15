@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- * 
- * 'IOperator.java', in plugin 'msi.gama.core', is part of the source code of the
+ *
+ * 'IExpressionCompilerProvider.java', in plugin 'msi.gama.core', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,18 +11,17 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.expressions.IExpressionCompiler;
 
 /**
- * Written by drogoul Modified on 22 ao�t 2010
+ * Class IExpressionCompilerProvider.
  * 
- * @todo Description
+ * @author drogoul
+ * @since 11 avr. 2014
  * 
  */
-public interface IOperator extends IExpression {
+public interface IExpressionCompilerProvider {
 
-	public abstract IExpression arg(int i);
-
-	public abstract OperatorProto getPrototype();
+	public abstract IExpressionCompiler newParser();
 
 }

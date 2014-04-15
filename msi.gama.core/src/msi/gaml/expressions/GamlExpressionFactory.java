@@ -1,30 +1,23 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GamlExpressionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gaml.compilation.GamlElementDocumentation;
+import msi.gaml.compilation.AbstractGamlDocumentation;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.IUnits;
+import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -36,18 +29,36 @@ import org.eclipse.emf.ecore.EObject;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
-	IExpressionCompiler parser;
+	IExpressionCompilerProvider parserProvider;
+	ThreadLocal<IExpressionCompiler> parser;
 
-	public GamlExpressionFactory() {}
+	public GamlExpressionFactory() {
+		parser = new ThreadLocal();
+	}
 
 	@Override
-	public void registerParser(final IExpressionCompiler f) {
-		parser = f;
+	public void registerParserProvider(final IExpressionCompilerProvider f) {
+		parserProvider = f;
+	}
+
+	@Override
+	public IExpressionCompiler getParser() {
+		if ( parser.get() == null ) {
+			parser.set(parserProvider.newParser());
+		}
+		return parser.get();
 	}
 
 	@Override
 	public boolean isInitialized() {
-		return parser != null;
+		return parser.get() != null;
+	}
+
+	@Override
+	public void resetParser() {
+		if ( isInitialized() ) {
+			getParser().reset();
+		}
 	}
 
 	@Override
@@ -76,31 +87,29 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createExpr(final IExpressionDescription ied, final IDescription context) {
 		if ( ied == null ) { return null; }
 		IExpression p = ied.getExpression();
-		return p == null ? parser.compile(ied, context) : p;
+		return p == null ? getParser().compile(ied, context) : p;
 	}
 
 	@Override
 	public IExpression createExpr(final String s, final IDescription context) {
 		if ( s == null || s.isEmpty() ) { return null; }
-		return parser.compile(StringBasedExpressionDescription.create(s), context);
+		return getParser().compile(StringBasedExpressionDescription.create(s), context);
 	}
 
 	@Override
 	public Map<String, IExpressionDescription> createArgumentMap(final StatementDescription action,
 		final IExpressionDescription args, final IDescription context) {
 		if ( args == null ) { return Collections.EMPTY_MAP; }
-		return parser.parseArguments(action, args.getTarget(), context);
+		return getParser().parseArguments(action, args.getTarget(), context);
 	}
 
 	@Override
-	public IVarExpression createVar(final String name, final IType type, final boolean isConst, final int scope,
+	public IExpression createVar(final String name, final IType type, final boolean isConst, final int scope,
 		final IDescription definitionDescription) {
-		if ( name.equals("possible_nests") ) {
-			GuiUtils.debug("GamlExpressionFactory.createVar");
-		}
 		switch (scope) {
 			case IVarExpression.GLOBAL:
-				return new GlobalVariableExpression(name, type, isConst, definitionDescription.getModelDescription());
+				return GlobalVariableExpression
+					.create(name, type, isConst, definitionDescription.getModelDescription());
 			case IVarExpression.AGENT:
 				return new AgentVariableExpression(name, type, isConst, definitionDescription);
 			case IVarExpression.TEMP:
@@ -117,13 +126,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public ListExpression createList(final List<? extends IExpression> elements) {
-		return new ListExpression(elements);
+	public IExpression createList(final List<? extends IExpression> elements) {
+		return ListExpression.create(elements);
 	}
 
 	@Override
-	public MapExpression createMap(final List<? extends IExpression> elements) {
-		return new MapExpression(elements);
+	public IExpression createMap(final List<? extends IExpression> elements) {
+		return MapExpression.create(elements);
 	}
 
 	@Override
@@ -135,7 +144,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		}
 		if ( OPERATORS.containsKey(op) ) {
 			// We get the possible sets of types registered in OPERATORS
-			Map<Signature, IOperator> ops = OPERATORS.get(op);
+			Map<Signature, OperatorProto> ops = OPERATORS.get(op);
 			// We create the signature corresponding to the arguments
 			// 19/02/14 Only the simplified signature is used now
 			Signature signature = new Signature(args).simplified();
@@ -145,7 +154,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				final List<Signature> temp_types = new ArrayList(10);
 				// temp_types.clear();
 				// We collect all the signatures that are compatible
-				for ( Map.Entry<Signature, IOperator> entry : ops.entrySet() ) {
+				for ( Map.Entry<Signature, OperatorProto> entry : ops.entrySet() ) {
 					if ( signature.isCompatibleWith(entry.getKey()) ) {
 						temp_types.add(entry.getKey());
 					}
@@ -186,16 +195,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				}
 			}
 
-			final IOperator helper = ops.get(signature);
-			// We finally make a copy of the operator and init it with the arguments
-			IOperator copy = helper.copy().init(op, context, args);
-			if(copy != null){
-				GamlElementDocumentation ged = copy.getDocumentationObject();
+			final OperatorProto proto = ops.get(signature);
+			// We finally make an instance of the operator and init it with the arguments
+			IExpression copy = proto.create(context, args);
+			if ( copy != null ) {
+				String ged = AbstractGamlDocumentation.getDeprecated(proto.doc);
 				if ( ged != null ) {
-					if ( ged.getDeprecated() != null ) {
-						context.warning(helper.getName() + " is deprecated: " + ged.getDeprecated(), IGamlIssue.DEPRECATED,
-							currentEObject);
-					}
+					context.warning(proto.name + " is deprecated: " + ged, IGamlIssue.DEPRECATED, currentEObject);
 				}
 			}
 			return copy;
@@ -206,8 +212,22 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext,
-		final StatementDescription action, final IExpression ... expressions) {
-		return new PrimitiveOperator(op).init(op, callerContext, action, expressions[0], expressions[1]);
+		final StatementDescription action, final IExpression call, final IExpression arguments) {
+		Arguments args = createArgs(arguments);
+		if ( action.verifyArgs(callerContext, args) ) { return new PrimitiveOperator(null, callerContext, action, call,
+			args); }
+		return null;
+	}
+
+	private Arguments createArgs(final IExpression mapExpression) {
+		final Arguments result = new Arguments();
+		if ( !(mapExpression instanceof MapExpression) ) { return result; }
+		final IExpression[] keys = ((MapExpression) mapExpression).keysArray();
+		final IExpression[] values = ((MapExpression) mapExpression).valuesArray();
+		for ( int i = 0; i < keys.length; i++ ) {
+			result.put(keys[i].literalValue(), values[i]);
+		}
+		return result;
 	}
 
 	// @Override
@@ -217,18 +237,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	// return parser.parseLiteralArray(s, context, skills);
 	// }
 
-	@Override
-	public IExpressionCompiler getParser() {
-		return parser;
-	}
-
 	/**
 	 * Method createCastingExpression()
 	 * @see msi.gaml.expressions.IExpressionFactory#createCastingExpression(msi.gaml.types.IType)
 	 */
 	@Override
 	public IExpression createTypeExpression(final IType type) {
-		return new CastingExpression(type);
+		return new TypeExpression(type);
 	}
 
 	/**
@@ -238,7 +253,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 */
 	@Override
 	public EObject getFacetExpression(final IDescription context, final EObject facet) {
-		return parser.getFacetExpression(context, facet);
+		return getParser().getFacetExpression(context, facet);
 	}
 
 }

@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'IExpressionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.*;
@@ -36,7 +29,7 @@ public interface IExpressionFactory {
 	public static final IExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL));
 	public static final IExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
 
-	public void registerParser(IExpressionCompiler parser);
+	public void registerParserProvider(IExpressionCompilerProvider parser);
 
 	public abstract IExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
@@ -57,7 +50,7 @@ public interface IExpressionFactory {
 
 	public IExpressionCompiler getParser();
 
-	IVarExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
+	IExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
 
 	public IExpression createList(final List<? extends IExpression> elements);
 
@@ -65,7 +58,8 @@ public interface IExpressionFactory {
 
 	// IExpression createOperator(String op, IDescription context, IExpression ... exprs);
 
-	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression ... exprs);
+	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression call,
+		IExpression args);
 
 	/**
 	 * @param op
@@ -92,5 +86,10 @@ public interface IExpressionFactory {
 	 * @return
 	 */
 	public EObject getFacetExpression(IDescription context, EObject facet);
+
+	/**
+	 *
+	 */
+	public void resetParser();
 
 }
