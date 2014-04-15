@@ -419,7 +419,9 @@ public class MovingSkill extends Skill {
 				}
 			}
 			final IShape lineEnd = edges.get(nb - 1);
-			falseTarget = (GamaPoint) Punctal._closest_point_to(((IShape) path.getEndVertex()).getLocation(), lineEnd);
+			ILocation end = ((IShape)path.getEndVertex()).getLocation();
+			falseTarget = (GamaPoint) Punctal._closest_point_to(end, lineEnd);
+			falseTarget.z = end.getZ();
 			endIndexSegment = 1;
 			final Point pointGeom = (Point) falseTarget.getInnerGeometry();
 			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -488,7 +490,8 @@ public class MovingSkill extends Skill {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					final double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
-					currentLocation.setLocation(newX, newY);
+					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
+					currentLocation.setLocation(newX, newY,newZ);
 					distance = 0;
 					break;
 				} else if ( distance > dist ) {
@@ -582,7 +585,8 @@ public class MovingSkill extends Skill {
 					final double ratio = distance / dist;
 					final double newX = pto.x + ratio * (pt.x - pto.x);
 					final double newY = pto.y + ratio * (pt.y - pto.y);
-					currentLocation.setLocation(newX, newY);
+					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
+					currentLocation.setLocation(newX, newY,newZ);
 					final IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
 					final IShape sh = path.getRealObject(line);
 					if ( sh != null ) {
