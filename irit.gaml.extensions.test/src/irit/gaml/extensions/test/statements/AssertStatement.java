@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'AssertStatement.java', in plugin 'irit.gaml.extensions.test', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package irit.gaml.extensions.test.statements;
 
 import java.util.Collection;
@@ -59,20 +70,20 @@ public class AssertStatement extends AbstractStatement {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
 		if ( equals != null ) {
-			if(value.value(scope) != null){
-				if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException
-					.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
-				return null;				
+			if ( value.value(scope) != null ) {
+				if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException.error(
+					"Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope), scope); }
+				return null;
 			} else {
-				if (equals.value(scope) != null) { throw GamaRuntimeException
-					.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
+				if ( equals.value(scope) != null ) { throw GamaRuntimeException.error(
+					"Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope), scope); }
 				return null;
 			}
 		}
 
 		if ( isnot != null ) {
-			if ( value.value(scope).equals(isnot.value(scope)) ) { throw GamaRuntimeException
-				.error("Assert is_not ERROR: " + value.toGaml() + " is equals to " + isnot.value(scope)); }
+			if ( value.value(scope).equals(isnot.value(scope)) ) { throw GamaRuntimeException.error(
+				"Assert is_not ERROR: " + value.toGaml() + " is equals to " + isnot.value(scope), scope); }
 			return null;
 		}
 
@@ -81,30 +92,30 @@ public class AssertStatement extends AbstractStatement {
 			try {
 				value.value(scope);
 			} catch (GamaRuntimeException e) {
-				boolean isWarning = e.isWarning() && !scope.getSimulationScope().getExperiment().getWarningsAsErrors();
+				boolean isWarning = e.isWarning() && !scope.getExperiment().getWarningsAsErrors();
 
-				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning."); }
-				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
+				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
+					"Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning.", scope); }
+				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException.error(
+					"Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error.", scope); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() +
-						", it raises " + (isWarning ? "a warning." : "an error.")); }
+						", it raises " + (isWarning ? "a warning." : "an error."), scope); }
 				return null;
 			} catch (Exception e) {
-				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA."); }
+				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
+					"Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA.", scope); }
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-				.error("Assert raises ERROR: " + value.toGaml() + " does not raise anything."); }
+				.error("Assert raises ERROR: " + value.toGaml() + " does not raise anything.", scope); }
 			return null;
 		}
 
 		// Case where there no equals, is_not or raises
 		// the value is thus evaluated as a boolean and tested
-		if ( !Cast.asBool(scope, getFacet(IKeyword.VALUE).value(scope)) ) { throw GamaRuntimeException
-			.error("Assert ERROR: " + value.toGaml() + " is false"); }
+		if ( !Cast.asBool(scope, getFacet(IKeyword.VALUE).value(scope)) ) { throw GamaRuntimeException.error(
+			"Assert ERROR: " + value.toGaml() + " is false", scope); }
 		return null;
 	}
 }
