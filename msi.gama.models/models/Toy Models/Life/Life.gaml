@@ -61,7 +61,7 @@ entities {
 
 }
 
-experiment toto type: gui {
+experiment "Game of Life" type: gui {
 	parameter 'Width:' var: environment_width category: 'Board';
 	parameter 'Height:' var: environment_height category: 'Board';
 	parameter 'Torus?:' var: torus_environment category: 'Board';
