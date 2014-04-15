@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'Output3D.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package collada;
 
 import java.io.*;
@@ -5,6 +16,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import msi.gama.common.util.FileUtils;
 import msi.gama.jogl.scene.GeometryObject;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.ILocation;
@@ -283,8 +295,7 @@ public class Output3D {
 			e1.printStackTrace();
 			return;
 		}
-		String file3DFile =
-			scope.getSimulationScope().getModel().getRelativeFilePath(FILE3DFOLDER + "/" + "level.xml", false);
+		String file3DFile = FileUtils.constructAbsoluteFilePath(scope, FILE3DFOLDER + "/" + "level.xml", false);
 
 		try {
 			FileWriter out = new FileWriter(file3DFile);

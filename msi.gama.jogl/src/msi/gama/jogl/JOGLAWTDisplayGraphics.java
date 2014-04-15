@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'JOGLAWTDisplayGraphics.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 
 package msi.gama.jogl;
 
@@ -81,7 +74,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}
 		}
 	}
-	
+
 	public void reinitFor(final IDisplaySurface surface) {
 		super.initFor(surface);
 	}
@@ -169,11 +162,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
-		final boolean textured, final boolean triangulated, final boolean isGrayScaled,final boolean showText, final Color gridColor,
-		final double cellSize, final String name) {
+		final boolean textured, final boolean triangulated, final boolean isGrayScaled, final boolean showText,
+		final Color gridColor, final double cellSize, final String name) {
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
-		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env, cellSize, name);
+		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env, cellSize,
+			name);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}

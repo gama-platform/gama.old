@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'JTSDrawer.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
 import static javax.media.opengl.GL.*;
@@ -405,7 +416,7 @@ public class JTSDrawer {
 				gl.glTexCoord2f(0.0f, 0.0f);
 				gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(),
 						p.getExteriorRing().getCoordinateN(3).z);
-		    gl.glEnd();
+			gl.glEnd();
 		}
 
 		texture.unbindFrom(renderer);

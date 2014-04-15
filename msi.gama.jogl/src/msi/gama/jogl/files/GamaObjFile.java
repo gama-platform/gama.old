@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 30 déc. 2013
+/*********************************************************************************************
  * 
- */
+ *
+ * 'GamaObjFile.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.jogl.files;
 
 import java.io.*;
@@ -12,7 +19,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile.Gama3DGeometryFile;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 
 /**
  * Class GamaObjFile.
@@ -21,9 +28,9 @@ import msi.gaml.types.GamaGeometryType;
  * @since 30 déc. 2013
  * 
  */
-@file(name = "obj", extensions = "obj")
+@file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
 public class GamaObjFile extends Gama3DGeometryFile {
-	
+
 	protected String mtl_path;
 
 	/**
@@ -41,22 +48,25 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
+		BufferedReader br = null;
 		try {
 			setBuffer(new GamaList());
-			final BufferedReader br = new BufferedReader(new FileReader(getFile()));
+			br = new BufferedReader(new FileReader(getFile()));
 			IList<IShape> vertices = new GamaList();
 			String newline;
 			while ((newline = br.readLine()) != null) {
 				if ( newline.length() > 0 ) {
 					newline = newline.trim();
-					//LOADS MATERIALS
-                    if (newline.charAt(0) == 'm' && newline.charAt(1) == 't' && newline.charAt(2) == 'l' && newline.charAt(3) == 'l' && newline.charAt(4) == 'i' && newline.charAt(5) == 'b') {
+					// LOADS MATERIALS
+					if ( newline.charAt(0) == 'm' && newline.charAt(1) == 't' && newline.charAt(2) == 'l' &&
+						newline.charAt(3) == 'l' && newline.charAt(4) == 'i' && newline.charAt(5) == 'b' ) {
 						String[] coordstext = new String[3];
 						coordstext = newline.split("\\s+");
-						if(mtl_path!=null)
+						if ( mtl_path != null ) {
 							loadmaterials();
+						}
 					}
-					
+
 					// LOADS VERTEX COORDINATES
 					if ( newline.startsWith("v ") ) {
 						float coords[] = new float[4];
@@ -90,7 +100,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						}
 						GamaList<IShape> face = new GamaList();
 						for ( int i = 0; i < v.length; i++ ) {
-							face.add(vertices.get(v[i]-1)); // Correct only if all the vertices have been loaded before
+							face.add(vertices.get(v[i] - 1)); // Correct only if all the vertices have been loaded
+																// before
 						}
 						((IList) getBuffer()).add(GamaGeometryType.buildPolygon(face));
 					}
@@ -98,23 +109,31 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			}
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e);
-		}
-	}
-	
-	 private void loadmaterials() {
-			FileReader frm;
-			String refm = mtl_path;
-
-			try {
-				frm = new FileReader(refm);
-				BufferedReader brm = new BufferedReader(frm);
-				//materials = new MtlLoader(brm,mtl_path);
-				frm.close();
-			} catch (IOException e) {
-				System.out.println("Could not open file: " + refm);
-				//materials = null;
+		} finally {
+			if ( br != null ) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+	}
+
+	private void loadmaterials() {
+		FileReader frm;
+		String refm = mtl_path;
+
+		try {
+			frm = new FileReader(refm);
+			BufferedReader brm = new BufferedReader(frm);
+			// materials = new MtlLoader(brm,mtl_path);
+			frm.close();
+		} catch (IOException e) {
+			System.out.println("Could not open file: " + refm);
+			// materials = null;
+		}
+	}
 
 	/**
 	 * Method flushBuffer()

@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'ModelScene.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
@@ -11,6 +22,7 @@ import msi.gama.jogl.scene.StaticLayerObject.WordLayerObject;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.*;
 import msi.gama.util.IList;
 import com.google.common.collect.Iterables;
 import com.sun.opengl.util.texture.*;
@@ -75,8 +87,9 @@ public class ModelScene {
 	}
 
 	public void draw(final boolean picking) {
-		for ( Map.Entry<String, LayerObject> entry : layers.entrySet() ) {
-			LayerObject layer = entry.getValue();
+		LayerObject[] array = layers.values().toArray(new LayerObject[0]);
+		for ( LayerObject layer : array ) {
+			// LayerObject layer = entry.getValue();
 			if ( layer != null ) {
 				layer.draw(renderer, picking);
 			}
@@ -98,15 +111,16 @@ public class ModelScene {
 
 	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1, null);
+		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
+			null);
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final IAgent agent,
-		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Envelope3D env,
-		final double cellSize, final String name) {
+		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
+		final Envelope3D env, final double cellSize, final String name) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false, true, env,
-			cellSize, name);
+		currentLayer.addDEM(dem, demTexture, null, agent, isTextured, isTriangulated, isGrayScaled, isShowText, false,
+			true, env, cellSize, name);
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
@@ -172,7 +186,11 @@ public class ModelScene {
 
 	public MyTexture createTexture(final String fileName, final boolean isDynamic) {
 		try {
-			BufferedImage image = ImageUtils.getInstance().getImageFromFile(fileName);
+			// TODO: The lecture of the image should be made elsewhere, in a place where the scope is available, which
+			// means before (in the IGraphics, probably).
+			IScope scope = GAMA.obtainNewScope();
+			BufferedImage image = ImageUtils.getInstance().getImageFromFile(scope, fileName);
+			GAMA.releaseScope(scope);
 			return createTexture(image, isDynamic);
 		} catch (IOException e) {
 			e.printStackTrace();

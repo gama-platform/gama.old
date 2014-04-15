@@ -1,14 +1,14 @@
-/*
- * GLUtil version v1.04 date 20.08.2010
- * This is simple class which contains static methods is create to you
- * build simple OpenGL program in java whihout writing a lot wate code.
- * You dont have create an object of this class.
- * New methods:
- * ->drawVec(GL gl,Wector point,Wector direction) - draw vector in specified location (point)
- * ->drawVec(GL gl,Wector direction)
- * ->drawCircle(GL gl,double size) - draw cirle with size radius on OXY plane in point 0,0,0
- * ->drawEmptyCircle(GL gl,double size) - draw dont filled cirle with size radius on OXY plane in point 0,0,0
- */
+/*********************************************************************************************
+ * 
+ *
+ * 'GLUtil.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.jogl.utils;
 
 import java.awt.Point;

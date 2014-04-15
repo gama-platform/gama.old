@@ -1,10 +1,18 @@
-/**
- * Created by drogoul, 16 mars 2014
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'StringDrawer.java', in plugin 'msi.gama.jogl', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
+import gnu.trove.map.hash.THashMap;
 import java.awt.Font;
 import java.util.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -29,12 +37,12 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 	TextRenderer get(final String font, final int size, final int style) {
 		Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
 		if ( map1 == null ) {
-			map1 = new HashMap();
+			map1 = new THashMap();
 			cache.put(font, map1);
 		}
 		Map<Integer, TextRenderer> map2 = map1.get(size);
 		if ( map2 == null ) {
-			map2 = new HashMap();
+			map2 = new THashMap();
 			map1.put(size, map2);
 		}
 		TextRenderer r = map2.get(style);
@@ -75,7 +83,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			renderer.gl.glDisable(GL_LIGHTING);
 
 			renderer.gl.glDisable(GL_BLEND);
-		
+
 			renderer.gl.glColor4d(s.getColor().getRed() / 255.0, s.getColor().getGreen() / 255.0, s.getColor()
 				.getBlue() / 255.0, s.getColor().getAlpha() / 255.0 * s.getAlpha());
 			renderer.gl.glRasterPos3d(x, y, z);
