@@ -1,5 +1,17 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'GamaPreferences.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.common;
 
+import gnu.trove.map.hash.THashMap;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
@@ -204,7 +216,7 @@ public class GamaPreferences {
 		}
 
 		@Override
-		public void setValue(final Object value) {
+		public void setValue(final IScope scope, final Object value) {
 			this.value = (T) value;
 		}
 
@@ -275,6 +287,11 @@ public class GamaPreferences {
 			return this.deactivates;
 		}
 
+		public void save() {
+			Map<String, Object> map = new THashMap();
+			map.put(getName(), getValue());
+			GamaPreferences.setNewPreferences(map);
+		}
 	}
 
 	/**
@@ -316,7 +333,7 @@ public class GamaPreferences {
 	/**
 	 * Startup
 	 */
-	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display GAMA website at startup",
+	public static final Entry<Boolean> CORE_SHOW_PAGE = create("core.show_page", "Display Welcome page at startup",
 		true, IType.BOOL).in(GENERAL).group("Startup");
 	/**
 	 * Runtime
@@ -333,20 +350,20 @@ public class GamaPreferences {
 	public static final Entry<String> CORE_DISPLAY = create("core.display",
 		"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL").in(DISPLAY)
 		.group("Properties");
-	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
-		"Synchronize displays with simulations", false, IType.BOOL).in(DISPLAY).group("Properties");
-	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false,
-		IType.BOOL).in(DISPLAY).activates("core.scale").group("Properties");
-	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay", false,
+	public static final Entry<Boolean> CORE_SYNC = create("core.sync", "Synchronize displays with simulations", false,
 		IType.BOOL).in(DISPLAY).group("Properties");
-	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing",
-		false, IType.BOOL).in(DISPLAY).group("Properties");
+	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false, IType.BOOL)
+		.in(DISPLAY).activates("core.scale").group("Properties");
+	public static final Entry<Boolean> CORE_SCALE =
+		create("core.scale", "Show scale bar in overlay", false, IType.BOOL).in(DISPLAY).group("Properties");
+	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing", false,
+		IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Color> CORE_BACKGROUND = create("core.background", "Default background color",
 		Color.white, IType.COLOR).in(DISPLAY).group("Properties");
 	public static final Entry<Color> CORE_HIGHLIGHT = create("core.highlight", "Default highlight color",
 		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
-		"Stack displays on screen in the order of their definition", true, IType.BOOL).in(DISPLAY).group("Properties");
+		"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY).group("Properties");
 	/**
 	 * Default Aspect
 	 */
@@ -360,17 +377,17 @@ public class GamaPreferences {
 	/**
 	 * OpenGL
 	 */
-	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting", true,
+	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use improved z positioning", true,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env",
-		"Draw environment and 3D axes", true, IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_SHOW_FPS =
-		create("core.show_fps", "Show fps", false, IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable Lighting", true,
-			IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals", false,
+	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
+		.in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_SHOW_FPS = create("core.show_fps", "Show number of frames per second",
+		false, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
+		.in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals to objects", false,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Cube Display", false,
+	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Display as a cube", false,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	// EDITOR PAGE
@@ -466,14 +483,14 @@ public class GamaPreferences {
 		switch (gp.type.id()) {
 			case IType.INT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(store.getInt(key, Cast.as(value, Integer.class)));
+					gp.setValue(scope, store.getInt(key, Cast.as(value, Integer.class)));
 				} else {
 					store.putInt(key, Cast.as(value, Integer.class));
 				}
 				break;
 			case IType.FLOAT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(store.getDouble(key, Cast.as(value, Double.class)));
+					gp.setValue(scope, store.getDouble(key, Cast.as(value, Double.class)));
 				} else {
 					store.putDouble(key, Cast.as(value, Double.class));
 				}
@@ -481,21 +498,21 @@ public class GamaPreferences {
 			case IType.BOOL:
 				value = Cast.asBool(scope, value);
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(store.getBoolean(key, Cast.as(value, Boolean.class)));
+					gp.setValue(scope, store.getBoolean(key, Cast.as(value, Boolean.class)));
 				} else {
 					store.putBoolean(key, Cast.as(value, Boolean.class));
 				}
 				break;
 			case IType.STRING:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(store.get(key, Cast.as(value, String.class)));
+					gp.setValue(scope, store.get(key, Cast.as(value, String.class)));
 				} else {
 					store.put(key, (String) value);
 				}
 				break;
 			case IType.FILE:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(new GenericFile(store.get(key, "")));
+					gp.setValue(scope, new GenericFile(store.get(key, "")));
 				} else {
 					store.put(key, ((IGamaFile) value).getPath());
 				}
@@ -503,14 +520,14 @@ public class GamaPreferences {
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class))));
+					gp.setValue(scope, GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class))));
 				} else {
 					store.putInt(key, Cast.as(value, Integer.class));
 				}
 				break;
 			default:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(store.get(key, Cast.as(value, String.class)));
+					gp.setValue(scope, store.get(key, Cast.as(value, String.class)));
 				} else {
 					store.put(key, Cast.as(value, String.class));
 				}
@@ -525,7 +542,7 @@ public class GamaPreferences {
 		}
 	}
 
-	private static void writeToStore(final Entry gp) {
+	public static void writeToStore(final Entry gp) {
 		String key = gp.key;
 		Object value = gp.value;
 		switch (gp.type.id()) {
@@ -555,12 +572,12 @@ public class GamaPreferences {
 	}
 
 	public static Map<String, Map<String, List<Entry>>> organizePrefs() {
-		Map<String, Map<String, List<Entry>>> result = new LinkedHashMap();
+		Map<String, Map<String, List<Entry>>> result = new TOrderedHashMap();
 		for ( Entry e : prefs.values() ) {
 			String tab = e.tab;
 			Map<String, List<Entry>> groups = result.get(tab);
 			if ( groups == null ) {
-				groups = new LinkedHashMap();
+				groups = new TOrderedHashMap();
 				result.put(tab, groups);
 			}
 			String group = e.group;
@@ -591,7 +608,7 @@ public class GamaPreferences {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void revertToDefaultValues(final Map<String, Object> modelValues) {
 		for ( String name : modelValues.keySet() ) {

@@ -1,30 +1,24 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ImageUtils.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.common.util;
 
+import gnu.trove.map.hash.THashMap;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
+import java.util.Map;
 import javax.imageio.ImageIO;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 
 public class ImageUtils {
 
@@ -91,6 +85,16 @@ public class ImageUtils {
 
 	private final Map<String, BufferedImage[]> cache;
 
+	private static GraphicsConfiguration cachedGC;
+
+	public static GraphicsConfiguration getCachedGC() {
+		if ( cachedGC == null ) {
+			cachedGC =
+				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		}
+		return cachedGC;
+	}
+
 	private static final int POSITIONS = 360;
 
 	private static final int ANGLE_INCREMENT = 360 / POSITIONS;
@@ -104,17 +108,17 @@ public class ImageUtils {
 	}
 
 	private ImageUtils() {
-		cache = new HashMap();
+		cache = new THashMap();
 	}
 
 	public boolean contains(final String s) {
 		return cache.containsKey(s);
 	}
 
-	public BufferedImage getImageFromFile(final String fileName) throws IOException {
+	public BufferedImage getImageFromFile(final IScope scope, final String fileName) throws IOException {
 		final BufferedImage image = get(fileName);
 		if ( image != null ) { return image; }
-		String s = GAMA.getModel().getRelativeFilePath(fileName, true);
+		String s = FileUtils.constructAbsoluteFilePath(scope, fileName, true);
 		final File f = new File(s);
 		return getImageFromFile(f);
 	}
@@ -146,33 +150,35 @@ public class ImageUtils {
 		map[position] = toCompatibleImage(image);
 	}
 
+	static boolean DEBUG_OPTION = true;
+
 	public static BufferedImage createCompatibleImage(final int width, final int height) {
 		BufferedImage new_image = null;
-		if ( GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) {
+		if ( DEBUG_OPTION || GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) {
 			new_image =
-				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_RGB);
+				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_ARGB);
 		} else {
-			final GraphicsConfiguration gfx_config =
-				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-			new_image = gfx_config.createCompatibleImage(width, height);
+			// final GraphicsConfiguration gfx_config =
+			// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+			new_image = getCachedGC().createCompatibleImage(width, height);
 		}
 		return new_image;
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		if ( GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
-		final GraphicsConfiguration gfx_config =
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		if ( DEBUG_OPTION || GuiUtils.isInHeadLessMode() || GraphicsEnvironment.isHeadless() ) { return image; }
+		// final GraphicsConfiguration gfx_config =
+		// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return
 		 * it
 		 */
-		if ( image.getColorModel().equals(gfx_config.getColorModel()) ) { return image; }
+		if ( image.getColorModel().equals(getCachedGC().getColorModel()) ) { return image; }
 
 		// image is not optimized, so create a new image that is
 		final BufferedImage new_image =
-			gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+			getCachedGC().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
 
 		// get the graphics context of the new image to draw the old image on
 		final Graphics2D g2d = (Graphics2D) new_image.getGraphics();

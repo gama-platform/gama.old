@@ -1,28 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'GeometryUtils.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.common.util;
 
 import static msi.gama.metamodel.shape.IShape.Type.*;
 import java.util.*;
-
-import org.geotools.coverage.processing.Operations;
-
 import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.shape.IShape.Type;
@@ -35,7 +25,6 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
-import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
@@ -390,7 +379,8 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y, final boolean overlaps) {
+	public static GamaList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
+		final boolean overlaps) {
 		final GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
@@ -413,10 +403,14 @@ public class GeometryUtils {
 					final Coordinate[] cc = { c1, c2, c3, c4, c1 };
 					final Geometry square = FACTORY.createPolygon(FACTORY.createLinearRing(cc), null);
 					y += size_y;
-					if (! overlaps) {
-						if (square.coveredBy(geom)) geoms.add(new GamaShape(square));
+					if ( !overlaps ) {
+						if ( square.coveredBy(geom) ) {
+							geoms.add(new GamaShape(square));
+						}
 					} else {
-						if (square.intersects(geom)) geoms.add(new GamaShape(square));
+						if ( square.intersects(geom) ) {
+							geoms.add(new GamaShape(square));
+						}
 					}
 				}
 				x += size_x;
@@ -424,19 +418,19 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
-	public static GamaList<IShape> geometryDecomposition(final IShape geom, double x_size,  double y_size) {
+
+	public static GamaList<IShape> geometryDecomposition(final IShape geom, final double x_size, final double y_size) {
 		final GamaList<IShape> geoms = new GamaList<IShape>();
 		double zVal = geom.getLocation().getZ();
-		GamaList<IShape> rects =  discretisation(geom.getInnerGeometry(), x_size, y_size, true);
-		for (IShape shape : rects) {
+		GamaList<IShape> rects = discretisation(geom.getInnerGeometry(), x_size, y_size, true);
+		for ( IShape shape : rects ) {
 			IShape gg = Operators.inter(null, shape, geom);
-			if (gg != null && !gg.getInnerGeometry().isEmpty()){
+			if ( gg != null && !gg.getInnerGeometry().isEmpty() ) {
 				GamaShape sp = new GamaShape(gg);
 				IList<ILocation> pts = (IList<ILocation>) sp.getPoints();
-				for (int i= 0; i< pts.size(); i++) {
+				for ( int i = 0; i < pts.size(); i++ ) {
 					ILocation gp = pts.get(i);
-					if (zVal != gp.getZ()) {
+					if ( zVal != gp.getZ() ) {
 						ThreeD.set_z(null, sp, i, zVal);
 					}
 				}
@@ -445,8 +439,8 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
-	public static GamaList<IShape> geometryDecomposition(final IShape geom, int nbCols, int nbRows) {
+
+	public static GamaList<IShape> geometryDecomposition(final IShape geom, final int nbCols, final int nbRows) {
 		double x_size = geom.getEnvelope().getWidth() / nbCols;
 		double y_size = geom.getEnvelope().getHeight() / nbRows;
 		return geometryDecomposition(geom, x_size, y_size);
@@ -489,7 +483,7 @@ public class GeometryUtils {
 				dtb.setTolerance(sizeTol);
 				tri = (GeometryCollection) dtb.getTriangles(FACTORY);
 			} catch (final LocateFailureException e) {
-				throw GamaRuntimeException.error("Impossible to draw Geometry");
+				throw GamaRuntimeException.error("Impossible to draw Geometry", scope);
 			}
 			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
 			final PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'IOverlayProvider.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 'ISpeedDisplayer.java', in plugin 'msi.gama.core', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,13 +12,14 @@
 package msi.gama.common.interfaces;
 
 /**
- * Class IOverlay.
+ * Class ISpeedDisplayer.
  * 
  * @author drogoul
- * @since 9 mars 2014
+ * @since 29 mars 2014
  * 
  */
-public interface IOverlayProvider<Message> {
+public interface ISpeedDisplayer {
 
-	public void setTarget(IUpdaterTarget<Message> overlay);
+	public void setInit(final double i, boolean notify);
+
 }

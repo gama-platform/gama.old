@@ -1,23 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'JavaUtils.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.common.util;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import com.google.common.collect.*;
 
@@ -29,9 +24,9 @@ import com.google.common.collect.*;
  */
 public class JavaUtils {
 
-	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new HashMap();
-	private static Map<Class, Set<Class>> allInterfaces = new HashMap();
-	private static Map<Class, Set<Class>> allSuperclasses = new HashMap();
+	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new THashMap();
+	private static Map<Class, Set<Class>> allInterfaces = new THashMap();
+	private static Map<Class, Set<Class>> allSuperclasses = new THashMap();
 
 	private static void addAllInterfaces(final Class clazz, final Set allInterfaces, final Set<Class> in) {
 		if ( clazz == null ) { return; }
@@ -55,7 +50,7 @@ public class JavaUtils {
 
 	public static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
 		if ( allInterfaces.containsKey(c) ) { return allInterfaces.get(c); }
-		final Set<Class> result = new HashSet<Class>();
+		final Set<Class> result = new THashSet<Class>();
 		addAllInterfaces(c, result, in);
 		allInterfaces.put(c, result);
 		return result;
@@ -63,7 +58,7 @@ public class JavaUtils {
 
 	public static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
 		if ( allSuperclasses.containsKey(c) ) { return allSuperclasses.get(c); }
-		final HashSet<Class> result = new HashSet();
+		final THashSet<Class> result = new THashSet();
 		if ( c == null ) { return result; }
 		Class c2 = c.getSuperclass();
 		while (c2 != null) {
@@ -79,12 +74,12 @@ public class JavaUtils {
 
 	public static List<Class> collectImplementationClasses(final Class baseClass, final Set<Class> skillClasses,
 		final Set<Class> in) {
-		final Set<Class> classes = new HashSet();
+		final Set<Class> classes = new THashSet();
 		if ( baseClass != null ) {
 			classes.add(baseClass);
 		}
 		classes.addAll(skillClasses);
-		final Set<Class> key = new HashSet(classes);
+		final Set<Class> key = new THashSet(classes);
 		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
 		classes.addAll(allInterfacesOf(baseClass, in));
 		for ( final Class classi : new ArrayList<Class>(classes) ) {

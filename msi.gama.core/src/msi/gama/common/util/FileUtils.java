@@ -1,18 +1,27 @@
-/**
- * Created by drogoul, 20 d�c. 2011
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'FileUtils.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.common.util;
 
 import java.io.*;
 import java.net.URLDecoder;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The class FileUtils.
  * 
  * @author drogoul
- * @since 20 d�c. 2011
+ * @since 20 dec. 2011
  * 
  */
 public class FileUtils {
@@ -51,27 +60,27 @@ public class FileUtils {
 	}
 
 	/**
-	 * Construct absolute file path.
+	 * Construct an absolute file path.
 	 * 
-	 * @param filePath the file path
+	 * @param scope the scope
+	 * @param fp the fp
 	 * @param mustExist the must exist
-	 * 
 	 * @return the string
-	 * 
-	 * @throws GamlException the gaml exception
+	 * @throws GamaRuntimeException the gama runtime exception
 	 */
-	static public String constructAbsoluteFilePath(final String fp, final String rf, final boolean mustExist)
+	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist)
 		throws GamaRuntimeException {
 		String filePath = null;
-		String referenceFile = null;
+		String baseDirectory = null;
+		IExperimentAgent a = scope.getExperiment();
+		String referenceDirectory = a.getWorkingPath();
 		try {
-			referenceFile = URLDecoder.decode(rf, "UTF-8");
+			baseDirectory = URLDecoder.decode(referenceDirectory, "UTF-8");
 			filePath = URLDecoder.decode(fp, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		String baseDirectory = new File(referenceFile).getParent();
-		//GuiUtils.debug("FileUtils.constructAbsoluteFilePath baseDirectory = " + baseDirectory);
+		// GuiUtils.debug("FileUtils.constructAbsoluteFilePath baseDirectory = " + baseDirectory);
 		final GamaRuntimeException ex;
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
@@ -86,7 +95,7 @@ public class FileUtils {
 			}
 			ex =
 				GamaRuntimeException.error("File denoted by " + file.getAbsolutePath() +
-					" not found! Tried the following paths : ");
+					" not found! Tried the following paths : ", scope);
 			ex.addContext(file.getAbsolutePath());
 			file = new File(baseDirectory + File.separator + removeRoot(filePath));
 			if ( file.exists() ) {
@@ -117,7 +126,7 @@ public class FileUtils {
 			}
 			ex =
 				GamaRuntimeException.error("File denoted by " + file.getAbsolutePath() +
-					" not found! Tried the following paths : ");
+					" not found! Tried the following paths : ", scope);
 			ex.addContext(file.getAbsolutePath());
 		}
 
