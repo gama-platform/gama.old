@@ -1,34 +1,30 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'DescriptionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TIntProcedure;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.GAML;
+import msi.gama.util.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
-import org.eclipse.emf.common.notify.*;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import com.google.common.collect.Iterables;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -38,63 +34,96 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class DescriptionFactory {
 
-	public static class Documentation implements Adapter.Internal {
+	private static IDocManager docManager;
 
-		final String doc;
-		final String title;
+	public static void setDocManager(final IDocManager dm) {
+		docManager = dm;
+	}
 
-		Documentation(final IGamlDescription desc) {
-			doc = desc.getDocumentation();
-			title = desc.getTitle();
-		}
+	public static IGamlDescription getGamlDocumentation(final IGamlDescription o) {
+		return docManager.getGamlDocumentation(o);
+	}
 
-		public String getDocumentation() {
-			return doc;
-		}
+	public static IGamlDescription getGamlDocumentation(final EObject o) {
+		return docManager.getGamlDocumentation(o);
+	}
 
-		public String getTitle() {
-			return title;
-		}
+	// Internal interface instantiated by XText
+	public interface IDocManager {
 
-		@Override
-		public void notifyChanged(final Notification notification) {}
+		public void document(IDescription description);
 
-		@Override
-		public Notifier getTarget() {
-			return null;
-		}
+		public IGamlDescription getGamlDocumentation(EObject o);
 
-		@Override
-		public void setTarget(final Notifier newTarget) {}
+		public IGamlDescription getGamlDocumentation(IGamlDescription o);
 
-		@Override
-		public boolean isAdapterForType(final Object type) {
-			return false;
-		}
+		public void setGamlDocumentation(final EObject object, final IGamlDescription description);
 
-		@Override
-		public void unsetTarget(final Notifier oldTarget) {}
-
+		public void document(Resource gamlResource, boolean accept);
 	}
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
-
-	static Map<String, SymbolProto> KEYWORDS_PROTOS = new HashMap();
-
+	static TOrderedHashMap<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new TOrderedHashMap();
+	static TOrderedHashMap<String, SymbolProto> VAR_KEYWORDS_PROTOS = new TOrderedHashMap();
 	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
 	public static void addFactory(final SymbolFactory factory) {
-		for ( final int i : factory.getHandles() ) {
-			FACTORIES.put(i, factory);
+		factory.getHandles().forEach(new TIntProcedure() {
+
+			@Override
+			public boolean execute(final int i) {
+				FACTORIES.put(i, factory);
+				return true;
+			}
+		});
+
+	}
+
+	// To be called once the validation has been done
+	public static void document(final IDescription desc) {
+		docManager.document(desc);
+	}
+
+	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
+		SymbolProto p = getStatementProto(keyword);
+		// If not a statement, we try to find a var declaration prototype
+		if ( p == null ) { return getVarProto(keyword, superDesc); }
+		return p;
+	}
+
+	public final static SymbolProto getStatementProto(final String keyword) {
+		return STATEMENT_KEYWORDS_PROTOS.get(keyword);
+	}
+
+	public final static SymbolProto getVarProto(final String keyword, final IDescription superDesc) {
+		SymbolProto p = VAR_KEYWORDS_PROTOS.get(keyword);
+		if ( p == null ) {
+			// If not a var declaration, we try to find if it is not a species name (in which case, it is an "agent"
+			// declaration prototype)
+			if ( superDesc == null ) { return null; }
+			ModelDescription md = superDesc.getModelDescription();
+			if ( md == null ) { return null; }
+			IType t = md.getTypesManager().get(keyword);
+			if ( t.isAgentType() ) { return getVarProto(AGENT, null); }
 		}
+		return p;
 	}
 
-	public final static SymbolProto getProto(final String keyword) {
-		return KEYWORDS_PROTOS.get(keyword);
+	public final static Iterable<String> getProtoNames() {
+		return Iterables.concat(getStatementProtoNames(), getVarProtoNames());
 	}
 
-	public final static Map<String, SymbolProto> getProtos() {
-		return KEYWORDS_PROTOS;
+	public final static Iterable<String> getStatementProtoNames() {
+		return STATEMENT_KEYWORDS_PROTOS.keySet();
+	}
+
+	public final static Iterable<String> getVarProtoNames() {
+		return VAR_KEYWORDS_PROTOS.keySet();
+	}
+
+	public final static boolean isStatementProto(final String s) {
+		// WARNING METHOD is treated here as a special keyword, but it should be leveraged in the future
+		return STATEMENT_KEYWORDS_PROTOS.containsKey(s) || IKeyword.METHOD.equals(s);
 	}
 
 	public static SymbolFactory getFactory(final int kind) {
@@ -102,75 +131,57 @@ public class DescriptionFactory {
 	}
 
 	public static String getOmissibleFacetForSymbol(final String keyword) {
-		final SymbolProto md = getProto(keyword);
+		final SymbolProto md = getProto(keyword, null);
 		if ( md == null ) { return IKeyword.NAME; }
 		return md.getOmissible();
 	}
 
 	public static void addProto(final SymbolProto md, final List<String> names) {
 		final int kind = md.getKind();
-		if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
-			SymbolProto.nonTypeStatements.addAll(names);
-		}
-		for ( final String s : names ) {
-			// GuiUtils.debug("DescriptionFactory.addProto " + s);
-			if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
-			KEYWORDS_PROTOS.put(s, md);
+		if ( ISymbolKind.Variable.KINDS.contains(kind) ) {
+			for ( final String s : names ) {
+				VAR_KEYWORDS_PROTOS.putIfAbsent(s, md);
+			}
+		} else {
+			// if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
+			// SymbolProto.nonTypeStatements.addAll(names);
+			// }
+			for ( final String s : names ) {
+				// GuiUtils.debug("DescriptionFactory.addProto " + s);
+				STATEMENT_KEYWORDS_PROTOS.putIfAbsent(s, md);
+			}
 		}
 		KINDS_PROTOS.put(kind, md);
 	}
 
 	public static void addNewTypeName(final String s, final int kind) {
-		if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
+		if ( VAR_KEYWORDS_PROTOS.containsKey(s) ) { return; }
 		final SymbolProto p = KINDS_PROTOS.get(kind);
 		if ( p != null ) {
-			KEYWORDS_PROTOS.put(s, p);
+			VAR_KEYWORDS_PROTOS.put(s, p);
 		}
 	}
 
 	public static SymbolFactory getFactory(final String keyword) {
-		final SymbolProto p = KEYWORDS_PROTOS.get(keyword);
+		final SymbolProto p = getProto(keyword, null);
 		if ( p != null ) { return p.getFactory(); }
 		return null;
 	}
 
 	public static void addSpeciesNameAsType(final String name) {
 		if ( !name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT) ) {
-			KEYWORDS_PROTOS.put(name, KEYWORDS_PROTOS.get(AGENT));
+			// System.err.println("						=====================================");
+			// System.err.println("						Registering " + name + " as a species type in the global registry");
+			// if ( VAR_KEYWORDS_PROTOS.containsKey(name) ) {
+			// System.err.println("						Another value has already been registered");
+			// }
+			// System.err.println("						=====================================");
+			VAR_KEYWORDS_PROTOS.putIfAbsent(name, VAR_KEYWORDS_PROTOS.get(AGENT));
 		}
 	}
 
 	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
-		if ( description == null || object == null ) { return; }
-		Documentation existing = getGamlDocumentation(object);
-		if ( existing != null ) {
-			object.eAdapters().remove(existing);
-		}
-		object.eAdapters().add(getGamlDocumentation(description));
-
-	}
-
-	public static Documentation getGamlDocumentation(final IGamlDescription o) {
-		return new Documentation(o);
-	}
-
-	// To be called once the validation has been done
-	public static void document(final IDescription desc) {
-		if ( desc == null ) { return; }
-		setGamlDocumentation(desc.getUnderlyingElement(null), desc);
-		for ( IDescription d : desc.getChildren() ) {
-			document(d);
-		}
-	}
-
-	public static Documentation getGamlDocumentation(final EObject object) {
-		if ( object == null ) { return null; }
-		for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
-			final Adapter a = object.eAdapters().get(i);
-			if ( a.getClass() == Documentation.class ) { return (Documentation) a; }
-
-		}
-		return null;
+		docManager.setGamlDocumentation(object, description);
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
@@ -206,7 +217,7 @@ public class DescriptionFactory {
 
 	public static Set<String> getAllowedFacetsFor(final String key) {
 		if ( key == null ) { return Collections.EMPTY_SET; }
-		final SymbolProto md = getProto(key);
+		final SymbolProto md = getProto(key, null);
 		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
 	}
 
@@ -226,7 +237,7 @@ public class DescriptionFactory {
 		final ChildrenProvider cp) {
 		if ( source == null ) { return null; }
 		String keyword = source.getKeyword();
-		final SymbolProto md = DescriptionFactory.getProto(keyword);
+		final SymbolProto md = DescriptionFactory.getProto(keyword, superDesc);
 		if ( md == null ) {
 			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(), keyword);
 			return null;

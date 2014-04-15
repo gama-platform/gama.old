@@ -1,67 +1,111 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'ErrorCollector.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import static com.google.common.collect.Iterables.*;
+import gnu.trove.set.hash.TLinkedHashSet;
 import java.util.*;
 import msi.gaml.compilation.GamlCompilationError;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
-public class ErrorCollector {
+public class ErrorCollector implements Iterable<GamlCompilationError> {
 
-	private final int SIZE = 200;
-	private boolean hasError = false;
-	final List<GamlCompilationError> all = new ArrayList();
+	final static int MAX_SIZE = 1000;
+	public static final ErrorCollector BuiltIn = new ErrorCollector();
+	boolean hasSyntaxErrors;
+	final URI resourceURI;
+	final TLinkedHashSet<GamlCompilationError> importedErrors = new TLinkedHashSet();
+	final TLinkedHashSet<GamlCompilationError> internalErrors = new TLinkedHashSet();
+	final TLinkedHashSet<GamlCompilationError> warnings = new TLinkedHashSet();
+	final TLinkedHashSet<GamlCompilationError> infos = new TLinkedHashSet();
 
-	// final List<GamlCompilationError> errors = new ArrayList();
-	// final List<GamlCompilationError> warnings = new ArrayList();
-	// final List<GamlCompilationError> infos = new ArrayList();
+	public ErrorCollector() {
+		this(null);
+	}
+
+	public ErrorCollector(final Resource resource) {
+		this(resource, false);
+	}
+
+	public ErrorCollector(final Resource resource, final boolean syntax) {
+		this.resourceURI = resource == null ? URI.createURI("builtin://gaml") : resource.getURI();
+		hasSyntaxErrors = syntax;
+	}
 
 	public void add(final GamlCompilationError error) {
-		if ( !error.isInfo() && !error.isWarning() ) {
-			hasError = true;
+		EObject object = error.getStatement();
+		boolean sameResource = object == null || object.eResource().getURI().equals(resourceURI);
+		if ( sameResource && error.isInfo() ) {
+			infos.add(error);
+		} else if ( sameResource && error.isWarning() ) {
+			warnings.add(error);
+		} else if ( error.isError() ) {
+			if ( sameResource ) {
+				internalErrors.add(error);
+			} else {
+				importedErrors.add(error);
+			}
 		}
-		if ( all.size() < SIZE ) {
-			all.add(error);
-			// if ( error.isInfo() ) {
-			// infos.add(error);
-			// } else if ( error.isWarning() ) {
-			// if ( warnings.size() < SIZE ) {
-			// warnings.add(error);
-			// }
-			// } else {
-			// if ( errors.size() < SIZE ) {
-			// errors.add(error);
-			// }
-			// }
-		}
+	}
+
+	public boolean hasInternalSyntaxErrors() {
+		return hasSyntaxErrors;
 	}
 
 	public boolean hasErrors() {
-		return hasError;
+		return hasSyntaxErrors || hasInternalErrors() || hasImportedErrors();
 	}
 
-	public List<GamlCompilationError> get() {
-		return all;
+	public boolean hasInternalErrors() {
+		return internalErrors.size() > 0;
 	}
 
-	//
-	// @Override
-	// public List<GamlCompilationError> getErrors() {
-	// return errors;
-	// }
-	//
-	// @Override
-	// public List<GamlCompilationError> getWarnings() {
-	// return warnings;
-	// }
-	//
-	// @Override
-	// public List<GamlCompilationError> getInfos() {
-	// return infos;
-	// }
+	public boolean hasImportedErrors() {
+		return importedErrors.size() > 0;
+	}
+
+	public Collection<GamlCompilationError> getInternalErrors() {
+		return internalErrors;
+	}
+
+	public Collection<GamlCompilationError> getImportedErrors() {
+		return importedErrors;
+	}
+
+	public Collection<GamlCompilationError> getWarnings() {
+		return warnings;
+	}
+
+	public Collection<GamlCompilationError> getInfos() {
+		return infos;
+	}
 
 	public void clear() {
-		all.clear();
-		// errors.clear();
-		// warnings.clear();
-		// infos.clear();
+		importedErrors.clear();
+		internalErrors.clear();
+		warnings.clear();
+		infos.clear();
+		hasSyntaxErrors = false;
+	}
+
+	/**
+	 * Method iterator()
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<GamlCompilationError> iterator() {
+		return limit(concat(getInternalErrors(), getImportedErrors(), getWarnings(), getInfos()), MAX_SIZE).iterator();
 	}
 
 }

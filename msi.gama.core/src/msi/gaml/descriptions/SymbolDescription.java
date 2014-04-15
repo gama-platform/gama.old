@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'SymbolDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import static msi.gama.util.GAML.getExpressionFactory;
@@ -23,7 +16,6 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
@@ -60,6 +52,7 @@ public abstract class SymbolDescription implements IDescription {
 		this.keyword = keyword;
 		element = source;
 		if ( superDesc != null ) {
+			// setOriginName(superDesc.getName());
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
@@ -69,6 +62,12 @@ public abstract class SymbolDescription implements IDescription {
 		} else {
 			// this.children = null;
 		}
+	}
+
+	@Override
+	public boolean isDocumenting() {
+		if ( enclosing == null ) { return false; }
+		return ((SymbolDescription) enclosing).isDocumenting();
 	}
 
 	@Override
@@ -87,7 +86,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public SymbolProto getMeta() {
-		return DescriptionFactory.getProto(keyword);
+		return DescriptionFactory.getProto(keyword, getModelDescription());
 	}
 
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
@@ -106,7 +105,7 @@ public abstract class SymbolDescription implements IDescription {
 		}
 		if ( !warning && !info ) {
 			String resource = e == null ? "(no file)" : e.eResource().getURI().lastSegment();
-			GuiUtils.debug("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " + resource);
+			System.err.println("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " + resource);
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
@@ -365,20 +364,6 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean hasErrors() {
-		ErrorCollector c = getErrorCollector();
-		if ( c == null ) { return false; }
-		return c.hasErrors();
-	}
-
-	@Override
-	public List<GamlCompilationError> getErrors() {
-		ErrorCollector c = getErrorCollector();
-		if ( c == null ) { return Collections.EMPTY_LIST; }
-		return c.get();
-	}
-
-	@Override
 	public ErrorCollector getErrorCollector() {
 		ModelDescription model = getModelDescription();
 		if ( model == null ) { return null; }
@@ -402,17 +387,18 @@ public abstract class SymbolDescription implements IDescription {
 		}
 	}
 
+	@Override
 	public void resetOriginName() {
 		originName = null;
 	}
 
 	@Override
-	public final IDescription validate() {
+	public IDescription validate() {
 		if ( validated ) { return this; }
 		validated = true;
 		if ( isBuiltIn() ) {
 			// We simply make sure that the facets are correctly compiled
-			validateFacets();
+			validateFacets(false);
 			return this;
 		}
 		final IDescription sd = getEnclosingDescription();
@@ -437,7 +423,7 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		}
 		// We then validate its facets
-		validateFacets();
+		validateFacets(true);
 
 		if ( proto.hasSequence && !PRIMITIVE.equals(keyword) ) {
 			if ( proto.isRemoteContext ) {
@@ -455,7 +441,7 @@ public abstract class SymbolDescription implements IDescription {
 		return this;
 	}
 
-	private final boolean validateFacets() {
+	private final boolean validateFacets(final boolean document) {
 
 		// final Facets facets = getFacets();
 		// Special case for "do", which can accept (at parsing time) any facet
@@ -491,7 +477,7 @@ public abstract class SymbolDescription implements IDescription {
 					if ( fp.types[0] == IType.NEW_TEMP_ID ) {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
-					} else if ( !fp.isLabel && !facet.equals(WITH) ) {
+					} else if ( !fp.isLabel && !facet.equals(WITH) && !facet.equals(DEPENDS_ON) ) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
 						exp = expr.getExpression();

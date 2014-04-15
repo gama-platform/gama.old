@@ -1,26 +1,20 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'VariableDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import gnu.trove.set.hash.*;
 import java.util.*;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -40,10 +34,8 @@ public class VariableDescription extends SymbolDescription {
 	private Set<String> extraDependencies;
 
 	private int definitionOrder = -1;
-	private IVarExpression varExpr = null;
+	private IExpression varExpr = null;
 	private IType type = null;
-	// private IType contentType = null;
-	// private final IType keyType = null;
 	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter;
 	private boolean _isUpdatable;
 	private GamaHelper get, init, set;
@@ -56,7 +48,6 @@ public class VariableDescription extends SymbolDescription {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		// _isFunction = facets.containsKey(FUNCTION);
 		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
 		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
 		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
@@ -75,13 +66,21 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void copyFrom(final VariableDescription v2) {
-		// Without replacing
+		// Special cases for functions
+		boolean isFunction = this.getFacets().containsKey(FUNCTION);
+		// We dont replace existing facets
 		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
 			if ( entry == null ) {
 				continue;
 			}
-			if ( !facets.containsKey(entry.getKey()) ) {
-				facets.put(entry.getKey(), entry.getValue());
+			String facetName = entry.getKey();
+			if ( isFunction ) {
+				if ( facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE) ) {
+					continue;
+				}
+			}
+			if ( !facets.containsKey(facetName) ) {
+				facets.put(facetName, entry.getValue());
 			}
 		}
 		if ( get == null ) {
@@ -101,7 +100,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
-		VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets);
+		VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets.cleanCopy());
 		vd.addHelpers(get, init, set);
 		vd.originName = originName;
 		return vd;
@@ -118,8 +117,8 @@ public class VariableDescription extends SymbolDescription {
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
 		if ( dependencies == null ) {
-			dependencies = new LinkedHashSet();
-			extraDependencies = new LinkedHashSet();
+			dependencies = new TLinkedHashSet();
+			extraDependencies = new TLinkedHashSet();
 			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
 				for ( final String s : depends.getStrings(getSpeciesContext(), false) ) {
@@ -138,7 +137,7 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void expandDependencies(final List<VariableDescription> without) {
-		final Set<VariableDescription> accumulator = new HashSet();
+		final Set<VariableDescription> accumulator = new THashSet();
 		for ( final VariableDescription dep : dependencies ) {
 			if ( !without.contains(dep) ) {
 				without.add(this);
@@ -177,24 +176,13 @@ public class VariableDescription extends SymbolDescription {
 		return _isParameter;
 	}
 
-	public IVarExpression getVarExpr() {
+	public IExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
-		//
-		// IType t = getType();
-		// if ( t.isContainer() ) {
-		// t = ParametricType.from(t, getKeyType(), getContentType());
-		// }
 		varExpr =
 			msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
 				_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
-
-	// public void setContentType(final IType type) {
-	// // sent by the variable once its value and init are compiled
-	// if ( contentType != null && contentType != Types.NO_TYPE ) { return; }
-	// contentType = type;
-	// }
 
 	public void setDefinitionOrder(final int i) {
 		definitionOrder = i;
@@ -217,8 +205,20 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		String title = isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ";
-		return title + " " + getName() /* + " of type " + getType().toString() */;
+		String title =
+			"Definition of " + (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ");
+		return title + " " + getName() + " of type " + getType().getTitle();
+	}
+
+	@Override
+	public String getDocumentation() {
+		String title = "a" + (isParameter() ? "  parameter " : isNotModifiable() ? " constant " : "n attribute ");
+		if ( getEnclosingDescription() == null ) { return "This statement declares " + getName() + " as " + title +
+			"<br/>" + super.getDocumentation(); }
+		String s =
+			"This statement declares " + getName() + " as " + title + " of " +
+				this.getEnclosingDescription().getTitle() + "<br/>";
+		return s + super.getDocumentation();
 	}
 
 	public void addHelpers(final GamaHelper get, final GamaHelper init, final GamaHelper set) {
@@ -243,17 +243,10 @@ public class VariableDescription extends SymbolDescription {
 		type = t;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isGlobal() {
 		return _isGlobal;
 	}
 
-	/**
-	 * Method getChildren()
-	 * @see msi.gaml.descriptions.SymbolDescription#getChildren()
-	 */
 	@Override
 	public List<IDescription> getChildren() {
 		return Collections.EMPTY_LIST;

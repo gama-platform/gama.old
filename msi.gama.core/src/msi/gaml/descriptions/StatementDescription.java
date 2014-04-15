@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'StatementDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
@@ -85,7 +78,7 @@ public class StatementDescription extends SymbolDescription {
 			}
 			StatementDescription desc =
 				new StatementWithChildrenDescription(getKeyword(), into, new ChildrenProvider(children), temps != null,
-					args != null, element, facets);
+					args != null, element, facets.cleanCopy());
 			desc.originName = originName;
 			return desc;
 		}
@@ -102,8 +95,8 @@ public class StatementDescription extends SymbolDescription {
 	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 		final boolean hasScope, final boolean hasArgs, final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
-		temps = hasScope ? new LinkedHashMap() : null;
-		args = hasArgs ? new LinkedHashMap() : null;
+		temps = hasScope ? new TOrderedHashMap() : null;
+		args = hasArgs ? new TOrderedHashMap() : null;
 		if ( hasArgs ) {
 			collectArgs();
 		}
@@ -217,7 +210,7 @@ public class StatementDescription extends SymbolDescription {
 		}
 		StatementDescription desc =
 			new StatementDescription(getKeyword(), into, new ChildrenProvider(children), temps != null, args != null,
-				element, facets);
+				element, facets.cleanCopy());
 		desc.originName = originName;
 		return desc;
 	}
@@ -243,9 +236,9 @@ public class StatementDescription extends SymbolDescription {
 			declaration.warning("This declaration of " + name + " shadows a previous declaration",
 				IGamlIssue.SHADOWS_NAME);
 		}
-		IVarExpression result =
+		IExpression result =
 			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
-		temps.put(name, result);
+		temps.put(name, (IVarExpression) result);
 		return result;
 	}
 
@@ -255,7 +248,7 @@ public class StatementDescription extends SymbolDescription {
 		return null;
 	}
 
-	public void verifyArgs(final IDescription caller, final Arguments names) {
+	public boolean verifyArgs(final IDescription caller, final Arguments names) {
 
 		// GuiUtils.debug(this.toString() + " called by " + caller + " with " + names);
 		// if ( args == null ) { return; }
@@ -277,17 +270,19 @@ public class StatementDescription extends SymbolDescription {
 
 		// We compute the list of mandatory args
 		List<String> mandatoryArgs = new ArrayList();
-
-		for ( IDescription c : args.values() ) {
-			String n = c.getName();
-			Facets argFacets = c.getFacets();
-			if ( argFacets.containsKey(DEFAULT) ) {
-				continue;
-			}
-			if ( c.getFacets().containsKey(OPTIONAL) && c.getFacets().get(OPTIONAL).equalsString(FALSE) ||
-				!c.getFacets().containsKey(OPTIONAL) ) {
-				// GuiUtils.debug("arg found for " + this + ": " + n + " with optional=" + c.getFacets().get(OPTIONAL));
-				mandatoryArgs.add(n);
+		if ( args != null ) {
+			for ( IDescription c : args.values() ) {
+				String n = c.getName();
+				Facets argFacets = c.getFacets();
+				if ( argFacets.containsKey(DEFAULT) ) {
+					// AD: we compile the default (which is, otherwise, not computed before validation
+					argFacets.get(DEFAULT).compile(this);
+					continue;
+				}
+				if ( c.getFacets().containsKey(OPTIONAL) && c.getFacets().get(OPTIONAL).equalsString(FALSE) ||
+					!c.getFacets().containsKey(OPTIONAL) ) {
+					mandatoryArgs.add(n);
+				}
 			}
 		}
 		// If one is missing in the arguments passed, we raise an error
@@ -299,6 +294,7 @@ public class StatementDescription extends SymbolDescription {
 			if ( !names.containsKey(arg) ) {
 				caller.error("Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " +
 					names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
+				return false;
 			}
 		}
 		// }
@@ -309,6 +305,7 @@ public class StatementDescription extends SymbolDescription {
 				if ( !allArgs.contains(name) ) {
 					caller.error("Unknown argument " + name + " in call to " + getName(), IGamlIssue.UNKNOWN_ARGUMENT,
 						arg.getValue().getTarget(), new String[] { arg.getKey() });
+					return false;
 				} else if ( arg.getValue() != null && arg.getValue().getExpression() != null ) {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
@@ -317,16 +314,18 @@ public class StatementDescription extends SymbolDescription {
 					if ( !accepted ) {
 						caller
 							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
+						return false;
 					}
 				}
 			}
 		}
+		return true;
 	}
 
-	public void verifyArgs(final String actionName, final Arguments args) {
+	public boolean verifyArgs(final String actionName, final Arguments args) {
 		StatementDescription executer = getAction();
-		if ( executer == null ) { return; }
-		executer.verifyArgs(this, args);
+		if ( executer == null ) { return false; }
+		return executer.verifyArgs(this, args);
 	}
 
 	public Collection<IDescription> getArgs() {
@@ -364,30 +363,6 @@ public class StatementDescription extends SymbolDescription {
 		}
 		return s;
 	}
-
-	//
-	// @Override
-	// public IType getType() {
-	// IType type = facets.getTypeDenotedBy(TYPE, this);
-	// IType keyType = facets.getTypeDenotedBy(INDEX, this, type.getKeyType());
-	// IType contentType = facets.getTypeDenotedBy(OF, this, type.getContentType());
-	// // IExpression expr = facets.getExpr(TYPE);
-	// // if ( expr == null ) { return Types.NO_TYPE; }
-	// return GamaType.from(type, keyType, contentType);
-	// }
-
-	//
-	// @Override
-	// public IType getContentType() {
-	// if ( facets.containsKey(OF) ) { return getTypeNamed(facets.getLabel(OF)); }
-	// return getType().getContentType();
-	// }
-	//
-	// @Override
-	// public IType getKeyType() {
-	// if ( facets.containsKey(INDEX) ) { return getTypeNamed(facets.getLabel(INDEX)); }
-	// return getType().getKeyType();
-	// }
 
 	@Override
 	public String toString() {
@@ -520,15 +495,8 @@ public class StatementDescription extends SymbolDescription {
 
 		// TODO is there a way to extract the species from a constant expression (like
 		// species("ant")) ? cf. Issue 145
-		IExpressionDescription ed = facets.get(SPECIES);
-		if ( ed == null ) {
-			ed = facets.get(AS);
-			if ( ed == null ) {
-				ed = facets.get(TARGET);
-				if ( ed == null ) { return null; }
-			}
-
-		}
+		IExpressionDescription ed = facets.getDescr(SPECIES, AS, TARGET);
+		if ( ed == null ) { return null; }
 		IExpression facet = ed.getExpression();
 		// We try to compute as much as possible, for example if the facet is not compiled yet (see Issue 618)
 		if ( facet == null ) {
@@ -561,15 +529,11 @@ public class StatementDescription extends SymbolDescription {
 			final String name = sd.getName();
 			IExpression e = null;
 			final IDescription superDesc = getEnclosingDescription();
-			IExpressionDescription ed = argFacets.get(VALUE);
+			IExpressionDescription ed = argFacets.getDescr(VALUE, DEFAULT);
 			if ( ed != null ) {
 				e = ed.compile(superDesc);
-			} else {
-				ed = argFacets.get(DEFAULT);
-				if ( ed != null ) {
-					e = ed.compile(superDesc);
-				}
 			}
+
 			ca.put(name, e);
 			if ( !isCalling ) {
 				IType type = sd.getType();

@@ -1,14 +1,22 @@
-/**
- * Created by drogoul, 31 mars 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'LabelExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -21,23 +29,14 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class LabelExpressionDescription extends BasicExpressionDescription {
 
-	static Map<String, StringConstantExpression> cache = new HashMap();
+	static Map<String, StringConstantExpression> cache = new THashMap();
 
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		return context.getTypeNamed(value);
 	}
 
-	// StringConstantExpression get(final String s) {
-	// StringConstantExpression sc = cache.get(s);
-	// if ( sc == null ) {
-	// sc = new StringConstantExpression(s);
-	// cache.put(s, sc);
-	// }
-	// return sc;
-	// }
-
-	class StringConstantExpression extends AbstractExpression {
+	static class StringConstantExpression extends AbstractExpression {
 
 		StringConstantExpression(final String constant) {
 			setName(constant);
@@ -121,16 +120,16 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public void setTarget(final EObject newTarget) {
 		super.setTarget(newTarget);
-		if ( getExpression() != null ) {
-			DescriptionFactory.setGamlDocumentation(newTarget, getExpression());
-		}
+		// if ( getExpression() != null ) {
+		// DescriptionFactory.setGamlDocumentation(newTarget, getExpression());
+		// }
 
 	}
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		Set<String> result = new HashSet();
+		Set<String> result = new THashSet();
 		StringBuilder b = new StringBuilder();
 		for ( char c : value.toCharArray() ) {
 			switch (c) {

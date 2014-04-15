@@ -1,28 +1,21 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
@@ -38,8 +31,8 @@ public class ModelDescription extends SpeciesDescription {
 
 	// TODO Move elsewhere
 	public static ModelDescription ROOT;
-	private final Map<String, ExperimentDescription> experiments = new LinkedHashMap();
-	private final Map<String, ExperimentDescription> titledExperiments = new LinkedHashMap();
+	private final Map<String, ExperimentDescription> experiments = new TOrderedHashMap();
+	private final Map<String, ExperimentDescription> titledExperiments = new TOrderedHashMap();
 	private IDescription output;
 	final TypesManager types;
 	private String modelFilePath;
@@ -47,10 +40,11 @@ public class ModelDescription extends SpeciesDescription {
 	private final String modelProjectPath;
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
+	protected boolean document;
 
-	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
-		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets) {
-		this(name, clazz, projectPath, modelPath, source, macro, parent, facets, new ErrorCollector());
+	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
+		final SpeciesDescription parent, final Facets facets) {
+		this(name, clazz, "", "", null, macro, parent, facets, ErrorCollector.BuiltIn);
 	}
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
@@ -70,6 +64,37 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void setTorus(final boolean b) {
 		isTorus = b;
+	}
+
+	@Override
+	public boolean isDocumenting() {
+		return document;
+	}
+
+	public void isDocumenting(final boolean b) {
+		document = b;
+	}
+
+	@Override
+	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
+		if ( newVar.isBuiltIn() ) { return; }
+		if ( existingVar.isBuiltIn() ) {
+			newVar.info(
+				"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
+				IGamlIssue.REDEFINES, NAME);
+			return;
+		}
+
+		EObject newResource = newVar.getUnderlyingElement(null).eContainer();
+		EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+		if ( newResource.equals(existingResource) ) {
+			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
+				NAME);
+			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
+			return;
+		}
+		newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file " +
+			existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
 	}
 
 	/**
@@ -99,19 +124,10 @@ public class ModelDescription extends SpeciesDescription {
 		output = null;
 		types.dispose();
 		// AD 7/9/2013 Added disposal of errors
-		collect.clear();
+		// collect = null;
 		super.dispose();
 
 		// isDisposed = true;
-	}
-
-	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
-		try {
-			return FileUtils.constructAbsoluteFilePath(filePath, modelFilePath, mustExist);
-		} catch (final GamaRuntimeException e) {
-			error(e.getMessage(), IGamlIssue.GENERAL);
-			return filePath;
-		}
 	}
 
 	/**
@@ -130,14 +146,12 @@ public class ModelDescription extends SpeciesDescription {
 	public String getModelProjectPath() {
 		return modelProjectPath;
 	}
-	
-	
 
-	public void setModelFilePath(String modelFilePath) {
+	public void setModelFilePath(final String modelFilePath) {
 		this.modelFilePath = modelFilePath;
 	}
 
-	public void setModelFolderPath(String modelFolderPath) {
+	public void setModelFolderPath(final String modelFolderPath) {
 		this.modelFolderPath = modelFolderPath;
 	}
 
@@ -160,8 +174,8 @@ public class ModelDescription extends SpeciesDescription {
 			experiments.put(s, (ExperimentDescription) child);
 			s = child.getFacets().getLabel(TITLE);
 			titledExperiments.put(s, (ExperimentDescription) child);
-			GuiUtils.debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
-				"...");
+			// GuiUtils.debug("Adding experiment" + s + " defined in " + child.getOriginName() + " to " + getName() +
+			// "...");
 			addSpeciesType((TypeDescription) child);
 		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {
 			if ( output == null ) {
@@ -206,11 +220,11 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentNames() {
-		return new LinkedHashSet(experiments.keySet());
+		return new TLinkedHashSet(experiments.keySet());
 	}
 
 	public Set<String> getExperimentTitles() {
-		Set<String> strings = new LinkedHashSet();
+		Set<String> strings = new TLinkedHashSet();
 		for ( String s : titledExperiments.keySet() ) {
 			ExperimentDescription ed = titledExperiments.get(s);
 			if ( ed.getOriginName().equals(getName()) ) {
@@ -250,6 +264,17 @@ public class ModelDescription extends SpeciesDescription {
 					", should be redefined.", IGamlIssue.MISSING_ACTION);
 			}
 		}
+	}
+
+	@Override
+	public IDescription validate() {
+		return validate(false);
+	}
+
+	public IDescription validate(final boolean document) {
+		isDocumenting(document);
+		super.validate();
+		return this;
 	}
 
 }

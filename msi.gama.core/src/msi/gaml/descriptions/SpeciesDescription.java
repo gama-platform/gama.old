@@ -1,23 +1,18 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'SpeciesDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.*;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -25,7 +20,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
@@ -41,7 +36,7 @@ public class SpeciesDescription extends TypeDescription {
 	private Map<String, StatementDescription> behaviors;
 	private Map<String, StatementDescription> aspects;
 	private Map<String, SpeciesDescription> microSpecies;
-	protected final Map<Class, ISkill> skills = new HashMap();
+	protected final Map<Class, ISkill> skills = new THashMap();
 	protected IArchitecture control;
 	private IAgentConstructor agentConstructor;
 
@@ -97,7 +92,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
-		final Set<String> skillNames = new LinkedHashSet();
+		final Set<String> skillNames = new TLinkedHashSet();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(CONTROL) ) {
 			String control = facets.getLabel(CONTROL);
@@ -163,7 +158,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	private void buildSharedSkills() {
 		// Necessary in order to prevent concurrentModificationExceptions
-		final Set<Class> classes = new HashSet(skills.keySet());
+		final Set<Class> classes = new THashSet(skills.keySet());
 		for ( final Class c : classes ) {
 			Class clazz = c;
 			if ( Skill.class.isAssignableFrom(clazz) ) {
@@ -190,26 +185,17 @@ public class SpeciesDescription extends TypeDescription {
 		final IDescription desc = super.addChild(child);
 		if ( desc == null ) { return null; }
 		if ( desc instanceof StatementDescription ) {
-			// FIXME Move this to TypeDescription !
 			final StatementDescription statement = (StatementDescription) desc;
 			final String kw = desc.getKeyword();
 			if ( PRIMITIVE.equals(kw) || ACTION.equals(kw) ) {
 				addAction(this, statement);
-			}
-			// else if ( ACTION.equals(kw) ) {
-			// addAction(statement);
-			// }
-			else if ( ASPECT.equals(kw) ) {
+			} else if ( ASPECT.equals(kw) ) {
 				addAspect(statement);
-			}
-			// else if ( INIT.equals(kw) ) {
-			// addInit(statement);
-			// }
-			else {
+			} else {
 				addBehavior(statement);
 			}
 		} else if ( desc instanceof VariableDescription ) {
-			addVariable((VariableDescription) desc);
+			addOwnVariable((VariableDescription) desc);
 		} else if ( desc instanceof SpeciesDescription ) {
 			final ModelDescription md = getModelDescription();
 			if ( md != null ) {
@@ -220,18 +206,10 @@ public class SpeciesDescription extends TypeDescription {
 		return desc;
 	}
 
-	//
-	// private void addInit(final StatementDescription init) {
-	// if ( inits == null ) {
-	// inits = new ArrayList<StatementDescription>();
-	// }
-	// inits.add(0, init); // Added at the beginning
-	// }
-
 	private void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
 		if ( behaviors == null ) {
-			behaviors = new LinkedHashMap<String, StatementDescription>();
+			behaviors = new TOrderedHashMap<String, StatementDescription>();
 		}
 		final StatementDescription existing = behaviors.get(behaviorName);
 		if ( existing != null ) {
@@ -260,7 +238,7 @@ public class SpeciesDescription extends TypeDescription {
 			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if ( aspects == null ) {
-			aspects = new LinkedHashMap<String, StatementDescription>();
+			aspects = new TOrderedHashMap<String, StatementDescription>();
 		}
 		aspects.put(aspectName, ce);
 	}
@@ -392,9 +370,7 @@ public class SpeciesDescription extends TypeDescription {
 			}
 			// GuiUtils.debug(" **** " + getName() + " inherits from " + parent.getName());
 			inheritMicroSpecies(parent);
-			// inheritSkills(parent);
 			inheritBehaviors(parent);
-			// inheritInits(parent);
 			inheritAspects(parent);
 			super.inheritFromParent();
 		}
@@ -405,7 +381,7 @@ public class SpeciesDescription extends TypeDescription {
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
 		// Takes care of invalid species (see Issue 711)
 		if ( parent == null || parent == this ) { return; }
-		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {	
+		for ( final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {
 			if ( !getMicroSpecies().containsKey(entry.getKey()) ) {
 				getMicroSpecies().put(entry.getKey(), entry.getValue());
 				// children.add(entry.getValue());
@@ -424,15 +400,6 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
-	// private void inheritInits(final SpeciesDescription parent) {
-	// // Takes care of invalid species (see Issue 711)
-	// if ( parent != null && parent != this && parent.inits != null ) {
-	// for ( final StatementDescription init : parent.inits ) {
-	// addChild(init.copy(this));
-	// }
-	// }
-	// }
-
 	private void inheritBehaviors(final SpeciesDescription parent) {
 		// We only copy the behaviors that are not redefined in this species
 		if ( parent.behaviors != null ) {
@@ -444,15 +411,6 @@ public class SpeciesDescription extends TypeDescription {
 			}
 		}
 	}
-
-	//
-	// private void inheritSkills(final SpeciesDescription parent) {
-	// for ( final Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
-	// if ( !skills.containsKey(entry.getKey()) ) {
-	// skills.put(entry.getKey(), entry.getValue());
-	// }
-	// }
-	// }
 
 	/**
 	 * @return
@@ -480,25 +438,28 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public String getTitle() {
-		return "species " + getName();
+		return getKeyword() + " " + getName();
 	}
 
 	@Override
 	public String getDocumentation() {
+		StringBuilder sb = new StringBuilder(200);
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
 		final String hostName = getMacroSpecies() == null ? null : getMacroSpecies().getName();
-		String result = "<b>Subspecies of: </b>" + parentName + "<br>";
+		sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		if ( hostName != null ) {
-			result += "<b>Microspecies of:</b>" + hostName + "<br>";
+			sb.append("<b>Microspecies of:</b> ").append(hostName).append("<br>");
 		}
-		result += "<b>Skills:</b> " + getSkillsNames() + "<br>";
-		result += "<b>Attributes:</b> " + getVarNames() + "<br>";
-		result += "<b>Actions: </b>" + getActionNames() + "<br>";
-		return result;
+		sb.append("<b>Skills:</b> ").append(getSkillsNames()).append("<br>");
+		sb.append("<b>Attributes:</b> ").append(getVarNames()).append("<br>");
+		sb.append("<b>Actions: </b>").append(getActionNames()).append("<br>");
+		sb.append("<br/>");
+		sb.append(getMeta().getDocumentation());
+		return sb.toString();
 	}
 
 	public Set<String> getSkillsNames() {
-		final Set<String> names = new LinkedHashSet();
+		final Set<String> names = new TLinkedHashSet();
 		for ( final ISkill skill : skills.values() ) {
 			if ( skill != null ) {
 				names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
@@ -643,7 +604,7 @@ public class SpeciesDescription extends TypeDescription {
 			final String error =
 				this.getName() + " species and " + potentialParent.getName() +
 					" species can't be sub-species of each other.";
-			potentialParent.error(error);
+			// potentialParent.error(error);
 			error(error);
 			return;
 		}
@@ -680,12 +641,15 @@ public class SpeciesDescription extends TypeDescription {
 			microSpec.finalizeDescription();
 			if ( !microSpec.isExperiment() ) {
 				final VariableDescription var =
-					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName(), OF,
-						microSpec.getName()); // CONST = TRUE ?
+					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName());
+				var.getFacets().put(
+					OF,
+					GAML.getExpressionFactory().createTypeExpression(
+						getModelDescription().getTypeNamed(microSpec.getName())));
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
 				final IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);
-				final Set<String> dependencies = exp == null ? new LinkedHashSet() : exp.getStrings(this, false);
+				final Set<String> dependencies = exp == null ? new TLinkedHashSet() : exp.getStrings(this, false);
 				for ( final VariableDescription v : microSpec.getVariables().values() ) {
 					dependencies.addAll(v.getExtraDependencies());
 				}
@@ -759,7 +723,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	public Map<String, SpeciesDescription> getMicroSpecies() {
 		if ( microSpecies == null ) {
-			microSpecies = new LinkedHashMap<String, SpeciesDescription>();
+			microSpecies = new TOrderedHashMap<String, SpeciesDescription>();
 		}
 		return microSpecies;
 	}

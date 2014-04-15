@@ -1,10 +1,18 @@
-/**
- * Created by drogoul, 31 mars 2012
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'StringBasedExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.*;
+import gnu.trove.set.hash.THashSet;
+import java.util.Set;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.util.GAML;
@@ -40,7 +48,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		Set<String> result = new HashSet();
+		Set<String> result = new THashSet();
 		StringBuilder b = new StringBuilder();
 		for ( char c : string.toCharArray() ) {
 			switch (c) {

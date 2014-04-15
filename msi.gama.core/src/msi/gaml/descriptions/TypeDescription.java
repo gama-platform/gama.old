@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'TypeDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.*;
@@ -15,7 +26,7 @@ import org.eclipse.emf.ecore.EObject;
  * The class TypeDescription.
  * 
  * @author drogoul
- * @since 23 f�vr. 2013
+ * @since 23 fevr. 2013
  * 
  */
 public abstract class TypeDescription extends SymbolDescription {
@@ -37,139 +48,33 @@ public abstract class TypeDescription extends SymbolDescription {
 	public void copyJavaAdditions() {
 		final Class clazz = getJavaBase();
 		if ( clazz == null ) {
-			error("This species cannot be compiled as its parent is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
+			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
 			return;
 		}
 		final Set<IDescription> children = AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses());
 		for ( final IDescription v : children ) {
-			addChild(v.copy(this));
-		}
-	}
-
-	public void setParent(final TypeDescription parent) {
-		this.parent = parent;
-	}
-
-	public Set<Class> getSkillClasses() {
-		return Collections.EMPTY_SET;
-	}
-
-	protected void duplicateInfo(final IDescription one, final IDescription two) {
-		final String name = one.getFacets().getLabel(NAME);
-		final String key = one.getKeyword();
-		final String error =
-			key + " " + name + " is declared twice. This definition supersedes the previous in " + two.getOriginName();
-		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
-		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
-	}
-
-	// protected void addPrimitive(final StatementDescription newAction) {
-	// final String actionName = newAction.getName();
-	// final StatementDescription existing = getAction(actionName);
-	// TypeDescription.assertActionsAreCompatible(existing, newAction, newAction.getOriginName());
-	// if ( actions == null ) {
-	// actions = new LinkedHashMap<String, StatementDescription>();
-	// }
-	// actions.put(actionName, newAction);
-	//
-	// }
-
-	protected void addAction(final TypeDescription from, final StatementDescription newAction) {
-		final String actionName = newAction.getName();
-
-		final StatementDescription existing = getAction(actionName);
-		if ( existing != null ) {
-			if ( newAction.isBuiltIn() && existing.isBuiltIn() ) { return; }
-			TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
-			if ( !existing.isAbstract() ) {
-				if ( existing.isBuiltIn() ) {
-					newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in " +
-						existing.getOriginName() + ". If it was not your intention, consider renaming it.",
-						IGamlIssue.GENERAL);
-				} else if ( from == this ) {
-					duplicateInfo(newAction, existing);
-				} else {
-					existing.info(
-						"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
-						IGamlIssue.REDEFINES);
-					return;
-				}
-			} else if ( newAction.isAbstract() && from != this ) {
-				this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
-					", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-				return;
+			if ( v instanceof VariableDescription ) {
+				addBuiltInVariable((VariableDescription) v);
+			} else {
+				addChild(v.copy(this));
 			}
-		} else if ( newAction.isAbstract() && from != this ) {
-			this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
-				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-			return;
 		}
-		if ( actions == null ) {
-			actions = new LinkedHashMap<String, StatementDescription>();
+	}
+
+	/**
+	 * ==================================== MANAGEMENT OF VARIABLES
+	 */
+
+	public Map<String, VariableDescription> getVariables() {
+		if ( variables == null ) {
+			variables = new TOrderedHashMap<String, VariableDescription>();
 		}
-		actions.put(actionName, newAction);
+		return variables;
 	}
 
-	// protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
-	// final String actionName = parentAction.getName();
-	// final StatementDescription existingAction = getAction(actionName);
-	// if ( existingAction == null ) {
-	// // The action does not replace any. Just proceed.
-	// // addChild(parentAction);
-	// return;
-	// }
-	// if ( existingAction.isAbstract() && parentAction.isAbstract() ) {
-	// this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
-	// ", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-	// return;
-	// }
-	// TypeDescription.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
-	// if ( existingAction.isBuiltIn() ) {
-	// // addChild(parentAction);
-	// return;
-	// }
-	// existingAction.info(
-	// "Redefinition of the action " + actionName + " defined in  " + parentAction.getOriginName(),
-	// IGamlIssue.REDEFINES);
-	// }
-
-	@Override
-	public StatementDescription getAction(final String aName) {
-		return actions == null ? null : actions.get(aName);
-		// if ( actions != null && actions.containsKey(aName) ) { return actions.get(aName); }
-
-		// return parent == null ? null : parent.getAction(aName);
-	}
-
-	public Collection<String> getActionNames() {
-		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
-		// Set<String> names = new HashSet();
-		// if ( actions != null ) {
-		// names.addAll(actions.keySet());
-		// }
-		// if ( parent != null ) {
-		// names.addAll(parent.getActionNames());
-		// }
-		// return names;
-	}
-
-	public Collection<StatementDescription> getActions() {
-		return actions == null ? Collections.EMPTY_LIST : actions.values();
-
-		// Set<StatementDescription> allActions = new HashSet();
-		// if ( actions != null ) {
-		// allActions.addAll(actions.values());
-		// }
-		// if ( parent != null ) {
-		// allActions.addAll(parent.getActions());
-		// }
-		// return allActions;
-	}
-
-	@Override
-	public boolean hasAction(final String a) {
-		return actions != null && actions.containsKey(a);
-		// return actions != null && actions.containsKey(a) || parent != null && parent != this && parent.hasAction(a);
+	public IList<String> getVarNames() {
+		if ( variables != null ) { return new GamaList(variables.keySet()); }
+		return GamaList.EMPTY_LIST;
 	}
 
 	public VariableDescription getVariable(final String name) {
@@ -188,60 +93,116 @@ public abstract class TypeDescription extends SymbolDescription {
 		return vd.getVarExpr();
 	}
 
-	public abstract Class getJavaBase();
-
-	// {
-	// if ( javaBase == null && parent != null ) {
-	// javaBase = parent.getJavaBase();
-	// }
-	// return javaBase;
-	// }
-
-	protected void setJavaBase(final Class javaBase) {
-		this.javaBase = javaBase;
+	protected void addVariableNoCheck(final VariableDescription vd) {
+		vd.setDefinitionOrder(varCount++);
+		getVariables().put(vd.getName(), vd);
 	}
 
-	@Override
-	public IType getType() {
-
-		// WARNING: this leads to numerous computations. Could we cache the type somehow ?
-		// WARNING: Before, we should count how many invocations are made
-
-		return getTypeNamed(getName());
-	}
-
-	public boolean isArgOf(final String op, final String arg) {
-		final StatementDescription action = getAction(op);
-		if ( action != null ) { return action.containsArg(arg); }
-		return false;
-	}
-
-	/**
-	 * Returns the parent species.
-	 * 
-	 * @return
-	 */
-	public TypeDescription getParent() {
-		return parent;
-	}
-
-	public Map<String, VariableDescription> getVariables() {
-		if ( variables == null ) {
-			variables = new LinkedHashMap<String, VariableDescription>();
+	public boolean assertVarsAreCompatible(final VariableDescription existingVar, final VariableDescription newVar) {
+		if ( newVar.isBuiltIn() && existingVar.isBuiltIn() ) { return true; }
+		IType existingType = existingVar.getType();
+		IType newType = newVar.getType();
+		if ( !newType.isTranslatableInto(existingType) ) {
+			if ( existingVar.isBuiltIn() ) {
+				newVar.error("Type (" + newType + ") differs from that (" + existingType +
+					") of the implementation of  " + newVar.getName() + " in " + existingVar.getOriginName(),
+					IGamlIssue.WRONG_REDEFINITION, NAME);
+			} else {
+				EObject newResource = newVar.getUnderlyingElement(null).eContainer();
+				EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+				if ( newResource.equals(existingResource) ) {
+					// Should not be the case, normally
+					newVar.error("Type (" + newType + ") differs from that (" + existingType +
+						") of the implementation of  " + newVar.getName() + " in " + existingVar.getOriginName(),
+						IGamlIssue.WRONG_REDEFINITION, NAME);
+				} else {
+					newVar.error("Type (" + newType + ") differs from that (" + existingType +
+						") of the implementation of  " + newVar.getName() + " in  imported file " +
+						existingResource.eResource().getURI().lastSegment(), IGamlIssue.WRONG_REDEFINITION, NAME);
+				}
+			}
+			return false;
 		}
-		return variables;
+		return true;
 	}
 
-	public boolean isAbstract() {
-		for ( final StatementDescription a : getActions() ) {
-			if ( a.isAbstract() ) { return true; }
+	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
+		if ( newVar.isBuiltIn() && existingVar.isBuiltIn() ) { return; }
+		if ( newVar.getOriginName().equals(existingVar.getOriginName()) ) {
+			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
+				NAME);
+			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
+			return;
 		}
-		return false;
+		if ( existingVar.isBuiltIn() ) {
+			newVar.info(
+				"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
+				IGamlIssue.REDEFINES, NAME);
+		} else {
+			// Possibily different resources
+			EObject newResource = newVar.getUnderlyingElement(null).eContainer();
+			EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+			if ( newResource.equals(existingResource) ) {
+				// Should not be the case, normally
+				newVar.info(
+					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
+					IGamlIssue.REDEFINES, NAME);
+			} else {
+				newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file " +
+					existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
+			}
+		}
 	}
 
-	public IList<String> getVarNames() {
-		if ( variables != null ) { return new GamaList(variables.keySet()); }
-		return GamaList.EMPTY_LIST;
+	protected void inheritVariablesFrom(final TypeDescription p) {
+		if ( p.variables != null ) {
+			for ( final VariableDescription v : p.getVariables().values() ) {
+				addInheritedVariable(v);
+			}
+		}
+	}
+
+	public void addBuiltInVariable(final VariableDescription vd) {
+		// We just add a copy of the variable
+		addVariableNoCheck(vd.copy(this));
+	}
+
+	public void addOwnVariable(final VariableDescription vd) {
+		String newVarName = vd.getName();
+		// If no previous definition is found, just add the variable
+		if ( !hasVar(newVarName) ) {
+			addVariableNoCheck(vd);
+			return;
+		}
+		// A previous deifnition has been found
+		VariableDescription existing = getVariable(newVarName);
+		// We assert whether their types are compatible or not
+		if ( assertVarsAreCompatible(existing, vd) ) {
+			markVariableRedefinition(existing, vd);
+			vd.copyFrom(existing);
+			addVariableNoCheck(vd);
+		}
+	}
+
+	public void addInheritedVariable(final VariableDescription vd) {
+		// We dont inherit from previously added variables, as a child and its parent should
+		// share the same javaBase
+
+		String inheritedVarName = vd.getName();
+
+		// If no previous definition is found, just add the variable
+		if ( !hasVar(inheritedVarName) ) {
+			addVariableNoCheck(vd.copy(this));
+			return;
+		}
+		// A redefinition has been found
+		VariableDescription existing = getVariable(inheritedVarName);
+		if ( assertVarsAreCompatible(vd, existing) ) {
+			if ( !existing.isBuiltIn() ) {
+				markVariableRedefinition(vd, existing);
+			}
+			existing.copyFrom(vd);
+		}
 	}
 
 	public List<String> getUpdatableVarNames() {
@@ -320,9 +281,115 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 	}
 
+	public void setParent(final TypeDescription parent) {
+		this.parent = parent;
+	}
+
+	public Set<Class> getSkillClasses() {
+		return Collections.EMPTY_SET;
+	}
+
+	protected void duplicateInfo(final IDescription one, final IDescription two) {
+		final String name = one.getFacets().getLabel(NAME);
+		final String key = one.getKeyword();
+		final String error =
+			key + " " + name + " is declared twice. This definition supersedes the previous in " + two.getOriginName();
+		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+	}
+
+	protected void addAction(final TypeDescription from, final StatementDescription newAction) {
+		final String actionName = newAction.getName();
+
+		final StatementDescription existing = getAction(actionName);
+		if ( existing != null ) {
+			if ( newAction.isBuiltIn() && existing.isBuiltIn() ) { return; }
+			TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
+			if ( !existing.isAbstract() ) {
+				if ( existing.isBuiltIn() ) {
+					newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in " +
+						existing.getOriginName() + ". If it was not your intention, consider renaming it.",
+						IGamlIssue.GENERAL);
+				} else if ( from == this ) {
+					duplicateInfo(newAction, existing);
+				} else {
+					existing.info(
+						"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
+						IGamlIssue.REDEFINES);
+					return;
+				}
+			} else if ( newAction.isAbstract() && from != this ) {
+				this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
+					", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+				return;
+			}
+		} else if ( newAction.isAbstract() && from != this ) {
+			this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
+				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+			return;
+		}
+		if ( actions == null ) {
+			actions = new TOrderedHashMap<String, StatementDescription>();
+		}
+		actions.put(actionName, newAction);
+	}
+
+	@Override
+	public StatementDescription getAction(final String aName) {
+		return actions == null ? null : actions.get(aName);
+	}
+
+	public Collection<String> getActionNames() {
+		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
+	}
+
+	public Collection<StatementDescription> getActions() {
+		return actions == null ? Collections.EMPTY_LIST : actions.values();
+	}
+
+	@Override
+	public boolean hasAction(final String a) {
+		return actions != null && actions.containsKey(a);
+	}
+
+	public abstract Class getJavaBase();
+
+	protected void setJavaBase(final Class javaBase) {
+		this.javaBase = javaBase;
+	}
+
+	public boolean isAbstract() {
+		for ( final StatementDescription a : getActions() ) {
+			if ( a.isAbstract() ) { return true; }
+		}
+		return false;
+	}
+
+	@Override
+	public IType getType() {
+		// WARNING: this leads to numerous computations. Could we cache the type somehow ?
+		// WARNING: Before, we should count how many invocations are made
+		return getTypeNamed(getName());
+	}
+
+	public boolean isArgOf(final String op, final String arg) {
+		final StatementDescription action = getAction(op);
+		if ( action != null ) { return action.containsArg(arg); }
+		return false;
+	}
+
+	/**
+	 * Returns the parent species.
+	 * 
+	 * @return a TypeDescription or null
+	 */
+	public TypeDescription getParent() {
+		return parent;
+	}
+
 	@Override
 	public void dispose() {
-		if ( /* isDisposed || */isBuiltIn() ) { return; }
+		if ( isBuiltIn() ) { return; }
 		if ( actions != null ) {
 			actions.clear();
 		}
@@ -330,81 +397,23 @@ public abstract class TypeDescription extends SymbolDescription {
 			variables.clear();
 		}
 		super.dispose();
-		// isDisposed = true;
 	}
 
 	protected void inheritFromParent() {
 		// Takes care of invalid species (see Issue 711)
 		if ( parent != null && parent != this && !parent.isBuiltIn() ) {
-			inheritActions();
-			inheritVariables();
+			inheritActionsFrom(parent);
+			inheritVariablesFrom(parent);
 		}
 	}
 
-	protected void inheritVariables() {
-		if ( parent.variables != null ) {
-			// We only copy the variables that are not redefined in this species
-			for ( final VariableDescription v : parent.getVariables().values() ) {
-				inheritVariable(v);
-			}
-		}
-	}
-
-	protected void inheritActions() {
+	protected void inheritActionsFrom(final TypeDescription p) {
 		// We only copy the actions that are not redefined in this species
-		if ( parent.actions != null ) {
-			for ( final StatementDescription action : parent.actions.values() ) {
-				addAction(parent, action);
+		if ( p.actions != null ) {
+			for ( final StatementDescription action : p.actions.values() ) {
+				addAction(p, action);
 			}
 		}
-	}
-
-	protected void inheritVariable(final VariableDescription parentVariable) {
-		final String varName = parentVariable.getName();
-		if ( !hasVar(varName) ) {
-			addChild(parentVariable.copy(this)); // TODO Verify the copy(...)
-			return;
-		}
-		final VariableDescription myVar = getVariable(varName);
-		// If the variable already in place is builtin, we replace it
-		if ( myVar.isBuiltIn() ) {
-			// We inherit another builtin variable. No need to do anything
-			if ( parentVariable.isBuiltIn() ) { return; }
-		}
-
-		// The variable has already been defined in the current species. Just need to check
-		// if it coherent with the inherited variable
-		IType myType = myVar.getType();
-		IType parentType = parentVariable.getType();
-		if ( !myType.isTranslatableInto(parentType) ) {
-			myVar.error("Type (" + myType + ") differs from that (" + parentType + ") of the implementation of  " +
-				varName + " in " + parent.getName());
-		}
-		if ( !myVar.isBuiltIn() ) {
-			myVar.info("Redefinition of the variable " + varName + " defined in  " + parentVariable.getOriginName(),
-				IGamlIssue.REDEFINES);
-		}
-
-	}
-
-	protected void addVariable(final VariableDescription v) {
-		final String vName = v.getName();
-		final IDescription builtIn = getVariables().get(vName);
-		if ( builtIn != null ) {
-			if ( !builtIn.isBuiltIn() ) {
-				duplicateInfo(v, builtIn);
-				// getChildren().remove(builtIn);
-			}
-			final IType bType = builtIn.getType();
-			final IType vType = v.getType();
-			if ( !vType.isTranslatableInto(bType) ) {
-				v.error("variable " + vName + " is of type " + bType + " and cannot be redefined as a " + vType,
-					IGamlIssue.WRONG_REDEFINITION);
-			}
-			v.copyFrom((VariableDescription) builtIn);
-		}
-		v.setDefinitionOrder(varCount++);
-		getVariables().put(vName, v);
 	}
 
 	public static void assertActionsAreCompatible(final StatementDescription myAction,

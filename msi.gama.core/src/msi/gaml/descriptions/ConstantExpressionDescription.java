@@ -1,6 +1,16 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'ConstantExpressionDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -31,7 +41,7 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 
 	@Override
 	public void setExpression(final IExpression expr) {
-		GuiUtils.debug("Trying to set a new expression " + expr + " to description " + expression);
+		// GuiUtils.debug("Trying to set a new expression " + expr + " to description " + expression);
 	}
 
 	@Override

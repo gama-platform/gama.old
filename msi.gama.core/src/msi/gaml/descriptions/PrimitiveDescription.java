@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'PrimitiveDescription.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import msi.gaml.compilation.GamaHelper;
@@ -28,7 +39,8 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
 		PrimitiveDescription desc =
-			new PrimitiveDescription(getKeyword(), into, ChildrenProvider.NONE, false, args != null, element, facets);
+			new PrimitiveDescription(getKeyword(), into, ChildrenProvider.NONE, false, args != null, element,
+				facets.cleanCopy());
 		if ( args != null ) {
 			desc.args.putAll(args);
 		}
