@@ -1,8 +1,18 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'HeadlessListener.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.headless.runtime;
 
 import java.util.*;
 import java.util.logging.Logger;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
@@ -21,7 +31,7 @@ public class HeadlessListener implements IGui {
 	static {
 		if ( GuiUtils.isInHeadLessMode() ) {
 			Logger.getAnonymousLogger().finest("Configuring Headless Mode");
-		//	System.out.println("Configuring Headless Mode");
+			// System.out.println("Configuring Headless Mode");
 			GuiUtils.setSwtGui(new HeadlessListener());
 		}
 	}
@@ -62,7 +72,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void raise(final Throwable ex) {
 		Logger.getAnonymousLogger().fine("Error: " + ex.getMessage());
-		//System.out.println("Error: " + ex.getMessage());
+		// System.out.println("Error: " + ex.getMessage());
 	}
 
 	@Override
@@ -73,14 +83,14 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void tell(final String message) {
 		Logger.getAnonymousLogger().finest("Message: " + message);
-		//System.out.println("Message: " + message);
+		// System.out.println("Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
-		//System.out.println("Error: " + error);
+		// System.out.println("Error: " + error);
 		Logger.getAnonymousLogger().fine("Error: " + error);
-		
+
 	}
 
 	@Override
@@ -89,13 +99,13 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void debugConsole(final int cycle, final String s) {
 		Logger.getAnonymousLogger().finer("Debug (step " + cycle + "): " + s);
-	//	System.out.println("Debug (step " + cycle + "): " + s);
+		// System.out.println("Debug (step " + cycle + "): " + s);
 	}
 
 	@Override
 	public void informConsole(final String s) {
 		Logger.getAnonymousLogger().finer("Information: " + s);
-//		System.out.println("Information: " + s);
+		// System.out.println("Information: " + s);
 	}
 
 	@Override
@@ -109,13 +119,13 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void warn(final String string) {
 		Logger.getAnonymousLogger().fine("Warning: " + string);
-//		System.out.println("Warning: " + string);
+		// System.out.println("Warning: " + string);
 	}
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
 		Logger.getAnonymousLogger().fine("Runtime error: " + g.getMessage());
-//		System.out.println("Runtime error: " + g.getMessage());
+		// System.out.println("Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -171,8 +181,8 @@ public class HeadlessListener implements IGui {
 	static Map<String, Class> displayClasses = null;
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
-		final double w, final double h, final Object ... args) {
+	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final String keyword,
+		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
 		if ( displayClasses == null ) {
 			displayClasses = new HashMap();
 			IConfigurationElement[] config =
@@ -199,9 +209,10 @@ public class HeadlessListener implements IGui {
 																 */}
 		try {
 			IDisplaySurface surface = clazz.newInstance();
-			Logger.getAnonymousLogger().fine("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
-		//	debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
-			surface.initialize(w, h, layerDisplayOutput);
+			Logger.getAnonymousLogger().fine(
+				"Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+			surface.initialize(scope, w, h, layerDisplayOutput);
 			return surface;
 		} catch (InstantiationException e1) {
 			e1.printStackTrace();
@@ -218,8 +229,9 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void updateParameterView(final IExperimentSpecies exp) {}
 
-	@Override
-	public void cycleDisplayViews(final Set<String> names) {}
+	//
+	// @Override
+	// public void cycleDisplayViews(final Set<String> names) {}
 
 	@Override
 	public void setSelectedAgent(final IAgent a) {}
@@ -252,4 +264,11 @@ public class HeadlessListener implements IGui {
 	public IDisplaySurface getFirstDisplaySurface() {
 		return null;
 	}
+
+	/**
+	 * Method updateSpeedDisplay()
+	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
+	 */
+	@Override
+	public void updateSpeedDisplay(final Double d, final boolean notify) {}
 }

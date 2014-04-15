@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 26 mars 2014
+/*********************************************************************************************
  * 
- */
+ *
+ * 'NullDisplaySurface.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.headless.runtime;
 
 import java.awt.*;
@@ -11,6 +18,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 
 /**
@@ -28,6 +36,11 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public BufferedImage getImage() {
+		return null;
+	}
+
+	@Override
+	public IScope getDisplayScope() {
 		return null;
 	}
 
@@ -254,7 +267,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h, final LayeredDisplayOutput layerDisplayOutput) {}
+	public void initialize(final IScope scope, final double w, final double h,
+		final LayeredDisplayOutput layerDisplayOutput) {}
 
 	/**
 	 * Method outputChanged()
@@ -262,7 +276,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 *      msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {}
+	public void outputChanged(final IScope scope, final double env_width, final double env_height,
+		final LayeredDisplayOutput output) {}
 
 	/**
 	 * Method getHighlightColor()

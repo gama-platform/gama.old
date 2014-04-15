@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ *
+ * 'DynamicClassLoader.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gama.headless.classLoader;
 
 import java.io.*;
@@ -111,18 +122,18 @@ public class DynamicClassLoader {
 				URL url = new URL("jar:file:" + PlugInDirectory + "/" + classFiles[index] + "!/");
 				URLClassLoader ucl = new URLClassLoader(new URL[] { url });
 
-				// On charge le jar en mŽmoire
+				// On charge le jar en mï¿½moire
 				JarFile jar = new JarFile(PlugInDirectory + "/" + classFiles[index]);
 				Enumeration enumeration;
 				String tmp = "";
-				// On rŽcupŽre le contenu du jar
+				// On rï¿½cupï¿½re le contenu du jar
 				enumeration = jar.entries();
 
 				while (enumeration.hasMoreElements()) {
 
 					tmp = enumeration.nextElement().toString();
 
-					// On vŽrifie que le fichier courant est un .class (et pas un fichier
+					// On vï¿½rifie que le fichier courant est un .class (et pas un fichier
 					// d'informations du jar )
 					if ( tmp.length() > 6 && tmp.substring(tmp.length() - 6).compareTo(".class") == 0 ) {
 
