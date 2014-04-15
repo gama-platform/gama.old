@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AbstractStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.*;
@@ -102,7 +95,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		// }
 		sb.append(k).append(' ');
 		for ( final Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
-			if ( e == null ) {
+			if ( e == null || e.getKey() == null ) {
 				continue;
 			}
 			if ( e.getKey().equals(IKeyword.KEYWORD) ) {
@@ -111,8 +104,14 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 			if ( e.getKey().equals(IKeyword.NAME) && n.startsWith("internal_") ) {
 				continue;
 			}
-			sb.append(e.getKey()).append(": [ ").append(e.getValue().getExpression().toGaml()).append(" ] ")
-				.append(Cast.toGaml(e.getValue().getExpression().value(scope))).append(" ");
+			IExpressionDescription ed = e.getValue();
+			IExpression expr = null;
+			if ( ed != null ) {
+				expr = ed.getExpression();
+			}
+			String exprString = expr == null ? "N/A" : expr.toGaml();
+			String exprValue = expr == null ? "nil" : Cast.toGaml(expr.value(scope));
+			sb.append(e.getKey()).append(": [ ").append(exprString).append(" ] ").append(exprValue).append(" ");
 		}
 		return sb.toString();
 	}
@@ -122,8 +121,14 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append(k).append(' ');
 		for ( final Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
-			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
-				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml()).append(" ");
+			if ( e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
+				IExpressionDescription ed = e.getValue();
+				IExpression expr = null;
+				if ( ed != null ) {
+					expr = ed.getExpression();
+				}
+				String exprString = expr == null ? "N/A" : expr.toGaml();
+				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
 			}
 		}
 		return sb.toString();

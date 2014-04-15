@@ -1,32 +1,25 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'ErrorStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,9 +37,8 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false, doc=@doc("the message to display in the error.")) }, omissible = IKeyword.MESSAGE)
-@doc(value = "The statement makes the agent output an error dialog (if the simulation contains a user interface). Otherwise displays the error in the console.", 
-	usages = {@usage(examples = {@example("error 'This is an error raised by ' + self;")})})
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false, doc = @doc("the message to display in the error.")) }, omissible = IKeyword.MESSAGE)
+@doc(value = "The statement makes the agent output an error dialog (if the simulation contains a user interface). Otherwise displays the error in the console.", usages = { @usage(examples = { @example("error 'This is an error raised by ' + self;") }) })
 public class ErrorStatement extends AbstractStatement {
 
 	final IExpression message;
@@ -57,12 +49,12 @@ public class ErrorStatement extends AbstractStatement {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IAgent agent = stack.getAgentScope();
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		IAgent agent = scope.getAgentScope();
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
-			mes = Cast.asString(stack, message.value(stack));
-			throw GamaRuntimeException.error(mes);
+			mes = Cast.asString(scope, message.value(scope));
+			throw GamaRuntimeException.error(mes, scope);
 		}
 		return mes;
 	}

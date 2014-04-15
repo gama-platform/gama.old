@@ -1,25 +1,19 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'AbstractContainerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
@@ -149,7 +143,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		public void validateIndexAndContentTypes(final String keyword, final IDescription cd, final boolean all) {
 			IExpression item = cd.getFacets().getExpr(ITEM);
 			IExpression list = cd.getFacets().getExpr(TO);
-			IExpression whole = cd.getFacets().getExpr(ALL);
+			// IExpression whole = cd.getFacets().getExpr(ALL);
 			IExpression index = cd.getFacets().getExpr(AT);
 			if ( !keyword.equals(REMOVE) ) {
 				if ( item == null ) {
@@ -277,7 +271,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	 * evaluated, and return special graph objects (node, edge, nodes and edges)
 	 */
 
-	public static interface GraphObjectToAdd {}
+	public static interface GraphObjectToAdd {
+
+		Object getObject();
+	}
 
 	public static class EdgeToAdd implements GraphObjectToAdd {
 
@@ -290,6 +287,11 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			this.weight = weight;
 			this.source = source;
 			this.target = target;
+		}
+
+		@Override
+		public Object getObject() {
+			return object;
 		}
 
 		/**
@@ -317,12 +319,22 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			object = o;
 		}
 
+		@Override
+		public Object getObject() {
+			return object;
+		}
+
 	}
 
 	public static class NodesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
 
 		public NodesToAdd(final IScope scope, final IContainer object) {
 			super(object.iterable(scope));
+		}
+
+		@Override
+		public Object getObject() {
+			return this;
 		}
 
 	}
@@ -333,69 +345,74 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			super(object.iterable(scope));
 		}
 
+		@Override
+		public Object getObject() {
+			return this;
+		}
+
 	}
 
-	@operator(value="edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Double weight) {
 		return edge(source, target, null, weight);
 	}
 
-	@operator(value="edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair, final Object object, final Double weight) {
 		return edge(pair.key, pair.value, object, weight);
 	}
 
-	@operator(value="edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target) {
 		return edge(source, target, null, null);
 	}
 
-	@operator(value="edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Object object) {
 		return edge(source, target, object, null);
 	}
 
-	@operator(value="edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Object object, final Double weight) {
 		return new EdgeToAdd(source, target, object, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object edgeObject, final Double weight) {
 		return edge(null, null, edgeObject, weight);
 	}
 
-	@operator(value = "edge", category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair, final Double weight) {
 		return edge(pair.key, pair.value, null, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object object) {
 		return edge(null, null, object, null);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair) {
 		return edge(pair.key, pair.value, null, null);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph. The second parameter indicates which weight the node should have in the graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static Object node(final Object object, final Double weight) {
 		return new NodeToAdd(object, weight);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static Object node(final Object nodeObject) {
 		return node(nodeObject, null);
 	}
 
-	@operator(value = "nodes", type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "nodes", type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as nodes of a graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static IContainer nodes(final IScope scope, final IContainer nodes) {
 		return new NodesToAdd(scope, nodes);
 	}
 
-	@operator(value = "edges", type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.GRAPH})
+	@operator(value = "edges", type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as edges of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static IContainer edges(final IScope scope, final IContainer nodes) {
 		return new EdgesToAdd(scope, nodes);
 	}

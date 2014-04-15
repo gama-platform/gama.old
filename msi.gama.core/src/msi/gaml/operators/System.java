@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'System.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.operators;
 
 import java.util.Map;
@@ -23,8 +16,8 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -41,13 +34,13 @@ import msi.gaml.types.*;
  */
 public class System {
 
-	@operator(value = "dead", category={IOperatorCategory.SYSTEM})
-	@doc(value = "true if the agent is dead, false otherwise.", examples = @example(value="dead(agent_A)", equals = "true or false", isExecutable = false))
+	@operator(value = "dead", category = { IOperatorCategory.SYSTEM })
+	@doc(value = "true if the agent is dead, false otherwise.", examples = @example(value = "dead(agent_A)", equals = "true or false", isExecutable = false))
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a.dead();
 	}
 
-	@operator(value = "every", category={IOperatorCategory.SYSTEM})
+	@operator(value = "every", category = { IOperatorCategory.SYSTEM })
 	@doc(value = "true every operand time step, false otherwise", comment = "the value of the every operator depends deeply on the time step. It can be used to do something not every step.", examples = {
 		@example("if every(2) {write \"the time step is even\";}"),
 		@example("	     else {write \"the time step is odd\";}") })
@@ -56,10 +49,10 @@ public class System {
 		return period > 0 && time >= period && time % period == 0;
 	}
 
-	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, category={IOperatorCategory.SYSTEM})
+	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, category = { IOperatorCategory.SYSTEM })
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = {
-		@example(value="agent1.location",equals="the location of the agent agent1", isExecutable=false),
-		@example(value="map(nil).keys", raises="exception")})
+		@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
+		@example(value = "map(nil).keys", raises = "exception") })
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) {
@@ -70,7 +63,7 @@ public class System {
 		if ( a.dead() ) {
 			// GuiUtils.debug("System.opGetValue");
 			if ( !scope.interrupted() ) {
-				GuiUtils.debug("System.opGetValue error");
+				// GuiUtils.debug("System.opGetValue error");
 				throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() + " as the target agent is dead");
 			}
 			return null;
@@ -78,29 +71,29 @@ public class System {
 		return scope.evaluate(s, a);
 	}
 
-	@operator(value = "copy", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.SYSTEM})
+	@operator(value = "copy", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.SYSTEM })
 	@doc(value = "returns a copy of the operand.")
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
 		if ( o instanceof IValue ) { return ((IValue) o).copy(scope); }
 		return o;
 	}
 
-	@operator(value = "user_input", category={IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL})
-	@doc(value = "asks the user for some values (not defined as parameters)", masterDoc=true, comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
+	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
+	@doc(value = "asks the user for some values (not defined as parameters)", masterDoc = true, comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
 		@example("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example(value="assert (values at \"Number\") equals: 100;",isTestOnly=true),
-		@example(value="assert (values at \"Location\") equals: {10,10};",isTestOnly=true),
-		@example(value="create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",isExecutable=false) })
+		@example(value = "assert (values at \"Number\") equals: 100;", isTestOnly = true),
+		@example(value = "assert (values at \"Location\") equals: {10,10};", isTestOnly = true),
+		@example(value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", isExecutable = false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		final IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
-	@operator(value = "user_input", category={IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL})
+	@operator(value = "user_input", category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL })
 	@doc(value = "asks the user for some values (not defined as parameters)", examples = {
 		@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
-		@example(value="create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",isExecutable=false) })
+		@example(value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];", isExecutable = false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
 		final GamaMap<String, IType> initialTypes = new GamaMap();
@@ -122,8 +115,8 @@ public class System {
 		return new GamaMap(GuiUtils.openUserInputDialog(title, initialValues, initialTypes));
 	}
 
-	@operator(value = "eval_gaml", can_be_const = false, category={IOperatorCategory.SYSTEM})
-	@doc(value = "evaluates the given GAML string.", examples = {@example(value="eval_gaml(\"2+3\")",equals="5")})
+	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM })
+	@doc(value = "evaluates the given GAML string.", examples = { @example(value = "eval_gaml(\"2+3\")", equals = "5") })
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
 		final IAgent agent = scope.getAgentScope();
 		final IDescription d = agent.getSpecies().getDescription();
@@ -159,5 +152,5 @@ public class System {
 	// }
 
 	// private static final String[] gamaDefaultImports = new String[] {};
-	
+
 }

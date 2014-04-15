@@ -1,10 +1,21 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'PertinenceChooseStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
@@ -38,8 +49,7 @@ public class PertinenceChooseStatement extends PertinenceStatement {
 			}
 		}
 		if ( !pertinentsCommands.isEmpty() ) {
-			mostPertinentCommand =
-				pertinentsCommands.get(GAMA.getRandom().between(0, pertinentsCommands.size() - 1));
+			mostPertinentCommand = pertinentsCommands.get(scope.getRandom().between(0, pertinentsCommands.size() - 1));
 		}
 		return pertinenceValue;
 	}

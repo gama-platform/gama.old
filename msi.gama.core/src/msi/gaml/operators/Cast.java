@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'Cast.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.operators;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -25,8 +18,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -68,9 +61,11 @@ public class Cast {
 	// return a;
 	// }
 
-	@operator(value = { IKeyword.IS }, category={IOperatorCategory.CASTING})
+	@operator(value = { IKeyword.IS }, category = { IOperatorCategory.CASTING })
 	@doc(value = "returns true if the left operand is of the right operand type, false otherwise", examples = {
-		@example(value="0 is int",equals="true"), @example(value="an_agent is node",equals="true",isExecutable=false), @example(value="1 is float",equals="false") })
+		@example(value = "0 is int", equals = "true"),
+		@example(value = "an_agent is node", equals = "true", isExecutable = false),
+		@example(value = "1 is float", equals = "false") })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
 		final IType type = asType(scope, b);
 		if ( a == null ) { return type == Types.NO_TYPE; }
@@ -84,8 +79,8 @@ public class Cast {
 		return type.isAssignableFrom(Types.get(a.getClass()));
 	}
 
-	@operator(value = IKeyword.IS_SKILL, category={IOperatorCategory.CASTING})
-	@doc(value = "returns true if the left operand is an agent whose species implementes the right-hand skill name", examples = { @example(value="agentA is_skill 'moving'",equals="true", isExecutable=false) })
+	@operator(value = IKeyword.IS_SKILL, category = { IOperatorCategory.CASTING })
+	@doc(value = "returns true if the left operand is an agent whose species implementes the right-hand skill name", examples = { @example(value = "agentA is_skill 'moving'", equals = "true", isExecutable = false) })
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
 		if ( !(a instanceof IAgent) ) { return false; }
 		final ISpecies s = ((IAgent) a).getSpecies();
@@ -137,7 +132,7 @@ public class Cast {
 		return GamaGraphType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY, category={IOperatorCategory.CASTING})
+	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY, category = { IOperatorCategory.CASTING })
 	@doc(value = "casting of the operand to a topology.", usages = {
 		@usage("if the operand is a topology, returns the topology itself;"),
 		@usage("if the operand is a spatial graph, returns the graph topology associated;"),
@@ -146,9 +141,9 @@ public class Cast {
 		@usage("if the operand is a matrix, returns the grid topology associated"),
 		@usage("if the operand is another kind of container, returns the multiple topology associated to the container"),
 		@usage("otherwise, casts the operand to a geometry and build a topology from it.") }, examples = {
-		@example(value="topology(0)", equals="nil", isExecutable=true),
-		@example(value="topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
-			+ "at location[53.556743711446195;34.57529210646354]", isExecutable=false) }, see = { "geometry" })
+		@example(value = "topology(0)", equals = "nil", isExecutable = true),
+		@example(value = "topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
+			+ "at location[53.556743711446195;34.57529210646354]", isExecutable = false) }, see = { "geometry" })
 	public static ITopology asTopology(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaTopologyType.staticCast(scope, val);
 	}
@@ -168,7 +163,7 @@ public class Cast {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
 
-	@operator(value = IKeyword.AS, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, can_be_const = true, category={IOperatorCategory.CASTING})
+	@operator(value = IKeyword.AS, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, can_be_const = true, category = { IOperatorCategory.CASTING })
 	@doc(value = "casting of the argument into a given type")
 	public static Object as(final IScope scope, final Object val, final IExpression expr) {
 		return expr.getType().cast(scope, val, null);
@@ -333,14 +328,13 @@ public class Cast {
 		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null);
 	}
 
-	@operator(value = "as_int", can_be_const = true, category={IOperatorCategory.CASTING})
+	@operator(value = "as_int", can_be_const = true, category = { IOperatorCategory.CASTING })
 	@doc(value = "parses the string argument as a signed integer in the radix specified by the second argument.", usages = {
 		@usage("if the left operand is nil or empty, as_int returns 0"),
-		@usage("if the left operand does not represent an integer in the specified radix, as_int throws an exception ")},  examples = {
-		@example(value="'20' as_int 10", equals="20"), 
-		@example(value="'20' as_int 8", equals="16"), @example(value="'20' as_int 16", equals="32"), 
-		@example(value="'1F' as_int 16", equals="31"), @example(value="'hello' as_int 32", equals="18306744") }, 
-		see = { "int" })
+		@usage("if the left operand does not represent an integer in the specified radix, as_int throws an exception ") }, examples = {
+		@example(value = "'20' as_int 10", equals = "20"), @example(value = "'20' as_int 8", equals = "16"),
+		@example(value = "'20' as_int 16", equals = "32"), @example(value = "'1F' as_int 16", equals = "31"),
+		@example(value = "'hello' as_int 32", equals = "18306744") }, see = { "int" })
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 		throws GamaRuntimeException {
 		if ( string == null || string.isEmpty() ) { return 0; }
@@ -370,7 +364,7 @@ public class Cast {
 	public static IList list_with(final IScope scope, final Integer size, final IExpression init) {
 		return GamaListType.with(scope, init, size);
 	}
-	
+
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	// @doc(value = "casts the operand into a matrix", special_cases = {
 	// "if the operand is a file, returns its content casted as a matrix",
@@ -382,11 +376,11 @@ public class Cast {
 		return asMatrix(scope, val, null);
 	}
 
-	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true, category={IOperatorCategory.CASTING})
+	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true, category = { IOperatorCategory.CASTING })
 	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand", comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.", see = {
 		"matrix", "as_matrix" })
 	public static IMatrix matrix_with(final IScope scope, final ILocation size, final Object init) {
-		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices"); }
+		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
 		if ( init instanceof Integer ) { return GamaMatrixType.with(scope, ((Integer) init).intValue(),
 			(GamaPoint) size); }
 		if ( init instanceof Double ) { return GamaMatrixType.with(scope, ((Double) init).doubleValue(),
@@ -402,7 +396,7 @@ public class Cast {
 
 	}
 
-	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, can_be_const = true, category={IOperatorCategory.CASTING})
+	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, can_be_const = true, category = { IOperatorCategory.CASTING })
 	@doc(value = "casts the left operand into a matrix with right operand as preferrenced size", comment = "This operator is very useful to cast a file containing raster data into a matrix."
 		+ "Note that both components of the right operand point should be positive, otherwise an exception is raised."
 		+ "The operator as_matrix creates a matrix of preferred size. It fills in it with elements of the left operand until the matrix is full "
@@ -412,33 +406,33 @@ public class Cast {
 		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE);
 	}
 
-	@operator(value = { IKeyword.SPECIES, "species_of" }, content_type = ITypeProvider.FIRST_TYPE, category={IOperatorCategory.CASTING})
+	@operator(value = { IKeyword.SPECIES, "species_of" }, content_type = ITypeProvider.FIRST_TYPE, category = { IOperatorCategory.CASTING })
 	@doc(value = "casting of the operand to a species.", usages = { @usage("if the operand is nil, returns nil;"),
 		@usage("if the operand is an agent, returns its species;"),
-		@usage("if the operand is a string, returns the species with this name (nil if not found);"), 
+		@usage("if the operand is a string, returns the species with this name (nil if not found);"),
 		@usage("otherwise, returns nil") }, examples = {
-		@example(value="species(self)", equals="the species of the current agent",isExecutable=false), 
-		@example(value="species('node')", equals="node", isExecutable=false),
-		@example(value="species([1,5,9,3])", equals="nil", isExecutable=false), 
-		@example(value="species(node1)", equals="node",isExecutable=false) })
+		@example(value = "species(self)", equals = "the species of the current agent", isExecutable = false),
+		@example(value = "species('node')", equals = "node", isExecutable = false),
+		@example(value = "species([1,5,9,3])", equals = "nil", isExecutable = false),
+		@example(value = "species(node1)", equals = "node", isExecutable = false) })
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
 	}
 
-	@operator(value = "to_gaml", category={IOperatorCategory.CASTING})
+	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING })
 	@doc(value = "represents the gaml way to write an expression in gaml, depending on its type", examples = {
-		@example(value="to_gaml(0)", equals="'0'"),
-		@example(value="to_gaml(3.78)", equals="'3.78'"),
-		@example(value="to_gaml(true)", equals="'true'"),
-		@example(value="to_gaml({23, 4.0})",equals="'{23.0,4.0,0.0}'"),
-		@example(value="to_gaml(5::34)", equals="'5::34'"),
-		@example(value="to_gaml(rgb(255,0,125))", equals="'rgb (255, 0, 125,255)'"),
-		@example(value="to_gaml('hello')", equals="\"'hello'\""),
-		@example(value="to_gaml([1,5,9,3])", equals="'[1,5,9,3]'"),
-		@example(value="to_gaml(['a'::345, 'b'::13, 'c'::12])", equals="\"([\'a\'::345,\'b\'::13,\'c\'::12] as map )\""),
-		@example(value="to_gaml([[3,5,7,9],[2,4,6,8]])", equals="'[[3,5,7,9],[2,4,6,8]]'"),
-		@example(value="to_gaml(a_graph)", equals="([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",isExecutable=false),
-		@example(value="to_gaml(node1)", equals=" 1 as node", isExecutable=false) }, see = { "to_java" })
+		@example(value = "to_gaml(0)", equals = "'0'"),
+		@example(value = "to_gaml(3.78)", equals = "'3.78'"),
+		@example(value = "to_gaml(true)", equals = "'true'"),
+		@example(value = "to_gaml({23, 4.0})", equals = "'{23.0,4.0,0.0}'"),
+		@example(value = "to_gaml(5::34)", equals = "'5::34'"),
+		@example(value = "to_gaml(rgb(255,0,125))", equals = "'rgb (255, 0, 125,255)'"),
+		@example(value = "to_gaml('hello')", equals = "\"'hello'\""),
+		@example(value = "to_gaml([1,5,9,3])", equals = "'[1,5,9,3]'"),
+		@example(value = "to_gaml(['a'::345, 'b'::13, 'c'::12])", equals = "\"([\'a\'::345,\'b\'::13,\'c\'::12] as map )\""),
+		@example(value = "to_gaml([[3,5,7,9],[2,4,6,8]])", equals = "'[[3,5,7,9],[2,4,6,8]]'"),
+		@example(value = "to_gaml(a_graph)", equals = "([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph", isExecutable = false),
+		@example(value = "to_gaml(node1)", equals = " 1 as node", isExecutable = false) }, see = { "to_java" })
 	public static String toGaml(final Object val) {
 		return StringUtils.toGaml(val);
 	}

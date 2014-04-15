@@ -1,92 +1,98 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'SaveStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import msi.gama.common.interfaces.IKeyword;
+import java.io.*;
+import java.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.IType;
-
-import org.geotools.data.DataUtilities;
-import org.geotools.data.DefaultTransaction;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
+import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.*;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.simple.*;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"text\" or \"csv\") ")),
+@facets(value = {
+	@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"text\" or \"csv\") ")),
 	@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
 	@facet(name = IKeyword.TO, type = IType.STRING, optional = false, doc = @doc("an expression that evaluates to an string, the path to the file")),
 	@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projectsion, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true, doc = @doc("")) }, omissible = IKeyword.DATA)
-@doc(value="Allows to save data in a file. The type of file can be \"shp\", \"text\" or \"csv\".", usages = { 
-	@usage(value="Its simple syntax is:", examples = {@example(value="save data to: output_file type: a_type_file;",isExecutable=false)}),
-	@usage(value="To save data in a text file:", examples = {
-		@example(value="save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";")}),
-	@usage(value="To save the values of some attributes of the current agent in csv file:", examples = {
-		@example(value="save [name, location, host] to: \"save_data.csv\" type: \"csv\";")}),	
-	@usage(value="To save the geometries of all the agents of a species into a shapefile (with optional attributes):", examples = {
-		@example(value="save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";")}),
-	@usage(value="The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.")
-})
+@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"text\" or \"csv\".", usages = {
+	@usage(value = "Its simple syntax is:", examples = { @example(value = "save data to: output_file type: a_type_file;", isExecutable = false) }),
+	@usage(value = "To save data in a text file:", examples = { @example(value = "save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";") }),
+	@usage(value = "To save the values of some attributes of the current agent in csv file:", examples = { @example(value = "save [name, location, host] to: \"save_data.csv\" type: \"csv\";") }),
+	@usage(value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):", examples = { @example(value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
+	@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
+@validator(SaveValidator.class)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+
+	public static class SaveValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			StatementDescription desc = (StatementDescription) description;
+			IExpression data = desc.getFacets().getExpr(DATA);
+			if ( data == null ) { return; }
+			IType t = data.getType().getContentType();
+			if ( !t.isAgentType() ) { return; }
+			SpeciesDescription species = t.getSpecies();
+			Collection<IDescription> args = desc.getArgs();
+			if ( args == null || args.isEmpty() ) { return; }
+			for ( IDescription arg : args ) {
+				if ( !species.hasVar(arg.getName()) ) {
+					desc.error("Attribute " + arg.getName() + " is not defined for the agents of " + data.toGaml(),
+						IGamlIssue.UNKNOWN_VAR, WITH);
+				}
+			}
+		}
+
+	}
 
 	private Arguments init;
 	private final IExpression crsCode;
@@ -110,8 +116,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		path =
-			scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
+		path = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
 		if ( path.equals("") ) {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
@@ -171,7 +176,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		} else {
 
-			throw GamaRuntimeException.error("Unable to save, because this format is not recognized ('" + type + "')");
+			throw GamaRuntimeException.error("Unable to save, because this format is not recognized ('" + type + "')",
+				scope);
 		}
 		return Cast.asString(scope, file.value(scope));
 	}
@@ -262,16 +268,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 		String code = null;
-		if (crsCode != null) {
+		if ( crsCode != null ) {
 			IType type = crsCode.getType();
-			if (type.id() == type.INT || type.id() == type.FLOAT) {
+			if ( type.id() == IType.INT || type.id() == IType.FLOAT ) {
 				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
-			} else if (type.id() == type.STRING){
+			} else if ( type.id() == IType.STRING ) {
 				code = (String) crsCode.value(scope);
 			}
 		}
+		System.out.println("code : " + code);
 		IProjection gis;
-		if (code == null) {
+		if ( code == null ) {
 			gis = scope.getSimulationScope().getProjectionFactory().getWorld();
 		} else {
 			try {
@@ -295,8 +302,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final List<Object> liste = new GamaList<Object>();
 			Geometry geom = (Geometry) ag.getInnerGeometry().clone();
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
-			if (gis != null)
+			if ( gis != null ) {
 				geom = gis.inverseTransform(geom);
+			}
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( final Object e : attributes.values() ) {
@@ -313,8 +321,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		t.commit();
 		t.close();
 		store.dispose();
-		if (gis != null)
+		if ( gis != null ) {
 			writePRJ(scope, path, gis);
+		}
 	}
 
 	private void writePRJ(final IScope scope, final String path, final IProjection gis) {

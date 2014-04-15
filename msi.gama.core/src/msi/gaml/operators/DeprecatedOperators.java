@@ -1,7 +1,14 @@
-/**
- * Created by drogoul, 16 janv. 2014
+/*********************************************************************************************
  * 
- */
+ * 
+ * 'DeprecatedOperators.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.operators;
 
 import static com.google.common.collect.Iterables.toArray;
@@ -11,8 +18,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -50,8 +57,8 @@ public class DeprecatedOperators {
 	@operator(value = "gamlfile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use gaml_file instead", value = "opens a file that a is a kind of model file.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		@example("let fileT type: file value: shapefile(\"../includes/testProperties.shp\");"),
-		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"") }, see = { "file",
-		"properties", "image", "text" })
+		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"") }, see = {
+		"file", "properties", "image", "text" })
 	@Deprecated
 	public static IGamaFile gamlFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GAMLFile(scope, s);
@@ -60,8 +67,8 @@ public class DeprecatedOperators {
 	@operator(value = "gridfile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use grid_file instead", value = "opens a file that a is a kind of shapefile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		@example("file fileT <- gridfile(\"../includes/testProperties.asc\");"),
-		@example("            // fileT represents the gridfile file \"../includes/testProperties.asc\"") }, see = { "file",
-		"properties", "image", "text", "shapefile" })
+		@example("            // fileT represents the gridfile file \"../includes/testProperties.asc\"") }, see = {
+		"file", "properties", "image", "text", "shapefile" })
 	@Deprecated
 	public static IGamaFile gridFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaGridFile(scope, s);
@@ -70,8 +77,8 @@ public class DeprecatedOperators {
 	@operator(value = "gridfile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use grid_file instead", value = "opens a file that a is a kind of gridfile. The integer parameter allows to specify a coordinate reference system (CRS). If equal to zero, it forces reading the data as alreay projected", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		@example("file fileT <- gridfile(\"../includes/testProperties.asc\");"),
-		@example("            // fileT represents the gridfile file \"../includes/testProperties.asc\"") }, see = { "file",
-		"properties", "image", "text", "shapefile" })
+		@example("            // fileT represents the gridfile file \"../includes/testProperties.asc\"") }, see = {
+		"file", "properties", "image", "text", "shapefile" })
 	@Deprecated
 	public static IGamaFile gridFile(final IScope scope, final String s, final Integer code)
 		throws GamaRuntimeException {
@@ -127,8 +134,8 @@ public class DeprecatedOperators {
 	@operator(value = "text", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use text_file instead", value = "opens a file that a is a kind of text.", comment = "The file should have a text extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing text file, an exception is risen.", examples = {
 		@example("let fileT type: file value: text(\"../includes/Stupid_Cell.Data\");"),
-		@example("				// fileT represents the text file \"../includes/Stupid_Cell.Data\"") }, see = { "file", "properties",
-		"image", "shapefile" })
+		@example("				// fileT represents the text file \"../includes/Stupid_Cell.Data\"") }, see = { "file",
+		"properties", "image", "shapefile" })
 	@Deprecated
 	public static IGamaFile textFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaTextFile(scope, s);
@@ -145,8 +152,8 @@ public class DeprecatedOperators {
 	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		@example("let fileT type: file value: shapefile(\"../includes/testProperties.shp\");"),
-		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"") }, see = { "file",
-		"properties", "image", "text" })
+		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"") }, see = {
+		"file", "properties", "image", "text" })
 	@Deprecated
 	public static IGamaFile shapeFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s);
@@ -155,8 +162,8 @@ public class DeprecatedOperators {
 	@operator(value = "shapefile", can_be_const = true, index_type = IType.INT)
 	@doc(deprecated = "use shape_file instead", value = "opens a file that a is a kind of shapefile, forcing the initial CRS to be the one indicated by the second int parameter (see http://spatialreference.org/ref/epsg/). If this int parameter is equal to 0, the data is considered as already projected", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		@example("let fileT type: file value: shapefile(\"../includes/testProperties.shp\");"),
-		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"" )}, see = { "file",
-		"properties", "image", "text" })
+		@example("            // fileT represents the shapefile file \"../includes/testProperties.shp\"") }, see = {
+		"file", "properties", "image", "text" })
 	@Deprecated
 	public static IGamaFile shapeFile(final IScope scope, final String s, final Integer code)
 		throws GamaRuntimeException {
@@ -211,13 +218,12 @@ public class DeprecatedOperators {
 		@example("interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]") })
 	@Deprecated
 	public static IList collate(final IScope scope, final IContainer cc) {
-		final Iterator it = new InterleavingIterator(toArray(nullCheck(cc).iterable(scope), Object.class));
+		final Iterator it = new InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
 		return new GamaList(Iterators.toArray(it, Object.class));
 	}
 
-	@operator(value = "evaluate_with", can_be_const = false, category={IOperatorCategory.SYSTEM})
-	@doc(deprecated = "This operator has been deprecated and there are no plans to replace it soon.", value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
-		"eval_gaml" })
+	@operator(value = "evaluate_with", can_be_const = false, category = { IOperatorCategory.SYSTEM })
+	@doc(deprecated = "This operator has been deprecated and there are no plans to replace it soon.", value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = { "eval_gaml" })
 	public static Object opEvalJava(final IScope scope, final String code, final IExpression parameters) {
 		return code;
 		// try {

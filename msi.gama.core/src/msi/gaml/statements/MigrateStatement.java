@@ -1,3 +1,14 @@
+/*********************************************************************************************
+ * 
+ * 
+ * 'MigrateStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.List;
@@ -39,8 +50,6 @@ import msi.gaml.types.IType;
 @validator(MigrateValidator.class)
 public class MigrateStatement extends AbstractStatementSequence {
 
-	
-
 	public static class MigrateValidator implements IDescriptionValidator {
 
 		/**
@@ -79,6 +88,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 		returnString = getLiteral(IKeyword.RETURNS);
 	}
 
+	// TODO AD -> VDA: Needs to be done in the validator not during runtime
 	private void verifyTarget() {
 		final SpeciesDescription species = this.getDescription().getSpeciesContext();
 		final TypeDescription targetSpeciesDesc = species.getMicroSpecies(target);
