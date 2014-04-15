@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ *
+ * 'EvidenceTheory.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Developers :
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
@@ -23,16 +16,16 @@ import java.util.*;
 import msi.gama.util.GamaList;
 
 /**
- * Classe implémentant la prise de décision à l'aide des fonctions de croyance
+ * Classe implï¿½mentant la prise de dï¿½cision ï¿½ l'aide des fonctions de croyance
  * @author PTaillandier
  * 
  */
 public class EvidenceTheory {
 
 	/**
-	 * Méthode assurant la fusion entre 2 sources
-	 * @param m1 : première source
-	 * @param m2 : deuxième source
+	 * Mï¿½thode assurant la fusion entre 2 sources
+	 * @param m1 : premiï¿½re source
+	 * @param m2 : deuxiï¿½me source
 	 * @return les masses de croyance m12
 	 */
 	private MassesCroyances fusionLesMassesLocalesDeuxSources(final MassesCroyances m1,
@@ -51,9 +44,9 @@ public class EvidenceTheory {
 	}
 
 	/**
-	 * Méthode permettant de fusionner des ensembles de masses de croyances
-	 * @param masses : ensemble de MassesCroyances : les masses de croyances à fusionner
-	 * @return les masses de croyances correspondant à la fusion de l'ensemble des masses
+	 * Mï¿½thode permettant de fusionner des ensembles de masses de croyances
+	 * @param masses : ensemble de MassesCroyances : les masses de croyances ï¿½ fusionner
+	 * @return les masses de croyances correspondant ï¿½ la fusion de l'ensemble des masses
 	 */
 	private MassesCroyances fusionLesMassesLocales(final LinkedList<MassesCroyances> masses) {
 		MassesCroyances fusion = null;
@@ -71,11 +64,11 @@ public class EvidenceTheory {
 	}
 
 	/**
-	 * Méthode assurant la fusion entre hypothèses
-	 * @param candidats : dictionnaire des hypothèses : clef : Candidat (hypothèse) -> valeur :
-	 *            MassesCroyances (associé à l'hypothèse)
-	 * @return la liste des propositions résultantes de la fusion ainsi que leur masse de croyance
-	 *         associée
+	 * Mï¿½thode assurant la fusion entre hypothï¿½ses
+	 * @param candidats : dictionnaire des hypothï¿½ses : clef : Candidat (hypothï¿½se) -> valeur :
+	 *            MassesCroyances (associï¿½ ï¿½ l'hypothï¿½se)
+	 * @return la liste des propositions rï¿½sultantes de la fusion ainsi que leur masse de croyance
+	 *         associï¿½e
 	 */
 	private Propositions fusionHypotheses(final Map<Candidate, MassesCroyances> candidats) {
 		Propositions fusion = new Propositions(candidats);

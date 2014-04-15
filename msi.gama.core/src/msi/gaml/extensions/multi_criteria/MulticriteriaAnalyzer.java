@@ -1,21 +1,14 @@
-/*
- * GAMA - V1.4 http://gama-platform.googlecode.com
+/*********************************************************************************************
  * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
- * Developers :
+ * 'MulticriteriaAnalyzer.java', in plugin 'msi.gama.core', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * 
+ * 
+ **********************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
@@ -24,7 +17,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
@@ -41,9 +34,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	public Integer WeightedMeansDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		final List<List> cands = scope.getListArg("candidates");
 		final List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
-		if ( cands == null || cands.isEmpty() ) { 
-			return -1;
-		}
+		if ( cands == null || cands.isEmpty() ) { return -1; }
 		final List<String> criteriaStr = new LinkedList<String>();
 		final Map<String, Double> weight = new HashMap<String, Double>();
 		for ( final Map<String, Object> critMap : criteriaMap ) {
@@ -142,7 +133,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			cpt++;
 		}
 		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
-		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
+		if ( candsFilter.isEmpty() ) { return scope.getRandom().between(0, candidates.size() - 1); }
 		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>((Iterable) candsFilter).firstValue(scope)
 			.getIndex(); }
 		final Candidate decision = promethee.decision(candsFilter);
@@ -184,7 +175,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			if ( q != null ) {
 				qf = Cast.asFloat(scope, q);
 			}
-			
+
 			indifference.put(name, qf);
 
 			if ( p != null ) {
@@ -216,7 +207,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			cpt++;
 		}
 		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
-		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
+		if ( candsFilter.isEmpty() ) { return scope.getRandom().between(0, candidates.size() - 1); }
 		final Candidate decision = electre.decision(candsFilter);
 		return decision.getIndex();
 
@@ -247,23 +238,23 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			}
 			final Object s2r = critMap.get("s2");
 			if ( s2r != null ) {
-				s2 =  Cast.asFloat(scope, s2r);
+				s2 = Cast.asFloat(scope, s2r);
 			}
 			final Object v1pr = critMap.get("v1p");
 			if ( v1pr != null ) {
-				v1Pour =  Cast.asFloat(scope, v1pr);
+				v1Pour = Cast.asFloat(scope, v1pr);
 			}
 			final Object v2pr = critMap.get("v2p");
 			if ( v2pr != null ) {
-				v2Pour =  Cast.asFloat(scope, v2pr);
+				v2Pour = Cast.asFloat(scope, v2pr);
 			}
 			final Object v1cr = critMap.get("v1c");
 			if ( v1cr != null ) {
-				v1Contre =  Cast.asFloat(scope, v1cr);
+				v1Contre = Cast.asFloat(scope, v1cr);
 			}
 			final Object v2cr = critMap.get("v2c");
 			if ( v2cr != null ) {
-				v2Contre =  Cast.asFloat(scope, v2cr);
+				v2Contre = Cast.asFloat(scope, v2cr);
 			}
 			final Object max = critMap.get("maximize");
 			if ( max != null && max instanceof Boolean ) {
@@ -288,7 +279,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		}
 		// System.out.println("candidates : " + candidates.size());
 		final LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
-		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1);
+		if ( candsFilter.isEmpty() ) { return scope.getRandom().between(0, candidates.size() - 1);
 
 		}
 		// System.out.println("candfilter : " + candsFilter);
