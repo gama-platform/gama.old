@@ -13,6 +13,7 @@ package msi.gama.gui.swt;
 
 import java.util.Arrays;
 import msi.gama.gui.swt.perspectives.*;
+import msi.gama.runtime.FrontEndController;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
@@ -161,6 +162,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public boolean preShutdown() {
 		try {
 			GAMA.controller.shutdown();
+			//hqnghi: if there are several controller, shut them down
+			for ( FrontEndController s : GAMA.getControllers().values() ) {
+				s.shutdown();
+			}
+			//end-hqnghi
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

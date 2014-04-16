@@ -127,7 +127,7 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public void addContext(final IStatement s) {
-		addContext("in " + s.toGaml());
+		addContext("in " + s);
 		final EObject e = s.getDescription().getUnderlyingElement(null);
 		if ( e != null ) {
 			editorContext = e;

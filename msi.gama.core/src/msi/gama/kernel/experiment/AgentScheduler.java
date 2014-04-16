@@ -185,7 +185,17 @@ public class AgentScheduler implements IStepable {
 	}
 
 	public synchronized void executeOneAction(final GamaHelper action) {
-		if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {
+		//hqnghi: check if it belong other controller beside default controller
+		String ctrlName = ((ExperimentSpecies) scope.getSimulationScope()
+				.getExperiment().getSpecies()).getControllerName();
+		FrontEndScheduler sche=GAMA.controller.getScheduler();
+		if(!ctrlName.equals("")){
+			sche=GAMA.getController(ctrlName).getScheduler();
+		}
+		//end-hqnghi
+		
+//		if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {			
+		if ( sche.paused || sche.on_user_hold ) {
 			action.run(scope);
 		} else {
 			insertOneShotAction(action);

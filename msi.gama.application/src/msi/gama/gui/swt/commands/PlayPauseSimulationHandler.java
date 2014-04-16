@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
+import msi.gama.runtime.FrontEndController;
 import msi.gama.runtime.GAMA;
 import org.eclipse.core.commands.*;
 
@@ -19,6 +20,11 @@ public class PlayPauseSimulationHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		GAMA.controller.startPause();
+		//hqnghi
+		for ( FrontEndController s : GAMA.getControllers().values() ) {
+			s.startPause();
+		}
+		//end-hqnghi
 		return null;
 	}
 }

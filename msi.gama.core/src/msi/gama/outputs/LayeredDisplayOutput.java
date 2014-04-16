@@ -350,16 +350,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
-		SimulationAgent sim = scope.getSimulationScope();
+		SimulationAgent sim = getScope().getSimulationScope();
 		Envelope env = null;
 		if ( sim != null ) {
-			env = scope.getSimulationScope().getEnvelope();
+			env = getScope().getSimulationScope().getEnvelope();
 		} else {
 			env = new Envelope3D(0, 100, 0, 100, 0, 0);
 		}
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
-		createSurface(scope, env);
+		createSurface(getScope(), env);
 		return true;
 	}
 

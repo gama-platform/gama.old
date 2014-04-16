@@ -14,6 +14,7 @@ package msi.gama.kernel.simulation;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.AgentScheduler;
+import msi.gama.kernel.experiment.ExperimentSpecies;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -79,18 +80,53 @@ public class SimulationAgent extends GamlAgent {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		GuiUtils.prepareForSimulation(this);
-		GAMA.controller.getScheduler().schedule(scheduler, scope);
-		if ( outputs != null ) {
-			final IScope simulationScope = obtainNewScope();
-			if ( simulationScope != null ) {
-				GAMA.controller.getScheduler().schedule(outputs, simulationScope);
-			} else {
-				// TODO What does it do here ? Should be elsewhere (but where ?)
-				GuiUtils.cleanAfterSimulation();
-				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-				// GuiUtils.hideMonitorView();
+//		GAMA.controller.getScheduler().schedule(scheduler, scope);
+//		if ( outputs != null ) {
+//			final IScope simulationScope = obtainNewScope();
+//			if ( simulationScope != null ) {
+//				GAMA.controller.getScheduler().schedule(outputs, simulationScope);
+//			} else {
+//				// TODO What does it do here ? Should be elsewhere (but where ?)
+//				GuiUtils.cleanAfterSimulation();
+//				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+//				// GuiUtils.hideMonitorView();
+//			}
+//		}
+		
+		//hqnghi: 2 case: multi controllers and mono controller
+		if(!((ExperimentSpecies)getExperiment().getSpecies()).getControllerName().equals("")){
+			GAMA.getController(((ExperimentSpecies)getExperiment().getSpecies()).getControllerName())
+			.getScheduler()
+			.schedule(scheduler,
+			scope);
+			if ( outputs != null ) {
+				final IScope simulationScope = obtainNewScope();
+				if ( simulationScope != null ) {
+					GAMA.getController(((ExperimentSpecies)getExperiment().getSpecies()).getControllerName()).getScheduler()
+							.schedule(
+							outputs, simulationScope);
+				} else {
+					// TODO What does it do here ? Should be elsewhere (but where ?)
+					GuiUtils.cleanAfterSimulation();
+					// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+					// GuiUtils.hideMonitorView();
+				}
+			}
+		}else{			
+			GAMA.controller.getScheduler().schedule(scheduler, scope);
+			if ( outputs != null ) {
+				final IScope simulationScope = obtainNewScope();
+				if ( simulationScope != null ) {
+					GAMA.controller.getScheduler().schedule(outputs, simulationScope);
+				} else {
+					// TODO What does it do here ? Should be elsewhere (but where ?)
+					GuiUtils.cleanAfterSimulation();
+					// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+					// GuiUtils.hideMonitorView();
+				}
 			}
 		}
+		//end-hqnghi
 	}
 
 	@Override

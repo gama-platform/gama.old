@@ -95,7 +95,19 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	protected IExploration exploration;
 	// private BatchOutput fileOutputDescription;
 	private FileOutput log;
+	
+	//hqnghi: manage experiment's controller
+	private String controllerName="";
 
+	public String getControllerName() {
+		return controllerName;
+	}
+
+	public void setControllerName(String controllerName) {
+		this.controllerName = controllerName;
+	}
+	//end-hqnghi
+	
 	@Override
 	public ExperimentAgent getAgent() {
 		return agent;

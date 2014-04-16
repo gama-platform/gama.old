@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
+import msi.gama.runtime.FrontEndController;
 import msi.gama.runtime.GAMA;
 import org.eclipse.core.commands.*;
 
@@ -19,6 +20,11 @@ public class ReloadSimulationHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		GAMA.controller.userReload();
+		//hqnghi
+				for ( FrontEndController s : GAMA.getControllers().values() ) {
+					s.userReload();
+				}
+		//end-hqnghi
 		return null;
 	}
 

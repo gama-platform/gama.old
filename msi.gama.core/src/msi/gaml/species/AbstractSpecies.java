@@ -79,7 +79,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-		return getPopulation(scope).listValue(scope, contentsType);
+//		return getPopulation(scope).listValue(scope, contentsType);
+		//hqnghi 16/04/14
+		IPopulation pop = getPopulation(scope);
+		if (pop == null) {
+			pop = scope.getSimulationScope().getPopulationFor(
+					contentsType.getName());
+		}
+		return pop.listValue(scope, contentsType);
+		//end-hqnghi
 	}
 
 	@Override

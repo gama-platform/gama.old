@@ -26,7 +26,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * 
  */
 public interface ILayer extends INamed, Comparable<ILayer> {
-
+	// hqnghi : getter and setter of scope for layer output
+	public IScope getPrivateScope();
+	
+	public void setPrivateScope(IScope privateScope);
+	//end-hqnghi
 	String getMenuName();
 
 	void drawDisplay(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;

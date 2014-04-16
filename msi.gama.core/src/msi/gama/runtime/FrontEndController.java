@@ -240,6 +240,14 @@ public class FrontEndController implements Runnable {
 		}
 	}
 
+	public void newExperiment(final IExperimentSpecies newExperiment) {
+		if ( newExperiment == null ) {
+			System.out.println("No experiment available.");
+			return;
+		}
+		experiment = newExperiment;
+	}
+	
 	public void newExperiment(final String id, final IModel model) {
 		final IExperimentSpecies newExperiment = model.getExperiment(id);
 		if ( newExperiment == null ) { return; }

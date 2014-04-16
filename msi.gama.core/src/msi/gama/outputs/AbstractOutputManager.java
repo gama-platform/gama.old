@@ -49,7 +49,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if ( output == null || outputs.containsValue(output) ) { return; }
+		if (output == null) {
+			return;
+		}// || outputs.containsValue(output) ) { return; }
 		outputs.put(output.getId(), output);
 	}
 
@@ -110,35 +112,65 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return outputs;
 	}
 
+	public boolean initSingleOutput(final IScope scope, final IOutput output) {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+
+		if ( scope.init(output) ) {
+			output.resume();
+			if ( scope.step(output) ) {
+				try {
+					output.open();
+					output.update();
+				} catch (RuntimeException e) {
+					GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
+					return false;
+				}
+			}
+		}
+
+		GuiUtils.waitForViewsToBeInitialized();
+		return true;
+	}
+	
 	@Override
 	public boolean init(final IScope scope) {
 		List<IOutput> list = new ArrayList(outputs.values());
 
-		for ( final IOutput output : list ) {
-
-			/**
-			 * TODO For the moment, the try block fixes issue 470, must be replaced by better solution
-			 */
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-
-			if ( scope.init(output) ) {
-				output.resume();
-				if ( scope.step(output) ) {
-					try {
-						output.open();
-						output.update();
-					} catch (RuntimeException e) {
-						e.printStackTrace();
-						return false;
+		if(GAMA.getControllers().size()==0){
+			for ( final IOutput output : list ) {
+	
+				/**
+				 * TODO For the moment, the try block fixes issue 470, must be replaced by better solution
+				 */
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+	
+				if ( scope.init(output) ) {
+					output.resume();
+					if ( scope.step(output) ) {
+						try {
+							output.open();
+							output.update();
+						} catch (RuntimeException e) {
+							e.printStackTrace();
+							return false;
+						}
 					}
 				}
 			}
+			GuiUtils.waitForViewsToBeInitialized();
+		}else{
+			for ( final IOutput output : list ) {
+				if(!initSingleOutput(scope, output)){return false;}
+			}
 		}
-		GuiUtils.waitForViewsToBeInitialized();
 
 		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {
 			GAMA.controller.userStart();

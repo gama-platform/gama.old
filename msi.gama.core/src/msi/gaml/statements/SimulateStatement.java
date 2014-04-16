@@ -14,14 +14,12 @@ package msi.gaml.statements;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.outputs.IOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
@@ -35,6 +33,7 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = "comodel", type = { IType.FILE }, optional = false),
 	@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
+	@facet(name = "share", type = { IType.LIST }, optional = true),
 	@facet(name = "with_input", type = { IType.MAP }, optional = true),
 	@facet(name = "with_output", type = { IType.MAP }, optional = true),
 	@facet(name = "reset", type = { IType.BOOL }, optional = true),
@@ -49,15 +48,16 @@ public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
 	private final IExpression comodel;
-	private IExperimentSpecies exp;
+	// private IExperimentSpecies exp;
 	private IExpression with_exp;
 	// private IModel mm = null;
 	private IExpression param_input = null;
 	private IExpression param_output = null;
 	private IExpression reset = null;
-	private final IOutput exp_output = null;
+	// private final IOutput exp_output = null;
 	private IExpression repeat = null;
 	private IExpression stopCondition = null;
+	private IExpression sharedResource = null;
 	private final GamaMap in = new GamaMap();
 	private final GamaMap out = new GamaMap();
 
@@ -69,7 +69,7 @@ public class SimulateStatement extends AbstractStatementSequence {
 
 		with_exp = getFacet("with_experiment");
 
-		exp = null;
+		// exp = null;
 
 		param_input = getFacet("with_input");
 
@@ -79,7 +79,7 @@ public class SimulateStatement extends AbstractStatementSequence {
 
 		repeat = getFacet(IKeyword.REPEAT);
 		stopCondition = getFacet(IKeyword.UNTIL);
-
+		sharedResource = getFacet("share");
 
 	}
 
@@ -94,8 +94,10 @@ public class SimulateStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) {
 		Object modelfile = comodel.value(scope);
 		if (modelfile instanceof GAMLFile) {
-			((GAMLFile) modelfile).execute(scope, with_exp, param_input,
-					param_output, in, out, reset, repeat, stopCondition);
+			((GAMLFile) modelfile).execute(scope, with_exp,
+					param_input,
+					param_output, in, out, reset, repeat, stopCondition,
+					sharedResource);
 		}
 
 

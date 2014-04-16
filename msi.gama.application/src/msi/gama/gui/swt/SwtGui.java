@@ -1054,7 +1054,14 @@ public class SwtGui implements IGui {
 			tell = new Tell();
 			error = new Error();
 			views = new Views();
-			OutputSynchronizer.waitForViewsToBeClosed();
+//			OutputSynchronizer.waitForViewsToBeClosed();
+			//hqnghi:
+			//TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
+			//TODO so waitForViewsToBeClosed only with mono controller
+			if(GAMA.getControllers().size()==0){
+				OutputSynchronizer.waitForViewsToBeClosed();
+			}
+			//end-hqnghi
 		} else {
 			status = null;
 		}

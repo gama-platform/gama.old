@@ -11,12 +11,16 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -34,7 +38,18 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	boolean open = false;
 	private Integer nextRefreshTime;
 	private int refreshRate;
+	//hqnghi: identify experiment name 
+	private String expName = "";
+	
+	public String getExpName() {
+		return expName;
+	}
 
+	public void setExpName(String expName) {
+		this.expName = expName;
+	}
+
+	//end-hqnghi
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
 		name = getLiteral(IKeyword.NAME);
@@ -61,7 +76,17 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public boolean init(final IScope scope) {
-		setScope(scope.copy());
+//		setScope(scope.copy());
+		//hqnghi: if experiment is not blank, it mean that output is come frome other experiment 
+		if (expName.equals("")) {
+			setScope(scope.copy());
+		}else {
+			setScope(GAMA.getController(expName).getExperiment()
+					.getAgent()
+					.getSimulation().getScope());
+		}
+		// GuiUtils.informConsole("scope " + expName);
+		//end-hqnghi
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
@@ -154,7 +179,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return getName(); // by default
 	}
 
-	protected void setScope(final IScope scope) {
+
+
+	public void setScope(final IScope scope) {
 		if ( this.scope != null ) {
 			GAMA.releaseScope(this.scope);
 		}

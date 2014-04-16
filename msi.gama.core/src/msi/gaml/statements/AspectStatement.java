@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -99,7 +100,13 @@ public class AspectStatement extends AbstractStatementSequence {
 	public Rectangle2D executeOn(final IScope scope) {
 		IAgent agent = scope.getAgentScope();
 		if ( agent != null ) {
-			final IGraphics g = scope.getGraphics();
+			IGraphics g = scope.getGraphics();
+			//hqnghi: try to find scope from experiment
+			if (g == null) {
+				g = GAMA.getExperiment().getAgent().getSimulation().getScope()
+						.getGraphics();
+			}
+			//end-hqnghi
 			if ( g == null ) { return null; }
 			try {
 				agent.acquireLock();
