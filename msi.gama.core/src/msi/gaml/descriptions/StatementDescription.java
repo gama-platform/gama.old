@@ -222,19 +222,31 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
+		// TODO Should separate validation from execution, here.
+
 		if ( temps == null ) {
 			if ( getEnclosingDescription() == null ) { return null; }
 			if ( !(getEnclosingDescription() instanceof StatementDescription) ) { return null; }
+
 			return ((StatementDescription) getEnclosingDescription()).addTemp(declaration, name, type);
 		}
-
-		// if ( !name.equals(MYSELF) ) {
-		// GuiUtils.debug("StatementDescription.addTemp " + name + " in " + this + ", declared by " + declaration);
-		// }
+		String kw = getKeyword();
+		String facet = kw == IKeyword.LET || kw == IKeyword.LOOP ? IKeyword.NAME : IKeyword.RETURNS;
 
 		if ( temps.containsKey(name) && !name.equals(MYSELF) ) {
 			declaration.warning("This declaration of " + name + " shadows a previous declaration",
-				IGamlIssue.SHADOWS_NAME);
+				IGamlIssue.SHADOWS_NAME, facet);
+		}
+		SpeciesDescription sd = declaration.getSpeciesContext();
+		ModelDescription md = declaration.getModelDescription();
+		if ( sd != null && sd != md && sd.hasVar(name) ) {
+			declaration.warning(
+				"This declaration of " + name + " shadows the declaration of an attribute of " + sd.getName(),
+				IGamlIssue.SHADOWS_NAME, facet);
+		}
+		if ( md != null && md.hasVar(name) ) {
+			declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
+				IGamlIssue.SHADOWS_NAME, facet);
 		}
 		IExpression result =
 			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
