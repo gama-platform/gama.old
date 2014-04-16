@@ -76,7 +76,7 @@ global {
 
 	reflex computeForces {
 		ask world2 {
-			do computeForces timeStep : 0.00100 * nb_balls;
+			do computeForces timeStep : 1;
 		}
 
 	}

@@ -48,7 +48,7 @@ global {
 	}
 	
 	reflex computeForces  {
-	  ask world2 {do computeForces timeStep : 0.0005;}
+	  ask world2 {do computeForces timeStep : 1;}
 	} 			
 } 
 
@@ -70,7 +70,8 @@ species ball skills: [physical3D] {
 	}	
 }
 experiment Falling_Hello_world type: gui {
-	output {
+	
+	output {		
 		display Rain  type: opengl background:rgb(0,58,64) draw_env:false{
 			species ground aspect:image;
 		    species ball aspect:sphere;			

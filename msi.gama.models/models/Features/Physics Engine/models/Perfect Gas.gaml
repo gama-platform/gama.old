@@ -91,7 +91,7 @@ global {
 		
 	}
 	reflex computeForces  {
-		ask world2 {do computeForces timeStep : 0.1;}
+		ask world2 {do computeForces timeStep : 1;}
 	} 
 			
 } 
