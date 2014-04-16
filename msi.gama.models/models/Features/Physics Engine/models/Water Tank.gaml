@@ -109,6 +109,9 @@ species ball skills: [physical3D] {
 }
 
 experiment tank type: gui {
+	init{
+		minimum_cycle_duration <-0.001;
+	}
 	output {
 		display Circle refresh_every: 1 type: opengl ambient_light: 100 background: rgb(230, 230, 230) { species ground;
 		species wall;

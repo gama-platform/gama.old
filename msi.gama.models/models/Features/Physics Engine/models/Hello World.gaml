@@ -70,6 +70,9 @@ species ball skills: [physical3D] {
 	}	
 }
 experiment Falling_Hello_world type: gui {
+	init{
+		minimum_cycle_duration <-0.001;
+	}
 	
 	output {		
 		display Rain  type: opengl background:rgb(0,58,64) draw_env:false{

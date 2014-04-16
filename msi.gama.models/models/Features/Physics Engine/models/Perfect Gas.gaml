@@ -126,6 +126,9 @@ species ball skills: [physical3D] {
 }
 
 experiment perfect_gas type: gui {
+	init{
+		minimum_cycle_duration <-0.001;
+	}
 	output {
 		display Cube type:opengl ambient_light:100 background:rgb(20,79,127) draw_env:false{
 			species ground transparency:0.5;
