@@ -75,9 +75,6 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			final String expName, final String cName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
-		// mymodel =
-		// ((GamlExpressionFactory)
-		// GAML.getExpressionFactory()).getParser().createModelFromFile(getFile().getName());
 		mymodel = ((GamlExpressionFactory) GAML.getExpressionFactory())
 				.getParser().createModelFromFile(getFile().getName());
 		experimentName = expName;
@@ -98,8 +95,10 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 					+ expName);
 		((ExperimentSpecies) exp).setControllerName(controllerName);
 		// multithread
-
-			GAMA.getController(controllerName).newExperiment(exp);
+		// eliminate conflict in close-open current Layer to initialize displays
+		exp.getExperimentOutputs().removeAllOutput();
+		exp.getSimulationOutputs().removeAllOutput();
+		GAMA.getController(controllerName).newExperiment(exp);
 		
 		// ((ExperimentSpecies) exp).createAgent();
 		// ((ExperimentSpecies) exp).open();
@@ -176,7 +175,6 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 							.getSimulationOutputs()).initSingleOutput(scope,
 							(IOutput) output);
 				}
-
 				// GAMA.getExperiment().getSimulationOutputs().init(scope);
 			}
 		}
