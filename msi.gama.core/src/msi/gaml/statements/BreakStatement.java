@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'BreakStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'BreakStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -27,7 +27,7 @@ import msi.gaml.descriptions.IDescription;
  * 
  */
 @symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(symbols = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE, IKeyword.DEFAULT })
+@inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
 public class BreakStatement extends AbstractStatement {
 
 	/**
