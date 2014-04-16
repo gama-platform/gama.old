@@ -795,9 +795,10 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		double minDiff = Double.MAX_VALUE;
 		// t343+= System.currentTimeMillis() - t;
 		// t = System.currentTimeMillis();
-
 		if ( onLinkedRoad ) {
 			for ( IAgent ag : agents ) {
+				if (ag == agent) 
+					continue;
 				double dist = distance2D((GamaPoint) ag.getLocation(), target);
 				double diff = distanceToGoal - dist;
 				if ( changeLane && Math.abs(diff) < vL ) { return 0; }
@@ -811,6 +812,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			}
 		} else {
 			for ( IAgent ag : agents ) {
+				if (ag == agent) 
+					continue;
 				double dist = getDistanceToGoal(ag);// distance2D((GamaPoint) ag.getLocation(), target);
 				double diff = distanceToGoal - dist;
 				if ( changeLane && Math.abs(diff) < vL ) { return 0; }
@@ -823,7 +826,6 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				}
 			}
 		}
-
 		// /System.out.println("agent : " + agent + " minDiff : " + minDiff + " nextAgent : " + nextAgent);
 		// t344+= System.currentTimeMillis() - t;
 		// t = System.currentTimeMillis();
@@ -837,9 +839,10 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		double realDist = Math.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
 		// t345+= System.currentTimeMillis() - t;
-
+		
 		if ( changeLane && realDist < vL ) { return 0; }
-		return Math.max(0.0, realDist);
+		realDist = Math.max(0.0, ((int) (0.5 + realDist * 1000)) / 1000.0);
+		return realDist;
 	}
 
 	private void changeLane(final IScope scope, final IAgent agent, final int previousLane, final int newLane,
@@ -1070,11 +1073,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				GamaPoint npt = new GamaPoint(newX, newY);
 				realDistance += currentLocation.euclidianDistanceTo(npt);
 				currentLocation.setLocation(npt);
+				setDistanceToGoal(agent, pt.euclidianDistanceTo(currentLocation));
 				distance = 0;
 				// t35 += System.currentTimeMillis() - t;
 				break;
 			} else {
 				currentLocation = pt;
+				setDistanceToGoal(agent, 0);
 				distance = distance - dist;
 				realDistance += dist;
 				// t35 += System.currentTimeMillis() - t;
