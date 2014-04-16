@@ -95,7 +95,18 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void updateCamera(final GL gl, final GLU glu, final int width, final int height) {
 		float aspect = (float) width / (height == 0 ? 1 : height);
-		glu.gluPerspective(45.0f, aspect, getMaxDim() / 1000, getMaxDim() * 10);
+		if(!this.getRenderer().getOrtho()){
+			glu.gluPerspective(45.0f, aspect, getMaxDim() / 1000, getMaxDim() * 10);	
+		}
+		else{
+			if (aspect >= 1.0){
+				gl.glOrtho(-getMaxDim()*aspect, getMaxDim()*aspect, -getMaxDim(), getMaxDim(), getMaxDim(), -getMaxDim());	
+			}			
+			else{
+				gl.glOrtho(-getMaxDim(), getMaxDim(), -getMaxDim()/aspect, getMaxDim()/aspect, getMaxDim(), -getMaxDim());	
+			}
+			gl.glTranslated(0.0, 0.0, getMaxDim()*1.5);
+		}
 		makeGluLookAt(glu);
 		animate();
 	}

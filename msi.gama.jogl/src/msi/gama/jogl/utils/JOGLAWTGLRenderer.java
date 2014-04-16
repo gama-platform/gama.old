@@ -68,6 +68,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean drawNormal = false;
 	// Display model a a 3D Cube
 	private boolean cubeDisplay = true;
+	// use orthographic projection
+	 boolean orthographic = false;
 
 	public boolean triangulation = false;
 
@@ -261,17 +263,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl = drawable.getGL();
 		this.width = width;
 		this.height = height == 0 ? 1 : height;
-
+		float aspect = (float) width / (height == 0 ? 1 : height);
 		// final float aspect = (float) width / height;
 		// Set the viewport (display area) to cover the entire window
-		gl.glViewport(0, 0, width, height);
+		gl.glViewport(0, 0, width, height);	
 		// Enable the model view - any new transformations will affect the model-view matrix
 		gl.glMatrixMode(GL_MODELVIEW);
 		gl.glLoadIdentity(); // reset
 		// perspective view
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		// glu.gluPerspective(45.0f, aspect, 0.1f, getMaxEnvDim() * 100);
+
+		
 		// FIXME Update camera as well ??
 		camera.updateCamera(gl, glu, width, height);
 	}
@@ -420,6 +423,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getCubeDisplay() {
 		return this.cubeDisplay;
+	}
+	
+	public void setOrtho(final boolean o) {
+		this.orthographic = o;
+	}
+
+	public boolean getOrtho() {
+		return this.orthographic;
 	}
 
 	public void setShowFPS(final boolean fps) {

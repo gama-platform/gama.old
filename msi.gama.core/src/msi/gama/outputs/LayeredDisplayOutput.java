@@ -57,6 +57,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
+	@facet(name = IKeyword.ORTHOGRAPHIC_PROJECTION, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is rgb(125,125,125)")),
 	@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width*2}")),
@@ -144,6 +145,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private final boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
 	private final boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
+	private boolean ortho = false;
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
@@ -248,6 +250,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
 			setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
+		}
+		
+		final IExpression ortho = getFacet(IKeyword.ORTHOGRAPHIC_PROJECTION);
+		if ( ortho != null ) {
+			setOrtho(Cast.asBool(getScope(), ortho.value(getScope())));
 		}
 
 		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
@@ -618,6 +625,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public boolean getCubeDisplay() {
 		return cubeDisplay;
 	}
+	
+	public boolean getOrtho() {
+		return ortho;
+	}
+	
+	private void setOrtho(final boolean o) {
+		this.ortho = o;
+	}
 
 	// private void setCubeDisplay(final boolean c) {
 	// this.cubeDisplay = c;
@@ -646,7 +661,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setDrawEnv(final boolean drawEnv) {
 		this.drawEnv = drawEnv;
 	}
-
+	
 	public boolean getDrawDiffuseLight() {
 		return drawDiffLight;
 	}
