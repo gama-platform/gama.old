@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IAgent.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -119,17 +119,9 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
-	public void setHeading(Integer heading);
+	// public void setHeading(Integer heading);
 
-	public Integer getHeading();
-	
-	public void setPitch(Integer pitch);
-
-	public Integer getPitch();
-	
-	public void setRoll(Integer roll);
-
-	public Integer getRoll();
+	// public Integer getHeading();
 
 	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
