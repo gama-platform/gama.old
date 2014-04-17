@@ -240,6 +240,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentSpecies exp) {
+		if ( !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
 			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
 	}
@@ -1059,7 +1060,7 @@ public class SwtGui implements IGui {
 			//TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
 			//TODO so waitForViewsToBeClosed only with mono controller
 			if(GAMA.getControllers().size()==0){
-				OutputSynchronizer.waitForViewsToBeClosed();
+			OutputSynchronizer.waitForViewsToBeClosed();
 			}
 			//end-hqnghi
 		} else {
@@ -1131,7 +1132,14 @@ public class SwtGui implements IGui {
 	@Override
 	public void updateSpeedDisplay(final Double d, final boolean notify) {
 		if ( speedStatus != null ) {
-			speedStatus.setInit(d, notify);
+			asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					speedStatus.setInit(d, notify);
+				}
+			});
+
 		}
 	}
 
