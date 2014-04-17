@@ -502,10 +502,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry().getEnvelope());
 			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
-			final Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
-			if ( newHeading != null && !getTopology().isTorus() ) {
-				setHeading(newHeading);
-			}
+			// final Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
+			// if ( newHeading != null && !getTopology().isTorus() ) {
+			// setHeading(newHeading);
+			// }
 			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
