@@ -180,7 +180,7 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 			if ( uri != null && exp != null ) {
 				ResourceSet rs = new SynchronizedXtextResourceSet();
 				GamlResource resource = (GamlResource) rs.getResource(uri, true);
-				IModel model = GamlResourceBuilder.getInstance().build(resource);
+				IModel model = GamlModelBuilder.getInstance().compile(resource);
 				if ( model == null ) { return; }
 				GuiUtils.openSimulationPerspective();
 				GAMA.controller.newExperiment(exp, model);

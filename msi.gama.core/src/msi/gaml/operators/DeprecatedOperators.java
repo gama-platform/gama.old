@@ -23,8 +23,8 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML.InterleavingIterator;
 import msi.gama.util.*;
+import msi.gama.util.Guava.InterleavingIterator;
 import msi.gama.util.file.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
@@ -218,7 +218,7 @@ public class DeprecatedOperators {
 		@example("interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]") })
 	@Deprecated
 	public static IList collate(final IScope scope, final IContainer cc) {
-		final Iterator it = new InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
+		final Iterator it = new Guava.InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
 		return new GamaList(Iterators.toArray(it, Object.class));
 	}
 

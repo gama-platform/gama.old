@@ -146,6 +146,7 @@ public class GAMA {
 
 	public static boolean isPaused() {
 		return controller.getScheduler().paused;
+
 	}
 
 	/**

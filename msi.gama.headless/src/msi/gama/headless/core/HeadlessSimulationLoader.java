@@ -116,7 +116,7 @@ public class HeadlessSimulationLoader {
 
 				// GamlJavaValidator validator = new GamlJavaValidator(); // .getInstance(GamlJavaValidator.class);
 				List<GamlCompilationError> errors = new ArrayList();
-				lastModel = GamlResourceBuilder.getInstance().build(r, errors);
+				lastModel = GamlModelBuilder.getInstance().compile(r, errors);
 				if ( lastModel == null ) {
 					Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(
 						"GAMA cannot build model " + fileName);

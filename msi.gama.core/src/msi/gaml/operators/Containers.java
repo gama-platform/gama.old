@@ -29,7 +29,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.GAML.InterleavingIterator;
+import msi.gama.util.Guava.InterleavingIterator;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.*;
 import msi.gaml.species.ISpecies;
@@ -90,7 +90,7 @@ public class Containers {
 		@example(value = "[1::2, 3::4, 5::6] contains_all [2,4]", equals = "true") }, see = { "contains",
 		"contains_any" })
 	public static Boolean contains_all(final IScope scope, final IContainer m, final IContainer l) {
-		return Iterables.all(nullCheck(scope, l).iterable(scope), inContainer(scope, m));
+		return Iterables.all(nullCheck(scope, l).iterable(scope), Guava.inContainer(scope, m));
 	}
 
 	@operator(value = "contains_any", can_be_const = true, category = { IOperatorCategory.CONTAINER })
@@ -101,7 +101,7 @@ public class Containers {
 		@example(value = "[1::2, 3::4, 5::6] contains_any [2,4]", equals = "true") }, see = { "contains",
 		"contains_all" })
 	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer l) {
-		return Iterables.any(nullCheck(scope, c).iterable(scope), inContainer(scope, l));
+		return Iterables.any(nullCheck(scope, c).iterable(scope), Guava.inContainer(scope, l));
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.LIST })
@@ -370,7 +370,7 @@ public class Containers {
 		"first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer original, final IExpression filter) {
 		// AD: 16/9/13 Bugfix where the lists created could not be used in further computations
-		ImmutableListMultimap m = Multimaps.index(nullCheck(scope, original).iterable(scope), function(scope, filter));
+		ImmutableListMultimap m = Multimaps.index(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter));
 		GamaMap result = new GamaMap();
 		for ( Map.Entry<Object, List> entry : (Collection<Map.Entry<Object, List>>) m.asMap().entrySet() ) {
 			result.put(entry.getKey(), new GamaList(entry.getValue()));
@@ -412,7 +412,7 @@ public class Containers {
 		@example(value = "(list(node) last_with (round(node(each).location.x) > 32)", equals = "node3", isExecutable = false) }, see = {
 		"group_by", "first_with", "where" })
 	public static Object last_with(final IScope scope, final IContainer original, final IExpression filter) {
-		final Iterable it = filter(nullCheck(scope, original).iterable(scope), withPredicate(scope, filter));
+		final Iterable it = filter(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter));
 		return size(it) == 0 ? null : getLast(it);
 	}
 
@@ -428,7 +428,7 @@ public class Containers {
 		@example(value = "(list(node) first_with (round(node(each).location.x) > 32)", equals = "node2", isExecutable = false) }, see = {
 		"group_by", "last_with", "where" })
 	public static Object first_with(final IScope scope, final IContainer original, final IExpression filter) {
-		return find(nullCheck(scope, original).iterable(scope), withPredicate(scope, filter), null);
+		return find(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter), null);
 	}
 
 	@operator(value = { "max_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
@@ -441,8 +441,8 @@ public class Containers {
 		@example(value = "g2.vertices max_of (g2 degree_of( each ))", equals = "2"),
 		@example(value = "(list(node) max_of (round(node(each).location.x))", equals = "96", isExecutable = false) }, see = { "min_of" })
 	public static Object max_of(final IScope scope, final IContainer container, final IExpression filter) {
-		final Function f = GAML.<Comparable> function(scope, filter);
-		final Object result = f.apply(orderOn(f).max(emptyCheck(scope, container).iterable(scope)));
+		final Function f = Guava.<Comparable> function(scope, filter);
+		final Object result = f.apply(Guava.orderOn(f).max(emptyCheck(scope, container).iterable(scope)));
 		return result;
 	}
 
@@ -456,8 +456,8 @@ public class Containers {
 		@example(value = "g2 min_of (length(g2 out_edges_of each) )", equals = "0"),
 		@example(value = "(list(node) min_of (round(node(each).location.x))", equals = "4", isExecutable = false) }, see = { "max_of" })
 	public static Object min_of(final IScope scope, final IContainer container, final IExpression filter) {
-		final Function f = GAML.<Comparable> function(scope, filter);
-		final Object result = f.apply(orderOn(f).min(emptyCheck(scope, container).iterable(scope)));
+		final Function f = Guava.<Comparable> function(scope, filter);
+		final Object result = f.apply(Guava.orderOn(f).min(emptyCheck(scope, container).iterable(scope)));
 		return result;
 	}
 
@@ -505,7 +505,7 @@ public class Containers {
 		final int size = size(it);
 		if ( size == 0 ) { return GamaList.EMPTY_LIST; }
 		if ( size == 1 ) { return GamaList.with(getFirst(it, null)); }
-		return new GamaList(orderOn(function(scope, filter)).sortedCopy(it));
+		return new GamaList(Guava.orderOn(Guava.function(scope, filter)).sortedCopy(it));
 	}
 
 	/**
@@ -555,7 +555,7 @@ public class Containers {
 		@example(value = "(list(node) where (round(node(each).location.x) > 32)", equals = "[node2, node3]", isExecutable = false) }, see = {
 		"first_with", "last_with", "where" })
 	public static IList where(final IScope scope, final IContainer original, final IExpression filter) {
-		return new GamaList(filter(nullCheck(scope, original).iterable(scope), withPredicate(scope, filter)));
+		return new GamaList(filter(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter)));
 	}
 
 	@operator(value = { "with_max_of" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
@@ -567,7 +567,7 @@ public class Containers {
 		@example(value = "[1::2, 3::4, 5::6] with_max_of (each)", equals = "6") }, see = { "where", "with_min_of" })
 	public static Object with_max_of(final IScope scope, final IContainer container, final IExpression filter) {
 		if ( nullCheck(scope, container).isEmpty(scope) ) { return null; }
-		return orderOn(function(scope, filter)).max(container.iterable(scope));
+		return Guava.orderOn(Guava.function(scope, filter)).max(container.iterable(scope));
 	}
 
 	@operator(value = { "with_min_of" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
@@ -579,7 +579,7 @@ public class Containers {
 		@example(value = "[1::2, 3::4, 5::6] with_min_of (each)", equals = "2") }, see = { "where", "with_max_of" })
 	public static Object with_min_of(final IScope scope, final IContainer container, final IExpression filter) {
 		if ( nullCheck(scope, container).isEmpty(scope) ) { return null; }
-		return orderOn(function(scope, filter)).min(container.iterable(scope));
+		return Guava.orderOn(Guava.function(scope, filter)).min(container.iterable(scope));
 	}
 
 	@operator(value = { "accumulate" }, content_type = ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE, iterator = true, category = IOperatorCategory.CONTAINER)
@@ -589,7 +589,7 @@ public class Containers {
 		@example(value = "[1,2,4] accumulate ([2,4])", equals = "[2,4,2,4,2,4]") }, see = { "collect" })
 	public static IList accumulate(final IScope scope, final IContainer original, final IExpression filter) {
 		return new GamaList(Iterables.concat(Iterables.transform(nullCheck(scope, original).iterable(scope),
-			iterableFunction(scope, filter))));
+			Guava.iterableFunction(scope, filter))));
 	}
 
 	@operator(value = { "interleave" }, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE, category = IOperatorCategory.CONTAINER)
@@ -597,7 +597,7 @@ public class Containers {
 		@example(value = "interleave([1,2,4,3,5,7,6,8])", equals = "[1,2,4,3,5,7,6,8]"),
 		@example(value = "interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])", equals = "['e11','e21','e31','e12','e22','e32','e13','e23','e33']") })
 	public static IList interleave(final IScope scope, final IContainer cc) {
-		final Iterator it = new InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
+		final Iterator it = new Guava.InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
 		return new GamaList(Iterators.toArray(it, Object.class));
 	}
 
@@ -611,7 +611,7 @@ public class Containers {
 		@example(value = "int n <- (list(node) count (round(node(each).location.x) > 32);", isExecutable = false),
 		@example(value = "[1::2, 3::4, 5::6] count (each > 4)", equals = "1") }, see = { "group_by" })
 	public static Integer count(final IScope scope, final IContainer original, final IExpression filter) {
-		return size(filter(nullCheck(scope, original).iterable(scope), withPredicate(scope, filter)));
+		return size(filter(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter)));
 	}
 
 	@operator(value = { "index_by" }, iterator = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.SECOND_TYPE, category = IOperatorCategory.CONTAINER)
@@ -619,7 +619,7 @@ public class Containers {
 	public static GamaMap index_by(final IScope scope, final IContainer original, final IExpression keyProvider) {
 		try {
 			return new GamaMap(Maps.uniqueIndex(nullCheck(scope, original).iterable(scope),
-				function(scope, keyProvider)));
+				Guava.function(scope, keyProvider)));
 		} catch (IllegalArgumentException e) {
 			GAMA.reportError(GamaRuntimeException.warning("The key computed by " + Cast.toGaml(keyProvider) +
 				" is not unique.", scope), false);
@@ -637,8 +637,8 @@ public class Containers {
 		final BinaryOperator pair = (BinaryOperator) filter;
 		if ( !pair.getName().equals("::") ) { throw GamaRuntimeException.error(
 			"'as_map' expects a pair as second argument", scope); }
-		final Function keyFunction = function(scope, pair.arg(0));
-		final Function valueFunction = function(scope, pair.arg(1));
+		final Function keyFunction = Guava.function(scope, pair.arg(0));
+		final Function valueFunction = Guava.function(scope, pair.arg(1));
 		return new GamaMap(Maps.transformValues(
 			Maps.uniqueIndex(nullCheck(scope, original).iterable(scope), keyFunction), valueFunction));
 	}
@@ -654,7 +654,7 @@ public class Containers {
 	public static IList collect(final IScope scope, final IContainer original, final IExpression filter) {
 		// GuiUtils.debug("Containers.collect begin for " + scope.getAgentScope());
 		IList list =
-			new GamaList(Iterables.transform(nullCheck(scope, original).iterable(scope), function(scope, filter)));
+			new GamaList(Iterables.transform(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter)));
 		// GuiUtils.debug("Containers.collect end");
 		return list;
 	}

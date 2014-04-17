@@ -12,6 +12,7 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
+import com.google.common.base.Predicate;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
@@ -45,6 +46,19 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 		public void notifyPopulationCleared(IPopulation pop);
 
+	}
+
+	public static class IsLiving implements Predicate<IAgent> {
+	
+		/**
+		 * Method apply()
+		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+		 */
+		@Override
+		public boolean apply(final IAgent input) {
+			return input != null && !input.dead();
+		}
+	
 	}
 
 	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;

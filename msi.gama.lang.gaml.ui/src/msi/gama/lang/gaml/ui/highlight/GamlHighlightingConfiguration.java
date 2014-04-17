@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlHighlightingConfiguration.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * 
+ * 'GamlHighlightingConfiguration.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -40,18 +40,15 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public void configure(final IHighlightingConfigurationAcceptor acceptor) {
 		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Statement keywords", keywordTextStyle());
-		acceptor.acceptDefaultHighlighting(PUNCTUATION_ID, "Punctuation characters",
-			punctuationTextStyle());
-		acceptor.acceptDefaultHighlighting(OPERATOR_ID, "Operators & action calls",
-			operatorTextStyle());
+		acceptor.acceptDefaultHighlighting(PUNCTUATION_ID, "Punctuation characters", punctuationTextStyle());
+		acceptor.acceptDefaultHighlighting(OPERATOR_ID, "Operators & action calls", operatorTextStyle());
 		acceptor.acceptDefaultHighlighting(RESERVED_ID, "Reserved symbols", reservedTextStyle());
 		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comments", commentTextStyle());
 		acceptor.acceptDefaultHighlighting(STRING_ID, "Strings", stringTextStyle());
 		acceptor.acceptDefaultHighlighting(NUMBER_ID, "Literal constants", numberTextStyle());
 		acceptor.acceptDefaultHighlighting(DEFAULT_ID, "Default", defaultTextStyle());
 		acceptor.acceptDefaultHighlighting(FACET_ID, "Facet keys", facetTextStyle());
-		acceptor.acceptDefaultHighlighting(VARIABLE_ID, "Variables used in expressions",
-			variableTextStyle());
+		acceptor.acceptDefaultHighlighting(VARIABLE_ID, "Variables used in expressions", variableTextStyle());
 		acceptor.acceptDefaultHighlighting(VARDEF_ID, "Variables definitions", varDefTextStyle());
 		acceptor.acceptDefaultHighlighting(TYPE_ID, "Type", typeTextStyle());
 		acceptor.acceptDefaultHighlighting(ASSIGN_ID, "Assignment signs", assignTextStyle());
@@ -61,7 +58,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	public TextStyle facetTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
-		textStyle.setColor(new RGB(150, 0, 60));
+		textStyle.setColor(new RGB(154, 72, 71));
 		return textStyle;
 	}
 
@@ -129,7 +126,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	public TextStyle keywordTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(127, 0, 85));
-		textStyle.setStyle(SWT.BOLD);
+		textStyle.setStyle(SWT.NONE);
 		return textStyle;
 	}
 
@@ -139,9 +136,16 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 		return textStyle;
 	}
 
+	@Override
+	public TextStyle stringTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(61, 173, 255));
+		return textStyle;
+	}
+
 	public TextStyle varDefTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setStyle(SWT.BOLD);
+		textStyle.setStyle(SWT.NONE);
 		textStyle.setColor(new RGB(0, 0, 153));
 		return textStyle;
 	}

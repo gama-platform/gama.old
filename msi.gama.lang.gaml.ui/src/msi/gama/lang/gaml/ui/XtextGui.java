@@ -61,7 +61,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 			ResourceSet rs = new SynchronizedXtextResourceSet();
 			GamlResource resource = (GamlResource) rs.getResource(uri, true);
 			List<GamlCompilationError> errors = new ArrayList();
-			IModel model = GamlResourceBuilder.getInstance().build(resource, errors);
+			IModel model = GamlModelBuilder.getInstance().compile(resource, errors);
 			if ( model == null ) {
 				error("File " + file.getFullPath().toString() + " cannot be built because of " + errors.size() +
 					" compilation errors");

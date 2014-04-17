@@ -32,6 +32,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 import org.eclipse.core.runtime.Platform;
 
@@ -46,23 +47,44 @@ import org.eclipse.core.runtime.Platform;
 @species(name = IKeyword.EXPERIMENT)
 @vars({
 
-	@var(name = IKeyword.SIMULATION, type = IType.AGENT, doc = @doc(value = "contains a reference to the current simulation being run by this experiment", comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
+	@var(name = IKeyword.SIMULATION,
+		type = IType.AGENT,
+		doc = @doc(value = "contains a reference to the current simulation being run by this experiment",
+			comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 	// @var(name = GAMA._FATAL, type = IType.BOOL),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL),
-	@var(name = ExperimentAgent.MODEL_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the folder in which the current model is located", comment = "Always terminated with a trailing separator")),
-	@var(name = IKeyword.SEED, type = IType.FLOAT, doc = @doc(value = "The seed of the random number generator", comment = "Each time it is set, the random number generator is reinitialized")),
-	@var(name = IKeyword.RNG, type = IType.STRING, doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
-		IKeyword.MERSENNE +
-		" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
-		IKeyword.CELLULAR +
-		" is a cellular automaton based generator that should be a bit faster, but less reliable; " +
-		IKeyword.XOR +
-		" is another choice. Much faster than the previous ones, but with short sequences; and " +
-		IKeyword.JAVA +
-		" invokes the standard Java generator")),
-	@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION, type = IType.FLOAT, doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')", comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
-	@var(name = ExperimentAgent.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
-	@var(name = ExperimentAgent.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
+	@var(name = ExperimentAgent.MODEL_PATH,
+		type = IType.STRING,
+		constant = true,
+		doc = @doc(value = "Contains the absolute path to the folder in which the current model is located",
+			comment = "Always terminated with a trailing separator")),
+	@var(name = IKeyword.SEED, type = IType.FLOAT, doc = @doc(value = "The seed of the random number generator",
+		comment = "Each time it is set, the random number generator is reinitialized")),
+	@var(name = IKeyword.RNG,
+		type = IType.STRING,
+		doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
+			IKeyword.MERSENNE +
+			" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
+			IKeyword.CELLULAR +
+			" is a cellular automaton based generator that should be a bit faster, but less reliable; " +
+			IKeyword.XOR +
+			" is another choice. Much faster than the previous ones, but with short sequences; and " +
+			IKeyword.JAVA +
+			" invokes the standard Java generator")),
+	@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
+		type = IType.FLOAT,
+		doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
+			comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
+	@var(name = ExperimentAgent.WORKSPACE_PATH,
+		type = IType.STRING,
+		constant = true,
+		doc = @doc(value = "Contains the absolute path to the workspace of GAMA",
+			comment = "Always terminated with a trailing separator")),
+	@var(name = ExperimentAgent.PROJECT_PATH,
+		type = IType.STRING,
+		constant = true,
+		doc = @doc(value = "Contains the absolute path to the project in which the current model is located",
+			comment = "Always terminated with a trailing separator")) })
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
@@ -123,7 +145,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				.getScheduler()
 				.unschedule(getSimulation().getScheduler());
 			}else{
-				GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());				
+			GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 			}
 			//end-hqnghi
 
@@ -196,7 +218,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		//hqnghi: in case experiment have its own controller
 
 		if(((ExperimentSpecies) getSpecies()).getControllerName()!=""){
-			if ( outputs != null ) {
+		if ( outputs != null ) {
 				GAMA.getController(
 						((ExperimentSpecies) getSpecies()).getControllerName())
 						.getScheduler()
@@ -211,10 +233,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		}else{
 			if ( outputs != null ) {
-				GAMA.controller.getScheduler().schedule(outputs, getScope());
-			}
-			GAMA.controller.getScheduler().schedule(this, getScope());			
+			GAMA.controller.getScheduler().schedule(outputs, getScope());
 		}
+		GAMA.controller.getScheduler().schedule(this, getScope());
+
+	}
 		//end-hqnghi
 	}
 
@@ -292,8 +315,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 //		GAMA.setDelayFromExperiment(d);
 		//hqnghi
 		if(GAMA.getControllers().size()==0){			
-			GAMA.setDelayFromExperiment(d);
-		}
+		GAMA.setDelayFromExperiment(d);
+	}
 		//end-hqnghi
 	}
 
@@ -452,6 +475,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		@Override
 		public IExperimentAgent getExperiment() {
 			return ExperimentAgent.this;
+		}
+
+		@Override
+		public IDescription getExperimentContext() {
+			return ExperimentAgent.this.getSpecies().getDescription();
+		}
+
+		@Override
+		public IDescription getModelContext() {
+			return ExperimentAgent.this.getSpecies().getModel().getDescription();
 		}
 
 		@Override

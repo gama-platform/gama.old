@@ -236,7 +236,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					public IModel exec(final XtextResource state) throws Exception {
 						ResourceSet rs = state.getResourceSet();
 						GamlResource resource = (GamlResource) rs.getResource(uri, true);
-						return GamlResourceBuilder.getInstance().build(resource);
+						return GamlModelBuilder.getInstance().compile(resource);
 					}
 
 				});
@@ -376,7 +376,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					@Override
 					public IModel exec(final XtextResource state) throws Exception {
 						List<GamlCompilationError> errors = new ArrayList();
-						return GamlResourceBuilder.getInstance().build((GamlResource) state);
+						return GamlModelBuilder.getInstance().compile((GamlResource) state);
 					}
 
 				});

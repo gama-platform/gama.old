@@ -33,7 +33,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public void validate(final Model model) {
 		GamlResource newResource = (GamlResource) model.eResource();
 		if ( newResource.isValidating() ) { return; }
-		ErrorCollector errors = GamlResourceBuilder.getInstance().validate(newResource);
+		ErrorCollector errors = GamlModelBuilder.getInstance().validate(newResource);
 		if ( !errors.hasInternalSyntaxErrors() ) {
 			if ( errors.hasInternalErrors() ) {
 				GuiUtils.debug("GamlJavaValidator.validate");

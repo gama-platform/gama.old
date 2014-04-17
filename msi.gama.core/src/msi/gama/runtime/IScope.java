@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IScope.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IScope.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
 
@@ -186,6 +187,10 @@ public interface IScope {
 	public abstract SimulationAgent getSimulationScope();
 
 	public abstract IExperimentAgent getExperiment();
+
+	public abstract IDescription getExperimentContext();
+
+	public abstract IDescription getModelContext();
 
 	public abstract IModel getModel();
 

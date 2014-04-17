@@ -23,7 +23,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
@@ -347,7 +347,8 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
+	public boolean
+		execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
 		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
 		// We then try to push the agent on the stack
@@ -633,8 +634,7 @@ public abstract class AbstractScope implements IScope {
 
 	/**
 	 * Method setAgentVarValue()
-	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String,
-	 *      java.lang.Object)
+	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void setAgentVarValue(final IAgent agent, final String name, final Object v) {
@@ -764,6 +764,28 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public IModel getModel() {
 		return root.getModel();
+	}
+
+	/**
+	 * Method getExperimentContext()
+	 * @see msi.gama.runtime.IScope#getExperimentContext()
+	 */
+	@Override
+	public IDescription getExperimentContext() {
+		IExperimentAgent a = getExperiment();
+		if ( a == null ) { return null; }
+		return a.getSpecies().getDescription();
+	}
+
+	/**
+	 * Method getModelContext()
+	 * @see msi.gama.runtime.IScope#getModelContext()
+	 */
+	@Override
+	public IDescription getModelContext() {
+		IModel model = getModel();
+		if ( model == null ) { return null; }
+		return model.getDescription();
 	}
 
 	/**

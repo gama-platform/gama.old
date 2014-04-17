@@ -42,7 +42,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		super.configure(binder);
 		System.out.println(">> Registering GAML expression compiler.");
 		GAML.getExpressionFactory().registerParserProvider(new GamlExpressionCompilerProvider());
-		DescriptionFactory.setDocManager(GamlResourceDocManager.getInstance());
+		GAML.getModelFactory().registerModelBuilder(GamlModelBuilder.getInstance());
+		DescriptionFactory.registerDocManager(GamlResourceDocManager.getInstance());
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
@@ -59,7 +60,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	@Override
 	// @SingletonBinding(eager = true)
-	public Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
+		public
+		Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
 		return GamlJavaValidator.class;
 	}
 

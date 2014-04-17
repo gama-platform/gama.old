@@ -136,7 +136,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 		// Opens a table inspector on the agents of this species
 		this(DescriptionFactory.create(
 			IKeyword.INSPECT,
-			GAML.getExperimentContext(),
+			GAML.getExperimentContext(rootAgent),
 			IKeyword.NAME,
 			species == null ? StringUtils.toGamlString("Custom " + count++) : StringUtils.toGamlString(species
 				.getName()), IKeyword.VALUE, species == null ? "nil" : species.getName(), IKeyword.TYPE,
@@ -146,7 +146,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
 		// Opens a table inspector on the agents of this container
-		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
 			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
 			types.get(INSPECT_TABLE)).validate());
 		lastValue = agents;
@@ -155,7 +155,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
 		// Opens a table inspector on the agents of this container
-		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME,
+		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
 			StringUtils.toGamlString("Custom " + count++), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
 			types.get(INSPECT_TABLE)).validate());
 		// lastValue = agents;

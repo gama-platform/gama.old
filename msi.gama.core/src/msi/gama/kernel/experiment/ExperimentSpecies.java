@@ -61,7 +61,10 @@ import msi.gaml.variables.IVariable;
 	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE,
+		type = IType.LABEL,
+		values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ },
+		optional = false) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @validator(BatchValidator.class)
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
@@ -95,7 +98,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	protected IExploration exploration;
 	// private BatchOutput fileOutputDescription;
 	private FileOutput log;
-	
+
 	//hqnghi: manage experiment's controller
 	private String controllerName="";
 
@@ -428,6 +431,16 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		@Override
 		public IExperimentAgent getExperiment() {
 			return (ExperimentAgent) root;
+		}
+
+		@Override
+		public IDescription getExperimentContext() {
+			return ExperimentSpecies.this.getDescription();
+		}
+
+		@Override
+		public IDescription getModelContext() {
+			return ExperimentSpecies.this.getModel().getDescription();
 		}
 
 		@Override

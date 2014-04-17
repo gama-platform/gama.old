@@ -145,7 +145,7 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
-		return getModelFactory().assemble(projectPath, modelPath, ImmutableList.copyOf(models), getErrorCollector(),
+		return getModelFactory().createModelDescription(projectPath, modelPath, ImmutableList.copyOf(models), getErrorCollector(),
 			isEdited);
 	}
 

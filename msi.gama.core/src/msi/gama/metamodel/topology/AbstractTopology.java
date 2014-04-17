@@ -322,7 +322,7 @@ public abstract class AbstractTopology implements ITopology {
 		final double sin = distance * Maths.sin(direction);
 		return normalizeLocation(new GamaPoint(source.getX() + cos, source.getY() + sin), nullIfOutside);
 	}
-	
+
 	@Override
 	public ILocation getDestination3D(final ILocation source, final int heading,final int pitch, final double distance,
 		final boolean nullIfOutside) {		

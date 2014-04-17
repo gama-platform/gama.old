@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DrivingSkill2d.java', in plugin 'msi.gaml.extensions.traffic2d', is part of the source code of the 
+ * 
+ * 'DrivingSkill2d.java', in plugin 'msi.gaml.extensions.traffic2d', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -96,7 +96,7 @@ public class DrivingSkill2d extends MovingSkill {
 	@setter(INITIAL_HEADING)
 	public void setIntitialHeading(final IAgent agent, final int initialHeading) {
 		agent.setAttribute(INITIAL_HEADING, initialHeading);
-		agent.setHeading(initialHeading);
+		setHeading(agent, initialHeading);
 	}
 
 	@getter(CONSIDERING_RANGE)
@@ -153,14 +153,31 @@ public class DrivingSkill2d extends MovingSkill {
 	/**
 	 * Coded by lvminh, updated 2012 oct 30
 	 */
-	@action(name = "vehicle_goto", args = {
-		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	@action(name = "vehicle_goto",
+		args = {
+			@arg(name = "target",
+				type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				optional = false,
+				doc = @doc("the location or entity towards which to move.")),
+			@arg(name = IKeyword.SPEED,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "background",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = false,
+				doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
+			@arg(name = "on",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = true,
+				doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.",
+			returns = "the path followed by the agent.",
+			examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	@args(names = { "target_type" })
 	// @args(names = { "target", IKeyword.SPEED, "on", "target_type" })
-	public Integer primVehicleGoto(final IScope scope) throws GamaRuntimeException {
+	public
+		Integer primVehicleGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
@@ -230,7 +247,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
 		GamaPoint pointToAdd = null;
-		final int currentHeadingAngle = agent.getHeading();
+		final int currentHeadingAngle = getHeading(agent);
 		int candidateHeading, dAngle;
 		// System.out.println("M: maxDist before: " + maxDist);
 		final GamaShape agentShape = (GamaShape) agent.getGeometry();
@@ -328,8 +345,8 @@ public class DrivingSkill2d extends MovingSkill {
 			final int newHeading = chosenCandidate.candidateHeading;
 			final int newRotateAngle = chosenCandidate.dAngle;
 			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agent, newRotateAngle));
-			agent.setLocation(chosenCandidate.candidatePoint);
-			agent.setHeading(newHeading);
+			setLocation(agent, chosenCandidate.candidatePoint);
+			setHeading(agent, newHeading);
 		} else {
 			/* move back */
 			candidateHeading = currentHeadingAngle + 180;
@@ -340,7 +357,7 @@ public class DrivingSkill2d extends MovingSkill {
 			final GamaShape candidateShape =
 				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(scope, agentShape, chosenCandidate);
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
-				agent.setLocation(chosenCandidate);
+				setLocation(agent, chosenCandidate);
 			}
 			/**/
 		}
@@ -360,14 +377,31 @@ public class DrivingSkill2d extends MovingSkill {
 	/**
 	 * Coded by lvminh, updated 2012 oct 30
 	 */
-	@action(name = "pedestrian_goto", args = {
-		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	@action(name = "pedestrian_goto",
+		args = {
+			@arg(name = "target",
+				type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				optional = false,
+				doc = @doc("the location or entity towards which to move.")),
+			@arg(name = IKeyword.SPEED,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "background",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = false,
+				doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
+			@arg(name = "on",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = true,
+				doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.",
+			returns = "the path followed by the agent.",
+			examples = { @example("do goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	// @args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	@args(names = { "target_type" })
-	public Integer primPedestrianGoto(final IScope scope) throws GamaRuntimeException {
+	public
+		Integer primPedestrianGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
@@ -437,7 +471,7 @@ public class DrivingSkill2d extends MovingSkill {
 		try {
 			final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
 			GamaPoint pointToAdd = null;
-			final int currentHeadingAngle = agent.getHeading();
+			final int currentHeadingAngle = getHeading(agent);
 			int candidateHeading, dAngle;
 			// System.out.println("M: maxDist before: " + maxDist);
 			final GamaShape agentShape = (GamaShape) agent.getGeometry();
@@ -534,8 +568,8 @@ public class DrivingSkill2d extends MovingSkill {
 				// chosenCandidate.toString());
 				setCurrentDistance(agent, minDistance);
 				final int newHeading = chosenCandidate.candidateHeading;
-				agent.setLocation(chosenCandidate.candidatePoint);
-				agent.setHeading(newHeading);
+				setLocation(agent, chosenCandidate.candidatePoint);
+				setHeading(agent, newHeading);
 			}
 			// scope.setStatus(ExecutionStatus.success);
 			if ( isReachedFalseTarget ) { return 1; }
@@ -571,7 +605,7 @@ public class DrivingSkill2d extends MovingSkill {
 	private double distanceToNearestInFront(final IScope scope, final IAgent agent,
 		final GamaList<IAgent> obstacleAgents, final int dAngle,
 		final IShape consideringBackgroundAgentForCurrentPosition, final int consideringRange, double minDistance) {
-		final int currentHeading = agent.getHeading();
+		final int currentHeading = getHeading(agent);
 		final double currentPointX = agent.getLocation().getX();
 		final double currentPointY = agent.getLocation().getY();
 		final double agentRadius = getCalculatedPerimeter(agent) / 4;
@@ -638,7 +672,10 @@ public class DrivingSkill2d extends MovingSkill {
 		return minDistance;
 	}
 
-	@action(name = "read_replay_file", args = { @arg(name = "file_name", type = IType.STRING, optional = false, doc = @doc("File name.")) })
+	@action(name = "read_replay_file", args = { @arg(name = "file_name",
+		type = IType.STRING,
+		optional = false,
+		doc = @doc("File name.")) })
 	@args(names = { "file_name" })
 	public IList primReadReplayFile(final IScope scope) throws GamaRuntimeException {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);
@@ -710,7 +747,10 @@ public class DrivingSkill2d extends MovingSkill {
 		return null;
 	}
 
-	@action(name = "read_replay", args = { @arg(name = "file_name", type = IType.STRING, optional = false, doc = @doc("File name.")) })
+	@action(name = "read_replay", args = { @arg(name = "file_name",
+		type = IType.STRING,
+		optional = false,
+		doc = @doc("File name.")) })
 	@args(names = { "file_name" })
 	public IList primReadReplay(final IScope scope) throws GamaRuntimeException {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);

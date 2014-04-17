@@ -944,7 +944,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		try {
 			List<GamlCompilationError> errors = new ArrayList();
-			lastModel = GamlResourceBuilder.getInstance().build(r, errors);
+			lastModel = GamlModelBuilder.getInstance().compile(r, errors);
 			// if ( lastModel == nu ) {
 			// lastModel = null;
 			// // System.out.println("End compilation of " + m.getName());

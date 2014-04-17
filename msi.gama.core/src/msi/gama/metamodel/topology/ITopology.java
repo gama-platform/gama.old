@@ -112,7 +112,7 @@ public interface ITopology extends IValue {
 	 */
 	public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
 		boolean nullIfOutside);
-	
+
 	/**
 	 * Return the location corresponding to a displacement from source, with an angle (in degrees)
 	 * given by direction and a given distance.

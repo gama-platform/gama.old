@@ -163,7 +163,7 @@ public class AmorphousTopology implements ITopology {
 		return new GamaPoint(source.getX() + cos, source.getY() + sin);
 
 	}
-	
+
 	/**
 	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */

@@ -342,6 +342,9 @@ public class GamaPreferences {
 		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
 	public static final Entry<Boolean> CORE_AUTO_RUN = create("core.auto_run",
 		"Auto-run experiments when they are launched", false, IType.BOOL).in(GENERAL).group("Runtime");
+	public static final Entry<Boolean> CORE_ASK_CLOSING = create("core.ask_closing",
+		"Ask to close the previous simulation before launching a new one ?", true, IType.BOOL).in(GENERAL).group(
+		"Runtime");
 
 	// DISPLAY PAGE
 	/**

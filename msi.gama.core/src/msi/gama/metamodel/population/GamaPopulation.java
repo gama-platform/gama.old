@@ -16,6 +16,7 @@ import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.population.IPopulation.IsLiving;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -36,7 +37,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaTopologyType;
 import msi.gaml.variables.IVariable;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.*;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -75,6 +76,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 * Listeners, created in a lazy way
 	 */
 	private LinkedList<IPopulation.Listener> listeners = null;
+
+	public static IPopulation.IsLiving isLiving = new IPopulation.IsLiving();
 
 	class MirrorPopulationManagement extends GamaHelper {
 
@@ -220,7 +223,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public java.lang.Iterable<IAgent> iterable(final IScope scope) {
-		return GAML.allLivingAgents(this);
+		return GamaPopulation.allLivingAgents(this);
 	}
 
 	@Override
@@ -699,7 +702,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 */
 	@Override
 	public IContainer<?, ? extends IShape> getAgents() {
-		return new GamaList(GAML.allLivingAgents(this));
+		return new GamaList(GamaPopulation.allLivingAgents(this));
 	}
 
 	/**
@@ -769,5 +772,14 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 		}
 
+	}
+
+	/**
+	 * @param scope
+	 * @param iterable
+	 * @return
+	 */
+	public static Iterable<IAgent> allLivingAgents(final Iterable<IAgent> iterable) {
+		return Iterables.filter(iterable, GamaPopulation.isLiving);
 	}
 }

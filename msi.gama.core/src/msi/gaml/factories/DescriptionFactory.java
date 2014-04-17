@@ -36,7 +36,7 @@ public class DescriptionFactory {
 
 	private static IDocManager docManager;
 
-	public static void setDocManager(final IDocManager dm) {
+	public static void registerDocManager(final IDocManager dm) {
 		docManager = dm;
 	}
 
@@ -82,6 +82,10 @@ public class DescriptionFactory {
 	// To be called once the validation has been done
 	public static void document(final IDescription desc) {
 		docManager.document(desc);
+	}
+
+	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
+		docManager.setGamlDocumentation(object, description);
 	}
 
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
@@ -178,10 +182,6 @@ public class DescriptionFactory {
 			// System.err.println("						=====================================");
 			VAR_KEYWORDS_PROTOS.putIfAbsent(name, VAR_KEYWORDS_PROTOS.get(AGENT));
 		}
-	}
-
-	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
-		docManager.setGamlDocumentation(object, description);
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
