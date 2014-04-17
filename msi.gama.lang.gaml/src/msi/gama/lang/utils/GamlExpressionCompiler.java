@@ -374,6 +374,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			String var = EGaml.getKeyOf(fieldExpr);
 			IVarExpression expr = (IVarExpression) species.getVarExpr(var);
 			if ( expr == null ) {
+				if ( species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var) ) {
+					IType t = Types.get(IKeyword.SPECIES);
+
+					return factory.createTypeExpression(GamaType.from(t, Types.get(IType.INT),
+						species.getTypeNamed(var)));
+				}
+				// else
+
 				getContext().error("Unknown variable: '" + var + "' in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
 					leftExpr, var, species.getName());
 			}
