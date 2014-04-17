@@ -149,7 +149,7 @@ public class BatchAgent extends ExperimentAgent {
 		for ( Map.Entry<String, Object> entry : sol.entrySet() ) {
 			IParameter p = getSpecies().getExplorableParameters().get(entry.getKey());
 			if ( p != null ) {
-				p.setValue(simulation.getScope(), entry.getValue());
+				p.setValue(getScope(), entry.getValue());
 			}
 		}
 		// We then run a number of simulations with the same solution
