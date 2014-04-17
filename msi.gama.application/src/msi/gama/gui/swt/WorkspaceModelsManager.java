@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'WorkspaceModelsManager.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'WorkspaceModelsManager.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -231,8 +231,8 @@ public class WorkspaceModelsManager {
 					@Override
 					public void done() {
 						RefreshHandler.run();
-						GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
-							" has been imported");
+						// GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
+						// " has been imported");
 					}
 
 				});
@@ -251,7 +251,7 @@ public class WorkspaceModelsManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 
 	public static String UNCLASSIFIED_MODELS = "Unclassified Models";
