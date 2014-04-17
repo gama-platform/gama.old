@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PrimitiveStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'PrimitiveStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -57,8 +57,8 @@ public class PrimitiveStatement extends ActionStatement {
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
 		helper = getDescription().getHelper();
-		// skill = desc.getSpeciesContext().getSkillFor(((StatementDescription) desc).getHelper().getSkillClass());
-		skill = AbstractGamlAdditions.getSkillInstanceFor(helper.getSkillClass());
+		skill = desc.getSpeciesContext().getSkillFor(helper.getSkillClass());
+		// skill = AbstractGamlAdditions.getSkillInstanceFor(helper.getSkillClass());
 	}
 
 	@Override
