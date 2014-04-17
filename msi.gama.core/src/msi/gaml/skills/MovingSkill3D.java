@@ -12,6 +12,7 @@
 package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
@@ -65,6 +66,10 @@ import msi.gama.metamodel.shape.IShape;
 		doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
 @skill(name = IKeyword.MOVING_3D_SKILL)
 public class MovingSkill3D extends MovingSkill {
+	
+	
+
+	
 
 	@Override
 	@getter(IKeyword.DESTINATION)
@@ -221,4 +226,81 @@ public class MovingSkill3D extends MovingSkill {
 			setPitch(agent, pitch);
 		}
 	}
+	
+
+	@action(name = "goto",
+			args = {
+				@arg(name = "target",
+					type = { IType.AGENT, IType.POINT, IType.GEOMETRY },
+					optional = false,
+					doc = @doc("the location or entity towards which to move.")),
+				@arg(name = IKeyword.SPEED,
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+				@arg(name = "on",
+					type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+					optional = true,
+					doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+				@arg(name = "recompute_path",
+					type = IType.BOOL,
+					optional = true,
+					doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)")),
+				@arg(name = "return_path",
+					type = IType.BOOL,
+					optional = true,
+					doc = @doc("if true, return the path followed (by default: false)")),
+				@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")) },
+			doc = @doc(value = "moves the agent towards the target passed in the arguments.",
+				returns = "optional: the path followed by the agent.",
+				examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }))
+		public
+			IPath primMove3DForward(final IScope scope) throws GamaRuntimeException {
+			final Object target = scope.getArg("target", IType.NONE);
+            super.primGoto(scope);
+            
+            if ( target != null && target instanceof ILocated ) {
+    			((ILocated) target).getLocation();
+    		}
+            final IAgent agent = getCurrentAgent(scope);
+            double dx = ((ILocated) target).getLocation().getX()-agent.getLocation().getX();
+            double dy = ((ILocated) target).getLocation().getY()-agent.getLocation().getY();
+            double dz = ((ILocated) target).getLocation().getZ()-agent.getLocation().getZ();
+            
+            //Heading
+            if(dx==0){
+            	if(dy>0){
+            		setHeading(agent,90);
+            	}
+            	if(dy<0){
+            		setHeading(agent,270);
+            	}
+            	if(dy==0){
+            		setHeading(agent,0);
+            	}	
+            }
+             if(dx>0){
+            	 setHeading(agent,(int) (Math.atan(dy/dx)*180/Math.PI));
+             }
+             if(dx<0){
+            	 setHeading(agent,(int) (180+Math.atan(dy/dx)*180/Math.PI)); 
+             }
+
+             //Pitch
+             if(dx == 0 && dy ==0){
+            	 if(dz>0){
+              		setPitch(agent,90);
+              	}
+              	if(dz<0){
+              		setPitch(agent,270);
+              	}
+              	if(dz==0){
+             		setPitch(agent,0);
+             	}
+             }
+             else{
+            	 setPitch(agent,(int) (Math.atan(dz/Math.sqrt(dx*dx+dy*dy))*180/Math.PI)); 
+             }
+            return null;
+		}
 }
