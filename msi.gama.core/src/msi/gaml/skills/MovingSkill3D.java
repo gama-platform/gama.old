@@ -154,7 +154,6 @@ public class MovingSkill3D extends MovingSkill {
 		final int pitch = computePitch(scope, agent);
 		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);		
 		GamaShape g = (GamaShape)scope.getSimulationScope().getGeometry();
-		g.getDepth();
 		if ( loc == null ||  loc.getZ() > g.getDepth() || loc.getZ() < 0 ) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
@@ -203,8 +202,8 @@ public class MovingSkill3D extends MovingSkill {
 
 		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 
-		// TODO Remove the 100
-		if ( loc == null || loc.getZ() > 100 || loc.getZ() < 0 ) {
+		GamaShape g = (GamaShape)scope.getSimulationScope().getGeometry();
+		if ( loc == null || loc.getZ() > g.getDepth() || loc.getZ() < 0 ) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
