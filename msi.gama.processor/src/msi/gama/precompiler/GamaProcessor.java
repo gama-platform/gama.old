@@ -655,6 +655,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( String s : skill.attach_to() ) {
 				sb.append(SEP).append(s);
 			}
+			processingEnv.getMessager().printMessage(Kind.NOTE, "Skill processed: " + rawNameOf(e));
 			gp.put(sb.toString(), docToString(skill.doc())); /* doc */
 		}
 	}
@@ -730,9 +731,11 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (Exception e1) {
-				processingEnv.getMessager().printMessage(Kind.ERROR, "Error in processing operator " + declClass + " " +
-					methodName + " " + Arrays.toString(args) + "; number of Java parameters: " + n +
-					"; number of Gaml parameters:" + actual_args_number + "; begin: " + begin + "; shift: " + shift);
+				processingEnv.getMessager().printMessage(
+					Kind.ERROR,
+					"Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
+						"; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
+						"; begin: " + begin + "; shift: " + shift);
 			}
 
 			String ret = rawNameOf(ex.getReturnType(), ex);
@@ -775,6 +778,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( int i = 0; i < names.length; i++ ) {
 				sb.append(SEP).append(names[i]);
 			}
+
 			gp.put(sb.toString(), docToString(documentation));
 		}
 	}
@@ -784,6 +788,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
 			action action = e.getAnnotation(action.class);
 			ExecutableElement ex = (ExecutableElement) e;
+			note("Action processed: " + ex.getSimpleName());
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(ACTION_PREFIX);
@@ -791,6 +796,7 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(ex.getSimpleName()).append(SEP);
 			// declClass
 			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
+			note("On class: " + ex.getSimpleName());
 			// retClass
 			TypeMirror tm = ex.getReturnType();
 			if ( tm.getKind().equals(TypeKind.VOID) ) {
@@ -840,8 +846,16 @@ public class GamaProcessor extends AbstractProcessor {
 					}
 				}
 			}
+			processingEnv.getMessager().printMessage(
+				Kind.NOTE,
+				"Adding action " + action.name() + ", implemented by " + rawNameOf(ex.getEnclosingElement()) + " " +
+					ex.getSimpleName());
 			gp.put(sb.toString(), docToString(action.doc())); /* doc */
 		}
+	}
+
+	private void note(final String s) {
+		processingEnv.getMessager().printMessage(Kind.NOTE, s);
 	}
 
 	public void processConstants(final RoundEnvironment env) {
@@ -893,7 +907,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null)
+				.openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
@@ -902,7 +917,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createDocSourceWriter() {
 		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null).openWriter();
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
+				.openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
