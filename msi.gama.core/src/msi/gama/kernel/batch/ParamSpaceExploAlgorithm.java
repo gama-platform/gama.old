@@ -11,8 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
-import gnu.trove.map.hash.TObjectDoubleHashMap;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -41,7 +40,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	private NumberGenerator<Double> randUniform;
-	protected TObjectDoubleHashMap<ParametersSet> testedSolutions;
+	protected HashMap<ParametersSet, Double> testedSolutions;
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
@@ -66,7 +65,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	protected void initializeTestedSolutions() {
-		testedSolutions = new TObjectDoubleHashMap<ParametersSet>(100, 0.75f, Double.MAX_VALUE);
+		testedSolutions = new HashMap<ParametersSet, Double>();
 	}
 
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
