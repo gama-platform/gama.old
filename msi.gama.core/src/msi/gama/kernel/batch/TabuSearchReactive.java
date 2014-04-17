@@ -171,7 +171,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			if ( bestNeighbor == null ) {
 				break;
 			}
-			if ( this.testedSolutions.contains(bestNeighbor) ) {
+			if ( this.testedSolutions.containsKey(bestNeighbor) ) {
 				currentCycleSize++;
 			} else {
 				startingCycle = null;
