@@ -303,30 +303,33 @@ public abstract class TypeDescription extends SymbolDescription {
 
 		final StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
-			if ( newAction.isBuiltIn() && existing.isBuiltIn() ) { return; }
-			TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
-			if ( !existing.isAbstract() ) {
-				if ( existing.isBuiltIn() ) {
-					newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in " +
-						existing.getOriginName() + ". If it was not your intention, consider renaming it.",
-						IGamlIssue.GENERAL);
-				} else if ( from == this ) {
-					duplicateInfo(newAction, existing);
-				} else {
-					existing.info(
-						"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
-						IGamlIssue.REDEFINES);
+			if ( !(newAction.isBuiltIn() && existing.isBuiltIn()) ) {
+
+				TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
+				if ( !existing.isAbstract() ) {
+					if ( existing.isBuiltIn() ) {
+						newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in " +
+							existing.getOriginName() + ". If it was not your intention, consider renaming it.",
+							IGamlIssue.GENERAL);
+					} else if ( from == this ) {
+						duplicateInfo(newAction, existing);
+					} else {
+						existing.info(
+							"Action '" + actionName + "' supersedes the one defined in  " + newAction.getOriginName(),
+							IGamlIssue.REDEFINES);
+						return;
+					}
+				} else if ( newAction.isAbstract() && from != this ) {
+					this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
+						", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
 					return;
 				}
-			} else if ( newAction.isAbstract() && from != this ) {
-				this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
-					", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-				return;
 			}
 		} else if ( newAction.isAbstract() && from != this ) {
 			this.error("Abstract action '" + actionName + "', inherited from " + from.getName() +
 				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
 			return;
+
 		}
 		if ( actions == null ) {
 			actions = new TOrderedHashMap<String, StatementDescription>();
