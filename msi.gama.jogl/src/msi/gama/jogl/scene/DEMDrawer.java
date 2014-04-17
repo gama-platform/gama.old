@@ -36,9 +36,6 @@ public class DEMDrawer extends ObjectDrawer<DEMObject> {
 	@Override
 	protected void _draw(final DEMObject demObj) {
 		
-		System.out.println("demObj.isTextured" + demObj.isTextured);
-		System.out.println("demObj.isGrayScaled" + demObj.isGrayScaled);
-
 		if ( demObj.fromImage ) {
 			drawFromImage(demObj);
 			return;
