@@ -13,7 +13,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationClock;
@@ -26,7 +26,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISkillConstructor;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -382,52 +382,20 @@ public abstract class MinimalAgent implements IAgent {
 		return false;
 	}
 
-	@Override
-	public Integer getHeading() {
-		Integer h = (Integer) getAttribute(IKeyword.HEADING);
-		if ( h == null ) {
-			h = RandomUtils.getDefault().between(0, 359);
-			setHeading(h);
-		}
-		return Maths.checkHeading(h);
-	}
-
-	@Override
-	public void setHeading(final Integer newHeading) {
-		setAttribute(IKeyword.HEADING, newHeading);
-	}
-	
-	@Override
-	public Integer getPitch() {
-		Integer p = (Integer) getAttribute(IKeyword.PITCH);
-		if ( p == null ) {
-			p = RandomUtils.getDefault().between(0, 359);
-			setPitch(p);
-		}
-		return Maths.checkHeading(p);
-	}
-
-	@Override
-	public void setPitch(final Integer newPitch) {
-		setAttribute(IKeyword.PITCH, newPitch);
-	}
-	
-	@Override
-	public Integer getRoll() {
-		Integer r = (Integer) getAttribute(IKeyword.ROLL);
-		if ( r == null ) {
-			r = RandomUtils.getDefault().between(0, 359);
-			setRoll(r);
-		}
-		return Maths.checkHeading(r);
-	}
-
-	@Override
-	public void setRoll(final Integer newRoll) {
-		setAttribute(IKeyword.ROLL, newRoll);
-	}
-	
-	
+	// @Override
+	// public Integer getHeading() {
+	// Integer h = (Integer) getAttribute(IKeyword.HEADING);
+	// if ( h == null ) {
+	// h = RandomUtils.getDefault().between(0, 359);
+	// setHeading(h);
+	// }
+	// return Maths.checkHeading(h);
+	// }
+	//
+	// @Override
+	// public void setHeading(final Integer newHeading) {
+	// setAttribute(IKeyword.HEADING, newHeading);
+	// }
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
@@ -599,8 +567,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	/**
 	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope,
-	 *      com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
 	 */
 	// @Override
 	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {
