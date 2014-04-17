@@ -39,7 +39,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		BOX, CIRCLE, CONE, CUBE, RGBCUBE, RGBTRIANGLE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"),
 		LINESTRING("LineString"), MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON(
 			"MultiPolygon"), NULL, PLAN, POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE,
-		TEAPOT, HEMISPHERE, PACMAN, PAC, MAN, PIESPHERE,LINECYLINDER, POLYLINECYLINDER;
+		TEAPOT, HEMISPHERE, PACMAN, PAC, MAN, PIESPHERE,PIESPHEREWITHDYNAMICALCOLOR,LINECYLINDER, POLYLINECYLINDER;
 
 		Type() {}
 
@@ -51,10 +51,9 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
 	public static final Map<String, Type> JTS_TYPES = new THashMap();
 	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();
-
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
-
 	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
+	public static final String COLOR_LIST_ATTRIBUTE = "_shape_internal_color_list";
 
 	@Override
 	public IShape copy(IScope scope);

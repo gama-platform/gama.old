@@ -13,6 +13,8 @@ package msi.gama.jogl.scene;
 
 import msi.gama.jogl.utils.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
+import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.Pie3DDrawer;
+
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -26,35 +28,19 @@ import com.vividsolutions.jts.geom.*;
 public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	JTSDrawer jtsDrawer;
+	Pie3DDrawer pieDrawer;
 
 	public GeometryDrawer(final JOGLAWTGLRenderer r) {
 		super(r);
 		jtsDrawer = new JTSDrawer(r);
+		pieDrawer = new Pie3DDrawer(r);
 	}
 
 	@Override
 	protected void _draw(final GeometryObject geometry) {
 		if ( geometry.isPie3D() ) {
-			// TODO repousser le switch dans JTSDrawer (PieDrawer) ?
-			switch (geometry.type) {
-				case HEMISPHERE:
-					jtsDrawer.drawHemiSphereChart((Pie3DObject) geometry);
-					break;
-				case PIESPHERE:
-					jtsDrawer.drawPieSphere((Pie3DObject) geometry);
-					break;
-				case PACMAN:
-					jtsDrawer.drawPacMan((Pie3DObject) geometry);
-					break;
-				case PAC:
-					jtsDrawer.drawPac((Pie3DObject) geometry);
-					break;
-				case MAN:
-					jtsDrawer.drawMan((Pie3DObject) geometry);
-					break;
-				default:
-
-			}
+			pieDrawer._draw((Pie3DObject)geometry);
+			
 		} else {
 			switch (geometry.type) {
 				case MULTIPOLYGON:
@@ -64,21 +50,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					break;
 				case SPHERE:
 					jtsDrawer.drawSphere(geometry);
-					break;
-				case HEMISPHERE:
-					jtsDrawer.drawHemiSphereChart((Pie3DObject) geometry);
-					break;
-				case PIESPHERE:
-					jtsDrawer.drawPieSphere((Pie3DObject) geometry);
-					break;
-				case PACMAN:
-					jtsDrawer.drawPacMan((Pie3DObject) geometry);
-					break;
-				case PAC:
-					jtsDrawer.drawPac((Pie3DObject) geometry);
-					break;
-				case MAN:
-					jtsDrawer.drawMan((Pie3DObject) geometry);
 					break;
 				case CONE:
 					jtsDrawer.drawCone3D(geometry);

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.util.GamaColor;
 import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -122,12 +123,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio) {
+		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio,final IList<GamaColor> colors) {
 		final GeometryObject curJTSGeometry;
-		if ( type == IShape.Type.PIESPHERE ) {
+		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR 
+				|| type == IShape.Type.PACMAN || type == IShape.Type.PAC || type == IShape.Type.PAC) {
 			curJTSGeometry =
 				new Pie3DObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,
-					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type, ratio);
+					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);
 		} else {
 			curJTSGeometry =
 				new GeometryObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,

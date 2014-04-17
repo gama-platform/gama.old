@@ -150,6 +150,39 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPieSphere(radius, location, ratio);
 		}
 		
+		@operator(value="spherical_pie", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
+		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.", 
+		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
+		examples = { @example(value="piesphere(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false) }, 
+		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
+		public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio, final IList<GamaColor> colors) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			
+			Double sum = 0.0;
+			for( Object curR :ratio){
+				sum = sum + Cast.asFloat(scope, curR);
+			}
+			for( int i=0;i<ratio.size();i++){
+				ratio.set(i, Cast.asFloat(scope, ratio.get(i))/sum); 
+			}
+			if(ratio.size() > colors.size()){
+				
+				throw GamaRuntimeException.warning(
+						"The number of value is greater of the number  of color whereas it should be equal.", scope);	
+			}
+			
+			if(ratio.size() < colors.size()){
+				throw GamaRuntimeException.warning(
+						"The number of color is greater of the number  of value whereas it should be equal.", scope);	
+			}
+			
+			return GamaGeometryType.buildPieSphereWithDynamicColor(radius, location, ratio, colors);
+		}
+		
 		@operator(value="pacman", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
 		@doc(value = "An pacman geometry which radius is equal to first argument.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="pacman(1)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })

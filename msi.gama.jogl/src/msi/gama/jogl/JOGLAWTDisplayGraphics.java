@@ -91,6 +91,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		IList<String> textures = new GamaList<String>();
 		IShape.Type type = shape.getGeometricalType();
 		IList<Double> ratio = new GamaList<Double>();
+		IList<GamaColor> colors = new GamaList<GamaColor>();
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
@@ -101,6 +102,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( shape.hasAttribute(IShape.RATIO_ATTRIBUTE) ) {
 			ratio = Cast.asList(scope, shape.getAttribute(IShape.RATIO_ATTRIBUTE));
 		}
+		if ( shape.hasAttribute(IShape.COLOR_LIST_ATTRIBUTE) ) {
+			colors = Cast.asList(scope, shape.getAttribute(IShape.COLOR_LIST_ATTRIBUTE));
+		}
 		final Color color = highlight ? highlightColor : c;
 		if ( topo != null && topo.isTorus() ) {
 			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());
@@ -109,12 +113,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio,colors);
 				}
 			}
 		} else {
 			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
-				ratio);
+				ratio,colors);
 		}
 
 		// Add a geometry with a depth and type coming from Attributes
@@ -123,9 +127,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final IList<String> textures, final IList<Double> ratio) {
+		final IList<String> textures, final IList<Double> ratio, final IList<GamaColor> colors) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), color, fill, border,
-			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio);
+			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio,colors);
 
 	}
 
@@ -186,7 +190,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0, false,
-					IShape.Type.GRIDLINE, null);
+					IShape.Type.GRIDLINE, null,null);
 			}
 		}
 	}
