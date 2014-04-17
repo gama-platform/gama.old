@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'LayerObject.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'LayerObject.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -113,19 +113,26 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
-		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
-		final boolean isFromImage, final boolean isDynamic, final Envelope3D env, final double cellSize,
-		final String name) {
-		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isGrayScaled, isShowText,
-			isFromImage, isDynamic, null, alpha, cellSize, name/* , id */));
+		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled,
+		final boolean isShowText, final boolean isFromImage, final boolean isDynamic, final Envelope3D env,
+		final double cellSize, final String name) {
+		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isGrayScaled,
+			isShowText, isFromImage, isDynamic, null, alpha, cellSize, name/* , id */));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
 		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
 		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio) {
-		final GeometryObject curJTSGeometry =
-			new GeometryObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured, textureFileNames,
-				angle == null ? 0 : angle, height, roundCorner, type, ratio);
+		final GeometryObject curJTSGeometry;
+		if ( type == IShape.Type.PIESPHERE ) {
+			curJTSGeometry =
+				new Pie3DObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,
+					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type, ratio);
+		} else {
+			curJTSGeometry =
+				new GeometryObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,
+					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type);
+		}
 		geometries.add(curJTSGeometry);
 	}
 

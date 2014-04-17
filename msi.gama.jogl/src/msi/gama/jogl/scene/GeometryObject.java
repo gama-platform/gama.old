@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GeometryObject.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'GeometryObject.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -29,13 +29,13 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public IList<String> textureFileNames;
 	public double height;
 	public boolean rounded;
-	public IList<Double> ratio;
+
 	private final MyTexture[] textures;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
 		final IList<String> textureFileNames, final int angle, final double height, final boolean rounded,
-		final IShape.Type type, final IList<Double> ratio) {
+		final IShape.Type type) {
 		super(color, alpha);
 
 		if ( type == IShape.Type.GRIDLINE ) {
@@ -72,7 +72,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		}
 		this.height = height;
 		this.rounded = rounded;
-		this.ratio = ratio;
 	}
 
 	@Override
@@ -142,6 +141,10 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 
 	public boolean hasTextures() {
 		return textures != null && textures.length > 1;
+	}
+
+	public boolean isPie3D() {
+		return false;
 	}
 
 }
