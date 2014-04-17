@@ -14,6 +14,7 @@ package msi.gaml.skills;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -30,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
+import msi.gama.metamodel.shape.IShape;
 
 /**
  * MovingSkill3D : This class is intended to define the minimal set of behaviours required from an
@@ -150,9 +152,10 @@ public class MovingSkill3D extends MovingSkill {
 		final double dist = computeDistance(scope, agent);
 		final int heading = computeHeading(scope, agent);
 		final int pitch = computePitch(scope, agent);
-		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
-		// TODO remove the 100
-		if ( loc == null || loc.getZ() > 100 || loc.getZ() < 0 ) {
+		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);		
+		GamaShape g = (GamaShape)scope.getSimulationScope().getGeometry();
+		g.getDepth();
+		if ( loc == null ||  loc.getZ() > g.getDepth() || loc.getZ() < 0 ) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
