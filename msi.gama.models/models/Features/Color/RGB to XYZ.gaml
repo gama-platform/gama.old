@@ -12,7 +12,7 @@ global {
 	init {
 		create myRGBCube {
 			p <- list<point> (rgb_to_xyz(imageRaster));
-			geometry shape <- square(255);
+			shape <- square(255);
 			location <- { 0, 0, 0 };
 		}
 

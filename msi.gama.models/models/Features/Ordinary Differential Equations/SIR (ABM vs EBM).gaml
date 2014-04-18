@@ -75,17 +75,17 @@ species Host {
 	reflex become_infected when: is_susceptible {
 		float rate <- 0.0;
 		if (local_infection) {
-			int nb_hosts <- 0;
+			int nb_hosts_loc <- 0;
 			int nb_hosts_infected <- 0;
 			loop hst over: ((myPlace.neighbours + myPlace) accumulate (Host overlapping each)) {
-				nb_hosts <- nb_hosts + 1;
+				nb_hosts_loc <- nb_hosts_loc + 1;
 				if (hst.is_infected) {
 					nb_hosts_infected <- nb_hosts_infected + 1;
 				}
 
 			}
 
-			rate <- nb_hosts_infected / nb_hosts;
+			rate <- nb_hosts_infected / nb_hosts_loc;
 		} else {
 			rate <- nb_infected / nb_hosts;
 		}

@@ -68,11 +68,11 @@ entities {
 			capacity <- capacity + 1;
 		}
 		aspect simple {
-			rgb color <- empty(insiders) ? rgb("white") : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+			color <- empty(insiders) ? rgb("white") : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			draw  square(40) color: color;
 		}
 		aspect gis {
-			rgb color <- empty(insiders) ? rgb("white") : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
+			color <- empty(insiders) ? rgb("white") : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			draw shape color: color border: rgb("black");
 		} 
 	}

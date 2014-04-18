@@ -18,9 +18,9 @@ global {
 
 	init { 
       create Building number:number_of_building{
-      	    float width <- (rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100)*50+10;
-			float depth <-	(rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100*width)*10+10;
-			shape <- box(width, width, depth) rotated_by rnd(360);
+      	    float width_bd <- (rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100)*50+10;
+			float depth_bd <-	(rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100*width)*10+10;
+			shape <- box(width_bd, width_bd, depth_bd) rotated_by rnd(360);
 			texture <- textures[rnd(9)];
 		}
 	}  
@@ -35,9 +35,9 @@ species Building{
 	file texture;
 	
 	reflex shuffle{
-		float width <- (rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100)*50+10;
-		float depth <-	(rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100*width)*10+10;
-		shape <- box(width, width, depth) rotated_by rnd(360);
+		float width_bd <- (rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100)*50+10;
+		float depth_bd <-	(rnd(100)/100)*(rnd(100)/100)*(rnd(100)/100*width)*10+10;
+		shape <- box(width_bd, width_bd, depth_bd) rotated_by rnd(360);
 	}
 	
 	aspect base {
