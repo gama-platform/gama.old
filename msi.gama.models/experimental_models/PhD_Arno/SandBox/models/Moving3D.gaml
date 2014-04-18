@@ -7,6 +7,7 @@
 model Moving3DModel   
 
 global {
+	
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 500 step:10 category: 'Initialization'; 
 	int envSize <-100; //max:100;
 	int mazeSize <-10;
