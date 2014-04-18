@@ -232,7 +232,8 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
+	public List<GamaSpatialPath>
+		KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
 		paths.add(pathBetween(scope, source, target));
 		return paths;
@@ -324,12 +325,22 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ILocation getDestination3D(final ILocation source, final int heading,final int pitch, final double distance,
-		final boolean nullIfOutside) {		
+	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch,
+		final double distance, final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
 		final double z = distance * Maths.sin(pitch);
-		return normalizeLocation(new GamaPoint(source.getX() + x, source.getY() + y,  source.getZ() + z),nullIfOutside);
+		return normalizeLocation3D(new GamaPoint(source.getX() + x, source.getY() + y, source.getZ() + z),
+			nullIfOutside);
+	}
+
+	public ILocation normalizeLocation3D(final ILocation point, final boolean nullIfOutside) {
+		ILocation p = normalizeLocation(point, nullIfOutside);
+		if ( p == null ) { return null; }
+		double z = p.getZ();
+		if ( z < 0 ) { return null; }
+		if ( z > ((GamaShape) environment.getGeometry()).getDepth() ) { return null; }
+		return point;
 	}
 
 	@Override

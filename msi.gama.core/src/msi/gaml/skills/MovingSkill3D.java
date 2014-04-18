@@ -12,11 +12,8 @@
 package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ILocated;
-import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -32,7 +29,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
-import msi.gama.metamodel.shape.IShape;
 
 /**
  * MovingSkill3D : This class is intended to define the minimal set of behaviours required from an
@@ -66,10 +62,6 @@ import msi.gama.metamodel.shape.IShape;
 		doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
 @skill(name = IKeyword.MOVING_3D_SKILL)
 public class MovingSkill3D extends MovingSkill {
-	
-	
-
-	
 
 	@Override
 	@getter(IKeyword.DESTINATION)
@@ -99,7 +91,7 @@ public class MovingSkill3D extends MovingSkill {
 	public Integer getRoll(final IAgent agent) {
 		Integer r = (Integer) agent.getAttribute(IKeyword.ROLL);
 		if ( r == null ) {
-			r = RandomUtils.getDefault().between(0, 359);
+			r = agent.getScope().getRandom().between(0, 359);
 			setRoll(agent, r);
 		}
 		return Maths.checkHeading(r);
@@ -157,9 +149,8 @@ public class MovingSkill3D extends MovingSkill {
 		final double dist = computeDistance(scope, agent);
 		final int heading = computeHeading(scope, agent);
 		final int pitch = computePitch(scope, agent);
-		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);		
-		GamaShape g = (GamaShape)scope.getSimulationScope().getGeometry();
-		if ( loc == null ||  loc.getZ() > g.getDepth() || loc.getZ() < 0 ) {
+		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
+		if ( loc == null ) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
@@ -180,24 +171,7 @@ public class MovingSkill3D extends MovingSkill {
 	}
 
 	@Override
-	@action(name = "wander",
-		args = {
-			@arg(name = IKeyword.SPEED,
-				type = IType.FLOAT,
-				optional = true,
-				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "amplitude",
-				type = IType.INT,
-				optional = true,
-				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
-			@arg(name = IKeyword.BOUNDS,
-				type = { IType.AGENT, IType.GEOMETRY },
-				optional = true,
-				doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
-		doc = @doc(examples = { @example("do wander speed: speed - 10 amplitude: 120 bounds: agentA;") },
-			value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
-	public
-		void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
+	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
@@ -206,101 +180,51 @@ public class MovingSkill3D extends MovingSkill {
 		final double dist = computeDistance(scope, agent);
 
 		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
-
-		GamaShape g = (GamaShape)scope.getSimulationScope().getGeometry();
-		if ( loc == null || loc.getZ() > g.getDepth() || loc.getZ() < 0 ) {
+		if ( loc == null ) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
-			/*
-			 * final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
-			 * if ( bounds != null ) {
-			 * final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
-			 * if ( geom != null && geom.getInnerGeometry() != null ) {
-			 * loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
-			 * }
-			 * }
-			 */
 			setLocation(agent, loc);
+
+			// WARNING Pourquoi refaire un setHeading ici ??? C'est déjà fait dans setLocation(). Et en plus celui-ci est incorrect.
+			// WARNING Idem pour pitch. Cf. le commentaire dans primGoto ci-dessous. Il suffirait de redéfinir setLocation(agent...) avec le calcul du "vrai" heading et du "vrai" pitch résultant de la
+			// destination
+
 			setHeading(agent, heading);
 			setPitch(agent, pitch);
 		}
 	}
-	
 
-	@action(name = "goto",
-			args = {
-				@arg(name = "target",
-					type = { IType.AGENT, IType.POINT, IType.GEOMETRY },
-					optional = false,
-					doc = @doc("the location or entity towards which to move.")),
-				@arg(name = IKeyword.SPEED,
-					type = IType.FLOAT,
-					optional = true,
-					doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-				@arg(name = "on",
-					type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
-					optional = true,
-					doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-				@arg(name = "recompute_path",
-					type = IType.BOOL,
-					optional = true,
-					doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)")),
-				@arg(name = "return_path",
-					type = IType.BOOL,
-					optional = true,
-					doc = @doc("if true, return the path followed (by default: false)")),
-				@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving.")) },
-			doc = @doc(value = "moves the agent towards the target passed in the arguments.",
-				returns = "optional: the path followed by the agent.",
-				examples = { @example("do goto target: (one_of road).location speed: speed * 2 on: road_network;") }))
-		public
-			IPath primMove3DForward(final IScope scope) throws GamaRuntimeException {
-			final Object target = scope.getArg("target", IType.NONE);
-            super.primGoto(scope);
-            
-            if ( target != null && target instanceof ILocated ) {
-    			((ILocated) target).getLocation();
-    		}
-            final IAgent agent = getCurrentAgent(scope);
-            double dx = ((ILocated) target).getLocation().getX()-agent.getLocation().getX();
-            double dy = ((ILocated) target).getLocation().getY()-agent.getLocation().getY();
-            double dz = ((ILocated) target).getLocation().getZ()-agent.getLocation().getZ();
-            
-            //Heading
-            if(dx==0){
-            	if(dy>0){
-            		setHeading(agent,90);
-            	}
-            	if(dy<0){
-            		setHeading(agent,270);
-            	}
-            	if(dy==0){
-            		setHeading(agent,0);
-            	}	
-            }
-             if(dx>0){
-            	 setHeading(agent,(int) (Math.atan(dy/dx)*180/Math.PI));
-             }
-             if(dx<0){
-            	 setHeading(agent,(int) (180+Math.atan(dy/dx)*180/Math.PI)); 
-             }
+	@Override
+	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 
-             //Pitch
-             if(dx == 0 && dy ==0){
-            	 if(dz>0){
-              		setPitch(agent,90);
-              	}
-              	if(dz<0){
-              		setPitch(agent,270);
-              	}
-              	if(dz==0){
-             		setPitch(agent,0);
-             	}
-             }
-             else{
-            	 setPitch(agent,(int) (Math.atan(dz/Math.sqrt(dx*dx+dy*dy))*180/Math.PI)); 
-             }
-            return null;
+		// WARNING Je ne vois pas l'intérêt de redéfinir cette méthode. Il suffirait de redéfinir setLocation(IAgent...) dans laquelle seraient mis les calculs effectués ci-dessous sur le heading et
+		// le pitch, et cette méthode serait ainsi appelée par super.primGoto()
+
+		final Object target = scope.getArg("target", IType.NONE);
+		if ( target == null ) { return null; }
+		IAgent agent = getCurrentAgent(scope);
+		GamaPoint oldLocation = (GamaPoint) agent.getLocation();
+		super.primGoto(scope);
+		GamaPoint newLocation = (GamaPoint) agent.getLocation();
+		GamaPoint diff = newLocation.minus(oldLocation);
+		int signumX = Maths.signum(diff.x);
+		int signumY = Maths.signum(diff.y);
+		// Heading
+		if ( signumX == 0 ) {
+			setHeading(agent, signumY == 0 ? 0 : signumY > 0 ? 90 : 270);
+		} else {
+			setHeading(agent, (int) (Math.atan(diff.y / diff.x) * Maths.toDeg) + (signumX > 0 ? 0 : 180));
 		}
+
+		// Pitch
+		if ( signumX == 0 && signumY == 0 ) {
+			int signumZ = Maths.signum(diff.z);
+			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
+		} else {
+			setPitch(agent, (int) (Math.atan(diff.z / Math.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
+		}
+
+		return null;
+	}
 }
