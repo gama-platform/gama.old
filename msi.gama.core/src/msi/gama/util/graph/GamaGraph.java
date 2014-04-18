@@ -163,7 +163,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			addEdge(p);
 			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
 			if ( p2 instanceof IShape ) {
-				getEdge(p2).setWeight(((IShape) p2).getPerimeter());
+				_Edge ed = getEdge(p2);
+				if (ed != null)
+					ed.setWeight(((IShape) p2).getPerimeter());
 			}
 		}
 	}

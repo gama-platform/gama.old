@@ -605,8 +605,8 @@ public class Graphs {
 	}
 
 	@operator(value = "add_node", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
-	@doc(value = "adds a node in a graph.", examples = @example(value = "node(0) add_node graph", equals = "the graph with node(0)", isExecutable = false))
-	public static IGraph addNode(final IShape node, final IGraph g) {
+	@doc(value = "adds a node in a graph.", examples = @example(value = "graph add_node node(0) ", equals = "the graph with node(0)", isExecutable = false))
+	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
 		g.incVersion();
 		return g;
