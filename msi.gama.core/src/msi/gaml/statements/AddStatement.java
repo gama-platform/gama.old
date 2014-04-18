@@ -48,23 +48,26 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.EDGE,
 		type = IType.NONE,
 		optional = true,
-		doc = { @doc("a pair that will be added to a graph as an edge (if nodes do not exist, they are also added)") }),
+		doc = { @doc("a pair that will be added to a graph as an edge (if nodes do not exist, they are also added). Soon to be deprecated, please use 'add edge(..)' instead") }),
 	@facet(name = IKeyword.VERTEX,
 		type = IType.NONE,
 		optional = true,
-		doc = { @doc(deprecated = "Use 'node' instead") }),
+		doc = { @doc(deprecated = "Use 'add node(...)' instead") }),
 	@facet(name = IKeyword.NODE,
 		type = IType.NONE,
 		optional = true,
-		doc = { @doc("an expression that will be added to a graph as a node") }),
+		doc = { @doc("an expression that will be added to a graph as a node. Soon to be deprecated, please use 'add node(...)' instead") }),
 	@facet(name = IKeyword.AT,
 		type = IType.NONE,
 		optional = true,
 		doc = { @doc("position in the container of added element") }),
-	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.ALL,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("Allows to either pass a container so as to add all its element, or 'true', if the item to add is already a container.")),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true) },
 	omissible = IKeyword.ITEM)
-@doc(value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container will produce a warning and let the container unmodified.",
+@doc(value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container will produce a warning and let the container unmodified. If all: is specified, it has no effect if its argument is not a container, or if its argument is 'true' and the item to add is not a container. In that latter case",
 	usages = {
 		@usage(value = "The new element can be added either at the end of the container or at a particular position.",
 			examples = {
@@ -118,7 +121,7 @@ import msi.gaml.types.*;
 				equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
 				returnType = "null") }), // workingMap now equals [null::value2, 5::val4, x::val3]
 
-		@usage(value = "In case of a graph, we can use the facets `node`, `edge` and `weight` to add a node, an edge or weights to the graph",
+		@usage(value = "In case of a graph, we can use the facets `node`, `edge` and `weight` to add a node, an edge or weights to the graph. However, these facets are now considered as deprecated, and it is advised to use the various edge(), node(), edges(), nodes() operators, which can build the correct objects to add to the graph ",
 			examples = {
 				@example(value = "graph g <- as_edge_graph([{1,5}::{12,45}]);"),
 				@example(value = "add edge: {1,5}::{2,3} to: g;",
@@ -144,6 +147,14 @@ public class AddStatement extends AbstractContainerStatement {
 		public void validateIndexAndContentTypes(final String keyword, final IDescription cd, final boolean all) {
 			IExpression item = cd.getFacets().getExpr(ITEM);
 			IExpression list = cd.getFacets().getExpr(TO);
+			IExpression allFacet = cd.getFacets().getExpr(ALL);
+			if ( allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue()) ) {
+				if ( !item.getType().isContainer() ) {
+					cd.warning("The use of 'all' will have no effect here, as " + item.toGaml() +
+						" is not a container. Only this value will be added to " + list.toGaml(),
+						IGamlIssue.WRONG_CONTEXT, ALL);
+				}
+			}
 			// IExpression whole = cd.getFacets().getExpr(ALL);
 			// IExpression index = cd.getFacets().getExpr(AT);
 			if ( list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR ) {
