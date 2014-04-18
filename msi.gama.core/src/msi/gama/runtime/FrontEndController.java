@@ -249,6 +249,12 @@ public class FrontEndController implements Runnable {
 	}
 	
 	public void newExperiment(final String id, final IModel model) {
+		if (GAMA.getControllers().size() > 0) {
+			for (FrontEndController s : GAMA.getControllers().values()) {
+				s.shutdown();
+			}
+			GAMA.getControllers().clear();
+		}
 		final IExperimentSpecies newExperiment = model.getExperiment(id);
 		if ( newExperiment == null ) { return; }
 		GuiUtils.openSimulationPerspective();
