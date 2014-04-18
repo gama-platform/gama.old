@@ -505,56 +505,79 @@ public class MovingSkill extends Skill {
 					}
 				}
 				line = edges.get(index);
-
-				currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
-				final Point pointGeom = (Point) currentLocation.getInnerGeometry();
-				if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
-					distanceS = Double.MAX_VALUE;
-					final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+				if (line.getPoints().contains(currentLocation)) {
+					currentLocation = new GamaPoint(currentLocation.toCoordinate());
+					indexSegment = line.getPoints().indexOf(currentLocation)+1;
+				} else {
+					currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
+					final Point pointGeom = (Point) currentLocation.getInnerGeometry();
+					if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
+						distanceS = Double.MAX_VALUE;
+						final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+						final int nbSp = coords.length;
+						final Coordinate[] temp = new Coordinate[2];
+						for ( int i = 0; i < nbSp - 1; i++ ) {
+							temp[0] = coords[i];
+							temp[1] = coords[i + 1];
+							final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+							final double distS = segment.distance(pointGeom);
+							if ( distS < distanceS ) {
+								distanceS = distS;
+								indexSegment = i + 1;
+								GamaPoint pt0 = new GamaPoint(temp[0]);
+								GamaPoint pt1 = new GamaPoint(temp[1]);
+								currentLocation.z = pt0.z + ((pt1.z - pt0.z) * currentLocation.distance(pt0)/ segment.getLength());
+							}
+						}
+					} else {
+						ILocation c0 = line.getPoints().get(0);
+						ILocation c1 = line.getPoints().get(1);
+						currentLocation.z = c0.getZ() + ((c1.getZ() - c0.getZ()) * currentLocation.distance((Coordinate) c0)/ line.getPerimeter());
+					}
+				}	
+			}
+			final IShape lineEnd = edges.get(nb - 1);
+			ILocation end = ((IShape)path.getEndVertex()).getLocation();
+			if (lineEnd.getPoints().contains(end)) {
+				falseTarget = new GamaPoint(end);
+				endIndexSegment = lineEnd.getPoints().indexOf(end)+1;
+			} else {
+				falseTarget = (GamaPoint) Punctal._closest_point_to(end, lineEnd);
+				endIndexSegment = 1;
+				final Point pointGeom = (Point) falseTarget.getInnerGeometry();
+				if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
+					double distanceT = Double.MAX_VALUE;
+					final Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
 					final int nbSp = coords.length;
 					final Coordinate[] temp = new Coordinate[2];
 					for ( int i = 0; i < nbSp - 1; i++ ) {
 						temp[0] = coords[i];
 						temp[1] = coords[i + 1];
 						final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
-						final double distS = segment.distance(pointGeom);
-						if ( distS < distanceS ) {
-							distanceS = distS;
-							indexSegment = i + 1;
+						final double distT = segment.distance(pointGeom);
+						if ( distT < distanceT ) {
+							distanceT = distT;
+							endIndexSegment = i + 1;
+							GamaPoint pt0 = new GamaPoint(temp[0]);
+							GamaPoint pt1 = new GamaPoint(temp[1]);
+							falseTarget.z = pt0.z + ((pt1.z - pt0.z) * falseTarget.distance(pt0)/ segment.getLength());
 						}
 					}
-				}
-			}
-			final IShape lineEnd = edges.get(nb - 1);
-			ILocation end = ((IShape)path.getEndVertex()).getLocation();
-			falseTarget = (GamaPoint) Punctal._closest_point_to(end, lineEnd);
-			falseTarget.z = end.getZ();
-			endIndexSegment = 1;
-			final Point pointGeom = (Point) falseTarget.getInnerGeometry();
-			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
-				double distanceT = Double.MAX_VALUE;
-				final Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
-				final int nbSp = coords.length;
-				final Coordinate[] temp = new Coordinate[2];
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					temp[0] = coords[i];
-					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
-					final double distT = segment.distance(pointGeom);
-					if ( distT < distanceT ) {
-						distanceT = distT;
-						endIndexSegment = i + 1;
-					}
+				} else {
+					ILocation c0 = lineEnd.getPoints().get(0);
+					ILocation c1 = lineEnd.getPoints().get(1);
+					falseTarget.z = c0.getZ() + ((c1.getZ() - c0.getZ()) * falseTarget.distance((Coordinate) c0)/ lineEnd.getPerimeter());
 				}
 			}
 		}
-		initVals.add(index);
+		initVals.add(index); 
 		initVals.add(indexSegment);
 		initVals.add(endIndexSegment);
 		initVals.add(currentLocation);
 		initVals.add(falseTarget);
 		return initVals;
 	}
+	
 
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
 		final double d, final GamaMap weigths) {
