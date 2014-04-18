@@ -114,13 +114,22 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 						pt = c1;
 					}
 					if ( cpt == 0 && !source.equals(pt) ) {
-						GamaPoint falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
+						GamaPoint falseSource = new GamaPoint(source.getLocation());
+						if (source.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
+							falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
+							falseSource.z = zVal(falseSource, edge2);
+						}
 						edge2 = GeometryUtils.split_at(edge2, falseSource).get(1);
 					}
 					if ( cpt == _edges.size() - 1 &&
 						!target.equals(edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry()
 							.getNumPoints() - 1]) ) {
-						GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
+						
+						GamaPoint falseTarget = new GamaPoint(target.getLocation());
+						if (target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
+							falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
+							falseTarget.z = zVal(falseTarget, edge2);
+						}
 						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
 					}
 					if ( ag != null ) {
@@ -137,6 +146,27 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				// segmentsInGraph.put(agents, agents);
 			}
 		}
+	}
+	
+	protected double zVal (GamaPoint point, IShape edge) {
+		double z = 0.0;
+		int nbSp = edge.getPoints().size();
+		final Coordinate[] temp = new Coordinate[2];
+		final Point pointGeom = (Point) point.getInnerGeometry();
+		double distanceS = Double.MAX_VALUE;
+		for ( int i = 0; i < nbSp - 1; i++ ) {
+			temp[0] = (Coordinate) edge.getPoints().get(i);
+			temp[1] = (Coordinate) edge.getPoints().get(i+1);
+			final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+			final double distS = segment.distance(pointGeom);
+			if ( distS < distanceS ) {
+				distanceS = distS;
+				GamaPoint pt0 = new GamaPoint(temp[0]);
+				GamaPoint pt1 = new GamaPoint(temp[1]);
+				z = pt0.z + ((pt1.z - pt0.z) * point.distance(pt0)/ segment.getLength());
+			}
+		}
+		return z;
 	}
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final List<IShape> nodes) {
