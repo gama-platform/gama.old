@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -21,7 +20,13 @@ import msi.gama.util.file.GamaFile;
 /**
  * The Class ParametersSet.
  */
-public class ParametersSet extends THashMap<String, Object> {
+public class ParametersSet extends HashMap<String, Object> {
+
+	public ParametersSet() {}
+
+	public ParametersSet(final ParametersSet solution) {
+		this.putAll(solution);
+	}
 
 	public ParametersSet(final IScope scope, final Map<String, IParameter> variables, final boolean reinit)
 		throws GamaRuntimeException {
@@ -51,14 +56,6 @@ public class ParametersSet extends THashMap<String, Object> {
 			}
 		});
 
-	}
-
-	public ParametersSet() {
-		super();
-	}
-
-	public ParametersSet(final ParametersSet solution) {
-		this.putAll(solution);
 	}
 
 	@Override
