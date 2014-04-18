@@ -83,6 +83,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		testedSolutions.put(getBestSolution(), getBestFitness());
+		setBestFitness(currentFitness);
 		int nbIt = 0;
 		double temperature = temperatureInit;
 
@@ -103,11 +104,12 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					}
 					continue;
 				}
-				double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == Double.MAX_VALUE ) {
+				Double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == null || neighborFitness == Double.MAX_VALUE ) {
 					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					testedSolutions.put(neighborSol, neighborFitness);
 				}
-				testedSolutions.put(neighborSol, neighborFitness);
+				
 
 				if ( isMaximize() &&
 					(neighborFitness >= currentFitness || scope.getRandom().next() < Math
@@ -129,9 +131,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
-		// System.out.println("Best solution : " + currentSol + "  fitness : "
-		// + currentFitness);
-
+		
 		return getBestSolution();
 	}
 
