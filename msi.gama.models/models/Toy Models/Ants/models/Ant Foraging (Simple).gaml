@@ -16,31 +16,20 @@ global {
 		create ant number: ants_number with: [ location :: center ];
 	} 
 	
-	action press
+	action press (point loc, list selected_agents)
 	{
-		arg location type: point;
-  		arg selected_agents type: list;
-  		write("press " + location.x + " " + location.y + " "+selected_agents);
+		write("press " + loc.x + " " + loc.y + " "+selected_agents);
 	}
-	action release
+	action release (point loc, list selected_agents)
 	{
-		arg location type: point;
-  		arg selected_agents type: list;
-  	
 		write("release");
 	}
-	action click
+	action click  (point loc, list selected_agents)
 	{
-		arg location type: point;
-  		arg selected_agents type: list;
-  	
 		write("click");
 	}
-	action click2 
+	action click2   (point loc, list selected_agents)
 	{
-		arg location type: point;
-  		arg selected_agents type: list;
-  	
 		write("click2");
 	}
 
