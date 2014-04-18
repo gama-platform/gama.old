@@ -98,7 +98,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 
 	public TextStyle reservedTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setStyle(SWT.BOLD);
+		textStyle.setStyle(SWT.ITALIC);
 		textStyle.setColor(new RGB(0, 0, 0));
 		return textStyle;
 	}
@@ -139,7 +139,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle stringTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(61, 173, 255));
+		textStyle.setColor(new RGB(116, 167, 251));
 		return textStyle;
 	}
 

@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.ui.highlight;
 import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.*;
 import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.*;
 import java.util.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.utils.EGaml;
@@ -50,12 +51,17 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	@Override
+	public Object caseS_Display(final S_Display object) {
+		return caseStatement(object);
+	}
+
+	@Override
 	public Object caseStatement(final Statement object) {
 
 		setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
 
 		setStyle(object, KEYWORD_ID, object.getKey());
-		// Doesnt seem to work
+
 		return setStyle(object, FACET_ID, object.getFirstFacet());
 	}
 
@@ -187,9 +193,8 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 			if ( n == null ) { return false; }
 			for ( ILeafNode node : n.getLeafNodes() ) {
 				if ( !node.isHidden() ) {
-					String sNode = NodeModelUtils.getTokenText(node);
-					String fsNode = sNode + ":";
-					if ( text.equals(sNode) || text.equals(fsNode) ) {
+					String sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
+					if ( equalsFaceOrString(text, sNode) ) {
 						n = node;
 						break;
 					}
@@ -197,6 +202,14 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 			}
 			return setStyle(s, n);
 		}
+		return false;
+	}
+
+	boolean equalsFaceOrString(final String text, final String s) {
+		if ( s.equals(text) ) { return true; }
+		if ( s.equals(text + ":") ) { return true; }
+		if ( s.equals("\"" + text + "\"") ) { return true; }
+		if ( s.equals("\'" + text + "\'") ) { return true; }
 		return false;
 	}
 
