@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import gnu.trove.map.hash.THashMap;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -397,7 +396,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 			final String legend = e.getName();
 			if ( !CategoryItemRenderer.class.isInstance(e.getRenderer()) ) {
-				e.renderer = new BarRenderer();
+				e.renderer = new CustomRenderer();
 			}
 			plot.setRenderer(i, (CategoryItemRenderer) e.getRenderer(), false);
 			final Color c = e.getColor();
@@ -543,15 +542,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		createChart(scope);
 		createData(scope);
-	//	dataswithoutlists = datas;
+		// dataswithoutlists = datas;
 		updateseries(scope);
 		chart.setNotify(false);
 		return true;
 	}
 
 	public void updateseries(final IScope scope) throws GamaRuntimeException {
-//		datas=dataswithoutlists;
-		datasfromlists=new ArrayList<ChartData>();
+		// datas=dataswithoutlists;
+		datasfromlists = new ArrayList<ChartData>();
 		for ( int dl = 0; dl < datalists.size(); dl++ ) {
 			ChartDataList datalist = datalists.get(dl);
 
@@ -655,10 +654,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					seriesnames = (GamaList) valc;
 					for ( int i = 0; i < Math.min(values.size(), seriesnames.size()); i++ ) {
 						defaultnames.set(i, seriesnames.get(i) + "(" + i + ")");
-						if ((type==SERIES_CHART)&&(((XYPlot)chart.getPlot()).getDataset(i+1)!=null))
-						{
-								if (((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i+1))).getSeriesCount()>0)
-								((DefaultTableXYDataset)(((XYPlot)chart.getPlot()).getDataset(i+1))).getSeries(0).setKey(seriesnames.get(i)+"("+i+")");
+						if ( type == SERIES_CHART && ((XYPlot) chart.getPlot()).getDataset(i + 1) != null ) {
+							if ( ((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1))
+								.getSeriesCount() > 0 ) {
+								((DefaultTableXYDataset) ((XYPlot) chart.getPlot()).getDataset(i + 1)).getSeries(0)
+									.setKey(seriesnames.get(i) + "(" + i + ")");
+							}
 
 						}
 					}
@@ -693,10 +694,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 								Cast.asColor(scope, defaultcolors.get(i)), values.get(i));
 
 						datas.add(newdata);
-							datasfromlists.add(newdata);
+						datasfromlists.add(newdata);
 
-						if ((type==SERIES_CHART)||(type==XY_CHART))
-						{
+						if ( type == SERIES_CHART || type == XY_CHART ) {
 							final XYPlot plot = (XYPlot) chart.getPlot();
 							final String legend = newdata.getName();
 							// if (dataset==null)
@@ -1023,54 +1023,55 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			history.append(',');
 		}
 		if ( !(type == SERIES_CHART & datas.size() < 2) ) {
-		for ( int i = 0; i < datas.size(); i++ ) 
-		if (!datasfromlists.contains(datas.get(i))){
-				if ( type == SERIES_CHART & i == 0 ) {
-					i++;
-				}
-				XYPlot plot = (XYPlot) chart.getPlot();
-				DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
-				XYSeries serie = data.getSeries(0);
-				GamaList n = new GamaList();
-				Object o = datas.get(i).getValue(scope);
-				if ( o instanceof GamaList ) {
-					n = (GamaList) o;
-				} else {
-					cumulative = true;
-					n.add(o);
-				}
-				if ( type == XY_CHART ) {
-					final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
-					data.removeSeries(0);
-					data.addSeries(nserie);
-					serie = nserie;
-					// serie.clear();
-				}
-				// java.lang.System.out.println("gr"+n);
-				for ( int j = 0; j < n.size(); j++ ) {
-					if ( type == SERIES_CHART ) {
-						if ( cumulative ) {
-							// serie.addOrUpdate(Cast.asFloat(scope,Random.opRnd(scope, 10000))/1000,
-							// Double.parseDouble("" + n.get(j)));
-							serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));
-						} else {
-							serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
-							// serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
-
-						}
+			for ( int i = 0; i < datas.size(); i++ ) {
+				if ( !datasfromlists.contains(datas.get(i)) ) {
+					if ( type == SERIES_CHART & i == 0 ) {
+						i++;
+					}
+					XYPlot plot = (XYPlot) chart.getPlot();
+					DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
+					XYSeries serie = data.getSeries(0);
+					GamaList n = new GamaList();
+					Object o = datas.get(i).getValue(scope);
+					if ( o instanceof GamaList ) {
+						n = (GamaList) o;
+					} else {
+						cumulative = true;
+						n.add(o);
 					}
 					if ( type == XY_CHART ) {
-						if ( cumulative ) {
-							serie.addOrUpdate(Double.parseDouble("" + ((GamaList) n.get(j)).get(0)),
-								Double.parseDouble("" + ((GamaList) n.get(j)).get(1)));
-						} else {
-							serie.addOrUpdate(Double.parseDouble("" + ((GamaList) n.get(j)).get(0)),
-								Double.parseDouble("" + ((GamaList) n.get(j)).get(1)));
-
-						}
+						final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
+						data.removeSeries(0);
+						data.addSeries(nserie);
+						serie = nserie;
+						// serie.clear();
 					}
-					history.append(n.get(j));
-					history.append(',');
+					// java.lang.System.out.println("gr"+n);
+					for ( int j = 0; j < n.size(); j++ ) {
+						if ( type == SERIES_CHART ) {
+							if ( cumulative ) {
+								// serie.addOrUpdate(Cast.asFloat(scope,Random.opRnd(scope, 10000))/1000,
+								// Double.parseDouble("" + n.get(j)));
+								serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));
+							} else {
+								serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
+								// serie.addOrUpdate(Double.parseDouble("" + j), Double.parseDouble("" + n.get(j)));
+
+							}
+						}
+						if ( type == XY_CHART ) {
+							if ( cumulative ) {
+								serie.addOrUpdate(Double.parseDouble("" + ((GamaList) n.get(j)).get(0)),
+									Double.parseDouble("" + ((GamaList) n.get(j)).get(1)));
+							} else {
+								serie.addOrUpdate(Double.parseDouble("" + ((GamaList) n.get(j)).get(0)),
+									Double.parseDouble("" + ((GamaList) n.get(j)).get(1)));
+
+							}
+						}
+						history.append(n.get(j));
+						history.append(',');
+					}
 				}
 			}
 		}

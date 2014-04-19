@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ChartDataStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ChartDataStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -27,12 +26,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import msi.gaml.variables.IVariable;
-
 import org.jfree.chart.renderer.AbstractRenderer;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.*;
 
 @symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
@@ -90,8 +85,11 @@ public class ChartDataStatement extends AbstractStatement {
 
 		public Object getValue(final IScope scope) throws GamaRuntimeException {
 			Object o;
-			if (value!=null) 	 o = value.value(scope);
-			else o=lastvalue;
+			if ( value != null ) {
+				o = value.value(scope);
+			} else {
+				o = lastvalue;
+			}
 			if ( o instanceof GamaList ) { return Cast.asList(scope, o); }
 			return Cast.asFloat(scope, o);
 		}
@@ -121,8 +119,8 @@ public class ChartDataStatement extends AbstractStatement {
 		}
 
 		GamaColor color = Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
-		boolean showMarkers = (Boolean) getFacetValue(scope, MARKER, true);
-		boolean fillMarkers = (Boolean) getFacetValue(scope, FILL, true);
+		boolean showMarkers = getFacetValue(scope, MARKER, true);
+		boolean fillMarkers = getFacetValue(scope, FILL, true);
 
 		AbstractRenderer r = null;
 		if ( style.equals(IKeyword.LINE) ) {
@@ -151,8 +149,8 @@ public class ChartDataStatement extends AbstractStatement {
 		} else if ( style.equals(IKeyword.STACK) ) {
 			r = new StackedBarRenderer();
 			r.setSeriesPaint(0, color);
-//			((XYStepRenderer) r).setBaseShapesFilled(fillMarkers);
-//			((XYStepRenderer) r).setBaseShapesVisible(showMarkers);
+			// ((XYStepRenderer) r).setBaseShapesFilled(fillMarkers);
+			// ((XYStepRenderer) r).setBaseShapesVisible(showMarkers);
 		}
 		data.renderer = r;
 
