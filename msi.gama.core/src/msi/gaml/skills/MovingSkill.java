@@ -123,8 +123,8 @@ public class MovingSkill extends Skill {
 		public
 		void setLocation(final IAgent agent, final ILocation p) {
 		final ITopology topology = getTopology(agent);
-		if ( !topology.isTorus() ) {
-			final ILocation oldLocation = agent.getLocation();
+		final ILocation oldLocation = agent.getLocation();
+		if ( !topology.isTorus() & ! p.equals(oldLocation)) {
 			final Integer newHeading = topology.directionInDegreesTo(agent.getScope(), oldLocation, p);
 			if ( newHeading != null ) {
 				setHeading(agent, newHeading);
