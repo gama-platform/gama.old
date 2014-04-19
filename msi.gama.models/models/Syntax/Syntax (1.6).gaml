@@ -262,8 +262,8 @@ global skills: [moving] control: fsm {
 		return i > j ? i : j;
 	}
 
-	list<agent> filter (container<agent> agents) {
-		return agents where (each.location = nil);
+	list<agent> filter (container<agent> my_agents) {
+		return my_agents where (each.location = nil);
 	}
 
 
@@ -289,7 +289,7 @@ global skills: [moving] control: fsm {
 		bool a <- flip(0.4);
 		// .. but also for binary ones (in addition to the classic way)
 		int b <- div(100, 23) + 100 div 23;
-		geometry c <- union(square(1), circle(10));
+		geometry c1 <- union(square(1), circle(10));
 		// The only exception to this rule is that of the built-in operators (like "and"/"or") and the ones whose names are not alphanumeric (like "+")
 
 		// The big news is that operators are now allowed to be written using any number of parameters (not 1 or 2)
@@ -299,7 +299,7 @@ global skills: [moving] control: fsm {
 		//    	if ( inf > sup ) { return false; }
 		//		return a >= sup ? false : a > inf; 
 		// }
-		bool e <- between(5, 1, 10);
+		bool e1 <- between(5, 1, 10);
 	}
 	/**
   * DEFINITION OF ASPECTS
