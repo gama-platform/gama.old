@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaViewPart.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GamaViewPart.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -60,6 +60,19 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 		this.parent = parent;
 		ownCreatePartControl(parent);
 		activateContext();
+	}
+
+	/**
+	 * @param state one of the IWorkbenchPage STATE_* values: STATE_MAXIMIZED,
+	 *            STATE_MINIMIZED, STATE_RESTORED
+	 */
+	public void setViewState(final int state) {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		int currentState = page.getPartState(page.getReference(this));
+		if ( currentState != state ) {
+			page.activate(this);
+			page.setPartState(page.getReference(this), state);
+		}
 	}
 
 	public abstract void ownCreatePartControl(Composite parent);

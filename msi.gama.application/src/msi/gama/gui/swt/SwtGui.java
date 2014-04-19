@@ -413,6 +413,7 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				try {
+					getPage().zoomOut();
 					result[0] = getPage().showView(viewId, secondaryId, code);
 				} catch (final PartInitException e) {
 					result[0] = e;
@@ -505,6 +506,7 @@ public class SwtGui implements IGui {
 				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
 			}
+
 		}
 
 		@Override
@@ -704,21 +706,6 @@ public class SwtGui implements IGui {
 	}
 
 	String currentPerspectiveId = null;
-
-	// public final boolean changePerspective() {
-	// if ( currentPerspectiveId.equals(PERSPECTIVE_SIMULATION_ID) ) {
-	// this.currentPerspectiveId = PERSPECTIVE_HPC_ID;
-	// return openPerspective(PERSPECTIVE_HPC_ID);
-	// } else {
-	// if ( currentPerspectiveId == PERSPECTIVE_MODELING_ID ) {
-	// this.currentPerspectiveId = PERSPECTIVE_SIMULATION_ID;
-	// return openPerspective(PERSPECTIVE_SIMULATION_ID);
-	// } else {
-	// this.currentPerspectiveId = PERSPECTIVE_MODELING_ID;
-	// return openPerspective(PERSPECTIVE_MODELING_ID);
-	// }
-	// }
-	// }
 
 	@Override
 	public void run(final Runnable r) {
@@ -1055,14 +1042,14 @@ public class SwtGui implements IGui {
 			tell = new Tell();
 			error = new Error();
 			views = new Views();
-//			OutputSynchronizer.waitForViewsToBeClosed();
-			//hqnghi:
-			//TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
-			//TODO so waitForViewsToBeClosed only with mono controller
-			if(GAMA.getControllers().size()==0){
-			OutputSynchronizer.waitForViewsToBeClosed();
+			// OutputSynchronizer.waitForViewsToBeClosed();
+			// hqnghi:
+			// TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
+			// TODO so waitForViewsToBeClosed only with mono controller
+			if ( GAMA.getControllers().size() == 0 ) {
+				OutputSynchronizer.waitForViewsToBeClosed();
 			}
-			//end-hqnghi
+			// end-hqnghi
 		} else {
 			status = null;
 		}
