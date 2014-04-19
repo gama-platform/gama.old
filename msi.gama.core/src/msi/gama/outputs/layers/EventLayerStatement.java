@@ -1,40 +1,106 @@
 /*********************************************************************************************
- * 
  *
- * 'EventLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ *
+ * 'EventLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import msi.gama.common.interfaces.IKeyword;
+import java.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
  * Written by Marilleau Modified on 16 novembre 2012
  * @todo Description
- * 
+ *
  */
 @symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, values = { "mouse_up", "mouse_down", "mouse_drag" }, optional = false),
-	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false),
+	@facet(name = EventLayerStatement.defaultPointArg, type = IType.STRING, optional = true, internal = true),
+	@facet(name = EventLayerStatement.defaultListArg, type = IType.STRING, optional = true, internal = true) },
+	omissible = IKeyword.NAME)
+@validator(EventLayerValidator.class)
 public class EventLayerStatement extends AbstractLayerStatement {
 
+	public static class EventLayerValidator implements IDescriptionValidator {
+
+		@Override
+		public void validate(final IDescription description) {
+			String actionName = description.getFacets().getLabel(ACTION);
+			StatementDescription sd = description.getModelDescription().getAction(actionName);
+			if ( sd == null ) {
+				description.error("Action '" + actionName + "' is not defined in 'global'", IGamlIssue.UNKNOWN_ACTION,
+					ACTION);
+				return;
+			}
+			String pointArg = null, listArg = null;
+			Collection<IDescription> args = sd.getArgs();
+			for ( IDescription d : args ) {
+				if ( d.getName().equals(defaultPointArg) || pointArg == null && d.getType().id() == IType.POINT ) {
+					pointArg = d.getName();
+				}
+				if ( d.getName().equals(defaultListArg) || listArg == null && d.getType().id() == IType.LIST ) {
+					listArg = d.getName();
+				}
+			}
+			if ( pointArg == null ) {
+				description.warning("Action '" + actionName + "' does not accept '" + defaultPointArg +
+					"' or any argument of type point. The location of the mouse will not be pased to it.",
+					IGamlIssue.MISSING_ARGUMENT, ACTION);
+			} else if ( !pointArg.equals(defaultListArg) ) {
+				description.info("The location of the mouse will be passed to the parameter '" + pointArg +
+					"' of action '" + actionName + "'", IGamlIssue.GENERAL, ACTION);
+			}
+			if ( listArg == null ) {
+				description.warning("Action '" + actionName + "' does not accept '" + defaultListArg +
+					"' or any argument of type list<agent>. The agents selected will not be pased to it.",
+					IGamlIssue.MISSING_ARGUMENT, ACTION);
+			} else if ( !listArg.equals(defaultListArg) ) {
+				description.info("The list of selected agents will be passed to the parameter '" + listArg +
+					"' of action '" + actionName + "'", IGamlIssue.GENERAL, ACTION);
+			}
+			List<String> argNames = sd.getArgNames();
+			if ( pointArg != null && listArg != null ) {
+				if ( argNames.size() > 2 ) {
+					description.error(
+						"Actions called by this event layer can not define any argument in addition to '" + pointArg +
+							"' and '" + listArg + "'", IGamlIssue.DIFFERENT_ARGUMENTS, ACTION);
+					return;
+				}
+			}
+			// The facets are modified
+			if ( pointArg != null ) {
+				description.getFacets().putAsLabel(defaultPointArg, pointArg);
+			}
+			if ( listArg != null ) {
+				description.getFacets().putAsLabel(defaultListArg, listArg);
+			}
+		}
+	}
+
+	public static final String defaultPointArg = "mouse_location";
+	public static final String defaultListArg = "selected_agents";
 	public static int MOUSE_PRESSED = 0;
 	public static int MOUSE_RELEASED = 1;
 	public static int MOUSE_DRAGGED = 2;

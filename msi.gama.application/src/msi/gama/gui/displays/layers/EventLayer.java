@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'EventLayer.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'EventLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,13 +12,11 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.event.*;
-import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.ConstantExpressionDescription;
@@ -32,10 +30,30 @@ import msi.gaml.statements.*;
 
 public class EventLayer extends AbstractLayer {
 
+	@Override
+	public void setPosition(final GamaPoint p) {
+		super.setPosition(p);
+	}
+
+	@Override
+	public void setExtent(final GamaPoint p) {
+		super.setExtent(p);
+	}
+
+	@Override
+	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
+		super.setPositionAndSize(box, g);
+	}
+
 	EventListener listener;
+	private final String pointArg, listArg;
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
+		IExpression exp = layer.getFacet(EventLayerStatement.defaultPointArg);
+		pointArg = exp == null ? null : exp.literalValue();
+		exp = layer.getFacet(EventLayerStatement.defaultListArg);
+		listArg = exp == null ? null : exp.literalValue();
 	}
 
 	@Override
@@ -53,22 +71,10 @@ public class EventLayer extends AbstractLayer {
 		super.firstLaunchOn(surface);
 		final IExpression eventType = definition.getFacet(IKeyword.NAME);
 		final IExpression actionName = definition.getFacet(IKeyword.ACTION);
+		IScope scope = surface.getDisplayScope();
 
-		String currentMouseEvent = GAMA.run(new InScope<String>() {
-
-			@Override
-			public String run(final IScope scope) {
-				return Cast.asString(scope, eventType.value(scope));
-			}
-		});
-
-		String currentAction = GAMA.run(new InScope<String>() {
-
-			@Override
-			public String run(final IScope scope) {
-				return Cast.asString(scope, actionName.value(scope));
-			}
-		});
+		String currentMouseEvent = Cast.asString(scope, eventType.value(scope));
+		String currentAction = Cast.asString(scope, actionName.value(scope));
 
 		listener = new EventListener(surface, currentMouseEvent, currentAction);
 		surface.addMouseListener(listener);
@@ -85,6 +91,12 @@ public class EventLayer extends AbstractLayer {
 		return "Event layer";
 	}
 
+	// We explicitely translate by the origin of the surface
+	@Override
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		return super.getModelCoordinatesFrom(xOnScreen - g.getOriginX(), yOnScreen - g.getOriginY(), g);
+	}
+
 	private class EventListener implements MouseListener {
 
 		private final static int MOUSE_PRESS = 0;
@@ -97,7 +109,7 @@ public class EventLayer extends AbstractLayer {
 
 		public EventListener(final IDisplaySurface display, final String event, final String action) {
 			listenedEvent = getListeningEvent(event);
-			executer = GAMA.getModel().getAction(action);
+			executer = display.getDisplayScope().getSimulationScope().getSpecies().getAction(action);
 			surface = display;
 		}
 
@@ -135,15 +147,18 @@ public class EventLayer extends AbstractLayer {
 			}
 		}
 
-		
-
 		private void executeEvent(final MouseEvent arg0) {
 			final GamaPoint pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
 			if ( pp.x < 0 || pp.getY() < 0 || pp.x >= surface.getEnvWidth() || pp.y >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
 			final IList<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
-			args.put("location", ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
-			args.put("selected_agents", ConstantExpressionDescription.create(new GamaList(agentset)));
+			if ( pointArg != null ) {
+				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
+			}
+			if ( listArg != null ) {
+				args.put(listArg, ConstantExpressionDescription.create(new GamaList(agentset)));
+			}
+
 			executer.setRuntimeArgs(args);
 			GAMA.run(new GAMA.InScope.Void() {
 

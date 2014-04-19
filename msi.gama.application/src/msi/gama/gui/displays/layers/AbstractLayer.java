@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractLayer.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AbstractLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -31,17 +31,20 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class AbstractLayer implements ILayer {
 
-//	 hqnghi : getter and setter of scope for layer output	 
+	// hqnghi : getter and setter of scope for layer output
 	private IScope privateScope = null;
 
+	@Override
 	public IScope getPrivateScope() {
 		return privateScope;
 	}
 
-	public void setPrivateScope(IScope privateScope) {
+	@Override
+	public void setPrivateScope(final IScope privateScope) {
 		this.privateScope = privateScope;
 	}
-//end-hqnghi
+
+	// end-hqnghi
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		return null;

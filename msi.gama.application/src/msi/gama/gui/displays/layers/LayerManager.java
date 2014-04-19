@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'LayerManager.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'LayerManager.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.ILayerStatement;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 
@@ -138,14 +137,17 @@ public class LayerManager implements ILayerManager {
 			g.beginDrawingLayers();
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 				final ILayer dis = enabledLayers.get(i);
-				//hqnghi: if layer have its own scope (from other experiment, init layer with it
+				// hqnghi: if layer have its own scope (from other experiment, init layer with it
 				if ( dis.getPrivateScope() != null ) {
-					GAMA.releaseScope(scope);
+					// WARNING NO. Why a layer would have a scope from an other experiment???
+					// TODO if you release the scope of the display, everything will be wiped from it.
+
+					// GAMA.releaseScope(scope);
 					scope = dis.getPrivateScope().copy();
 					if ( scope == null || scope.interrupted() ) { return; }
 					scope.setGraphics(g);
 				}
-				//end-hqnghi
+				// end-hqnghi
 				dis.drawDisplay(scope, g);
 			}
 		} catch (final Exception e) {
