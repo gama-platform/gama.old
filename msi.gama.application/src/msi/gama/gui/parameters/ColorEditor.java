@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ColorEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ColorEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,11 +22,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class ColorEditor extends AbstractEditor implements DisposeListener {
+public class ColorEditor extends AbstractEditor {
 
 	private Button edit;
-
-	// private ExpressionControl expression;
 
 	ColorEditor(final IParameter param) {
 		super(param);
@@ -59,37 +57,14 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 	}
 
 	@Override
-	public void widgetDisposed(final DisposeEvent event) {
-		// if ( edit.getImage() != null ) {
-		// edit.getImage().dispose();
-		// edit.setImage(null);
-		// }
-	}
-
-	@Override
 	public Control createCustomParameterControl(final Composite compo) {
 		compo.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		// Composite comp = new Composite(compo, SWT.None);
-		// comp.setLayoutData(getParameterGridData());
-		// final GridLayout layout = new GridLayout(2, false);
-		// layout.verticalSpacing = 0;
-		// layout.marginHeight = 1;
-		// layout.marginWidth = 1;
-		// comp.setLayout(layout);
-		// expression = new ExpressionControl(comp, this);
-
 		edit = new Button(compo, SWT.PUSH);
 		GridData d = new GridData(SWT.LEFT, SWT.FILL, false, true);
 		d.widthHint = 48;
 		edit.setLayoutData(d);
-		// edit.setText("Edit");
 		edit.setAlignment(SWT.LEFT);
-
-		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		// edit.setLayoutData(d);
-		edit.addDisposeListener(this);
 		edit.addSelectionListener(this);
-		// edit.setImage(getImage());
 		edit.addPaintListener(new PaintListener() {
 
 			@Override
@@ -100,29 +75,16 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 		});
 
 		return edit;
-		// return expression.getControl();
 	}
-
-	// private static Image dumbImage;
-	//
-	// static Image getImage() {
-	// if ( dumbImage == null ) {
-	// dumbImage = new Image(Display.getDefault(), 32, 1);
-	// }
-	// return dumbImage;
-	// }
 
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		// expression.getControl().setText(StringUtils.toGaml(currentValue));
 		java.awt.Color c = currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue;
 		Color color = new Color(Display.getDefault(), c.getRed(), c.getGreen(), c.getBlue());
-		// Image oldImage = edit.getImage();
 		int height = edit.getSize().y;
 		int width = edit.getSize().x;
 		if ( height <= 0 || width <= 0 ) { return; }
-		// Image image = new Image(Display.getDefault(), width, height);
 		GC gc = new GC(edit);
 		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		gc.fillRoundRectangle(6, 6, width - 16, height - 16, 5, 5);
@@ -131,11 +93,8 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 		gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		gc.drawRoundRectangle(7, 7, width - 18, height - 18, 5, 5);
 		gc.dispose();
-		edit.setText("                " + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + " ");
-		// edit.setImage(image);
-		// if ( oldImage != null && !oldImage.isDisposed() ) {
-		// oldImage.dispose();
-		// }
+		// WARNING AD 19/04/14: this (commented) line seems to be the cause of Issue 923 (hangs on MacOSX).
+		// edit.setText("                " + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + " ");
 		color.dispose();
 		internalModification = false;
 	}
@@ -143,8 +102,6 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 	@Override
 	public Control getEditorControl() {
 		return edit;
-		// if ( expression == null ) { return null; }
-		// return expression.getControl();
 	}
 
 	@Override
