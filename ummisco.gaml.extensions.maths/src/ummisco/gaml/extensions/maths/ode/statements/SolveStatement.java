@@ -18,6 +18,8 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,12 +32,12 @@ import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 
 @facets(value = {
-	@facet(name = IKeyword.EQUATION, type = IType.STRING, optional = false),
+	@facet(name = IKeyword.EQUATION, type = IType.STRING, optional = false, doc = @doc("the equation system identifier to be numerically solved")),
 	@facet(name = IKeyword.METHOD,
 		type = IType.ID /* CHANGE */,
 		optional = true,
 		values = { "rk4", "dp853" },
-		doc = @doc(value = "integrate method")),
+		doc = @doc(value = "integrate method (can be only \"rk4\" or \"dp853\") (default value: \"rk4\")")),
 	@facet(name = "integrated_times",
 		type = IType.LIST,
 		optional = true,
@@ -43,11 +45,11 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	@facet(name = "integrated_values",
 		type = IType.LIST,
 		optional = true,
-		doc = @doc(value = "list of Variables's value inside integration process")),
+		doc = @doc(value = "list of variables's value inside integration process")),
 	@facet(name = "discretizing_step",
 		type = IType.INT,
 		optional = true,
-		doc = @doc(value = "number of discret beside 2 step of simulation")),
+		doc = @doc(value = "number of discret beside 2 step of simulation (default value: 0)")),
 	@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
 	@facet(name = "time_final",
 		type = IType.FLOAT,
@@ -56,33 +58,36 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	@facet(name = "cycle_length",
 		type = IType.INT,
 		optional = true,
-		doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator")),
+		doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 	@facet(name = IKeyword.STEP,
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "integration step, use with most integrator method")),
+		doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
 	@facet(name = "min_step",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "minimal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		doc = @doc(value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "max_step",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "maximal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		doc = @doc(value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 	@facet(name = "scalAbsoluteTolerance",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "allowed absolute error, use with dp853 method,")),
+		doc = @doc(value = "allowed absolute error (used with dp853 method only)")),
 	@facet(name = "scalRelativeTolerance",
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc(value = "allowed relative error, use with dp853 method,")) },
+		doc = @doc(value = "allowed relative error (used with dp853 method only)")) },
 
 	combinations = { @combination({ IKeyword.STEP }),
 		@combination({ "min_step", "max_step", "scalAbsoluteTolerance", "scalRelativeTolerance" }) },
 	omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@doc(value="Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.", usages = {
+	@usage(value="", examples = {@example(value="solve SIR method: \"rk4\" step:0.001;", isExecutable=false)})
+})
 public class SolveStatement extends AbstractStatementSequence {
 
 	Solver solver;
