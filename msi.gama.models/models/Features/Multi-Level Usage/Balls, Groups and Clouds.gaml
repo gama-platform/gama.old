@@ -351,10 +351,8 @@ global {
 			reflex self_disaggregate {
 			}
 			
-			action move2 {
-				arg with_heading type: float;
-				arg with_speed type: float;
-				
+			action move2 (float with_heading, float with_speed) {
+
 				loop m over: members {
 					ask m as ball_in_cloud {
 						do move2 (with_heading,with_speed);
@@ -392,8 +390,7 @@ global {
 			}
 		}
 		
-		action can_capture type: bool {
-			arg a_group type: group;
+		bool can_capture (group a_group) {
 			
 			if (shape overlaps a_group.shape) { return true; }
 			
@@ -510,9 +507,9 @@ experiment cloud_experiment type: gui {
 			species cloud;
 		}
 		
-		monitor balls value: length(ball);
-		monitor groups value: length(group);
-		monitor clouds value: length(cloud);
+		monitor "Balls" value: length(ball);
+		monitor "Groups" value: length(group);
+		monitor "Clouds" value: length(cloud);
 	}
 }
 
