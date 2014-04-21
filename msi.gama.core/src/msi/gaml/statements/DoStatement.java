@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.ACTION, type = IType.ID, optional = false, doc = @doc("the name of an action or a primitive")),
 	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true, doc = @doc(value = "a map expression containing the parameters of the action")),
-	@facet(name = IKeyword.INTERNAL_FUNCTION, type = IType.NONE, optional = true, doc = @doc(value = "for internal use only")),
+	@facet(name = IKeyword.INTERNAL_FUNCTION, type = IType.NONE, optional = true, internal = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc(deprecated = "declare a temporary variable and use assignement instead", value = "create a new variable and assign to it the result of the action")) }, omissible = IKeyword.ACTION)
 @doc(value = "Allows the agent to execute an action or a primitive.  For a list of primitives available in every species, see this [BuiltIn161 page]; for the list of primitives defined by the different skills, see this [Skills161 page]. Finally, see this [Species161 page] to know how to declare custom actions.", usages = {
 	@usage(value = "The simple syntax (when the action does not expect any argument and the result is not to be kept) is:", examples = { @example(value = "do name_of_action_or_primitive;", isExecutable = false) }),
@@ -163,11 +163,11 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	// return Types.NO_TYPE;
 	// }
 
-	@Override
-	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		final ISpecies context = scope.getAgentScope().getSpecies();
-		final IStatement.WithArgs executer = context.getAction(name);
-		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer.getPertinence().value(scope)); }
-		return 1.0;
-	}
+//	@Override
+//	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
+//		final ISpecies context = scope.getAgentScope().getSpecies();
+//		final IStatement.WithArgs executer = context.getAction(name);
+//		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer.getPertinence().value(scope)); }
+//		return 1.0;
+//	}
 }
