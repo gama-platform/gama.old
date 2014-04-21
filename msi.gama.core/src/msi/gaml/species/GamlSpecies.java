@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlSpecies.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamlSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -40,9 +40,20 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true),
-	@facet(name = "use_individual_shapes", type = IType.BOOL, optional = true, doc = { @doc(value = "True by default. Allows to specify whether or not the agents of the grid will have distinct geometries. If set to false, they will all have simpler proxy geometries", see = "use_regular_agents", comment = "This facet, when set to true, allows to save memory by generating only one reference geometry and proxy geometries for the agents") }),
-	@facet(name = "use_regular_agents", type = IType.BOOL, optional = true, doc = { @doc(value = "True by default. Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
-	@facet(name = "use_neighbours_cache", type = IType.BOOL, optional = true, doc = { @doc(value = "True by default. Allows to turn on or off the use of the neighbours cache used for grids. Note that if a diffusion of variable occurs, GAMA will emit a warning and automatically switch to a caching version") }),
+	@facet(name = "use_individual_shapes",
+		type = IType.BOOL,
+		optional = true,
+		doc = { @doc(value = "True by default. Allows to specify whether or not the agents of the grid will have distinct geometries. If set to false, they will all have simpler proxy geometries",
+			see = "use_regular_agents",
+			comment = "This facet, when set to true, allows to save memory by generating only one reference geometry and proxy geometries for the agents") }),
+	@facet(name = "use_regular_agents",
+		type = IType.BOOL,
+		optional = true,
+		doc = { @doc(value = "True by default. Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
+	@facet(name = "use_neighbours_cache",
+		type = IType.BOOL,
+		optional = true,
+		doc = { @doc(value = "True by default. Allows to turn on or off the use of the neighbours cache used for grids. Note that if a diffusion of variable occurs, GAMA will emit a warning and automatically switch to a caching version") }),
 	@facet(name = IKeyword.FILE, type = IType.FILE, optional = true),
 	@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
@@ -54,7 +65,8 @@ import msi.gaml.types.IType;
 	@facet(name = "compile", type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
-	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) },
+	omissible = IKeyword.NAME)
 @validator(SpeciesValidator.class)
 public class GamlSpecies extends AbstractSpecies {
 
@@ -122,8 +134,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method accept()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
@@ -132,8 +143,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method filter()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
