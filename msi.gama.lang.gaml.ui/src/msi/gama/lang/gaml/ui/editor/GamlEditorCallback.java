@@ -46,7 +46,9 @@ public class GamlEditorCallback extends AbstractDirtyStateAwareEditorCallback {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				((GamlResource) state).setEdited(true);
+				GamlResource r = (GamlResource) state;
+				if ( r == null ) { return; }
+				r.setEdited(true);
 			}
 		});
 
