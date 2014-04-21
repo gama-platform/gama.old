@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExperimentOutputManager.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ExperimentOutputManager.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,7 +25,7 @@ import msi.gaml.descriptions.IDescription;
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
 @symbol(name = IKeyword.PERMANENT, kind = ISymbolKind.OUTPUT, with_sequence = true)
-@inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.EXPERIMENT })
 public class ExperimentOutputManager extends AbstractOutputManager {
 
 	public ExperimentOutputManager(final IDescription desc) {
