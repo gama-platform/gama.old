@@ -27,14 +27,11 @@ import msi.gaml.operators.Cast;
 
 public abstract class AbstractStatement extends Symbol implements IStatement {
 
-	protected IExpression pertinence;
-
 	public AbstractStatement(final IDescription desc) {
 		super(desc);
 		final String k = getLiteral(IKeyword.KEYWORD);
 		final String n = getLiteral(IKeyword.NAME);
 		setName(k == null ? "" : k + " " + n == null ? "" : n);
-		pertinence = null;
 	}
 
 	@Override
@@ -132,17 +129,6 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 			}
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		if ( pertinence != null ) { return Cast.asFloat(scope, pertinence.value(scope)); }
-		return 1.0;
-	}
-
-	@Override
-	public IExpression getPertinence() {
-		return pertinence;
 	}
 
 }
