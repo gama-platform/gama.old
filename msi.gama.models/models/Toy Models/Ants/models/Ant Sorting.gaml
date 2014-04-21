@@ -37,7 +37,7 @@ entities {
 		}
 		state full {
 			enter { 
-				let encountered <- 0; 
+				int encountered <- 0; 
 			}
 			if place.color = color { 
 				encountered <- encountered + 1 ;
