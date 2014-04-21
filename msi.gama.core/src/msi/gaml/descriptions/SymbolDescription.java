@@ -392,6 +392,11 @@ public abstract class SymbolDescription implements IDescription {
 		originName = null;
 	}
 
+	protected boolean canBeDefinedIn(final IDescription sd) {
+		final SymbolProto proto = getMeta();
+		return proto.contextKinds[sd.getKind()] || proto.contextKeywords.contains(sd.getKeyword());
+	}
+
 	@Override
 	public IDescription validate() {
 		if ( validated ) { return this; }
@@ -405,8 +410,8 @@ public abstract class SymbolDescription implements IDescription {
 		final SymbolProto proto = getMeta();
 		if ( sd != null ) {
 			// We first verify that the description is at the right place
-			if ( !proto.contextKinds[sd.getKind()] && !proto.contextKeywords.contains(sd.getKeyword()) ) {
-				error(keyword + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT, getName());
+			if ( !canBeDefinedIn(sd) ) {
+				error(keyword + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT);
 				return this;
 			}
 			// If it is supposed to be unique, we verify this

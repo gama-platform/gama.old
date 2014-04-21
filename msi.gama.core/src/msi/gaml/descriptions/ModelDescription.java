@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -23,9 +23,9 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class ModelDescription extends SpeciesDescription {
 
@@ -73,6 +73,12 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void isDocumenting(final boolean b) {
 		document = b;
+	}
+
+	@Override
+	protected boolean canBeDefinedIn(final IDescription sd) {
+		// By convention, a model can be defined everywhere
+		return true;
 	}
 
 	@Override
@@ -132,7 +138,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	/**
 	 * Gets the model file name.
-	 * 
+	 *
 	 * @return the model file name
 	 */
 	public String getModelFilePath() {
