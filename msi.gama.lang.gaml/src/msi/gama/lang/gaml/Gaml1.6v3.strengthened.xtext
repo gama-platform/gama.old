@@ -32,19 +32,39 @@ S_Section returns Statement:
 ;
 
 S_Global :
-	key="global" (facets+=Facet)* (block=Block | ';')
+	key="global" (facets+=Facet)* (block=speciesBlock | ';')
 ;
 
 S_Entities:
-	key="entities" block=Block
+	key="entities" block=speciesListBlock
 ;
 
 S_Environment :
-	key="environment" (facets+=Facet)* (block=Block | ';')
+	key="environment" (facets+=Facet)* (block=speciesListBlock | ';')
+;
+
+speciesListBlock returns Block:
+	{Block} '{' (statements+=S_Species)* '}'
 ;
 
 S_Species :
-	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';'));
+	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=speciesBlock | ';'));
+
+speciesBlock returns Block:
+	{Block} '{' (statements+=S_FirstLevel)* '}'
+;
+
+S_FirstLevel returns Statement:
+	S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Equations | S_User
+;
+
+S_User:
+	key=(_UserKey) (firstFacet="name:")? expr= TerminalExpression (facets+=Facet)* (block=Block | ';')
+;
+
+_UserKey:
+	"user_command" | "user_panel" | "user_input"
+;
 
 S_Experiment :
 	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=ExperimentBlock | ';');
@@ -54,7 +74,7 @@ S_Experiment :
  */
 Statement:
 	(=> S_Declaration |
-	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)));
+	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If  | S_Arg | S_Solve | S_User )));
 
 S_1Expr_Facets_BlockOrEnd returns Statement:
 	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
@@ -63,7 +83,7 @@ S_Do:
 	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
 
 S_Loop:
-	key="loop" (name=ID)? (facets+=Facet)* block=Block;
+	key="loop" (name=Valid_ID)? (facets+=Facet)* block=Block;
 
 S_If:
 	key='if' (firstFacet="condition:")? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
@@ -78,14 +98,18 @@ S_Return:
 	/*
  * DECLARATIONS
  */
-S_Declaration:
-	S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Loop ;
+S_Declaration :
+	  S_Reflex | S_Definition | S_Loop ;
 
 S_Reflex:
 	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
 
-S_Definition:
-	tkey=TypeRef (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+S_Definition :
+	tkey=TypeRef (firstFacet="name:")? name=(Valid_ID) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+
+S_Arg returns S_Definition:
+	{S_Arg}key=_LetOrArgKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';'
+;
 
 S_Action returns S_Definition:
 	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
@@ -122,7 +146,7 @@ S_Solve:
  */
 
 S_Monitor:
-	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
+	key="monitor" (firstFacet="name:")? (name=Valid_ID | expr= TerminalExpression) (facets+=Facet)+ ";"
 ;
 
 S_Display:
@@ -138,7 +162,11 @@ ExperimentBlock returns Block:
 ;
 
 experimentStatement returns Statement:
-	Statement | S_Output
+	S_FirstLevel | S_Output | S_Parameter
+;
+
+S_Parameter returns Statement:
+	key='parameter' (firstFacet = "name:") ? expr= Expression (facets+=Facet)* ';'
 ;
 
 
@@ -151,7 +179,7 @@ outputBlock returns Block:
 ;
 
 outputStatement returns Statement:
-	Statement | S_Display
+	Statement | S_Display | S_Monitor
 ;
 displayStatement returns Statement:
 	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
@@ -175,7 +203,7 @@ _SpeciesKey:
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" ;
+	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one"  ;
 
 _LayerKey:
 	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
@@ -184,10 +212,14 @@ _DoKey:
 	"do";
 
 _VarOrConstKey:
-	"var" | "const" | "let" | "arg" | "signal" ;
+	"var" | "const" | "signal" ;
+
+_LetOrArgKey:
+	"let" | "arg"
+;
 
 _ReflexKey:
-	"init" | "reflex" | "aspect";
+	"init" | "reflex" | "aspect" | "setup";
 
 _AssignmentKey:
 	"<-" | "<<" | '>' '>' | "<<+" | '>''>-' | "+<-" | "<+" | ">-" ;
@@ -406,7 +438,7 @@ TypeDefinition:
 
 
 VarDefinition:
-	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+	=>S_Declaration | (=>S_Species | Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
 
 ActionDefinition:
 	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;
@@ -431,7 +463,9 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
+	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _LetOrArgKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | _UserKey | ID;
+
+
 
 	/**
  * Terminals

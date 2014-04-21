@@ -68,16 +68,20 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
       case GamlPackage.ACTION_EDITOR: return createActionEditor();
       case GamlPackage.MODEL: return createModel();
+      case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.STATEMENT: return createStatement();
+      case GamlPackage.SGLOBAL: return createS_Global();
+      case GamlPackage.SENTITIES: return createS_Entities();
+      case GamlPackage.SENVIRONMENT: return createS_Environment();
+      case GamlPackage.SSPECIES: return createS_Species();
+      case GamlPackage.SEXPERIMENT: return createS_Experiment();
       case GamlPackage.SDO: return createS_Do();
       case GamlPackage.SLOOP: return createS_Loop();
       case GamlPackage.SIF: return createS_If();
       case GamlPackage.SOTHER: return createS_Other();
       case GamlPackage.SRETURN: return createS_Return();
       case GamlPackage.SDECLARATION: return createS_Declaration();
-      case GamlPackage.SSPECIES: return createS_Species();
-      case GamlPackage.SEXPERIMENT: return createS_Experiment();
       case GamlPackage.SREFLEX: return createS_Reflex();
       case GamlPackage.SDEFINITION: return createS_Definition();
       case GamlPackage.SASSIGNMENT: return createS_Assignment();
@@ -87,7 +91,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSOLVE: return createS_Solve();
       case GamlPackage.SMONITOR: return createS_Monitor();
       case GamlPackage.SDISPLAY: return createS_Display();
-      case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
       case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
@@ -189,6 +192,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Block createBlock()
+  {
+    BlockImpl block = new BlockImpl();
+    return block;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Import createImport()
   {
     ImportImpl import_ = new ImportImpl();
@@ -204,6 +218,61 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     StatementImpl statement = new StatementImpl();
     return statement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Global createS_Global()
+  {
+    S_GlobalImpl s_Global = new S_GlobalImpl();
+    return s_Global;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Entities createS_Entities()
+  {
+    S_EntitiesImpl s_Entities = new S_EntitiesImpl();
+    return s_Entities;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Environment createS_Environment()
+  {
+    S_EnvironmentImpl s_Environment = new S_EnvironmentImpl();
+    return s_Environment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Species createS_Species()
+  {
+    S_SpeciesImpl s_Species = new S_SpeciesImpl();
+    return s_Species;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Experiment createS_Experiment()
+  {
+    S_ExperimentImpl s_Experiment = new S_ExperimentImpl();
+    return s_Experiment;
   }
 
   /**
@@ -270,28 +339,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_DeclarationImpl s_Declaration = new S_DeclarationImpl();
     return s_Declaration;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public S_Species createS_Species()
-  {
-    S_SpeciesImpl s_Species = new S_SpeciesImpl();
-    return s_Species;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public S_Experiment createS_Experiment()
-  {
-    S_ExperimentImpl s_Experiment = new S_ExperimentImpl();
-    return s_Experiment;
   }
 
   /**
@@ -391,17 +438,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_DisplayImpl s_Display = new S_DisplayImpl();
     return s_Display;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Block createBlock()
-  {
-    BlockImpl block = new BlockImpl();
-    return block;
   }
 
   /**

@@ -17,7 +17,11 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/imports"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/statements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/block"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Block">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/function"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Import/importURI"/>
@@ -29,6 +33,13 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/facets"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/block"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//S_Global"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Entities"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Environment"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Species"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Experiment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Experiment/name"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Do"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Loop"/>
     <genClasses ecoreClass="Gaml.ecore#//S_If">
@@ -37,8 +48,6 @@
     <genClasses ecoreClass="Gaml.ecore#//S_Other"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Return"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Declaration"/>
-    <genClasses ecoreClass="Gaml.ecore#//S_Species"/>
-    <genClasses ecoreClass="Gaml.ecore#//S_Experiment"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Reflex"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Definition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Definition/tkey"/>
@@ -61,10 +70,6 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Display">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Display/name"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//Block">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/function"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//speciesOrGridDisplayStatement"/>
     <genClasses ecoreClass="Gaml.ecore#//Parameters">

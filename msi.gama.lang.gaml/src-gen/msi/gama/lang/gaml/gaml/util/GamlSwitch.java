@@ -105,6 +105,13 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.BLOCK:
+      {
+        Block block = (Block)theEObject;
+        T result = caseBlock(block);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.IMPORT:
       {
         Import import_ = (Import)theEObject;
@@ -116,6 +123,51 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Statement statement = (Statement)theEObject;
         T result = caseStatement(statement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SGLOBAL:
+      {
+        S_Global s_Global = (S_Global)theEObject;
+        T result = caseS_Global(s_Global);
+        if (result == null) result = caseStatement(s_Global);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SENTITIES:
+      {
+        S_Entities s_Entities = (S_Entities)theEObject;
+        T result = caseS_Entities(s_Entities);
+        if (result == null) result = caseStatement(s_Entities);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SENVIRONMENT:
+      {
+        S_Environment s_Environment = (S_Environment)theEObject;
+        T result = caseS_Environment(s_Environment);
+        if (result == null) result = caseStatement(s_Environment);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SSPECIES:
+      {
+        S_Species s_Species = (S_Species)theEObject;
+        T result = caseS_Species(s_Species);
+        if (result == null) result = caseS_Declaration(s_Species);
+        if (result == null) result = caseTypeDefinition(s_Species);
+        if (result == null) result = caseStatement(s_Species);
+        if (result == null) result = caseVarDefinition(s_Species);
+        if (result == null) result = caseActionDefinition(s_Species);
+        if (result == null) result = caseGamlDefinition(s_Species);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SEXPERIMENT:
+      {
+        S_Experiment s_Experiment = (S_Experiment)theEObject;
+        T result = caseS_Experiment(s_Experiment);
+        if (result == null) result = caseStatement(s_Experiment);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -169,30 +221,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = caseStatement(s_Declaration);
         if (result == null) result = caseVarDefinition(s_Declaration);
         if (result == null) result = caseGamlDefinition(s_Declaration);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.SSPECIES:
-      {
-        S_Species s_Species = (S_Species)theEObject;
-        T result = caseS_Species(s_Species);
-        if (result == null) result = caseS_Declaration(s_Species);
-        if (result == null) result = caseTypeDefinition(s_Species);
-        if (result == null) result = caseStatement(s_Species);
-        if (result == null) result = caseVarDefinition(s_Species);
-        if (result == null) result = caseActionDefinition(s_Species);
-        if (result == null) result = caseGamlDefinition(s_Species);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.SEXPERIMENT:
-      {
-        S_Experiment s_Experiment = (S_Experiment)theEObject;
-        T result = caseS_Experiment(s_Experiment);
-        if (result == null) result = caseS_Declaration(s_Experiment);
-        if (result == null) result = caseStatement(s_Experiment);
-        if (result == null) result = caseVarDefinition(s_Experiment);
-        if (result == null) result = caseGamlDefinition(s_Experiment);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -275,13 +303,6 @@ public class GamlSwitch<T> extends Switch<T>
         S_Display s_Display = (S_Display)theEObject;
         T result = caseS_Display(s_Display);
         if (result == null) result = caseStatement(s_Display);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.BLOCK:
-      {
-        Block block = (Block)theEObject;
-        T result = caseBlock(block);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -749,6 +770,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Block</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Block</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseBlock(Block object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Import</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -776,6 +813,86 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseStatement(Statement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>SGlobal</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SGlobal</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Global(S_Global object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>SEntities</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SEntities</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Entities(S_Entities object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>SEnvironment</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SEnvironment</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Environment(S_Environment object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>SSpecies</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SSpecies</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Species(S_Species object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>SExperiment</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SExperiment</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Experiment(S_Experiment object)
   {
     return null;
   }
@@ -872,38 +989,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseS_Declaration(S_Declaration object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SSpecies</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SSpecies</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Species(S_Species object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SExperiment</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SExperiment</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Experiment(S_Experiment object)
   {
     return null;
   }
@@ -1048,22 +1133,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseS_Display(S_Display object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Block</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Block</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseBlock(Block object)
   {
     return null;
   }

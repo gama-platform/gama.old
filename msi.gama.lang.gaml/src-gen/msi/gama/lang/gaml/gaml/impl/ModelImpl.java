@@ -4,11 +4,11 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
+import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getStatements <em>Statements</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getBlock <em>Block</em>}</li>
  * </ul>
  * </p>
  *
@@ -72,14 +72,14 @@ public class ModelImpl extends EntryImpl implements Model
   protected EList<Import> imports;
 
   /**
-   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
+   * The cached value of the '{@link #getBlock() <em>Block</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getStatements()
+   * @see #getBlock()
    * @generated
    * @ordered
    */
-  protected EList<Statement> statements;
+  protected Block block;
 
   /**
    * <!-- begin-user-doc -->
@@ -144,13 +144,47 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Statement> getStatements()
+  public Block getBlock()
   {
-    if (statements == null)
+    return block;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetBlock(Block newBlock, NotificationChain msgs)
+  {
+    Block oldBlock = block;
+    block = newBlock;
+    if (eNotificationRequired())
     {
-      statements = new EObjectContainmentEList<Statement>(Statement.class, this, GamlPackage.MODEL__STATEMENTS);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__BLOCK, oldBlock, newBlock);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return statements;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setBlock(Block newBlock)
+  {
+    if (newBlock != block)
+    {
+      NotificationChain msgs = null;
+      if (block != null)
+        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__BLOCK, null, msgs);
+      if (newBlock != null)
+        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__BLOCK, null, msgs);
+      msgs = basicSetBlock(newBlock, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__BLOCK, newBlock, newBlock));
   }
 
   /**
@@ -165,8 +199,8 @@ public class ModelImpl extends EntryImpl implements Model
     {
       case GamlPackage.MODEL__IMPORTS:
         return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
-      case GamlPackage.MODEL__STATEMENTS:
-        return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
+      case GamlPackage.MODEL__BLOCK:
+        return basicSetBlock(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -185,8 +219,8 @@ public class ModelImpl extends EntryImpl implements Model
         return getName();
       case GamlPackage.MODEL__IMPORTS:
         return getImports();
-      case GamlPackage.MODEL__STATEMENTS:
-        return getStatements();
+      case GamlPackage.MODEL__BLOCK:
+        return getBlock();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -209,9 +243,8 @@ public class ModelImpl extends EntryImpl implements Model
         getImports().clear();
         getImports().addAll((Collection<? extends Import>)newValue);
         return;
-      case GamlPackage.MODEL__STATEMENTS:
-        getStatements().clear();
-        getStatements().addAll((Collection<? extends Statement>)newValue);
+      case GamlPackage.MODEL__BLOCK:
+        setBlock((Block)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -233,8 +266,8 @@ public class ModelImpl extends EntryImpl implements Model
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         return;
-      case GamlPackage.MODEL__STATEMENTS:
-        getStatements().clear();
+      case GamlPackage.MODEL__BLOCK:
+        setBlock((Block)null);
         return;
     }
     super.eUnset(featureID);
@@ -254,8 +287,8 @@ public class ModelImpl extends EntryImpl implements Model
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case GamlPackage.MODEL__IMPORTS:
         return imports != null && !imports.isEmpty();
-      case GamlPackage.MODEL__STATEMENTS:
-        return statements != null && !statements.isEmpty();
+      case GamlPackage.MODEL__BLOCK:
+        return block != null;
     }
     return super.eIsSet(featureID);
   }

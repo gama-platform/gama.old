@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlResourceDescriptionStrategy.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the 
+ * 
+ * 'GamlResourceDescriptionStrategy.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -30,8 +30,7 @@ import org.eclipse.xtext.util.IAcceptor;
 public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionStrategy {
 
 	/**
-	 * @see org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy#createEObjectDescriptions(org.eclipse.emf.ecore.EObject,
-	 *      org.eclipse.xtext.util.IAcceptor)
+	 * @see org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy#createEObjectDescriptions(org.eclipse.emf.ecore.EObject, org.eclipse.xtext.util.IAcceptor)
 	 */
 
 	static Set<String> composed = new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT, ACTION));
@@ -43,6 +42,7 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 		} else if ( o instanceof ArgumentDefinition ) {
 			super.createEObjectDescriptions(o, acceptor);
 		} else if ( o instanceof Statement ) {
+
 			Statement stm = (Statement) o;
 			String n = EGaml.getNameOf(stm);
 			if ( n != null ) {
@@ -53,6 +53,7 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 					return false;
 				}
 			}
+
 			return ((Statement) o).getBlock() != null; // composed.contains(EGaml.getKey.caseStatement(stm));
 		}
 		return o instanceof Block || o instanceof Model;

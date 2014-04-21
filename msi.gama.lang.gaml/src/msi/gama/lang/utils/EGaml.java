@@ -137,6 +137,7 @@ public class EGaml {
 
 	public static String getNameOf(final Statement s) {
 		if ( s instanceof GamlDefinition ) { return ((GamlDefinition) s).getName(); }
+		if ( s instanceof S_Experiment ) { return ((S_Experiment) s).getName(); }
 		if ( s instanceof S_Display ) { return ((S_Display) s).getName(); }
 		return null;
 	}
@@ -162,7 +163,7 @@ public class EGaml {
 		if ( obj == null ) { return false; }
 		if ( obj instanceof S_Equations ) { return ((S_EquationsImpl) obj).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS); }
 		if ( obj instanceof Block ) { return ((BlockImpl) obj).eIsSet(GamlPackage.BLOCK__STATEMENTS); }
-		if ( obj instanceof Model ) { return ((ModelImpl) obj).eIsSet(GamlPackage.MODEL__STATEMENTS); }
+		if ( obj instanceof Model ) { return ((ModelImpl) obj).eIsSet(GamlPackage.MODEL__BLOCK); }
 		if ( obj instanceof Statement ) {
 			boolean hasBlock = ((StatementImpl) obj).eIsSet(GamlPackage.STATEMENT__BLOCK);
 			if ( hasBlock ) { return true; }
@@ -172,12 +173,13 @@ public class EGaml {
 	}
 
 	public static List<? extends Statement> getStatementsOf(final Block block) {
-		if ( ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block.getStatements(); }
+		if ( block != null && ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block
+			.getStatements(); }
 		return Collections.EMPTY_LIST;
 	}
 
-	public static List<? extends Statement> getStatementsOf(final Model block) {
-		if ( ((ModelImpl) block).eIsSet(GamlPackage.MODEL__STATEMENTS) ) { return block.getStatements(); }
+	public static List<? extends Statement> getStatementsOf(final Model model) {
+		if ( model != null ) { return getStatementsOf(model.getBlock()); }
 		return Collections.EMPTY_LIST;
 	}
 

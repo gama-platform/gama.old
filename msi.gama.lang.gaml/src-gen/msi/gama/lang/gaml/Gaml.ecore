@@ -14,8 +14,14 @@
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Entry #//VarDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block">
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
         eType="#//Statement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Expression"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Import">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -30,6 +36,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Global" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Entities" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Environment" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Species" eSuperTypes="#//Statement #//S_Declaration #//TypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Experiment" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="S_Do" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Loop" eSuperTypes="#//S_Declaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_If" eSuperTypes="#//Statement">
@@ -39,8 +52,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="S_Other" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Return" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Declaration" eSuperTypes="#//Statement #//VarDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Species" eSuperTypes="#//S_Declaration #//TypeDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Experiment" eSuperTypes="#//S_Declaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Reflex" eSuperTypes="#//S_Declaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Definition" eSuperTypes="#//S_Declaration #//ActionDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="tkey" eType="#//Expression"
@@ -68,12 +79,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="S_Display" eSuperTypes="#//Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Block">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
-        eType="#//Statement" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Expression"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="speciesOrGridDisplayStatement" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="Parameters" eSuperTypes="#//Expression">

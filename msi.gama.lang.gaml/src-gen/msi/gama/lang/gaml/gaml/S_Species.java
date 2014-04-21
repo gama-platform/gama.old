@@ -13,6 +13,6 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface S_Species extends S_Declaration, TypeDefinition
+public interface S_Species extends Statement, S_Declaration, TypeDefinition
 {
 } // S_Species

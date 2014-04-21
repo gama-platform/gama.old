@@ -95,6 +95,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createModelAdapter();
       }
       @Override
+      public Adapter caseBlock(Block object)
+      {
+        return createBlockAdapter();
+      }
+      @Override
       public Adapter caseImport(Import object)
       {
         return createImportAdapter();
@@ -103,6 +108,31 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
+      }
+      @Override
+      public Adapter caseS_Global(S_Global object)
+      {
+        return createS_GlobalAdapter();
+      }
+      @Override
+      public Adapter caseS_Entities(S_Entities object)
+      {
+        return createS_EntitiesAdapter();
+      }
+      @Override
+      public Adapter caseS_Environment(S_Environment object)
+      {
+        return createS_EnvironmentAdapter();
+      }
+      @Override
+      public Adapter caseS_Species(S_Species object)
+      {
+        return createS_SpeciesAdapter();
+      }
+      @Override
+      public Adapter caseS_Experiment(S_Experiment object)
+      {
+        return createS_ExperimentAdapter();
       }
       @Override
       public Adapter caseS_Do(S_Do object)
@@ -133,16 +163,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseS_Declaration(S_Declaration object)
       {
         return createS_DeclarationAdapter();
-      }
-      @Override
-      public Adapter caseS_Species(S_Species object)
-      {
-        return createS_SpeciesAdapter();
-      }
-      @Override
-      public Adapter caseS_Experiment(S_Experiment object)
-      {
-        return createS_ExperimentAdapter();
       }
       @Override
       public Adapter caseS_Reflex(S_Reflex object)
@@ -188,11 +208,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseS_Display(S_Display object)
       {
         return createS_DisplayAdapter();
-      }
-      @Override
-      public Adapter caseBlock(Block object)
-      {
-        return createBlockAdapter();
       }
       @Override
       public Adapter casespeciesOrGridDisplayStatement(speciesOrGridDisplayStatement object)
@@ -512,6 +527,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Block <em>Block</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Block
+   * @generated
+   */
+  public Adapter createBlockAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Import <em>Import</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -537,6 +567,81 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Global <em>SGlobal</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Global
+   * @generated
+   */
+  public Adapter createS_GlobalAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Entities <em>SEntities</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Entities
+   * @generated
+   */
+  public Adapter createS_EntitiesAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Environment <em>SEnvironment</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Environment
+   * @generated
+   */
+  public Adapter createS_EnvironmentAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Species <em>SSpecies</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Species
+   * @generated
+   */
+  public Adapter createS_SpeciesAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Experiment <em>SExperiment</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Experiment
+   * @generated
+   */
+  public Adapter createS_ExperimentAdapter()
   {
     return null;
   }
@@ -627,36 +732,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createS_DeclarationAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Species <em>SSpecies</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Species
-   * @generated
-   */
-  public Adapter createS_SpeciesAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Experiment <em>SExperiment</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Experiment
-   * @generated
-   */
-  public Adapter createS_ExperimentAdapter()
   {
     return null;
   }
@@ -792,21 +867,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createS_DisplayAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Block <em>Block</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Block
-   * @generated
-   */
-  public Adapter createBlockAdapter()
   {
     return null;
   }

@@ -59,6 +59,15 @@ public interface GamlFactory extends EFactory
   Model createModel();
 
   /**
+   * Returns a new object of class '<em>Block</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Block</em>'.
+   * @generated
+   */
+  Block createBlock();
+
+  /**
    * Returns a new object of class '<em>Import</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -75,6 +84,51 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Statement createStatement();
+
+  /**
+   * Returns a new object of class '<em>SGlobal</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SGlobal</em>'.
+   * @generated
+   */
+  S_Global createS_Global();
+
+  /**
+   * Returns a new object of class '<em>SEntities</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SEntities</em>'.
+   * @generated
+   */
+  S_Entities createS_Entities();
+
+  /**
+   * Returns a new object of class '<em>SEnvironment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SEnvironment</em>'.
+   * @generated
+   */
+  S_Environment createS_Environment();
+
+  /**
+   * Returns a new object of class '<em>SSpecies</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SSpecies</em>'.
+   * @generated
+   */
+  S_Species createS_Species();
+
+  /**
+   * Returns a new object of class '<em>SExperiment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SExperiment</em>'.
+   * @generated
+   */
+  S_Experiment createS_Experiment();
 
   /**
    * Returns a new object of class '<em>SDo</em>'.
@@ -129,24 +183,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   S_Declaration createS_Declaration();
-
-  /**
-   * Returns a new object of class '<em>SSpecies</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SSpecies</em>'.
-   * @generated
-   */
-  S_Species createS_Species();
-
-  /**
-   * Returns a new object of class '<em>SExperiment</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SExperiment</em>'.
-   * @generated
-   */
-  S_Experiment createS_Experiment();
 
   /**
    * Returns a new object of class '<em>SReflex</em>'.
@@ -228,15 +264,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   S_Display createS_Display();
-
-  /**
-   * Returns a new object of class '<em>Block</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Block</em>'.
-   * @generated
-   */
-  Block createBlock();
 
   /**
    * Returns a new object of class '<em>species Or Grid Display Statement</em>'.
