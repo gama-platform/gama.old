@@ -152,10 +152,10 @@ species edge_agent schedules:[]{
 	
 
 experiment Moving  type: gui {
-	parameter var:trace <- false;
-	parameter var:movingType <- "move";
-	parameter var:agentAspect <- "direction";
-	parameter var:effectType <- "" among:["","firework"];
+	parameter "Trace" var:trace <- false;
+	parameter "Movement" var:movingType <- "move";
+	parameter "Agent Aspect" var:agentAspect <- "direction";
+	parameter "Effect type" var:effectType <- "" among:["","firework"];
 	output {	
 		display MovingAgent type:opengl  ambient_light:10 diffuse_light:100  background:rgb(10,40,55) trace:trace{
 			species movingAgent;
@@ -164,9 +164,9 @@ experiment Moving  type: gui {
 }
 
 experiment Wandering  type: gui {
-	parameter var:trace <- false;
-	parameter var:movingType <- "wander";
-	parameter var:agentAspect <- "direction";
+	parameter "Trace" var:trace <- false;
+	parameter "Movement" var:movingType <- "wander";
+	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {	
 		display WanderingAgent type:opengl  ambient_light:10 diffuse_light:100  background:rgb(10,40,55) trace:trace{
 			species wanderAgent;
@@ -175,10 +175,10 @@ experiment Wandering  type: gui {
 }
 
 experiment Goto  type: gui {
-	parameter var:trace <- false;
-	parameter var:movingType <- "goto";
-	parameter var:agentAspect <- "direction";
-	parameter var:effectType <- "" among:["","blob"];
+	parameter "Trace" var:trace <- false;
+	parameter "Movement" var:movingType <- "goto";
+	parameter "Agent Aspect" var:agentAspect <- "direction";
+	parameter "Effect Type" var:effectType <- "" among:["","blob"];
 	output {	
 		display GotoAgent type:opengl  ambient_light:10 diffuse_light:100  background:rgb(10,40,55) trace:trace{
 			species gotoAgent;
@@ -187,9 +187,9 @@ experiment Goto  type: gui {
 }
 
 experiment GotoOnNetwork  type: gui {
-	parameter var:trace <- false;
-	parameter var:movingType <- "gotoOnNetwork";
-	parameter var:agentAspect <- "direction";
+	parameter "Trace" var:trace <- false;
+	parameter "Movement" var:movingType <- "gotoOnNetwork";
+	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {
 			
 		display GotoOnNetworkAgent type:opengl  ambient_light:10 diffuse_light:100  background:rgb(10,40,55) trace:trace{
@@ -201,9 +201,9 @@ experiment GotoOnNetwork  type: gui {
 }
 
 experiment Complete  type: gui {
-	parameter var:trace <- false;
-	parameter var:movingType <- "complete";
-	parameter var:agentAspect <- "direction";
+	parameter "Trace" var:trace <- false;
+	parameter "Movement" var:movingType <- "complete";
+	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {
 			
 		display GotoOnNetworkAgent type:opengl  ambient_light:10 diffuse_light:100  background:rgb(10,40,55) trace:trace{

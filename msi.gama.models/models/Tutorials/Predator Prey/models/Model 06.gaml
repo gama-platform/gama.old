@@ -124,7 +124,7 @@ experiment prey_predator type: gui {
 			species prey aspect: base ;
 			species predator aspect: base ;
 		}
-		monitor number_of_preys value: nb_preys refresh_every: 1 ;
-		monitor number_of_predators value: nb_predators refresh_every: 1 ;
+		monitor "Number of preys" value: nb_preys refresh_every: 1 ;
+		monitor "Number of predators" value: nb_predators refresh_every: 1 ;
 	}
 }

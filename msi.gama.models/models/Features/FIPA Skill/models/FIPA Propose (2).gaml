@@ -42,7 +42,7 @@ species Initiator skills: [communicating] {
 
 species Participant skills: [communicating] {
 	reflex accept_proposal when: !(empty(proposes)) {
-		let proposalFromInitiator type: message <- proposes at 0;
+		message proposalFromInitiator <- proposes at 0;
 		
 		do reject_proposal with: [ message :: proposalFromInitiator, content :: ['No! It \'s too cold today!'] ];
 	}

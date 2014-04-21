@@ -91,7 +91,7 @@ experiment Complex type: gui {
 			species road aspect: base ;
 			species people aspect: base;
 		}
-		monitor nbGoalsAchived value: nbGoalsAchived refresh_every: 1 ;
+		monitor "Number of goals achieved" value: nbGoalsAchived refresh_every: 1 ;
 	}
 }
 

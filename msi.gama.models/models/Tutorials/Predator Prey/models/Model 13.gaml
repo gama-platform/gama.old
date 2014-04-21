@@ -195,8 +195,8 @@ experiment prey_predator type: gui {
 				data "]0.75;1]" value: predator count (each.energy > 0.75) ;
 			}
 		}
-		monitor number_of_preys value: nb_preys refresh_every: 1 ;
-		monitor number_of_predators value: nb_predators refresh_every: 1 ;
+		monitor "Number of preys" value: nb_preys refresh_every: 1 ;
+		monitor "Number of predators" value: nb_predators refresh_every: 1 ;
 	}
 }
 

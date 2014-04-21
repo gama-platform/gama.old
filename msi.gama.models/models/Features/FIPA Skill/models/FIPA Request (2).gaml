@@ -59,7 +59,7 @@ species Participant skills: [communicating] {
 	}
 
 	reflex reply_messages when: (!empty(messages)) {
-		let requestFromInitiator <- (messages at 0) type: message;
+		message requestFromInitiator <- (messages at 0);
 		write 'agree message';
 		do agree with: [ message :: requestFromInitiator, content :: ['I will'] ];
 		

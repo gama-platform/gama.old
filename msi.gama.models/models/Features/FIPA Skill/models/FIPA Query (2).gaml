@@ -41,7 +41,7 @@ species Initiator skills: [communicating] {
 
 species Participant skills: [communicating] {
 	reflex reply_query_messages when: !(empty(queries)) {
-		let queryFromInitiator type: message <- queries at 0;
+		message queryFromInitiator  <- queries at 0;
 		
 		write name + ' reads a query message with content : ' + (string(queryFromInitiator.content));
 		

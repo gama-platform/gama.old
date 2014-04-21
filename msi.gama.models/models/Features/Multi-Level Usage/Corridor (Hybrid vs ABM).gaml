@@ -78,9 +78,7 @@ species pedestrian skills: [moving] {
 	point target_location;
 	float outgoing_density;
 	
-	action init_location {
-		arg loc type: point;
-		
+	action init_location (point loc) {
 		location <- loc;
 		target_location <- {environment_width, location.y};
 		heading <- self towards (target_location);
@@ -102,10 +100,7 @@ species pedestrian skills: [moving] {
 species corridor  {
 	bool capture_pedestrians;
 	
-	action init_corridor {
-		arg corridor_shape type: geometry;
-		arg is_hybrid type: bool;
-		
+	action init_corridor (geometry corridor_shape, bool is_hybrid) {
 		shape <- corridor_shape;
 		capture_pedestrians <- is_hybrid;
 	}

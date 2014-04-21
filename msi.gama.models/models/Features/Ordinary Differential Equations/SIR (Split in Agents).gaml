@@ -59,7 +59,7 @@ entities {
 				( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
 		}
 		
-		solve evol method : "rk4" step : 0.01 ;
+		reflex solving {solve evol method : "rk4" step : 0.01 ;}
 	}
 	
 	species I_agt {
@@ -103,7 +103,7 @@ entities {
 			diff ( Rm , t ) = ( delta * Im ) ;
 		}
 		
-		solve SIR method : "rk4" step : 0.01 ;
+		reflex solving {solve SIR method : "rk4" step : 0.01 ;}
 	}
 }
 

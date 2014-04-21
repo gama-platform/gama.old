@@ -40,7 +40,7 @@ entities {
 			diff(R,t) = (delta * I);
 		} 
 
-		solve SIR method: "rk4" step: h cycle_length:mycycle ;       
+		reflex solving {solve SIR method: "rk4" step: h cycle_length:mycycle ; }      
 	}
 }
 

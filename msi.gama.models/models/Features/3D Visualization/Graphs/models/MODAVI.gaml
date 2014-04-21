@@ -78,7 +78,7 @@ global {
  			}		
 		}
 
-		let i<-1;
+		int i<-1;
 		create macroNode number: nbValuePerClass{	 
 			class <-i;
 			location <- {(cos (((class-1)/nbValuePerClass)*360)*50 +50),(sin (((class-1)/nbValuePerClass)*360)*50+50),0};

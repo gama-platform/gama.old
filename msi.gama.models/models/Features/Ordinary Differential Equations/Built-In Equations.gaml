@@ -46,8 +46,8 @@ entities {
 
 		// must be followed with exact order S, I, t  and N,beta
 		equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
-
-		solve eqSI method:rk4 step:h;
+		reflex solving {solve eqSI method:rk4 step:h;}
+		
 	}
 
 	species userSI {
@@ -62,8 +62,8 @@ entities {
 			diff(S,t) = -beta * S * I / N ;
 			diff(I,t) = beta * S * I / N ;
 		}		
-
-		solve eqSI method:rk4 step:h;
+		reflex solving{solve eqSI method:rk4 step:h;}
+		
 	}
 
 
@@ -78,8 +78,9 @@ entities {
 
 		// must be followed with exact order S, I, t  and N,beta
 		equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
-
-		solve eqSIS method:rk4 step:h;
+		reflex solving {
+			solve eqSIS method:rk4 step:h;
+		}
 	}
 
 	species userSIS {
@@ -95,8 +96,9 @@ entities {
 			diff(S,t) = -beta * S * I / N + gamma * I;
 			diff(I,t) = beta * S * I / N - gamma * I;
 		}		
-
-		solve eqSIS method:rk4 step:h;
+		reflex solving {	
+			solve eqSIS method:rk4 step:h;
+		}
 	}
 	
 	
@@ -112,8 +114,9 @@ entities {
 
 		// must be followed with exact order S, I, R, t  and N,beta,delta
 		equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma] ;
-
-		solve eqSIR method:rk4 step:h;
+		reflex solving {	
+			solve eqSIR method:rk4 step:h;
+		}
 	}
 
 	species userSIR{
@@ -131,8 +134,9 @@ entities {
 			diff(I,t) = (beta * S * I / N) - (gamma * I);
 			diff(R,t) = (gamma * I);
 		}		
-
-		solve eqSIR method:rk4 step:h;
+		reflex solving {
+			solve eqSIR method:rk4 step:h;
+		}
 	}
 
 
@@ -150,8 +154,9 @@ entities {
 
 		// must be followed with exact order S, I, R, t  and N,beta,delta
 		equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
-
-		solve eqSIRS method:rk4 step:h;
+		reflex solving {
+			solve eqSIRS method:rk4 step:h;
+		}
 	}
 
 	species userSIRS {
@@ -171,8 +176,9 @@ entities {
 			 diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
 			 diff(R,t) = gamma * I - omega * R - mu * R ;
 		}		
-
-		solve eqSIRS method:rk4 step:h;
+		reflex solving {
+			solve eqSIRS method:rk4 step:h;
+		}
 	}
 
 
@@ -191,8 +197,9 @@ entities {
 
 		// must be followed with exact order S, E, I, R, t  and N,beta,gamma,sigma,mu
 		equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
-
-		solve eqSEIR method:rk4 step:h;
+		reflex solving {
+			solve eqSEIR method:rk4 step:h;
+		}
 	}
 
 	species userSEIR {
@@ -214,8 +221,9 @@ entities {
 			diff(I,t) = sigma * E - mu * I - gamma * I;
 			diff(R,t) = gamma * I - mu * R ;
 		}		
-
+		reflex solving {
 		solve eqSEIR method:rk4 step:h;
+		}
 	}
 
 
@@ -231,8 +239,9 @@ entities {
 
 		// must be followed with exact order x, y, t  and  alpha,beta,delta,gamma
 		equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
-
-		solve eqLV method:rk4 step:h;
+		reflex solving {
+			solve eqLV method:rk4 step:h;
+		}
 	}
 
 	species userLV {
@@ -249,8 +258,9 @@ entities {
 			diff(x,t) =   x * (alpha - beta * y);
 			diff(y,t) = - y * (delta - gamma * x);
         }		
-
-		solve eqLV method:rk4 step:h;
+		reflex solving {
+			solve eqLV method:rk4 step:h;
+		}
 	}
 
 }

@@ -63,6 +63,6 @@ experiment prey_predator type: gui {
 			grid vegetation_cell lines: rgb("black") ;
 			species prey aspect: base ;
 		}
-		monitor number_of_preys value: nb_preys refresh_every: 1 ;
+		monitor "Number of preys" value: nb_preys refresh_every: 1 ;
 	}
 }

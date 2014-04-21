@@ -66,8 +66,8 @@ species road  {
 		draw shape color: rgb("black") ;
 	} 
 		
-	user_command Remove_road action: remove;
-	user_command Add_road action: add;
+	user_command "Remove a road" action: remove;
+	user_command "Add a road" action: add;
 		 
 	action remove {
 		blocked <- true;
@@ -194,7 +194,7 @@ experiment traffic type: gui {
 				data name:"Staying home" value: length ((people as list) where (each.objective="go home")) color: rgb("blue") ;
 			}
 		}
-		monitor nbGoalsAchived value: nbGoalsAchived refresh_every: 1 ;
+		monitor "Number of goals achieved" value: nbGoalsAchived refresh_every: 1 ;
 	}
 }
 

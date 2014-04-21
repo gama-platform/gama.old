@@ -72,7 +72,7 @@ entities {
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 		float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
 		rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
-		list<vegetation_cell> neighbours  <- (self neighbours_at 2);
+		list<vegetation_cell> neighbours  <- (self neighbours_at 2); 
 	}
 }
 
@@ -92,8 +92,8 @@ experiment prey_predator type: gui {
 			species prey aspect: base ;
 			species predator aspect: base ;
 		}
-		monitor number_of_preys value: nb_preys refresh_every: 1 ;
-		monitor number_of_predators value: nb_predators refresh_every: 1 ;
+		monitor "Number of preys" value: nb_preys refresh_every: 1 ;
+		monitor "Number of predators" value: nb_predators refresh_every: 1 ;
 	}
 }
  

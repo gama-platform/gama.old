@@ -26,7 +26,7 @@ global {
 	geometry shape <- rectangle(width_of_environment, height_of_environment);
 
 	init { 
-		let i <- 1;
+		int i <- 1;
 		create section number: nbSection { 
 			location <- {width_of_environment/2, height_of_environment*(i/nbSection)};
 			do initZSection;

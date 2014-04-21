@@ -1,6 +1,6 @@
 /**
  *  Casting: different ways of transforming objects and agents in GAML
- *  Author: drogoul
+ *  Author: A. Drogoul & P. Taillandier
  *  Description: 
  */
 

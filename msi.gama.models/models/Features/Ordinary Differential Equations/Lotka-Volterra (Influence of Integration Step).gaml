@@ -51,7 +51,7 @@ entities {
 			diff(y,t) = - y * (delta - gamma * x);
         }
                 
-        solve lotka_volterra method: "rk4" step:h cycle_length: my_length ;        
+        reflex solving {solve lotka_volterra method: "rk4" step:h cycle_length: my_length ;  }      
 	}
 }
 

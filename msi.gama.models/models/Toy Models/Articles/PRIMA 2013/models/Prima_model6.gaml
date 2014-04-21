@@ -94,7 +94,7 @@ species buildings {
 
 	reflex epidemic when:(S>0 and I>0){ 	
 		float I0 <- I;
-    	solve SIR method: "rk4" step: h { }
+    	solve SIR method: "rk4" step: h ;
     	I_to_1 <- I_to_1 + (I - I0);
     	if(I_to_1 > 1) {
     		ask(membersS){
@@ -102,7 +102,7 @@ species buildings {
     			myself.I_to_1 <- myself.I_to_1 - 1;
     		}
     	}
-    }   
+    }    
 }
 
 experiment main_experiment type:gui{

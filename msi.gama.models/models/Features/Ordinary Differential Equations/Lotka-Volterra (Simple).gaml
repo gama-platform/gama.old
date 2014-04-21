@@ -37,8 +37,9 @@ entities {
 			diff(x,t) =   x * (alpha - beta * y);
 			diff(y,t) = - y * (delta - gamma * x);
         }
-                
-        solve lotka_volterra method: "rk4" step:0.01 cycle_length:100;        
+        reflex solving {        
+        	solve lotka_volterra method: "rk4" step:0.01 cycle_length:100;
+        }
 	}
 }
 

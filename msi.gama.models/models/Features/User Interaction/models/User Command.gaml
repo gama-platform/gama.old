@@ -14,12 +14,12 @@ global {
 			color <-°green;
 		}
 	}
-	user_command create_an_agent {
+	user_command "Create an agent" {
    		create cell number: nbAgent with: [location::user_location]  {
    			color <-°green;
    		} 
 	}
-	user_command create_agents {
+	user_command "Create agents" {
 		 map input_values <- user_input(["Number" :: 1, "shape" :: "circle"]);
      	 create cell number : int(input_values at "Number") with: [color:: °pink, is_square:: string(input_values at "shape") = "square"];
 	}

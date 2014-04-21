@@ -178,7 +178,7 @@ entities {
 			list<flock> nearby_flocks<- (flock overlapping (shape +  merging_distance));
 			if !(empty (nearby_flocks)) {
 			 	nearby_flocks <- nearby_flocks sort_by (length (each.members));
-			 	let largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
+			 	flock largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
 			 	 
 			 	remove largest_flock from: nearby_flocks;
 			 	 
@@ -247,7 +247,7 @@ entities {
 		
 		reflex avoid when: apply_avoid {
 			point acc <- {0,0};
-			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
+			list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
 				acc <- acc - ((location of obs) - my (location));
 			}

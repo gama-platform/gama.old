@@ -82,9 +82,7 @@ species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall
 	int heading;
 	float speed <- 2.0;
 	
-	action init_location {
-		arg name: loc type: point;
-		
+	action init_location (point loc) {
 		location <- loc;
 		initial_location <- loc;
 		target_location <- {environment_size, loc.y};

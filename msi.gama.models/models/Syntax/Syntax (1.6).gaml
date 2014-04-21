@@ -22,7 +22,7 @@ global skills: [moving] control: fsm {
 		diff(y, t) = x + y * 2;
 	}
 
-	solve eq method: rk4;
+	reflex solving {solve eq method: rk4;}
 
 	/** 
  * ATTRIBUTES
@@ -72,19 +72,19 @@ global skills: [moving] control: fsm {
   * ACTIONS
   */
 // Actions can also be declared in different ways. Classic:
-	action dummy1 type: list of: int {
-		arg a type: int default: 100;
-		arg b type: float;
-		return [a, int(b)];
-	}
+//	action dummy1 type: list of: int {
+//		arg a type: int default: 100;
+//		arg b type: float;
+//		return [a, int(b)];
+//	}
 	// Semi-classic (prefixed by the type)
-	list dummy2 of: int {
-		arg a type: int default: 100;
-		arg b type: float;
-		return [a, int(b)];
-	}
+//	list dummy2 of: int {
+//		arg a type: int default: 100;
+//		arg b type: float;
+//		return [a, int(b)];
+//	}
 	//Compact
-	list<int> dummy3 (int a <- 100, float b) {
+	list<int> dummy1 (int a <- 100, float b) {
 		return [a, int(b)];
 	}
 
@@ -99,7 +99,7 @@ global skills: [moving] control: fsm {
 	reflex variables {
 
 	// Temporary variables can use the same syntax as attributes. The classic form:
-		let name: t1 type: int value: length(a1);
+		//let name: t1 type: int value: length(a1);
 		// is equivalent to the more compact one:
 		int t2 <- length(a1);
 
@@ -111,8 +111,8 @@ global skills: [moving] control: fsm {
 		t2 <- 100;
 
 		// Species can now act as direct containers of their agents..
-		let spec_with_location <- species0 select (each.location = { 0, 0 });
-		let agent0 <- species0[10];
+		list<species0> spec_with_location <- species0 select (each.location = { 0, 0 });
+		species0 agent0 <- species0[10];
 		write string(agent0);
 
 		// ...  and agents as direct containers of their attributes (mimicking the internal attributes map). This "virtual map" will now contain, in addition to the attributes, 

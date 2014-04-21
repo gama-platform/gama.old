@@ -55,7 +55,7 @@ entities {
 			diff(self.Ssize, t) = (- sum(I_agt accumulate [each.beta * each.Isize]) * self.Ssize / N);
 		}
 
-		solve evol method : "rk4" step : hKR4 ;
+		reflex solving {solve evol method : "rk4" step : hKR4 ;}
 	}
 
 	species I_agt {
@@ -91,7 +91,7 @@ entities {
 			diff(self.Rm, t) = (_delta * Im);
 		}
 
-		solve SIR method : "rk4" step : hKR4;
+		reflex solving {solve SIR method : "rk4" step : hKR4;}
 	}
 
 }

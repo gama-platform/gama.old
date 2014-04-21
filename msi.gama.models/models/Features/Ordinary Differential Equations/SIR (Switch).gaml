@@ -11,7 +11,7 @@ global {
 	int initial_I <- 5   ; // The number of infected
 	int initial_R <- 0   ; // The number of removed 
 
-	float beta <- 0.1   ; // The parameter Beta
+	float beta <- 0.1   ; // The parameter Beta 
 	float delta <- 0.01 ; // The parameter Delta	
 	
 	int switch_threshold <- 120 ; // threshold for switching models
@@ -237,7 +237,7 @@ entities {
 			diff(R, t) = (delta * I);
 		}
 
-		solve SIR method: "rk4" step: 0.01 ;
+		reflex solving {solve SIR method: "rk4" step: 0.01 ;}
 	}
 
 	species Host schedules: [] skills: [moving] {
@@ -335,7 +335,7 @@ entities {
 			diff(R, t) = (alpha * I);
 		}
 		
-		solve SIR method:"rk4" step:0.01;
+		reflex solving {solve SIR method:"rk4" step:0.01;}
 
 	}
 

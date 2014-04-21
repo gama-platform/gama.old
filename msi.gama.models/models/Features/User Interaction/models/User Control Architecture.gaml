@@ -26,7 +26,7 @@ species cell {
 }
 
 species user control:user_only {
-   user_panel default initial: true {
+   user_panel "Default" initial: true {
       transition to: "Basic Control" when: every (10) and !advanced_user_control;
       transition to: "Advanced Control" when: every(10) and advanced_user_control;
    }
@@ -38,11 +38,11 @@ species user control:user_only {
          }
       }
       user_command "Create one cell" {
-        create cell {
-			color <-°green;
+        create cell { 
+			color <-°green; 
 		}
       } 
-      transition to: default when: true;                    
+      transition to: "Default" when: true;                    
    }
    user_panel "Advanced Control" {
       user_command "Kill cells" {
@@ -55,7 +55,7 @@ species user control:user_only {
         user_input "Number" returns: number type: int <- 10;
         create cell number: number ;
       } 
-      transition to: default when: true;        
+      transition to: "Default" when: true;        
    }
 }
 
