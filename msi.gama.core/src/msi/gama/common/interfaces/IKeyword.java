@@ -260,7 +260,7 @@ public interface IKeyword {
 	public static final String OPEN_LIST = "[";
 	public static final String OPEN_POINT = "{";
 	public static final String OPTIONAL = "optional";
-	public static final String ORTHOGRAPHIC_PROJECTION = "orthographic_projection";	
+	public static final String ORTHOGRAPHIC_PROJECTION = "orthographic_projection";
 	public static final String OTHER_EVENTS = "other_events";
 	public static final String OUTPUT = "output";
 	public final static String OUTPUT3D = "output3D";
@@ -274,7 +274,6 @@ public interface IKeyword {
 	public static final String PAUSE_SOUND = "pause_sound";
 	public static final String PEERS = "peers";
 	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
-	public static final String PERTINENCE = "pertinence";
 	public static final String PIE = "pie";
 	public static final String PITCH = "pitch";
 	public static final String PLACES = "places";
