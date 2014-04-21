@@ -89,8 +89,8 @@ entities {
 		}
 		
 		reflex avoid when: apply_avoid { 
-			let acc <- {0,0};
-			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
+			point acc <- {0,0};
+			list<obstacle> nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
 				acc <- acc - ((location of obs) - my (location));
 			}
