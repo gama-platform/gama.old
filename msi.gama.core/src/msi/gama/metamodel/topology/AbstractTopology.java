@@ -339,8 +339,14 @@ public abstract class AbstractTopology implements ITopology {
 		if ( p == null ) { return null; }
 		double z = p.getZ();
 		if ( z < 0 ) { return null; }
-		if ( z > ((GamaShape) environment.getGeometry()).getDepth() ) { return null; }
-		return point;
+		if(((GamaShape) environment.getGeometry()).getDepth() !=null){
+			if ( z > ((GamaShape) environment.getGeometry()).getDepth() ) { return null; }
+			return point;	
+		}
+		else{
+			throw GamaRuntimeException.error("The environement must be a 3D environment (e.g shape <- cube(100).", null);
+		}
+		
 	}
 
 	@Override
