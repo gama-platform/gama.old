@@ -118,9 +118,8 @@ statement_keyword1 expression1 attribute2: expression2... {
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="kindGlobal" select="@symbol"/> 
 		<xsl:text>
-== </xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text> ==</xsl:text>
-		<xsl:text>
-  * </xsl:text>
+  * </xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>
+    * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>
@@ -137,9 +136,8 @@ statement_keyword1 expression1 attribute2: expression2... {
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="symbolGlobal" select="@symbol"/> 
 		<xsl:text>
-== </xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text> ==</xsl:text>
-		<xsl:text>
-  * </xsl:text>
+  * </xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text>
+    * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>
