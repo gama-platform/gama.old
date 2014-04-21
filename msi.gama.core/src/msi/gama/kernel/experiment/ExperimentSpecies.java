@@ -65,7 +65,7 @@ import msi.gaml.variables.IVariable;
 		type = IType.LABEL,
 		values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ },
 		optional = false) }, omissible = IKeyword.NAME)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
 
@@ -81,7 +81,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			if ( !type.equals(IKeyword.BATCH) ) { return; }
 			if ( !desc.getFacets().containsKey(IKeyword.UNTIL) ) {
 				desc.warning(
-					"No stop condition have been defined (facet 'until:'). This may result in an endless run of the simulation",
+					"No stop condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
 					IGamlIssue.MISSING_FACET);
 			}
 		}
@@ -99,18 +99,19 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	// private BatchOutput fileOutputDescription;
 	private FileOutput log;
 
-	//hqnghi: manage experiment's controller
-	private String controllerName="";
+	// hqnghi: manage experiment's controller
+	private String controllerName = "";
 
 	public String getControllerName() {
 		return controllerName;
 	}
 
-	public void setControllerName(String controllerName) {
+	public void setControllerName(final String controllerName) {
 		this.controllerName = controllerName;
 	}
-	//end-hqnghi
-	
+
+	// end-hqnghi
+
 	@Override
 	public ExperimentAgent getAgent() {
 		return agent;
