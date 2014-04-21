@@ -22,6 +22,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -32,7 +35,17 @@ import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species)")) }, omissible = IKeyword.NAME)
+@doc(value="Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.", usages = {
+	@usage(value="An example of use of the aspect statement:", examples= {
+		@example(value="species one_species {", isExecutable=false),
+		@example(value="	int a <- rnd(10);", isExecutable=false),
+		@example(value="	aspect aspect1 {", isExecutable=false),
+		@example(value="		if(a mod 2 = 0) { draw circle(a);}", isExecutable=false),
+		@example(value="		else {draw square(a);}", isExecutable=false),
+		@example(value="		draw text: \"a= \" + a color: #black size: 5;", isExecutable=false),
+		@example(value="	}", isExecutable=false),
+		@example(value="}", isExecutable=false)})})
 public class AspectStatement extends AbstractStatementSequence {
 
 	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
