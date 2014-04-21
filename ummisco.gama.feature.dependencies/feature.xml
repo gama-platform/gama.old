@@ -530,13 +530,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.team.svn"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.sat4j.core"
          download-size="0"
          install-size="0"
@@ -990,12 +983,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.intro.universal"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.swt.gtk.linux.x86"
          os="linux"
          ws="gtk"
@@ -1004,13 +991,6 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.ui.intro"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
          unpack="false"/>
 
    <plugin
