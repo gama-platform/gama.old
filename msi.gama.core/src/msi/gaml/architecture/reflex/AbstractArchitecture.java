@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AbstractArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,11 +13,10 @@ package msi.gaml.architecture.reflex;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.*;
 import msi.gaml.species.ISpecies;
 
@@ -85,16 +84,6 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	@Override
 	public boolean hasFacet(final String key) {
 		return false;
-	}
-
-	@Override
-	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		return 1.0;
-	}
-
-	@Override
-	public IExpression getPertinence() {
-		return new ConstantExpression(1.0);
 	}
 
 	@Override
