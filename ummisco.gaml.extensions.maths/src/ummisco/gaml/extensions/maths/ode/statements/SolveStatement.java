@@ -14,12 +14,12 @@ package ummisco.gaml.extensions.maths.ode.statements;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -32,7 +32,10 @@ import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 
 @facets(value = {
-	@facet(name = IKeyword.EQUATION, type = IType.STRING, optional = false, doc = @doc("the equation system identifier to be numerically solved")),
+	@facet(name = IKeyword.EQUATION,
+		type = IType.STRING,
+		optional = false,
+		doc = @doc("the equation system identifier to be numerically solved")),
 	@facet(name = IKeyword.METHOD,
 		type = IType.ID /* CHANGE */,
 		optional = true,
@@ -83,11 +86,11 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 	combinations = { @combination({ IKeyword.STEP }),
 		@combination({ "min_step", "max_step", "scalAbsoluteTolerance", "scalRelativeTolerance" }) },
 	omissible = IKeyword.EQUATION)
-@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@doc(value="Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.", usages = {
-	@usage(value="", examples = {@example(value="solve SIR method: \"rk4\" step:0.001;", isExecutable=false)})
-})
+@doc(value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
+	usages = { @usage(value = "", examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;",
+		isExecutable = false) }) })
 public class SolveStatement extends AbstractStatementSequence {
 
 	Solver solver;
