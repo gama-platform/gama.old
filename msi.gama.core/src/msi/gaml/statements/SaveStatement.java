@@ -199,6 +199,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if ( agents instanceof IPopulation ) {
 				species = ((IPopulation) agents).getSpecies();
 			} else {
+				if (agents.isEmpty()) return;
 				species = agents.get(0).getSpecies();
 			}
 			for ( final String e : attributes.keySet() ) {
