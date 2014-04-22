@@ -30,21 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 public abstract class AbstractLayer implements ILayer {
-
-	// hqnghi : getter and setter of scope for layer output
-	private IScope privateScope = null;
-
-	@Override
-	public IScope getPrivateScope() {
-		return privateScope;
-	}
-
-	@Override
-	public void setPrivateScope(final IScope privateScope) {
-		this.privateScope = privateScope;
-	}
-
-	// end-hqnghi
+	
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		return null;

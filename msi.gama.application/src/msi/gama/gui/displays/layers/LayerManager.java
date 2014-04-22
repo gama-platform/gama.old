@@ -137,17 +137,6 @@ public class LayerManager implements ILayerManager {
 			g.beginDrawingLayers();
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 				final ILayer dis = enabledLayers.get(i);
-				// hqnghi: if layer have its own scope (from other experiment, init layer with it
-				if ( dis.getPrivateScope() != null ) {
-					// WARNING NO. Why a layer would have a scope from an other experiment???
-					// TODO if you release the scope of the display, everything will be wiped from it.
-
-					// GAMA.releaseScope(scope);
-					scope = dis.getPrivateScope().copy();
-					if ( scope == null || scope.interrupted() ) { return; }
-					scope.setGraphics(g);
-				}
-				// end-hqnghi
 				dis.drawDisplay(scope, g);
 			}
 		} catch (final Exception e) {
