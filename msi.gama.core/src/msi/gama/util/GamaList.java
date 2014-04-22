@@ -177,9 +177,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	public GamaList(final Object[] tab) {
-		super(tab.length + 2);
-		for ( int i = 0, n = tab.length; i < n; i++ ) {
-			add((E) tab[i]);
+		super(tab == null ? 0 : tab.length + 2);
+		if ( tab != null ) {
+			for ( int i = 0, n = tab.length; i < n; i++ ) {
+				add((E) tab[i]);
+			}
 		}
 	}
 
@@ -450,8 +452,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	/**
 	 * Method buildValue()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public E buildValue(final IScope scope, final Object object, final IContainerType containerType) {
@@ -460,18 +461,17 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	/**
 	 * Method buildValues()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer, msi.gaml.types.IContainerType)
 	 */
 	@Override
-	public IContainer<?, E> buildValues(final IScope scope, final IContainer objects, final IContainerType containerType) {
+	public IContainer<?, E>
+		buildValues(final IScope scope, final IContainer objects, final IContainerType containerType) {
 		return containerType.cast(scope, objects, null);
 	}
 
 	/**
 	 * Method buildIndex()
-	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public Integer buildIndex(final IScope scope, final Object object, final IContainerType containerType) {
