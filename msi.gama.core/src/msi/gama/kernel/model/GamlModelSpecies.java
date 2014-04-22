@@ -17,7 +17,6 @@ import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
@@ -28,7 +27,6 @@ import msi.gaml.types.IType;
 import org.apache.commons.lang.StringUtils;
 
 @symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true)
-@inside(kinds = ISymbolKind.SPECIES)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),
