@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlAnnotations.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * 
+ * 'GamlAnnotations.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -135,8 +135,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this facet is for internal use only.
 		 */
-		boolean internal() default false;		
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -202,8 +202,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this type is for internal use only.
 		 */
-		boolean internal() default false;			
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -250,8 +250,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this skill is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -320,8 +320,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this species is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -355,8 +355,7 @@ public final class GamlAnnotations {
 	/**
 	 * 
 	 * The class action. Used to tag a method that will be considered as an action (or
-	 * primitive) in GAML. The method must have the following signature:
-	 * <code>Object methodName(IScope) throws GamaRuntimeException </code> and be contained in a
+	 * primitive) in GAML. The method must have the following signature: <code>Object methodName(IScope) throws GamaRuntimeException </code> and be contained in a
 	 * class annotated with @species or @skill (or a related class, like a subclass or an interface)
 	 * 
 	 * @see species
@@ -392,8 +391,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this action is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -546,8 +545,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this var is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -631,8 +630,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this symbol is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * 
 		 * @return Indicates that this statement must be unique in its super context (for example,
@@ -729,8 +728,8 @@ public final class GamlAnnotations {
 		 * 
 		 * @return whether this operator is for internal use only.
 		 */
-		boolean internal() default false;	
-		
+		boolean internal() default false;
+
 		/**
 		 * Doc.
 		 * 
@@ -1062,10 +1061,10 @@ public final class GamlAnnotations {
 	/**
 	 * Written by gaudou Modified on 24 mars 2014
 	 * 
-	 * Used to annotate methods that can be used as operators in GAML.
+	 * Used to annotate fields that are used as constants in GAML.
 	 * 
 	 */
-	@Retention(RetentionPolicy.SOURCE)
+	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD })
 	public static @interface constant {
 
