@@ -413,15 +413,25 @@ public class MovingSkill extends Skill {
 		final ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
 		final ILocation goal = computeTarget(scope, agent);
-		if ( goal == null ) {
-			// scope.setStatus(ExecutionStatus.failure);
-			return null;
-		}
+		final Boolean returnPath = scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
 		final ITopology topo = computeTopology(scope, agent);
-		if ( topo == null ) {
-			// scope.setStatus(ExecutionStatus.failure);
+		
+		if ( goal == null ) {
+			if (returnPath)
+				return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false);
 			return null;
 		}
+		if ( topo == null ) {
+			if (returnPath)
+				return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false);
+			return null;
+		}
+		if ( source.equals(goal) ) {
+			if (returnPath)
+				return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false);
+			return null;
+		}
+		
 		Boolean recomputePath = (Boolean) scope.getArg("recompute_path", IType.NONE);
 		if ( recomputePath == null ) {
 			recomputePath = true;
@@ -434,24 +444,24 @@ public class MovingSkill extends Skill {
 		} else {
 
 			if ( topo instanceof GraphTopology ) {
-				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() || recomputePath &&
-					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
+				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() || (recomputePath &&
+					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion()) ) {
 					path = topo.pathBetween(scope, source, goal);
 				}
 			}
 		}
 		if ( path == null ) {
-			// scope.setStatus(ExecutionStatus.failure);
+			if (returnPath)
+				return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false);
 			return null;
 		}
 
-		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+		
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		if ( returnPath != null && returnPath ) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
 			if ( pathFollowed == null ) {
-				// scope.setStatus(ExecutionStatus.failure);
-				return null;
+				return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false);
 			}
 			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
