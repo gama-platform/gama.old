@@ -153,6 +153,7 @@ public class AddStatement extends AbstractContainerStatement {
 					cd.warning("The use of 'all' will have no effect here, as " + item.toGaml() +
 						" is not a container. Only this value will be added to " + list.toGaml(),
 						IGamlIssue.WRONG_CONTEXT, ALL);
+					cd.getFacets().remove(ALL);
 				}
 			}
 			// IExpression whole = cd.getFacets().getExpr(ALL);
@@ -197,9 +198,10 @@ public class AddStatement extends AbstractContainerStatement {
 		} else {
 			if ( object instanceof IContainer ) {
 				container.addVallues(scope, (IContainer) object);
-			} else {
-				container.setAllValues(scope, object);
 			}
+			// else {
+			// container.setAllValues(scope, object);
+			// }
 		}
 	}
 
