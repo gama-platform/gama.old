@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SimulateStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SimulateStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,6 @@
 package msi.gaml.statements;
 
 import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -20,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gama.util.file.GAMLFile;
@@ -29,9 +28,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
-@symbol(name = "simulate", kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(value = {
-	@facet(name = "comodel", type = { IType.FILE }, optional = false),
+@symbol(name = "simulate", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@facets(value = { @facet(name = "comodel", type = { IType.FILE }, optional = false),
 	@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
 	@facet(name = "share", type = { IType.LIST }, optional = true),
 	@facet(name = "with_input", type = { IType.MAP }, optional = true),
@@ -39,11 +37,12 @@ import msi.gaml.types.IType;
 	@facet(name = "reset", type = { IType.BOOL }, optional = true),
 	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.REPEAT, type = { IType.INT }, optional = true) }, omissible = "comodel")
-@inside(kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES,
-		ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
+@inside(kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT },
+	symbols = IKeyword.CHART)
 @doc(value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
-	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
-	@example(value="ask receiver_agent(s) {",isExecutable=false), @example(value="     // [statements]",isExecutable=false), @example(value="}",isExecutable=false) })
+	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):",
+	examples = { @example(value = "ask receiver_agent(s) {", isExecutable = false),
+		@example(value = "     // [statements]", isExecutable = false), @example(value = "}", isExecutable = false) })
 public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
@@ -93,13 +92,10 @@ public class SimulateStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		Object modelfile = comodel.value(scope);
-		if (modelfile instanceof GAMLFile) {
-			((GAMLFile) modelfile).execute(scope, with_exp,
-					param_input,
-					param_output, in, out, reset, repeat, stopCondition,
-					sharedResource);
+		if ( modelfile instanceof GAMLFile ) {
+			((GAMLFile) modelfile).execute(scope, with_exp, param_input, param_output, in, out, reset, repeat,
+				stopCondition, sharedResource);
 		}
-
 
 		// exp.getCurrentSimulation().halt(exp.getAgent().getScope());
 		return null;
