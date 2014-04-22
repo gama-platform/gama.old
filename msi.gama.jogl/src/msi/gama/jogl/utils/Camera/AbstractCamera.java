@@ -261,6 +261,15 @@ public abstract class AbstractCamera implements ICamera {
 				this.ctrlKeyDown = checkCtrlKeyDown(arg0);
 				break;
 		}
+		
+		switch (arg0.getKeyChar()) {
+          case '+':
+            zoom(true);
+            return;
+        case '-':
+            zoom(false);
+            return;
+        }
 	}
 
 	@Override
