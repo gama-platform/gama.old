@@ -17,6 +17,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -32,10 +35,12 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor")),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("number of simulation steps between two computations of the expression (default is 1)")),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("expression that will be evaluated to be displayed in the monitor")) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
+@doc(value="A monitor allows to follow the value of an arbitrary expression in GAML.", usages = {
+	@usage(value = "An example of use is:", examples = @example(value="monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ", isExecutable=false))})
 public class MonitorOutput extends AbstractDisplayOutput {
 
 	//

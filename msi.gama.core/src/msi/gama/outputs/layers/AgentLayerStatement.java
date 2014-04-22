@@ -39,17 +39,18 @@ import msi.gaml.types.*;
 @symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false),
+	@facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false, doc = @doc("the set of agents to display")),
 	@facet(name = IKeyword.TRACE, type = { IType.BOOL, IType.INT }, optional = true, doc = @doc("Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. ")),
 	@facet(name = IKeyword.FADING, type = { IType.BOOL }, optional = true, doc = @doc("Used in conjunction with 'trace:', allows to apply a fading effect to the previous traces. Default is false")),
-	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.FOCUS, type = IType.AGENT, optional = true),
-	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("")),
+	@facet(name = IKeyword.FOCUS, type = IType.AGENT, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true, doc = @doc("the name of the aspect that should be used to display the species")),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("")) }, omissible = IKeyword.NAME)
 @validator(AgentLayerValidator.class)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.")
 public class AgentLayerStatement extends AbstractLayerStatement {
 
 	public static class AgentLayerValidator implements IDescriptionValidator {
