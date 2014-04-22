@@ -297,7 +297,23 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// IType kt = t.getKeyType();
 			setEach_Expr(new EachExpression(t /* ct, kt */));
 		}
-		// we can now safely compile the right-hand expression
+		// If the right-hand expression is a list of expression, then we have a n-ary operator
+		if ( e2 instanceof ExpressionList ) {
+			ExpressionList el = (ExpressionList) e2;
+			List<Expression> list = EGaml.getExprsOf(el);
+			int size = list.size();
+			if ( size > 1 ) {
+				IExpression[] compiledArgs = new IExpression[size + 1];
+				compiledArgs[0] = left;
+				for ( int i = 0; i < size; i++ ) {
+					compiledArgs[i + 1] = compile(list.get(i));
+				}
+				IExpression result = factory.createOperator(op, getContext(), e2, compiledArgs);
+				return result;
+			}
+		}
+
+		// Otherwise we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
 		// and return the binary expression
 		return factory.createOperator(op, getContext(), e2.eContainer(), left, right);
