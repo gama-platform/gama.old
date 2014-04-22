@@ -19,8 +19,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
+import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import com.google.common.collect.Lists;
 
@@ -38,24 +37,23 @@ public class GAMA {
 	private static double CYCLE_DELAY = 0d;
 
 	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
-	
-	//hqnghi: add several controllers to have multi-thread experiments 
+
+	// hqnghi: add several controllers to have multi-thread experiments
 	private final static GamaMap<String, FrontEndController> controllers = new GamaMap<String, FrontEndController>();
-	
+
 	public static FrontEndController getController(final String ctrlName) {
 		return controllers.get(ctrlName);
 	}
-	
+
 	public static GamaMap<String, FrontEndController> getControllers() {
 		return controllers;
 	}
-	
-	public static void addController(final String ctrlName,
-			final FrontEndController fec) {
-		controllers.addValue(null, new GamaPair<String, FrontEndController>(
-				ctrlName, fec));
+
+	public static void addController(final String ctrlName, final FrontEndController fec) {
+		controllers.addValue(null, new GamaPair<String, FrontEndController>(ctrlName, fec));
 	}
-	//end-hqnghi
+
+	// end-hqnghi
 	/**
 	 * 
 	 * Access to experiments and their components
