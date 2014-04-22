@@ -14,6 +14,7 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
+import msi.gaml.operators.IUnits;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -25,13 +26,14 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IExpressionFactory {
 
-	public static final IExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL));
-	public static final IExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL));
-	public static final IExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
+	public static final ConstantExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL));
+	public static final ConstantExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL));
+	public static final ConstantExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
+	public final static Map<String, UnitConstantExpression> UNITS_EXPR = IUnits.UNITS_EXPR;
 
 	public void registerParserProvider(IExpressionCompilerProvider parser);
 
-	public abstract IExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
+	public abstract ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
 	// public abstract IExpression createConst(final Object val, final IType type, final IType contentType)
 	// throws GamaRuntimeException;
@@ -40,7 +42,7 @@ public interface IExpressionFactory {
 
 	public abstract IExpression createExpr(final String s, IDescription context);
 
-	public abstract IExpression createUnitExpr(final String unit, IDescription context);
+	public abstract ConstantExpression getUnitExpr(final String unit);
 
 	Map<String, IExpressionDescription> createArgumentMap(StatementDescription action, IExpressionDescription args,
 		IDescription context);
@@ -91,5 +93,14 @@ public interface IExpressionFactory {
 	 *
 	 */
 	public void resetParser();
+
+	/**
+	 * Creates a new unit expression
+	 * @param value
+	 * @param t
+	 * @param doc
+	 * @return
+	 */
+	public UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String[] names);
 
 }

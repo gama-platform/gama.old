@@ -16,7 +16,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gaml.compilation.AbstractGamlDocumentation;
 import msi.gaml.descriptions.*;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
@@ -61,8 +60,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		}
 	}
 
+	/**
+	 * Method createUnit()
+	 * @see msi.gaml.expressions.IExpressionFactory#createUnit(java.lang.Object, msi.gaml.types.IType, java.lang.String)
+	 */
 	@Override
-	public IExpression createConst(final Object val, final IType type) {
+	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
+		final String[] names) {
+		return UnitConstantExpression.create(value, t, name, doc, names);
+	}
+
+	@Override
+	public ConstantExpression createConst(final Object val, final IType type) {
 		if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
 		if ( val == null ) { return NIL_EXPR; }
 		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
@@ -70,17 +79,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createUnitExpr(final String unit, final IDescription context) {
+	public ConstantExpression getUnitExpr(final String unit) {
 		// FIXME Special cases (to be automated later)
-		if ( unit.equals("pixels") || unit.equals("px") ) {
-			// AD: See in the callers to this method the hack to address Issue 387.
-			return new PixelUnitExpression();
-		}
-		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
-		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
-		Object result = IUnits.UNITS.get(unit);
-		IType t = result instanceof Double ? Types.get(IType.FLOAT) : Types.get(IType.COLOR);
-		return createConst(result, t);
+		// if ( unit.equals("pixels") || unit.equals("px") ) {
+		// // AD: See in the callers to this method the hack to address Issue 387.
+		// return new PixelUnitExpression();
+		// }
+		// if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
+		// if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
+		return UNITS_EXPR.get(unit);
+		// Object result = IUnits.UNITS.get(unit);
+		// IType t = result instanceof Double ? Types.get(IType.FLOAT) : Types.get(IType.COLOR);
+		// return createConst(result, t);
 	}
 
 	@Override
@@ -248,8 +258,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	/**
 	 * Method getFacetExpression()
-	 * @see msi.gaml.expressions.IExpressionFactory#getFacetExpression(msi.gaml.descriptions.IDescription,
-	 *      java.lang.Object)
+	 * @see msi.gaml.expressions.IExpressionFactory#getFacetExpression(msi.gaml.descriptions.IDescription, java.lang.Object)
 	 */
 	@Override
 	public EObject getFacetExpression(final IDescription context, final EObject facet) {

@@ -21,9 +21,8 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
@@ -362,11 +361,12 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	}
 
-	static void addUnit(final EClass eClass, final String t, final Object value) {
+	static void addUnit(final EClass eClass, final String t) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		Map<String, String> doc = new ImmutableMap("title", "Unit " + t + " of value " + value, "type", "unit");
+		String d = IExpressionFactory.UNITS_EXPR.get(t).getDocumentation();
+		Map<String, String> doc = new ImmutableMap("title", d, "type", "unit");
 		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
 
@@ -403,8 +403,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				add(eType, t);
 				add(eVar, t);
 			}
-			for ( String t : IUnits.UNITS.keySet() ) {
-				addUnit(eUnit, t, IUnits.UNITS.get(t));
+			for ( String t : IExpressionFactory.UNITS_EXPR.keySet() ) {
+				addUnit(eUnit, t);
 			}
 			for ( OperatorProto t : AbstractGamlAdditions.getAllFields() ) {
 				addVar(eVar, t.name, t, "field");

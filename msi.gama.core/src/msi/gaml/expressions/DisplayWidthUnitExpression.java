@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DisplayWidthUnitExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'DisplayWidthUnitExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,10 +15,10 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
-public class DisplayWidthUnitExpression extends ConstantExpression {
+public class DisplayWidthUnitExpression extends UnitConstantExpression {
 
-	public DisplayWidthUnitExpression() {
-		super("display_width", Types.get(IType.FLOAT));
+	public DisplayWidthUnitExpression(final String doc) {
+		super(100.0, Types.get(IType.FLOAT), "display_width", doc, null);
 	}
 
 	@Override
@@ -34,8 +34,4 @@ public class DisplayWidthUnitExpression extends ConstantExpression {
 		return false;
 	}
 
-	@Override
-	public String toGaml() {
-		return "°display_width";
-	}
 }

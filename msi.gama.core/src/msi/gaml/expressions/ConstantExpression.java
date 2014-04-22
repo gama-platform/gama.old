@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ConstantExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ConstantExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -40,12 +40,6 @@ public class ConstantExpression extends AbstractExpression {
 	public Object value(final IScope scope) {
 		return value;
 	}
-
-	//
-	// @Override
-	// public IType getContentType() {
-	// return type.getContentType();
-	// }
 
 	@Override
 	public boolean isConst() {

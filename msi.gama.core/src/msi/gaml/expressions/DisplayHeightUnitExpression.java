@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DisplayHeightUnitExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'DisplayHeightUnitExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,10 +15,10 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
-public class DisplayHeightUnitExpression extends ConstantExpression {
+public class DisplayHeightUnitExpression extends UnitConstantExpression {
 
-	public DisplayHeightUnitExpression() {
-		super("display_height", Types.get(IType.FLOAT));
+	public DisplayHeightUnitExpression(final String doc) {
+		super(100.0, Types.get(IType.FLOAT), "display_height", doc, null);
 	}
 
 	@Override
@@ -32,11 +32,7 @@ public class DisplayHeightUnitExpression extends ConstantExpression {
 	@Override
 	public boolean isConst() {
 		return false;
-	}
 
-	@Override
-	public String toGaml() {
-		return "°display_height";
 	}
 
 }

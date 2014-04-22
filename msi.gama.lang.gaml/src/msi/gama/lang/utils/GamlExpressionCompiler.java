@@ -30,7 +30,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
@@ -562,7 +561,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseUnitName(final UnitName object) {
 		String s = EGaml.getKeyOf(object);
-		if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, getContext()); }
+		if ( IExpressionFactory.UNITS_EXPR.containsKey(s) ) { return factory.getUnitExpr(s); }
 		// If it is a unit, we return its float value
 		getContext().error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
 		return null;
