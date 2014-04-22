@@ -14,10 +14,13 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,11 +31,14 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.HILL_CLIMBING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = HillClimbing.ITER_MAX, type = IType.INT, optional = true),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal= true),
+	@facet(name = HillClimbing.ITER_MAX, type = IType.INT, optional = true, doc=@doc("number of iterations")),
+	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
+	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
+@doc(value="This algorithm is an implementation of the Hill Climbing algorithm. See the wikipedia article and [batch161 the batch dedicated page].", usages = {
+		@usage(value="As other batch methods, the basic syntax of the `hill_climbing` statement uses `method hill_climbing` instead of the expected `hill_climbing name: id` : ", examples = {@example(value="method hill_climbing [facet: value];", isExecutable=false)}), 
+		@usage(value="For example: ", examples = {@example(value="method hill_climbing iter_max: 50 maximize : food_gathered; ", isExecutable=false)})})
 public class HillClimbing extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";

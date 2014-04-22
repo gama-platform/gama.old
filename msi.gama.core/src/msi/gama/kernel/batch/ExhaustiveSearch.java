@@ -14,10 +14,13 @@ package msi.gama.kernel.batch;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -25,10 +28,13 @@ import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
+	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
+	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
+@doc(value="This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [batch161 the batch dedicated page].", usages = {
+		@usage(value="As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ", examples = {@example(value="method exhaustive [facet: value];", isExecutable=false)}), 
+		@usage(value="For example: ", examples = {@example(value="method exhaustive maximize: food_gathered;", isExecutable=false)})})
 public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	public ExhaustiveSearch(final IDescription desc) {

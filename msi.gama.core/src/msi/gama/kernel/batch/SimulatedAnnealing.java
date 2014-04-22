@@ -14,10 +14,13 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,14 +31,17 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true),
-	@facet(name = SimulatedAnnealing.TEMP_DECREASE, type = IType.FLOAT, optional = true),
-	@facet(name = SimulatedAnnealing.TEMP_INIT, type = IType.FLOAT, optional = true),
-	@facet(name = SimulatedAnnealing.NB_ITER, type = IType.INT, optional = true),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
+	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true, doc = @doc("final temperature")),
+	@facet(name = SimulatedAnnealing.TEMP_DECREASE, type = IType.FLOAT, optional = true, doc = @doc("temperature decrease coefficient")),
+	@facet(name = SimulatedAnnealing.TEMP_INIT, type = IType.FLOAT, optional = true, doc = @doc("initial temperature")),
+	@facet(name = SimulatedAnnealing.NB_ITER, type = IType.INT, optional = true, doc = @doc("number of iterations per level of temperature")),
+	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
+	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
+@doc(value="This algorithm is an implementation of the Simulated Annealing algorithm. See the wikipedia article and [batch161 the batch dedicated page].", usages = {
+		@usage(value="As other batch methods, the basic syntax of the annealing statement uses `method annealing` instead of the expected `annealing name: id` : ", examples = {@example(value="method annealing [facet: value];", isExecutable=false)}), 
+		@usage(value="For example: ", examples = {@example(value="method annealing temp_init: 100  temp_end: 1 temp_decrease: 0.5 nb_iter_cst_temp: 5 maximize: food_gathered;", isExecutable=false)})})
 public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	private double temperatureEnd = 1;
