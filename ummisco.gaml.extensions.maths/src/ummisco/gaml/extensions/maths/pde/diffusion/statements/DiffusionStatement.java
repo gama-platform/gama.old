@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DiffusionStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the 
+ * 
+ * 'DiffusionStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -29,7 +29,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.AbstractStatementSequence;
+import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
@@ -41,10 +41,10 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 	@facet(name = "proportion", type = IType.FLOAT, optional = true),
 	@facet(name = "radius", type = IType.INT, optional = true),
 	@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true) }, omissible = IKeyword.VAR)
-@symbol(name = { "diffusion" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@symbol(name = { "diffusion" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(DiffusionValidator.class)
-public class DiffusionStatement extends AbstractStatementSequence {
+public class DiffusionStatement extends AbstractStatement {
 
 	public static Class VALIDATOR = DiffusionValidator.class;
 
