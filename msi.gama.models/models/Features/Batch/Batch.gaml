@@ -84,8 +84,8 @@ experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( ti
 }
 
 // This experiment explores two parameters with an exhaustive strategy,
-// repeating each simulation three times, in order to find the best combination
-// of parameters to minimize the number of infected people
+// repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
+// in order to find the best combination of parameters to minimize the number of infected people
 experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 , 0.5 , 1.0 ];
 	parameter 'Speed of people:' var: speed_people min: 1.0 max: 3.0 step:1.0;
@@ -93,20 +93,20 @@ experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until
 }
 
 // This experiment explores two parameters with a GA strategy,
-// repeating each simulation three times, in order to find the best combination
-// of parameters to minimize the number of infected people
+// repeating each simulation three times (the aggregated fitness correspond to the min fitness), 
+// in order to find the best combination of parameters to minimize the number of infected people
 experiment Genetic type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 ,0.2, 0.5 , 0.6,0.8, 1.0 ];
 	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
 	method genetic pop_dim: 3 crossover_prob: 0.7 mutation_prob: 0.1
-	nb_prelim_gen: 1 max_gen: 5  minimize: nb_infected;
+	nb_prelim_gen: 1 max_gen: 5  minimize: nb_infected  aggregation: "min";
 }
 
 // This experiment explores two parameters with a Tabu Search strategy,
-// repeating each simulation three times, in order to find the best combination
-// of parameters to minimize the number of infected people
+// repeating each simulation three times (the aggregated fitness correspond to the max fitness), 
+// in order to find the best combination of parameters to minimize the number of infected people
 experiment Tabu_Search type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 ,0.2, 0.5 , 0.6,0.8, 1.0 ];
 	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
-	method tabu iter_max: 10 tabu_list_size: 5 minimize: nb_infected;
+	method tabu iter_max: 10 tabu_list_size: 5 minimize: nb_infected aggregation: "max";
 }
