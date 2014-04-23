@@ -47,7 +47,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 
 	public HillClimbing(final IDescription species) {
 		super(species);
-
+		initParams();
 	}
 
 	@Override
@@ -101,12 +101,14 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
+	}
+	
+	public void initParams(){
 		final IExpression maxItExp = getFacet(ITER_MAX);
 		if ( maxItExp != null ) {
 			maxIt = Cast.as(maxItExp, Integer.class);
 			stoppingCriterion = new StoppingCriterionMaxIt(maxIt);
 		}
-
 	}
 
 	@Override

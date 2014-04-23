@@ -50,6 +50,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 	public TabuSearch(final IDescription species) {
 		super(species);
+		initParams();
 
 	}
 
@@ -140,6 +141,10 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
+		
+	}
+	
+	public void initParams(){
 		final IExpression maxIt = getFacet(ITER_MAX);
 		if ( maxIt != null ) {
 			iterMax = Cast.asInt(scope, maxIt.value(scope));

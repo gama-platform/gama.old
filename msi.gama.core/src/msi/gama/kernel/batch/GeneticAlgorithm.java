@@ -65,12 +65,14 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	public GeneticAlgorithm(final IDescription species) {
 		super(species);
+		initParams();
 	}
 
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
-
+	}
+	public void initParams(){
 		initPop = new InitializationUniform();
 		crossOverOp = new CrossOver1Pt();
 		mutationOp = new Mutation1Var();
@@ -95,7 +97,6 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		if ( maxgen != null ) {
 			maxGenerations = Cast.asInt(scope, maxgen.value(scope));
 		}
-
 	}
 
 	@Override

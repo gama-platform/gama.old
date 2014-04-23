@@ -12,6 +12,7 @@
 package msi.gama.kernel.batch;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -56,12 +57,15 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	public SimulatedAnnealing(final IDescription species) {
 		super(species);
+		initParams();
 	}
 
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
-
+	}
+	
+	public void initParams(){
 		final IExpression tempend = getFacet(TEMP_END);
 		if ( tempend != null ) {
 			temperatureEnd = Cast.asFloat(scope, tempend.value(scope));
@@ -79,7 +83,6 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		if ( nbIterCstT != null ) {
 			nbIterCstTemp = Cast.asInt(scope, nbIterCstT.value(scope));
 		}
-
 	}
 
 	@Override
@@ -90,11 +93,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		testedSolutions.put(getBestSolution(), getBestFitness());
 		setBestFitness(currentFitness);
-		int nbIt = 0;
 		double temperature = temperatureInit;
 
-		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
-		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (temperature > temperatureEnd) {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, bestSolutionAlgo);
 			if ( neighbors.isEmpty() ) {
@@ -134,8 +134,6 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 				iter++;
 			}
 			temperature *= tempDimCoeff;
-			nbIt++;
-			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
 		
 		return getBestSolution();
@@ -174,7 +172,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 			@Override
 			public Object value() {
-				return temperatureEnd;
+				return nbIterCstTemp;
 			}
 
 		});
