@@ -18,10 +18,12 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,21 +44,29 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.GRID_POPULATION, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
-	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
-	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.ELEVATION, type = { IType.MATRIX, IType.FLOAT, IType.INT, IType.BOOL }, optional = true, doc = @doc("Allows to specify the elevation of each cell, if any. Can be a matrix of float (provided it is the same size as the grid), a int or float variable of the grid species, or simply true (in which case, the variable called 'grid_value' is used to compute the elevation of each cell)")),
-	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true),
-	@facet(name = IKeyword.GRAYSCALE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
-	@facet(name = "draw_as_dem", type = IType.BOOL, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
-	@facet(name = "dem", type = IType.MATRIX, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
-@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
-	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false, doc = @doc("the species of the agents in the grid")),
+	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true, doc = @doc("the color to draw lines (borders of cells)")),
+	@facet(name = IKeyword.ELEVATION, type = { IType.MATRIX, IType.FLOAT, IType.INT, IType.BOOL }, optional = true, doc = @doc("Allows to specify the elevation of each cell, if any. Can be a matrix of float (provided it has the same size than the grid), an int or float variable of the grid species, or simply true (in which case, the variable called 'grid_value' is used to compute the elevation of each cell)")),
+	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true, doc = @doc("the file object containing the texture image to be applied on the grid")),
+	@facet(name = IKeyword.GRAYSCALE, type = IType.BOOL, optional = true, doc = @doc("if true, givse a grey value to each polygon depending on its elevation (false by default)")),
+	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true, doc = @doc("specifies whther the cells will be triangulated: if it is false, they will be displayed as horizontal squares at a given elevation, whereas if it is true, cells will be triangulated and linked to neighbors in order to have a continuous surface (false by default)")),
+	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true, doc = @doc("specify whether the attribute used to compute the elevation is displayed on each cells (false by default)")),
+	@facet(name = "draw_as_dem", type = IType.BOOL, optional = true, doc = @doc(deprecated = "use 'elevation' instead")),
+	@facet(name = "dem", type = IType.MATRIX, optional = true, doc = @doc(deprecated = "use 'elevation' instead")),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) }, omissible = IKeyword.SPECIES)
+@doc(value="`"+IKeyword.GRID_POPULATION+"` is used using the `"+IKeyword.GRID+"` keyword. It allows the modeler to display in an optimized way all cell agents of a grid (i.e. all agents of a species having a grid topology).", usages = {
+		@usage(value = "The general syntax is:", examples = {
+			@example(value="display my_display {", isExecutable=false),
+			@example(value="   grid ant_grid lines: #black position: { 0.5, 0 } size: {0.5,0.5};", isExecutable=false),
+			@example(value="}", isExecutable=false)}), 
+		@usage(value = "To display a grid as a DEM:", examples = {
+			@example(value="display my_display {", isExecutable=false),
+			@example(value="    grid cell texture: texture_file text: false triangulation: true elevation: true;", isExecutable=false),
+			@example(value="}", isExecutable=false)})},				
+	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class GridLayerStatement extends AbstractLayerStatement {
 
 	public GridLayerStatement(final IDescription desc) throws GamaRuntimeException {
