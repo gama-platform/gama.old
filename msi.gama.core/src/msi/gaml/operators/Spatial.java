@@ -106,32 +106,39 @@ public abstract class Spatial {
 		}
 
 		@operator(value="antislice", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
-		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="pac(10,0.3)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
+		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", 
+		    special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		    comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
+		    examples = { @example(value="antislice(10,0.3)",equals="a geometry as a circle of radius 10 but displays an antislice.", test=false) }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle", "hemisphere", "pie3D" })
 		public static IShape hemispherePac(final IScope scope, final Double radius, final Double ratio) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( radius <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildPac(radius, location, ratio);
+			return GamaGeometryType.buildAntiSlice(radius, location, ratio);
 		}
 		
 		@operator(value="slice", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
-		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { @example(value="man(10,0.3)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, see = {
+		@doc(value = "An sphere geometry which radius is equal to the operand made of 2 hemisphere.", 
+		     special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		     comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
+		     examples = { @example(value="slice(10,0.3)",equals="a geometry as a circle of radius 10 but displays a slice.", test=false) }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
 		public static IShape hemisphereMan(final IScope scope, final Double radius, final Double ratio) {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( radius <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildMan(radius, location, ratio);
+			return GamaGeometryType.buildSlice(radius, location, ratio);
 		}
 		
 		@operator(value="spherical_pie", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
 		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.", 
 		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
 		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
-		examples = { @example(value="piesphere(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false) }, 
+		examples = { @example(value="spherical_pie(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false) },
+		
 		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
 		public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio) {
 			ILocation location;
@@ -154,7 +161,8 @@ public abstract class Spatial {
 		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.", 
 		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
 		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
-		examples = { @example(value="piesphere(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false) }, 
+		examples = { @example(value="spherical_pie(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false),
+				    @example(value="spherical_pie(size/2,[0.1,0.9],[¡red,¡green])",equals="a geometry as a circle of radius 10 but displays a sphere with 2 slices with the corresponding colors.", test=false)}, 
 		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
 		public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio, final IList<GamaColor> colors) {
 			ILocation location;
@@ -195,7 +203,7 @@ public abstract class Spatial {
 		}
 		
 		@operator(value="pacman", category={IOperatorCategory.SPATIAL,IOperatorCategory.SHAPE})
-		@doc(value = "An pacman geometry with a dynamic opening mouse which radius is equal to first argument.", 
+		@doc(value = "An pacman geometry with a dynamic opening mouse equal to first argument.", 
 		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
 		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
 		examples = { @example(value="pacman(1,0.2)",equals="a geometry as a circle of radius 10 but displays a sphere.", test=false) }, 

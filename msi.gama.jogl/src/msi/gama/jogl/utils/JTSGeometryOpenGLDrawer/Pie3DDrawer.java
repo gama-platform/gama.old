@@ -38,10 +38,10 @@ public class Pie3DDrawer extends JTSDrawer{
 			case PACMAN:
 				drawPacMan((Pie3DObject) geometry);
 				break;
-			case PAC:
+			case ANTISLICE:
 				drawPac((Pie3DObject) geometry);
 				break;
-			case MAN:
+			case SLICE:
 				drawMan((Pie3DObject) geometry);
 				break;
 			default:

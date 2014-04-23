@@ -269,7 +269,9 @@ public abstract class AbstractCamera implements ICamera {
         case '-':
             zoom(false);
             return;
-        }
+		}
+	    
+        
 	}
 
 	@Override

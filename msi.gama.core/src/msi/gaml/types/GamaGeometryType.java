@@ -382,18 +382,18 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 	
-	public static IShape buildPac(final double radius, final ILocation location, final double ratio) {
+	public static IShape buildAntiSlice(final double radius, final ILocation location, final double ratio) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, PAC);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, ANTISLICE);
 		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
 		return g;
 	}
 	
-	public static IShape buildMan(final double radius, final ILocation location, final double ratio) {
+	public static IShape buildSlice(final double radius, final ILocation location, final double ratio) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, MAN);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, SLICE);
 		g.setAttribute(IShape.RATIO_ATTRIBUTE, ratio);
 		return g;
 	}

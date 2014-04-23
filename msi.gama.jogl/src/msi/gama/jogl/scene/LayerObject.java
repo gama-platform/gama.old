@@ -126,7 +126,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio,final IList<GamaColor> colors) {
 		final GeometryObject curJTSGeometry;
 		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR 
-				|| type == IShape.Type.PACMAN || type == IShape.Type.PAC || type == IShape.Type.PAC) {
+				|| type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE) {
 			curJTSGeometry =
 				new Pie3DObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,
 					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);

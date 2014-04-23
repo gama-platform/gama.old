@@ -52,10 +52,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case PACMAN:
 				jtsDrawer.drawPacMan(geometry);
 				break;
-			case PAC:
+			case ANTISLICE:
 				jtsDrawer.drawPac(geometry);
 				break;
-			case MAN:
+			case SLICE:
 				jtsDrawer.drawMan(geometry);
 				break;
 			case CONE:
