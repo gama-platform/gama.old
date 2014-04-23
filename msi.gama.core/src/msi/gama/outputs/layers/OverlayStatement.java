@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ThreadedUpdater;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -34,6 +35,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.RIGHT, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CENTER, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.COLOR, type = { IType.LIST, IType.COLOR }, optional = true) }, omissible = IKeyword.LEFT)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
+	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class OverlayStatement extends AbstractLayerStatement implements IOverlayProvider<OverlayInfo> {
 
 	final IExpression left, right, center;

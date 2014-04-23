@@ -37,6 +37,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
+see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	AspectStatement aspect;

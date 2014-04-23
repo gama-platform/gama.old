@@ -24,6 +24,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -50,21 +53,21 @@ import msi.gaml.variables.IVariable;
  */
 @symbol(name = { IKeyword.EXPERIMENT }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
-	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true),
-	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
-	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true),
-	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment")),
+	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc("")),
+	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true, doc = @doc("the parent experiment (in case of inheritane between experiments)")),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true, doc = @doc("an ordered list of agents giving the order of their execution")),
+	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.TYPE,
 		type = IType.LABEL,
 		values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ },
-		optional = false) }, omissible = IKeyword.NAME)
+		optional = false, doc = @doc("the experiment type")) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {

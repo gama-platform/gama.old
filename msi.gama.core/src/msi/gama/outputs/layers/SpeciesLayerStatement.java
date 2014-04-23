@@ -47,6 +47,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
+see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	private IExecutable aspect;

@@ -55,6 +55,8 @@ import msi.gaml.types.IType;
 	@facet(name = "draw_as_dem", type = IType.BOOL, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
 	@facet(name = "dem", type = IType.MATRIX, optional = true, doc = @doc(value = "", deprecated = "use 'elevation' instead")),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
+	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class GridLayerStatement extends AbstractLayerStatement {
 
 	public GridLayerStatement(final IDescription desc) throws GamaRuntimeException {

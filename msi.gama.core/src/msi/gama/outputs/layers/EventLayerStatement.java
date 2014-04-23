@@ -14,6 +14,7 @@ package msi.gama.outputs.layers;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -41,6 +42,8 @@ import msi.gaml.types.IType;
 	@facet(name = EventLayerStatement.defaultListArg, type = IType.STRING, optional = true, internal = true) },
 	omissible = IKeyword.NAME)
 @validator(EventLayerValidator.class)
+@doc(value="`agents` allows the modeler to display only the agents that fulfill a given condition.", 
+	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class EventLayerStatement extends AbstractLayerStatement {
 
 	public static class EventLayerValidator implements IDescriptionValidator {

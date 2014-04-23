@@ -15,10 +15,13 @@ import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,14 +40,34 @@ import msi.gaml.types.*;
  */
 @symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.FILE, type = { IType.STRING, IType.FILE }, optional = true),
-	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
-	@facet(name = IKeyword.GIS, type = { IType.FILE, IType.STRING }, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.FILE, type = { IType.STRING, IType.FILE }, optional = true, doc = @doc("the name/path of the image (in the case of a raster image)")),
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+	@facet(name = IKeyword.NAME, type = IType.STRING, optional = true, doc = @doc("the identifier of the image layer")),
+	@facet(name = IKeyword.GIS, type = { IType.FILE, IType.STRING }, optional = true, doc = @doc("the name/path of the shape file (to display a shapefile as background, without creating agents from it)")),
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("in the case of a shapefile, this the color used to fill in geometries of the shapefile")),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("(openGL only) specify whether the image display is refreshed. (true by default, usefull in case of images that is not modified over the simulation)")) }, omissible = IKeyword.NAME)
+@doc(value="`" + IKeyword.IMAGE + "` allows modeler to display an image (e.g. as background of a simulation).",usages = {
+	@usage(value = "The general syntax is:", examples = {
+		@example(value="display my_display {", isExecutable=false),
+		@example(value="   image layer_name file: image_file [additional options];", isExecutable=false),
+		@example(value="}", isExecutable=false)}),
+	@usage(value= "For instance, in the case of a bitmap image", examples = {
+		@example(value="display my_display {", isExecutable=false),
+		@example(value="   image background file:\"../images/my_backgound.jpg\";", isExecutable=false),
+		@example(value="}", isExecutable=false)}),
+	@usage(value= "Or in the case of a shapefile:", examples = {
+		@example(value="display my_display {", isExecutable=false),
+		@example(value="   image testGIS gis: \"../includes/building.shp\" color: rgb('blue');", isExecutable=false),
+		@example(value="}", isExecutable=false)}),			
+	@usage(value= "It is also possible to superpose images on different layers in the same way as for species using opengl display:", examples = {
+		@example(value="display my_display {", isExecutable=false),
+		@example(value="  image image1 file:\"../images/image1.jpg\";", isExecutable=false),
+		@example(value="  image image2 file:\"../images/image2.jpg\";", isExecutable=false),
+		@example(value="  image image3 file:\"../images/image3.jpg\" position: {0,0,0.5};", isExecutable=false),
+		@example(value="}", isExecutable=false)})},
+	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
 public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {

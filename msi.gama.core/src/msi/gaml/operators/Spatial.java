@@ -162,7 +162,7 @@ public abstract class Spatial {
 		special_cases = { "returns a point if the operand is lower or equal to 0." }, 
 		comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", 
 		examples = { @example(value="spherical_pie(10,[1.0,1.0,1.0])",equals="a geometry as a circle of radius 10 but displays a sphere with 4 slices.", test=false),
-				    @example(value="spherical_pie(size/2,[0.1,0.9],[¡red,¡green])",equals="a geometry as a circle of radius 10 but displays a sphere with 2 slices with the corresponding colors.", test=false)}, 
+				    @example(value="spherical_pie(size/2,[0.1,0.9],[#red,#green])",equals="a geometry as a circle of radius 10 but displays a sphere with 2 slices with the corresponding colors.", test=false)}, 
 		see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle","hemisphere", "pie3D" })
 		public static IShape pieSphere(final IScope scope, final Double radius, final IList<Double> ratio, final IList<GamaColor> colors) {
 			ILocation location;
@@ -1547,7 +1547,7 @@ public abstract class Spatial {
 			final GamaList<ILocation> locations = new GamaList();
 			final ILocation loc = scope.getAgentScope().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
-
+			
 			for ( int i = 0; i < nbLoc; i++ ) {
 				final GamaPoint p =
 					new GamaPoint(loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
