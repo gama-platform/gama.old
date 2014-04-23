@@ -27,7 +27,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.AbstractStatementSequence;
+import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 
@@ -91,7 +91,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 @doc(value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.",
 	usages = { @usage(value = "", examples = { @example(value = "solve SIR method: \"rk4\" step:0.001;",
 		isExecutable = false) }) })
-public class SolveStatement extends AbstractStatementSequence {
+public class SolveStatement extends AbstractStatement {
 
 	Solver solver;
 	final String equationName, solverName;
@@ -130,7 +130,6 @@ public class SolveStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		super.privateExecuteIn(scope);
 
 		GamaList integrate_time = new GamaList();
 		GamaList integrate_val = new GamaList();
