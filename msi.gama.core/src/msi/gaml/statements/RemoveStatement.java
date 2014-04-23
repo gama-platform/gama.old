@@ -62,7 +62,7 @@ import msi.gaml.types.IType;
 		type = IType.NONE,
 		optional = true,
 		doc = @doc("any expression, the key at which to remove the element from the container ")),
-	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true, doc = @doc("any expression, ?????? ")) },
+	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true, doc = @doc("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) },
 	omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
@@ -73,21 +73,6 @@ import msi.gaml.types.IType;
 				@example(value = "remove index: expr from: expr_container;", isExecutable = false),
 				@example(value = "remove key: expr from: expr_container;", isExecutable = false),
 				@example(value = "remove all: expr from: expr_container;", isExecutable = false) }),
-		@usage(value = "In the case of an agent or a shape, `remove` allows to remove an attribute from the attributes map of the receiver. However, for agents, it will only remove attributes that have been added dynamically, not the ones defined in the species or in its built-in parent.",
-			examples = {
-				@example("list<int> removeList <- [3,2,1,2,3];"),
-				@example(value = "remove 2 from: removeList;",
-					var = "removeList",
-					equals = "[3,1,2,3]",
-					returnType = "null"),
-				@example(value = "remove 3 all: true from: removeList;",
-					var = "removeList",
-					equals = "[1,2]",
-					returnType = "null"),
-				@example(value = "remove index: 1 from: removeList;",
-					var = "removeList",
-					equals = "[1]",
-					returnType = "null") }),
 		@usage(value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurences of the given expression.",
 			examples = {
 				@example("list<int> removeList <- [3,2,1,2,3];"),
@@ -139,8 +124,19 @@ import msi.gaml.types.IType;
 				@example(value = "remove edge({3,4},{5,6}) from: removeGraph;"),
 				@example(value = "removeGraph.vertices", returnType = "list", equals = "[{3,4},{5,6}]"),
 				@example(value = "removeGraph.edges", returnType = "list", equals = "[]") }),
-		// @usage(value="In the case of a geometry, a point can be removed from the geometry.", examples = {
-		// @example("geometry removeGeom <- polyline([{1,2},{3,4},{5,6}]);"),@example(value="remove {3,4} from: removeGeom;", var="removeGeom", equals="polyline([{1,2},{5,6}]);", returnType="null")}),
+		@usage(value = "In the case of an agent or a shape, `remove` allows to remove an attribute from the attributes map of the receiver. However, for agents, it will only remove attributes that have been added dynamically, not the ones defined in the species or in its built-in parent.",
+			examples = {
+				@example(value = "global {", isExecutable = false),
+				@example(value = "   init {", isExecutable = false),
+				@example(value = "      create speciesRemove;", isExecutable = false),
+				@example(value = "      speciesRemove sR <- speciesRemove(0); 	// sR.a now equals 100", isExecutable = false),
+				@example(value = "      remove key:\"a\" from: sR; 	// sR.a now equals nil", isExecutable = false),
+				@example(value = "   }", isExecutable = false),
+				@example(value = "}", isExecutable = false),
+				@example(value = "", isExecutable = false),				
+				@example(value = "species speciesRemove {", isExecutable = false),
+				@example(value = "   int a <- 100; ", isExecutable = false),
+				@example(value = "}", isExecutable = false)}),				
 		@usage(value = "This statement can not be used on *matrix*.") },
 	see = { "add", "put" })
 public class RemoveStatement extends AbstractContainerStatement {

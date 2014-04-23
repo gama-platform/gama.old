@@ -18,20 +18,20 @@
 
 = &lt;font color="blue"&gt; General syntax &lt;/font&gt; =
 
-A statement is a keyword, followed by specific attributes, some of them mandatory (in bold), some of them optional. One of the attribute names can be ommitted (the one that is omissible in the sequel). It has to be the first one.
+A statement represents either a declaration or an imperative command. It consists in a keyword, followed by specific facets, some of them mandatory (in bold), some of them optional. One of the facet names can be ommitted (the one denoted as omissible). It has to be the first one.
 
 {{{
-statement_keyword expression1 attribute2: expression2 ... ;
+statement_keyword expression1 facet2: expression2 ... ;
 or
-statement_keyword attribute1: expression1 attribute2: expression2 ...; 
+statement_keyword facet1: expression1 facet2: expression2 ...;
 }}}
 
-If the statement encloses other statements, they are declared between curly brakets, as in:
+If the statement encloses other statements, it is called a *sequence statement*, and its sub-statements (either sequence statements or single statements) are declared between curly brakets, as in:
 
 {{{
-statement_keyword1 expression1 attribute2: expression2... {
-     statement_keyword2 expression1 attribute2: expression2...;  
-     statement_keyword3 expression1 attribute2: expression2...;
+statement_keyword1 expression1 facet2: expression2... { // a sequence statement
+     statement_keyword2 expression1 facet2: expression2...;  // a single statement
+     statement_keyword3 expression1 facet2: expression2...;
 }
 }}}
 
