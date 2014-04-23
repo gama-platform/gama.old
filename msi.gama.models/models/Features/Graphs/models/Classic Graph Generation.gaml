@@ -17,13 +17,13 @@ global {
 	init {
 		switch graph_type {
 			match "scale-free" {
-				the_graph <- generate_barabasi_albert(node_agent, edge_agent, nb_nodes,m);	
+				the_graph <- generate_barabasi_albert(node_agent, edge_agent, nb_nodes,m, true);	
 			}
 			match "small-world" {
-				the_graph <- generate_watts_strogatz(node_agent, edge_agent, nb_nodes, p, k);	
+				the_graph <- generate_watts_strogatz(node_agent, edge_agent, nb_nodes, p, k, true);	
 			}
 			match "complete" {
-				the_graph <- generate_complete_graph(node_agent, edge_agent, nb_nodes);	
+				the_graph <- generate_complete_graph(node_agent, edge_agent, nb_nodes, true);	
 			}	
 		}
 	}

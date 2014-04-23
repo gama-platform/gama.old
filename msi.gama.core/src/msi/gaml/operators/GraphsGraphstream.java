@@ -143,7 +143,7 @@ public class GraphsGraphstream {
 	 * @return
 	 */
 	public static IGraph loadGraphWithGraphstreamFromGeneratorSource(final IScope scope, ISpecies nodeSpecies,
-		ISpecies edgeSpecies, BaseGenerator generator, int maxLinks) {
+		ISpecies edgeSpecies, BaseGenerator generator, int maxLinks, final Boolean isSynchronized) {
 
 		// init population of edges
 		final IAgent executor = scope.getAgentScope();
@@ -174,7 +174,8 @@ public class GraphsGraphstream {
 		}
 
 		// synchronize agents and graph
-		GraphAndPopulationsSynchronizer.synchronize(populationNodes, populationEdges, createdGraph);
+		if (isSynchronized)
+			GraphAndPopulationsSynchronizer.synchronize(populationNodes, populationEdges, createdGraph);
 
 		return createdGraph;
 
@@ -194,15 +195,16 @@ public class GraphsGraphstream {
 		+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
 		+ "The map operand should includes following elements:", usages = {
 		@usage("\"edges_specy\": the species of edges"), @usage("\"vertices_specy\": the species of vertices"),
-		@usage("\"size\": the graph will contain (size + 1) nodes"), @usage("\"m\": the number of edges added per novel node") }, examples = {
+		@usage("\"size\": the graph will contain (size + 1) nodes"), @usage("\"m\": the number of edges added per novel node"),
+		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")},  examples = {
 		@example(value="graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert(",isExecutable=false), @example(value="		yourNodeSpecy,",isExecutable=false),
-		@example(value="		yourEdgeSpecy,",isExecutable=false), @example(value="		3,",isExecutable=false), @example(value="		5);",isExecutable=false) }, see = { "generate_watts_strogatz" })
+		@example(value="		yourEdgeSpecy,",isExecutable=false), @example(value="		3,",isExecutable=false), @example(value="		5,",isExecutable=false) , @example(value="		true);",isExecutable=false)}, see = { "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final ISpecies vertices_specy,
-		final ISpecies edges_specy, final Integer size, final Integer m) {
+		final ISpecies edges_specy, final Integer size, final Integer m, final Boolean isSychronized) {
 
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-			new BarabasiAlbertGenerator(m), size - 2 // nota: in graphstream, two nodes are already created by default.
-		);
+			new BarabasiAlbertGenerator(m), size - 2 // nota: in graphstream, two nodes are already created by default., 
+			,isSychronized);
 
 	}
 
@@ -214,14 +216,15 @@ public class GraphsGraphstream {
 		@usage("\"edges_specy\": the species of edges"),
 		@usage("\"size\": the graph will contain (size + 1) nodes. Size must be greater than k."),
 		@usage("\"p\": probability to \"rewire\" an edge. So it must be between 0 and 1. The parameter is often called beta in the literature."),
-		@usage("\"k\": the base degree of each node. k must be greater than 2 and even.") }, examples = {
+		@usage("\"k\": the base degree of each node. k must be greater than 2 and even."),
+		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")},  examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			2,",isExecutable=false), @example(value="			0.3,",isExecutable=false), @example(value="			2);",isExecutable=false) }, see = { "generate_barabasi_albert" })
+		@example(value="			2,",isExecutable=false), @example(value="			0.3,",isExecutable=false), @example(value="			2,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
-		final ISpecies edges_specy, final Integer size, final Double p, final Integer k) {
+		final ISpecies edges_specy, final Integer size, final Double p, final Integer k, final Boolean isSychronized) {
 
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-			new WattsStrogatzGenerator(size, k, p), -1);
+			new WattsStrogatzGenerator(size, k, p), -1,isSychronized);
 	}
 
 	@operator(value = "generate_complete_graph")
@@ -231,15 +234,16 @@ public class GraphsGraphstream {
 		@usage("\"vertices_specy\": the species of vertices"),
 		@usage("\"edges_specy\": the species of edges"),
 		@usage("\"size\": the graph will contain size nodes."),
-		@usage("\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment.")}, 
+		@usage("\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment."),
+		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")}, 
 		examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			10, 25);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="			10, 25,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
-		final ISpecies edges_specy, final Integer size, final double layoutRadius) {
+		final ISpecies edges_specy, final Integer size, final double layoutRadius, final Boolean isSychronized) {
 		
 		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-				new FullGenerator(), size - 1);
+				new FullGenerator(), size - 1,isSychronized);
 		
 		double THETA = 2 * Math.PI / size;	
 		int i = 0;
@@ -261,15 +265,16 @@ public class GraphsGraphstream {
 		usages = {
 		@usage("\"vertices_specy\": the species of vertices"),
 		@usage("\"edges_specy\": the species of edges"),
-		@usage("\"size\": the graph will contain size nodes.")}, 
+		@usage("\"size\": the graph will contain size nodes."),
+		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")}, 
 		examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			10);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="			10,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
-		final ISpecies edges_specy, final Integer size) {
+		final ISpecies edges_specy, final Integer size, final Boolean isSychronized) {
 		
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
-				new FullGenerator(), size - 1);
+				new FullGenerator(), size - 1,isSychronized);
 	}
 	
 }
