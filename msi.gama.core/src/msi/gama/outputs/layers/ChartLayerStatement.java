@@ -529,6 +529,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		history = new StringBuilder(500);
+		lastValues.clear();;
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		if ( string1 != null ) {
 			String t = Cast.asString(scope, string1.value(scope));
