@@ -220,6 +220,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
 		setValue(scope, init.value(scope));
+		
 	}
 
 	private Number drawRandomValue(final IScope scope) {
@@ -227,11 +228,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			final int val = (int) (scope.getRandom().between(0., max - min) + 0.5);
-			final int nbStep = (int) (val / step);
-			final int high = (int) ((nbStep + 1) * step);
-			final int low = (int) (nbStep * step);
-			return val - low < high - val ? low : high;
+			int nbSteps = (int)((max - min) / step);
+			final int val = scope.getRandom().between(0, nbSteps);
+			return min + (int)(val * step);
 		}
 		double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 		double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
