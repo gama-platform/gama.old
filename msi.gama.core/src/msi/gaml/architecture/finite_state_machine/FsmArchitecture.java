@@ -20,6 +20,9 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -34,9 +37,9 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.STATE, type = IType.STRING),
-	@var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
-@skill(name = IKeyword.FSM)
+@vars({ @var(name = IKeyword.STATE, type = IType.STRING, doc = @doc("the current state")),
+	@var(name = IKeyword.STATES, type = IType.LIST, constant = true, doc = @doc("the list of all possible states")) })
+@skill(name = IKeyword.FSM, doc = @doc("the Final State Machine architecture"))
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected final Map<String, FsmStateStatement> states = new THashMap();
