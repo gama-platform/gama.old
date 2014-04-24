@@ -33,7 +33,7 @@ import msi.gaml.types.IType;
 	@facet(name = "graph", type = IType.GRAPH, optional = false),
 	@facet(name = "lowquality", type = IType.BOOL, optional = true), }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
-@doc(deprecated="true")
+@doc(value="",deprecated="true")
 public class GraphstreamOutput extends AbstractDisplayOutput {
 
 	// parameters retrieved from GAML
