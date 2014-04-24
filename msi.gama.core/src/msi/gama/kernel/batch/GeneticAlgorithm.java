@@ -138,8 +138,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	private void computePopFitness(final List<Chromosome> population) throws GamaRuntimeException {
 		for ( final Chromosome chromosome : population ) {
 			final ParametersSet sol = chromosome.convertToSolution(currentExperiment.getParametersToExplore());
-			double fitness = testedSolutions.get(sol);
-			if ( fitness == Double.MAX_VALUE ) {
+			Double fitness = testedSolutions.get(sol);
+			if (fitness == null || fitness == Double.MAX_VALUE ) {
 				fitness = currentExperiment.launchSimulationsWithSolution(sol);
 			}
 			testedSolutions.put(sol, fitness);

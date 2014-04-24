@@ -155,8 +155,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 						tabuListSize++;
 					}
 				}
-				double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == Double.MAX_VALUE ) {
+				Double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == null || neighborFitness == Double.MAX_VALUE ) {
 					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
 				}
 				testedSolutions.put(neighborSol, neighborFitness);

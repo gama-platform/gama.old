@@ -91,8 +91,8 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				if ( neighborSol == null ) {
 					continue;
 				}
-				double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == Double.MAX_VALUE ) {
+				Double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == null || neighborFitness == Double.MAX_VALUE ) {
 					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 					nbIt++;
 				} else {
