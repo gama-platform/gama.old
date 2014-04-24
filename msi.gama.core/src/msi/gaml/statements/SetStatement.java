@@ -17,6 +17,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -36,12 +39,15 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NONE, optional = true), */
-@facet(name = IKeyword.NAME, type = IType.NONE, optional = false),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false) }, combinations = {
+	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the name of an existin variable or attribute to be modified")),
+	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false, doc = @doc("the value to affect to the variable or attribute")) }, combinations = {
 /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AssignmentValidator.class)
+@doc(value="", usages = {
+	@usage(value="", examples = {@example()})
+})
 public class SetStatement extends AbstractStatement {
 
 	public static class AssignmentValidator implements IDescriptionValidator {

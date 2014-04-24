@@ -14,6 +14,7 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,6 +29,7 @@ import msi.gaml.descriptions.IDescription;
  */
 @symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
+@doc(value="`"+IKeyword.BREAK+"` allows to interrupt the current sequence of statements.")
 public class BreakStatement extends AbstractStatement {
 
 	/**

@@ -17,6 +17,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -32,7 +35,13 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.USING, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@facets(value = { @facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = false) }, omissible = IKeyword.TOPOLOGY)
+@facets(value = { @facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = false, doc = @doc("the topology")) }, omissible = IKeyword.TOPOLOGY)
+@doc(value="`"+IKeyword.USING+"` is a statement that allows to set the topology to use by its sub-statements. They can gather it by asking the scope to provide it.", usages = {
+	@usage(value="All the spatial operations are topology-dependent (e.g. neighbors are not the same in a continuous and in a grid topology). So `"+IKeyword.USING+"` statement allows modelers to specify the topology in which the spatial operation will be computed.", examples = {
+		@example(value="float dist <- 0.0;",isExecutable=false),
+		@example(value="using topology(grid_ant) {",isExecutable=false),
+		@example(value="	d (self.location distance_to target.location);",isExecutable=false),
+		@example(value="}",isExecutable=false)})})
 public class UsingStatement extends AbstractStatementSequence {
 
 	final IExpression topology;

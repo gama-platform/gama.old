@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,11 +28,12 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 @SuppressWarnings("unchecked")
-@symbol(name = IKeyword.DISPLAY_GRAPH, kind = ISymbolKind.OUTPUT, with_sequence = true)
+@symbol(name = IKeyword.DISPLAY_GRAPH, kind = ISymbolKind.OUTPUT, with_sequence = true, internal = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
 	@facet(name = "graph", type = IType.GRAPH, optional = false),
 	@facet(name = "lowquality", type = IType.BOOL, optional = true), }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
+@doc(deprecated="true")
 public class GraphstreamOutput extends AbstractDisplayOutput {
 
 	// parameters retrieved from GAML

@@ -22,6 +22,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -46,8 +48,8 @@ import com.vividsolutions.jts.geom.Envelope;
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.FOCUS, type = IType.GEOMETRY, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the display")),
+	@facet(name = IKeyword.FOCUS, type = IType.GEOMETRY, optional = true, doc = @doc("the geometry (or agent) on which the displau will (dynamically) focus")),
 	// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
@@ -66,11 +68,19 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
 	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
 	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true, doc = @doc("Allows to define the orientation of the camera")),
-	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true, doc= @doc("")),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @validator(InfoValidator.class)
+@doc(value="A display refers to a independent and mobile part of the interface that can display species, images, texts or charts.", usages = {
+	@usage(value="The general syntax is:", examples = @example(value = "display my_display [additional options] { ... }", isExecutable=false)),
+	@usage(value="Each display can include different layers (like in a GIS).", examples = {
+		@example(value="display gridWithElevationTriangulated type: opengl ambient_light: 100 {", isExecutable=false),
+		@example(value="	grid cell elevation: true triangulation: true;", isExecutable=false),
+		@example(value="	species people aspect: base;", isExecutable=false),
+		@example(value="}", isExecutable=false)
+	})})
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static class InfoValidator implements IDescriptionValidator {

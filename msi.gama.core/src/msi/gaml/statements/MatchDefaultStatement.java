@@ -20,6 +20,7 @@ import msi.gaml.descriptions.IDescription;
 
 @symbol(name = { IKeyword.DEFAULT }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, unique_in_context = true)
 @inside(symbols = IKeyword.SWITCH)
+@doc(value="Used in a switch match structure, the block prefixed by default is executed only if no other block has matched (otherwise it is not).", see= {"switch","match"})
 public class MatchDefaultStatement extends MatchStatement {
 
 	public MatchDefaultStatement(final IDescription desc) {

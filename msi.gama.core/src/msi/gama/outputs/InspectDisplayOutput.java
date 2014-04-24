@@ -20,6 +20,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -41,12 +44,15 @@ import msi.gaml.types.*;
 @symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the identifier of the inspector")),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("the refreshment frequence (1 means that it is refreshed every steps")),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc("the set of agents to inspect, could be a species, a list of agents or an agent")),
+	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true, doc = @doc("the list of attributes to inspect")),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.POPULATION,
-		IKeyword.TABLE }, optional = true) }, omissible = IKeyword.NAME)
+		IKeyword.TABLE }, optional = true, doc = @doc("the way to inspect agents: in a table, or a set of inspectors")) }, omissible = IKeyword.NAME)
+@doc(value="`"+IKeyword.INSPECT+"` (and `"+IKeyword.BROWSE+"`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `"+IKeyword.BROWSE+"` is used, type: default value is table, whereas when`"+IKeyword.INSPECT+"` is used, type: default value is agent.", usages ={
+	@usage(value="An example of syntax is:", examples = {
+		@example(value="inspect \"my_inspector\" value: ant attributes: [\"name\", \"location\"];",isExecutable=false)})})
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
