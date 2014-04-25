@@ -68,7 +68,7 @@ global {
 			
 		}
         else{
-          my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(node_agent,edge_agent,nbAgent,2));	
+          my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(node_agent,edge_agent,nbAgent,2,true));	
         }
         
 
