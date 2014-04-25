@@ -17,37 +17,67 @@
 
 &lt;wiki:toc max_depth="3" /&gt;
 
-= &lt;font color="blue"&gt; Definition &lt;/font&gt; =
 
-An operator performs a function on one, two, or three operands. An operator that only requires one operand is called a unary operator. An operator that requires two operands is a binary operator. And finally, a ternary operator is one that requires three operands. The GAML programming language has only one ternary operator, ? :, which is a short-hand if-else statement.
+= &lt;font color="blue"&gt; Introduction &lt;/font&gt; =
 
-Unary operators are written using aprefix parenthesized notation. Prefix notation means that the operator appears before its operand. Note that unary expressions should always been parenthesized:
+== &lt;font color="blue"&gt; Definition &lt;/font&gt; ==
+
+Operators in the GAML language are used to compose complex expressions. An operator performs a function on one, two, or n operands (which are other expressions and thus may be themselves composed of operators) and returns the result of this function. Most of them use a classical prefixed functional syntax (i.e. operator_name(operand1, operand2, operand3), see below), with the exception of arithmetic (e.g. '+', '/'), logical ('and', 'or'), comparison (e.g. '&gt;', '&lt;'), access ('.', '[..]') and pair ('::') operators, which require an infixed notation (i.e. operand1 operator_symbol operand1). The ternary functional if-else operator, ? :, uses a special infixed syntax composed with two symbols (e.g. 'operand1 ? operand2 : operand3'). Two unary operators ('-' and '!') use a traditional prefixed syntax that does not require parentheses unless the operand is itself a complex expression (e.g. ' - 10', '! (operand1 or operand2)'). Finally, special constructor operators ('{...}' for constructing points, '[...]' for constructing lists and maps) will require their operands to be placed between their two symbols (e.g. '{1,2,3}', '[operand1, operand2, ..., operandn]' or '[key1::value1, key2::value2... keyn::valuen]').
+
+With the exception of these special cases above, the following rules apply to the syntax of operators:
+  * if they only have one operand, the functional prefixed syntax is mandatory (e.g. 'operator_name(operand1)')
+  * if they have two arguments, either the functional prefixed syntax (e.g. 'operator_name(operand1, operand2)') or the infixed syntax (e.g. 'operand1 operator_name operand2') can be used.
+  * if they have more than two arguments, either the functional prefixed syntax (e.g. 'operator_name(operand1, operand2, ..., operand)') or a special infixed syntax with the first operand on the left-hand side of the operator name (e.g. 'operand1 operator_name(operand2, ..., operand)') can be used.
+
+All of these alternative syntaxes are completely equivalent.
+
+Operators in GAML are purely functional, i.e. they are guaranteed to not have any side effects on their operands. For instance, the shuffle operator, which randomizes the positions of elements in a list, does not modify its list operand but returns a new shuffled list.
+
+
+== &lt;font color="blue"&gt; Priority between operators &lt;/font&gt; ==
+
+The priority of operators determines, in the case of complex expressions composed of several operators, which one(s) will be evaluated first.
+
+GAML follows in general the traditional priorities attributed to arithmetic, boolean, comparison operators, with some twists. Namely:
+  * the constructor operators, like '::', used to compose pairs of operands, have the lowest priority of all operators (e.g. 'a &gt; b :: b &gt; c' will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, '[a &gt; 10, b &gt; 5]' will return a list of boolean values]
+  * it is followed by the '?:' operator, the functional if-else (e.g. ' a &gt; b ? a + 10 : a - 10' will return the result of the if-else).
+  * next are the logical operators, 'and' and 'or' (e.g. 'a &gt; b or b &gt; c' will return the value of the test)
+  * next are the comparison operators (i.e. '&gt;', '&lt;', '&lt;=', '&gt;=', '=', '!=')
+  * next the arithmetic operators in their logical order (multiplicative operators have a higher priority than additive operators)
+  * next the unary operators '-' and '!'
+  * next the access operators '.' and '[]' (e.g. '{1,2,3}.x &gt; 20 + {4,5,6}.y' will return the result of the comparison between the x and y ordinates of the two points)
+  * and finally the functional operators, which have the highest priority of all.
+
+
+== &lt;font color="blue"&gt; Using actions as operators &lt;/font&gt; ==
+
+Actions defined in species can be used as operators, provided they are called on the correct agent. The syntax is that of normal functional operators, but the agent that will perform the action must be added as the first operand.
+
+For instance, if the following species is defined:
 
 {{{
-unary_operator (operand)
+species spec1 {
+        int min(int x, int y) {
+                return x &gt; y ? x : y;
+        }
+}
 }}}
 
-Most of binary operators can use two notations:
-  * the fonctional notation, which used a parenthesized notation around the operands (this notation cannot be used with arithmetic and relational operators such as: +, -, /, `*`, ^, =, !=, &lt;, &gt;, &gt;=, &lt;=... )
-  * the infix notation, which means that the operator appears between its operands
+any agent instance of species1 can use 'min' as an operator (if the action conflicts with an existing operator, a warning will be emitted). For instance, in the same model, the following line is perfectly acceptable:
 
 {{{
-binary_operator(op1, op2)
-
-Or 
-
-op1 binary_operator op2    
+global {
+        init {
+                create spec1;
+                spec1 my_agent &lt;- spec1[0];
+                int the_min &lt;- my_agent min(10,20); // or min(my_agent, 10, 20);
+        }
+}
 }}}
 
-The ternary operator is also infix; each component of the operator appears between operands:
+If the action doesn't have any operands, the syntax to use is 'my_agent the_action()'. Finally, if it does not return a value, it might still be used but is considering as returning a value of type 'unknown' (e.g. 'unknown result &lt;- my_agent the_action(op1, op2);').
 
-{{{
-op1 ? op2 : op3
-}}}
-
-In addition to performing operations, operators are functional, i.e. they return a value. The return value and its type depend on the operator and the type of its operands. For example, the arithmetic operators, which perform basic arithmetic operations such as addition and subtraction, return numbers - the result of the arithmetic operation.
-
-Moreover, operators are strictly functional, i.e. they have no side effects on their operands. For instance, the shuffle operator, which randomizes the positions of elements in a list, does not modify its list operand but returns a new shuffled list.
+Note that due to the fact that actions are written by modelers, the general functional contract is not respected in that case: actions might perfectly have side effects on their operands (including the agent).
 
 [#Table_of_Contents Top of the page] 
 	</xsl:text>
@@ -86,7 +116,7 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 </xsl:template>
     
  <xsl:template name="buildOperators"> 
-    <xsl:for-each select="doc/operators/operator[@alphabetOrder = $alphabetID]">
+    <xsl:for-each select="doc/operators/operator[@alphabetOrder = $alphabetID or $alphabetID = '*']">
     	<xsl:sort select="@name" />
     
 == <xsl:call-template name="checkName"/> == 
