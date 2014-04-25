@@ -124,7 +124,7 @@ import msi.gaml.types.*;
 					equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
 					returnType = "null")}), // workingMap now equals [x::val3, val2::value2, 5::val4]
 		@usage(value="On a map, the all facet will add all value of a container  in the map (so as pair val_cont::val_cont)", examples= {
-				@example(value = "add [\"val4\",\"val5\"] at: \"x\" to: workingMap;",
+				@example(value = "add [\"val4\",\"val5\"] all: true at: \"x\" to: workingMap;",
 					var = "workingMap",
 					equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\",\"val4\"::\"val4\",\"val5\"::\"val5\"]",
 					returnType = "null") }), // workingMap now equals [x::val3, val2::value2, 5::val4, val4::value4, val5::value5]

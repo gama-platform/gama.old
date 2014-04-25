@@ -219,7 +219,7 @@ public class GraphsGraphstream {
 		@usage("\"k\": the base degree of each node. k must be greater than 2 and even."),
 		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")},  examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			2,",isExecutable=false), @example(value="			0.3,",isExecutable=false), @example(value="			2,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert" })
+		@example(value="			2,",isExecutable=false), @example(value="			0.3,",isExecutable=false), @example(value="			2,",isExecutable=false), @example(value="		true);",isExecutable=false) }, see = { "generate_barabasi_albert" })
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Double p, final Integer k, final Boolean isSychronized) {
 
@@ -238,7 +238,7 @@ public class GraphsGraphstream {
 		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")}, 
 		examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			10, 25,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="			10, 25,",isExecutable=false), @example(value="		true);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final double layoutRadius, final Boolean isSychronized) {
 		
@@ -269,7 +269,7 @@ public class GraphsGraphstream {
 		@usage("\"synchronized\": is the graph and the species of vertices and edges synchronized?")}, 
 		examples = {
 		@example(value="graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",isExecutable=false), @example(value="			myVertexSpecy,",isExecutable=false), @example(value="			myEdgeSpecy,",isExecutable=false),
-		@example(value="			10,",isExecutable=false), @example(value="		true);") }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+		@example(value="			10,",isExecutable=false), @example(value="		true);",isExecutable=false) }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 		final ISpecies edges_specy, final Integer size, final Boolean isSychronized) {
 		

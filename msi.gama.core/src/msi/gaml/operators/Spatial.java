@@ -186,7 +186,7 @@ public abstract class Spatial {
 		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.",
 			special_cases = { "returns a point if the operand is lower or equal to 0." },
 			comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value="spherical_pie(size/2,[0.1,0.9],[#red,#green])",
+			examples = { @example(value="spherical_pie(10/2,[0.1,0.9],[#red,#green])",
 				equals = "a circle geometry of radius 10, displayed as a sphere with 2 slices.",
 				test = false) }, see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 				"rectangle", "square", "triangle", "hemisphere", "pie3D" })
@@ -1914,7 +1914,7 @@ public abstract class Spatial {
 				test = false) },
 			see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 		public static
-			GamaList points_at(final IScope scope, final Integer nbLoc, final Double distance) {
+			IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if ( distance == null || nbLoc == null ) {
 				// scope.setStatus(ExecutionStatus.failure);
 				throw GamaRuntimeException.error("Impossible to compute points_at");

@@ -17,6 +17,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,10 +39,13 @@ import msi.gaml.types.IType;
  */
 @symbol(name = { IKeyword.USER_COMMAND }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.USER_PANEL)
-@facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = true, doc = @doc("the identifier of the action to be executed")),
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the user_command")),
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("the condition that should be fulfille in order that the action is executed")),
+	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true, doc = @doc("the map of the parameters::values that requires the action")) }, omissible = IKeyword.NAME)
+@doc(value="Anywhere in the global block, in a species or in an (GUI) experiment, user_command statements allows to either call directly an existing action (with or without arguments) or to be followed by a block that describes what to do when this command is run.", usages={
+		@usage(value="The general syntax is for example:", examples = @example(value="user_command kill_myself action: some_action with: [arg1::val1, arg2::val2, ...];", isExecutable=false))
+	}, see = {IKeyword.USER_INIT,IKeyword.USER_PANEL, IKeyword.USER_INPUT})
 public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	Arguments args;
