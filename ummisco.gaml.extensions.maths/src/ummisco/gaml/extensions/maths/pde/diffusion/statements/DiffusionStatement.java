@@ -20,6 +20,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -33,17 +36,30 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
-@facets(value = { @facet(name = IKeyword.VAR, type = IType.ID, optional = false),
-	@facet(name = IKeyword.ON, type = IType.ID, optional = false),
-	@facet(name = "mat_diffu", type = IType.MATRIX, optional = true),
-	@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution", "dot_product" }),
-	@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true),
-	@facet(name = "proportion", type = IType.FLOAT, optional = true),
-	@facet(name = "radius", type = IType.INT, optional = true),
-	@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true) }, omissible = IKeyword.VAR)
+@facets(value = { 
+	@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the variable to be diffused")),
+	@facet(name = IKeyword.ON, type = IType.ID, optional = false, doc = @doc("the species (in general a grid), on which the diffusion will occur")),
+	@facet(name = "mat_diffu", type = IType.MATRIX, optional = true, doc = @doc("the diffusion matrix (can have any size)")),
+	@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution", "dot_product" }, doc = @doc("the diffusion method")),
+	@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example)")),
+	@facet(name = "proportion", type = IType.FLOAT, optional = true, doc = @doc("a diffusion rate")),
+	@facet(name = "radius", type = IType.INT, optional = true, doc = @doc("a diffusion radius")),
+	@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true, doc = @doc("the number of diffusion operation applied in one simulation step")) }, omissible = IKeyword.VAR)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(DiffusionValidator.class)
+@doc(value="This statements allows a value to diffuse among a species on agents (generally on a grid) depending on a given diffusion matrix.", usages = {
+	@usage(value="A basic example of diffusion of the variable phero defined in the species cells, given a diffusion matrix math_diff is:", examples = {
+		@example(value="matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);",isExecutable=false),
+		@example(value="diffusion var: phero on: cells mat_diffu: math_diff;",isExecutable=false)
+	}),
+	@usage(value="The diffusion can be masked by obstacles, created from a bitmap image:", examples = {
+		@example(value="diffusion var: phero on: cells mat_diffu: math_diff mask: mymask;",isExecutable=false)
+	}),	
+	@usage(value="A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):", examples = {
+		@example(value="diffusion var: phero on: cells proportion: 1/9 radius: 1;",isExecutable=false)
+	})
+})
 public class DiffusionStatement extends AbstractStatement {
 
 	public static Class VALIDATOR = DiffusionValidator.class;

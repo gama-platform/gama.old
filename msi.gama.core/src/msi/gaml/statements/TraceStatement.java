@@ -14,6 +14,7 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -27,6 +28,7 @@ import msi.gaml.descriptions.IDescription;
  */
 @symbol(name = IKeyword.TRACE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@doc(value="All the statements executed in the trace statement are displayed in the console.")
 public class TraceStatement extends AbstractStatementSequence {
 
 	/**

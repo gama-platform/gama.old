@@ -24,6 +24,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,32 +42,55 @@ import msi.gaml.types.*;
 @symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
-	@facet(name = IKeyword.GEOMETRY, type = IType.NONE, optional = true),
-	// AD 18/01/13: geometry is now accepting an y type of data
-	@facet(name = SHAPE, type = IType.NONE, optional = true),
-	@facet(name = TEXT, type = IType.STRING, optional = true),
-	@facet(name = IMAGE, type = IType.STRING, optional = true),
-	@facet(name = TEXTURE, type = { IType.STRING, IType.LIST }, optional = true),
-	@facet(name = EMPTY, type = IType.BOOL, optional = true),
-	@facet(name = BORDER, type = IType.COLOR, optional = true),
-	@facet(name = ROUNDED, type = IType.BOOL, optional = true), @facet(name = AT, type = IType.POINT, optional = true),
-	@facet(name = SIZE, type = IType.FLOAT, optional = true), @facet(name = TO, type = IType.POINT, optional = true),
-	@facet(name = COLOR, type = IType.COLOR, optional = true),
-	@facet(name = SCALE, type = IType.FLOAT, optional = true),
-	@facet(name = ROTATE, type = { IType.FLOAT, IType.INT }, optional = true),
-	@facet(name = FONT, type = IType.STRING, optional = true),
-	@facet(name = BITMAP, type = IType.BOOL, optional = true),
-	@facet(name = DEPTH, type = IType.FLOAT, optional = true),
-	@facet(name = DrawStatement.BEGIN_ARROW, type = { IType.INT, IType.FLOAT }, optional = true),
-	@facet(name = DrawStatement.END_ARROW, type = { IType.INT, IType.FLOAT }, optional = true),
-	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
-
-combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
+	@facet(name = IKeyword.GEOMETRY, type = IType.NONE, optional = true, doc = @doc("any type of data (it can be geometry, image, text)")),
+	// AD 18/01/13: geometry is now accepting any type of data
+	@facet(name = SHAPE, type = IType.NONE, optional = true, doc = @doc("the shape to display")),
+	@facet(name = TEXT, type = IType.STRING, optional = true, doc = @doc("the text to draw")),
+	@facet(name = IMAGE, type = IType.STRING, optional = true, doc = @doc("path of the icon to draw (JPEG, PNG, GIF)")),
+	@facet(name = TEXTURE, type = { IType.STRING, IType.LIST }, optional = true, doc = @doc("the texture that should be applied to the geometry")),
+	@facet(name = EMPTY, type = IType.BOOL, optional = true, doc = @doc("a condition specifying whether the geometry is empty or full")),
+	@facet(name = BORDER, type = IType.COLOR, optional = true, doc = @doc("the colors of the geometry border")),
+	@facet(name = ROUNDED, type = IType.BOOL, optional = true, doc = @doc("specify whether the geometry have to be rounded (e.g. for squares)")), 
+	@facet(name = AT, type = IType.POINT, optional = true, doc = @doc("location where the shape/text/icon is drawn")),
+	@facet(name = SIZE, type = IType.FLOAT, optional = true, doc = @doc("size of the text/icon (not use in the context of the drawing of a geometry)")), 
+	@facet(name = TO, type = IType.POINT, optional = true, doc = @doc("")),
+	@facet(name = COLOR, type = IType.COLOR, optional = true, doc = @doc("the color to use to display the text/icon/geometry")),
+	@facet(name = SCALE, type = IType.FLOAT, optional = true, doc = @doc("")),
+	@facet(name = ROTATE, type = { IType.FLOAT, IType.INT }, optional = true, doc = @doc("orientation of the shape/text/icon")),
+	@facet(name = FONT, type = IType.STRING, optional = true, doc = @doc("the font used to draw the text")),
+	@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = DEPTH, type = IType.FLOAT, optional = true, doc = @doc("(only if the display type is opengl) Add a depth to the geometry previously defined (a line becomes a plan, a circle becomes a cylinder, a square becomes a cube, a polygon becomes a polyhedron with height equal to the depth value). Note: This only works if a the agent has not a point geometry")),
+	@facet(name = DrawStatement.BEGIN_ARROW, type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc("the size of the arrow, located at the beginning of the drawn geometry")),
+	@facet(name = DrawStatement.END_ARROW, type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc("the size of the arrow, located at the end of the drawn geometry")),
+	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true, doc = @doc("the style used to display text")) },
+combinations = { 
+	@combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
 	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, DEPTH }),
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
-	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }), @combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
+	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }), 
+	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@doc(value="`"+DRAW+"` is used in an aspect block to expresse how agents of the species will be drawn. It is evaluated each time the agent has to be drawn. It can also be used in the graphics block.",usages ={
+	@usage(value="Any kind of geometry as any location can be drawn when displaying an agent (independently of his shape)", examples = {
+		@example(value="aspect geometryAspect {",isExecutable=false),
+		@example(value="	draw circle(1.0) empty: !hasFood color: #orange ;",isExecutable=false),
+		@example(value="}",isExecutable=false)	
+	}),
+	@usage(value="Image or text can also be drawn", examples = {
+		@example(value="aspect arrowAspect {",isExecutable=false),
+		@example(value="	draw \"Current state= \"+state at: location + {-3,1.5} color: #white size: 0.8 ;",isExecutable=false),
+		@example(value="	draw file(ant_shape_full) rotate: heading at: location size: 5",isExecutable=false),
+		@example(value="}",isExecutable=false)	
+	}),
+	@usage(value="Arrows can be drawn with any kind of geometry, using "+DrawStatement.BEGIN_ARROW+" and "+DrawStatement.END_ARROW+" facets, combined with the empty: facet to specify whether it is plain or empty", examples = {
+		@example(value="aspect arrowAspect {",isExecutable=false),
+		@example(value="	draw line([{20, 20}, {40, 40}]) color: #black begin_arrow:5;",isExecutable=false),
+		@example(value="	draw line([{10, 10},{20, 50}, {40, 70}]) color: #green end_arrow: 2 begin_arrow: 2 empty: true;",isExecutable=false),
+		@example(value="	draw square(10) at: {80,20} color: #purple begin_arrow: 2 empty: true;",isExecutable=false),
+		@example(value="}",isExecutable=false)	
+	})
+})
 public class DrawStatement extends AbstractStatementSequence {
 
 	public static final String END_ARROW = "end_arrow";
