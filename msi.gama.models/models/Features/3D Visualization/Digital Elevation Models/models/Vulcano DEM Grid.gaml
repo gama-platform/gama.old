@@ -13,17 +13,15 @@ global {
 	file grid_file <- file("../includes/DEM-Vulcano/vulcano_50.asc");
 	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
-	map
-	colors <- map([1::rgb([178, 180, 176]), 2::rgb([246, 111, 0]), 3::rgb([107, 0, 0]), 4::rgb([249, 0, 255]), 5::rgb([144, 96, 22]), 6::rgb([255, 255, 86]), 7::rgb([19, 114, 38]), 8::rgb("black"), 9::rgb([107, 94, 255]), 10::rgb([43, 255, 255])]);
+	map colors <- map([1::rgb([178, 180, 176]), 2::rgb([246, 111, 0]), 3::rgb([107, 0, 0]), 4::rgb([249, 0, 255]), 5::rgb([144, 96, 22]), 6::rgb([255, 255, 86]), 7::rgb([19, 114, 38]), 8::rgb("black"), 9::rgb([107, 94, 255]), 10::rgb([43, 255, 255])]);
 	geometry shape <- envelope(grid_file);
+	
 	init {
 		create people number: 100 {
 			float z <- (cell(location)).grid_value;
 			location <- { location.x, location.y, z };
 		}
-
 	}
-
 }
 
 grid cell file: grid_file {
@@ -34,7 +32,6 @@ grid cell file: grid_file {
 	reflex decreaseVamue {
 		grid_value <- grid_value - 0.01;
 	}
-
 }
 
 species people skills: [moving] {
@@ -58,19 +55,22 @@ experiment DEM type: gui {
 	geometry shape <- envelope(grid_file);
 	output {
 
-	//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevationTriangulated type: opengl ambient_light: 100 { grid cell elevation: true triangulation: true;
-		species people aspect: base;
+		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
+		display gridWithElevationTriangulated type: opengl ambient_light: 100 { 
+			grid cell elevation: true triangulation: true;
+			species people aspect: base;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-		display gridGrayScaledTriangulated type: opengl ambient_light: 100 { grid cell elevation: true grayscale: true triangulation: true;
-		species people aspect: base;
+		display gridGrayScaledTriangulated type: opengl ambient_light: 100 { 
+			grid cell elevation: true grayscale: true triangulation: true;
+			species people aspect: base;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
-		display gridTextured type: opengl ambient_light: 100 { grid cell texture: texture text: false triangulation: true elevation: true;
-		species people aspect: base;
+		display gridTextured type: opengl ambient_light: 100 { 
+			grid cell texture: texture text: false triangulation: true elevation: true;
+			species people aspect: base;
 		}
 	}
 
@@ -129,23 +129,25 @@ experiment GridDEMComplete type: gui {
 
 experiment GraphicDEMComplete type: gui {
 	output {
-		display VulcanoTexturedScaled type: opengl ambient_light: 255 draw_env: false { graphics 'GraphicPrimitive' {
-			draw dem(dem, texture, 0.1);
-		}
-
-		} display VulcanoDEMSacled type: opengl ambient_light: 255 draw_env: false { graphics 'GraphicPrimitive' {
-			draw dem(dem, 0.1);
-		}
-
-		} display VulcanoTextured type: opengl ambient_light: 255 draw_env: false { graphics 'GraphicPrimitive' {
-			draw dem(dem, texture);
-		}
-
-		} display VulcanoDEM type: opengl ambient_light: 255 draw_env: false { graphics 'GraphicPrimitive' {
-			draw dem(dem);
-		}
-
+		display VulcanoTexturedScaled type: opengl ambient_light: 255 draw_env: false { 
+			graphics 'GraphicPrimitive' {
+				draw dem(dem, texture, 0.1);
+			}
+		} 
+		display VulcanoDEMSacled type: opengl ambient_light: 255 draw_env: false { 
+			graphics 'GraphicPrimitive' {
+				draw dem(dem, 0.1);
+			}
+		} 
+		display VulcanoTextured type: opengl ambient_light: 255 draw_env: false { 
+			graphics 'GraphicPrimitive' {
+				draw dem(dem, texture);
+			}
+		} 
+		display VulcanoDEM type: opengl ambient_light: 255 draw_env: false { 
+			graphics 'GraphicPrimitive' {
+				draw dem(dem);
+			}
 		}
 	}
-
 }
