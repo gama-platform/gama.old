@@ -55,9 +55,13 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Inject
 	private ResourceSetGlobalScopeProvider resourceSetScopeProvider;
 
+	static final THashMap EMPTY_MAP = new THashMap();
 	private static THashMap<EClass, Resource> resources;
 	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
+
+	static XtextResourceSet rs = IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(
+		URI.createFileURI("dummy.gaml")).get(XtextResourceSet.class);
 
 	public static class AllImportUriGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
@@ -252,11 +256,6 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		}
 	}
 
-	static SynchronizedXtextResourceSet rs = new SynchronizedXtextResourceSet();
-
-	// @Inject
-	// private XtextResourceSet rs;
-
 	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri), false);
 		if ( r == null ) {
@@ -437,8 +436,6 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	static {
 		createDescriptions();
 	}
-
-	static final THashMap EMPTY_MAP = new THashMap();
 
 	/**
 	 * Implementation of IGlobalScopeProvider.

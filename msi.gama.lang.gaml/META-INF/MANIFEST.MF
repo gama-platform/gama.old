@@ -39,3 +39,4 @@ Export-Package: msi.gama.lang.gaml,
 Import-Package: msi.gama.precompiler,
  org.apache.log4j,
  org.eclipse.xtext.xbase.lib
+Bundle-ActivationPolicy: lazy

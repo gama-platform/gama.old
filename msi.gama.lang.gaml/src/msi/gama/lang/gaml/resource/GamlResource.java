@@ -56,6 +56,11 @@ public class GamlResource extends LazyLinkingResource {
 		return collector;
 	}
 
+	@Override
+	public String getEncoding() {
+		return "UTF-8";
+	}
+
 	public void resetErrorCollector() {
 		if ( collector == null ) {
 			getErrorCollector();
@@ -145,8 +150,8 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
-		return getModelFactory().createModelDescription(projectPath, modelPath, ImmutableList.copyOf(models), getErrorCollector(),
-			isEdited);
+		return getModelFactory().createModelDescription(projectPath, modelPath, ImmutableList.copyOf(models),
+			getErrorCollector(), isEdited);
 	}
 
 	public Set<URI> computeImportedURIs() {
