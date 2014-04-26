@@ -9,5 +9,12 @@
             name="gaml">
       </path>
    </extension>
+   <extension
+         point="gama.display">
+      <implementation
+            class="msi.gama.outputs.ImageDisplaySurface"
+            keyword="image">
+      </implementation>
+   </extension>
 
 </plugin>

@@ -20,13 +20,11 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -54,20 +52,39 @@ import msi.gaml.variables.IVariable;
 @symbol(name = { IKeyword.EXPERIMENT }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment")),
-	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc("")),
-	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true, doc = @doc("the parent experiment (in case of inheritane between experiments)")),
-	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true, doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
-	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true, doc = @doc("an ordered list of agents giving the order of their execution")),
+	@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.PARENT,
+		type = IType.ID,
+		optional = true,
+		doc = @doc("the parent experiment (in case of inheritance between experiments)")),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc(""), internal = true),
+	@facet(name = IKeyword.FREQUENCY,
+		type = IType.INT,
+		optional = true,
+		internal = true,
+		doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
+	@facet(name = IKeyword.SCHEDULES,
+		type = IType.CONTAINER,
+		optional = true,
+		internal = true,
+		doc = @doc("an ordered list of agents giving the order of their execution")),
 	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("")),
-	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.REPEAT,
+		type = IType.INT,
+		optional = true,
+		doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated")),
+	@facet(name = IKeyword.UNTIL,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
+	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc(""), internal = true),
 	@facet(name = IKeyword.TYPE,
 		type = IType.LABEL,
-		values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ },
-		optional = false, doc = @doc("the experiment type")) }, omissible = IKeyword.NAME)
+		values = { IKeyword.BATCH,/* IKeyword.REMOTE, */IKeyword.GUI_ },
+		optional = false,
+		doc = @doc("the type of the experiment (either 'gui' or 'batch'")) },
+	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
@@ -84,7 +101,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			if ( !type.equals(IKeyword.BATCH) ) { return; }
 			if ( !desc.getFacets().containsKey(IKeyword.UNTIL) ) {
 				desc.warning(
-					"No stop condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
+					"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
 					IGamlIssue.MISSING_FACET);
 			}
 		}
@@ -99,10 +116,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	protected final Scope stack = new Scope(null);
 	protected IModel model;
 	protected IExploration exploration;
-	// private BatchOutput fileOutputDescription;
 	private FileOutput log;
 
-	// hqnghi: manage experiment's controller
 	private String controllerName = "";
 
 	public String getControllerName() {

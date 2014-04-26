@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'HeadlessListener.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'HeadlessListener.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.Map;
+import java.util.logging.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
@@ -22,15 +22,24 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 
 public class HeadlessListener implements IGui {
 
+	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 	static {
+
 		if ( GuiUtils.isInHeadLessMode() ) {
-			Logger.getAnonymousLogger().finest("Configuring Headless Mode");
+
+			for ( Handler h : LOGGER.getHandlers() ) {
+				h.setLevel(Level.ALL);
+			}
+			LOGGER.setLevel(Level.ALL);
+			// Handler h = new ConsoleHandler();
+			// h.setLevel(Level.ALL);
+			// LOGGER.addHandler(h);
+			// System.out.println("Configuring Headless Mode");
 			// System.out.println("Configuring Headless Mode");
 			GuiUtils.setSwtGui(new HeadlessListener());
 		}
@@ -71,7 +80,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void raise(final Throwable ex) {
-		Logger.getAnonymousLogger().fine("Error: " + ex.getMessage());
+		System.out.println("Error: " + ex.getMessage());
 		// System.out.println("Error: " + ex.getMessage());
 	}
 
@@ -82,14 +91,14 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void tell(final String message) {
-		Logger.getAnonymousLogger().finest("Message: " + message);
+		System.out.println("Message: " + message);
 		// System.out.println("Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
 		// System.out.println("Error: " + error);
-		Logger.getAnonymousLogger().fine("Error: " + error);
+		System.out.println("Error: " + error);
 
 	}
 
@@ -98,13 +107,13 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void debugConsole(final int cycle, final String s) {
-		Logger.getAnonymousLogger().finer("Debug (step " + cycle + "): " + s);
+		System.out.println("Debug (step " + cycle + "): " + s);
 		// System.out.println("Debug (step " + cycle + "): " + s);
 	}
 
 	@Override
 	public void informConsole(final String s) {
-		Logger.getAnonymousLogger().finer("Information: " + s);
+		System.out.println("Information: " + s);
 		// System.out.println("Information: " + s);
 	}
 
@@ -113,18 +122,18 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void debug(final String string) {
-		Logger.getAnonymousLogger().finest("Debug: " + string);
+		System.out.println("Debug: " + string);
 	}
 
 	@Override
 	public void warn(final String string) {
-		Logger.getAnonymousLogger().fine("Warning: " + string);
+		System.out.println("Warning: " + string);
 		// System.out.println("Warning: " + string);
 	}
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
-		Logger.getAnonymousLogger().fine("Runtime error: " + g.getMessage());
+		System.out.println("Runtime error: " + g.getMessage());
 		// System.out.println("Runtime error: " + g.getMessage());
 	}
 
@@ -183,44 +192,54 @@ public class HeadlessListener implements IGui {
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final String keyword,
 		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
-		if ( displayClasses == null ) {
-			displayClasses = new HashMap();
-			IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
-			for ( IConfigurationElement e : config ) {
-				final String pluginKeyword = e.getAttribute("keyword");
-				final String pluginClass = e.getAttribute("class");
-				// final Class<IDisplaySurface> displayClass = .
-				final String pluginName = e.getContributor().getName();
-				// System.out.println("displays " + pluginKeyword + " " + pluginName);
-				ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-				try {
-					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		// keyword = "image";
-		Class<IDisplaySurface> clazz = displayClasses.get("image");
-		if ( clazz == null ) { return new NullDisplaySurface(); /*
-																 * throw GamaRuntimeException.error("Display " + keyword
-																 * + " is not defined anywhere.");
-																 */}
-		try {
-			IDisplaySurface surface = clazz.newInstance();
-			Logger.getAnonymousLogger().fine(
-				"Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
-			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+
+		IDisplaySurface surface = null;
+		final IDisplayCreator creator = DISPLAYS.get("image");
+		if ( creator != null ) {
+			surface = creator.create(args);
 			surface.initialize(scope, w, h, layerDisplayOutput);
-			return surface;
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
+		} else {
+			return new NullDisplaySurface();
+			// throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
 		}
 
-		return null;
+		// if ( displayClasses == null ) {
+		// displayClasses = new HashMap();
+		// IConfigurationElement[] config =
+		// Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
+		// for ( IConfigurationElement e : config ) {
+		// final String pluginKeyword = e.getAttribute("keyword");
+		// final String pluginClass = e.getAttribute("class");
+		// // final Class<IDisplaySurface> displayClass = .
+		// final String pluginName = e.getContributor().getName();
+		// // System.out.println("displays " + pluginKeyword + " " + pluginName);
+		// ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+		// try {
+		// displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
+		// } catch (ClassNotFoundException e1) {
+		// e1.printStackTrace();
+		// }
+		// }
+		// }
+		// // keyword = "image";
+		// Class<IDisplaySurface> clazz = displayClasses.get("image");
+		// if ( clazz == null ) { return new NullDisplaySurface(); /*
+		// * throw GamaRuntimeException.error("Display " + keyword
+		// * + " is not defined anywhere.");
+		// */}
+		// try {
+		// IDisplaySurface surface = clazz.newInstance();
+		// System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+		// // debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+		// surface.initialize(scope, w, h, layerDisplayOutput);
+		// return surface;
+		// } catch (InstantiationException e1) {
+		// e1.printStackTrace();
+		// } catch (IllegalAccessException e1) {
+		// e1.printStackTrace();
+		// }
+
+		return surface;
 	}
 
 	@Override

@@ -23,12 +23,12 @@ import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
-import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
-import msi.gama.outputs.layers.AbstractLayerStatement;
+import msi.gama.outputs.display.LayerManager;
+import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -114,7 +114,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			manager = new LayerManager(this);
 			final List<AbstractLayerStatement> layers = output.getLayers();
 			for ( final AbstractLayerStatement layer : layers ) {
-				manager.addLayer(LayerManager.createLayer(scope, layer));
+				manager.addLayer(AbstractLayer.createLayer(scope, layer));
 			}
 		} else {
 			manager.outputChanged();

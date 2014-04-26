@@ -184,6 +184,7 @@ Export-Package: msi.gama.common,
    msi.gama.common.interfaces,
    msi.gama.kernel.simulation,
    msi.gaml.descriptions",
+ msi.gama.outputs.display,
  msi.gama.outputs.layers;
   uses:="org.jfree.chart,
    msi.gaml.expressions,

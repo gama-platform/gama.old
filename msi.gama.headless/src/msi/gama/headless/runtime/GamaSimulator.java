@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaSimulator.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'GamaSimulator.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,28 +12,18 @@
 package msi.gama.headless.runtime;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
+import java.io.*;
 import javax.imageio.ImageIO;
-
-import msi.gama.headless.common.DataType;
-import msi.gama.headless.common.Display2D;
-import msi.gama.headless.common.Globals;
-import msi.gama.headless.common.ISimulator;
+import msi.gama.headless.common.*;
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.kernel.experiment.ExperimentSpecies;
-import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.outputs.AbstractOutputManager;
-import msi.gama.outputs.IOutput;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.MonitorOutput;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.outputs.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
+
 	private String experimentID;
 
 	private int currentStep;
@@ -76,6 +66,7 @@ public class GamaSimulator implements ISimulator {
 			return ((MonitorOutput) output).getLastValue();
 		} else if ( output instanceof LayeredDisplayOutput ) {
 			BufferedImage buf = ((LayeredDisplayOutput) output).getImage();
+			if ( buf == null ) { return null; }
 			return writeImageInFile(buf, name);
 		}
 		return null;

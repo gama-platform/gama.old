@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SetStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SetStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AssignmentValidator.class)
-@doc(value="", usages = {
+@doc(value="Allows to assign a value to the variable or attribute specified", usages = {
 	@usage(value="", examples = {@example()})
 })
 public class SetStatement extends AbstractStatement {

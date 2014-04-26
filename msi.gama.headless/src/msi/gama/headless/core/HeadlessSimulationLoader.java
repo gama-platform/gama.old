@@ -84,19 +84,27 @@ public class HeadlessSimulationLoader {
 	public static void preloadGAMA() {
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA configuring and loading...");
 		GuiUtils.setSwtGui(new HeadlessListener());
+
 		try {
 			GamaBundleLoader.preBuildContributions();
 		} catch (Exception e1) {
 			throw GamaRuntimeException.create(e1);
 		}
 
+		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		// System.out.println("Bindings: ");
+		// for ( Map.Entry entry : injector.getBindings().entrySet() ) {
+		// System.out.println(" == " + entry.getKey() + " == " + entry.getValue());
+		// }
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
+
 		// SEED HACK
 		GamaPreferences.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.CORE_SEED.set(1.0);
 		// SEED HACK
 
-		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
+		// injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		// Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 	}
 
 	public static IModel loadModel(final File myFile) {

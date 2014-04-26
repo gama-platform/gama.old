@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GraphicLayer.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GraphicLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.*;

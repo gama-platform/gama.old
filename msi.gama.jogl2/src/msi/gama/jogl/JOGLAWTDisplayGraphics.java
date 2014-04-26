@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'JOGLAWTDisplayGraphics.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'JOGLAWTDisplayGraphics.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,7 +16,6 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
@@ -39,7 +38,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
 
-public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements IGraphics.OpenGL {
+public class JOGLAWTDisplayGraphics extends msi.gama.outputs.display.AbstractDisplayGraphics implements IGraphics.OpenGL {
 
 	// GLRenderer.
 	// TODO remove references to renderer
@@ -74,7 +73,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}
 		}
 	}
-	
+
 	public void reinitFor(final IDisplaySurface surface) {
 		super.initFor(surface);
 	}
@@ -162,11 +161,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] valueMatrix,
-		final boolean textured, final boolean triangulated, final boolean isGrayScaled,final boolean showText, final Color gridColor,
-		final double cellSize, final String name) {
+		final boolean textured, final boolean triangulated, final boolean isGrayScaled, final boolean showText,
+		final Color gridColor, final double cellSize, final String name) {
 		Envelope3D env = getWorldEnvelopeWithZ(1);
 		IAgent a = scope.getAgentScope();
-		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env, cellSize, name);
+		renderer.getScene().addDEM(valueMatrix, img, a, textured, triangulated, isGrayScaled, showText, env, cellSize,
+			name);
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}

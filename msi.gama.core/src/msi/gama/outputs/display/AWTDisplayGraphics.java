@@ -10,7 +10,7 @@
  * 
  **********************************************************************************************/
 
-package msi.gama.gui.displays.awt;
+package msi.gama.outputs.display;
 
 import static java.awt.RenderingHints.*;
 import java.awt.*;

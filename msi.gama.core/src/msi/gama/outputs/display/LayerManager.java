@@ -9,14 +9,13 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 
@@ -188,44 +187,6 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void updateItemValues() {}
-
-	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
-		switch (layer.getType()) {
-
-			case ILayerStatement.GRID: {
-				return new GridLayer(scope, layer);
-			}
-			case ILayerStatement.AGENTS: {
-				return new AgentLayer(layer);
-			}
-			case ILayerStatement.SPECIES: {
-				return new SpeciesLayer(layer);
-			}
-			case ILayerStatement.TEXT: {
-				return new TextLayer(layer);
-			}
-			case ILayerStatement.IMAGE: {
-				return new ImageLayer(scope, layer);
-			}
-			case ILayerStatement.GIS: {
-				return new GisLayer(layer);
-			}
-			case ILayerStatement.CHART: {
-				return new ChartLayer(layer);
-			}
-			case ILayerStatement.QUADTREE: {
-				return new QuadTreeLayer(layer);
-			}
-			case ILayerStatement.EVENT: {
-				return new EventLayer(layer);
-			}
-			case ILayerStatement.GRAPHICS: {
-				return new GraphicLayer(layer);
-			}
-			default:
-				return null;
-		}
-	}
 
 	/**
 	 * Allows the layers to do some cleansing when the output of the display changes

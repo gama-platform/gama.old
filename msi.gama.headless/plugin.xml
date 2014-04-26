@@ -3,6 +3,7 @@
 <plugin>
    <extension
          id="id4"
+         name="Headless Gama"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"

@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.awt;
+package msi.gama.outputs.display;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SpeciesLayer.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'SpeciesLayer.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -9,12 +9,11 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.layers.*;
@@ -22,7 +21,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
-import org.eclipse.swt.widgets.Composite;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -36,31 +34,11 @@ public class SpeciesLayer extends AgentLayer {
 	}
 
 	@Override
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-		super.fillComposite(compo, container);
-		EditorFactory.choose(compo, "Aspect:", ((SpeciesLayerStatement) definition).getAspectName(), true,
-			((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
-
-				@Override
-				public void valueModified(final String newValue) {
-					changeAspect(newValue);
-					if ( isPaused(container) ) {
-						container.forceUpdateDisplay();
-					}
-				}
-			});
-	}
-
-	@Override
 	public Set<IAgent> getAgentsForMenu(final IScope scope) {
 		final Set<IAgent> result =
 			ImmutableSet.copyOf(scope.getSimulationScope()
 				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
 		return result;
-	}
-
-	private void changeAspect(final String s) {
-		((SpeciesLayerStatement) definition).setAspect(s);
 	}
 
 	@Override

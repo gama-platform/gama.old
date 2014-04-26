@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GuiUtils.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GuiUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -76,7 +76,9 @@ public class GuiUtils {
 	 * @param gui an instance of IGui
 	 */
 	public static void setSwtGui(final IGui gui) {
-		GuiUtils.gui = gui;
+		if ( GuiUtils.gui == null ) {
+			GuiUtils.gui = gui;
+		}
 	}
 
 	public static void waitStatus(final String string) {

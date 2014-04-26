@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import gnu.trove.set.hash.THashSet;
 import java.awt.*;
@@ -18,15 +18,12 @@ import java.awt.image.*;
 import java.util.Set;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaImageFile;
-import org.eclipse.swt.widgets.Composite;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class GridLayer extends ImageLayer {
@@ -43,7 +40,7 @@ public class GridLayer extends ImageLayer {
 		return new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
 	}
 
-	private boolean turnGridOn;
+	public boolean turnGridOn;
 	private double cellSize;
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
@@ -58,21 +55,6 @@ public class GridLayer extends ImageLayer {
 			image.flush();
 			image = null;
 		}
-	}
-
-	@Override
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-		super.fillComposite(compo, container);
-		EditorFactory.create(compo, "Draw grid:", turnGridOn, new EditorListener<Boolean>() {
-
-			@Override
-			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
-				turnGridOn = newValue;
-				if ( isPaused(container) ) {
-					container.forceUpdateDisplay();
-				}
-			}
-		});
 	}
 
 	@Override
@@ -137,6 +119,13 @@ public class GridLayer extends ImageLayer {
 	@Override
 	public String getType() {
 		return "Grid layer";
+	}
+
+	/**
+	 * @param newValue
+	 */
+	public void setDrawLines(final Boolean newValue) {
+		turnGridOn = newValue;
 	}
 
 }

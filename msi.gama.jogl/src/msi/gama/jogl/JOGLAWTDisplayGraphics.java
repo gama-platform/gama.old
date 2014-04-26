@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'JOGLAWTDisplayGraphics.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'JOGLAWTDisplayGraphics.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,12 +16,12 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -113,12 +113,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				Geometry intersect = world.intersection(g);
 				if ( !intersect.isEmpty() ) {
 					drawSingleShape(scope, intersect, color, fill, border, null, rounded, depth,
-						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio,colors);
+						msi.gama.common.util.GeometryUtils.getTypeOf(intersect), textures, ratio, colors);
 				}
 			}
 		} else {
 			drawSingleShape(scope, shape.getInnerGeometry(), color, fill, border, null, rounded, depth, type, textures,
-				ratio,colors);
+				ratio, colors);
 		}
 
 		// Add a geometry with a depth and type coming from Attributes
@@ -129,7 +129,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
 		final IList<String> textures, final IList<Double> ratio, final IList<GamaColor> colors) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), color, fill, border,
-			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio,colors);
+			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio, colors);
 
 	}
 
@@ -190,7 +190,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX * wRatio, stepY * hRatio))
 						.getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, lineColor, false, lineColor, false, null, 0, 0, false,
-					IShape.Type.GRIDLINE, null,null);
+					IShape.Type.GRIDLINE, null, null);
 			}
 		}
 	}

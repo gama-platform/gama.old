@@ -9,18 +9,15 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
-import org.eclipse.swt.widgets.Composite;
 
 public class GisLayer extends AbstractLayer {
 
@@ -45,20 +42,6 @@ public class GisLayer extends AbstractLayer {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-		super.fillComposite(compo, container);
-		EditorFactory.createFile(compo, "Shapefile:", ((ImageLayerStatement) definition).getImageFileName(),
-			new EditorListener<String>() {
-
-				@Override
-				public void valueModified(final String newValue) throws GamaRuntimeException {
-					((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(), newValue);
-				}
-
-			});
 	}
 
 	@Override

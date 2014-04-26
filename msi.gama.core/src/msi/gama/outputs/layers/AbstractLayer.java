@@ -9,19 +9,17 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -30,7 +28,12 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 public abstract class AbstractLayer implements ILayer {
-	
+
+	@Override
+	public ILayerStatement getDefinition() {
+		return definition;
+	}
+
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		return null;
@@ -77,69 +80,9 @@ public abstract class AbstractLayer implements ILayer {
 		return order.compareTo(o.getOrder());
 	}
 
-	protected boolean isPaused(final IDisplaySurface container) {
+	@Override
+	public boolean isPaused(final IDisplaySurface container) {
 		return container.isPaused() || GAMA.isPaused();
-	}
-
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-
-		EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(this), new EditorListener<Boolean>() {
-
-			@Override
-			public void valueModified(final Boolean newValue) {
-
-				container.getManager().enableLayer(AbstractLayer.this, newValue);
-				if ( isPaused(container) ) {
-					container.forceUpdateDisplay();
-				}
-			}
-		});
-		EditorFactory.create(compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
-			new EditorListener<Double>() {
-
-				@Override
-				public void valueModified(final Double newValue) {
-					setTransparency(newValue);
-					if ( isPaused(container) ) {
-						container.forceUpdateDisplay();
-					}
-				}
-
-			});
-		EditorFactory.create(compo, "Position:", definition.getBox().getPosition(), new EditorListener<GamaPoint>() {
-
-			@Override
-			public void valueModified(final GamaPoint newValue) {
-				setPosition(newValue);
-				if ( isPaused(container) ) {
-					container.forceUpdateDisplay();
-				}
-			}
-
-		});
-		EditorFactory.create(compo, "Size:", definition.getBox().getSize(), new EditorListener<GamaPoint>() {
-
-			@Override
-			public void valueModified(final GamaPoint newValue) {
-				setExtent(newValue);
-				if ( isPaused(container) ) {
-					container.forceUpdateDisplay();
-				}
-			}
-
-		});
-		// EditorFactory.create(compo, "Elevation:", definition.getElevation(), 0.0, 1.0, 0.1, false,
-		// new EditorListener<Double>() {
-		//
-		// @Override
-		// public void valueModified(final Double newValue) {
-		// setElevation(newValue);
-		// if ( isPaused(container) ) {
-		// container.forceUpdateDisplay();
-		// }
-		// }
-		//
-		// });
 	}
 
 	@Override
@@ -162,7 +105,8 @@ public abstract class AbstractLayer implements ILayer {
 		definition.setTransparency(transparency);
 	}
 
-	public void setPosition(final GamaPoint p) {
+	@Override
+	public void setPosition(final ILocation p) {
 		definition.getBox().setPosition(p);
 	}
 
@@ -171,7 +115,8 @@ public abstract class AbstractLayer implements ILayer {
 		return definition.getBox().getPosition();
 	}
 
-	public void setExtent(final GamaPoint p) {
+	@Override
+	public void setExtent(final ILocation p) {
 		definition.getBox().setSize(p);
 	}
 
@@ -291,6 +236,44 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public boolean stayProportional() {
 		return true;
+	}
+
+	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
+		switch (layer.getType()) {
+
+			case ILayerStatement.GRID: {
+				return new GridLayer(scope, layer);
+			}
+			case ILayerStatement.AGENTS: {
+				return new AgentLayer(layer);
+			}
+			case ILayerStatement.SPECIES: {
+				return new SpeciesLayer(layer);
+			}
+			case ILayerStatement.TEXT: {
+				return new TextLayer(layer);
+			}
+			case ILayerStatement.IMAGE: {
+				return new ImageLayer(scope, layer);
+			}
+			case ILayerStatement.GIS: {
+				return new GisLayer(layer);
+			}
+			case ILayerStatement.CHART: {
+				return new ChartLayer(layer);
+			}
+			case ILayerStatement.QUADTREE: {
+				return new QuadTreeLayer(layer);
+			}
+			case ILayerStatement.EVENT: {
+				return new EventLayer(layer);
+			}
+			case ILayerStatement.GRAPHICS: {
+				return new GraphicLayer(layer);
+			}
+			default:
+				return null;
+		}
 	}
 
 }

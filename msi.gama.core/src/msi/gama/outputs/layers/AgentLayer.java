@@ -9,23 +9,19 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
-import msi.gaml.types.*;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -43,27 +39,6 @@ public class AgentLayer extends AbstractLayer {
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		return shapes.get(geometry);
-	}
-
-	@Override
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-		super.fillComposite(compo, container);
-		IExpression expr = null;
-		if ( definition instanceof AgentLayerStatement ) {
-			expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
-		}
-		if ( expr != null ) {
-			EditorFactory.createExpression(compo, "Agents:", expr.toGaml(), new EditorListener<IExpression>() {
-
-				@Override
-				public void valueModified(final IExpression newValue) throws GamaRuntimeException {
-					((AgentLayerStatement) definition).setAgentsExpr(newValue);
-					if ( isPaused(container) ) {
-						container.forceUpdateDisplay();
-					}
-				}
-			}, Types.get(IType.LIST));
-		}
 	}
 
 	protected final Map<IAgent, Rectangle2D> shapes = new THashMap();

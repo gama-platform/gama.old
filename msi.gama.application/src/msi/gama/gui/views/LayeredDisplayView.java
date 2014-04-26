@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'LayeredDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'LayeredDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,12 +16,13 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.layers.AbstractLayer;
+import msi.gama.gui.displays.layers.LayerSideControls;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.layers.AbstractLayer;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -182,7 +183,7 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		if ( d instanceof AbstractLayer ) {
-			((AbstractLayer) d).fillComposite(compo, getOutput().getSurface());
+			LayerSideControls.fill(compo, d, getOutput().getSurface());
 		}
 		return compo;
 	}

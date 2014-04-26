@@ -24,11 +24,11 @@ import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.*;
-import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
-import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.service.*;
 import com.google.inject.Binder;
 
 /**
@@ -70,7 +70,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	@Override
-	@SingletonBinding(eager = true)
+	@SingletonBinding
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
@@ -105,11 +105,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	// return GamlResourceValidator.class;
 	// }
 
-	// @Override
-	// public void configureRuntimeEncodingProvider(final Binder binder) {
-	// binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
-	// .to(GamlEncodingProvider.class);
-	// }
+	@Override
+	public void configureRuntimeEncodingProvider(final Binder binder) {
+		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
+			.to(GamlEncodingProvider.class);
+	}
 
 	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
 	// return GamlEncodingProvider.class;

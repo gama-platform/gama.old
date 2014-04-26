@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'WebDisplaySurface.java', in plugin 'msi.gama.display.web', is part of the source code of the 
+ * 
+ * 'WebDisplaySurface.java', in plugin 'msi.gama.display.web', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,12 +16,12 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.display.web.utils.Logger;
-import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.WebDisplayView;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.display.LayerManager;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
@@ -160,8 +160,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method focusOn()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#focusOn(msi.gama.metamodel.shape.IShape,
-	 *      msi.gama.common.interfaces.ILayer)
+	 * @see msi.gama.common.interfaces.IDisplaySurface#focusOn(msi.gama.metamodel.shape.IShape, msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
@@ -374,8 +373,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method outputChanged()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#outputChanged(double, double,
-	 *      msi.gama.outputs.LayeredDisplayOutput)
+	 * @see msi.gama.common.interfaces.IDisplaySurface#outputChanged(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
 	public void outputChanged(final IScope scope, final double env_width, final double env_height,

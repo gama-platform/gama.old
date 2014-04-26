@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.awt;
+package msi.gama.outputs;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -20,11 +20,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.display.*;
+import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -120,7 +119,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer(scope, (ILayerStatement) layer));
+				manager.addLayer(AbstractLayer.createLayer(scope, (ILayerStatement) layer));
 			}
 		} else {
 			manager.outputChanged();

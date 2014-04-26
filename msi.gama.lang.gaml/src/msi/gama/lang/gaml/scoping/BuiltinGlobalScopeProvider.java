@@ -333,6 +333,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		// IGamlDescription d = null;
 		Map<String, String> doc;
 		if ( d != null ) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", keyword);

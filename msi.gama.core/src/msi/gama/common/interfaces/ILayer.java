@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ILayer.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ILayer.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -76,5 +77,26 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	Boolean getFading();
 
 	Rectangle2D focusOn(IShape geometry, IDisplaySurface s);
+
+	/**
+	 * @return
+	 */
+	ILayerStatement getDefinition();
+
+	/**
+	 * @param container
+	 * @return
+	 */
+	boolean isPaused(IDisplaySurface container);
+
+	/**
+	 * @param newValue
+	 */
+	void setPosition(ILocation newValue);
+
+	/**
+	 * @param newValue
+	 */
+	void setExtent(ILocation newValue);
 
 }

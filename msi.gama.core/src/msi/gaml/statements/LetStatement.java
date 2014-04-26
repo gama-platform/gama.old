@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'LetStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'LetStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,6 +13,7 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -41,7 +42,10 @@ import msi.gaml.types.IType;
 
 combinations = { /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */
 @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.LET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = { IKeyword.LET },
+	kind = ISymbolKind.SINGLE_STATEMENT,
+	with_sequence = false,
+	doc = @doc("Allows to declare a temporary variable of the specified type and to initialize it with a value"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @validator(LetValidator.class)
 public class LetStatement extends SetStatement {

@@ -1544,10 +1544,6 @@
                class="msi.gama.gui.displays.awt.AWTDisplaySurface"
                keyword="java2D">
          </implementation>
-         <implementation
-               class="msi.gama.gui.displays.awt.ImageDisplaySurface"
-               keyword="image">
-         </implementation>
       </extension>
       <extension
             point="gaml.grammar.addition">

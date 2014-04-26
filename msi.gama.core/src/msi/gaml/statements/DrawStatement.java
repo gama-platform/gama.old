@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DrawStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'DrawStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -53,7 +53,7 @@ import msi.gaml.types.*;
 	@facet(name = ROUNDED, type = IType.BOOL, optional = true, doc = @doc("specify whether the geometry have to be rounded (e.g. for squares)")), 
 	@facet(name = AT, type = IType.POINT, optional = true, doc = @doc("location where the shape/text/icon is drawn")),
 	@facet(name = SIZE, type = IType.FLOAT, optional = true, doc = @doc("size of the text/icon (not use in the context of the drawing of a geometry)")), 
-	@facet(name = TO, type = IType.POINT, optional = true, doc = @doc("")),
+	@facet(name = TO, type = IType.POINT, optional = true, doc = @doc(""), internal=true),
 	@facet(name = COLOR, type = IType.COLOR, optional = true, doc = @doc("the color to use to display the text/icon/geometry")),
 	@facet(name = SCALE, type = IType.FLOAT, optional = true, doc = @doc("")),
 	@facet(name = ROTATE, type = { IType.FLOAT, IType.INT }, optional = true, doc = @doc("orientation of the shape/text/icon")),

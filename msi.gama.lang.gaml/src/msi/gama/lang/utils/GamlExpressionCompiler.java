@@ -905,6 +905,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private GamlResource getFreshResource() {
 		if ( resource == null ) {
 			XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
+			// XtextResourceSet rs = new SynchronizedXtextResourceSet();
 			rs.setClasspathURIContext(EcoreBasedExpressionDescription.class);
 			// IResourceFactory resourceFactory = EGaml.getInstance(IResourceFactory.class);
 			URI uri = URI.createURI("dummy" + count++ + ".gaml");

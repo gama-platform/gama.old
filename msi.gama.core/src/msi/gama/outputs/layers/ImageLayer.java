@@ -9,15 +9,13 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -48,26 +46,6 @@ public class ImageLayer extends AbstractLayer {
 				image = null;
 				e.printStackTrace();
 			}
-		}
-	}
-
-	@Override
-	public void fillComposite(final Composite compo, final IDisplaySurface container) {
-		super.fillComposite(compo, container);
-
-		if ( definition instanceof ImageLayerStatement ) {
-			EditorFactory.create(compo, "Image:", ((ImageLayerStatement) definition).getImageFileName(), false,
-				new EditorListener<String>() {
-
-					@Override
-					public void valueModified(final String newValue) {
-						((ImageLayerStatement) definition).setImageFileName(newValue);
-						if ( isPaused(container) ) {
-							container.forceUpdateDisplay();
-						}
-					}
-
-				});
 		}
 	}
 

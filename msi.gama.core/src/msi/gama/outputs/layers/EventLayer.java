@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.displays.layers;
+package msi.gama.outputs.layers;
 
 import java.awt.event.*;
 import msi.gama.common.interfaces.*;
@@ -29,16 +29,6 @@ import msi.gaml.statements.*;
  */
 
 public class EventLayer extends AbstractLayer {
-
-	@Override
-	public void setPosition(final GamaPoint p) {
-		super.setPosition(p);
-	}
-
-	@Override
-	public void setExtent(final GamaPoint p) {
-		super.setExtent(p);
-	}
 
 	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
