@@ -26,7 +26,7 @@ import msi.gaml.species.*;
 import msi.gaml.types.IType;
 import org.apache.commons.lang.StringUtils;
 
-@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true)
+@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),
