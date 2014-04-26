@@ -207,7 +207,7 @@ public class VariableDescription extends SymbolDescription {
 	public String getTitle() {
 		String title =
 			"Definition of " + (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ");
-		return title + " " + getName() + " of type " + getType().getTitle();
+		return title + " " + getName() /* + " of type " + getType().getTitle() */;
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( getEnclosingDescription() == null ) { return "This statement declares " + getName() + " as " + title +
 			"<br/>" + super.getDocumentation(); }
 		String s =
-			"This statement declares " + getName() + " as " + title + " of " +
+			"This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle()  + ", in " +
 				this.getEnclosingDescription().getTitle() + "<br/>";
 		return s + super.getDocumentation();
 	}
