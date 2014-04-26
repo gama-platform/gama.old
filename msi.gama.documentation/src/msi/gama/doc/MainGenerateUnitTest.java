@@ -41,7 +41,7 @@ public class MainGenerateUnitTest {
 		System.out.println("GENERATION OF THE TESTS FROM JAVA CODE");
 		System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 		System.out.print("Preparation of the folders................");
-		PrepareEnv.prepareDocumentation();
+		PrepareEnv.prepareDocumentation(Constants.ONLINE);
 		System.out.println("DONE");
 		System.out.print("Merge all the docGAMA.xml files................");		
 		UnifyDoc.unify();

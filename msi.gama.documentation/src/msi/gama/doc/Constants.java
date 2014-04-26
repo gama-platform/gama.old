@@ -13,13 +13,15 @@ package msi.gama.doc;
 import java.io.File;
 
 public class Constants {
+	public static boolean ONLINE = false;
+	
 	public static String BASE_FOLDER = "";
 	public static String SRC_FOLDER = BASE_FOLDER + "files";
 	
 	public static String GEN_FOLDER = SRC_FOLDER + File.separator + "gen";
 	public static String INPUT_FOLDER = SRC_FOLDER + File.separator + "input";
-	// public static String SVN_FOLDER = SRC_FOLDER + File.separator + "svn";
-	public static String SVN_FOLDER = BASE_FOLDER + File.separator + "svn";
+	public static String SVN_FOLDER = SRC_FOLDER + File.separator + "svn";
+	// public static String SVN_FOLDER = BASE_FOLDER + File.separator + "svn";
 	
 	public static String JAVA2XML_FOLDER = GEN_FOLDER + File.separator + "java2xml";
 //	public static String XML2WIKI_FOLDER = GEN_FOLDER + File.separator + "xml2wiki";
@@ -31,7 +33,7 @@ public class Constants {
 	public static String XML2WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "WIKI" + File.separator + "dev";
 	
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2wiki";
-	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc16.xml";
+	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc161.xml";
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
 	public static String XSL_XML2PDF_FILE = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf" + File.separator + "xhtml-to-xslfo.xsl";
 	public static String XSL_XML2TEST_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";

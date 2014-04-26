@@ -28,7 +28,6 @@ import msi.gama.doc.util.WikiCleaner;
 
 public class MainBeforePython {
 
-	private static final boolean ONLINE = true;
 	/**
 	 * @param args
 	 * @throws Exception 
@@ -38,10 +37,10 @@ public class MainBeforePython {
 	
 		try {
 			System.out.print("Preparation of the folders.......................");
-			PrepareEnv.prepareDocumentation();
+			PrepareEnv.prepareDocumentation(Constants.ONLINE);
 			System.out.println("DONE");
 			
-			if(ONLINE){
+			if(Constants.ONLINE){
 				System.out.print("Checkout Wiki Files from GAMA SVN................PLEASE WAIT");	
 				SVNUtils.checkoutSVNGamaDoc();	
 				System.out.println("Checkout Wiki Files from GAMA SVN................DONE");	

@@ -337,7 +337,7 @@ public class Graphs {
 	}
 
 	@operator(value = "alpha_index", category = { IOperatorCategory.GRAPH })
-	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2*S-5) - planar graph)", examples = {
+	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2`*`S-5) - planar graph)", examples = {
 		@example(value = "graph graphEpidemio <- graph([]);", isTestOnly = true),
 		@example(value = "alpha_index(graphEpidemio)", equals = "the alpha index of the graph", test = false) }, see = {
 		"beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
