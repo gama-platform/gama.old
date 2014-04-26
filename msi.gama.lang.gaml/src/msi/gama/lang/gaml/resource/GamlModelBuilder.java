@@ -13,9 +13,12 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.InputStream;
 import java.util.*;
+
 import msi.gama.kernel.model.IModel;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ModelDescription;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
@@ -128,5 +131,16 @@ public class GamlModelBuilder implements IModelBuilder {
 			fakeResource.unload();
 		}
 		return fakeResource;
+	}
+
+	@Override
+	public ModelDescription buildModelDescription(URI uri,
+			List<GamlCompilationError> errors) {
+		try {
+			GamlResource r = (GamlResource) buildResourceSet.createResource(uri);
+			return r.buildDescription(r.getResourceSet(), errors);
+		} finally {
+			buildResourceSet.getResources().clear();
+		}
 	}
 }

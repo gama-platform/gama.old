@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
+import java.util.Map;
+
 import msi.gama.common.interfaces.IStepable;
 
 /**
@@ -29,7 +31,9 @@ public interface IOutputManager extends IStepable {
 	void removeOutput(IOutput output);
 
 	IOutput getOutput(String id);
-
+	//hqnghi
+	Map<String, IOutput> getOutputs(); 
+	//end-hqnghi
 	void forceUpdateOutputs();
 
 }

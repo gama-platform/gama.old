@@ -14,6 +14,7 @@ package msi.gama.gui.views;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.views.actions.*;
 import msi.gama.outputs.*;
+import msi.gama.runtime.FrontEndController;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -43,6 +44,20 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 				manager = GAMA.getExperiment().getExperimentOutputs();
 				if ( manager != null ) {
 					out = (IDisplayOutput) manager.getOutput(id);
+				}
+				if ( out == null ) {
+					for(FrontEndController fec: GAMA.getControllers().getValues()){
+						manager=fec.getExperiment().getSimulationOutputs();
+						if ( manager != null ) {
+							out = (IDisplayOutput) manager.getOutput(id);
+						}
+						if ( out == null ) {
+							manager=fec.getExperiment().getExperimentOutputs();
+							if ( manager != null ) {
+								out = (IDisplayOutput) manager.getOutput(id);
+							}
+						}
+					}
 				}
 			}
 		}

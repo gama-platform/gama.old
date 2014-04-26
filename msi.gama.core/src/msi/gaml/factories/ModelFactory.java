@@ -17,6 +17,8 @@ import java.util.List;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
@@ -31,7 +33,23 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 @factory(handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory implements IModelBuilder {
-
+	
+	private GamaMap<String, ModelDescription> COMODELS=new GamaMap<String,ModelDescription>();
+	
+	public GamaMap<String, ModelDescription> getCoModels(){
+		return COMODELS;
+	}
+	
+	public ModelDescription getCoModel(String name){
+		if(COMODELS.size()>0)
+			return COMODELS.get(name);
+		return null;
+	}
+	
+	public void addCoModel(String mName, ModelDescription md){
+		COMODELS.addValue(null, new GamaPair<String, ModelDescription>(mName, md));
+	}
+	
 	ModelAssembler assembler = new ModelAssembler();
 	IModelBuilder delegate;
 
@@ -124,6 +142,12 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	@Override
 	public IModel compile(final InputStream contents, final List<GamlCompilationError> errors) {
 		return delegate == null ? null : delegate.compile(contents, errors);
+	}
+
+	@Override
+	public ModelDescription buildModelDescription(URI uri,
+			List<GamlCompilationError> errors) {
+		return delegate == null ? null : delegate.buildModelDescription(uri, errors);
 	}
 
 }

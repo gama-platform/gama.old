@@ -291,6 +291,38 @@ public class GamlResource extends LazyLinkingResource {
 	IModel build(final ResourceSet set) {
 		return build(set, new ArrayList());
 	}
+	
+
+	ModelDescription buildDescription(final ResourceSet set, final List<GamlCompilationError> errors) {
+
+		// We make sure the resource is loaded in the ResourceSet passed
+		set.getResource(getURI(), true);
+
+		System.out.println("Thread [" + Thread.currentThread().getName() + "]");
+		System.out.println("Resource " + getURI().lastSegment() + " building");
+		System.out.println("****************************************************");
+
+		// Syntactic errors detected, we cannot build the resource
+		if ( !getErrors().isEmpty() ) {
+			getErrorCollector().add(
+				new GamlCompilationError("Syntactic errors detected in " + getURI().lastSegment(), IGamlIssue.GENERAL,
+					getContents().get(0), false, false));
+			return null;
+		}
+
+		// We build the description
+		ModelDescription model = buildCompleteDescription(set);
+		// If the description has errors, we cannot build the resource
+		if ( collector.hasErrors() ) {
+			errors.addAll(collector.getInternalErrors());
+			errors.addAll(collector.getImportedErrors());
+			model.dispose();
+			return null;
+		}
+
+		errors.addAll(ImmutableList.copyOf(collector));
+		return model;
+	}
 
 	IModel build(final ResourceSet set, final List<GamlCompilationError> errors) {
 

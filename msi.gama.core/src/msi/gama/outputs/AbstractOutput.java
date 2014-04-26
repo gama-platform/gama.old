@@ -176,6 +176,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public String getId() {
+		if(!this.getDescription().getModelDescription().getComodelName().equals("")){
+			return getName()+"#"+this.getDescription().getModelDescription().getComodelName(); 
+		}
 		return getName(); // by default
 	}
 

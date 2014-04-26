@@ -36,6 +36,11 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	}
 
 	@Override
+	public Map<String, IOutput> getOutputs() {
+		return outputs;
+	}
+	
+	@Override
 	public IOutput getOutput(final String id) {
 		return outputs.get(id);
 	}
@@ -108,68 +113,56 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return Iterables.filter(outputs.values(), IDisplayOutput.class);
 	}
 
-	public Map<String, IOutput> getOutputs() {
-		return outputs;
-	}
-
-	public boolean initSingleOutput(final IScope scope, final IOutput output) {
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-
-		if ( scope.init(output) ) {
-			output.resume();
-			if ( scope.step(output) ) {
-				try {
-					output.open();
-					output.update();
-				} catch (RuntimeException e) {
-					GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
-					return false;
-				}
-			}
-		}
-
-		GuiUtils.waitForViewsToBeInitialized();
-		return true;
-	}
+//	public boolean initSingleOutput1(final IScope scope, final IOutput output) {
+//		try {
+//			Thread.sleep(200);
+//		} catch (InterruptedException e1) {
+//			e1.printStackTrace();
+//		}
+//
+//		if ( scope.init(output) ) {
+//			output.resume();
+//			if ( scope.step(output) ) {
+//				try {
+//					output.open();
+//					output.update();
+//				} catch (RuntimeException e) {
+//					GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
 	
 	@Override
 	public boolean init(final IScope scope) {
 		List<IOutput> list = new ArrayList(outputs.values());
 
-		if(GAMA.getControllers().size()==0){
-			for ( final IOutput output : list ) {
-	
-				/**
-				 * TODO For the moment, the try block fixes issue 470, must be replaced by better solution
-				 */
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-	
-				if ( scope.init(output) ) {
-					output.resume();
-					if ( scope.step(output) ) {
-						try {
-							output.open();
-							output.update();
-						} catch (RuntimeException e) {
-							e.printStackTrace();
-							return false;
-						}
+		for ( final IOutput output : list ) {
+
+			/**
+			 * TODO For the moment, the try block fixes issue 470, must be replaced by better solution
+			 */
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+
+			if ( scope.init(output) ) {
+				output.resume();
+				if ( scope.step(output) ) {
+					try {
+						output.open();
+						output.update();
+					} catch (RuntimeException e) {
+						e.printStackTrace();
+						return false;
 					}
 				}
 			}
 			GuiUtils.waitForViewsToBeInitialized();
-		}else{
-			for ( final IOutput output : list ) {
-				if(!initSingleOutput(scope, output)){return false;}
-			}
 		}
 
 		if ( GamaPreferences.CORE_AUTO_RUN.getValue() ) {

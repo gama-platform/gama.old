@@ -41,6 +41,13 @@ public class ModelDescription extends SpeciesDescription {
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
 	protected boolean document;
+	private String comodelName="";
+	public void setComodelName(final String nnn){
+		comodelName=nnn;
+	}
+	public String getComodelName(){
+		return comodelName;
+	}
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
 		final SpeciesDescription parent, final Facets facets) {

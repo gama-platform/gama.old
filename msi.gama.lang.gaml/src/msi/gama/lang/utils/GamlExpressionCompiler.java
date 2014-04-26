@@ -134,6 +134,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( op == null ) { return null; }
 		IExpression expr = compile(e);
 		if ( expr == null ) { return null; }
+		if( op.equals("gamlfile") || op.equals("gaml_file")){
+			if(GAML.getModelFactory().getCoModel(expr.toString())==null){
+				IModel mymodel=  ((GamlExpressionFactory) GAML.getExpressionFactory())
+						.getParser().createModelFromFile(expr.toString());
+				GAML.getModelFactory().addCoModel(expr.toString(),(ModelDescription) mymodel.getDescription());				
+			}
+		}
 		if ( op.equals(MY) ) {
 			IDescription desc = getContext().getDescriptionDeclaringVar(MYSELF);
 			if ( desc != null ) {
@@ -987,7 +994,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// System.out.println("Experiment created ");
 		return lastModel;
 	}
-
+	
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
 		System.out.println(fileName + " model is loading...");
@@ -995,22 +1002,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		GamlResource resource =
 			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
 
-		URI iu = URI.createURI("file:///" + fileName).resolve(resource.getURI());
+		URI iu = URI.createURI(fileName).resolve(resource.getURI());
 		ModelDescription lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
-		// GamlResource r = (GamlResource) rs.getResource(iu, true);
 		GamlResource r = (GamlResource) rs.getResource(iu, true);
-		// URI.createURI("file:///" + fileName), true);
-
 		try {
 			GamlJavaValidator validator = new GamlJavaValidator();
-			// = (GamlJavaValidator) injector
-			// .getInstance(EValidator.class);
-
-			// lastModel = validator.validate((Model) r);
+			List<GamlCompilationError> errors = new ArrayList();
+			lastModel = GamlModelBuilder.getInstance().buildModelDescription(r.getURI(), errors);
 			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
-				// System.out.println("End compilation of " + m.getName());
 			}
 
 		} catch (GamaRuntimeException e1) {
@@ -1023,7 +1024,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// FIXME Experiment default no longer exists. Needs to specify one name
 		// GAMA.controller.newExperiment(IKeyword.DEFAULT, lastModel);
-		System.out.println("Experiment created ");
+//		System.out.println("Experiment created ");
 		return lastModel;
 	}
 

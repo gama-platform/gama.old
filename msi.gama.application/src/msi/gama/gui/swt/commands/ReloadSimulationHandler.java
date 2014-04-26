@@ -19,12 +19,12 @@ public class ReloadSimulationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.controller.userReload();
 		//hqnghi
 				for ( FrontEndController s : GAMA.getControllers().values() ) {
-					s.userReload();
+					s.directPause();
 				}
 		//end-hqnghi
+		GAMA.controller.userReload();
 		return null;
 	}
 

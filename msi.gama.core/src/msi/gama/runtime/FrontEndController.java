@@ -164,6 +164,16 @@ public class FrontEndController implements Runnable {
 		offer(_RELOAD);
 	}
 
+	public void directOpenExperiment() {
+		processUserCommand(_OPEN);
+	}
+
+	public void directReload() {
+		// TODO Should maybe be done directly (so as to reload immediately)
+		if ( experiment == null ) { return; }
+		processUserCommand(_RELOAD);
+	}
+
 	public void userStart() {
 		offer(_START);
 	}
@@ -245,12 +255,16 @@ public class FrontEndController implements Runnable {
 			System.out.println("No experiment available.");
 			return;
 		}
+		if ( experiment != null ) {		
+			closeExperiment();
+		}
 		experiment = newExperiment;
 	}
 	
 	public void newExperiment(final String id, final IModel model) {
 		if (GAMA.getControllers().size() > 0) {
 			for (FrontEndController s : GAMA.getControllers().values()) {
+				s.closeExperiment();
 				s.shutdown();
 			}
 			GAMA.getControllers().clear();

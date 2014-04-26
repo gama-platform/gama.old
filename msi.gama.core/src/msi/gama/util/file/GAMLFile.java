@@ -12,16 +12,21 @@
 package msi.gama.util.file;
 
 import java.util.Iterator;
+import java.util.Map;
 
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentSpecies;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.AbstractOutput;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.IOutput;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.runtime.FrontEndController;
 import msi.gama.runtime.FrontEndScheduler;
 import msi.gama.runtime.GAMA;
@@ -31,16 +36,19 @@ import msi.gama.util.GAML;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -75,11 +83,12 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			final String expName, final String cName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
-		mymodel = ((GamlExpressionFactory) GAML.getExpressionFactory())
-				.getParser().createModelFromFile(getFile().getName());
 		experimentName = expName;
 		comodelName = cName;
-
+		ModelDescription mm=((GamlExpressionFactory) GAML.getExpressionFactory())
+		.getParser().createModelDescriptionFromFile(getFile().getName());		
+		mm.setComodelName(comodelName);
+		mymodel=(IModel) mm.compile();
 		// multithread
 		controllerName = experimentName + comodelName;
 
@@ -93,16 +102,20 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	public void createExperiment(final String expName) {
 			IExperimentSpecies exp = mymodel.getExperiment("Experiment "
 					+ expName);
+			for(IOutput o:exp.getSimulationOutputs().getOutputs().values()){
+				o.setName(o.getName() + "#" + comodelName);
+				((AbstractOutput) o).setExpName(experimentName
+						+ comodelName);
+			}
+			for(IOutput o:exp.getExperimentOutputs().getOutputs().values()){
+				o.setName(o.getName() + "#" + comodelName);
+				((AbstractOutput) o).setExpName(experimentName
+						+ comodelName);
+			}
 		((ExperimentSpecies) exp).setControllerName(controllerName);
 		// multithread
 		// eliminate conflict in close-open current Layer to initialize displays
-		exp.getExperimentOutputs().removeAllOutput();
-		exp.getSimulationOutputs().removeAllOutput();
 		GAMA.getController(controllerName).newExperiment(exp);
-		
-		// ((ExperimentSpecies) exp).createAgent();
-		// ((ExperimentSpecies) exp).open();
-
 		// singlethread
 		// GAMA.getController(controllerName).addExperiment(
 		// experimentName + comodelName, exp);
@@ -139,111 +152,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 							.setValue(null, in.getValues().get(i));
 				}
 			}
-			((ExperimentSpecies) GAMA.getController(controllerName)
-					.getExperiment()).open();
-		// ((ExperimentSpecies)
-		// GAMA.getController(controllerName).getExperiment(
-		// experimentName + comodelName)).getAgent().schedule();
-			SimulationAgent sim = (SimulationAgent) GAMA
-					.getController(controllerName)
-					.getExperiment().getAgent()
-					.getSimulation();
-			IScope simScope = null;
-			if (sim == null) {
-				sim = GAMA.getController(controllerName)
-						.getExperiment().getAgent()
-						.createSimulation(new ParametersSet(), false);
-				GAMA.getController(controllerName).getScheduler()
-						.schedule(sim, sim.getScope());
-				// sim._init_(sim.getScope());
-			}
-			initDisplay = true;
-			ExperimentDescription expdes = ((ModelDescription) mymodel
-					.getDescription()).getExperiment(experimentName);
-			if (expdes.getBehaviors().size() > 0) {
-				Iterator<IDescription> m = expdes.getBehaviors().iterator();
-				IDescription iii = m.next();
-
-				for (IDescription disp : iii.getChildren()) {
-					ISymbol output = disp.compile();
-					output.setName(output.getName() + "#" + comodelName);
-					((AbstractOutput) output).setExpName(experimentName
-							+ comodelName);
-					GAMA.getExperiment().getSimulationOutputs()
-							.addOutput((IOutput) output);
-					((AbstractOutputManager) GAMA.getExperiment()
-							.getSimulationOutputs()).initSingleOutput(scope,
-							(IOutput) output);
-				}
-				// GAMA.getExperiment().getSimulationOutputs().init(scope);
-			}
-		}
-
-		SimulationAgent sim = (SimulationAgent) GAMA
-				.getController(controllerName)
-				.getExperiment().getAgent()
-				.getSimulation();
-		IScope simScope = null;
-		if (sim == null) {
-			sim = GAMA.getController(controllerName)
-					.getExperiment().getAgent()
-					.createSimulation(new ParametersSet(), false);
-			// GAMA.getController(controllerName).getScheduler()
-			// .schedule(sim, sim.getScope());
-			// sim._init_(sim.getScope());
-		}
-		simScope = sim.getScope();
-		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
-			sim._init_(simScope);
-		}
-
-		// ScopedExpression sss = ScopedExpression.with(simScope, share);
-		// share = sss;
-		//
-		// GamlSpecies gs = (GamlSpecies) ((GamaList)
-		// sss.value(simScope)).get(0);
-		// GuiUtils.informConsole("" + gs.length(simScope));
-
-		
-		int nTimes = 1;
-		int i = 0;
-		if (repeat != null) {
-			nTimes = (Integer) repeat.value(scope);
-		}
-		boolean mustStop = false;
-		if (stopCondition == null) {
-			mustStop = true;
-		}
-		while (!mustStop || i < nTimes) {
-			GAMA.getController(controllerName).userStep();// (FrontEndController._STEP);
-
-			if (param_output != null) {
-				out = (GamaMap) param_output.value(scope);
-				for (int j = 0; j < out.getKeys().size(); j++) { //
-				// scope.setAgentVarValue(
-				// out.getValues().get(j).toString(), //
-				// ((ExperimentSpecies) GAMA
-				// .getController(experimentName + comodelName)
-				// .getExperiment(experimentName + comodelName)) //
-				// .getExperimentScope().getGlobalVarValue(
-				// out.getKeys().get(j).toString()));
-					Object value = ((ExperimentSpecies) GAMA.getController(
-							experimentName + comodelName).getExperiment()).getExperimentScope()
-							.getGlobalVarValue(out.getKeys().get(j).toString());
-					scope.getAgentScope().setAttribute(
-							out.getValues().get(j).toString(), value);
-				}
-			}
-			if (stopCondition != null) {
-				mustStop = Cast.asBool(scope,
-						scope.evaluate(stopCondition, scope.getAgentScope()));
-			}
-			i++;
-		}
-		 
-		if (reset != null && Cast.asBool(scope, reset.value(scope))) {
-			GAMA.getController(experimentName + comodelName)
-					.getExperiment().dispose();
+			GAMA.getController(controllerName).directOpenExperiment(); 
 		}
 	}
 
@@ -254,8 +163,17 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
 		setBuffer(new GamaList());
-
-		((IList) getBuffer()).add(mymodel);
+//		IModel mymodel=  ((GamlExpressionFactory) GAML.getExpressionFactory())
+//				.getParser().createModelFromFile(getFile().getName());
+		ModelDescription mm=((GamlExpressionFactory) GAML.getExpressionFactory())
+				.getParser().createModelDescriptionFromFile(getFile().getName());		
+		GAML.getModelFactory().addCoModel(mm.getName(),mm);
+		for(ISpecies spec:((GamlModelSpecies)mymodel.getSpecies()).getExperiments().values()) {		
+			//TODO must change to add displays
+			((ExperimentSpecies)spec).getExperimentOutputs().removeAllOutput();
+			((ExperimentSpecies)spec).getSimulationOutputs().removeAllOutput();
+			((IList) getBuffer()).add(spec);
+		}
 
 	}
 

@@ -189,4 +189,9 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		}
 	}
 
+	public Map<String, IExperimentSpecies> getExperiments() {
+		// TODO Auto-generated method stub
+		return experiments;
+	}
+
 }
