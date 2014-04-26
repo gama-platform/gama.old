@@ -40,8 +40,7 @@ public class HeadlessSimulationLoader {
 	 */
 	public static synchronized ExperimentSpecies newHeadlessSimulation(final IModel model, final String expName,
 		final ParametersSet params) throws GamaRuntimeException {
-		// FIXME Verify all this.
-		configureHeadLessSimulation();
+
 		ExperimentSpecies currentExperiment = (ExperimentSpecies) model.getExperiment(expName);
 		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
 			" cannot be created"); }
@@ -63,6 +62,7 @@ public class HeadlessSimulationLoader {
 
 	public static void preloadGAMA() {
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA configuring and loading...");
+		configureHeadLessSimulation();
 		GuiUtils.setSwtGui(new HeadlessListener());
 
 		try {
