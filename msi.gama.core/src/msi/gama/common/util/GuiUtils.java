@@ -67,10 +67,6 @@ public class GuiUtils {
 		headlessMode = true;
 	}
 
-	public static void setGUIMode() {
-		headlessMode = false;
-	}
-
 	/**
 	 * Method called by the UI plugin to initialize the SWT environment to talk with.
 	 * @param gui an instance of IGui
