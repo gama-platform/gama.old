@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ILayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ILayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,7 +22,7 @@ import msi.gaml.compilation.ISymbol;
  * @since 14 d�c. 2011
  * 
  */
-public interface ILayerStatement extends INamed, IStepable, ISymbol {
+public interface ILayerStatement extends INamed, IStepable, ISymbol, Comparable<ILayerStatement> {
 
 	public final static short GRID = 1;
 	public final static short AGENTS = 2;
@@ -40,7 +40,9 @@ public interface ILayerStatement extends INamed, IStepable, ISymbol {
 
 	public abstract Double getTransparency();
 
-	// public abstract Double getElevation();
+	void setOrder(Integer i);
+
+	Integer getOrder();
 
 	public abstract Boolean getRefresh();
 
@@ -49,8 +51,6 @@ public interface ILayerStatement extends INamed, IStepable, ISymbol {
 	public Integer getTrace();
 
 	public Boolean getFading();
-
-	// public abstract void setElevation(Double elevation);
 
 	public abstract void setRefresh(Boolean refresh);
 

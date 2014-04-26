@@ -17,7 +17,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -39,7 +38,6 @@ public abstract class AbstractLayer implements ILayer {
 		return null;
 	}
 
-	private Integer order = 0;
 	protected ILayerStatement definition;
 	private String name;
 	private final Point positionInPixels, sizeInPixels;
@@ -67,17 +65,17 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void setOrder(final Integer o) {
-		order = o;
+		definition.setOrder(o);
 	}
 
 	@Override
 	public Integer getOrder() {
-		return order;
+		return definition.getOrder();
 	}
 
 	@Override
 	public int compareTo(final ILayer o) {
-		return order.compareTo(o.getOrder());
+		return definition.compareTo(o.getDefinition());
 	}
 
 	@Override

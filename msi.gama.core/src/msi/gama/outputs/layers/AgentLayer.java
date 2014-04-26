@@ -18,7 +18,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.statements.*;
@@ -29,7 +28,6 @@ import msi.gaml.statements.*;
  * @todo Description
  * 
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentLayer extends AbstractLayer {
 
 	public AgentLayer(final ILayerStatement layer) {
@@ -84,107 +82,17 @@ public class AgentLayer extends AbstractLayer {
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
 		final Set<IAgent> selectedAgents = new THashSet();
-
-		// GamaGeometry selectionPoint = new GamaGeometry(getModelCoordinatesFrom(x, y));
-		// Envelope selectionEnvelope = selectionPoint.getEnvelope();
-		// selectionEnvelope.expandBy(selectionWidthInModel);
-		//
-		// ISpatialIndex globalEnv =
-		// GAMA.getFrontmostSimulation().getModel().getModelEnvironment().getSpatialIndex();
-		// GamaList<IAgent> agents =
-		// globalEnv.queryAllInEnvelope(selectionPoint, selectionEnvelope,
-		// In.list(this.getAgentsToDisplay()), false);
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2, y + IDisplaySurface.SELECTION_SIZE /
 			2);
-		// Point2D p = new Point2D.Double(x, y);
-
-		// Set<IAgent> closeAgents = new HashSet();
 		for ( final Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
 			if ( entry.getValue().intersects(selection) ) {
 				selectedAgents.add(entry.getKey());
 			}
 		}
 
-		// for ( IAgent agent : closeAgents ) {
-		// selectedAgents.add(agent);
-		// SelectedAgent sa = new SelectedAgent();
-		// sa.macro = agent;
-		// selectedAgents.add(sa);
-		// }
-
-		// direct micro-populations of "world"
-		// List<IPopulation> microPopulations =
-		// GAMA.getFrontmostSimulation().getWorld().getMicroPopulations();
-		// TODO to be implemented
-
-		// GamaList<IAgent> closeAgents = globalEnv.getAgentsInEnvelope(selectionPoint,
-		// selectionEnvelope, In.list(getAgentsToDisplay()), false);
-
-		/*
-		 * SelectedAgent sa;
-		 * for (IAgent a : closeAgents) {
-		 * sa = new SelectedAgent();
-		 * sa.macro = a;
-		 * 
-		 * if (a.getSpecies().hasMicroSpecies() &&
-		 * a.getGlobalGeometry().getEnvelope().intersects(selectionEnvelope) && a.hasMembers()) {
-		 * collectMicroAgentsIn(sa, selectionEnvelope);
-		 * }
-		 * 
-		 * selectedAgents.add(sa);
-		 * }
-		 */
-
 		return selectedAgents;
 	}
-
-	// private void collectMicroAgentsIn(final SelectedAgent targetMacro,
-	// final Envelope selectionEnvelope) {
-	//
-	// SelectedAgent sMicro;
-	// IPopulation microManager;
-	// IList<IAgent> intersectingMicros;
-	//
-	// List<String> microSpecies = targetMacro.macro.getSpecies().getMicroSpeciesNames();
-	// Collections.sort(microSpecies);
-	//
-	// for ( String microSpec : microSpecies ) {
-	// microManager = targetMacro.macro.getPopulationFor(microSpec);
-	//
-	// if ( microManager != null && microManager.size() > 0 ) {
-	// intersectingMicros = new GamaList<IAgent>();
-	// for ( IAgent m : microManager.getAgentsList() ) {
-	// if ( m.getEnvelope().intersects(selectionEnvelope) ) {
-	// intersectingMicros.add(m);
-	// }
-	// }
-	//
-	// if ( !intersectingMicros.isEmpty() ) {
-	// List<SelectedAgent> selectedMicros = new GamaList<SelectedAgent>();
-	// for ( IAgent iMicro : intersectingMicros ) {
-	// sMicro = new SelectedAgent();
-	// sMicro.macro = iMicro;
-	// if ( iMicro.getSpecies().hasMicroSpecies() && iMicro.hasMembers() ) {
-	// collectMicroAgentsIn(sMicro,
-	// iMicro.getEnvelope().intersection(selectionEnvelope));
-	// }
-	//
-	// selectedMicros.add(sMicro);
-	// }
-	//
-	// if ( targetMacro.micros == null ) {
-	// targetMacro.micros = new HashMap<ISpecies, List<SelectedAgent>>();
-	// }
-	//
-	// if ( !selectedMicros.isEmpty() ) {
-	// targetMacro.micros.put(microManager.getSpecies(),
-	// new GamaList<SelectedAgent>(selectedMicros));
-	// }
-	// }
-	// }
-	// }
-	// }
 
 	@Override
 	public String getType() {

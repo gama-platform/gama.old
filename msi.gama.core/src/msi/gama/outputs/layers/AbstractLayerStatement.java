@@ -34,6 +34,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	private IDisplayLayerBox box;
 	IDisplayOutput output;
+	private Integer order = 0;
 
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -43,6 +44,21 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 		if ( title != null && title.isConst() ) {
 			setName(title.literalValue());
 		}
+	}
+
+	@Override
+	public void setOrder(final Integer o) {
+		order = o;
+	}
+
+	@Override
+	public Integer getOrder() {
+		return order;
+	}
+
+	@Override
+	public int compareTo(final ILayerStatement o) {
+		return order.compareTo(o.getOrder());
 	}
 
 	@Override
@@ -61,10 +77,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	@Override
 	public abstract short getType();
 
-	public String serializeToGaml() {
-		return "";
-	}
-
 	@Override
 	public final boolean step(final IScope scope) throws GamaRuntimeException {
 		return _step(scope);
@@ -76,12 +88,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	public final Double getTransparency() {
 		return getBox().getTransparency();
 	}
-
-	//
-	// @Override
-	// public final Double getElevation() {
-	// return getBox().getElevation();
-	// }
 
 	@Override
 	public final Boolean getRefresh() {
@@ -118,12 +124,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	public void setTransparency(final Double transparency) {
 		getBox().setTransparency(transparency);
 	}
-
-	//
-	// @Override
-	// public void setElevation(final Double elevation) {
-	// getBox().setElevation(elevation);
-	// }
 
 	@Override
 	public void setRefresh(final Boolean refresh) {
