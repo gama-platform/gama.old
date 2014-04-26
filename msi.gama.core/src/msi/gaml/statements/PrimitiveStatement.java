@@ -32,10 +32,9 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true)
+@symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true, internal = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	// @facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
 	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
 // Necessary to avoid running the validator from ActionStatement
