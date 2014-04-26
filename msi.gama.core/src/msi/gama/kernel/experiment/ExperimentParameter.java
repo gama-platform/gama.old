@@ -14,13 +14,13 @@ package msi.gama.kernel.experiment;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -31,29 +31,44 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-import msi.gaml.variables.Variable;
+import msi.gaml.variables.*;
 
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true, doc = @doc("The message displayed in the interface")),
+@facets(value = {
+	@facet(name = IKeyword.NAME,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("The message displayed in the interface")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
 	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
 	@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value")),
 	@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value")),
-	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("a category label, used to group parameters in the interface")),
-	@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the name of the variable (that should be declared in the global)")),
+	@facet(name = IKeyword.CATEGORY,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("a category label, used to group parameters in the interface")),
+	@facet(name = IKeyword.VAR,
+		type = IType.ID,
+		optional = false,
+		doc = @doc("the name of the variable (that should be declared in the global)")),
 	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
-	@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
-	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.STEP,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) },
+	omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @validator(Variable.VarValidator.class)
-@doc(value="The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.", usages = {
-	@usage(value="In gui experiment, the general syntax is the following:", examples = {
-		@example(value="parameter title var: global_var category: cat;", isExecutable=false)}),
-	@usage(value="In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:", examples = {
-		@example(value="parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ", isExecutable=false),
-		@example(value="parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable=false)		
-	}),	
-})
+@doc(value = "The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.",
+	usages = {
+		@usage(value = "In gui experiment, the general syntax is the following:",
+			examples = { @example(value = "parameter title var: global_var category: cat;", isExecutable = false) }),
+		@usage(value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:",
+			examples = {
+				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ",
+					isExecutable = false),
+				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable = false) }), })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -73,11 +88,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		VariableDescription desc = (VariableDescription) sd;
 		setName(desc.getFacets().getLabel(IKeyword.VAR));
 		type = desc.getType();
-		// contentType = desc.getContentType();
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
 		ModelDescription wd = desc.getModelDescription();
-		// TypeDescription wd = md.getWorldSpecies();
 		IDescription targetedGlobalVar = wd.getVariable(varName);
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = targetedGlobalVar.getType();
@@ -90,12 +103,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		init =
 			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets().getExpr(
 				IKeyword.INIT);
-
 		order = desc.getDefinitionOrder();
-
-		// setValue(init == null ? UNDEFINED : init.value(GAMA.getDefaultScope()));
 		isEditable = true;
-		// isLabel = false; // ??
 	}
 
 	public ExperimentParameter(final IScope scope, final IParameter p) {
@@ -110,7 +119,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 		final String unit, final List among, final boolean canBeNull) {
 		super(null);
-		init = null;
+
 		this.title = title;
 		this.canBeNull = canBeNull;
 		this.order = p.getDefinitionOrder();
@@ -141,9 +150,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setName(p.getName());
 		setCategory(category);
 		setType(p.getType());
-		setValue(scope, p.getInitialValue(scope));
+		if ( p instanceof IVariable && getType().id() == IType.FILE ) {
+			init = ((IVariable) p).getFacet(IKeyword.INIT);
+		} else {
+			init = null;
+			setValue(scope, p.getInitialValue(scope));
+		}
 		setEditable(p.isEditable());
-		// isLabel = p.isLabel();
 	}
 
 	@Override
@@ -231,7 +244,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
 		setValue(scope, init.value(scope));
-		
+
 	}
 
 	private Number drawRandomValue(final IScope scope) {
@@ -239,9 +252,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			int nbSteps = (int)((max - min) / step);
+			int nbSteps = (int) ((max - min) / step);
 			final int val = scope.getRandom().between(0, nbSteps);
-			return min + (int)(val * step);
+			return min + (int) (val * step);
 		}
 		double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 		double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
