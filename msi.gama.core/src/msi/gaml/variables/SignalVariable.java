@@ -33,72 +33,53 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import msi.gaml.variables.SignalVariable.SignalValidator;
 
-/**
- * Special variables that hold signals that can be propagated in the environment. Signals have a
- * fixed name, a variable float intensity (represented by their facet 'value'), propagate in only
- * one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in
- * meter), and can see their intensity decrease over time (facet 'decay').
- * 
- * Signals can be propagated using different combinations of the 'variation', 'proportion' and
- * 'propagation' facets.
- * 
- * 'decay' represents the amount to remove to the intensity of a signal, once dropped on a place, at
- * each time step. It is a percentage between 0 and 1. If 'decay' is not defined, the signal will
- * not be wiped from the places; otherwise, its intensity will be equal to (intensity * decay).
- * 
- * 'proportion' is a value between 0 and 1 that represents the percentage of the intensity which
- * will be shared between the neighbours in the diffusion. For instance, for an intensity of 80, and
- * a proportion of 0.5, in a 4-neighbours environment, each of the neighbouring places will receive
- * an intensity of (80 * 0.5) / 4 = 10.
- * 
- * 'variation' is an absolute decrease of intensity that occurs between each place. It should be a
- * positive number. However, negative numbers are allowed (be aware, in this case, that if no range
- * is defined, the signal will certainly propagate in the whole environment).
- * 
- * As they will be eventually shared by all the agents, 'decay', 'variation' and 'proportion' must
- * either be a constant or depend on a global (world) variable parameter. They cannot depend on an
- * other variable of the agent. [CHANGED : they are now variable].
- * 
- * If no 'proportion' is defined, it is assumed that the propagation corresponds to a diffusion
- * where 100% of the intensity is equally divided between the neighbours. I.e., for an intensity of
- * 100, and 4 neighbours per place, each of them receives a signal with an intensity of 25.
- * 
- * If no 'variation' is defined, it defaults to 1 in the case of a gradient type and 0 in the case
- * of a diffusion.
- * 
- * 'propagation' represents both the way the signal is propagated and the way to treat multiple
- * propagations of the same signal occuring at once from different places.
- * 
- * If propagation equals 'diffusion', the intensity of a signal is shared between its neighbours
- * with respect to 'proportion', 'variation' and the number of neighbours of the environment places
- * (4, 6 or 8). I.e., for a given signal S propagated from place P, the value transmitted to its N
- * neighbours is : S' = (S / N / proportion) - variation. The intensity of S is then diminished by
- * S*proportion on P. In a diffusion, the different signals of the same name see their intensities
- * added to each other on each place.
- * 
- * If propagation equals 'gradient', the original intensity is not modified, and each neighbours
- * receives the intensity : S / proportion - variation. If multiple propagations occur at once, only
- * the maximum intensity is kept on each place.
- * 
- * If 'propagation' is not defined, it is assumed that it is equal to 'diffusion'.
- * 
- * 
- */
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
+	@facet(name = IKeyword.NAME,
+		type = IType.NEW_VAR_ID,
+		optional = false,
+		doc = @doc("The name of the variable that will be introduced to represent this signal on the specified grid")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = true),
-	@facet(name = IKeyword.ON, type = { IType.SPECIES, IType.CONTAINER }, optional = true),
-	@facet(name = IKeyword.DECAY, type = IType.FLOAT, optional = false),
-	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION, IKeyword.GRADIENT }, optional = true),
-	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.VARIATION, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.RANGE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "",
+		deprecated = "Use 'update' instead")),
+	@facet(name = IKeyword.UPDATE,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("An expression that will be evaluated each cycle to update the value of the signal on each grid cell")),
+	@facet(name = IKeyword.ENVIRONMENT,
+		type = IType.SPECIES,
+		optional = true,
+		doc = @doc("The name of the grid species on which this signal will be propagated")),
+	@facet(name = IKeyword.ON,
+		type = { IType.SPECIES, IType.CONTAINER },
+		optional = true,
+		doc = @doc("Either the name of the grid species on which this signal will be propagated (equivalent to 'environment:'), or an expression that returns a subset of the cells of this grid species")),
+	@facet(name = IKeyword.DECAY,
+		type = IType.FLOAT,
+		optional = false,
+		doc = @doc("represents the amount to remove to the intensity of a signal, once dropped on a place, at each time step. It is a percentage between 0 and 1. If 'decay' is not defined, the signal will not be wiped from the places; otherwise, its intensity will be equal to (intensity * decay).")),
+	@facet(name = IKeyword.PROPAGATION,
+		type = IType.LABEL,
+		values = { IKeyword.DIFFUSION, IKeyword.GRADIENT },
+		optional = true,
+		doc = @doc(" represents both the way the signal is propagated and the way to treat multiple propagations of the same signal occuring at once from different places. If propagation equals 'diffusion', the intensity of a signal is shared between its neighbours with respect to 'proportion', 'variation' and the number of neighbours of the environment places (4, 6 or 8). I.e., for a given signal S propagated from place P, the value transmitted to its N neighbours is : S' = (S / N / proportion) - variation. The intensity of S is then diminished by S*proportion on P. In a diffusion, the different signals of the same name see their intensities added to each other on each place. If propagation equals 'gradient', the original intensity is not modified, and each neighbours receives the intensity : S / proportion - variation. If multiple propagations occur at once, only the maximum intensity is kept on each place. If 'propagation' is not defined, it is assumed that it is equal to 'diffusion'.")),
+	@facet(name = IKeyword.PROPORTION,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("a value between 0 and 1 that represents the percentage of the intensity which will be shared between the neighbours in the diffusion. For instance, for an intensity of 80, and  a proportion of 0.5, in a 4-neighbours environment, each of the neighbouring places will receive an intensity of (80 * 0.5) / 4 = 10.  * If no 'proportion' is defined, it is assumed that the propagation corresponds to a diffusion where 100% of the intensity is equally divided between the neighbours. I.e., for an intensity of 100, and 4 neighbours per place, each of them receives a signal with an intensity of 25.")),
+	@facet(name = IKeyword.VARIATION,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("an absolute decrease of intensity that occurs between each place. It should be a positive number. However, negative numbers are allowed (be aware, in this case, that if no range is defined, the signal will certainly propagate in the whole environment).  * If no 'variation' is defined, it defaults to 1 in the case of a gradient type and 0 in the case of a diffusion.")),
+	@facet(name = IKeyword.RANGE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("Indicates the distance (in meter) at which the signal stops propagating")),
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) },
+	omissible = IKeyword.NAME)
+@symbol(name = IKeyword.SIGNAL,
+	kind = ISymbolKind.Variable.SIGNAL,
+	with_sequence = false,
+	doc = @doc("A special attribute that holds signals that can be propagated in the environment. Signals have a fixed name, a variable float intensity (represented by their facet 'value'), propagate in only one grid environment (facet 'environment'), can be limited to a specific range (facet 'range', in meter), and can see their intensity decrease over time (facet 'decay'). Signals can be propagated using different combinations of the 'variation', 'proportion' and 'propagation' facets. "))
 @inside(kinds = { ISymbolKind.SPECIES })
 @validator(SignalValidator.class)
 public class SignalVariable extends NumberVariable {
@@ -119,7 +100,8 @@ public class SignalVariable extends NumberVariable {
 				IType tenv = env.getExpression().getType().getContentType();
 				IType ton = on.getExpression().getType().getContentType();
 				if ( !tenv.isAssignableFrom(ton) ) {
-					d.warning("'environment:' and 'on:' should be of the same type", IGamlIssue.UNMATCHED_TYPES);
+					d.warning("'environment:' and 'on:' should be of the same type", IGamlIssue.UNMATCHED_TYPES,
+						env.getTarget());
 				}
 				env = on;
 			}
@@ -132,7 +114,8 @@ public class SignalVariable extends NumberVariable {
 			SpeciesDescription s = env.getExpression().getType().getContentType().getSpecies();
 
 			if ( !s.isGrid() ) {
-				d.error(s.getName() + " is not a grid. Signals can only be diffused on grids");
+				d.error(s.getName() + " is not a grid. Signals can only be diffused on grids", IGamlIssue.WRONG_TYPE,
+					env.getTarget());
 			}
 
 			IExpression decay = d.getFacets().getExpr(DECAY);
