@@ -118,7 +118,7 @@ public class GamaSimulator implements ISimulator {
 		this.fileName = var;
 		this.experimentID = exp;
 		this.experimentName = expName;
-		this.model = HeadlessSimulationLoader.loadModel(this.fileName);
+		this.model = HeadlessSimulationLoader.loadModel(new File(this.fileName));
 	}
 
 	@Override

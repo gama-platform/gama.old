@@ -21,18 +21,13 @@ import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
-import msi.gama.lang.gaml.resource.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import com.google.inject.Injector;
 
 public class HeadlessSimulationLoader {
-
-	static Injector injector;
 
 	/**
 	 * 
@@ -51,9 +46,6 @@ public class HeadlessSimulationLoader {
 		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
 			" cannot be created"); }
 
-		// Little Hack
-		// waitLoading(exp1);
-
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 				entry.getValue());
@@ -61,21 +53,9 @@ public class HeadlessSimulationLoader {
 		currentExperiment.createAgent();
 		SimulationAgent sim = currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 		GAMA.controller.newHeadlessExperiment(currentExperiment);
-		// Little
-		// waitLoading(currentExperiment);
 		return currentExperiment;
 	}
 
-	/*
-	 * private static void waitLoading(final ExperimentSpecies exp) {
-	 * System.out.println("Simulation loading...");
-	 * try {
-	 * Thread.sleep(10);
-	 * } catch (InterruptedException e) {
-	 * e.printStackTrace();
-	 * }
-	 * }
-	 */
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
@@ -86,63 +66,40 @@ public class HeadlessSimulationLoader {
 		GuiUtils.setSwtGui(new HeadlessListener());
 
 		try {
+			// We initialize the extensions of Gaml
 			GamaBundleLoader.preBuildContributions();
+			// We initialize XText and Gaml.
+			GamlStandaloneSetup.doSetup();
 		} catch (Exception e1) {
 			throw GamaRuntimeException.create(e1);
 		}
-
-		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-		// System.out.println("Bindings: ");
-		// for ( Map.Entry entry : injector.getBindings().entrySet() ) {
-		// System.out.println(" == " + entry.getKey() + " == " + entry.getValue());
-		// }
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 
-		// SEED HACK
+		// SEED HACK // WARNING AD : Why ?
 		GamaPreferences.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.CORE_SEED.set(1.0);
 		// SEED HACK
-
-		// injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-		// Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
 	}
 
-	public static IModel loadModel(final File myFile) {
-		// System.out.println("coucocu "+myFile.getAbsolutePath());
-		return loadModel(myFile.getAbsolutePath());
-	}
-
-	public static synchronized IModel loadModel(final String fileName) {
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " model is loading...");
-		IModel lastModel = null;
-		ResourceSet rs = new ResourceSetImpl();
-
-		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
-		if ( r != null && r.getErrors().isEmpty() ) {
-			try {
-				// Injector mInjector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-
-				// GamlJavaValidator validator = new GamlJavaValidator(); // .getInstance(GamlJavaValidator.class);
-				List<GamlCompilationError> errors = new ArrayList();
-				lastModel = GamlModelBuilder.getInstance().compile(r, errors);
-				if ( lastModel == null ) {
-					Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(
-						"GAMA cannot build model " + fileName);
-					for ( GamlCompilationError d : errors ) {
-						Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(">> Error " + d.toString());
-					}
+	public static synchronized IModel loadModel(final File myFile) {
+		String fileName = myFile.getAbsolutePath();
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
+		try {
+			List<GamlCompilationError> errors = new ArrayList();
+			IModel model = GAML.getModelFactory().compile(URI.createURI("file:///" + fileName), errors);
+			if ( model == null ) {
+				System.err.println("GAMA cannot build model " + fileName);
+				for ( GamlCompilationError d : errors ) {
+					System.err.println(">> Error " + d.toString());
 				}
-
-			} catch (GamaRuntimeException e1) {
-				throw e1;
-			} catch (Exception e2) {
-				throw new RuntimeException(e2);
 			}
 			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Experiment created ");
-		} else {
-			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Xtext cannot parse model " + fileName);
+			return model;
+
+		} catch (Exception e1) {
+			throw new RuntimeException(e1);
 		}
-		return lastModel;
+
 	}
 
 }
