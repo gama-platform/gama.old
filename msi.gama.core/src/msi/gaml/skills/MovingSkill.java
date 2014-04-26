@@ -65,10 +65,6 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 @skill(name = IKeyword.MOVING_SKILL)
 public class MovingSkill extends Skill {
 
-	public MovingSkill() {
-		java.lang.System.out.println();
-	}
-
 	/**
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException Gets the destination of the agent. The destination is the next
