@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ContainerVariable.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ContainerVariable.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -27,20 +27,41 @@ import msi.gaml.types.IType;
 import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false, doc = @doc("The name of the attribute")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.POINT }, optional = true, doc = @doc(value = "", deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")),
+	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("The initial value of the attribute")),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true, doc = @doc(value = "",
+		deprecated = "Use 'update' instead")),
+	@facet(name = IKeyword.UPDATE,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
+	@facet(name = IKeyword.FUNCTION,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+	@facet(name = IKeyword.CONST,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
+	@facet(name = IKeyword.CATEGORY,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+	@facet(name = IKeyword.PARAMETER,
+		type = IType.LABEL,
+		optional = true,
+		doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.POINT }, optional = true, doc = @doc(value = "",
+		deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.FILL_WITH, type = IType.NONE, optional = true, doc = @doc(value = "", deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")) }, omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
+	@facet(name = IKeyword.FILL_WITH, type = IType.NONE, optional = true, doc = @doc(value = "",
+		deprecated = "Use the operator matrix_with(size, fill_with) or list_with(size, fill_with) instead")) },
+	omissible = IKeyword.NAME)
+@symbol(kind = ISymbolKind.Variable.CONTAINER,
+	with_sequence = false,
+	doc = @doc("Allows to declare an attribute of a species or an experiment"))
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @validator(ContainerVarValidator.class)
 public class ContainerVariable extends Variable {
@@ -95,44 +116,8 @@ public class ContainerVariable extends Variable {
 		}
 	}
 
-	// private GamaPoint size;
-	// private final IExpression sizeExpr;
-	// private final IExpression fillExpr;
-
 	public ContainerVariable(final IDescription sd) {
 		super(sd);
-		// sizeExpr = getFacet(IKeyword.SIZE);
-		// fillExpr = getFacet(IKeyword.FILL_WITH);
 	}
-
-	// @Override
-	// public void initializeWith(final IScope scope, final IAgent owner, final Object v) throws GamaRuntimeException {
-	// super.initializeWith(scope, owner, v);
-	// if ( sizeExpr != null ) {
-	// setSize(scope, owner, scope.evaluate(sizeExpr, owner));
-	// }
-	//
-	// }
-	//
-	// private void setSize(final IScope scope, final IAgent owner, final Object value) throws GamaRuntimeException {
-	// IContainer result = null;
-	// size = value instanceof ILocation ? (GamaPoint) value : new GamaPoint(Cast.asInt(scope, value), 1);
-	// switch (type.id()) {
-	// case IType.MATRIX:
-	// result = GamaMatrixType.with(scope, fillExpr, size);
-	// break;
-	// case IType.LIST: {
-	// result = GamaListType.with(scope, fillExpr, Cast.asInt(scope, value));
-	// }
-	// }
-	// if ( result == null ) { return; }
-	// _setVal(owner, scope, result);
-	// }
-	//
-	// @Override
-	// protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-	// final Object result = type.cast(scope, v, size);
-	// return result;
-	// }
 
 }
