@@ -15,6 +15,7 @@ package msi.gama.lang.gaml.scoping;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import java.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.EGaml;
@@ -296,26 +297,19 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	static void add(final EClass eClass, final String t) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
-		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		// Map<String, String> userData = new HashMap();
-		// TODO Put some doc in it at some point
-		// userData.put("doc", Types.get(t).toString());
 		IEObjectDescription e = EObjectDescription.create(t, stub/* , userData */);
 		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
-		// if ( previous != null ) {
-		// descriptions.get(eClass).put(e.getName(), previous);
-		// }
 	}
 
 	static void add(final EClass eClass, final String t, final OperatorProto o) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
-		// TODO Add the fields definition here
 		stub.setName(t);
-		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc;
+		resources.get(eClass).getContents().add(stub);
+		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+
 		if ( d != null ) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "operator");
 		} else {
@@ -331,7 +325,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
 		// IGamlDescription d = null;
 		Map<String, String> doc;
 		if ( d != null ) {
@@ -349,7 +343,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		IGamlDescription d = DescriptionFactory.getGamlDocumentation(o);
+		IGamlDescription d = GuiUtils.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
 		Map<String, String> doc;
 		if ( d != null ) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
