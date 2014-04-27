@@ -65,30 +65,58 @@ import org.jfree.ui.RectangleInsets;
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */
-	@facet(name = ChartLayerStatement.XRANGE, type = { IType.FLOAT, IType.INT, IType.POINT }, optional = true, doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-	@facet(name = ChartLayerStatement.YRANGE, type = { IType.FLOAT, IType.INT, IType.POINT }, optional = true, doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
-	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+	@facet(name = ChartLayerStatement.XRANGE,
+		type = { IType.FLOAT, IType.INT, IType.POINT },
+		optional = true,
+		doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+	@facet(name = ChartLayerStatement.YRANGE,
+		type = { IType.FLOAT, IType.INT, IType.POINT },
+		optional = true,
+		doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+	@facet(name = IKeyword.POSITION,
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+	@facet(name = IKeyword.SIZE,
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
-	@facet(name = IKeyword.TIMEXSERIES, type = IType.LIST, optional = true, doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
-	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc= @doc("the axis color")),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM, IKeyword.SERIES,
-		IKeyword.PIE, IKeyword.BOX_WHISKER }, optional = true, doc = @doc("the type of chart. It could be histogram, series, xy or pie. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+	@facet(name = IKeyword.TIMEXSERIES,
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("for series charts, change the default time serie (simulation cycle) for an other value.")),
+	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
+	@facet(name = IKeyword.TYPE,
+		type = IType.ID,
+		values = { IKeyword.XY, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER },
+		optional = true,
+		doc = @doc("the type of chart. It could be histogram, series, xy or pie. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
-		IKeyword.BAR }, optional = true), @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
+		IKeyword.BAR }, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
 	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
-	@facet(name = ChartLayerStatement.YTICKUNIT, type = IType.FLOAT, optional = true, doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
-	@facet(name = ChartLayerStatement.XTICKUNIT, type = IType.FLOAT, optional = true, doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
+	@facet(name = ChartLayerStatement.YTICKUNIT,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+	@facet(name = ChartLayerStatement.XTICKUNIT,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) }, omissible = IKeyword.NAME)
-@doc(value="`"+IKeyword.CHART+"` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).", usages = {
-	@usage(value = "The general syntax is:", examples = {
-		@example(value="display chart_display {", isExecutable=false),
-		@example(value="   chart \"chart name\" type: series [additional options] {", isExecutable=false),
-		@example(value="      [Set of data, datalists statements]", isExecutable=false),
-		@example(value="   }", isExecutable=false),
-		@example(value="}", isExecutable=false)})}, 
-	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) },
+	omissible = IKeyword.NAME)
+@doc(value = "`" +
+	IKeyword.CHART +
+	"` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).",
+	usages = { @usage(value = "The general syntax is:", examples = {
+		@example(value = "display chart_display {", isExecutable = false),
+		@example(value = "   chart \"chart name\" type: series [additional options] {", isExecutable = false),
+		@example(value = "      [Set of data, datalists statements]", isExecutable = false),
+		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
+	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
+		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
@@ -424,6 +452,36 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		plot.setDataset((DefaultCategoryDataset) dataset);
 
 		chart.removeLegend();
+		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+		IExpression expr = getFacet(YRANGE);
+		IExpression expr2 = getFacet(YTICKUNIT);
+		if ( expr != null ) {
+			Object range = expr.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					yAxis.setFixedAutoRange(r);
+					yAxis.setAutoRangeMinimumSize(r);
+				}
+				// yAxis.setAutoRangeIncludesZero(false);
+			} else if ( range instanceof GamaPoint ) {
+				yAxis.setRange(((GamaPoint) range).getX(), ((GamaPoint) range).getY());
+			}
+		}
+		if ( expr2 != null ) {
+			Object range = expr2.value(scope);
+			// Double range = Cast.asFloat(scope, expr.value(scope));
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				if ( r > 0 ) {
+					yAxis.setTickUnit(new NumberTickUnit(r));
+				}
+			}
+		}
+
 		final CategoryAxis axis = plot.getDomainAxis();
 		Double gap = Cast.asFloat(scope, getFacetValue(scope, IKeyword.GAP, 0.01));
 		// ((BarRenderer) plot.getRenderer()).setItemMargin(gap);
