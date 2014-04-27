@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,25 +11,56 @@
  **********************************************************************************************/
 package msi.gama.headless.core;
 
-import java.util.Calendar;
-import java.util.Vector;
-
+import java.util.*;
 import msi.gama.headless.common.ISimulator;
 import msi.gama.headless.runtime.GamaSimulator;
 import msi.gama.headless.xml.Writer;
 
 public class Simulation {
+
+	// Temporary solution for getting the variables
+	public static enum OutputType {
+		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
+	}
+
+	public static class ListenedVariable {
+
+		String name;
+		int frameRate;
+		OutputType type;
+		Object value;
+
+		public ListenedVariable(final String name, final int frameRate, final OutputType type) {
+			this.name = name;
+			this.frameRate = frameRate;
+			this.type = type;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setValue(final Object obj) {
+			value = obj;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+
+		public OutputType getType() {
+			return type;
+		}
+	}
+
 	/**
 	 * Variable listeners
 	 */
-	private String[] listenedVariable;
-	private Object [] results;
-	private Integer [] listenedVariableFrameRate;
-	private Vector<Parameter> parameters;
-	private Vector<Output> outputs;
+	private ListenedVariable[] listenedVariables;
+	private List<Parameter> parameters;
+	private List<Output> outputs;
 	private Writer outputFile;
 	private final String sourcePath;
-	//private String driver;
 	private final String experimentName;
 
 	/**
@@ -41,25 +72,22 @@ public class Simulation {
 	 * current step
 	 */
 	private int step;
-	
+
 	/**
 	 * id of current experiment
 	 */
 	private String experimentID;
 	public int maxStep;
-	
-	public void setBufferedWriter(Writer w)
-	{
-		this.outputFile=w;
+
+	public void setBufferedWriter(final Writer w) {
+		this.outputFile = w;
 	}
-	
-	public void addParameter(Parameter p)
-	{
+
+	public void addParameter(final Parameter p) {
 		this.parameters.add(p);
 	}
 
-	public void addOutput(Output p)
-	{
+	public void addOutput(final Output p) {
 		this.outputs.add(p);
 	}
 
@@ -69,126 +97,105 @@ public class Simulation {
 		this.maxStep = clone.maxStep;
 		this.experimentName = clone.experimentName;
 		this.parameters = clone.parameters;
-		this.listenedVariable = clone.listenedVariable;
-		this.listenedVariableFrameRate = clone.listenedVariableFrameRate;
+		this.listenedVariables = clone.listenedVariables;
 		this.setStep(clone.getStep());
 		this.outputs = clone.outputs;
 	}
 
-	public Simulation(String expId, String sourcePath, String exp, int max) {
+	public Simulation(final String expId, final String sourcePath, final String exp, final int max) {
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.maxStep = max;
 		this.experimentName = exp;
 		initialize();
 	}
-	
-	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException 
-	{
-		
+
+	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+
 		this.load();
-		this.listenedVariable=new String[outputs.size()];
-		this.listenedVariableFrameRate=new Integer[outputs.size()];
-		this.results=new Object[outputs.size()];
-	
-		
-		for(int i=0; i<parameters.size();i++)
-		{
-			Parameter temp=parameters.get(i);
+		this.listenedVariables = new ListenedVariable[outputs.size()];
+
+		for ( int i = 0; i < parameters.size(); i++ ) {
+			Parameter temp = parameters.get(i);
 			this.simulator.setParameterWithName(temp.getName(), temp.getValue());
-	
-		}
-		for(int i=0; i<outputs.size();i++)
-		{
-			Output temp=outputs.get(i);
-			this.listenedVariable[i]=temp.getName();
-			this.listenedVariableFrameRate[i]=temp.getFrameRate();
 		}
 		this.setup();
 		simulator.initialize();
+		for ( int i = 0; i < outputs.size(); i++ ) {
+			Output temp = outputs.get(i);
+			this.listenedVariables[i] =
+				new ListenedVariable(temp.getName(), temp.getFrameRate(), simulator.getTypeOf(temp.getName()));
+		}
+
 	}
 
-	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException
-	{
-		System.setProperty("user.dir",this.sourcePath);
-		this.simulator=new GamaSimulator(); 
+	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		System.setProperty("user.dir", this.sourcePath);
+		this.simulator = new GamaSimulator();
 		this.simulator.load(this.sourcePath, this.experimentID, this.experimentName);
 	}
-	
-	public void setup()
-	{
-		this.step=0;
+
+	public void setup() {
+		this.step = 0;
 	}
 
 	public void play() {
-		if (this.outputFile != null)
+		if ( this.outputFile != null ) {
 			this.outputFile.writeSimulationHeader(this);
+		}
 		System.out.println("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
-		int affDelay = maxStep < 100 ? 1 : maxStep /100;
-		for(;step<maxStep;step++)
-		{
-			if(step%affDelay == 0)
+		int affDelay = maxStep < 100 ? 1 : maxStep / 100;
+		for ( ; step < maxStep; step++ ) {
+			if ( step % affDelay == 0 ) {
 				System.out.print(".");
+			}
 			nextStepDone();
 		}
-		long endDate= Calendar.getInstance().getTimeInMillis();
+		long endDate = Calendar.getInstance().getTimeInMillis();
 		this.simulator.free();
-		if(this.outputFile!=null)
+		if ( this.outputFile != null ) {
 			this.outputFile.close();
-		System.out.println("\nSimulation duration: "+ (endDate - startdate)+"ms");
+		}
+		System.out.println("\nSimulation duration: " + (endDate - startdate) + "ms");
 	}
-	
-	public void nextStepDone()
-	{
+
+	public void nextStepDone() {
 		simulator.nextStep(this.step);
-		this.exportData();
+		this.exportVariables();
 	}
-	
+
 	public String getExperimentID() {
 		return experimentID;
 	}
 
-	public void setExperimentID(String experimentID) {
+	public void setExperimentID(final String experimentID) {
 		this.experimentID = experimentID;
 	}
-	private void exportVariable()
-	{
-		
-		int size=this.listenedVariable.length;
-		
-		for(int i=0;i<size;i++)
-		{
-			int frameRate=this.listenedVariableFrameRate[i].intValue();
-			if((this.step%frameRate)==0)
-			{
-				String vars=this.listenedVariable[i];
-				Object obj=this.simulator.getVariableWithName(vars);
-				this.results[i]=obj;
-			} 
+
+	private void exportVariables() {
+		// TODO: listenedVariable should contain objects that know "what they are" (simulation outputs, experiment outputs, simulation variables, experiment variables, etc.)
+		int size = this.listenedVariables.length;
+
+		for ( int i = 0; i < size; i++ ) {
+			ListenedVariable v = this.listenedVariables[i];
+			if ( this.step % v.frameRate == 0 ) {
+				simulator.retrieveOutputValue(v);
+			}
 		}
-		if(this.outputFile!=null)
-			this.outputFile.writeResultStep(this.step,this.listenedVariable,this.results);
-		
+		if ( this.outputFile != null ) {
+			this.outputFile.writeResultStep(this.step, this.listenedVariables);
+		}
+
 	}
-		
-	/**
-	 * Export simulation data to database...
-	 */
-	private void exportData()
-	{
-		exportVariable();
-	}
-	
-	public void initialize()
-	{
-		parameters=new Vector<Parameter>();
-		outputs=new Vector<Output>();
-				
-		if(simulator!=null)
-		{
+
+	public void initialize() {
+		parameters = new Vector<Parameter>();
+		outputs = new Vector<Output>();
+
+		if ( simulator != null ) {
 			simulator.free();
-			simulator=null;
+			simulator = null;
 		}
 
 	}
@@ -197,7 +204,7 @@ public class Simulation {
 		return step;
 	}
 
-	public void setStep(int step) {
+	public void setStep(final int step) {
 		this.step = step;
 	}
 

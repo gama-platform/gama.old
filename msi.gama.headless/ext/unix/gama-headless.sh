@@ -1,9 +1,7 @@
 inputFile=$1
 outputFile=$2
 memory=2048m
-clear
 
-echo "\n\n\n\n\n"
 echo "******************************************************************"
 echo "* GAMA version 1.6.1                                             *"
 echo "* http://gama-platform.googlecode.com                            *"
@@ -15,9 +13,8 @@ if [[  ( $1 == "-?" || $1 == "--help" || $1 == "" || $2 == "") ]]
 then
 echo "Help:"
 echo " command: sh gama-headless.sh [opt] xmlInputFile outputDirectory "
-echo "\n option:"
+echo " option:"
 echo " -m to define the memory allocated by the simulation"
-echo "\n\n\n\n\n"
 exit
 fi
 
@@ -32,18 +29,15 @@ fi
 if [[ ! ( -f $inputFile ) ]]
 then
     echo "The input file does not exist. Please check the path of your input file"
-    echo "\n\n\n\n\n"
     exit
 fi
 
 if [[  ( -d $outputFile ) ]]
 then
 echo "The output directory already exist. Please check the path of your output directory"
-    echo "\n\n\n\n\n"
 exit
 fi
 
-echo "\n\n\n\n\n"
 
 export  LIB_HOME=./lib
 export gamaDirectory=../plugins

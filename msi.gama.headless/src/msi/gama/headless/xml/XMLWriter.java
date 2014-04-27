@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'XMLWriter.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'XMLWriter.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,8 @@
 package msi.gama.headless.xml;
 
 import java.io.*;
-import msi.gama.headless.core.Simulation;
+import msi.gama.headless.core.*;
+import msi.gama.headless.core.Simulation.ListenedVariable;
 
 public class XMLWriter implements Writer {
 
@@ -41,10 +42,11 @@ public class XMLWriter implements Writer {
 	}
 
 	@Override
-	public void writeResultStep(final int step, final String[] names, final Object[] values) {
+	public void writeResultStep(final int step, final ListenedVariable[] vars) {
 		StringBuffer sb = new StringBuffer("\t<Step id='").append(step).append("' >\n");
-		for ( int i = 0; i < values.length; i++ ) {
-			sb.append("\t\t<Variable name='").append(names[i]).append("' value='").append(values[i]).append("'/>\n");
+		for ( int i = 0; i < vars.length; i++ ) {
+			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' value='").append(vars[i].getValue())
+				.append("'/>\n");
 		}
 		sb.append("\t</Step>\n");
 		try {
