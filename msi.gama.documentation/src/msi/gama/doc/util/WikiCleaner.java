@@ -112,9 +112,11 @@ public class WikiCleaner {
 	 	SAXBuilder builder = new SAXBuilder();      	
        	Document docTOC = (Document) builder.build(Constants.TOC_FILE);	
        	
+       	String srcFolder = (Constants.ONLINE) ? Constants.SVN_FOLDER : Constants.WIKI_FOLDER;
+       	
        	for(Element e : docTOC.getRootElement().getChildren()){
        		if("chapter".equals(e.getName())){
-	       		String fileToClean = Constants.SVN_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
+	       		String fileToClean = srcFolder + File.separator + e.getAttributeValue("file") + ".wiki";
 	       		String destFile = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
 	       		cleanFile(fileToClean, destFile);
        		}

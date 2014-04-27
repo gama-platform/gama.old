@@ -39,7 +39,7 @@ Operators in GAML are purely functional, i.e. they are guaranteed to not have an
 The priority of operators determines, in the case of complex expressions composed of several operators, which one(s) will be evaluated first.
 
 GAML follows in general the traditional priorities attributed to arithmetic, boolean, comparison operators, with some twists. Namely:
-  * the constructor operators, like '::', used to compose pairs of operands, have the lowest priority of all operators (e.g. 'a &gt; b :: b &gt; c' will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, '[a &gt; 10, b &gt; 5]' will return a list of boolean values]
+  * the constructor operators, like '::', used to compose pairs of operands, have the lowest priority of all operators (e.g. 'a &gt; b :: b &gt; c' will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, '[a &gt; 10, b &gt; 5]' will return a list of boolean values.
   * it is followed by the '?:' operator, the functional if-else (e.g. ' a &gt; b ? a + 10 : a - 10' will return the result of the if-else).
   * next are the logical operators, 'and' and 'or' (e.g. 'a &gt; b or b &gt; c' will return the value of the test)
   * next are the comparison operators (i.e. '&gt;', '&lt;', '&lt;=', '&gt;=', '=', '!=')
@@ -121,7 +121,7 @@ Note that due to the fact that actions are written by modelers, the general func
     
 == <xsl:call-template name="checkName"/> == 
   	<xsl:if test="@alternativeNameOf">
- Same signification as [#<xsl:value-of select="@alternativeNameOf"/><xsl:text> </xsl:text><xsl:value-of select="@alternativeNameOf"/>] operator.
+Same signification as [#<xsl:value-of select="@alternativeNameOf"/><xsl:text> </xsl:text><xsl:value-of select="@alternativeNameOf"/>] operator.
   	</xsl:if>
   	
   	<xsl:if test="combinaisonIO[node()]">

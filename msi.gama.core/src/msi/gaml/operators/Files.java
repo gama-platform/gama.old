@@ -90,9 +90,9 @@ public class Files {
 	}
 
 	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT, category = IOperatorCategory.FILE)
-	@doc(value = "opens an existing repository", usages = @usage(" If the specified string does not refer to an existing repository, an exception is risen."), examples = {
+	@doc(value = "opens an existing repository", usages = @usage("If the specified string does not refer to an existing repository, an exception is risen."), examples = {
 		@example(value = "folder(\"../includes/\")", raises = "error"),
-		@example(value = "let dirT type: file value: folder(\"../includes/\");", isExecutable = false),
+		@example(value = "file dirT <- folder(\"../includes/\");", isExecutable = false),
 		@example(value = "				// dirT represents the repository \"../includes/\""),
 		@example(value = "				// dirT.contents here contains the list of the names of included files") }, see = {
 		"file", "new_folder" })

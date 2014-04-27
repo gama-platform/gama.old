@@ -12,8 +12,10 @@
 
 &lt;wiki:toc max_depth="1" /&gt;
 
-= &lt;font color="blue"&gt; Statements by categories &lt;/font&gt; =
+= &lt;font color="blue"&gt; Statements by kinds &lt;/font&gt; =
+</xsl:text> <xsl:call-template name="buildStatementsByKind"/> <xsl:text>
 
+= &lt;font color="blue"&gt; Statements by embedment &lt;/font&gt; =
 </xsl:text> <xsl:call-template name="buildStatementsByEmbeded"/> <xsl:text>
 
 = &lt;font color="blue"&gt; General syntax &lt;/font&gt; =
@@ -36,11 +38,13 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 }}}
 
 [#Table_of_Contents Top of the page] 
+
+= &lt;font color="blue"&gt; Statements &lt;/font&gt; =
 	</xsl:text>
 
 	<xsl:for-each select="doc/statements/statement">
     	<xsl:sort select="@name" />
-= &lt;font color="blue"&gt; <xsl:value-of select="@name"/> &lt;/font&gt; = 	
+== &lt;font color="blue"&gt; <xsl:value-of select="@name"/> &lt;/font&gt; == 	
 		<xsl:call-template name="buildFacets"/>
 		<xsl:call-template name="buildEmbedments"/>
 		<xsl:call-template name="buildDefinition"/>		
@@ -50,9 +54,9 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 
 <xsl:template name="buildEmbedments"> 
 <xsl:variable name="nameStatGlobal" select="@name"/>
-== Embedments ==
-  * The <xsl:value-of select="@name"/> statement can be embedded into: <xsl:for-each select="inside/symbols/symbol"><xsl:value-of select="text()"/>, </xsl:for-each><xsl:for-each select="inside/kinds/kind"><xsl:value-of select="text()"/>, </xsl:for-each>
+=== Embedments ===
   * The <xsl:value-of select="@name"/> statement is of type: *<xsl:value-of select="@kind"/>*
+  * The <xsl:value-of select="@name"/> statement can be embedded into: <xsl:for-each select="inside/symbols/symbol"><xsl:value-of select="text()"/>, </xsl:for-each><xsl:for-each select="inside/kinds/kind"><xsl:value-of select="text()"/>, </xsl:for-each>
   * The <xsl:value-of select="@name"/> statement embeds statements: <xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>			
@@ -63,7 +67,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 
     
 <xsl:template name="buildFacets"> 
-== Facets ==
+=== Facets ===
 		<xsl:for-each select="facets/facet">
 		<xsl:sort select="@optional"/>			
 		<xsl:sort select="@omissible" order="descending"/>	
@@ -74,18 +78,18 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
   			<xsl:otherwise>
   * <xsl:value-of select="@name"/>
   			</xsl:otherwise>
-  		</xsl:choose> (<xsl:value-of select="@type"/>)<xsl:if test="@omissible = 'true'"> (omissible) </xsl:if>: <xsl:value-of select="documentation/result"/> 
+  		</xsl:choose> (<xsl:value-of select="@type"/>)<xsl:if test="@omissible = 'true'">, (omissible) </xsl:if><xsl:if test="@values"><xsl:value-of select="@values"/></xsl:if>: <xsl:value-of select="documentation/result"/> 
 		</xsl:for-each>
 </xsl:template>
 
  <xsl:template name="buildDefinition"> 
  	<xsl:if test="documentation[text()]"> 
  	
-== Definition == 
+=== Definition === 
 
 <xsl:value-of select="documentation/result"/>
 
-== Usages ==
+=== Usages ===
 <xsl:for-each select="documentation/usages/usage">
   * <xsl:value-of select="@descUsageElt"/> 
 <xsl:if test="examples[node()]">
@@ -112,13 +116,28 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 [#Table_of_Contents Top of the page] 
 	</xsl:template>
 
+<xsl:template name="buildStatementsByKind">
+	<xsl:for-each select="/doc/statementsKinds/kind">
+		<xsl:sort select="@symbol"/>
+		<xsl:variable name="kindGlobal" select="@symbol"/> 			
+		<xsl:text>
+  * *</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>*
+    * </xsl:text>
+		<xsl:for-each select="/doc/statements/statement"> 
+			<xsl:sort select="@name" />
+				<xsl:if test="@kind = $kindGlobal "> 
+					<xsl:text>[#</xsl:text> <xsl:value-of select="@name"/> <xsl:text> </xsl:text> <xsl:value-of select="@name"/> <xsl:text>],  </xsl:text> 
+				</xsl:if>							
+		</xsl:for-each>    	
+	</xsl:for-each>
+</xsl:template>
 
 <xsl:template name="buildStatementsByEmbeded">
 	<xsl:for-each select="/doc/insideStatementKinds/insideStatementKind">
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="kindGlobal" select="@symbol"/> 
 		<xsl:text>
-  * </xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>
+  * *</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>*
     * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
@@ -136,7 +155,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="symbolGlobal" select="@symbol"/> 
 		<xsl:text>
-  * </xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text>
+  * *</xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text>*
     * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />

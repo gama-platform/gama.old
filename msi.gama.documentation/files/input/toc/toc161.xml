@@ -4,34 +4,49 @@
 -->
 <toc title="Full Documentation of GAMA 1.6.1">
 		<chapter name="Introduction to GAMA 1.6.1" file="GAMAIntro161"/>		
-<!--	<part name="Interface Guide"/>	
-		<chapter name="Interface Guide" file="InterfaceGuide16"/>	
+	<part name="Interface Guide"/>	
+<!--		<chapter name="Interface Guide" file="InterfaceGuide16"/>	
 		<chapter name="Inspectors and Agent browsers" file="Inspector16"/>		
-		<chapter name="Guide for OpenGL interface" file="OpenGLInterface16"/>			
+		<chapter name="Guide for OpenGL interface" file="OpenGLInterface16"/>			-->
 	<part name="Modeling Guide"/>		
-		<chapter name="Introduction to the Modeling Guide" file="ModelingGuide16"/>					
-		<chapter name="Model Sections" file="Sections16"/>	
-		<chapter name="Species Definition" file="Species16"/>  
-		<chapter name="Variables definition" file="Variables16"/>				
+<!--		<chapter name="Introduction to the Modeling Guide" file="ModelingGuide16"/>			-->		
+		<chapter name="Model Sections" file="Sections161"/>	
+		<chapter name="Species Definition" file="Species161"/>  
+		<chapter name="Built-In Variables" file="BuiltInVariables161"/>	
+		
+<!--		<chapter name="Variables definition" file="Variables16"/>				
 		<chapter name="Actions" file="ActionGAMA16"/>
 		<chapter name="Behaviors" file="Behaviors15"/>
-		<chapter name="Aspects" file="Aspect16"/>		
-		<chapter name="Skills" file="Skills16"/>	
-		<chapter name="Grid" file="Grid16"/>		
+		<chapter name="Aspects" file="Aspect16"/>	-->	
+		<chapter name="Skills" file="Skills161"/>
+		<chapter name="Built-in Species" file="SpeciesBuiltIn161"/>	
+			
+<!--		<chapter name="Grid" file="Grid16"/>		
 		<chapter name="Built-in Agents" file="BuiltInAgents16"/>	
 		<chapter name="Built-in Items" file="BuiltIn16"/>	
-		<chapter name="Built-in Variables" file="BuiltInVariables16"/>				
+		<chapter name="Built-in Variables" file="BuiltInVariables161"/>				
 		<chapter name="Experiment definition" file="experiment16"/>	
 		<chapter name="GUI" file="output16"/>	
 		<chapter name="Batch" file="batch16"/> -->
 	<part name="GAML language guide"/>				
 	<!--	<chapter name="Data Types" file="Types16"/>	-->
 		<chapter name="Statements" file="Statements161"/>	
+		<chapter name="Statements" file="Expressions161"/>	
+		<chapter name="Literals" file="Literals161"/>
+		<chapter name="Pseudos-variables" file="Pseudo161"/>								
+		<chapter name="Statements" file="Constants161"/>	
+			
 		<chapter name="Operators" file="Operators161"/>	
+	
 	<!--	<chapter name="Keywords" file="Keywords161"/>	-->
-<!--	<part name="Extensions of GAML"/>
-		<chapter name="Gama 3D" file="Gama3D16"/>	
-		<chapter name="User Control" file="UserControl16"/>	
+		<chapter name="Experiments" file="experiment161"/>	
+		<chapter name="Batch" file="batch161"/>	
+		<chapter name="Output" file="output161"/>	
+	
+	<part name="Extensions of GAML"/>
+		<chapter name="Extensions" file="Extensions161"/>	
+		<chapter name="Gama 3D" file="Gama3D161"/>	
+<!--		<chapter name="User Control" file="UserControl16"/>	
 		<chapter name="Database access" file="Ext_DB_SQL16"/>	
 		<chapter name="Calling R language" file="CallingR16"/>	
 		<chapter name="Equations models" file="EquationPresentation16"/>	

@@ -45,7 +45,7 @@ public class MainBeforePython {
 				SVNUtils.checkoutSVNGamaDoc();	
 				System.out.println("Checkout Wiki Files from GAMA SVN................DONE");	
 			} else {
-				System.out.println("NO CHECKOUT DONE");
+				System.out.println("NO CHECKOUT DONE  ... then will copy all files if availables from the WIKI folder");
 			}
 			System.out.print("Select and clean some wiki files.................");
 			WikiCleaner.selectWikiFiles();
@@ -59,6 +59,8 @@ public class MainBeforePython {
 		System.out.println("This is the end of the step 1. ");
 		System.out.println("Please run the python file 'statwiki.py' in the python folder with arguments: --build --d=../../files/gen/wiki2wiki ");
 
+		// System.exec"--build --d=../../files/gen/wiki2wiki"
+		
 	}
 	
 	public static void launchCommandLineGama(String path, String inpFile, String outDir) {

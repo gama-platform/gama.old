@@ -34,9 +34,24 @@ import org.jdom2.output.XMLOutputter;
 
 public class UnifyDoc {
 
-	private static String[] tabEltXML = {XMLElements.OPERATORS_CATEGORIES,XMLElements.OPERATORS,XMLElements.SKILLS,XMLElements.SPECIESS,XMLElements.STATEMENTS,XMLElements.CONSTANTS_CATEGORIES,XMLElements.CONSTANTS,XMLElements.INSIDE_STAT_KINDS,XMLElements.INSIDE_STAT_SYMBOLS};	
+	private static String[] tabEltXML = {
+		XMLElements.OPERATORS_CATEGORIES,
+		XMLElements.OPERATORS,
+		XMLElements.SKILLS,
+		XMLElements.SPECIESS,
+		XMLElements.STATEMENTS,
+		XMLElements.CONSTANTS_CATEGORIES,
+		XMLElements.CONSTANTS,
+		XMLElements.INSIDE_STAT_KINDS,
+		XMLElements.INSIDE_STAT_SYMBOLS,
+		XMLElements.STATEMENT_KINDS};	
 	// among tebEltXML, categories do not need to have an additional projectName attribute
-	private static String[] tabCategoriesEltXML = {XMLElements.OPERATORS_CATEGORIES,XMLElements.CONSTANTS_CATEGORIES,XMLElements.INSIDE_STAT_KINDS,XMLElements.INSIDE_STAT_SYMBOLS};	
+	private static String[] tabCategoriesEltXML = {
+		XMLElements.OPERATORS_CATEGORIES,
+		XMLElements.CONSTANTS_CATEGORIES,
+		XMLElements.INSIDE_STAT_KINDS,
+		XMLElements.INSIDE_STAT_SYMBOLS,
+		XMLElements.STATEMENT_KINDS};	
 	
 	public static void unify() throws IOException, JDOMException {
 		HashMap<File,String> hmFilesPackages = getMapFiles(".");

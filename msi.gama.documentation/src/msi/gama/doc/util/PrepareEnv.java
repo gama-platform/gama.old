@@ -30,7 +30,9 @@ public class PrepareEnv {
 		
 		if(genFolder.exists()) {FileUtils.deleteDirectory(genFolder);}
 		if(testFolder.exists()) {FileUtils.deleteDirectory(testFolder);}
+		if(svnFolder.exists()) {FileUtils.deleteDirectory(svnFolder);}
 
+		svnFolder.mkdir();
 		genFolder.mkdir();	
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
 		new File(Constants.XML2WIKI_FOLDER).mkdirs();
@@ -38,15 +40,7 @@ public class PrepareEnv {
 		new File(Constants.HTML2XML_FOLDER).mkdirs();
 		new File(Constants.PDF_FOLDER).mkdirs();
 		new File(Constants.TEST_FOLDER).mkdirs();
-	
-		if(online){
-			if(svnFolder.exists()) {FileUtils.deleteDirectory(svnFolder);}
-			svnFolder.mkdir();
-		}
-		
-//		createCleanFolder(Constants.XML2WIKI_FOLDER);
-//		createCleanFolder(Constants.WIKI2WIKI_FOLDER);
-		
+
 		copyPythonTemplate();
 	}
 	
@@ -73,5 +67,4 @@ public class PrepareEnv {
 	public static void main(String[] args) throws IOException {
 		prepareDocumentation(Constants.ONLINE);
 	}	
-	
 }

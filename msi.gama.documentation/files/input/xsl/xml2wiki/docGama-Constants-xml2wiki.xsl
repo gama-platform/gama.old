@@ -39,7 +39,7 @@ float foo &lt;- 1 #centimeter;
 
 In that case, the numeric value of foo will be automatically translated to 0.01 (meter). It is recommended to always use float as the type of the variables that might be qualified by units (otherwise, for example in the previous case, they might be truncated to 0). 
 Several units names are allowed as qualifiers of numeric variables. 
-These units represent the basic metric and US units. Composed and derived units (like velocity, acceleration, special volumes or surfaces) can be obtained by combining these units using the * and / operators. For instance:
+These units represent the basic metric and US units. Composed and derived units (like velocity, acceleration, special volumes or surfaces) can be obtained by combining these units using the `*` and / operators. For instance:
 {{{
 float one_kmh &lt;- 1 °km / °h const: true;
 float one_millisecond &lt;-1 °sec / 1000;
