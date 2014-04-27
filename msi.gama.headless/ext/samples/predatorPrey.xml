@@ -8,5 +8,6 @@
     <Output id="1" name="main_display" framerate="5" />
     <Output id="2" name="number_of_preys" framerate="1" />
     <Output id="3" name="number_of_predators" framerate="1" />
+    <Output id="4" name="duration" framerate="1" />
   </Outputs>
 </Simulation>

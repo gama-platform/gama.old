@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Writer.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'Writer.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,11 +11,14 @@
  **********************************************************************************************/
 package msi.gama.headless.xml;
 
-import msi.gama.headless.core.Simulation;
-
+import msi.gama.headless.core.*;
+import msi.gama.headless.core.Simulation.ListenedVariable;
 
 public interface Writer {
+
 	public void writeSimulationHeader(Simulation s);
-	public void writeResultStep(int step,String[] names, Object[] values);
+
+	public void writeResultStep(int step, ListenedVariable[] vars);
+
 	public void close();
 }
