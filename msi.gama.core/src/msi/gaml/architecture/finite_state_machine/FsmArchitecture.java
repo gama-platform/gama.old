@@ -15,14 +15,12 @@ import gnu.trove.map.hash.THashMap;
 import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -117,9 +115,9 @@ public class FsmArchitecture extends ReflexArchitecture {
 	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == state ) { return; }
-		if ( currentState != null && currentState.hasExitActions() ) {
-			agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);
-		}
+		// if ( currentState != null && currentState.hasExitActions() ) {
+		// agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);
+		// }
 		agent.setAttribute(IKeyword.ENTER, true);
 		agent.setAttribute(IKeyword.CURRENT_STATE, state);
 	}

@@ -16,12 +16,12 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
@@ -43,38 +43,40 @@ import msi.gaml.types.IType;
 
 @symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true, doc = @doc("specifies whether the state is the initial one (default value = false)")),
-	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL, optional = true, doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state")) }, combinations = {
-	@combination({ IKeyword.NAME, FsmStateStatement.FINAL }), @combination({ IKeyword.NAME }),
-	@combination({ IKeyword.NAME, FsmStateStatement.INITIAL }) }, omissible = IKeyword.NAME)
+@facets(value = {
+	@facet(name = FsmStateStatement.INITIAL,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("specifies whether the state is the initial one (default value = false)")),
+	@facet(name = FsmStateStatement.FINAL,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state")) },
+	combinations = { @combination({ IKeyword.NAME, FsmStateStatement.FINAL }), @combination({ IKeyword.NAME }),
+		@combination({ IKeyword.NAME, FsmStateStatement.INITIAL }) },
+	omissible = IKeyword.NAME)
 @validator(StateValidator.class)
-@doc(value="A state, like a reflex, can contains several statements that can be executed at each time step by the agent.", usages = {
-	@usage(value="Here is an exemple integrating 2 states and the statements in the FSM architecture:", examples = {
-		@example(value="	state s_init initial: true {", isExecutable=false),
-		@example(value="		enter { write \"Enter in\" + state; }", isExecutable=false),
-		@example(value="			write \"Enter in\" + state;", isExecutable=false),
-		@example(value="		}", isExecutable=false),
-		@example(value="", isExecutable=false),		
-		@example(value="		write state;", isExecutable=false),
-		@example(value="", isExecutable=false),		
-		@example(value="		transition to: s1 when: (cycle > 2) {", isExecutable=false),
-		@example(value="			write \"transition s_init -> s1\";", isExecutable=false),
-		@example(value="		}", isExecutable=false),	
-		@example(value="", isExecutable=false),
-		@example(value="		exit {", isExecutable=false),
-		@example(value="			write \"EXIT from \"+state;", isExecutable=false),
-		@example(value="		}", isExecutable=false),
-		@example(value="	}", isExecutable=false),
-		@example(value="	state s1 {", isExecutable=false),
-		@example(value="", isExecutable=false),
-		@example(value="	enter {write 'Enter in '+state;}", isExecutable=false),
-		@example(value="", isExecutable=false),
-		@example(value="	write state;", isExecutable=false),
-		@example(value="", isExecutable=false),		
-		@example(value="	exit {write 'EXIT from '+state;}", isExecutable=false),		
-		@example(value="}", isExecutable=false)	})},
-	see={FsmStateStatement.ENTER,FsmStateStatement.EXIT,FsmTransitionStatement.TRANSITION})
+@doc(value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.",
+	usages = { @usage(value = "Here is an exemple integrating 2 states and the statements in the FSM architecture:",
+		examples = { @example(value = "	state s_init initial: true {", isExecutable = false),
+			@example(value = "		enter { write \"Enter in\" + state; }", isExecutable = false),
+			@example(value = "			write \"Enter in\" + state;", isExecutable = false),
+			@example(value = "		}", isExecutable = false), @example(value = "", isExecutable = false),
+			@example(value = "		write state;", isExecutable = false), @example(value = "", isExecutable = false),
+			@example(value = "		transition to: s1 when: (cycle > 2) {", isExecutable = false),
+			@example(value = "			write \"transition s_init -> s1\";", isExecutable = false),
+			@example(value = "		}", isExecutable = false), @example(value = "", isExecutable = false),
+			@example(value = "		exit {", isExecutable = false),
+			@example(value = "			write \"EXIT from \"+state;", isExecutable = false),
+			@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false),
+			@example(value = "	state s1 {", isExecutable = false), @example(value = "", isExecutable = false),
+			@example(value = "	enter {write 'Enter in '+state;}", isExecutable = false),
+			@example(value = "", isExecutable = false), @example(value = "	write state;", isExecutable = false),
+			@example(value = "", isExecutable = false),
+			@example(value = "	exit {write 'EXIT from '+state;}", isExecutable = false),
+			@example(value = "}", isExecutable = false) }) }, see = { FsmStateStatement.ENTER, FsmStateStatement.EXIT,
+		FsmTransitionStatement.TRANSITION })
 public class FsmStateStatement extends AbstractStatementSequence {
 
 	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,
@@ -195,30 +197,23 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgentScope();
 		if ( scope.interrupted() ) { return false; }
+		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
-		if ( memory == null ) {
+		if ( enter || memory == null ) {
 			memory = new THashMap();
 			agent.setAttribute(STATE_MEMORY, memory);
-		}
-		for ( final Map.Entry<String, Object> entry : memory.entrySet() ) {
-			scope.addVarWithValue(entry.getKey(), entry.getValue());
-		}
-		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
-		if ( enter ) {
-			final FsmStateStatement stateToExit = (FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
-			if ( stateToExit != null ) {
-				stateToExit.haltOn(scope);
+		} else {
+			for ( final Map.Entry<String, Object> entry : memory.entrySet() ) {
+				scope.addVarWithValue(entry.getKey(), entry.getValue());
 			}
-			if ( agent.dead() ) { return false; }
-			memory.clear();
-			scope.removeAllVars();
+		}
+		if ( enter ) {
 			if ( enterActions != null ) {
 				enterActions.executeOn(scope);
 			}
-			agent.setAttribute(IKeyword.STATE_TO_EXIT, null);
+			if ( agent.dead() ) { return false; }
 			agent.setAttribute(ENTER, false);
 		}
-		if ( agent.dead() ) { return false; }
 		return true;
 	}
 
@@ -231,8 +226,9 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		for ( int i = 0; i < transitionsSize; i++ ) {
 			final FsmTransitionStatement transition = transitions.get(i);
 
-			if ( /* agent.isEnabled(futureState) && */transition.evaluatesTrueOn(scope) ) {
+			if ( transition.evaluatesTrueOn(scope) ) {
 				final String futureState = transition.getName();
+				haltOn(scope);
 				transition.executeOn(scope);
 				scope.setAgentVarValue(agent, STATE, futureState);
 				return futureState;

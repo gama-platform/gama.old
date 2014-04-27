@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'FsmTransitionStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'FsmTransitionStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,14 +13,14 @@ package msi.gaml.architecture.finite_state_machine;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,18 +34,26 @@ import msi.gaml.types.IType;
 
 @symbol(name = FsmTransitionStatement.TRANSITION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.BEHAVIOR })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("a condition to be fulfilled to have a transition to another given state")),
-	@facet(name = FsmTransitionStatement.TO, type = IType.ID, optional = false, doc = @doc("the identifier of the next state")) }, omissible = IKeyword.WHEN)
+@facets(value = {
+	@facet(name = IKeyword.WHEN,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("a condition to be fulfilled to have a transition to another given state")),
+	@facet(name = FsmTransitionStatement.TO,
+		type = IType.ID,
+		optional = false,
+		doc = @doc("the identifier of the next state")) }, omissible = IKeyword.WHEN)
 @validator(TransitionValidator.class)
-@doc(value="In an FSM architecture, `"+FsmTransitionStatement.TRANSITION+"` specifies the next state of the life cycle. The transition occurs when the condition is fulfilled. The embedded statements are executed when the transition is triggered.", usages = {
-	@usage(value="In the following example, the transition is executed when after 2 steps:", examples = {
-		@example(value="	state s_init initial: true {", isExecutable=false),
-		@example(value="		write state;", isExecutable=false),
-		@example(value="		transition to: s1 when: (cycle > 2) {", isExecutable=false),
-		@example(value="			write \"transition s_init -> s1\";", isExecutable=false),
-		@example(value="		}", isExecutable=false),
-		@example(value="	}", isExecutable=false)})},
-	see={FsmStateStatement.ENTER,FsmStateStatement.STATE,FsmStateStatement.EXIT})
+@doc(value = "In an FSM architecture, `" +
+	FsmTransitionStatement.TRANSITION +
+	"` specifies the next state of the life cycle. The transition occurs when the condition is fulfilled. The embedded statements are executed when the transition is triggered.",
+	usages = { @usage(value = "In the following example, the transition is executed when after 2 steps:", examples = {
+		@example(value = "	state s_init initial: true {", isExecutable = false),
+		@example(value = "		write state;", isExecutable = false),
+		@example(value = "		transition to: s1 when: (cycle > 2) {", isExecutable = false),
+		@example(value = "			write \"transition s_init -> s1\";", isExecutable = false),
+		@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false) }) },
+	see = { FsmStateStatement.ENTER, FsmStateStatement.STATE, FsmStateStatement.EXIT })
 public class FsmTransitionStatement extends AbstractStatementSequence {
 
 	private static final List<String> states = Arrays.asList(FsmStateStatement.STATE, IKeyword.USER_PANEL);
@@ -88,7 +96,7 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		if ( getFacet(IKeyword.WHEN) != null ) {
 			when = getFacet(IKeyword.WHEN);
 		} else {
-			when = new ConstantExpression(true);
+			when = IExpressionFactory.TRUE_EXPR;
 		}
 	}
 

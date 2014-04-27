@@ -334,7 +334,6 @@ public interface IKeyword {
 	public static final String STACK = "stack";
 	public static final String START_SOUND = "start_sound";
 	public static final String STATE = "state";
-	public static final String STATE_TO_EXIT = "stateToExit";
 	public static final String STATES = "states";
 	public static final String STEP = "step";
 	public static final String STOP_SOUND = "stop_sound";
