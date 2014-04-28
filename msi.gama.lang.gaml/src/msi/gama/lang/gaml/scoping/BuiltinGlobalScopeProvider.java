@@ -61,8 +61,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
-	static XtextResourceSet rs = IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(
-		URI.createFileURI("dummy.gaml")).get(XtextResourceSet.class);
+	static XtextResourceSet rs = new XtextResourceSet();
 
 	public static class AllImportUriGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 

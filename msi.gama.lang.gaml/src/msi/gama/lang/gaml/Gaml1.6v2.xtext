@@ -21,7 +21,7 @@ ModelBlock returns Block:
 ;
 
 Import:
-	'import' importURI=STRING; // must be named importURI
+	'import' importURI=STRING ("as" name=Valid_ID)?; // must be named importURI
 
 /**
  * Global statements
@@ -79,7 +79,7 @@ S_Return:
  * DECLARATIONS
  */
 S_Declaration:
-	S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Loop ;
+	=>S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
 
 S_Reflex:
 	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
@@ -406,7 +406,7 @@ TypeDefinition:
 
 
 VarDefinition:
-	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import);
 
 ActionDefinition:
 	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;

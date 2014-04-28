@@ -167,13 +167,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cImportKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cImportURIAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cImportURISTRINGTerminalRuleCall_1_0 = (RuleCall)cImportURIAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cAsKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cNameAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cNameValid_IDParserRuleCall_2_1_0 = (RuleCall)cNameAssignment_2_1.eContents().get(0);
 		
 		//// must be named importURI
 		//Import:
-		//	"import" importURI=STRING;
+		//	"import" importURI=STRING ("as" name=Valid_ID)?;
 		public ParserRule getRule() { return rule; }
 
-		//"import" importURI=STRING
+		//"import" importURI=STRING ("as" name=Valid_ID)?
 		public Group getGroup() { return cGroup; }
 
 		//"import"
@@ -184,6 +188,18 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//STRING
 		public RuleCall getImportURISTRINGTerminalRuleCall_1_0() { return cImportURISTRINGTerminalRuleCall_1_0; }
+
+		//("as" name=Valid_ID)?
+		public Group getGroup_2() { return cGroup_2; }
+
+		//"as"
+		public Keyword getAsKeyword_2_0() { return cAsKeyword_2_0; }
+
+		//name=Valid_ID
+		public Assignment getNameAssignment_2_1() { return cNameAssignment_2_1; }
+
+		//Valid_ID
+		public RuleCall getNameValid_IDParserRuleCall_2_1_0() { return cNameValid_IDParserRuleCall_2_1_0; }
 	}
 
 	public class S_SectionElements extends AbstractParserRuleElementFinder {
@@ -837,9 +853,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class S_DeclarationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "S_Declaration");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cS_SpeciesParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cS_ReflexParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cS_DefinitionParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cS_DefinitionParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cS_SpeciesParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cS_ReflexParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cS_ActionParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		private final RuleCall cS_VarParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
 		private final RuleCall cS_LoopParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
@@ -847,20 +863,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		/// *
 		// * DECLARATIONS
 		// * / S_Declaration:
-		//	S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Loop;
+		//	S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop;
 		public ParserRule getRule() { return rule; }
 
-		//S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Loop
+		//=> S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop
 		public Alternatives getAlternatives() { return cAlternatives; }
 
+		//=> S_Definition
+		public RuleCall getS_DefinitionParserRuleCall_0() { return cS_DefinitionParserRuleCall_0; }
+
 		//S_Species
-		public RuleCall getS_SpeciesParserRuleCall_0() { return cS_SpeciesParserRuleCall_0; }
+		public RuleCall getS_SpeciesParserRuleCall_1() { return cS_SpeciesParserRuleCall_1; }
 
 		//S_Reflex
-		public RuleCall getS_ReflexParserRuleCall_1() { return cS_ReflexParserRuleCall_1; }
-
-		//S_Definition
-		public RuleCall getS_DefinitionParserRuleCall_2() { return cS_DefinitionParserRuleCall_2; }
+		public RuleCall getS_ReflexParserRuleCall_2() { return cS_ReflexParserRuleCall_2; }
 
 		//S_Action
 		public RuleCall getS_ActionParserRuleCall_3() { return cS_ActionParserRuleCall_3; }
@@ -4382,37 +4398,45 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class VarDefinitionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "VarDefinition");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cS_DeclarationParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cImportParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final Alternatives cAlternatives_1 = (Alternatives)cAlternatives.eContents().get(1);
-		private final RuleCall cModelParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
-		private final RuleCall cArgumentDefinitionParserRuleCall_1_1 = (RuleCall)cAlternatives_1.eContents().get(1);
-		private final RuleCall cDefinitionFacetParserRuleCall_1_2 = (RuleCall)cAlternatives_1.eContents().get(2);
-		private final RuleCall cVarFakeDefinitionParserRuleCall_1_3 = (RuleCall)cAlternatives_1.eContents().get(3);
+		private final RuleCall cS_DeclarationParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cAlternatives_1.eContents().get(1);
+		private final RuleCall cModelParserRuleCall_1_1_0 = (RuleCall)cAlternatives_1_1.eContents().get(0);
+		private final RuleCall cArgumentDefinitionParserRuleCall_1_1_1 = (RuleCall)cAlternatives_1_1.eContents().get(1);
+		private final RuleCall cDefinitionFacetParserRuleCall_1_1_2 = (RuleCall)cAlternatives_1_1.eContents().get(2);
+		private final RuleCall cVarFakeDefinitionParserRuleCall_1_1_3 = (RuleCall)cAlternatives_1_1.eContents().get(3);
 		
 		//VarDefinition:
-		//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+		//	Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition));
 		public ParserRule getRule() { return rule; }
 
-		//=> S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition)
+		//=> Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition))
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//=> S_Declaration
-		public RuleCall getS_DeclarationParserRuleCall_0() { return cS_DeclarationParserRuleCall_0; }
+		//=> Import
+		public RuleCall getImportParserRuleCall_0() { return cImportParserRuleCall_0; }
 
-		//Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition
+		//=> S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition)
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
+		//=> S_Declaration
+		public RuleCall getS_DeclarationParserRuleCall_1_0() { return cS_DeclarationParserRuleCall_1_0; }
+
+		//Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+
 		//Model
-		public RuleCall getModelParserRuleCall_1_0() { return cModelParserRuleCall_1_0; }
+		public RuleCall getModelParserRuleCall_1_1_0() { return cModelParserRuleCall_1_1_0; }
 
 		//ArgumentDefinition
-		public RuleCall getArgumentDefinitionParserRuleCall_1_1() { return cArgumentDefinitionParserRuleCall_1_1; }
+		public RuleCall getArgumentDefinitionParserRuleCall_1_1_1() { return cArgumentDefinitionParserRuleCall_1_1_1; }
 
 		//DefinitionFacet
-		public RuleCall getDefinitionFacetParserRuleCall_1_2() { return cDefinitionFacetParserRuleCall_1_2; }
+		public RuleCall getDefinitionFacetParserRuleCall_1_1_2() { return cDefinitionFacetParserRuleCall_1_1_2; }
 
 		//VarFakeDefinition
-		public RuleCall getVarFakeDefinitionParserRuleCall_1_3() { return cVarFakeDefinitionParserRuleCall_1_3; }
+		public RuleCall getVarFakeDefinitionParserRuleCall_1_1_3() { return cVarFakeDefinitionParserRuleCall_1_1_3; }
 	}
 
 	public class ActionDefinitionElements extends AbstractParserRuleElementFinder {
@@ -4945,7 +4969,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//// must be named importURI
 	//Import:
-	//	"import" importURI=STRING;
+	//	"import" importURI=STRING ("as" name=Valid_ID)?;
 	public ImportElements getImportAccess() {
 		return (pImport != null) ? pImport : (pImport = new ImportElements());
 	}
@@ -5091,7 +5115,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	/// *
 	// * DECLARATIONS
 	// * / S_Declaration:
-	//	S_Species | S_Reflex | S_Definition | S_Action | S_Var | S_Loop;
+	//	S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop;
 	public S_DeclarationElements getS_DeclarationAccess() {
 		return (pS_Declaration != null) ? pS_Declaration : (pS_Declaration = new S_DeclarationElements());
 	}
@@ -5926,7 +5950,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//VarDefinition:
-	//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+	//	Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition));
 	public VarDefinitionElements getVarDefinitionAccess() {
 		return (pVarDefinition != null) ? pVarDefinition : (pVarDefinition = new VarDefinitionElements());
 	}

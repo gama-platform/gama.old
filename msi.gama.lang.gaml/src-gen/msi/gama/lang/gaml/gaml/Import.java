@@ -2,7 +2,6 @@
  */
 package msi.gama.lang.gaml.gaml;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Import extends EObject
+public interface Import extends VarDefinition
 {
   /**
    * Returns the value of the '<em><b>Import URI</b></em>' attribute.

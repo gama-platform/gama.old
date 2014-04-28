@@ -377,7 +377,29 @@ ruleImport returns [EObject current=null]
 	    }
 
 )
-))
+)(	otherlv_2='as' 
+    {
+    	newLeafNode(otherlv_2, grammarAccess.getImportAccess().getAsKeyword_2_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getImportAccess().getNameValid_IDParserRuleCall_2_1_0()); 
+	    }
+		lv_name_3_0=ruleValid_ID		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getImportRule());
+	        }
+       		set(
+       			$current, 
+       			"name",
+        		lv_name_3_0, 
+        		"Valid_ID");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))?)
 ;
 
 
@@ -1627,33 +1649,33 @@ ruleS_Declaration returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(
+(((	ruleS_Definition)=>
     { 
-        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_SpeciesParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_DefinitionParserRuleCall_0()); 
     }
-    this_S_Species_0=ruleS_Species
+    this_S_Definition_0=ruleS_Definition
     { 
-        $current = $this_S_Species_0.current; 
+        $current = $this_S_Definition_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+)
+    |
+    { 
+        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_SpeciesParserRuleCall_1()); 
+    }
+    this_S_Species_1=ruleS_Species
+    { 
+        $current = $this_S_Species_1.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_ReflexParserRuleCall_1()); 
+        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_ReflexParserRuleCall_2()); 
     }
-    this_S_Reflex_1=ruleS_Reflex
+    this_S_Reflex_2=ruleS_Reflex
     { 
-        $current = $this_S_Reflex_1.current; 
-        afterParserOrEnumRuleCall();
-    }
-
-    |
-    { 
-        newCompositeNode(grammarAccess.getS_DeclarationAccess().getS_DefinitionParserRuleCall_2()); 
-    }
-    this_S_Definition_2=ruleS_Definition
-    { 
-        $current = $this_S_Definition_2.current; 
+        $current = $this_S_Reflex_2.current; 
         afterParserOrEnumRuleCall();
     }
 
@@ -7658,33 +7680,43 @@ ruleVarDefinition returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(((	ruleS_Declaration)=>
+(((	ruleImport)=>
     { 
-        newCompositeNode(grammarAccess.getVarDefinitionAccess().getS_DeclarationParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getImportParserRuleCall_0()); 
     }
-    this_S_Declaration_0=ruleS_Declaration
+    this_Import_0=ruleImport
     { 
-        $current = $this_S_Declaration_0.current; 
+        $current = $this_Import_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+)
+    |(((	ruleS_Declaration)=>
+    { 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getS_DeclarationParserRuleCall_1_0()); 
+    }
+    this_S_Declaration_1=ruleS_Declaration
+    { 
+        $current = $this_S_Declaration_1.current; 
         afterParserOrEnumRuleCall();
     }
 )
     |(
     { 
-        newCompositeNode(grammarAccess.getVarDefinitionAccess().getModelParserRuleCall_1_0()); 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getModelParserRuleCall_1_1_0()); 
     }
-    this_Model_1=ruleModel
+    this_Model_2=ruleModel
     { 
-        $current = $this_Model_1.current; 
+        $current = $this_Model_2.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getVarDefinitionAccess().getArgumentDefinitionParserRuleCall_1_1()); 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getArgumentDefinitionParserRuleCall_1_1_1()); 
     }
-    this_ArgumentDefinition_2=ruleArgumentDefinition
+    this_ArgumentDefinition_3=ruleArgumentDefinition
     { 
-        $current = $this_ArgumentDefinition_2.current; 
+        $current = $this_ArgumentDefinition_3.current; 
         afterParserOrEnumRuleCall();
     }
 
@@ -7694,24 +7726,24 @@ ruleDefinitionFacetKey
 )
 )=>
     { 
-        newCompositeNode(grammarAccess.getVarDefinitionAccess().getDefinitionFacetParserRuleCall_1_2()); 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getDefinitionFacetParserRuleCall_1_1_2()); 
     }
-    this_DefinitionFacet_3=ruleDefinitionFacet
+    this_DefinitionFacet_4=ruleDefinitionFacet
     { 
-        $current = $this_DefinitionFacet_3.current; 
+        $current = $this_DefinitionFacet_4.current; 
         afterParserOrEnumRuleCall();
     }
 )
     |
     { 
-        newCompositeNode(grammarAccess.getVarDefinitionAccess().getVarFakeDefinitionParserRuleCall_1_3()); 
+        newCompositeNode(grammarAccess.getVarDefinitionAccess().getVarFakeDefinitionParserRuleCall_1_1_3()); 
     }
-    this_VarFakeDefinition_4=ruleVarFakeDefinition
+    this_VarFakeDefinition_5=ruleVarFakeDefinition
     { 
-        $current = $this_VarFakeDefinition_4.current; 
+        $current = $this_VarFakeDefinition_5.current; 
         afterParserOrEnumRuleCall();
     }
-))
+)))
 ;
 
 

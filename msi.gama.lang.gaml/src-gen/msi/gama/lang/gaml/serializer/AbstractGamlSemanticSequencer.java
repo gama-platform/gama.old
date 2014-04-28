@@ -530,7 +530,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.IMPORT:
-				if(context == grammarAccess.getImportRule()) {
+				if(context == grammarAccess.getGamlDefinitionRule() ||
+				   context == grammarAccess.getImportRule() ||
+				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_Import(context, (Import) semanticObject); 
 					return; 
 				}
@@ -1521,17 +1523,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     importURI=STRING
+	 *     (importURI=STRING name=Valid_ID?)
 	 */
 	protected void sequence_Import(EObject context, Import semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.IMPORT__IMPORT_URI) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.IMPORT__IMPORT_URI));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getImportAccess().getImportURISTRINGTerminalRuleCall_1_0(), semanticObject.getImportURI());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

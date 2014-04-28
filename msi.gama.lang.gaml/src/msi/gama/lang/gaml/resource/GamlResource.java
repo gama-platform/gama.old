@@ -184,11 +184,13 @@ public class GamlResource extends LazyLinkingResource {
 		final Model model = (Model) getContents().get(0);
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
-			final URI iu = URI.createURI(importUri).resolve(getURI());
-			if ( EcoreUtil2.isValidUri(this, iu) ) {
-				final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
-				if ( ir != null ) {
-					imports.put(ir, imp);
+			if ( importUri != null ) {
+				final URI iu = URI.createURI(importUri).resolve(getURI());
+				if ( EcoreUtil2.isValidUri(this, iu) ) {
+					final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+					if ( ir != null ) {
+						imports.put(ir, imp);
+					}
 				}
 			}
 		}

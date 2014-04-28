@@ -25,14 +25,25 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A QuadTree allows to quickly find an object on a two-dimensional space.
  * <p>
- * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides the space covered by
- * the rectangle of its parent node into four smaller rectangles covering the upper left, upper right, lower left and
- * lower right quadrant of the parent rectangle.
+ * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides the space covered by the rectangle of its parent node into four smaller rectangles covering the
+ * upper left, upper right, lower left and lower right quadrant of the parent rectangle.
  * 
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
  * @version $Id: QuadTree.java 717 2010-11-21 12:30:57Z rawcoder $
  */
 public class GamaQuadTree implements ISpatialIndex {
+
+	static private Color[] colors;
+	{
+		colors = new Color[32];
+		colors[15] = Color.DARK_GRAY;
+		for ( int i = 14; i >= 0; i-- ) {
+			colors[i] = colors[i + 1].brighter();
+		}
+		for ( int i = 16; i < 32; i++ ) {
+			colors[i] = colors[i - 1].darker();
+		}
+	}
 
 	private final QuadNode root;
 	private final static int maxCapacity = 20;
@@ -132,7 +143,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		private final Envelope bounds;
 		private final double hw, hh, minx, miny, halfx, halfy;
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered (by insertion order) **
-		private final Set<IAgent> objects = new TLinkedHashSet();
+		private final Set<IAgent> objects = /* new TLinkedHashSet(); */new LinkedHashSet(maxCapacity + 5);
 		private volatile int size = 0;
 		private volatile boolean isLeaf = true;
 		private QuadNode ne;
@@ -376,18 +387,6 @@ public class GamaQuadTree implements ISpatialIndex {
 						se.findIntersects(scope, source, r, result);
 					}
 				}
-			}
-		}
-
-		private Color[] colors;
-		{
-			colors = new Color[32];
-			colors[15] = Color.DARK_GRAY;
-			for ( int i = 14; i >= 0; i-- ) {
-				colors[i] = colors[i + 1].brighter();
-			}
-			for ( int i = 16; i < 32; i++ ) {
-				colors[i] = colors[i - 1].darker();
 			}
 		}
 

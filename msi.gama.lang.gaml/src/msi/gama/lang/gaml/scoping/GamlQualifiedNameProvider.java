@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlQualifiedNameProvider.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the 
+ * 
+ * 'GamlQualifiedNameProvider.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -99,6 +99,12 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 
 	QualifiedName qualifiedName(final Model o) {
 		return QualifiedName.create(o.getName() + "_model");
+	}
+
+	QualifiedName qualifiedName(final Import i) {
+		String name = i.getName();
+		if ( !Strings.isEmpty(name) ) { return QualifiedName.create(name); }
+		return null;
 	}
 
 }

@@ -166,7 +166,9 @@ public class SymbolProto implements IGamlDescription, INamed {
 		}
 
 		sb.append("<b><br/>Facets :</b><ul>");
-		for ( FacetProto f : this.getPossibleFacets().values() ) {
+		List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
+		Collections.sort(protos);
+		for ( FacetProto f : protos ) {
 			if ( !f.internal ) {
 				sb.append("<li>").append(f.getDocumentation());
 			}

@@ -116,6 +116,8 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Import import_ = (Import)theEObject;
         T result = caseImport(import_);
+        if (result == null) result = caseVarDefinition(import_);
+        if (result == null) result = caseGamlDefinition(import_);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }

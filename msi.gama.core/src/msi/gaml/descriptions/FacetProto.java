@@ -17,7 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.JavaWriter;
 import msi.gaml.types.*;
 
-public class FacetProto implements IGamlDescription {
+public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	public final String name;
 	public String deprecated = null;
@@ -150,5 +150,14 @@ public class FacetProto implements IGamlDescription {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Method compareTo()
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final FacetProto o) {
+		return getName().compareTo(o.getName());
 	}
 }

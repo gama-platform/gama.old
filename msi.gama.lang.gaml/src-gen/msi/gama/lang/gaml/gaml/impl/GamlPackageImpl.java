@@ -2232,6 +2232,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     actionEditorEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getVarDefinition());
+    importEClass.getESuperTypes().add(this.getVarDefinition());
     s_GlobalEClass.getESuperTypes().add(this.getStatement());
     s_EntitiesEClass.getESuperTypes().add(this.getStatement());
     s_EnvironmentEClass.getESuperTypes().add(this.getStatement());

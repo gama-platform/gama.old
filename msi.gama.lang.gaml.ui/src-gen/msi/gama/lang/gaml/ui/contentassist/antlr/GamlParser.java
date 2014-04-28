@@ -106,6 +106,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getTypeDefinitionAccess().getAlternatives(), "rule__TypeDefinition__Alternatives");
 					put(grammarAccess.getVarDefinitionAccess().getAlternatives(), "rule__VarDefinition__Alternatives");
 					put(grammarAccess.getVarDefinitionAccess().getAlternatives_1(), "rule__VarDefinition__Alternatives_1");
+					put(grammarAccess.getVarDefinitionAccess().getAlternatives_1_1(), "rule__VarDefinition__Alternatives_1_1");
 					put(grammarAccess.getActionDefinitionAccess().getAlternatives(), "rule__ActionDefinition__Alternatives");
 					put(grammarAccess.getValid_IDAccess().getAlternatives(), "rule__Valid_ID__Alternatives");
 					put(grammarAccess.getTerminalExpressionAccess().getAlternatives(), "rule__TerminalExpression__Alternatives");
@@ -114,6 +115,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getModelBlockAccess().getGroup(), "rule__ModelBlock__Group__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
+					put(grammarAccess.getImportAccess().getGroup_2(), "rule__Import__Group_2__0");
 					put(grammarAccess.getS_GlobalAccess().getGroup(), "rule__S_Global__Group__0");
 					put(grammarAccess.getS_EntitiesAccess().getGroup(), "rule__S_Entities__Group__0");
 					put(grammarAccess.getS_EnvironmentAccess().getGroup(), "rule__S_Environment__Group__0");
@@ -252,6 +254,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelAccess().getBlockAssignment_3(), "rule__Model__BlockAssignment_3");
 					put(grammarAccess.getModelBlockAccess().getStatementsAssignment_1(), "rule__ModelBlock__StatementsAssignment_1");
 					put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
+					put(grammarAccess.getImportAccess().getNameAssignment_2_1(), "rule__Import__NameAssignment_2_1");
 					put(grammarAccess.getS_GlobalAccess().getKeyAssignment_0(), "rule__S_Global__KeyAssignment_0");
 					put(grammarAccess.getS_GlobalAccess().getFacetsAssignment_1(), "rule__S_Global__FacetsAssignment_1");
 					put(grammarAccess.getS_GlobalAccess().getBlockAssignment_2_0(), "rule__S_Global__BlockAssignment_2_0");
