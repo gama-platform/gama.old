@@ -104,10 +104,6 @@
     <genClasses ecoreClass="Gaml.ecore#//VariableRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//VariableRef/ref"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//SpeciesRef">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//SpeciesRef/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//SpeciesRef/parameter"/>
-    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//TypeInfo">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeInfo/first"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeInfo/second"/>

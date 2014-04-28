@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class SyntacticFactory {
 
+	public static final String SPECIES_VAR = "species_var";
+
 	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren,
 		final Object ... data) {
 		return create(keyword, null, statement, withChildren, data);
@@ -43,7 +45,13 @@ public class SyntacticFactory {
 		} else if ( keyword.equals(SPECIES) || keyword.equals(GRID) ) {
 			return new SyntacticSpeciesElement(keyword, facets, statement);
 		} else if ( keyword.equals(EXPERIMENT) ) { return new SyntacticExperimentElement(keyword, facets, statement); }
-		if ( !withChildren ) { return new SyntacticSingleElement(keyword, facets, statement); }
+		if ( !withChildren ) {
+			if ( keyword.equals(SPECIES_VAR) ) {
+				return new SyntacticSingleElement(SPECIES_VAR, facets, statement);
+			} else {
+				return new SyntacticSingleElement(keyword, facets, statement);
+			}
+		}
 		return new SyntacticComposedElement(keyword, facets, statement);
 	}
 }

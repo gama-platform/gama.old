@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IDescriptionValidator.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IDescriptionValidator.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -48,7 +48,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 			// IType receiverType = expr1.getType();
 			final IType assignedType = expr2.getType();
 
-			// AD: 6/9/13 special case for int and float (see Issue 590)
+			// AD: 6/9/13 special case for int and float (see Issue 590) and for empty lists and maps
 			if ( expr2 != IExpressionFactory.NIL_EXPR &&
 				!assignedType.getType().isTranslatableInto(receiverType.getType()) ||
 				Types.intFloatCase(receiverType, assignedType) ) {
@@ -74,6 +74,16 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 					// if ( expr2 instanceof MapExpression && ((MapExpression) expr2).keysArray().length == 0 ) {
 					// return; }
 				}
+				// AD: 28/4/14 special case for variables of type species<xxx>
+				if ( expr2 != IExpressionFactory.NIL_EXPR && receiverType.getType().id() == IType.SPECIES ) {
+					if ( !contentType.isTranslatableInto(receiverContentType) ) {
+						context.error("Impossible assignment: " + contentType.getSpeciesName() +
+							" is not a sub-species of " + receiverContentType.getSpeciesName(), IGamlIssue.WRONG_TYPE,
+							assigned.getTarget());
+						return;
+					}
+				}
+
 				// Special case for maps and lists of pairs (Issue 846)
 				if ( receiverType.id() == IType.MAP && assignedType.id() == IType.LIST &&
 					contentType.id() == IType.PAIR ) {

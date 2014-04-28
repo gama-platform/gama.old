@@ -51,6 +51,9 @@ public class Types {
 		TypeTree<IType> hierarchy = buildHierarchy();
 		for ( TypeNode<IType> node : hierarchy.build(Order.PRE_ORDER) ) {
 			IType type = node.getData();
+			// if ( type.toString().equals("species") ) {
+			// GuiUtils.debug("Types.init;");
+			// }
 			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
 			Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
 			type.setFieldGetters(vars);

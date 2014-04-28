@@ -134,11 +134,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( op == null ) { return null; }
 		IExpression expr = compile(e);
 		if ( expr == null ) { return null; }
-		if( op.equals("gamlfile") || op.equals("gaml_file")){
-			if(GAML.getModelFactory().getCoModel(expr.toString())==null){
-				IModel mymodel=  ((GamlExpressionFactory) GAML.getExpressionFactory())
-						.getParser().createModelFromFile(expr.toString());
-				GAML.getModelFactory().addCoModel(expr.toString(),(ModelDescription) mymodel.getDescription());				
+		if ( op.equals("gamlfile") || op.equals("gaml_file") ) {
+			if ( GAML.getModelFactory().getCoModel(expr.toString()) == null ) {
+				IModel mymodel =
+					((GamlExpressionFactory) GAML.getExpressionFactory()).getParser().createModelFromFile(
+						expr.toString());
+				GAML.getModelFactory().addCoModel(expr.toString(), (ModelDescription) mymodel.getDescription());
 			}
 		}
 		if ( op.equals(MY) ) {
@@ -216,6 +217,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		if ( primary == null ) {
 			primary = object.getRef().getName();
+		} else if ( primary.equals(SyntacticFactory.SPECIES_VAR) ) {
+			primary = SPECIES;
 		}
 
 		IType t = getContext().getTypeNamed(primary);
@@ -240,16 +243,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
 	}
 
-	IType fromSpeciesRef(final SpeciesRef object) {
-		IType t = Types.get(IKeyword.SPECIES);
-		TypeInfo parameter = object.getParameter();
-		if ( parameter == null ) { return t; }
-		TypeRef first = (TypeRef) parameter.getFirst();
-		if ( first == null ) { return t; }
-		TypeRef second = (TypeRef) parameter.getSecond();
-		if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
-		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
-	}
+	// IType fromSpeciesRef(final SpeciesRef object) {
+	// IType t = Types.get(IKeyword.SPECIES);
+	// TypeInfo parameter = object.getParameter();
+	// if ( parameter == null ) { return t; }
+	// TypeRef first = (TypeRef) parameter.getFirst();
+	// if ( first == null ) { return t; }
+	// TypeRef second = (TypeRef) parameter.getSecond();
+	// if ( second == null ) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
+	// return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
+	// }
 
 	private IExpression binary(final String op, final IExpression left, final Expression e2) {
 		if ( left == null ) { return null; }
@@ -554,11 +557,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return factory.createTypeExpression(t);
 	}
 
-	@Override
-	public IExpression caseSpeciesRef(final SpeciesRef object) {
-		IType t = fromSpeciesRef(object);
-		return factory.createTypeExpression(t);
-	}
+	//
+	// @Override
+	// public IExpression caseSpeciesRef(final SpeciesRef object) {
+	// IType t = fromSpeciesRef(object);
+	// return factory.createTypeExpression(t);
+	// }
 
 	@Override
 	public IExpression caseEquationRef(final EquationRef object) {
@@ -994,7 +998,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// System.out.println("Experiment created ");
 		return lastModel;
 	}
-	
+
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
 		System.out.println(fileName + " model is loading...");
@@ -1024,7 +1028,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// FIXME Experiment default no longer exists. Needs to specify one name
 		// GAMA.controller.newExperiment(IKeyword.DEFAULT, lastModel);
-//		System.out.println("Experiment created ");
+		// System.out.println("Experiment created ");
 		return lastModel;
 	}
 

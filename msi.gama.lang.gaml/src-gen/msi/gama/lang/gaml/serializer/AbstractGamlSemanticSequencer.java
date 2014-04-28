@@ -55,7 +55,6 @@ import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
-import msi.gama.lang.gaml.gaml.SpeciesRef;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringEvaluator;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -906,12 +905,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 					return; 
 				}
 				else break;
-			case GamlPackage.SPECIES_REF:
-				if(context == grammarAccess.getSpeciesRefRule()) {
-					sequence_SpeciesRef(context, (SpeciesRef) semanticObject); 
-					return; 
-				}
-				else break;
 			case GamlPackage.STATEMENT:
 				if(context == grammarAccess.getExperimentStatementRule()) {
 					sequence_S_1Expr_Facets_BlockOrEnd_S_Output_experimentStatement(context, (Statement) semanticObject); 
@@ -1298,7 +1291,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     ((type=TypeRef | type=SpeciesRef) name=Valid_ID default=Expression?)
+	 *     (type=TypeRef name=Valid_ID default=Expression?)
 	 */
 	protected void sequence_ArgumentDefinition(EObject context, ArgumentDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1894,15 +1887,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (name='species' parameter=TypeInfo?)
-	 */
-	protected void sequence_SpeciesRef(EObject context, SpeciesRef semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (toto=ID expr=Expression)
 	 */
 	protected void sequence_StringEvaluator(EObject context, StringEvaluator semanticObject) {
@@ -2010,7 +1994,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (ref=[TypeDefinition|ID] parameter=TypeInfo?)
+	 *     ((ref=[TypeDefinition|ID] parameter=TypeInfo?) | parameter=TypeInfo)
 	 */
 	protected void sequence_TypeRef(EObject context, TypeRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

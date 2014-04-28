@@ -49,8 +49,7 @@ public class ParametricType implements IContainerType {
 
 	/**
 	 * Method cast()
-	 * @see msi.gaml.types.IType#cast(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, msi.gaml.types.IType,
-	 *      msi.gaml.types.IType)
+	 * @see msi.gaml.types.IType#cast(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, msi.gaml.types.IType, msi.gaml.types.IType)
 	 */
 	@Override
 	public IContainer cast(final IScope scope, final Object obj, final Object param, final IType kt, final IType ct)
@@ -317,6 +316,7 @@ public class ParametricType implements IContainerType {
 	public String toString() {
 		if ( type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER &&
 			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
+		if ( type.id() == IType.SPECIES ) { return type.toString() + "<subspecies of " + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
 	}
 

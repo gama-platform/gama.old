@@ -356,15 +356,6 @@ public interface GamlFactory extends EFactory
   VariableRef createVariableRef();
 
   /**
-   * Returns a new object of class '<em>Species Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Species Ref</em>'.
-   * @generated
-   */
-  SpeciesRef createSpeciesRef();
-
-  /**
    * Returns a new object of class '<em>Type Info</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

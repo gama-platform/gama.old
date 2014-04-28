@@ -90,7 +90,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArgumentDefinition" eSuperTypes="#//VarDefinition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Expression"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="default" eType="#//Expression"
         containment="true"/>
@@ -124,11 +124,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VariableRef" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//VarDefinition"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SpeciesRef">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" eType="#//TypeInfo"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeInfo">
     <eStructuralFeatures xsi:type="ecore:EReference" name="first" eType="#//Expression"

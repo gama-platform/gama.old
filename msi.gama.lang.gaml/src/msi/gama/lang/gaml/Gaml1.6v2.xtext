@@ -85,7 +85,7 @@ S_Reflex:
 	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
 
 S_Definition:
-	tkey=TypeRef (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+	tkey=(TypeRef) (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
 S_Action returns S_Definition:
 	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
@@ -202,7 +202,7 @@ ActionArguments:
 	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
 
 ArgumentDefinition:
-	type=(TypeRef | SpeciesRef) name=Valid_ID ('<-' default=Expression)?;
+	type=(TypeRef) name=Valid_ID ('<-' default=Expression)?;
 
 	/**
  * Facets
@@ -378,7 +378,7 @@ VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
 TypeRef returns Expression:
-	{TypeRef} ref=[TypeDefinition|ID] parameter=TypeInfo? ;
+	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) ;
 
 SpeciesRef:
 	name="species" parameter=TypeInfo?;

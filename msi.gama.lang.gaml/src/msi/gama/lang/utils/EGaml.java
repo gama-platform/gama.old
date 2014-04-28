@@ -16,6 +16,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
+import msi.gaml.compilation.SyntacticFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -102,7 +103,15 @@ public class EGaml {
 		@Override
 		public String caseTypeRef(final TypeRef object) {
 			String s = NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
-			return s.split("<")[0];
+
+			if ( s.contains("<") ) {
+				s = s.split("<")[0];
+				// Special case for the 'species<xxx>' case
+				if ( s.equals("species") ) {
+					s = SyntacticFactory.SPECIES_VAR;
+				}
+			}
+			return s;
 		}
 
 		@Override

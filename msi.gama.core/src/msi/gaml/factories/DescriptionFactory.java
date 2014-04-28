@@ -162,7 +162,11 @@ public class DescriptionFactory {
 		if ( VAR_KEYWORDS_PROTOS.containsKey(s) ) { return; }
 		final SymbolProto p = KINDS_PROTOS.get(kind);
 		if ( p != null ) {
-			VAR_KEYWORDS_PROTOS.put(s, p);
+			if ( s.equals("species") ) {
+				VAR_KEYWORDS_PROTOS.put(SyntacticFactory.SPECIES_VAR, p);
+			} else {
+				VAR_KEYWORDS_PROTOS.put(s, p);
+			}
 		}
 	}
 

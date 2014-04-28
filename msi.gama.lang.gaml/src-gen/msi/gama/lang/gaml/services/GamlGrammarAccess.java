@@ -2254,9 +2254,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ArgumentDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Alternatives cTypeAlternatives_0_0 = (Alternatives)cTypeAssignment_0.eContents().get(0);
-		private final RuleCall cTypeTypeRefParserRuleCall_0_0_0 = (RuleCall)cTypeAlternatives_0_0.eContents().get(0);
-		private final RuleCall cTypeSpeciesRefParserRuleCall_0_0_1 = (RuleCall)cTypeAlternatives_0_0.eContents().get(1);
+		private final RuleCall cTypeTypeRefParserRuleCall_0_0 = (RuleCall)cTypeAssignment_0.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameValid_IDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
@@ -2265,23 +2263,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDefaultExpressionParserRuleCall_2_1_0 = (RuleCall)cDefaultAssignment_2_1.eContents().get(0);
 		
 		//ArgumentDefinition:
-		//	type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?;
+		//	type=TypeRef name=Valid_ID ("<-" default=Expression)?;
 		public ParserRule getRule() { return rule; }
 
-		//type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?
+		//type=TypeRef name=Valid_ID ("<-" default=Expression)?
 		public Group getGroup() { return cGroup; }
 
-		//type=(TypeRef | SpeciesRef)
+		//type=TypeRef
 		public Assignment getTypeAssignment_0() { return cTypeAssignment_0; }
 
-		//TypeRef | SpeciesRef
-		public Alternatives getTypeAlternatives_0_0() { return cTypeAlternatives_0_0; }
-
 		//TypeRef
-		public RuleCall getTypeTypeRefParserRuleCall_0_0_0() { return cTypeTypeRefParserRuleCall_0_0_0; }
-
-		//SpeciesRef
-		public RuleCall getTypeSpeciesRefParserRuleCall_0_0_1() { return cTypeSpeciesRefParserRuleCall_0_0_1; }
+		public RuleCall getTypeTypeRefParserRuleCall_0_0() { return cTypeTypeRefParserRuleCall_0_0; }
 
 		//name=Valid_ID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
@@ -4129,66 +4121,70 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class TypeRefElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "TypeRef");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cTypeRefAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cRefAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final CrossReference cRefTypeDefinitionCrossReference_1_0 = (CrossReference)cRefAssignment_1.eContents().get(0);
-		private final RuleCall cRefTypeDefinitionIDTerminalRuleCall_1_0_1 = (RuleCall)cRefTypeDefinitionCrossReference_1_0.eContents().get(1);
-		private final Assignment cParameterAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cParameterTypeInfoParserRuleCall_2_0 = (RuleCall)cParameterAssignment_2.eContents().get(0);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Action cTypeRefAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Assignment cRefAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
+		private final CrossReference cRefTypeDefinitionCrossReference_0_1_0_0 = (CrossReference)cRefAssignment_0_1_0.eContents().get(0);
+		private final RuleCall cRefTypeDefinitionIDTerminalRuleCall_0_1_0_0_1 = (RuleCall)cRefTypeDefinitionCrossReference_0_1_0_0.eContents().get(1);
+		private final Assignment cParameterAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cParameterTypeInfoParserRuleCall_0_1_1_0 = (RuleCall)cParameterAssignment_0_1_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Action cTypeRefAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
+		private final Keyword cSpeciesKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
+		private final Assignment cParameterAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cParameterTypeInfoParserRuleCall_1_1_1_0 = (RuleCall)cParameterAssignment_1_1_1.eContents().get(0);
 		
 		//TypeRef returns Expression:
-		//	{TypeRef} ref=[TypeDefinition] parameter=TypeInfo?;
+		//	{TypeRef} (ref=[TypeDefinition] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo);
 		public ParserRule getRule() { return rule; }
 
-		//{TypeRef} ref=[TypeDefinition] parameter=TypeInfo?
-		public Group getGroup() { return cGroup; }
+		//{TypeRef} (ref=[TypeDefinition] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo)
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//{TypeRef} (ref=[TypeDefinition] parameter=TypeInfo?)
+		public Group getGroup_0() { return cGroup_0; }
 
 		//{TypeRef}
-		public Action getTypeRefAction_0() { return cTypeRefAction_0; }
+		public Action getTypeRefAction_0_0() { return cTypeRefAction_0_0; }
+
+		//ref=[TypeDefinition] parameter=TypeInfo?
+		public Group getGroup_0_1() { return cGroup_0_1; }
 
 		//ref=[TypeDefinition]
-		public Assignment getRefAssignment_1() { return cRefAssignment_1; }
+		public Assignment getRefAssignment_0_1_0() { return cRefAssignment_0_1_0; }
 
 		//[TypeDefinition]
-		public CrossReference getRefTypeDefinitionCrossReference_1_0() { return cRefTypeDefinitionCrossReference_1_0; }
+		public CrossReference getRefTypeDefinitionCrossReference_0_1_0_0() { return cRefTypeDefinitionCrossReference_0_1_0_0; }
 
 		//ID
-		public RuleCall getRefTypeDefinitionIDTerminalRuleCall_1_0_1() { return cRefTypeDefinitionIDTerminalRuleCall_1_0_1; }
+		public RuleCall getRefTypeDefinitionIDTerminalRuleCall_0_1_0_0_1() { return cRefTypeDefinitionIDTerminalRuleCall_0_1_0_0_1; }
 
 		//parameter=TypeInfo?
-		public Assignment getParameterAssignment_2() { return cParameterAssignment_2; }
+		public Assignment getParameterAssignment_0_1_1() { return cParameterAssignment_0_1_1; }
 
 		//TypeInfo
-		public RuleCall getParameterTypeInfoParserRuleCall_2_0() { return cParameterTypeInfoParserRuleCall_2_0; }
-	}
+		public RuleCall getParameterTypeInfoParserRuleCall_0_1_1_0() { return cParameterTypeInfoParserRuleCall_0_1_1_0; }
 
-	public class SpeciesRefElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "SpeciesRef");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Keyword cNameSpeciesKeyword_0_0 = (Keyword)cNameAssignment_0.eContents().get(0);
-		private final Assignment cParameterAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cParameterTypeInfoParserRuleCall_1_0 = (RuleCall)cParameterAssignment_1.eContents().get(0);
-		
-		//SpeciesRef:
-		//	name="species" parameter=TypeInfo?;
-		public ParserRule getRule() { return rule; }
+		//{TypeRef} ("species" parameter=TypeInfo)
+		public Group getGroup_1() { return cGroup_1; }
 
-		//name="species" parameter=TypeInfo?
-		public Group getGroup() { return cGroup; }
+		//{TypeRef}
+		public Action getTypeRefAction_1_0() { return cTypeRefAction_1_0; }
 
-		//name="species"
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+		//"species" parameter=TypeInfo
+		public Group getGroup_1_1() { return cGroup_1_1; }
 
 		//"species"
-		public Keyword getNameSpeciesKeyword_0_0() { return cNameSpeciesKeyword_0_0; }
+		public Keyword getSpeciesKeyword_1_1_0() { return cSpeciesKeyword_1_1_0; }
 
-		//parameter=TypeInfo?
-		public Assignment getParameterAssignment_1() { return cParameterAssignment_1; }
+		//parameter=TypeInfo
+		public Assignment getParameterAssignment_1_1_1() { return cParameterAssignment_1_1_1; }
 
 		//TypeInfo
-		public RuleCall getParameterTypeInfoParserRuleCall_1_0() { return cParameterTypeInfoParserRuleCall_1_0; }
+		public RuleCall getParameterTypeInfoParserRuleCall_1_1_1_0() { return cParameterTypeInfoParserRuleCall_1_1_1_0; }
 	}
 
 	public class TypeInfoElements extends AbstractParserRuleElementFinder {
@@ -4203,6 +4199,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSecondTypeRefParserRuleCall_2_1_0 = (RuleCall)cSecondAssignment_2_1.eContents().get(0);
 		private final Keyword cGreaterThanSignKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
+		////SpeciesRef:
+		////	name="species" parameter=TypeInfo?;
 		//TypeInfo:
 		//	"<" first=TypeRef ("," second=TypeRef)? => ">";
 		public ParserRule getRule() { return rule; }
@@ -4398,45 +4396,41 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class VarDefinitionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "VarDefinition");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cImportParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cS_DeclarationParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final Alternatives cAlternatives_1 = (Alternatives)cAlternatives.eContents().get(1);
-		private final RuleCall cS_DeclarationParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_1 = (Alternatives)cAlternatives_1.eContents().get(1);
-		private final RuleCall cModelParserRuleCall_1_1_0 = (RuleCall)cAlternatives_1_1.eContents().get(0);
-		private final RuleCall cArgumentDefinitionParserRuleCall_1_1_1 = (RuleCall)cAlternatives_1_1.eContents().get(1);
-		private final RuleCall cDefinitionFacetParserRuleCall_1_1_2 = (RuleCall)cAlternatives_1_1.eContents().get(2);
-		private final RuleCall cVarFakeDefinitionParserRuleCall_1_1_3 = (RuleCall)cAlternatives_1_1.eContents().get(3);
+		private final RuleCall cModelParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
+		private final RuleCall cArgumentDefinitionParserRuleCall_1_1 = (RuleCall)cAlternatives_1.eContents().get(1);
+		private final RuleCall cDefinitionFacetParserRuleCall_1_2 = (RuleCall)cAlternatives_1.eContents().get(2);
+		private final RuleCall cVarFakeDefinitionParserRuleCall_1_3 = (RuleCall)cAlternatives_1.eContents().get(3);
+		private final RuleCall cImportParserRuleCall_1_4 = (RuleCall)cAlternatives_1.eContents().get(4);
 		
 		//VarDefinition:
-		//	Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition));
+		//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import);
 		public ParserRule getRule() { return rule; }
 
-		//=> Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition))
+		//=> S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import)
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//=> Import
-		public RuleCall getImportParserRuleCall_0() { return cImportParserRuleCall_0; }
+		//=> S_Declaration
+		public RuleCall getS_DeclarationParserRuleCall_0() { return cS_DeclarationParserRuleCall_0; }
 
-		//=> S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition)
+		//Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//=> S_Declaration
-		public RuleCall getS_DeclarationParserRuleCall_1_0() { return cS_DeclarationParserRuleCall_1_0; }
-
-		//Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition
-		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
-
 		//Model
-		public RuleCall getModelParserRuleCall_1_1_0() { return cModelParserRuleCall_1_1_0; }
+		public RuleCall getModelParserRuleCall_1_0() { return cModelParserRuleCall_1_0; }
 
 		//ArgumentDefinition
-		public RuleCall getArgumentDefinitionParserRuleCall_1_1_1() { return cArgumentDefinitionParserRuleCall_1_1_1; }
+		public RuleCall getArgumentDefinitionParserRuleCall_1_1() { return cArgumentDefinitionParserRuleCall_1_1; }
 
 		//DefinitionFacet
-		public RuleCall getDefinitionFacetParserRuleCall_1_1_2() { return cDefinitionFacetParserRuleCall_1_1_2; }
+		public RuleCall getDefinitionFacetParserRuleCall_1_2() { return cDefinitionFacetParserRuleCall_1_2; }
 
 		//VarFakeDefinition
-		public RuleCall getVarFakeDefinitionParserRuleCall_1_1_3() { return cVarFakeDefinitionParserRuleCall_1_1_3; }
+		public RuleCall getVarFakeDefinitionParserRuleCall_1_3() { return cVarFakeDefinitionParserRuleCall_1_3; }
+
+		//Import
+		public RuleCall getImportParserRuleCall_1_4() { return cImportParserRuleCall_1_4; }
 	}
 
 	public class ActionDefinitionElements extends AbstractParserRuleElementFinder {
@@ -4857,7 +4851,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private UnitRefElements pUnitRef;
 	private VariableRefElements pVariableRef;
 	private TypeRefElements pTypeRef;
-	private SpeciesRefElements pSpeciesRef;
 	private TypeInfoElements pTypeInfo;
 	private SkillRefElements pSkillRef;
 	private ActionRefElements pActionRef;
@@ -5448,7 +5441,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ArgumentDefinition:
-	//	type=(TypeRef | SpeciesRef) name=Valid_ID ("<-" default=Expression)?;
+	//	type=TypeRef name=Valid_ID ("<-" default=Expression)?;
 	public ArgumentDefinitionElements getArgumentDefinitionAccess() {
 		return (pArgumentDefinition != null) ? pArgumentDefinition : (pArgumentDefinition = new ArgumentDefinitionElements());
 	}
@@ -5860,7 +5853,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//TypeRef returns Expression:
-	//	{TypeRef} ref=[TypeDefinition] parameter=TypeInfo?;
+	//	{TypeRef} (ref=[TypeDefinition] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo);
 	public TypeRefElements getTypeRefAccess() {
 		return (pTypeRef != null) ? pTypeRef : (pTypeRef = new TypeRefElements());
 	}
@@ -5869,16 +5862,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getTypeRefAccess().getRule();
 	}
 
-	//SpeciesRef:
-	//	name="species" parameter=TypeInfo?;
-	public SpeciesRefElements getSpeciesRefAccess() {
-		return (pSpeciesRef != null) ? pSpeciesRef : (pSpeciesRef = new SpeciesRefElements());
-	}
-	
-	public ParserRule getSpeciesRefRule() {
-		return getSpeciesRefAccess().getRule();
-	}
-
+	////SpeciesRef:
+	////	name="species" parameter=TypeInfo?;
 	//TypeInfo:
 	//	"<" first=TypeRef ("," second=TypeRef)? => ">";
 	public TypeInfoElements getTypeInfoAccess() {
@@ -5950,7 +5935,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//VarDefinition:
-	//	Import | (S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition));
+	//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import);
 	public VarDefinitionElements getVarDefinitionAccess() {
 		return (pVarDefinition != null) ? pVarDefinition : (pVarDefinition = new VarDefinitionElements());
 	}
