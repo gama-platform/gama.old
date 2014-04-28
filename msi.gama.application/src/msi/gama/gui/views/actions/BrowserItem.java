@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'BrowserItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'BrowserItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,7 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.views.*;
+import msi.gama.gui.views.BrowserEditor;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.browser.Browser;
 
@@ -25,20 +25,19 @@ import org.eclipse.swt.browser.Browser;
  */
 public abstract class BrowserItem extends GamaViewItem {
 
-	public BrowserItem(final GamaViewPart view) {
-		super(view);
-		if ( !(getView() instanceof BrowserView) ) { throw new IllegalArgumentException(); }
+	public BrowserItem() {
+		super(null);
 	}
 
 	protected Browser getBrowser() {
-		return ((BrowserView) getView()).getBrowser();
+		return ((BrowserEditor) getView()).getBrowser();
+	}
+
+	public void setView(final BrowserEditor view) {
+		this.view = view;
 	}
 
 	public static class Back extends BrowserItem {
-
-		public Back(final GamaViewPart view) {
-			super(view);
-		}
 
 		@Override
 		protected IContributionItem createItem() {
@@ -59,10 +58,6 @@ public abstract class BrowserItem extends GamaViewItem {
 
 	public static class Forward extends BrowserItem {
 
-		public Forward(final GamaViewPart view) {
-			super(view);
-		}
-
 		@Override
 		protected IContributionItem createItem() {
 			IAction action =
@@ -81,10 +76,6 @@ public abstract class BrowserItem extends GamaViewItem {
 	}
 
 	public static class Stop extends BrowserItem {
-
-		public Stop(final GamaViewPart view) {
-			super(view);
-		}
 
 		@Override
 		protected IContributionItem createItem() {
@@ -105,10 +96,6 @@ public abstract class BrowserItem extends GamaViewItem {
 
 	public static class Home extends BrowserItem {
 
-		public Home(final GamaViewPart view) {
-			super(view);
-		}
-
 		@Override
 		protected IContributionItem createItem() {
 			IAction action =
@@ -126,10 +113,6 @@ public abstract class BrowserItem extends GamaViewItem {
 	}
 
 	public static class Refresh extends BrowserItem {
-
-		public Refresh(final GamaViewPart view) {
-			super(view);
-		}
 
 		@Override
 		protected IContributionItem createItem() {

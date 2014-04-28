@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PauseItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'PauseItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,10 +13,8 @@ package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
-import msi.gama.outputs.AbstractOutput;
-import msi.gama.outputs.IOutput;
-import msi.gama.runtime.FrontEndController;
-import msi.gama.runtime.GAMA;
+import msi.gama.outputs.*;
+import msi.gama.runtime.*;
 import org.eclipse.jface.action.*;
 
 /**
@@ -46,22 +44,24 @@ public class PauseItem extends GamaViewItem {
 
 				@Override
 				public void run() {
-					IOutput output = view.getOutput();
+					IOutput output = ((GamaViewPart) view).getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
-							//hqnghi resume  thread  of co-experiment
-							if(!((AbstractOutput) output).getExpName().equals("")){								
-								GAMA.getController(((AbstractOutput) output).getExpName()).offer(FrontEndController._START);
+							// hqnghi resume thread of co-experiment
+							if ( !((AbstractOutput) output).getExpName().equals("") ) {
+								GAMA.getController(((AbstractOutput) output).getExpName()).offer(
+									FrontEndController._START);
 							}
-							//end-hqnghi
+							// end-hqnghi
 							resume(output);
 						} else {
 							pause(output);
-							//hqnghi pause thread  of co-experiment
-							if(!((AbstractOutput) output).getExpName().equals("")){								
-								GAMA.getController(((AbstractOutput) output).getExpName()).offer(FrontEndController._PAUSE);
+							// hqnghi pause thread of co-experiment
+							if ( !((AbstractOutput) output).getExpName().equals("") ) {
+								GAMA.getController(((AbstractOutput) output).getExpName()).offer(
+									FrontEndController._PAUSE);
 							}
-							//end-hqnghi
+							// end-hqnghi
 						}
 					}
 				}

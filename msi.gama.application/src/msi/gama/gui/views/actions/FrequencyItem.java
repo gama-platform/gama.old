@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'FrequencyItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'FrequencyItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -38,9 +38,9 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 
 	double getInit() {
 		// refresh every 1 = 1d ; refresh every 1000 = 0d;
-		IDisplayOutput output = view.getOutput();
+		IDisplayOutput output = ((GamaViewPart) view).getOutput();
 		if ( output == null ) { return 1d; }
-		int refresh = view.getOutput().getRefreshRate();
+		int refresh = output.getRefreshRate();
 		if ( refresh >= 100 || refresh == 0 ) { return 0d; }
 		return (100 - refresh) / 100d;
 	}
@@ -70,7 +70,7 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 
 	@Override
 	public void positionChanged(final double position) {
-		IDisplayOutput output = view.getOutput();
+		IDisplayOutput output = ((GamaViewPart) view).getOutput();
 		if ( output == null ) { return; }
 		output.setRefreshRate(getRefresh(position));
 	}

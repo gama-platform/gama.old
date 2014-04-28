@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaViewItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GamaViewItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,10 +11,9 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.views.GamaViewPart;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.*;
 
 /**
  * The class GamaContributionItem.
@@ -25,11 +24,11 @@ import org.eclipse.ui.IViewSite;
  */
 public abstract class GamaViewItem implements IContributionItem {
 
-	GamaViewPart view;
+	protected IWorkbenchPart view;
 	protected final IContributionItem item;
 	boolean disposed = false;
 
-	GamaViewItem(final GamaViewPart view) {
+	GamaViewItem(final IWorkbenchPart view) {
 		this.view = view;
 		item = createItem();
 	}
@@ -38,7 +37,7 @@ public abstract class GamaViewItem implements IContributionItem {
 		((IViewSite) view.getSite()).getActionBars().updateActionBars();
 	}
 
-	GamaViewPart getView() {
+	IWorkbenchPart getView() {
 		return view;
 	}
 
