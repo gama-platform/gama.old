@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ApplicationWorkbenchWindowAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ApplicationWorkbenchWindowAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,22 +16,22 @@ import java.net.*;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.views.BrowserView;
+import msi.gama.gui.views.BrowserEditor;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.browser.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry;
 import org.eclipse.ui.wizards.*;
+import org.osgi.framework.Bundle;
 
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
@@ -130,65 +130,40 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
-		openWelcomePage(true);
-		// openGamaWebPage(false);
+		openWelcomePageIfEmpty();
 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 
-	public static void openGamaWebPage(final String address, final boolean force) {
-		if ( isInternetReachable(force) ) {
-			BrowserView bv = (BrowserView) GuiUtils.showView("gama.browser.view", null, IWorkbenchPage.VIEW_VISIBLE);
-			if ( address != null && bv != null ) {
-				bv.getBrowser().setUrl(address);
-			}
+	public static void openWebPage(final String address, final String html) {
+		if ( address != null && !isInternetReachable() ) { return; }
+		BrowserEditor bv = (BrowserEditor) GuiUtils.showWebEditor(address, html);
+	}
+
+	public void openWelcomePageIfEmpty() {
+		if ( this.getWindowConfigurer().getWindow().getActivePage().getActiveEditor() != null ) { return; }
+		if ( !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
+		// ClassLoader loader = this.getClass().getClassLoader();
+		Bundle bundle = Platform.getBundle("msi.gama.ext");
+
+		URL url = bundle.getEntry("/images/welcome.html");
+		try {
+			url = FileLocator.toFileURL(url);
+		} catch (IOException e) {
+			e.printStackTrace();
 			return;
 		}
+		// String html =
+		// "<!DOCTYPE html><html style=\"width:100%;  height:100%; background:url(" + url.toString() +
+		// ") center center no-repeat;\"> <head></head><body></body></html>";
+		openWebPage(url.toString(), null);
 	}
 
-	public void openWelcomePage(final boolean force) {
-		if ( this.getWindowConfigurer().getWindow().getActivePage().getActiveEditor() == null ) {
-			if ( isInternetReachable(force) ) {
-				try {
-					IWebBrowser wb =
-						PlatformUI.getWorkbench().getBrowserSupport()
-							.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "", "Welcome", "");
-					wb.openURL(new URL(
-						"http://gama-platform.googlecode.com/svn/branches/GAMA_CURRENT/msi.gama.application/welcome.html"));
-				} catch (PartInitException e) {
-					e.printStackTrace();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} finally {
-					// GamaPreferences.CORE_SHOW_PAGE.set(false).save();
-				}
-			}
-		}
-	}
+	public static boolean isInternetReachable() {
 
-	// if ( isInternetReachable(force) ) {
-	//
-	// try {
-	// IWebBrowser wb =
-	// PlatformUI
-	// .getWorkbench()
-	// .getBrowserSupport()
-	// .createBrowser(
-	// IWorkbenchBrowserSupport.AS_VIEW ,"", "Welcome", "");
-	// wb.openURL(new URL("https://code.google.com/p/gama-platform/"));
-	// } catch (PartInitException e) {
-	// e.printStackTrace();
-	// } catch (MalformedURLException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-
-	public static boolean isInternetReachable(final boolean force) {
-		if ( !force && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return false; }
 		// AD 11/10/13 : see Issue 679
 		// Too many problems with Linux for the moment. Reverse this if a definitive solution is found.
 		if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }

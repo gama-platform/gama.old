@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -421,6 +422,71 @@ public class SwtGui implements IGui {
 			}
 		});
 		return result[0];
+	}
+
+	public static final IEditorInput input = new IEditorInput() {
+
+		@Override
+		public Object getAdapter(final Class adapter) {
+			return null;
+		}
+
+		@Override
+		public boolean exists() {
+			return true;
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return null;
+		}
+
+		@Override
+		public String getName() {
+			return "";
+		}
+
+		@Override
+		public IPersistableElement getPersistable() {
+			return null;
+		}
+
+		@Override
+		public String getToolTipText() {
+			return "";
+		}
+	};
+
+	@Override
+	public Object showWebEditor(final String url, final String html) {
+		final Object[] result = new Object[1];
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					getPage().zoomOut();
+					IEditorPart p = getPage().findEditor(input);
+					if ( p == null ) {
+						result[0] = getPage().openEditor(input, "msi.gama.application.browser", true);
+					} else {
+						result[0] = p;
+					}
+				} catch (final PartInitException e) {
+					result[0] = e;
+				}
+			}
+		});
+		if ( result[0] instanceof BrowserEditor ) {
+			BrowserEditor be = (BrowserEditor) result[0];
+			if ( url != null ) {
+				be.setUrl(url);
+			} else if ( html != null ) {
+				be.setHtml(html);
+			}
+		}
+		return result[0];
+
 	}
 
 	@Override
