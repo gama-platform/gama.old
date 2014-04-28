@@ -290,4 +290,13 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void updateSpeedDisplay(final Double d, final boolean notify) {}
+
+	/**
+	 * Method showWebEditor()
+	 * @see msi.gama.common.interfaces.IGui#showWebEditor(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Object showWebEditor(final String url, final String html) {
+		return null;
+	}
 }
