@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'OpenGamaWebsiteHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'OpenGamaWebsiteHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,7 +22,7 @@ public class OpenGamaWebsiteHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openGamaWebPage(null, true);
+		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/", null);
 		return null;
 	}
 

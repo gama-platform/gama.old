@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'HelpHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'HelpHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -20,8 +20,8 @@ public class HelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openGamaWebPage("https://code.google.com/p/gama-platform/wiki/Documentation",
-			true);
+		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/wiki/Documentation",
+			null);
 		return null;
 	}
 }
