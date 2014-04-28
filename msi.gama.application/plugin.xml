@@ -105,15 +105,6 @@
             name="Web Display"
             restorable="true">
       </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.BrowserView"
-            icon="icons/view.www.png"
-            id="gama.browser.view"
-            name="GAMA Home Page"
-            restorable="true">
-      </view>
 
    </extension>
 
@@ -1597,5 +1588,16 @@
          <svnconnector
                class="org.polarion.team.svn.connector.svnkit.SVNKitConnectorFactory">
          </svnconnector>
+      </extension>
+      <extension
+            point="org.eclipse.ui.editors">
+         <editor
+               class="msi.gama.gui.views.BrowserEditor"
+               contributorClass="msi.gama.gui.views.BrowserEditorContributor"
+               default="false"
+               icon="icons/view.www.png"
+               id="msi.gama.application.browser"
+               name="GAMA">
+         </editor>
       </extension>
 </plugin>
