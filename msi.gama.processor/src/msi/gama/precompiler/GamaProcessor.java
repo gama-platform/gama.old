@@ -61,7 +61,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private GamlProperties gp;
 	// JavaAgentBaseWriter jabw;
 
-	boolean alwaysDoc = false;
+	boolean alwaysDoc = true;
 	GamlDocProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;

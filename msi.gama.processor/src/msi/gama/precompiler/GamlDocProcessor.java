@@ -13,6 +13,7 @@ package msi.gama.precompiler;
 
 import java.io.*;
 import java.util.*;
+
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
@@ -37,7 +38,6 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.precompiler.doc.DocProcessorAnnotations;
-import msi.gama.precompiler.doc.Element.Category;
 import msi.gama.precompiler.doc.Element.Operand;
 import msi.gama.precompiler.doc.Element.Operator;
 import msi.gama.precompiler.doc.utils.TypeConverter;
@@ -127,13 +127,15 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Inside statements	(kinds and symbols)
-		Set<? extends Element> setStatementsInside = env.getElementsAnnotatedWith(symbol.class);
-		root.appendChild(this.processDocXMLStatementsInsideKind(setStatementsInside, doc));
-		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatementsInside, doc));
+		// Set<? extends Element> setStatementsInside = env.getElementsAnnotatedWith(symbol.class);
+		Set<? extends Element> setStatements = env.getElementsAnnotatedWith(symbol.class);
+		root.appendChild(this.processDocXMLStatementsInsideKind(setStatements, doc));
+		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatements, doc));
 		
 		// ////////////////////////////////////////////////
 		// /// Parsing of Statements
-		Set<? extends Element> setStatements = env.getElementsAnnotatedWith(symbol.class);
+		// Set<? extends Element> setStatements = env.getElementsAnnotatedWith(symbol.class);
+		root.appendChild(this.processDocXMLStatementsKinds(setStatements, doc));
 		root.appendChild(this.processDocXMLStatements(setStatements, doc));
 
 		// ////////////////////////////////////////////////
@@ -651,6 +653,32 @@ public class GamlDocProcessor {
 			}
 			
 		return statementsInsideKindElt;
+	}	
+
+
+	private Node processDocXMLStatementsKinds(
+			final Set<? extends Element> setStatements, final Document doc) {
+		org.w3c.dom.Element statementsKindsElt = doc.createElement(XMLElements.STATEMENT_KINDS);
+		ArrayList<String> statementKinds = new ArrayList<String>();
+		
+		for ( Element e : setStatements ) {
+			if( (e.getAnnotation(symbol.class).internal() == true) || 
+				( e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) ) {
+					// We just omit it
+			} else {
+				int kindAnnot = e.getAnnotation(symbol.class).kind();
+				String kindStr = tc.getSymbolKindStringFromISymbolKind(kindAnnot);
+				if( !statementKinds.contains(kindStr) ) { statementKinds.add(kindStr); }								
+			}
+		}
+		
+		for(String kindName : statementKinds) {
+			org.w3c.dom.Element kindStatElt = doc.createElement(XMLElements.KIND);		
+			kindStatElt.setAttribute(XMLElements.ATT_KIND_STAT, kindName);
+			statementsKindsElt.appendChild(kindStatElt);
+		}
+		
+		return statementsKindsElt;
 	}	
 	
 	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement,

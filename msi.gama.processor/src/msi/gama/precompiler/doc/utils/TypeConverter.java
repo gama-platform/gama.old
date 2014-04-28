@@ -31,21 +31,24 @@ public class TypeConverter {
 
 	private HashMap<Integer, String> initSymbolKindStringFromISymbolKind() {
 		HashMap<Integer, String> hm = new HashMap<Integer, String>();
-		hm.put(0, "species");
-		hm.put(1, "model");
-		hm.put(2, "single_statement");
-		hm.put(3, "behavior");
-		hm.put(4, "parameter");
-		hm.put(5, "output");
-		hm.put(6, "layer");
-		hm.put(7, "skill");
-		hm.put(8, "batch_section");
-		hm.put(9, "batch_method");
-		hm.put(10, "environment");
-		hm.put(11, "sequence_statement or action");
-		hm.put(13, "experiment");
-		hm.put(14, "abstract_section");
-		
+		hm.put(0, "Species");
+		hm.put(1, "Model");
+		hm.put(2, "Single statement");
+		hm.put(3, "Behavior");
+		hm.put(4, "Parameter");
+		hm.put(5, "Output");
+		hm.put(6, "Layer");
+		hm.put(7, "Skill");
+		hm.put(8, "Batch section");
+		hm.put(9, "Batch method");
+		hm.put(10, "Environment");
+		hm.put(11, "Sequence of statements or action");
+		hm.put(13, "Experiment");
+		hm.put(14, "Abstract section");
+		hm.put(101, "Variable (number)");
+		hm.put(102, "Variable (container)");
+		hm.put(103, "Variable (signal)");
+		hm.put(104, "Variable (regular)");
 		return hm;
 	}
 	
@@ -129,7 +132,7 @@ public class TypeConverter {
 	// FROM IType.java
 	private HashMap<Integer,String> initNameTypeFromIType(){
 		HashMap<Integer, String> hm = new HashMap<Integer, String>();
-		hm.put(0, "unknown");  // NONE
+		hm.put(0, "any type");  // NONE
 		hm.put(1, "int");
 		hm.put(2, "float");
 		hm.put(3, "boolean");
@@ -152,11 +155,11 @@ public class TypeConverter {
 		hm.put(99, "message");
 		hm.put(100, "species_types");
 		
-		hm.put(-200, "label");
-		hm.put(-201, "variable id");
-		hm.put(-202, "type_id");
-		hm.put(-203, "new variable id");
-		hm.put(-204, "new temp variable id");
+		hm.put(-200, "a label");
+		hm.put(-201, "an identifier");
+		hm.put(-202, "a datatype identifier");
+		hm.put(-203, "a new identifier");
+		hm.put(-204, "a new identifier");
 		return hm;
 	}
 	
@@ -164,6 +167,7 @@ public class TypeConverter {
 		HashMap<String, String> hm = new HashMap<String, String>();
 		hm.put("Cast", 					IOperatorCategory.CASTING);
 		hm.put("Colors", 			IOperatorCategory.COLOR);
+		hm.put("DrivingOperators", 	IOperatorCategory.DRIVING);
 		hm.put("Comparison", 			IOperatorCategory.COMPARISON);
 		hm.put("IContainer", 		IOperatorCategory.CONTAINER);
 		hm.put("Containers", 		IOperatorCategory.CONTAINER);
@@ -230,6 +234,22 @@ public class TypeConverter {
 		}		
 	}	
 
+	public String getTypeString(int[] types){
+		StringBuilder s = new StringBuilder(30);
+		s.append(types.length < 2 ? "" : "any type in [");
+		for ( int i = 0; i < types.length; i++ ) {
+			s.append(getTypeString(types[i]));
+
+			if ( i != types.length - 1 ) {
+				s.append(", ");
+			}
+		}
+		if ( types.length >= 2 ) {
+			s.append("]");
+		}
+		return s.toString();
+	}	
+	
 	public String getSymbolKindStringFromISymbolKind(Integer i){
 		if ( symbolKindStringFromISymbolKind.containsKey(i) ) {
 			return symbolKindStringFromISymbolKind.get(i);

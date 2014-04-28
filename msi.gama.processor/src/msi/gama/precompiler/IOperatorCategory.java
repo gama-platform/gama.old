@@ -65,4 +65,6 @@ public interface IOperatorCategory {
 	public static final String TIME				= "Time-related operators";
 	
 	public static final String DEPRECATED 		= "DeprecatedOperators";	
+	
+	public static final String DRIVING 			= "Driving operators";
 }

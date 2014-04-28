@@ -336,11 +336,14 @@ public class DocProcessorAnnotations {
 		for ( facet f : facetsAnnot.value() ) {
 			org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
 			facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
-			// TODO : check several types
-			String facetTypes = tc.getTypeString(f.type()[0]);
-			for(int i = 1 ; i < f.type().length ; i ++) {facetTypes = facetTypes + ", " + tc.getTypeString(f.type()[i]); }
-			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, facetTypes );
+			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, tc.getTypeString(f.type()) );
 			facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
+			if(f.values().length != 0){
+				String valuesTaken = ", takes values in: {"+f.values()[0];
+				for(int i = 1; i < f.values().length;i++){ valuesTaken += ", "+ f.values()[i]; } 
+				valuesTaken += "}";
+				facetElt.setAttribute(XMLElements.ATT_FACET_VALUES, valuesTaken);		
+			}
 			facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
 				f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
 			org.w3c.dom.Element docFacetElt = 

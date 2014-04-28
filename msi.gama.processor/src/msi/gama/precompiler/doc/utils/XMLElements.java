@@ -54,6 +54,7 @@ public class XMLElements {
 	public static final String SPECIES = "species";
 	public static final String STATEMENTS = "statements";
 	public static final String STATEMENT = "statement";
+	public static final String STATEMENT_KINDS = "statementsKinds";
 	public static final String INSIDE_STAT_KINDS = "insideStatementKinds";
 	public static final String INSIDE_STAT_KIND = "insideStatementKind";
 	public static final String INSIDE_STAT_SYMBOLS = "insideStatementSymbols";
@@ -101,6 +102,7 @@ public class XMLElements {
 	// Attributes of FACET element
 	public static final String ATT_FACET_NAME = "name";
 	public static final String ATT_FACET_TYPE = "type";
+	public static final String ATT_FACET_VALUES = "values";
 	public static final String ATT_FACET_OPTIONAL = "optional";
 	public static final String ATT_FACET_OMISSIBLE = "omissible";
 
@@ -147,4 +149,8 @@ public class XMLElements {
 	
 	// Attributes of INSIDE_STAT element
 	public static final String ATT_INSIDE_STAT_SYMBOL = "symbol";
+	
+	// Attributes of KIND element
+	public static final String ATT_KIND_STAT = "symbol";
+
 }
