@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ModelingPerspective.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ModelingPerspective.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.perspectives;
 
-import msi.gama.gui.views.BrowserView;
 import org.eclipse.ui.*;
 
 public class ModelingPerspective implements IPerspectiveFactory {
@@ -44,9 +43,9 @@ public class ModelingPerspective implements IPerspectiveFactory {
 		// problemFolder.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
 		// layout.addView
 		// And finally the browser
-		IPlaceholderFolderLayout browserFolder =
-			layout.createPlaceholderFolder("BrowserFolder", IPageLayout.RIGHT, 0.66f, editorId);
-		browserFolder.addPlaceholder(BrowserView.ID);
+		// IPlaceholderFolderLayout browserFolder =
+		// layout.createPlaceholderFolder("BrowserFolder", IPageLayout.RIGHT, 0.66f, editorId);
+		// browserFolder.addPlaceholder(BrowserView.ID);
 
 		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewFileWizard");
 		// layout.addNewWizardShortcut("msi.gama.gui.wizards.NewProjectWizard");
