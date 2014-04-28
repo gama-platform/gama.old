@@ -125,6 +125,11 @@ public class GuiUtils {
 		return null;
 	}
 
+	public static Object showWebEditor(final String url, final String html) {
+		if ( gui != null ) { return gui.showWebEditor(url, html); }
+		return null;
+	}
+
 	/**
 	 * @param ex
 	 */

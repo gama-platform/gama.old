@@ -136,4 +136,11 @@ public interface IGui {
 
 	void updateSpeedDisplay(Double d, boolean notify);
 
+	/**
+	 * @param url
+	 * @param html
+	 * @return
+	 */
+	Object showWebEditor(String url, String html);
+
 }
