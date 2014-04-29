@@ -17,7 +17,7 @@ global {
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	 
-	map<string,string> PARAMS <-  ['srid'::'4326',
+	map<string,string> PARAMS <-  [//'srid'::'4326', // optinal
 								   'host'::'localhost','dbtype'::'Postgres','database'::'spatial_DB',
 								   'port'::'5433','user'::'postgres','passwd'::'tmt'];
 

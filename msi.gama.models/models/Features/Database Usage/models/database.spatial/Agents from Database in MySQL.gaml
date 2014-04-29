@@ -7,7 +7,7 @@
 model DB2agentMySQL
 
 global {
-	map<string,string> BOUNDS <- [	'srid'::'4326',
+	map<string,string> BOUNDS <- [	//'srid'::'4326', // optinal
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
@@ -15,7 +15,7 @@ global {
 									'user'::'root',
 									'passwd'::'root',
 								  	"select"::"SELECT geom FROM bounds;" ];
-	map<string,string> PARAMS <- [	'srid'::'4326',
+	map<string,string> PARAMS <- [	//'srid'::'4326', // optinal
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
@@ -29,7 +29,7 @@ global {
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
+							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
 		 }
 	}
 }

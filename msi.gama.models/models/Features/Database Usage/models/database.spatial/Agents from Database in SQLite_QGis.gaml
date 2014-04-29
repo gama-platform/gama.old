@@ -18,51 +18,41 @@ model Sqlite_QGis
  
   
 global { 
-	map BOUNDS <- ['srid'::'4326',
-				  "dbtype"::"sqlite","database"::"../includes/bph.db"
-				  ,"select"::	"select geometry  from vnm_adm2 where (id_1=3291 or id_1=3289);" //Bac trung bo and DBSCL
+	map BOUNDS <- [//'srid'::'4326', // optinal
+				  "dbtype"::"sqlite",
+				  "database"::"../../includes/spatialite.db"
+				  ,"select"::	"select geom  from bounds;" 
 														
 							  ]; 
-	map PARAMS <- ['srid'::'4326',"dbtype"::"sqlite","database"::"../includes/bph.db"];
-	string LOCATIONS <- "select ID_2, varname_2,  geometry  from vnm_adm2 where id_1=3291 or id_1=3289;";
+	map PARAMS <- [//'srid'::'4326', // optinal
+					"dbtype"::"sqlite",
+					"database"::"../../includes/bph.db"];
+	string QUERY <- "SELECT name, type, geom as geom FROM buildings ;";
+	geometry shape <- envelope(BOUNDS);		  	
+		  	
 	init {
-		create dummy 
-		{ 			
-			create locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: int("id_2"), name:: "varname_2",shape::geometry("geometry")]
-			{
-				//put statements here; 
-			}
-			write "Click on <<Step>> button to print the agent's data";
-		}
-		 
-	}
-   
-}   
-environment bounds: BOUNDS ;
-entities {   
-	species dummy skills: [SQLSKILL]
-	 {  
-		//Nothing
-	 }   
-	
-	species locations {
-		int id ;
-		string name;
-		rgb color <- rgb(rnd(255),rnd(255),0);
-		geometry geom;
-		reflex printdata{
-			 write " id : " + id + "; name: " + name;
-		}
-		
-	}
-}      
-
-experiment default_expr type: gui {
-	output {
-		
-		display GlobalView {
-			species locations ;
-		}
+		create DB_accessor {
+			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
+							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
+		 }
 	}
 }
 
+entities {
+	species DB_accessor skills: [SQLSKILL];
+	
+	species buildings {
+		string type;
+		aspect default {
+			draw shape color: rgb('gray') ;
+		}	
+	}	
+}
+
+experiment DB2agentSQLite type: gui {
+	output {
+		display fullView {
+			species buildings aspect: default;
+		}
+	}
+}

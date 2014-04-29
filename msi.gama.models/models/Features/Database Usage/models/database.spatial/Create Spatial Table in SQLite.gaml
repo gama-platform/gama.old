@@ -10,28 +10,28 @@
 model SQLite_selectNUpdate
   
 global {
-	map PARAMS <- ['dbtype'::'sqlite','database'::'../includes/spatialite.db'];
+	map PARAMS <- ['dbtype'::'sqlite','database'::'../../includes/spatialite.db'];
 
 	init {
 		create dummy ;
 		ask (dummy)	
 		{ 
-			do  executeUpdate params: PARAMS updateComm: "DROP TABLE location; " ;
- 			do  executeUpdate params: PARAMS updateComm: "DELETE FROM geometry_columns where f_table_name='location'; " ;
- 
- 			write "dropped table!";
-			do executeUpdate params: PARAMS updateComm: "CREATE TABLE location " +
+			do  executeUpdate params: PARAMS 
+					updateComm: "DROP TABLE bounds; " ;
+ 			do  executeUpdate params: PARAMS 
+ 					updateComm: "DROP TABLE buildings; " ;
+  
+ 			write "dropped tables!";
+			do executeUpdate params: PARAMS updateComm: "CREATE TABLE bounds " +
+                   "(id INTEGER PRIMARY KEY, " +
+				   " geom BLOB NOT NULL); "  ;
+ 			do executeUpdate params: PARAMS updateComm: "CREATE TABLE buildings " +
                    "(id INTEGER PRIMARY KEY, " +
                    " name TEXT NOT NULL," +
+                   " type TEXT NOT NULL," +
                    " geom BLOB NOT NULL); "  ;
  			 	
- 			write "Insert Geometry Meta data";
-			do executeUpdate params: PARAMS updateComm: "INSERT INTO geometry_columns"
-				      +"(f_table_name,f_geometry_column, geometry_type,coord_dimension,srid,geometry_format) "
-				      +"values('location', 'geom',3,2, 4326,'WKB');" ;
-          
- 			
- 			write "Created location table";				
+		
 					
 		}
 	}

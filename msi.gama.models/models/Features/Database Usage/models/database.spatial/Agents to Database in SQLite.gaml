@@ -16,7 +16,7 @@ global {
 	
 	map<string,string> PARAMS <- [
 				'dbtype'::'sqlite', 
-				'srid'::'4326',
+				//'srid'::'4326', // optinal
 				'database'::'../../includes/spatialite.db'
 			
 				];

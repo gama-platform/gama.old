@@ -9,7 +9,7 @@ global {
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
-	map<string,string> PARAMS <- ['srid'::'4326',
+	map<string,string> PARAMS <- [//'srid'::'4326', // optinal
 								  'host'::'127.0.0.1','dbtype'::'sqlserver','database'::'spatial_DB',
 								  'port'::'1433','user'::'sa','passwd'::'tmt'];
 

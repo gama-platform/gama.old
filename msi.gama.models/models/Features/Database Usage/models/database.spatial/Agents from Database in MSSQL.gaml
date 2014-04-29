@@ -7,7 +7,7 @@
 model DB2agentMSSQL
 
 global {
-	map<string,string> BOUNDS <- [	"srid"::"4326",
+	map<string,string> BOUNDS <- [	//"srid"::"4326", // optinal
 									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",
@@ -15,7 +15,7 @@ global {
 									"user"::"sa",
 									"passwd"::"tmt",
 								  	"select"::"SELECT GEOM.STAsBinary() as GEOM FROM bounds;" ];
-	map<string,string> PARAMS <- [	"srid"::"4326",
+	map<string,string> PARAMS <- [	//"srid"::"4326", // optinal
 									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",
@@ -28,7 +28,7 @@ global {
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ "name"::"name","type"::"type", "shape":: geometry("geom")];
+							 with:[ "name"::"name","type"::"type", "shape":: "geom"];
 		 }
 	}
 }
@@ -44,7 +44,7 @@ entities {
 	}	
 }
 
-experiment DB2agentSQLite type: gui {
+experiment DB2agentMSSQL type: gui {
 	output {
 		display fullView {
 			species buildings aspect: default;
