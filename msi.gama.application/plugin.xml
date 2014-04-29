@@ -16,7 +16,7 @@
             name="Console"
             restorable="true">
       </view>
-  		 		
+
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
@@ -178,7 +178,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
 
-         
+
       <perspectiveExtension
             targetID="msi.gama.application.perspectives.ModelingPerspective">
             <newWizardShortcut id="msi.gama.gui.wizards.newProjectWizard">
@@ -888,7 +888,7 @@
       <handler
             class="msi.gama.gui.swt.commands.SwitchPerspectiveHandler"
             commandId="msi.gama.application.commands.SwitchPerspective">
-       
+
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.PlayPauseSimulationHandler"
@@ -1234,7 +1234,7 @@
          </and>
       </definition>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -1283,7 +1283,7 @@
             name="Add a monitor">
       </command>
       <command
-            id="msi.gama.application.commands.ShowHideConsoleView"         
+            id="msi.gama.application.commands.ShowHideConsoleView"
             name="Show console">
       </command>
       <command
@@ -1359,7 +1359,7 @@
       <command
             defaultHandler="msi.gama.gui.swt.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
-            name="Open GAMA web site">
+            name="Welcome page">
       </command>
       <command
             defaultHandler="msi.gama.gui.swt.commands.FileOpen"

@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.views.BrowserEditor;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.browser.Browser;
@@ -99,11 +99,12 @@ public abstract class BrowserItem extends GamaViewItem {
 		@Override
 		protected IContributionItem createItem() {
 			IAction action =
-				new GamaAction("Home", "Go back home", IAction.AS_PUSH_BUTTON, IGamaIcons.BROWSER_HOME.descriptor()) {
+				new GamaAction("Home", "Go back to the welcome page", IAction.AS_PUSH_BUTTON,
+					IGamaIcons.BROWSER_HOME.descriptor()) {
 
 					@Override
 					public void run() {
-						getBrowser().setUrl("https://code.google.com/p/gama-platform/");
+						ApplicationWorkbenchWindowAdvisor.openWelcomePage(false);
 					}
 
 				};

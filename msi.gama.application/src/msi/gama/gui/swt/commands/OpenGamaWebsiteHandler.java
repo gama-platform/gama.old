@@ -22,7 +22,7 @@ public class OpenGamaWebsiteHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/", null);
+		ApplicationWorkbenchWindowAdvisor.openWelcomePage(false);
 		return null;
 	}
 

@@ -130,7 +130,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
-		openWelcomePageIfEmpty();
+		openWelcomePage(true);
 
 	}
 
@@ -143,8 +143,8 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		BrowserEditor bv = (BrowserEditor) GuiUtils.showWebEditor(address, html);
 	}
 
-	public void openWelcomePageIfEmpty() {
-		if ( this.getWindowConfigurer().getWindow().getActivePage().getActiveEditor() != null ) { return; }
+	public static void openWelcomePage(final boolean ifEmpty) {
+		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
 		if ( !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
 		// ClassLoader loader = this.getClass().getClassLoader();
 		Bundle bundle = Platform.getBundle("msi.gama.ext");
@@ -156,9 +156,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			e.printStackTrace();
 			return;
 		}
-		// String html =
-		// "<!DOCTYPE html><html style=\"width:100%;  height:100%; background:url(" + url.toString() +
-		// ") center center no-repeat;\"> <head></head><body></body></html>";
 		openWebPage(url.toString(), null);
 	}
 
