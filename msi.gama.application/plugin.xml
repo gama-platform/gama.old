@@ -1593,7 +1593,6 @@
             point="org.eclipse.ui.editors">
          <editor
                class="msi.gama.gui.views.BrowserEditor"
-               contributorClass="msi.gama.gui.views.BrowserEditorContributor"
                default="false"
                icon="icons/view.www.png"
                id="msi.gama.application.browser"

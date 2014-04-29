@@ -4,10 +4,14 @@
  */
 package msi.gama.gui.views;
 
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.views.actions.BrowserItem;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.EditorPart;
 
@@ -19,6 +23,17 @@ import org.eclipse.ui.part.EditorPart;
  * 
  */
 public class BrowserEditor extends EditorPart {
+
+	static BrowserItem[] items;
+
+	static {
+		items = new BrowserItem[5];
+		items[0] = new BrowserItem.Back();
+		items[1] = new BrowserItem.Home();
+		items[2] = new BrowserItem.Forward();
+		items[3] = new BrowserItem.Stop();
+		items[4] = new BrowserItem.Refresh();
+	}
 
 	Browser browser;
 
@@ -75,8 +90,24 @@ public class BrowserEditor extends EditorPart {
 	 */
 	@Override
 	public void createPartControl(final Composite parent) {
+		GridLayout layout = new GridLayout(1, false);
+		parent.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		parent.setLayout(layout);
+		ToolBarManager mng = new ToolBarManager(SWT.FLAT);
+		for ( BrowserItem item : items ) {
+			item.setView(this);
+			mng.add(item);
+		}
+		ToolBar tb = mng.createControl(parent);
+		tb.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false));
 		browser = new Browser(parent, SWT.NONE);
-		// browser.setUrl("https://code.google.com/p/gama-platform/");
+		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		parent.layout();
 	}
 
 	public void setUrl(final String url) {
