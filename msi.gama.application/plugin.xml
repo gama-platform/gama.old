@@ -357,7 +357,7 @@
             <command
                   commandId="msi.gama.application.command.web"
                   icon="icons/view.www.png"
-                  label="GAMA Website"
+                  label="Welcome page"
                   style="push">
             </command>
             <separator
