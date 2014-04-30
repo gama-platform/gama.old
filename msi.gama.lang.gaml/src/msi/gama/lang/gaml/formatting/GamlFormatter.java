@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlFormatter.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the 
+ * 
+ * 'GamlFormatter.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -53,7 +53,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		}
 
 		// No space after these elements
-		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "�", "!") ) {
+		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "°", "!") ) {
 			c.setNoSpace().after(k);
 		}
 		// No space before these ones
@@ -86,23 +86,19 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 			c.setLinewrap().after(k);
 		}
 
-		// A same opening curly bracket is shared by blocks and functions, after which a ln is done
-		c.setLinewrap().after(g.getBlockAccess().getLeftCurlyBracketKeyword_1());
-		c.setIndentationIncrement().after(g.getBlockAccess().getLeftCurlyBracketKeyword_1());
 		// Regular blocks
-		c.setLinewrap(2).after(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
-		c.setLinewrap(1).before(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
-		c.setIndentationDecrement().before(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		handleBlock(c, g.getBlockAccess().getLeftCurlyBracketKeyword_1(), g.getBlockAccess()
+			.getRightCurlyBracketKeyword_2_1_1(), 2);
+		handleBlock(c, g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1(), g.getDisplayBlockAccess()
+			.getRightCurlyBracketKeyword_3(), 2);
+		handleBlock(c, g.getExperimentBlockAccess().getLeftCurlyBracketKeyword_1(), g.getExperimentBlockAccess()
+			.getRightCurlyBracketKeyword_3(), 2);
+		handleBlock(c, g.getOutputBlockAccess().getLeftCurlyBracketKeyword_1(), g.getOutputBlockAccess()
+			.getRightCurlyBracketKeyword_3(), 2);
+		handleBlock(c, g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0(), g.getS_EquationsAccess()
+			.getRightCurlyBracketKeyword_3_0_2(), 2);
 		// Functions
-		c.setLinewrap(1).after(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
-		c.setLinewrap(1).before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
-		c.setIndentationDecrement().before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
-		// Equation blocks are defined differently (of course ! It would be too simple...)
-		c.setLinewrap().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
-		c.setIndentationIncrement().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
-		c.setLinewrap(2).after(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
-		c.setLinewrap(1).before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
-		c.setIndentationDecrement().before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
+		handleBlockTermination(c, g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1(), 1);
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
 
@@ -110,6 +106,28 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 		handleComments(c, g);
 
+	}
+
+	/**
+	 * @param c
+	 * @param opening and closing keywords
+	 */
+	private void handleBlock(final FormattingConfig c, final Keyword opening, final Keyword closing,
+		final int lineWrapAfter) {
+		// A same opening curly bracket is shared by blocks and functions, after which a ln is done
+		handleBlockOpening(c, opening);
+		handleBlockTermination(c, closing, lineWrapAfter);
+	}
+
+	private void handleBlockOpening(final FormattingConfig c, final Keyword opening) {
+		c.setLinewrap().after(opening);
+		c.setIndentationIncrement().after(opening);
+	}
+
+	private void handleBlockTermination(final FormattingConfig c, final Keyword closing, final int lineWrapAfter) {
+		c.setLinewrap(lineWrapAfter).after(closing);
+		c.setLinewrap(1).before(closing);
+		c.setIndentationDecrement().before(closing);
 	}
 
 	@Override
