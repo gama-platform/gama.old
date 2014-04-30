@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ActionWiper.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ActionWiper.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -41,7 +41,8 @@ public class ActionWiper extends PerspectiveAdapter implements IStartup {
 				IContributionItem[] items = w.getCoolBarManager2().getItems();
 				// We remove all contributions to the toolbar that do not relate to gama
 				for ( IContributionItem item : items ) {
-					if ( !item.getId().contains("gama") && !item.isGroupMarker() && !item.isSeparator() ) {
+					if ( !item.getId().contains("gama") && !item.isGroupMarker() && !item.isSeparator() &&
+						!item.getId().contains("editbox") ) {
 						System.out.println("Removed perspective contribution:" + item.getId());
 						w.getCoolBarManager2().remove(item);
 					}
