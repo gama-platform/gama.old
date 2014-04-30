@@ -13,6 +13,7 @@ package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import java.util.List;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
@@ -23,6 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -30,7 +32,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
@@ -42,6 +44,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 
 /**
@@ -54,6 +57,10 @@ import com.google.inject.Inject;
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	public GamlEditor() {}
+
+	static final GamaPreferences.Entry<Boolean> EDITOR_CLEAN_UP = GamaPreferences
+		.create("editor.cleanup.save", "Applying formatting to models on save", false, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options");
 
 	// Copied from SwtGui. See how to factorize this.
 	// public static Image run = GamaIcons.action_run;
@@ -71,6 +78,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
+
+	@Inject
+	private CompoundXtextEditorCallback callback;
 
 	@Inject
 	private GamlJavaValidator validator;
@@ -376,7 +386,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					@Override
 					public IModel exec(final XtextResource state) throws Exception {
 						List<GamlCompilationError> errors = new ArrayList();
-						return GamlModelBuilder.getInstance().compile((GamlResource) state);
+						return GamlModelBuilder.getInstance().compile(state);
 					}
 
 				});
@@ -503,6 +513,37 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			return super.getTextHover(sourceViewer, contentType);
 		}
 
+	}
+
+	@Override
+	public void doSave(final IProgressMonitor progressMonitor) {
+		this.beforeSave();
+		super.doSave(progressMonitor);
+	}
+
+	@Override
+	public void doSaveAs() {
+		this.beforeSave();
+		super.doSaveAs();
+	}
+
+	/**
+	 *
+	 */
+	private void beforeSave() {
+		if ( !EDITOR_CLEAN_UP.getValue() ) { return; }
+		SourceViewer sv = (SourceViewer) getInternalSourceViewer();
+		Point p = sv.getSelectedRange();
+		sv.setSelectedRange(0, sv.getDocument().getLength());
+		sv.doOperation(ISourceViewer.FORMAT);
+		sv.setSelectedRange(p.x, p.y);
+	}
+
+	@Override
+	protected String[] collectContextMenuPreferencePages() {
+		String[] commonPages = super.collectContextMenuPreferencePages();
+		String[] langSpecificPages = new String[] { "pm.eclipse.editbox.pref.default" };
+		return ObjectArrays.concat(langSpecificPages, commonPages, String.class);
 	}
 
 }
