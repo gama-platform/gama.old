@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractOutput.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AbstractOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,16 +11,12 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.util.Collections;
-import java.util.List;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.compilation.Symbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -38,18 +34,18 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	boolean open = false;
 	private Integer nextRefreshTime;
 	private int refreshRate;
-	//hqnghi: identify experiment name 
+	// hqnghi: identify experiment name
 	private String expName = "";
-	
+
 	public String getExpName() {
 		return expName;
 	}
 
-	public void setExpName(String expName) {
+	public void setExpName(final String expName) {
 		this.expName = expName;
 	}
 
-	//end-hqnghi
+	// end-hqnghi
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
 		name = getLiteral(IKeyword.NAME);
@@ -63,6 +59,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	private boolean isUserCreated = true;
+	private boolean permanent = false;
 
 	@Override
 	public final boolean isUserCreated() {
@@ -76,17 +73,15 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public boolean init(final IScope scope) {
-//		setScope(scope.copy());
-		//hqnghi: if experiment is not blank, it mean that output is come frome other experiment 
-		if (expName.equals("")) {
+		// setScope(scope.copy());
+		// hqnghi: if experiment is not blank, it mean that output is come frome other experiment
+		if ( expName.equals("") ) {
 			setScope(scope.copy());
-		}else {
-			setScope(GAMA.getController(expName).getExperiment()
-					.getAgent()
-					.getSimulation().getScope());
+		} else {
+			setScope(GAMA.getController(expName).getExperiment().getAgent().getSimulation().getScope());
 		}
 		// GuiUtils.informConsole("scope " + expName);
-		//end-hqnghi
+		// end-hqnghi
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
@@ -176,13 +171,10 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public String getId() {
-		if(!this.getDescription().getModelDescription().getComodelName().equals("")){
-			return getName()+"#"+this.getDescription().getModelDescription().getComodelName(); 
-		}
+		if ( !this.getDescription().getModelDescription().getComodelName().equals("") ) { return getName() + "#" +
+			this.getDescription().getModelDescription().getComodelName(); }
 		return getName(); // by default
 	}
-
-
 
 	public void setScope(final IScope scope) {
 		if ( this.scope != null ) {
@@ -194,6 +186,15 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public IScope getScope() {
 		return scope;
+	}
+
+	@Override
+	public void setPermanent() {
+		permanent = true;
+	}
+
+	public boolean isPermanent() {
+		return permanent;
 	}
 
 }

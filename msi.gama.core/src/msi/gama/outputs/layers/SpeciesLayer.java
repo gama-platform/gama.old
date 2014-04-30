@@ -16,7 +16,6 @@ import java.util.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
@@ -51,7 +50,7 @@ public class SpeciesLayer extends AgentLayer {
 		shapes.clear();
 		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
 		final IMacroAgent world = scope.getSimulationScope();
-		if ( !world.dead() ) {
+		if ( world != null && !world.dead() ) {
 			final IPopulation microPop = world.getMicroPopulation(species);
 			if ( microPop != null ) {
 				drawPopulation(scope, g, (SpeciesLayerStatement) definition, microPop);

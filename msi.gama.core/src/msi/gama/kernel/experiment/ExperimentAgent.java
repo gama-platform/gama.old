@@ -137,17 +137,16 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void closeSimulation() {
 		// We unschedule the simulation if any
 		if ( getSimulation() != null ) {
-//			GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
+			// GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 
-			//hqnghi: in case experiment have its own controller 
-			if(!((ExperimentSpecies) getSpecies()).getControllerName().equals("")){				
-				GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName())
-				.getScheduler()
-				.unschedule(getSimulation().getScheduler());
-			}else{
-			GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
+			// hqnghi: in case experiment have its own controller
+			if ( !((ExperimentSpecies) getSpecies()).getControllerName().equals("") ) {
+				GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+					.unschedule(getSimulation().getScheduler());
+			} else {
+				GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 			}
-			//end-hqnghi
+			// end-hqnghi
 
 			// TODO Should better be in SimulationOutputManager
 			if ( !getSpecies().isBatch() ) {
@@ -180,12 +179,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return this;
 	}
 
-	public SimulationAgent createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
+	public void createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
 		final IPopulation pop = getMicroPopulation(getModel());
+		if ( pop == null ) { return; }
 		// 'simulation' is set by a callback call to setSimulation()
 		ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
-		return (SimulationAgent) pop.createAgents(scope, 1, GamaList.with(ps), scheduleIt).get(0);
+		pop.createAgents(scope, 1, GamaList.with(ps), scheduleIt);
 	}
 
 	public ParametersSet getParameterValues() {
@@ -210,35 +210,29 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void schedule() {
 		// The experiment agent is scheduled in the global scheduler
 		IOutputManager outputs = getSpecies().getExperimentOutputs();
-//		if ( outputs != null ) {
-//			GAMA.controller.getScheduler().schedule(outputs, getScope());
-//		}
-//		GAMA.controller.getScheduler().schedule(this, getScope());
-		
-		//hqnghi: in case experiment have its own controller
+		// if ( outputs != null ) {
+		// GAMA.controller.getScheduler().schedule(outputs, getScope());
+		// }
+		// GAMA.controller.getScheduler().schedule(this, getScope());
 
-		if(((ExperimentSpecies) getSpecies()).getControllerName()!=""){
-		if ( outputs != null ) {
-				GAMA.getController(
-						((ExperimentSpecies) getSpecies()).getControllerName())
-						.getScheduler()
-						.schedule(
-						outputs,
-						getScope());
-			}
-			GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName())
-					.getScheduler()
-					.schedule(this,
-					getScope());
+		// hqnghi: in case experiment have its own controller
 
-		}else{
+		if ( ((ExperimentSpecies) getSpecies()).getControllerName() != "" ) {
 			if ( outputs != null ) {
-			GAMA.controller.getScheduler().schedule(outputs, getScope());
-		}
-		GAMA.controller.getScheduler().schedule(this, getScope());
+				GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+					.schedule(outputs, getScope());
+			}
+			GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+				.schedule(this, getScope());
 
-	}
-		//end-hqnghi
+		} else {
+			if ( outputs != null ) {
+				GAMA.controller.getScheduler().schedule(outputs, getScope());
+			}
+			GAMA.controller.getScheduler().schedule(this, getScope());
+
+		}
+		// end-hqnghi
 	}
 
 	/**
@@ -312,12 +306,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@setter(ExperimentAgent.MINIMUM_CYCLE_DURATION)
 	public void setMinimumDuration(final Double d) {
 		// d is in seconds, but the slider expects milleseconds
-//		GAMA.setDelayFromExperiment(d);
-		//hqnghi
-		if(GAMA.getControllers().size()==0){			
-		GAMA.setDelayFromExperiment(d);
-	}
-		//end-hqnghi
+		// GAMA.setDelayFromExperiment(d);
+		// hqnghi
+		if ( GAMA.getControllers().size() == 0 ) {
+			GAMA.setDelayFromExperiment(d);
+		}
+		// end-hqnghi
 	}
 
 	@Override

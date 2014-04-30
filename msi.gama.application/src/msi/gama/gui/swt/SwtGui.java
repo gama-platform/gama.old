@@ -104,8 +104,8 @@ public class SwtGui implements IGui {
 	private ConsoleView console = null;
 	private final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
-	private final List<IDisplaySurface> surfaces = new ArrayList();
-	private IPartListener2 partListener;
+	private static final List<IDisplaySurface> surfaces = new ArrayList();
+	private static IPartListener2 partListener;
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -494,8 +494,6 @@ public class SwtGui implements IGui {
 
 		Object o = internalShowView(viewId, secondaryId, code);
 		if ( o instanceof IWorkbenchPart ) {
-			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
-			ps.addPartListener(getPartListener());
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
@@ -505,7 +503,7 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
-	private IPartListener2 getPartListener() {
+	public static IPartListener2 getPartListener() {
 		if ( partListener == null ) {
 			partListener = new GamaPartListener();
 		}
@@ -545,7 +543,7 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	public class GamaPartListener implements IPartListener2 {
+	public static class GamaPartListener implements IPartListener2 {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {}
@@ -1167,8 +1165,7 @@ public class SwtGui implements IGui {
 	 * Method getFirstDisplaySurface()
 	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
 	 */
-	@Override
-	public IDisplaySurface getFirstDisplaySurface() {
+	public static IDisplaySurface getFirstDisplaySurface() {
 		if ( surfaces.isEmpty() ) { return null; }
 		if ( surfaces.size() > 1 ) { return null; }
 		return surfaces.get(0);

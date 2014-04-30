@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'JOGLAWTGLRenderer.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'JOGLAWTGLRenderer.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -21,7 +21,6 @@ import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.*;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
@@ -69,14 +68,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Display model a a 3D Cube
 	private boolean cubeDisplay = true;
 	// use orthographic projection
-	 boolean orthographic = false;
+	boolean orthographic = false;
 
 	public boolean triangulation = false;
 
 	public boolean computeNormal = true;
 
 	public boolean drawDiffuseLight = true;
-	
+
 	public boolean isLightOn = true;
 
 	public boolean drawAxes = true;
@@ -130,7 +129,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// Set background color
 		setBackground(displaySurface.getBackgroundColor());
-		
+
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtilLight.enableSmooth(gl);
 
@@ -141,7 +140,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Set up the lighting for Light-1
 		GLUtilLight.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(),
 			(float) displaySurface.getEnvHeight(), ambientLightValue, diffuseLightValue);
-	
+
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -150,8 +149,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		// Blending control
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		
-		//gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+
+		// gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
 		gl.glEnable(GL_BLEND);
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
@@ -177,7 +176,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void display(final GLAutoDrawable drawable) {
 		// AD : 10/09/13 Addition of the second condition to addres Issue 607.
 		// TODO : Understand why some OpenGL operations are triggered even when the simulation is gone.
-		if ( !displaySurface.isPaused() && GAMA.getSimulation() != null ) {
+		if ( !displaySurface.isPaused() /* && GAMA.getSimulation() != null */) {
 			gl = drawable.getGL();
 			setContext(drawable.getContext());
 			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
@@ -210,9 +209,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			light0Position[2] = (float) diffuseLightPosition.z;
 			light0Position[3] = 0.0f;
 
-			
-			if(drawDiffuseLight){
-				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu,getMaxEnvDim()/10, diffuseLightValue);
+			if ( drawDiffuseLight ) {
+				GLUtilLight.DrawDiffuseLight0(light0Position, gl, glu, getMaxEnvDim() / 10, diffuseLightValue);
 			}
 
 			// System.out.println("x:" + light0Position[0] + "y:" + light0Position[1] + "z:" + light0Position[2] );
@@ -258,7 +256,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
+	public void
+		reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 		this.width = width;
@@ -266,7 +265,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		float aspect = (float) width / (height == 0 ? 1 : height);
 		// final float aspect = (float) width / height;
 		// Set the viewport (display area) to cover the entire window
-		gl.glViewport(0, 0, width, height);	
+		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the model-view matrix
 		gl.glMatrixMode(GL_MODELVIEW);
 		gl.glLoadIdentity(); // reset
@@ -274,7 +273,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 
-		
 		// FIXME Update camera as well ??
 		camera.updateCamera(gl, glu, width, height);
 	}
@@ -424,7 +422,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getCubeDisplay() {
 		return this.cubeDisplay;
 	}
-	
+
 	public void setOrtho(final boolean o) {
 		this.orthographic = o;
 	}
@@ -452,7 +450,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setDrawDiffuseLight(final boolean ddiff) {
 		this.drawDiffuseLight = ddiff;
 	}
-	
+
 	public boolean getIsLightOn() {
 		return isLightOn;
 	}
@@ -521,11 +519,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( frame != 0 ) {
 			double env_width = displaySurface.getEnvWidth();
 			double env_height = displaySurface.getEnvHeight();
-			//gl.glPushMatrix();
+			// gl.glPushMatrix();
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotatef(frame, 0, 0, 1);
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
-			//gl.glPopMatrix();
+			// gl.glPopMatrix();
 		}
 	}
 

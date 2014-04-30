@@ -1,13 +1,13 @@
 /*********************************************************************************************
- *
- *
+ * 
+ * 
  * 'EventLayerStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
+ * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
+ * 
+ * 
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -33,37 +33,47 @@ import msi.gaml.types.IType;
 /**
  * Written by Marilleau Modified on 16 novembre 2012
  * @todo Description
- *
+ * 
  */
 @symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY })
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, values = { "mouse_up", "mouse_down", "mouse_drag" }, optional = false, doc = @doc("the type of event captured")),
-	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false, doc = @doc("the identifier of the action to be executed. It has to be an action written in the global block. This action have to follow the following specification: `action myAction (point location, list selected_agents)`")),
+	@facet(name = IKeyword.NAME,
+		type = IType.ID,
+		values = { "mouse_up", "mouse_down", "mouse_drag" },
+		optional = false,
+		doc = @doc("the type of event captured")),
+	@facet(name = IKeyword.ACTION,
+		type = IType.STRING,
+		optional = false,
+		doc = @doc("the identifier of the action to be executed. It has to be an action written in the global block. This action have to follow the following specification: `action myAction (point location, list selected_agents)`")),
 	@facet(name = EventLayerStatement.defaultPointArg, type = IType.STRING, optional = true, internal = true),
 	@facet(name = EventLayerStatement.defaultListArg, type = IType.STRING, optional = true, internal = true) },
 	omissible = IKeyword.NAME)
 @validator(EventLayerValidator.class)
-@doc(value="`"+IKeyword.EVENT+"` allows to interact with the simulation by capturing mouse event and doing an action. This action could apply a change on environment or on agents, according to the goal.", usages = {
-		@usage(value = "The general syntax is:", examples = {
-				@example(value="event [event_type] action: myAction;", isExecutable=false)}),
+@doc(value = "`" +
+	IKeyword.EVENT +
+	"` allows to interact with the simulation by capturing mouse event and doing an action. This action could apply a change on environment or on agents, according to the goal.",
+	usages = {
+		@usage(value = "The general syntax is:", examples = { @example(value = "event [event_type] action: myAction;",
+			isExecutable = false) }),
 		@usage(value = "For instance:", examples = {
-		@example(value="global {", isExecutable=false),
-		@example(value="   // ... ", isExecutable=false),		
-		@example(value="   action myAction (point location, list selected_agents) {", isExecutable=false),
-		@example(value="      // location: contains le location of the click in the environment", isExecutable=false),
-		@example(value="      // selected_agents: contains agents clicked by the event", isExecutable=false),	
-		@example(value="      ", isExecutable=false),		
-		@example(value="      // code written by modelers", isExecutable=false),
-		@example(value="   }", isExecutable=false),
-		@example(value="}", isExecutable=false),
-		@example(value="", isExecutable=false),		
-		@example(value="experiment Simple type:gui {", isExecutable=false),	
-		@example(value="   display my_display {", isExecutable=false),
-		@example(value="      event mouse_up action: myAction;", isExecutable=false),
-		@example(value="   }", isExecutable=false),
-		@example(value="}", isExecutable=false)})},
-	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.OVERLAY,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
+			@example(value = "global {", isExecutable = false),
+			@example(value = "   // ... ", isExecutable = false),
+			@example(value = "   action myAction (point location, list selected_agents) {", isExecutable = false),
+			@example(value = "      // location: contains le location of the click in the environment",
+				isExecutable = false),
+			@example(value = "      // selected_agents: contains agents clicked by the event", isExecutable = false),
+			@example(value = "      ", isExecutable = false),
+			@example(value = "      // code written by modelers", isExecutable = false),
+			@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false),
+			@example(value = "", isExecutable = false),
+			@example(value = "experiment Simple type:gui {", isExecutable = false),
+			@example(value = "   display my_display {", isExecutable = false),
+			@example(value = "      event mouse_up action: myAction;", isExecutable = false),
+			@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) }, see = {
+		IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
+		IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class EventLayerStatement extends AbstractLayerStatement {
 
 	public static class EventLayerValidator implements IDescriptionValidator {
@@ -72,6 +82,16 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		public void validate(final IDescription description) {
 			String actionName = description.getFacets().getLabel(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
+			if ( sd == null ) {
+				// display
+				IDescription superDesc = description.getEnclosingDescription();
+				// output or permanent
+				superDesc = superDesc.getEnclosingDescription();
+				if ( superDesc.getKeyword() == IKeyword.PERMANENT ) {
+					// we look into experiment
+					sd = superDesc.getEnclosingDescription().getAction(actionName);
+				}
+			}
 			if ( sd == null ) {
 				description.error("Action '" + actionName + "' is not defined in 'global'", IGamlIssue.UNKNOWN_ACTION,
 					ACTION);

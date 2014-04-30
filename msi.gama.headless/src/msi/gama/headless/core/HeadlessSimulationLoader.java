@@ -19,7 +19,6 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -50,7 +49,7 @@ public class HeadlessSimulationLoader {
 				entry.getValue());
 		}
 		currentExperiment.createAgent();
-		SimulationAgent sim = currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
+		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 		GAMA.controller.newHeadlessExperiment(currentExperiment);
 		return currentExperiment;
 	}

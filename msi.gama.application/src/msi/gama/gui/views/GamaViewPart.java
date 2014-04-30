@@ -12,10 +12,10 @@
 package msi.gama.gui.views;
 
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.actions.*;
 import msi.gama.outputs.*;
-import msi.gama.runtime.FrontEndController;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.contexts.IContextService;
@@ -32,6 +32,8 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
+		IPartService ps = (IPartService) site.getService(IPartService.class);
+		ps.addPartListener(SwtGui.getPartListener());
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
@@ -46,13 +48,13 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 					out = (IDisplayOutput) manager.getOutput(id);
 				}
 				if ( out == null ) {
-					for(FrontEndController fec: GAMA.getControllers().getValues()){
-						manager=fec.getExperiment().getSimulationOutputs();
+					for ( FrontEndController fec : GAMA.getControllers().getValues() ) {
+						manager = fec.getExperiment().getSimulationOutputs();
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
 						}
 						if ( out == null ) {
-							manager=fec.getExperiment().getExperimentOutputs();
+							manager = fec.getExperiment().getExperimentOutputs();
 							if ( manager != null ) {
 								out = (IDisplayOutput) manager.getOutput(id);
 							}
@@ -77,18 +79,18 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 		activateContext();
 	}
 
-	/**
-	 * @param state one of the IWorkbenchPage STATE_* values: STATE_MAXIMIZED,
-	 *            STATE_MINIMIZED, STATE_RESTORED
-	 */
-	public void setViewState(final int state) {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		int currentState = page.getPartState(page.getReference(this));
-		if ( currentState != state ) {
-			page.activate(this);
-			page.setPartState(page.getReference(this), state);
-		}
-	}
+	// /**
+	// * @param state one of the IWorkbenchPage STATE_* values: STATE_MAXIMIZED,
+	// * STATE_MINIMIZED, STATE_RESTORED
+	// */
+	// public void setViewState(final int state) {
+	// IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	// int currentState = page.getPartState(page.getReference(this));
+	// if ( currentState != state ) {
+	// page.activate(this);
+	// page.setPartState(page.getReference(this), state);
+	// }
+	// }
 
 	public abstract void ownCreatePartControl(Composite parent);
 
@@ -129,5 +131,17 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	public void setFocus() {}
 
 	public void fixSize() {};
+
+	@Override
+	public void dispose() {
+		IWorkbenchPartSite s = getSite();
+		if ( s != null ) {
+			IPartService ps = (IPartService) s.getService(IPartService.class);
+			if ( ps != null ) {
+				ps.removePartListener(SwtGui.getPartListener());
+			}
+		}
+
+	}
 
 }

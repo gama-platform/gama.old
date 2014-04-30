@@ -276,15 +276,6 @@ public class HeadlessListener implements IGui {
 	public void runModel(final Object object, final String exp) throws CoreException {}
 
 	/**
-	 * Method getFirstDisplaySurface()
-	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
-	 */
-	@Override
-	public IDisplaySurface getFirstDisplaySurface() {
-		return null;
-	}
-
-	/**
 	 * Method updateSpeedDisplay()
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */

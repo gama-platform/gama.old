@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IOutput.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -55,5 +55,10 @@ public interface IOutput extends ISymbol, IStepable {
 	public IScope getScope();
 
 	public void setUserCreated(boolean b);
+
+	/**
+	 *
+	 */
+	public void setPermanent();
 
 }

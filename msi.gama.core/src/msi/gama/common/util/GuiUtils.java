@@ -407,14 +407,6 @@ public class GuiUtils {
 	}
 
 	/**
-	 * @return
-	 */
-	public static IDisplaySurface getFirstDisplaySurface() {
-		if ( gui == null ) { return null; }
-		return gui.getFirstDisplaySurface();
-	}
-
-	/**
 	 * @param d in milliseconds
 	 */
 	public static void updateSpeedDisplay(final Double d, final boolean notify) {

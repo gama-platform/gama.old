@@ -148,8 +148,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setPaused(final boolean flag) {
+		boolean oldPaused = paused;
 		paused = flag;
-		if ( !paused ) {
+		if ( oldPaused && !paused ) {
 			updateDisplay();
 		}
 	}
@@ -390,7 +391,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public boolean resizeImage(final int x, final int y) {
-		// GuiUtils.debug("AbstractAWTDisplaySurface.resizeImage " + x + " " + y + " can be update : " + canBeUpdated);
 		if ( x == displayWidth && y == displayHeight ) { return true; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);

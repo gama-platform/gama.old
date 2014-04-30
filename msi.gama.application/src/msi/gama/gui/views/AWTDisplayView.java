@@ -66,7 +66,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 		final boolean isOpenGL = getOutput().isOpenGL();
 		final String outputName = getOutput().getName();
 
-		OutputSynchronizer.incInitializingViews(outputName); // incremented in the SWT thread
+		OutputSynchronizer.incInitializingViews(outputName, getOutput().isPermanent()); // incremented in the SWT thread
 		surfaceComposite = new SwingControl(parent, SWT.NONE) {
 
 			@Override
@@ -146,9 +146,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 		};
 
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-		// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// data.minimumHeight = 100;
-		// surfaceComposite.setLayoutData(data);
 		return surfaceComposite;
 	}
 

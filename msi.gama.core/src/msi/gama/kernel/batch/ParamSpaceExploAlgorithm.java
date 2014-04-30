@@ -86,7 +86,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public void run() {
 		try {
-			IScope scope = currentExperiment.getScope();
 			findBestSolution();
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e, false);

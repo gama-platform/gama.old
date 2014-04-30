@@ -37,13 +37,16 @@ public class OutputSynchronizer {
 		return NumberClosingViews.get();
 	}
 
-	public static void incInitializingViews(final String view) {
+	public static void incInitializingViews(final String view, final boolean isPermanent) {
 		// GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
 		viewsScheduledToOpen.add(view);
-		viewsScheduledToClose.add(view);
+		if ( !isPermanent ) {
+			viewsScheduledToClose.add(view);
+			NumberClosingViews.incrementAndGet();
+		}
 		viewsScheduledToBeActivated.add(0, view);
 		NumberOpeningViews.incrementAndGet();
-		NumberClosingViews.incrementAndGet();
+
 	}
 
 	public static void decClosingViews(final String view) {

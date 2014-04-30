@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AgentsMenu.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AgentsMenu.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,7 +16,7 @@ import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -64,7 +64,8 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
-	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop, final Image image) {
+	private static MenuItem
+		browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop, final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		if ( pop instanceof IPopulation ) {
 			result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
@@ -242,8 +243,8 @@ public class AgentsMenu extends ContributionItem {
 		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(), "Inspect");
 		if ( !topLevel ) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
-			if ( GuiUtils.getFirstDisplaySurface() != null && actions == null || actions.length == 0 ) {
-				actionAgentMenuItem(menu, agent, new Focuser(GuiUtils.getFirstDisplaySurface()),
+			if ( SwtGui.getFirstDisplaySurface() != null && actions == null || actions.length == 0 ) {
+				actionAgentMenuItem(menu, agent, new Focuser(SwtGui.getFirstDisplaySurface()),
 					IGamaIcons.MENU_FOCUS.image(), "Focus");
 			}
 		}

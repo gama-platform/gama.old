@@ -15,7 +15,6 @@ import java.awt.event.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -99,7 +98,11 @@ public class EventLayer extends AbstractLayer {
 
 		public EventListener(final IDisplaySurface display, final String event, final String action) {
 			listenedEvent = getListeningEvent(event);
-			executer = display.getDisplayScope().getSimulationScope().getSpecies().getAction(action);
+			IAgent a = display.getDisplayScope().getSimulationScope();
+			if ( a == null ) {
+				a = display.getDisplayScope().getExperiment();
+			}
+			executer = a.getSpecies().getAction(action);
 			surface = display;
 		}
 
@@ -138,6 +141,7 @@ public class EventLayer extends AbstractLayer {
 		}
 
 		private void executeEvent(final MouseEvent arg0) {
+			if ( executer == null ) { return; }
 			final GamaPoint pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
 			if ( pp.x < 0 || pp.getY() < 0 || pp.x >= surface.getEnvWidth() || pp.y >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();

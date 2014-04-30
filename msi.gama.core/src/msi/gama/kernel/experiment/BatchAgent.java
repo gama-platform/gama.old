@@ -17,6 +17,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
@@ -156,27 +157,32 @@ public class BatchAgent extends ExperimentAgent {
 		for ( repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, false);
-			GuiUtils.prepareForSimulation(simulation);
-			IScope scope = simulation.getScope();
-			simulation.getScheduler().insertAgentToInit(simulation, scope);
-			// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
-			simulation.getScheduler().init(scope);
+			if ( simulation != null && !simulation.dead() ) {
+				GuiUtils.prepareForSimulation(simulation);
+				IScope scope = simulation.getScope();
+				simulation.getScheduler().insertAgentToInit(simulation, scope);
+				// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
+				simulation.getScheduler().init(scope);
 
-			// This inner while loop runs the simulation and controls its execution
-			while (simulation != null && simulation.step(scope)) {
-				boolean mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, simulation));
-				if ( mustStop ) {
-					break;
+				// This inner while loop runs the simulation and controls its execution
+				while (simulation != null && simulation.step(scope)) {
+					boolean mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, simulation));
+					if ( mustStop ) {
+						break;
+					}
+					GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
+						getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
+					// TODO This is where any update of the outputs of simulations should be introduced
 				}
-				GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
-					getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
-				// TODO This is where any update of the outputs of simulations should be introduced
 			}
 			// When a simulation is finished, we give a chance to the outputs of the experiment and the experiment
 			// agent itself to "step" once, effectively emulating what the front scheduler should do. The simulation is
 			// still "alive" at this stage, which allows to retrieve information from it
 			super.step(getScope());
-			getSpecies().getExperimentOutputs().step(getScope());
+			IOutputManager manager = getSpecies().getExperimentOutputs();
+			if ( manager != null ) {
+				manager.step(getScope());
+			}
 			// We then verify that the front scheduler has not been paused
 			while (GAMA.controller.getScheduler().paused && !dead) {
 				try {
