@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    <extension point="org.eclipse.ui.commands">
+        <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="ummisco.gaml.editbox.actions.SelectBox"
+            id="ummisco.gaml.editbox.SelectBox"
+            name="EditBox Select box"/>
+        <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="ummisco.gaml.editbox.actions.UnselectBox"
+            id="ummisco.gaml.editbox.UnselectBox"
+            name="EditBox Unselect box"/>
+        <command
+            categoryId="org.eclipse.ui.category.window"
+            id="ummisco.gaml.editbox.actions.EnableEditBoxCmd"
+            defaultHandler="ummisco.gaml.editbox.actions.EnableEditBox"
+            name="EditBox on/off"/>
+    </extension>
+
+    <extension point="org.eclipse.ui.preferencePages">
+       <page
+             category="msi.gama.lang.gaml.Gaml"
+             class="ummisco.gaml.editbox.pref.EditboxPreferencePage"
+             id="pm.eclipse.editbox.pref.default"
+             name="EditBox">
+       </page>
+    </extension>
+   
+    <extension point="org.eclipse.ui.bindings">
+        <key commandId="ummisco.gaml.editbox.SelectBox" sequence="ALT+Z"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+    </extension>
+
+    <extension point="org.eclipse.ui.startup">
+      <startup class="ummisco.gaml.editbox.actions.EditBoxStartup"/>
+    </extension>
+
+	<extension point = "org.eclipse.ui.actionSets">
+	   <actionSet id="pm.eclipse.editbox.ActionSetId" label="EditBox" visible="true">
+		   <action id="ummisco.gaml.editbox.EnableEditboxActionId"
+			            label="EditBox" 
+						toolbarPath="EditBox"
+						style="toggle"
+						icon="icons/editbox.png" 
+						tooltip="Editbox on/off"  
+						class="ummisco.gaml.editbox.actions.EnableEditBox"
+						definitionId="ummisco.gaml.editbox.actions.EnableEditBoxCmd" >
+		   </action>
+	   </actionSet>
+	</extension>
+
+</plugin>
