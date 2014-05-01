@@ -2246,7 +2246,7 @@ public abstract class Spatial {
 		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.",
 			comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.",
 			examples = { @example(value = "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0",
-				equals = "for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]",
+				equals = "for example, can return [[[ag1],[ag3]], [ag2], [[[ag4],[ag5]],[ag6]]",
 				isExecutable = false) }, see = { "simple_clustering_by_distance" })
 		public static
 			IList
@@ -2299,16 +2299,9 @@ public abstract class Spatial {
 				groups.remove(g2);
 				groups.remove(g1);
 				IList groupeF = new GamaList();
-				if ( g2.size() == 1 ) {
-					groupeF.add(g2.get(0));
-				} else {
-					groupeF.add(g2);
-				}
-				if ( g1.size() == 1 ) {
-					groupeF.add(g1.get(0));
-				} else {
-					groupeF.add(g1);
-				}
+				groupeF.add(g2);
+				groupeF.add(g1);
+				
 				for ( final IList groupe : groups ) {
 					final Set<IList> newDistGp = new THashSet<IList>();
 					newDistGp.add(groupe);
