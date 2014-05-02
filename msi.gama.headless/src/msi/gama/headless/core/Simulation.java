@@ -176,7 +176,7 @@ public class Simulation {
 	private void exportVariables() {
 		// TODO: listenedVariable should contain objects that know "what they are" (simulation outputs, experiment outputs, simulation variables, experiment variables, etc.)
 		int size = this.listenedVariables.length;
-
+		if ( size == 0 ) { return; }
 		for ( int i = 0; i < size; i++ ) {
 			ListenedVariable v = this.listenedVariables[i];
 			if ( this.step % v.frameRate == 0 ) {
