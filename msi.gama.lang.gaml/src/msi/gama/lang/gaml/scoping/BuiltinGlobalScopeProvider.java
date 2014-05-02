@@ -67,7 +67,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 		@Override
 		protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
-			return ((GamlResource) resource).computeAllImportedURIs();
+			return ((GamlResource) resource).computeAllImportedURIs(resource.getResourceSet());
 		}
 	}
 
@@ -257,9 +257,9 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	}
 
 	static Resource createResource(final String uri) {
-		Resource r = rs.getResource(URI.createURI(uri), false);
+		Resource r = rs.getResource(URI.createURI(uri, false), false);
 		if ( r == null ) {
-			r = rs.createResource(URI.createURI(uri));
+			r = rs.createResource(URI.createURI(uri, false));
 		}
 		return r;
 	}
