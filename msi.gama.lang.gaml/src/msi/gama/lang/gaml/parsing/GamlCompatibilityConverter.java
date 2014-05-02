@@ -49,7 +49,7 @@ public class GamlCompatibilityConverter {
 			List<Import> imports = m.getImports();
 			imps = new Object[imports.size()];
 			for ( int i = 0; i < imps.length; i++ ) {
-				URI uri = URI.createURI(imports.get(i).getImportURI());
+				URI uri = URI.createURI(imports.get(i).getImportURI(), false);
 				imps[i] = uri;
 				// if ( EcoreUtil2.isValidUri(r, uri) ) {
 				// imps[i] = uri;
