@@ -154,13 +154,8 @@ public class GamlResource extends LazyLinkingResource {
 			getErrorCollector(), isEdited);
 	}
 
-	public Set<URI> computeImportedURIs() {
-		ISyntacticElement element = this.getSyntacticContents();
-		if ( !(element instanceof SyntacticModelElement) ) { return Collections.EMPTY_SET; }
-		return ((SyntacticModelElement) element).getImports();
-	}
 
-	public LinkedHashSet<URI> computeAllImportedURIs() {
+	public LinkedHashSet<URI> computeAllImportedURIs(final ResourceSet set) {
 
 		final LinkedHashSet<URI> totalResources = new LinkedHashSet();
 		final TLinkedHashSet<GamlResource> newResources = new TLinkedHashSet<GamlResource>();
@@ -170,25 +165,27 @@ public class GamlResource extends LazyLinkingResource {
 			newResources.clear();
 			for ( final GamlResource gr : resourcesToConsider ) {
 				if ( totalResources.add(gr.getURI()) ) {
-					final TOrderedHashMap<GamlResource, Import> imports = gr.loadImports();
+					final TOrderedHashMap<GamlResource, Import> imports = gr.loadImports(set);
 					newResources.addAll(imports.keySet());
 				}
 			}
 		}
+		// GamlModelBuilder.imports(getURI(), totalResources);
 		return totalResources;
 
 	}
 
-	public TOrderedHashMap<GamlResource, Import> loadImports() {
+	public TOrderedHashMap<GamlResource, Import> loadImports(final ResourceSet resourceSet) {
 		final TOrderedHashMap<GamlResource, Import> imports = new TOrderedHashMap();
 		final Model model = (Model) getContents().get(0);
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
 			if ( importUri != null ) {
-				final URI iu = URI.createURI(importUri).resolve(getURI());
+				final URI iu = URI.createURI(importUri, false).resolve(getURI());
 				if ( EcoreUtil2.isValidUri(this, iu) ) {
-					final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+					GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 					if ( ir != null ) {
+
 						imports.put(ir, imp);
 					}
 				}
@@ -197,9 +194,9 @@ public class GamlResource extends LazyLinkingResource {
 		return imports;
 	}
 
-	public TLinkedHashSet<GamlResource> loadAllResources() {
+	public TLinkedHashSet<GamlResource> loadAllResources(final ResourceSet resourceSet) {
 		final TLinkedHashSet<GamlResource> totalResources = new TLinkedHashSet<GamlResource>();
-		Set<URI> uris = computeAllImportedURIs();
+		Set<URI> uris = computeAllImportedURIs(resourceSet);
 		for ( URI uri : uris ) {
 			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
 			if ( ir != null ) {
@@ -212,7 +209,7 @@ public class GamlResource extends LazyLinkingResource {
 	public EObject findImport(final URI uri) {
 		Model m = (Model) getContents().get(0);
 		for ( final Import imp : m.getImports() ) {
-			final URI iu = URI.createURI(imp.getImportURI()).resolve(getURI());
+			final URI iu = URI.createURI(imp.getImportURI(), false).resolve(getURI());
 			if ( uri.equals(iu) ) { return imp; }
 		}
 		return null;
@@ -233,7 +230,7 @@ public class GamlResource extends LazyLinkingResource {
 
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
-		Set<GamlResource> imports = loadAllResources();
+		Set<GamlResource> imports = loadAllResources(set);
 		for ( GamlResource r : imports ) {
 			if ( !r.getErrors().isEmpty() ) {
 				invalidateBecauseOfImportedProblem("Syntax errors detected ", r);
@@ -261,13 +258,13 @@ public class GamlResource extends LazyLinkingResource {
 	public boolean validate(final ResourceSet set) {
 		try {
 			setValidating(true);
-			// DescriptionFactory.HUGE_CACHE.clear();
 			// We first build the model description
 			final long begin = System.nanoTime();
 			final long mem = Runtime.getRuntime().freeMemory();
 			final long mb = 1024;
 
 			ModelDescription model = buildCompleteDescription(set);
+
 			if ( model == null ) { return false; }
 
 			// We then validate it and get rid of the description. The documentation is produced only if the resource is
