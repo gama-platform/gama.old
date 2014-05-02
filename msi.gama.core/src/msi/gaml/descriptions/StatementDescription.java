@@ -727,4 +727,11 @@ public class StatementDescription extends SymbolDescription {
 		return Collections.EMPTY_LIST;
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isBreakable() {
+		return getMeta().isBreakable();
+	}
+
 }

@@ -61,6 +61,7 @@ public class SymbolProto implements IGamlDescription, INamed {
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
 		constructor = constr;
+
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
 		this.hasArgs = hasArgs;
@@ -202,5 +203,12 @@ public class SymbolProto implements IGamlDescription, INamed {
 	@Override
 	public void setName(final String newName) {
 		name = newName;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isBreakable() {
+		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
 	}
 }

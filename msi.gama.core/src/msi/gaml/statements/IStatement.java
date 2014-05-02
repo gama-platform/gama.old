@@ -31,6 +31,10 @@ public interface IStatement extends ISymbol, IGamlable, IExecutable {
 
 	}
 
+	public interface Breakable extends IStatement {
+		// Unused tagging interface (for the moment)
+	}
+
 	public abstract String getTrace(IScope scope);
 
 }

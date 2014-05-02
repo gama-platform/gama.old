@@ -11,14 +11,17 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.*;
+import msi.gaml.statements.BreakStatement.BreakValidator;
 
 /**
  * The class BreakCommand.
@@ -29,8 +32,27 @@ import msi.gaml.descriptions.IDescription;
  */
 @symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
-@doc(value="`"+IKeyword.BREAK+"` allows to interrupt the current sequence of statements.")
+@doc(value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
+@validator(BreakValidator.class)
 public class BreakStatement extends AbstractStatement {
+
+	public static class BreakValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription description) {
+			IDescription superDesc = description.getEnclosingDescription();
+			while (superDesc != null && superDesc instanceof StatementDescription) {
+				if ( ((StatementDescription) superDesc).isBreakable() ) { return; }
+				superDesc = superDesc.getEnclosingDescription();
+			}
+			description.error("'break' must be used in the context of a loop, a switch or an ask statement",
+				IGamlIssue.WRONG_CONTEXT);
+		}
+	}
 
 	/**
 	 * @param desc
