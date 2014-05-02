@@ -70,7 +70,7 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 	private Resource getResource() {
 		if ( stubsResource == null ) {
-			stubsResource = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi"));
+			stubsResource = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi", false));
 		}
 		return stubsResource;
 	}
