@@ -73,10 +73,10 @@ public class GamlEditorCallback extends AbstractDirtyStateAwareEditorCallback {
 
 	@Override
 	public void afterSave(final XtextEditor editor) {
-		if ( editor.isEditable() ) {
-			ValidationJob validationJob = newValidationJob(editor);
-			validationJob.schedule();
-		}
+		// if ( editor.isEditable() ) {
+		// ValidationJob validationJob = newValidationJob(editor);
+		// validationJob.schedule();
+		// }
 		super.afterSave(editor);
 	}
 
