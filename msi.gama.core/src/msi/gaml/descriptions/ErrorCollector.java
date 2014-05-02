@@ -39,7 +39,7 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	}
 
 	public ErrorCollector(final Resource resource, final boolean syntax) {
-		this.resourceURI = resource == null ? URI.createURI("builtin://gaml") : resource.getURI();
+		this.resourceURI = resource == null ? URI.createURI("builtin://gaml", false) : resource.getURI();
 		hasSyntaxErrors = syntax;
 	}
 
