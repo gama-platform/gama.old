@@ -13,12 +13,9 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.InputStream;
 import java.util.*;
-
 import msi.gama.kernel.model.IModel;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.ErrorCollector;
-import msi.gaml.descriptions.ModelDescription;
-
+import msi.gaml.descriptions.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
@@ -34,7 +31,7 @@ public class GamlModelBuilder implements IModelBuilder {
 
 	SynchronizedXtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
 	GamlResource fakeResource;
-	URI fakeURI = URI.createURI("temp_builder.gaml");
+	URI fakeURI = URI.createURI("temp_builder.gaml", false);
 
 	private static GamlModelBuilder instance = new GamlModelBuilder();
 
@@ -134,8 +131,7 @@ public class GamlModelBuilder implements IModelBuilder {
 	}
 
 	@Override
-	public ModelDescription buildModelDescription(URI uri,
-			List<GamlCompilationError> errors) {
+	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
 		try {
 			GamlResource r = (GamlResource) buildResourceSet.createResource(uri);
 			return r.buildDescription(r.getResourceSet(), errors);
