@@ -74,7 +74,7 @@ public class HumanMovingSkill extends MovingSkill {
 		final double detectingRange = dist + agentSize;
 		final double epsilon = 0.4;
 		final int numberOfSlot = (int) (dist / epsilon);
-		final int slot = GAMA.getRandom().between(-numberOfSlot, numberOfSlot);
+		final int slot = scope.getRandom().between(-numberOfSlot, numberOfSlot);
 
 		final Object background = scope.getArg("background", IType.NONE);
 		final IAgent backgroundAgent = (IAgent) background;
@@ -115,7 +115,7 @@ public class HumanMovingSkill extends MovingSkill {
 			dist = 2 * agentSize;
 		}
 
-		final int sign = GAMA.getRandom().between(-2, 2);
+		final int sign = scope.getRandom().between(-2, 2);
 		// OutputManager.debug("sign: " + sign);
 		final double x = startingPoint.getX() + slot * epsilon;
 		// OutputManager.debug("x: " + x);
@@ -199,7 +199,7 @@ public class HumanMovingSkill extends MovingSkill {
 		candidatePoint.add(new GamaPoint(startingPoint.x + dist / sqrt2, startingPoint.y - dist / sqrt2));
 		candidatePoint.add(new GamaPoint(startingPoint.x - dist / sqrt2, startingPoint.y + dist / sqrt2));
 
-		final int index = GAMA.getRandom().between(0, candidatePoint.size() - 1);
+		final int index = scope.getRandom().between(0, candidatePoint.size() - 1);
 
 		final GamaPoint px = candidatePoint.elementAt(index);
 		// OutputManager.debug(px.x + " - " + px.y);
