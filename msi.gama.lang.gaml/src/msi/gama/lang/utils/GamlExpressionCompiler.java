@@ -919,7 +919,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// XtextResourceSet rs = new SynchronizedXtextResourceSet();
 			rs.setClasspathURIContext(EcoreBasedExpressionDescription.class);
 			// IResourceFactory resourceFactory = EGaml.getInstance(IResourceFactory.class);
-			URI uri = URI.createURI("dummy" + count++ + ".gaml");
+			URI uri = URI.createURI("dummy" + count++ + ".gaml", false);
 			resource = (GamlResource) rs.createResource(uri);
 			// resource = (GamlResource) resourceFactory.createResource(uri);
 			// rs.getResources().add(resource);
@@ -970,7 +970,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		GamlResource resource =
 			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
 
-		URI iu = URI.createURI(fileName).resolve(resource.getURI());
+		URI iu = URI.createURI(fileName, false).resolve(resource.getURI());
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		// GamlResource r = (GamlResource) rs.getResource(iu, true);
@@ -1006,7 +1006,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		GamlResource resource =
 			(GamlResource) getContext().getModelDescription().getUnderlyingElement(null).eResource();
 
-		URI iu = URI.createURI(fileName).resolve(resource.getURI());
+		URI iu = URI.createURI(fileName, false).resolve(resource.getURI());
 		ModelDescription lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(iu, true);
