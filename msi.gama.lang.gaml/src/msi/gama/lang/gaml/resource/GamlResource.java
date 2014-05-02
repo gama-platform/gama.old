@@ -330,7 +330,7 @@ public class GamlResource extends LazyLinkingResource {
 		return model;
 	}
 
-	IModel build(final ResourceSet set, final List<GamlCompilationError> errors) {
+	public IModel build(final ResourceSet set, final List<GamlCompilationError> errors) {
 		// We build the description
 		ModelDescription model = buildDescription(set, errors);
 		// And compile it before returning it.
