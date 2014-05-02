@@ -12,7 +12,8 @@
 package msi.gama.lang.gaml.formatting;
 
 import java.util.*;
-import msi.gama.lang.gaml.services.GamlGrammarAccess;
+import msi.gama.lang.gaml.services.*;
+import msi.gama.lang.gaml.services.GamlGrammarAccess.BlockElements;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.*;
 
@@ -26,6 +27,12 @@ import org.eclipse.xtext.formatting.impl.*;
  */
 public class GamlFormatter extends AbstractDeclarativeFormatter {
 
+	static String[] keywords1SpaceAround = new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-",
+		"/", "*" };
+	static String[] keywordNoSpaceAfter = new String[] { ".", "[", "(", "::", "°", "!" };
+	static String[] keywordNoSpaceBefore = new String[] { "]", ".", ")", ",", ":", "::" };
+	static String[] keyword1SpaceAfter = new String[] { ",", ":" };
+
 	/**
 	 * @see org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter#configureFormatting(org.eclipse.xtext.formatting.impl.FormattingConfig)
 	 */
@@ -34,8 +41,6 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 	protected void configureFormatting(final FormattingConfig c) {
 		GamlGrammarAccess g = getGrammarAccess();
 
-		// c.setLinewrap(0, 1, 2).before(g.getSL_COMMENTRule());
-		c.setLinewrap(1).around(g.getStatementRule());
 		c.setLinewrap(2).after(g.getModelAccess().getNameAssignment_1());
 		c.setLinewrap(1).after(g.getImportRule());
 
@@ -45,23 +50,22 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		handled.add(g.getUnaryAccess().getOpHyphenMinusKeyword_1_1_1_0_0_0());
 
 		// Operators are surrounded by a space
-		for ( Keyword k : g.findKeywords(">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-", "/", "*") ) {
-			if ( handled.contains(k) ) {
-				continue;
+		for ( Keyword k : g.findKeywords(keywords1SpaceAround) ) {
+			if ( !handled.contains(k) ) {
+				c.setSpace(" ").around(k);
 			}
-			c.setSpace(" ").around(k);
 		}
 
 		// No space after these elements
-		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "°", "!") ) {
+		for ( Keyword k : g.findKeywords(keywordNoSpaceAfter) ) {
 			c.setNoSpace().after(k);
 		}
 		// No space before these ones
-		for ( Keyword k : g.findKeywords("]", ".", ")", ",", ":", "::") ) {
+		for ( Keyword k : g.findKeywords(keywordNoSpaceBefore) ) {
 			c.setNoSpace().before(k);
 		}
 		// One space after these ones
-		for ( Keyword k : g.findKeywords(",", ":") ) {
+		for ( Keyword k : g.findKeywords(keyword1SpaceAfter) ) {
 			c.setSpace(" ").after(k);
 		}
 
@@ -83,12 +87,12 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		// Semicolons induce line separations
 		for ( Keyword k : g.findKeywords(";") ) {
 			c.setNoSpace().before(k);
-			c.setLinewrap().after(k);
+			c.setLinewrap(1).after(k);
 		}
 
 		// Regular blocks
-		handleBlock(c, g.getBlockAccess().getLeftCurlyBracketKeyword_1(), g.getBlockAccess()
-			.getRightCurlyBracketKeyword_2_1_1(), 2);
+		BlockElements elem = g.getBlockAccess();
+		handleBlock(c, elem.getLeftCurlyBracketKeyword_1(), elem.getRightCurlyBracketKeyword_2_1_1(), 2);
 		handleBlock(c, g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1(), g.getDisplayBlockAccess()
 			.getRightCurlyBracketKeyword_3(), 2);
 		handleBlock(c, g.getExperimentBlockAccess().getLeftCurlyBracketKeyword_1(), g.getExperimentBlockAccess()
@@ -101,6 +105,16 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		handleBlockTermination(c, g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1(), 1);
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
+		// Double '}' closing elements should not be separated by 2 linewraps
+		// TODO How to do that ?
+		//
+		// c.setNoLinewrap().between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1(),
+		// g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		c.setLinewrap(1).between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1(),
+			g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		c.setLinewrap(2).after(g.getS_SpeciesRule());
+		c.setLinewrap(2).after(g.getS_ExperimentRule());
+		c.setLinewrap(3).before(g.getS_GlobalRule());
 
 		c.setAutoLinewrap(180);
 
@@ -115,19 +129,24 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 	private void handleBlock(final FormattingConfig c, final Keyword opening, final Keyword closing,
 		final int lineWrapAfter) {
 		// A same opening curly bracket is shared by blocks and functions, after which a ln is done
-		handleBlockOpening(c, opening);
 		handleBlockTermination(c, closing, lineWrapAfter);
+		handleBlockOpening(c, opening);
+
 	}
 
 	private void handleBlockOpening(final FormattingConfig c, final Keyword opening) {
+		c.setLinewrap().before(opening);
 		c.setLinewrap().after(opening);
 		c.setIndentationIncrement().after(opening);
 	}
 
 	private void handleBlockTermination(final FormattingConfig c, final Keyword closing, final int lineWrapAfter) {
-		c.setLinewrap(lineWrapAfter).after(closing);
-		c.setLinewrap(1).before(closing);
+
+		// c.setSpace("\n/*closing*/").before(closing);
+		c.setLinewrap(0, 0, 1).before(closing);
 		c.setIndentationDecrement().before(closing);
+		c.setLinewrap(lineWrapAfter).after(closing);
+		// c.setSpace(" ").after(closing);
 	}
 
 	@Override
