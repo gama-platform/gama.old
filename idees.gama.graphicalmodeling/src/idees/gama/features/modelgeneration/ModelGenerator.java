@@ -73,7 +73,7 @@ public class ModelGenerator {
 		try {
 			Set<GamlResource> resources = new HashSet<GamlResource>();
 			resources.add(resource);
-			IModel model = GAML.getModelFactory().compile(resource);
+			IModel model = resource.build(resource.getResourceSet(), new ArrayList<GamlCompilationError>());//GAML.getModelFactory().compile(resource);
 			((ModelDescription)model.getDescription()).setModelFilePath(getPath(fp, diagram));
 			return model;
 		} catch (GamaRuntimeException e1) {
