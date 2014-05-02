@@ -25,9 +25,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.Model;
@@ -38,6 +40,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -47,7 +50,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 public class ModelGenerator {
@@ -58,9 +60,8 @@ public class ModelGenerator {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
-		IResourceFactory resourceFactory = EGaml.getInstance(IResourceFactory.class);
 		URI uri = URI.createPlatformResourceURI("toto/"+ diagramEditor.getTitle()+".gaml", true);
-		GamlResource resource = (GamlResource) resourceFactory.createResource(uri);
+		GamlResource resource = (GamlResource) rs.createResource(uri);
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
@@ -70,7 +71,9 @@ public class ModelGenerator {
 			e1.printStackTrace();
 		}
 		try {
-			IModel model = GAML.getModelFactory().compile(resource);//.getContents().get(0));
+			Set<GamlResource> resources = new HashSet<GamlResource>();
+			resources.add(resource);
+			IModel model = GAML.getModelFactory().compile(resource);
 			((ModelDescription)model.getDescription()).setModelFilePath(getPath(fp, diagram));
 			return model;
 		} catch (GamaRuntimeException e1) {
@@ -101,9 +104,8 @@ public class ModelGenerator {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
-		IResourceFactory resourceFactory = EGaml.getInstance(IResourceFactory.class);
 		URI uri = URI.createPlatformResourceURI("toto/"+ diagramEditor.getTitle()+".gaml", true);
-		GamlResource resource = (GamlResource) resourceFactory.createResource(uri);
+		GamlResource resource = (GamlResource) rs.createResource(uri);
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
@@ -116,9 +118,14 @@ public class ModelGenerator {
 		try {
 			GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
 			List<GamlCompilationError> errors = new ArrayList<GamlCompilationError>();
-			System.out.println("resource.getContents().get(0) : " + resource.getContents().get(0));
-			validator.validate((Model) resource.getContents().get(0));
-			//diagramEditor.setErrors(errors);
+			ErrorCollector erColl = validator.validate((Model) resource.getContents().get(0));
+			if (erColl != null) {
+				for ( GamlCompilationError error : erColl ) {
+					if (error.isError())
+						errors.add(error);
+				}
+			}
+			diagramEditor.setErrors(errors);
 			return errors;
 		} catch (GamaRuntimeException e1) {
 			return null;
