@@ -11,15 +11,20 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.resource.GamlModelBuilder;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
-import org.eclipse.emf.ecore.*;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.util.Arrays;
-import org.eclipse.xtext.validation.*;
+import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
@@ -30,18 +35,10 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	// }
 	//
 	@Check()
-	public void validate(final Model model) {
+	public ErrorCollector validate(final Model model) {
 		GamlResource newResource = (GamlResource) model.eResource();
-		if ( newResource.isValidating() ) { return; }
-		ErrorCollector errors = GamlModelBuilder.getInstance().validate(newResource);
-		if ( !errors.hasInternalSyntaxErrors() ) {
-			if ( errors.hasInternalErrors() ) {
-				GuiUtils.debug("GamlJavaValidator.validate");
-			}
-			for ( GamlCompilationError error : errors ) {
-				manageCompilationIssue(error);
-			}
-		}
+		if ( newResource.isValidating() ) { return null; }
+		return GamlModelBuilder.getInstance().validate(newResource);
 	}
 
 	private GamlResource getCurrentResource() {
