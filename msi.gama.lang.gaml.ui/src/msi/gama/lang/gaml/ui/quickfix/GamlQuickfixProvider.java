@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlQuickfixProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * 
+ * 'GamlQuickfixProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -110,8 +110,7 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 
 	}
 
-	public void removeIssue(final String label, final Issue issue,
-		final IssueResolutionAcceptor acceptor) {
+	public void removeIssue(final String label, final Issue issue, final IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, label, "", "", new IModification() {
 
 			@Override
@@ -142,12 +141,12 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 		String[] data = issue.getData();
 		if ( data == null || data.length == 0 ) { return; }
 		final String path = data[0];
-		final URI uri = URI.createURI(path);
-		acceptor.accept(issue, "Open " + uri.lastSegment() + "...",
-			"Open file " + uri.lastSegment() + " to fix it", "", new IModification() {
+		final URI uri = URI.createURI(path, false);
+		acceptor.accept(issue, "Open " + uri.lastSegment() + "...", "Open file " + uri.lastSegment() + " to fix it",
+			"", new IModification() {
 
 				@Override
-				public void apply(IModificationContext context) throws Exception {
+				public void apply(final IModificationContext context) throws Exception {
 					fileOpener.openFileInWorkspace(uri);
 				}
 
