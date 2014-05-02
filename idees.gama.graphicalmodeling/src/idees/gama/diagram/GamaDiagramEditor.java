@@ -34,6 +34,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ErrorCollector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
@@ -90,10 +91,13 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 
 	@Override
-	public void validationEnded(Set<String> experiments, boolean withErrors) {
-		updateExperiments(experiments, withErrors);
+	public void validationEnded(Set<String> experiments, ErrorCollector status) {
+		updateExperiments(experiments, status.hasErrors());
 		toRefresh = true;
 	}
+/*public void validationEnded(Set<String> experiments, boolean withErrors) {
+		
+	}*/
 
 	private void updateExperiments(final Set<String> newExperiments,
 			final boolean withErrors) {
@@ -441,5 +445,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		//this.getDiagramTypeProvider().getFeatureProvider().getUpdateFeature(context).hasDoneChanges = true;
 
 	}
+
+	
 
 }

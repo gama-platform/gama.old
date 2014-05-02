@@ -21,11 +21,15 @@ package idees.gama.ui.commands;
 import idees.gama.diagram.GamaFeatureProvider;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.ui.GamlEditor;
+import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.util.GAML;
+import msi.gaml.compilation.GamlCompilationError;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -57,7 +61,7 @@ import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-public class GenerateDiagramHandler extends AbstractHandler {
+public class GenerateDiagramHandler extends AbstractHandler { 
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -66,8 +70,7 @@ public class GenerateDiagramHandler extends AbstractHandler {
 
 				@Override
 				public IModel exec(final XtextResource state) throws Exception {
-					GamlJavaValidator v = IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(state.getURI()).get(GamlJavaValidator.class);
-					return v.build((GamlResource) state);
+					return GAML.getModelFactory().compile(state.getURI());
 				}
 
 			});

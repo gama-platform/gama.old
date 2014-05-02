@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.graphiti;bundle-version="0.8.2",
  org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
- msi.gama.application;bundle-version="1.6.1"
+ msi.gama.application;bundle-version="1.6.1",
+ msi.gama.ext;bundle-version="1.0.0"
 Export-Package: idees.gama.diagram,
  idees.gama.features,
  idees.gama.features.add,

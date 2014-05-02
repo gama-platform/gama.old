@@ -7,7 +7,6 @@ import gama.EWorldAgent;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
-import msi.gama.lang.gaml.ui.GamlEditor;
 import msi.gaml.compilation.GamlCompilationError;
 
 import org.eclipse.graphiti.features.IFeatureProvider;

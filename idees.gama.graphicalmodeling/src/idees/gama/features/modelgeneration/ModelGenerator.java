@@ -24,15 +24,18 @@ import idees.gama.diagram.GamaDiagramEditor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
@@ -67,8 +70,7 @@ public class ModelGenerator {
 			e1.printStackTrace();
 		}
 		try {
-			GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
-			IModel model = validator.build(resource.getContents().get(0));
+			IModel model = GAML.getModelFactory().compile(resource);//.getContents().get(0));
 			((ModelDescription)model.getDescription()).setModelFilePath(getPath(fp, diagram));
 			return model;
 		} catch (GamaRuntimeException e1) {
@@ -113,8 +115,10 @@ public class ModelGenerator {
 		}
 		try {
 			GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
-			List<GamlCompilationError> errors = validator.validateModel(resource.getContents().get(0));
-			diagramEditor.setErrors(errors);
+			List<GamlCompilationError> errors = new ArrayList<GamlCompilationError>();
+			System.out.println("resource.getContents().get(0) : " + resource.getContents().get(0));
+			validator.validate((Model) resource.getContents().get(0));
+			//diagramEditor.setErrors(errors);
 			return errors;
 		} catch (GamaRuntimeException e1) {
 			return null;
