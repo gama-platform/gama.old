@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NavigatorLabelProvider.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NavigatorLabelProvider.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -35,7 +35,7 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 			" ( " + ((VirtualSharedModelsFolder) element).getChildren().length + " )"; }
 		if ( element instanceof FileBean ) {
 			String name = ((FileBean) element).toString();
-			return name.substring(0, name.lastIndexOf("."));
+			return "Project " + name.substring(0, name.lastIndexOf("."));
 		}
 		// } if (element instanceof File) {
 		// String name = ((File) element).getName();
