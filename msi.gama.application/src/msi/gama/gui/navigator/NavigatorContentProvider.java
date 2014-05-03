@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NavigatorContentProvider.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NavigatorContentProvider.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,8 +22,7 @@ public class NavigatorContentProvider implements ITreeContentProvider, IResource
 	private static final Object[] EMPTY_ARRAY = new Object[0];
 
 	public NavigatorContentProvider() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this,
-			IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	@Override
@@ -70,7 +69,9 @@ public class NavigatorContentProvider implements ITreeContentProvider, IResource
 
 			@Override
 			public void run() {
+				TreePath[] treePaths = ((TreeViewer) viewer).getExpandedTreePaths();
 				viewer.refresh();
+				((TreeViewer) viewer).setExpandedTreePaths(treePaths);
 			}
 		});
 	}
