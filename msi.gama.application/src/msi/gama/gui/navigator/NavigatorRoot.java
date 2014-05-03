@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NavigatorRoot.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NavigatorRoot.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,4 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-public class NavigatorRoot { }
+import org.eclipse.core.runtime.PlatformObject;
+
+public class NavigatorRoot extends PlatformObject {}
