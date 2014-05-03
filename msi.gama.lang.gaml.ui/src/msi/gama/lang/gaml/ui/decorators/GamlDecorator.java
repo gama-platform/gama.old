@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlDecorator.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * 
+ * 'GamlDecorator.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -101,16 +101,33 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 		// return; }
 
-		ImageDescriptor overlay = null;
+		final ImageDescriptor[] overlay = new ImageDescriptor[1];
 		if ( severity == IMarker.SEVERITY_ERROR ) {
-			overlay = getErrorImageDescriptor();
+			overlay[0] = getErrorImageDescriptor();
 		} else if ( severity == IMarker.SEVERITY_WARNING ) {
-			overlay = getWarningImageDescriptor();
-		} else if ( resource instanceof IProject || resource instanceof IFolder || resource.getName().endsWith("gaml") ) {
-			overlay = IGamaIcons.OVERLAY_OK.descriptor();
-		}
+			overlay[0] = getWarningImageDescriptor();
+		} else if ( resource.getName().endsWith("gaml") ) {
+			overlay[0] = IGamaIcons.OVERLAY_OK.descriptor();
+		} else if ( resource instanceof IContainer ) {
+			try {
+				((IContainer) resource).accept(new IResourceVisitor() {
 
-		decoration.addOverlay(overlay, IDecoration.BOTTOM_LEFT);
+					@Override
+					public boolean visit(final IResource resource) throws CoreException {
+						if ( resource.getName().endsWith(".gaml") ) {
+							overlay[0] = IGamaIcons.OVERLAY_OK.descriptor();
+							return false;
+						}
+						return true;
+					}
+				});
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		if ( overlay[0] != null ) {
+			decoration.addOverlay(overlay[0], IDecoration.BOTTOM_LEFT);
+		}
 
 		// TODO Reimplement this for the next release. A way would be to get the experiment names directly from the
 		// resource

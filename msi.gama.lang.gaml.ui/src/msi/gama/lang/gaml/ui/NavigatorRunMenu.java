@@ -54,7 +54,15 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 		IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
 		Object firstElement = selection.getFirstElement();
 		if ( firstElement == null ) { return getAllGamaModelsIn(ResourcesPlugin.getWorkspace().getRoot()); }
-		return getAllGamaModelsIn(firstElement);
+		List<URI> result = getAllGamaModelsIn(firstElement);
+		if ( !result.isEmpty() ) {
+			if ( firstElement instanceof IResource ) {
+				result.add(0, URI.createPlatformResourceURI(((IResource) firstElement).getFullPath().toString(), true));
+			} else {
+				result.add(0, null);
+			}
+		}
+		return result;
 	}
 
 	private static void recursiveFindGamaFiles(final List<URI> uris, final IContainer container) {
@@ -112,7 +120,20 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 	public void fill(final Menu parent, final int index) {
 		StringBuilder sb = new StringBuilder();
 		List<URI> uris = getSelection();
-		Map<URI, List<String>> map = grabExperiments(uris);
+		URI sourceURI = null;
+		Map<URI, List<String>> map = Collections.EMPTY_MAP;
+		if ( !uris.isEmpty() ) {
+			sourceURI = uris.remove(0);
+			map = grabExperiments(uris);
+		}
+		Set<String> sourceSegments = new HashSet();
+		if ( sourceURI != null ) {
+			String[] segmentsArray = sourceURI.segments();
+			for ( int i = 0; i < segmentsArray.length; i++ ) {
+				segmentsArray[i] = URI.decode(segmentsArray[i]);
+			}
+			sourceSegments = new LinkedHashSet(Arrays.asList(segmentsArray));
+		}
 		if ( map.isEmpty() ) {
 			MenuItem nothing = new MenuItem(parent, SWT.PUSH);
 			nothing.setText("No experiments defined");
@@ -122,50 +143,52 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 		boolean onlyOneFile = map.size() == 1;
 		for ( URI uri : map.keySet() ) {
 			List<String> expNames = map.get(uri);
-			if ( expNames.size() == 1 ) { // No need to create a sub-menu
-				MenuItem expItem = new MenuItem(parent, SWT.PUSH);
-				sb.setLength(0);
-				sb.append(expNames.get(0));
-				if ( !onlyOneFile ) {
-					sb.append(" in ");
-					for ( int i = 1; i < uri.segmentCount(); i++ ) {
-						String s = URI.decode(uri.segment(i));
-						if ( !"models".equals(s) ) {
-							sb.append(s);
-							sb.append(">");
-						}
-					}
-					sb.setLength(sb.length() - 1);
-				}
-				expItem.setText(sb.toString());
-				expItem.setData("uri", uri);
-				expItem.setData("exp", expNames.get(0));
-				expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
-				expItem.addSelectionListener(adapter);
-			} else {
-				MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
-				sb.setLength(0);
-				for ( int i = 1; i < uri.segmentCount() - 1; i++ ) {
-					String s = URI.decode(uri.segment(i));
-					if ( !"models".equals(s) ) {
-						sb.append(s);
-						sb.append(" > ");
-					}
-				}
-				modelItem.setText(URI.decode(sb.toString() + uri.lastSegment()));
-				modelItem.setImage(IGamaIcons.FILE_ICON.image());
-				Menu expMenu = new Menu(modelItem);
-				modelItem.setMenu(expMenu);
+			// if ( expNames.size() == 1 ) { // No need to create a sub-menu
+			// MenuItem expItem = new MenuItem(parent, SWT.PUSH);
+			// sb.setLength(0);
+			// sb.append(expNames.get(0));
+			// if ( !onlyOneFile ) {
+			// sb.append(" in ");
+			// for ( int i = 1; i < uri.segmentCount(); i++ ) {
+			// String s = URI.decode(uri.segment(i));
+			// if ( !"models".equals(s) && !sourceSegments.contains(s) ) {
+			// sb.append(s);
+			// sb.append('>');
+			// }
+			// }
+			// sb.setLength(sb.length() - 1);
+			// }
+			// expItem.setText(sb.toString());
+			// expItem.setData("uri", uri);
+			// expItem.setData("exp", expNames.get(0));
+			// expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
+			// expItem.addSelectionListener(adapter);
+			// } else {
+			MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
 
-				for ( String name : expNames ) {
-					MenuItem expItem = new MenuItem(expMenu, SWT.PUSH);
-					expItem.setText(name);
-					expItem.setData("uri", uri);
-					expItem.setData("exp", name);
-					expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
-					expItem.addSelectionListener(adapter);
+			sb.setLength(0);
+			for ( int i = 1; i < uri.segmentCount() - 1; i++ ) {
+				String s = URI.decode(uri.segment(i));
+				if ( !"models".equals(s) && !sourceSegments.contains(s) ) {
+					sb.append(s);
+					sb.append(" > ");
 				}
 			}
+			modelItem.setText(URI.decode(sb.toString() + uri.lastSegment()));
+			// modelItem.setImage(IGamaIcons.FILE_ICON.image());
+			// modelItem.setEnabled(false);
+			Menu expMenu = new Menu(modelItem);
+			modelItem.setMenu(expMenu);
+
+			for ( String name : expNames ) {
+				MenuItem expItem = new MenuItem(expMenu, SWT.PUSH);
+				expItem.setText(name);
+				expItem.setData("uri", uri);
+				expItem.setData("exp", name);
+				expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
+				expItem.addSelectionListener(adapter);
+			}
+			// }
 
 		}
 	}
