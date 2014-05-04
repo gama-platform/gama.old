@@ -33,6 +33,7 @@ public interface IKeyword {
 	public static final String APPEND_HORIZONTALLY = "append_horizontally";
 	public static final String APPEND_VERTICALLY = "append_vertically";
 	public static final String AREA = "area";
+	public static final String AREA_STACK = "area_stack";
 	public static final String ARG = "arg";
 	public static final String AS = "as";
 	public static final String ASK = "ask";
@@ -313,6 +314,7 @@ public interface IKeyword {
 	public static final String SAVE = "save";
 	public static final String SAVE_BATCH = "save_batch";
 	public static final String SCALE = "scale";
+	public static final String SCATTER = "scatter";
 	public static final String SCHEDULE = "schedule";
 	public static final String SCHEDULES = "schedules";
 	public static final String SEED = "seed";

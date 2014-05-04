@@ -15,6 +15,7 @@ import java.awt.Shape;
 import java.util.ArrayList;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -41,13 +42,14 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
 	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID,values={ChartDataStatement.MARKER_EMPTY,ChartDataStatement.MARKER_SQUARE,ChartDataStatement.MARKER_CIRCLE,ChartDataStatement.MARKER_UP_TRIANGLE,
 			ChartDataStatement.MARKER_DIAMOND,ChartDataStatement.MARKER_HOR_RECTANGLE,ChartDataStatement.MARKER_DOWN_TRIANGLE,ChartDataStatement.MARKER_HOR_ELLIPSE,ChartDataStatement.MARKER_RIGHT_TRIANGLE,
 			ChartDataStatement.MARKER_VERT_RECTANGLE,ChartDataStatement.MARKER_LEFT_TRIANGLE}, optional = true),
 	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
-		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
+		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK,IKeyword.THREE_D, IKeyword.RING,
 		IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
@@ -55,6 +57,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String MARKERSHAPE = "marker_shape";
 	public static final String FILL = "fill";
 
+	public static final String LINE_VISIBLE="line_visible";
 	public static final String MARKER_EMPTY="marker_empty";
 	public static final String MARKER_SQUARE="marker_sqaure";
 	public static final String MARKER_CIRCLE="marker_square";
@@ -113,6 +116,7 @@ public class ChartDataStatement extends AbstractStatement {
 				o = lastvalue;
 			}
 			if ( o instanceof GamaList ) { return Cast.asList(scope, o); }
+			if ( o instanceof GamaPoint ) { return Cast.asPoint(scope, o); }
 			return Cast.asFloat(scope, o);
 		}
 
@@ -142,6 +146,7 @@ public class ChartDataStatement extends AbstractStatement {
 
 		GamaColor color = Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
 		boolean showMarkers = getFacetValue(scope, MARKER, true);
+		boolean showLine = getFacetValue(scope, LINE_VISIBLE, true);
 		boolean fillMarkers = getFacetValue(scope, FILL, true);
 		String shapeMarker=getFacetValue(scope,MARKERSHAPE,null);
 		
@@ -199,6 +204,7 @@ public class ChartDataStatement extends AbstractStatement {
 				}
 				
 			}
+			((XYLineAndShapeRenderer) r).setSeriesLinesVisible(0, showLine);
 		} else if ( style.equals(IKeyword.AREA) ) {
 			r = new XYAreaRenderer();
 			r.setSeriesPaint(0, color);
@@ -210,6 +216,7 @@ public class ChartDataStatement extends AbstractStatement {
 			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.DOT) ) {
 			r = new XYDotRenderer();
+			r = new XYShapeRenderer();
 			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.SPLINE) ) {
 			r = new XYSplineRenderer();
@@ -218,6 +225,9 @@ public class ChartDataStatement extends AbstractStatement {
 			((XYSplineRenderer) r).setBaseShapesVisible(showMarkers);
 		} else if ( style.equals(IKeyword.STEP) ) {
 			r = new XYStepRenderer();
+		} else if ( style.equals(IKeyword.AREA_STACK) ) {
+			r = new StackedXYAreaRenderer2();
+			r.setSeriesPaint(0, color);
 		} else if ( style.equals(IKeyword.STACK) ) {
 			r = new StackedBarRenderer();
 			r.setSeriesPaint(0, color);

@@ -12,6 +12,7 @@
 package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.GuiUtils;
@@ -47,6 +48,9 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true, doc = @doc("the name of categories (can be a variable with dynamic names)")),
 	@facet(name = ChartDataListStatement.REVERSECATEG, type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
+	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
@@ -195,13 +199,19 @@ public class ChartDataListStatement extends AbstractStatement {
 //		names = Cast.asList(scope, getFacetValue(scope, IKeyword.LEGEND,getFacetValue(scope, IKeyword.NAME,defaultnames)));
 		colors = Cast.asList(scope, getFacetValue(scope, IKeyword.COLOR,defaultcolors));
 */
+
+		boolean showMarkers = getFacetValue(scope, ChartDataStatement.MARKER, true);
+		boolean showLine = getFacetValue(scope, ChartDataStatement.LINE_VISIBLE, true);
+		boolean fillMarkers = getFacetValue(scope, ChartDataStatement.FILL, true);
 		String style = getLiteral(IKeyword.STYLE);
 		if ( style == null ) {
 			style = IKeyword.LINE;
 		}
 			AbstractRenderer r = null;
 			if ( style.equals(IKeyword.LINE) ) {
-				r = new XYLineAndShapeRenderer();
+				r = new XYLineAndShapeRenderer(true, showMarkers);
+				((XYLineAndShapeRenderer) r).setBaseShapesFilled(fillMarkers);
+				((XYLineAndShapeRenderer) r).setSeriesLinesVisible(0, showLine);
 			} else if ( style.equals(IKeyword.AREA) ) {
 				r = new XYAreaRenderer();
 			} else if ( style.equals(IKeyword.WHISKER) ) {
@@ -214,6 +224,8 @@ public class ChartDataListStatement extends AbstractStatement {
 				r = new XYSplineRenderer();
 			} else if ( style.equals(IKeyword.STEP) ) {
 				r = new XYStepRenderer();
+			} else if ( style.equals(IKeyword.AREA_STACK) ) {
+				r = new StackedXYAreaRenderer2();
 			} else if ( style.equals(IKeyword.STACK) ) {
 				r = new StackedBarRenderer();
 			}
