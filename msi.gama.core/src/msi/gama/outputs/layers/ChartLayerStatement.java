@@ -294,12 +294,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				XYSeries serie=new XYSeries(0,false,false);
 				if ( type == SERIES_CHART || type == XY_CHART) {
 					dataset = new DefaultTableXYDataset();
-					final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
+//					final XYSeries nserie = new XYSeries(serie.getKey(), false, false);
+					final XYSeries nserie = new XYSeries(e.getName(), false, false);
 					((DefaultTableXYDataset)dataset).addSeries(nserie);
 				}
 				if ( type == SCATTER_CHART) {
 					dataset = new XYSeriesCollection();
-					final XYSeries nserie = new XYSeries(serie.getKey(), false, true);
+					final XYSeries nserie = new XYSeries(e.getName(), false, true);
+//					final XYSeries nserie = new XYSeries(serie.getKey(), false, true);
 					((XYSeriesCollection)dataset).addSeries(nserie);
 				}
 
