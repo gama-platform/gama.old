@@ -45,7 +45,6 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
-	final NumberFormat nf = NumberFormat.getInstance(Locale.US);
 	private IVarExpression each_expr;
 	private IExpression world;
 	// To disable reentrant parsing (Issue 782)
@@ -790,16 +789,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseDoubleLiteral(final DoubleLiteral object) {
+
 		String s = EGaml.getKeyOf(object);
 		if ( s == null ) { return null; }
-		Number val;
 		try {
-			val = nf.parse(s);
-		} catch (ParseException e) {
-			getContext().error("Malformed float: " + s, IGamlIssue.UNKNOWN_NUMBER, object);
-			return null;
+			return factory.createConst(Double.parseDouble(s), Types.get(IType.FLOAT));
+		} catch (NumberFormatException e) {
+			try {
+				final NumberFormat nf = NumberFormat.getInstance(Locale.US);
+				// More robust, but slower parsing used in case Double.parseDouble() cannot handle it
+				// See Issue 1025. Exponent notation is capitalized, and '+' is removed beforehand
+				s = s.replace('e', 'E');
+				s = s.replace("+", "");
+				return factory.createConst(nf.parse(s).doubleValue(), Types.get(IType.FLOAT));
+			} catch (ParseException ex) {
+				getContext().error("Malformed float: " + s, IGamlIssue.UNKNOWN_NUMBER, object);
+				return null;
+			}
 		}
-		return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
 
 	}
 
