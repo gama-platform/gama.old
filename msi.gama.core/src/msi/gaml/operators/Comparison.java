@@ -223,7 +223,7 @@ public class Comparison {
 	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "true if both operands are different, false otherwise",
 		masterDoc = true,
-		examples = { @example(value = "4.5 = 4.7", equals = "false") },
+		examples = { @example(value = "3.0 != 3.0", equals = "false"), @example(value = "4.0 != 4.7", equals = "true") },
 		see = { "=" })
 	public static Boolean different(final Double a, final Double b) {
 		if ( a == null ) { return b != null; }
@@ -231,6 +231,23 @@ public class Comparison {
 		return !IntervalSize.isZeroWidth(a, b);
 		// return a < b || a > b;
 	}
+	
+	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
+	@doc(value = "returns true if both operands are different, false otherwise", examples = {
+		@example(value = "3 != 3.0", equals = "false"), @example(value = "4 != 4.7", equals = "true") }, see = { "=" })
+	public static Boolean different(final Integer a, final Double b) {
+		return a == null ? b == null : ! (new Double(a).equals(b));
+		// return !(a < b) && !(a > b);
+	}
+
+	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
+	@doc(value = "returns true if both operands are different, false otherwise", examples = {
+		@example(value = "3.0 != 3", equals = "false"), @example(value = "4.7 != 4", equals = "true") }, see = { "=" })
+	public static Boolean different(final Double a, final Integer b) {
+		return a == null ? b == null : ! (new Double(b).equals(a)); 
+		// return !(a < b) && !(a > b);
+	}
+
 
 	@operator(value = LTE, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.STRING })
 	@doc(value = "Returns true if the left-hand operand is smaller than or equal to the right-hand operand, false otherwise.",
