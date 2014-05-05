@@ -27,7 +27,7 @@ entities {
 		list<ant_grid> neighbours <- self neighbours_at 1;
 		bool multiagent <- true ;
 		int type <- int(types at {grid_x,grid_y}) ;
-		bool isNestLocation <- (self distance_to center) < 4 ;
+		bool isNestLocation <- (self distance_to center) < 4 ; 
 		bool isFoodLocation <- type = 2 ; 
 		rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
 		int food <- isFoodLocation ? 5 : 0 ;
@@ -123,7 +123,7 @@ experiment Ant type: gui {
 			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
 			int d<-0;
-			list nl<-[];
+			list<int> nl<-[];
 			loop d from:0 to:9
 				{
 			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
@@ -265,7 +265,7 @@ experiment Ant type: gui {
 			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
 			int d<-0;
-			list nl<-[];
+			list<int> nl<-[];
 			loop d from:0 to:9
 				{
 			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
