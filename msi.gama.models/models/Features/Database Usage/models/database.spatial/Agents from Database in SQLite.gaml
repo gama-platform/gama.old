@@ -14,11 +14,11 @@ global {
 	
 	map<string,string> BOUNDS <- ["dbtype"::"sqlite",
 								  'database'::'../../includes/spatialite.db',
-								 //'srid'::'4326',
+								 //'srid'::'32648',
 								  "select"::"SELECT AsBinary(geom) as geom FROM bounds;"				
 				  				 ];
 	map<string,string> PARAMS <- ["dbtype"::"sqlite",
-								  //'srid'::'4326',
+								  //'srid'::'32648',
 								  'database'::'../../includes/spatialite.db'
 								  ];
 	

@@ -7,7 +7,7 @@
 model DB2agentMSSQL
 
 global {
-	map<string,string> BOUNDS <- [	//"srid"::"4326", // optinal
+	map<string,string> BOUNDS <- [	//"srid"::"32648", // optinal
 									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",
@@ -15,7 +15,7 @@ global {
 									"user"::"sa",
 									"passwd"::"tmt",
 								  	"select"::"SELECT GEOM.STAsBinary() as GEOM FROM bounds;" ];
-	map<string,string> PARAMS <- [	//"srid"::"4326", // optinal
+	map<string,string> PARAMS <- [	//"srid"::"32648", // optinal
 									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"spatial_DB",

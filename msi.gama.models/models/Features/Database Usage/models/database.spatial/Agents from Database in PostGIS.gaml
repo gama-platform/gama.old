@@ -7,7 +7,7 @@
 model DB2agentMySQL 
 
 global {
-	map<string,string> BOUNDS <- [	//'srid'::'4326', // optinal
+	map<string,string> BOUNDS <- [	//'srid'::'32648', // optinal
 	 								'host'::'localhost',
 									'dbtype'::'postgres',
 									'database'::'spatial_DB',
@@ -15,7 +15,7 @@ global {
 									'user'::'postgres',
 									'passwd'::'tmt',
 								  	'select'::'SELECT ST_AsBinary(geom) as geom FROM buildings;' ];
-	map<string,string> PARAMS <- [	//'srid'::'4326', // optinal
+	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
 									'host'::'localhost',
 									'dbtype'::'postgres',
 									'database'::'spatial_DB',

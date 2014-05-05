@@ -7,7 +7,7 @@
 model DB2agentMySQL
 
 global {
-	map<string,string> BOUNDS <- [	//'srid'::'4326', // optinal
+	map<string,string> BOUNDS <- [	//'srid'::'32648', // optinal
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
@@ -15,7 +15,7 @@ global {
 									'user'::'root',
 									'passwd'::'root',
 								  	"select"::"SELECT geom FROM bounds;" ];
-	map<string,string> PARAMS <- [	//'srid'::'4326', // optinal
+	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
