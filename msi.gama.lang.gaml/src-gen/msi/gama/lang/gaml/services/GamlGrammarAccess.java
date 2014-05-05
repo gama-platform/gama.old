@@ -4199,8 +4199,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSecondTypeRefParserRuleCall_2_1_0 = (RuleCall)cSecondAssignment_2_1.eContents().get(0);
 		private final Keyword cGreaterThanSignKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		////SpeciesRef:
-		////	name="species" parameter=TypeInfo?;
 		//TypeInfo:
 		//	"<" first=TypeRef ("," second=TypeRef)? => ">";
 		public ParserRule getRule() { return rule; }
@@ -5862,8 +5860,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getTypeRefAccess().getRule();
 	}
 
-	////SpeciesRef:
-	////	name="species" parameter=TypeInfo?;
 	//TypeInfo:
 	//	"<" first=TypeRef ("," second=TypeRef)? => ">";
 	public TypeInfoElements getTypeInfoAccess() {
@@ -6044,6 +6040,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return (tKEYWORD != null) ? tKEYWORD : (tKEYWORD = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "KEYWORD"));
 	} 
 
+	////terminal INTEGER : ('0'..'9')+;
 	//terminal INTEGER:
 	//	"0" | "1".."9" "0".."9"*;
 	public TerminalRule getINTEGERRule() {
@@ -6075,6 +6072,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return (tDOUBLE != null) ? tDOUBLE : (tDOUBLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "DOUBLE"));
 	} 
 
+	////DOUBLE hidden(): INTEGER '.' (EXP_INT | INTEGER); // INT ? '.' (EXT_INT | INT);
+	////terminal EXP_INT: INTEGER ('e'|'E')('-'|'+')? INTEGER;
 	//terminal STRING:
 	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\\") | !("\\" | "\""))* "\"" | "\'" ("\\" ("b" | "t" | "n" |
 	//	"f" | "r" | "u" | "\'" | "\\") | !("\\" | "\'"))* "\'";
