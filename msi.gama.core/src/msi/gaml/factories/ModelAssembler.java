@@ -85,8 +85,8 @@ public class ModelAssembler {
 		}
 
 		final ModelDescription model =
-			new ModelDescription(modelName, null, projectPath, modelPath, lastGlobalNode.getElement(), null,
-				ModelDescription.ROOT, globalFacets, collector);
+			new ModelDescription(modelName, null, projectPath, modelPath, /* lastGlobalNode.getElement() */
+				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector);
 
 		// model.setGlobal(true);
 		model.addSpeciesType(model);

@@ -47,7 +47,7 @@ public class SimulateStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
 	private final IExpression comodel;
-	// private IExperimentSpecies exp;
+	// private IExperimentPlan exp;
 	private IExpression with_exp;
 	// private IModel mm = null;
 	private IExpression param_input = null;

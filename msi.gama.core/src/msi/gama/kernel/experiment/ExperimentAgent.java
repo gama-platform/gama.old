@@ -140,8 +140,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 
 			// hqnghi: in case experiment have its own controller
-			if ( !((ExperimentSpecies) getSpecies()).getControllerName().equals("") ) {
-				GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+			if ( !((ExperimentPlan) getSpecies()).getControllerName().equals("") ) {
+				GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
 					.unschedule(getSimulation().getScheduler());
 			} else {
 				GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
@@ -217,12 +217,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		// hqnghi: in case experiment have its own controller
 
-		if ( ((ExperimentSpecies) getSpecies()).getControllerName() != "" ) {
+		if ( ((ExperimentPlan) getSpecies()).getControllerName() != "" ) {
 			if ( outputs != null ) {
-				GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+				GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
 					.schedule(outputs, getScope());
 			}
-			GAMA.getController(((ExperimentSpecies) getSpecies()).getControllerName()).getScheduler()
+			GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
 				.schedule(this, getScope());
 
 		} else {
@@ -266,8 +266,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public IExperimentSpecies getSpecies() {
-		return (IExperimentSpecies) super.getSpecies();
+	public IExperimentPlan getSpecies() {
+		return (IExperimentPlan) super.getSpecies();
 	}
 
 	@Override
@@ -294,7 +294,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	protected String getExperimentParametersCategory() {
 		return "Model " + getModel().getName() + ItemList.SEPARATION_CODE + ItemList.INFO_CODE +
-			IExperimentSpecies.SYSTEM_CATEGORY_PREFIX + " '" + getSpecies().getName() + "'";
+			IExperimentPlan.SYSTEM_CATEGORY_PREFIX + " '" + getSpecies().getName() + "'";
 	}
 
 	@getter(value = ExperimentAgent.MINIMUM_CYCLE_DURATION, initializer = true)

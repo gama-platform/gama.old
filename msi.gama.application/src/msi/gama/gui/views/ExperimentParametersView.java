@@ -27,7 +27,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
 
-	private IExperimentSpecies experiment;
+	private IExperimentPlan experiment;
 	private Composite commandsComposite, commandsBody;
 	int maxButtonWidth;
 
@@ -62,7 +62,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		parent = intermediate;
 	}
 
-	public void addItem(final IExperimentSpecies exp) {
+	public void addItem(final IExperimentPlan exp) {
 		if ( exp != null /* && exp != experiment */) {
 			experiment = exp;
 			reset();
@@ -158,7 +158,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		return true;
 	}
 
-	public IExperimentSpecies getExperiment() {
+	public IExperimentPlan getExperiment() {
 		return experiment;
 	}
 

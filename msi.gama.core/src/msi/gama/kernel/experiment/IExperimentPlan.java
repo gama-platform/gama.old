@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'IExperimentSpecies.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 'IExperimentPlan.java', in plugin 'msi.gama.core', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -27,7 +27,7 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-public interface IExperimentSpecies extends ISpecies {
+public interface IExperimentPlan extends ISpecies {
 
 	static final String BATCH_CATEGORY_NAME = "Exploration method";
 	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";

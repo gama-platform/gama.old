@@ -24,7 +24,7 @@ import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.views.*;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -240,7 +240,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public boolean confirmClose(final IExperimentSpecies exp) {
+	public boolean confirmClose(final IExperimentPlan exp) {
 		if ( !GamaPreferences.CORE_ASK_CLOSING.getValue() ) { return true; }
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
 			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
@@ -551,7 +551,7 @@ public class SwtGui implements IGui {
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
 			if ( partRef.getPart(false) instanceof IGamaView ) {
-				final IExperimentSpecies s = GAMA.getExperiment();
+				final IExperimentPlan s = GAMA.getExperiment();
 				if ( s == null ) { return; }
 				final IOutputManager m = s.getSimulationOutputs();
 				if ( m != null ) {
@@ -922,7 +922,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void updateParameterView(final IExperimentSpecies exp) {
+	public void updateParameterView(final IExperimentPlan exp) {
 
 		run(new Runnable() {
 
@@ -946,7 +946,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperimentSpecies exp) {
+	public void showParameterView(final IExperimentPlan exp) {
 
 		run(new Runnable() {
 
@@ -1098,7 +1098,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentSpecies exp) {
+	public void prepareForExperiment(final IExperimentPlan exp) {
 		if ( exp.isGui() ) {
 			// showConsoleView();
 			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
@@ -1121,10 +1121,10 @@ public class SwtGui implements IGui {
 
 	/**
 	 * Method cleanAfterExperiment()
-	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentSpecies)
+	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentPlan)
 	 */
 	@Override
-	public void cleanAfterExperiment(final IExperimentSpecies exp) {
+	public void cleanAfterExperiment(final IExperimentPlan exp) {
 		// setSelectedAgent(null);
 		// setHighlightedAgent(null);
 		hideView(GuiUtils.PARAMETER_VIEW_ID);

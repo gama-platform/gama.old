@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.logging.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -103,7 +103,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperimentSpecies exp) {}
+	public void showParameterView(final IExperimentPlan exp) {}
 
 	@Override
 	public void debugConsole(final int cycle, final String s) {
@@ -143,12 +143,12 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean confirmClose(final IExperimentSpecies experiment) {
+	public boolean confirmClose(final IExperimentPlan experiment) {
 		return true;
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentSpecies exp) {}
+	public void prepareForExperiment(final IExperimentPlan exp) {}
 
 	@Override
 	public void showConsoleView() {}
@@ -246,7 +246,7 @@ public class HeadlessListener implements IGui {
 	public void editModel(final Object eObject) {}
 
 	@Override
-	public void updateParameterView(final IExperimentSpecies exp) {}
+	public void updateParameterView(final IExperimentPlan exp) {}
 
 	//
 	// @Override
@@ -256,7 +256,7 @@ public class HeadlessListener implements IGui {
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment(final IExperimentSpecies exp) {}
+	public void cleanAfterExperiment(final IExperimentPlan exp) {}
 
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {}

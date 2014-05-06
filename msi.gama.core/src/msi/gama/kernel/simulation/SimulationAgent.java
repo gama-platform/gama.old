@@ -14,7 +14,7 @@ package msi.gama.kernel.simulation;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.AgentScheduler;
-import msi.gama.kernel.experiment.ExperimentSpecies;
+import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -94,15 +94,15 @@ public class SimulationAgent extends GamlAgent {
 //		}
 		
 		//hqnghi: 2 case: multi controllers and mono controller
-		if(!((ExperimentSpecies)getExperiment().getSpecies()).getControllerName().equals("")){
-			GAMA.getController(((ExperimentSpecies)getExperiment().getSpecies()).getControllerName())
+		if(!((ExperimentPlan)getExperiment().getSpecies()).getControllerName().equals("")){
+			GAMA.getController(((ExperimentPlan)getExperiment().getSpecies()).getControllerName())
 			.getScheduler()
 			.schedule(scheduler,
 			scope);
 			if ( outputs != null ) {
 				final IScope simulationScope = obtainNewScope();
 				if ( simulationScope != null ) {
-					GAMA.getController(((ExperimentSpecies)getExperiment().getSpecies()).getControllerName()).getScheduler()
+					GAMA.getController(((ExperimentPlan)getExperiment().getSpecies()).getControllerName()).getScheduler()
 							.schedule(
 							outputs, simulationScope);
 				} else {
@@ -294,7 +294,7 @@ public class SimulationAgent extends GamlAgent {
 	@action(name = "pause", doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 	@args(names = {})
 	public Object pause(final IScope scope) {
-		String ctrlName=((ExperimentSpecies)scope.getExperiment().getSpecies()).getControllerName();
+		String ctrlName=((ExperimentPlan)scope.getExperiment().getSpecies()).getControllerName();
 		if(!ctrlName.equals("")){
 			GAMA.getController(ctrlName).offer(FrontEndController._PAUSE);
 		}else{

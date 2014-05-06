@@ -13,7 +13,7 @@ package msi.gama.kernel.model;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -40,8 +40,8 @@ import org.apache.commons.lang.StringUtils;
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
-	protected final Map<String, IExperimentSpecies> experiments = new TOrderedHashMap();
-	protected final Map<String, IExperimentSpecies> titledExperiments = new TOrderedHashMap();
+	protected final Map<String, IExperimentPlan> experiments = new TOrderedHashMap();
+	protected final Map<String, IExperimentPlan> titledExperiments = new TOrderedHashMap();
 	protected Map<String, ISpecies> allSpecies;
 
 	public GamlModelSpecies(final IDescription description) {
@@ -84,7 +84,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		return getDescription().getModelProjectPath();
 	}
 
-	protected void addExperiment(final IExperimentSpecies exp) {
+	protected void addExperiment(final IExperimentPlan exp) {
 		if ( exp == null ) { return; }
 		experiments.put(exp.getName(), exp);
 		titledExperiments.put(exp.getFacet(IKeyword.TITLE).literalValue(), exp);
@@ -92,9 +92,9 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public IExperimentSpecies getExperiment(final String s) {
+	public IExperimentPlan getExperiment(final String s) {
 		// First we try to get it using its "internal" name
-		IExperimentSpecies e = experiments.get(s);
+		IExperimentPlan e = experiments.get(s);
 		if ( e == null ) {
 			// Otherwise with its title
 			e = titledExperiments.get(s);
@@ -115,7 +115,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	@Override
 	public void dispose() {
 		super.dispose();
-		for ( final IExperimentSpecies exp : experiments.values() ) {
+		for ( final IExperimentPlan exp : experiments.values() ) {
 			exp.dispose();
 		}
 		experiments.clear();
@@ -169,11 +169,11 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public void setChildren(final List<? extends ISymbol> children) {
 		final GamaList forExperiment = new GamaList();
 
-		final List<IExperimentSpecies> experiments = new ArrayList();
+		final List<IExperimentPlan> experiments = new ArrayList();
 		for ( final Iterator<? extends ISymbol> it = children.iterator(); it.hasNext(); ) {
 			final ISymbol s = it.next();
-			if ( s instanceof IExperimentSpecies ) {
-				experiments.add((IExperimentSpecies) s);
+			if ( s instanceof IExperimentPlan ) {
+				experiments.add((IExperimentPlan) s);
 				it.remove();
 			} else if ( s instanceof AbstractOutputManager ) {
 				forExperiment.add(s);
@@ -183,13 +183,13 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		// Add the variables, etc. to the model
 		super.setChildren(children);
 		// Add the experiments and the default outputs to all experiments
-		for ( final IExperimentSpecies exp : experiments ) {
+		for ( final IExperimentPlan exp : experiments ) {
 			addExperiment(exp);
 			exp.setChildren(forExperiment);
 		}
 	}
 
-	public Map<String, IExperimentSpecies> getExperiments() {
+	public Map<String, IExperimentPlan> getExperiments() {
 		// TODO Auto-generated method stub
 		return experiments;
 	}

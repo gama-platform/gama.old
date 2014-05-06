@@ -17,7 +17,7 @@ import msi.gama.metamodel.agent.IAgent;
 public interface IExperimentAgent extends IAgent {
 
 	@Override
-	public abstract IExperimentSpecies getSpecies();
+	public abstract IExperimentPlan getSpecies();
 
 	public abstract RandomUtils getRandomGenerator();
 

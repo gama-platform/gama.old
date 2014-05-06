@@ -184,7 +184,7 @@ public class FileOutput extends AbstractOutput {
 		return true;
 	}
 
-	public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentSpecies exp)
+	public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentPlan exp)
 		throws GamaRuntimeException {
 		// WARNING Created by the batch. Is it still necessary to keep this ?
 		// TODO Should be deprecated in favor of a regular file output in the permanent
@@ -200,7 +200,7 @@ public class FileOutput extends AbstractOutput {
 		this.writeHeaderAndClose();
 	}
 
-	// public void prepare(final IExperimentSpecies exp) throws GamaRuntimeException {
+	// public void prepare(final IExperimentPlan exp) throws GamaRuntimeException {
 	// // FIXME Verify this scope
 	// setScope(GAMA.obtainNewScope());
 	// outputManager = exp.getOutputManager();

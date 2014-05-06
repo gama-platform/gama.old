@@ -186,7 +186,7 @@ public class AgentScheduler implements IStepable {
 
 	public synchronized void executeOneAction(final GamaHelper action) {
 		//hqnghi: check if it belong other controller beside default controller
-		String ctrlName = ((ExperimentSpecies) scope.getSimulationScope()
+		String ctrlName = ((ExperimentPlan) scope.getSimulationScope()
 				.getExperiment().getSpecies()).getControllerName();
 		FrontEndScheduler sche=GAMA.controller.getScheduler();
 		if(!ctrlName.equals("")){

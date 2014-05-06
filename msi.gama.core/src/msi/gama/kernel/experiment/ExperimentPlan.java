@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  * 
- * 'ExperimentSpecies.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'ExperimentPlan.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.batch.*;
-import msi.gama.kernel.experiment.ExperimentSpecies.BatchValidator;
+import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -87,7 +87,7 @@ import msi.gaml.variables.IVariable;
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
-public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
+public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public static class BatchValidator implements IDescriptionValidator {
 
@@ -135,7 +135,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		return agent;
 	}
 
-	public ExperimentSpecies(final IDescription description) {
+	public ExperimentPlan(final IDescription description) {
 		super(description);
 		setName(description.getName());
 		String type = description.getFacets().getLabel(IKeyword.TYPE);
@@ -186,7 +186,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		if ( !isBatch() ) {
 			for ( final IVariable v : model.getVars() ) {
 				if ( v.isParameter() ) {
-					// GuiUtils.debug("from ExperimentSpecies.setModel:");
+					// GuiUtils.debug("from ExperimentPlan.setModel:");
 					IParameter p = new ExperimentParameter(stack, v);
 					final String name = p.getName();
 					boolean already = parameters.containsKey(name);
@@ -363,7 +363,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	public void addParameter(final IParameter p) {
-		// GuiUtils.debug("ExperimentSpecies.addParameter " + p.getName());
+		// GuiUtils.debug("ExperimentPlan.addParameter " + p.getName());
 		// TODO Verify this
 		final String name = p.getName();
 		IParameter already = parameters.get(name);
@@ -425,7 +425,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if ( hasParameter(name) ) {
 				setParameterValue(this, name, v);
-				GuiUtils.updateParameterView(ExperimentSpecies.this);
+				GuiUtils.updateParameterView(ExperimentPlan.this);
 				return;
 			}
 			SimulationAgent a = getCurrentSimulation();
@@ -454,17 +454,17 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 		@Override
 		public IDescription getExperimentContext() {
-			return ExperimentSpecies.this.getDescription();
+			return ExperimentPlan.this.getDescription();
 		}
 
 		@Override
 		public IDescription getModelContext() {
-			return ExperimentSpecies.this.getModel().getDescription();
+			return ExperimentPlan.this.getModel().getDescription();
 		}
 
 		@Override
 		public IModel getModel() {
-			return ExperimentSpecies.this.getModel();
+			return ExperimentPlan.this.getModel();
 		}
 
 		@Override

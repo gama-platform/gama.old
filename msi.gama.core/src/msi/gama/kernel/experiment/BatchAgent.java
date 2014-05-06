@@ -220,13 +220,13 @@ public class BatchAgent extends ExperimentAgent {
 				ExperimentParameter p = new ExperimentParameter(getScope(), v);
 				if ( p.canBeExplored() ) {
 					p.setEditable(false);
-					p.setCategory(IExperimentSpecies.EXPLORABLE_CATEGORY_NAME);
+					p.setCategory(IExperimentPlan.EXPLORABLE_CATEGORY_NAME);
 					params.add(p);
 				}
 			}
 		}
 
-		params.add(new ParameterAdapter("Stop condition", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.STRING) {
+		params.add(new ParameterAdapter("Stop condition", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
 			public Object value() {
@@ -235,7 +235,7 @@ public class BatchAgent extends ExperimentAgent {
 
 		});
 
-		params.add(new ParameterAdapter("Best fitness", IExperimentSpecies.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
 			@Override
 			public String getUnitLabel() {
@@ -257,7 +257,7 @@ public class BatchAgent extends ExperimentAgent {
 
 		});
 
-		params.add(new ParameterAdapter("Last fitness", IExperimentSpecies.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
 			@Override
 			public String getUnitLabel() {
@@ -273,7 +273,7 @@ public class BatchAgent extends ExperimentAgent {
 
 		});
 
-		params.add(new ParameterAdapter("Parameter space", IExperimentSpecies.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Parameter space", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
 			@Override
 			public String value() {

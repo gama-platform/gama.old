@@ -31,7 +31,7 @@ public class ExperimentPopulation extends GamaPopulation {
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
 		final boolean isRestored) throws GamaRuntimeException {
 		if ( size() == 0 ) {
-			boolean isBatch = ((ExperimentSpecies) getSpecies()).isBatch();
+			boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
 			// exp.setIndex(0);
 			/* agents. */add(exp);

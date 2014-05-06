@@ -37,10 +37,10 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static synchronized ExperimentSpecies newHeadlessSimulation(final IModel model, final String expName,
+	public static synchronized ExperimentPlan newHeadlessSimulation(final IModel model, final String expName,
 		final ParametersSet params) throws GamaRuntimeException {
 
-		ExperimentSpecies currentExperiment = (ExperimentSpecies) model.getExperiment(expName);
+		ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
 		if ( currentExperiment == null ) { throw GamaRuntimeException.error("Experiment " + expName +
 			" cannot be created"); }
 

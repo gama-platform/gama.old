@@ -13,7 +13,7 @@ package msi.gama.common.interfaces;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -53,7 +53,7 @@ public interface IGui {
 
 	void error(String error);
 
-	void showParameterView(IExperimentSpecies exp);
+	void showParameterView(IExperimentPlan exp);
 
 	void debugConsole(int cycle, String s);
 
@@ -69,7 +69,7 @@ public interface IGui {
 
 	IEditorFactory getEditorFactory();
 
-	boolean confirmClose(IExperimentSpecies experiment);
+	boolean confirmClose(IExperimentPlan experiment);
 
 	void showConsoleView();
 
@@ -112,13 +112,13 @@ public interface IGui {
 
 	void setSelectedAgent(IAgent a);
 
-	void updateParameterView(IExperimentSpecies exp);
+	void updateParameterView(IExperimentPlan exp);
 
 	// void cycleDisplayViews(Set<String> names);
 
-	void prepareForExperiment(IExperimentSpecies exp);
+	void prepareForExperiment(IExperimentPlan exp);
 
-	void cleanAfterExperiment(IExperimentSpecies exp);
+	void cleanAfterExperiment(IExperimentPlan exp);
 
 	void prepareForSimulation(SimulationAgent sim);
 

@@ -13,7 +13,7 @@ package msi.gama.common.util;
 
 import java.util.Map;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -165,7 +165,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void showParameterView(final IExperimentSpecies exp) {
+	public static void showParameterView(final IExperimentPlan exp) {
 		if ( gui != null ) {
 			gui.showParameterView(exp);
 		}
@@ -234,12 +234,12 @@ public class GuiUtils {
 		return null;
 	}
 
-	public static boolean confirmClose(final IExperimentSpecies experiment) {
+	public static boolean confirmClose(final IExperimentPlan experiment) {
 		if ( gui != null ) { return gui.confirmClose(experiment); }
 		return true;
 	}
 
-	public static void prepareForExperiment(final IExperimentSpecies exp) {
+	public static void prepareForExperiment(final IExperimentPlan exp) {
 		if ( gui != null ) {
 			gui.prepareForExperiment(exp);
 		}
@@ -251,7 +251,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void cleanAfterExperiment(final IExperimentSpecies exp) {
+	public static void cleanAfterExperiment(final IExperimentPlan exp) {
 		GAMA.setDelayFromExperiment(0);
 		if ( gui != null ) {
 			gui.cleanAfterExperiment(exp);
@@ -385,7 +385,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void updateParameterView(final IExperimentSpecies exp) {
+	public static void updateParameterView(final IExperimentPlan exp) {
 		if ( gui == null ) { return; }
 		gui.updateParameterView(exp);
 	}

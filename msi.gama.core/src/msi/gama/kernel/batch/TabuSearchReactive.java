@@ -243,7 +243,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Tabu list initial size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Tabu list initial size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -251,7 +251,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Tabu list maximum size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Tabu list maximum size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -259,7 +259,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Tabu list minimum size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Tabu list minimum size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -268,7 +268,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		params.add(new ParameterAdapter("Maximum number of tests without collision",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -276,7 +276,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Maximum cycle size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Maximum cycle size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -284,7 +284,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Minimum cycle size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Minimum cycle size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -292,7 +292,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentSpecies.BATCH_CATEGORY_NAME,
+		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME,
 			IType.FLOAT) {
 
 			@Override

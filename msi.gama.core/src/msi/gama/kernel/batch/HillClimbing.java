@@ -114,7 +114,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentSpecies.BATCH_CATEGORY_NAME,
+		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME,
 			IType.INT) {
 
 			@Override

@@ -16,8 +16,8 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.ExperimentSpecies;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.model.IModel;
@@ -72,7 +72,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	private String comodelName = "";
 	private boolean initDisplay = false;
 
-	// private IExperimentSpecies exp = null;
+	// private IExperimentPlan exp = null;
 	public GAMLFile(final IScope scope, final String pathName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
@@ -100,7 +100,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		return (GamlSpecies) mymodel.getSpecies(name);
 	}
 	public void createExperiment(final String expName) {
-			IExperimentSpecies exp = mymodel.getExperiment("Experiment "
+			IExperimentPlan exp = mymodel.getExperiment("Experiment "
 					+ expName);
 			for(IOutput o:exp.getSimulationOutputs().getOutputs().values()){
 				o.setName(o.getName() + "#" + comodelName);
@@ -112,7 +112,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 				((AbstractOutput) o).setExpName(experimentName
 						+ comodelName);
 			}
-		((ExperimentSpecies) exp).setControllerName(controllerName);
+		((ExperimentPlan) exp).setControllerName(controllerName);
 		// multithread
 		// eliminate conflict in close-open current Layer to initialize displays
 		GAMA.getController(controllerName).newExperiment(exp);
@@ -170,8 +170,8 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		GAML.getModelFactory().addCoModel(mm.getName(),mm);
 		for(ISpecies spec:((GamlModelSpecies)mymodel.getSpecies()).getExperiments().values()) {		
 			//TODO must change to add displays
-			((ExperimentSpecies)spec).getExperimentOutputs().removeAllOutput();
-			((ExperimentSpecies)spec).getSimulationOutputs().removeAllOutput();
+			((ExperimentPlan)spec).getExperimentOutputs().removeAllOutput();
+			((ExperimentPlan)spec).getSimulationOutputs().removeAllOutput();
 			((IList) getBuffer()).add(spec);
 		}
 

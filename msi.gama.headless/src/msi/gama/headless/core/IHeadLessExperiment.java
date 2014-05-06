@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gama.headless.core;
 
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 
-public interface IHeadLessExperiment extends IExperimentSpecies {
+public interface IHeadLessExperiment extends IExperimentPlan {
 
 	public void start(int nbStep);
 

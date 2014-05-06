@@ -83,7 +83,7 @@ public class GAMA {
 
 	}
 
-	public static IExperimentSpecies getExperiment() {
+	public static IExperimentPlan getExperiment() {
 		return controller.getExperiment();
 	}
 

@@ -33,7 +33,7 @@ public class GamaSimulator implements ISimulator {
 	private IModel model;
 	private String fileName;
 	private String experimentName;
-	private ExperimentSpecies experiment;
+	private ExperimentPlan experiment;
 
 	public GamaSimulator() {
 		this.params = new ParametersSet();

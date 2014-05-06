@@ -14,7 +14,7 @@ package msi.gama.runtime;
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -34,7 +34,7 @@ public class FrontEndController implements Runnable {
 	public static final int _NEXT = 7;
 
 	public ISimulationStateProvider state = null;
-	private volatile IExperimentSpecies experiment = null;
+	private volatile IExperimentPlan experiment = null;
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	public volatile Thread commandThread;
 	protected volatile boolean running = true;
@@ -51,7 +51,7 @@ public class FrontEndController implements Runnable {
 		}
 	}
 
-	public IExperimentSpecies getExperiment() {
+	public IExperimentPlan getExperiment() {
 		return experiment;
 	}
 
@@ -237,7 +237,7 @@ public class FrontEndController implements Runnable {
 		updateSimulationState(getFrontmostSimulationState());
 	}
 
-	public void newHeadlessExperiment(final IExperimentSpecies newExperiment) {
+	public void newHeadlessExperiment(final IExperimentPlan newExperiment) {
 		if ( newExperiment == null ) {
 			System.out.println("No experiment available.");
 			return;
@@ -250,7 +250,7 @@ public class FrontEndController implements Runnable {
 		}
 	}
 
-	public void newExperiment(final IExperimentSpecies newExperiment) {
+	public void newExperiment(final IExperimentPlan newExperiment) {
 		if ( newExperiment == null ) {
 			System.out.println("No experiment available.");
 			return;
@@ -269,7 +269,7 @@ public class FrontEndController implements Runnable {
 			}
 			GAMA.getControllers().clear();
 		}
-		final IExperimentSpecies newExperiment = model.getExperiment(id);
+		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if ( newExperiment == null ) { return; }
 		GuiUtils.openSimulationPerspective();
 		// FIXME Useless

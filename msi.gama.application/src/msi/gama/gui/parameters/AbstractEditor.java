@@ -92,7 +92,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
-			IExperimentSpecies exp = GAMA.getExperiment();
+			IExperimentPlan exp = GAMA.getExperiment();
 			if ( exp != null ) {
 				a = exp.getAgent();
 			}

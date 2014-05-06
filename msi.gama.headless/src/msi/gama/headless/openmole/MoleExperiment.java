@@ -20,7 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MoleExperiment implements IMoleExperiment {
 
-	private ExperimentSpecies currentExperiment;
+	private ExperimentPlan currentExperiment;
 	private final ParametersSet params;
 	private final IModel model;
 	private String experimentName;

@@ -12,7 +12,7 @@
 package msi.gama.kernel.model;
 
 import java.util.Map;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -25,7 +25,7 @@ public interface IModel extends ISpecies {
 
 	public abstract ISpecies getSpecies(String speciesName);
 
-	public abstract IExperimentSpecies getExperiment(final String s);
+	public abstract IExperimentPlan getExperiment(final String s);
 
 	// String getRelativeFilePath(IScope scope, String filePath, boolean shouldExist);
 

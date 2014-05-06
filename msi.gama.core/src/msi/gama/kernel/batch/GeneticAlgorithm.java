@@ -155,7 +155,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Mutation probability", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Mutation probability", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -163,7 +163,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Crossover probability", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Crossover probability", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -171,7 +171,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Population dimension", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Population dimension", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -179,7 +179,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Preliminary number of generations", IExperimentSpecies.BATCH_CATEGORY_NAME,
+		params.add(new ParameterAdapter("Preliminary number of generations", IExperimentPlan.BATCH_CATEGORY_NAME,
 			IType.FLOAT) {
 
 			@Override
@@ -188,7 +188,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Max. number of generations", IExperimentSpecies.BATCH_CATEGORY_NAME,
+		params.add(new ParameterAdapter("Max. number of generations", IExperimentPlan.BATCH_CATEGORY_NAME,
 			IType.FLOAT) {
 
 			@Override
