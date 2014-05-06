@@ -1334,6 +1334,19 @@ public abstract class Spatial {
 			IList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
+		
+		@operator(value = "voronoi", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
+				IOperatorCategory.SP_TRANSFORMATIONS })
+			@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
+				masterDoc = true,
+				examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
+					equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
+					test = false) })
+			public static
+				IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts) {
+				if ( pts == null ) { return null; }
+				return GeometryUtils.voronoi(scope, pts);
+			}
 
 		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category = {
 			IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })

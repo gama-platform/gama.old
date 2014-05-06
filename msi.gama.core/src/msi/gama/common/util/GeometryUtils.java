@@ -31,6 +31,7 @@ import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 /**
@@ -460,6 +461,19 @@ public class GeometryUtils {
 		final int nb = tri.getNumGeometries();
 		for ( int i = 0; i < nb; i++ ) {
 			final Geometry gg = tri.getGeometryN(i);
+			geoms.add(new GamaShape(gg));
+		}
+		return geoms;
+	}
+	
+	public static GamaList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
+		final GamaList<IShape> geoms = new GamaList<IShape>();
+		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
+		dtb.setSites(points);
+		final GeometryCollection g = (GeometryCollection) dtb.getDiagram(FACTORY);
+		final int nb = g.getNumGeometries();
+		for ( int i = 0; i < nb; i++ ) {
+			final Geometry gg = g.getGeometryN(i);
 			geoms.add(new GamaShape(gg));
 		}
 		return geoms;
