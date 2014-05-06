@@ -1,8 +1,9 @@
 model model1   
 
 global {
+  int nb_cells <-100;	
   init { 
-    create cells number: 1000 { 
+    create cells number: nb_cells { 
       location <- {rnd(100), rnd(100), rnd(100)};       
     } 
   }  
