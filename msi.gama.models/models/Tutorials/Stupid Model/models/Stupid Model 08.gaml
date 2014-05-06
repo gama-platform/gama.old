@@ -59,15 +59,15 @@ experiment stupidModel type: gui {
 		display histogram_display {
 	        chart "Size distribution" type: histogram {
 	            data "[0;10]" value: bug count (each.size < 10) color: rgb("red");
-	            data "[10;20]" value: bug count ((each.size > 10) and (each.size < 20)) color: rgb("red");
-	            data "[20;30]" value: bug count ((each.size > 20) and (each.size < 30)) color: rgb("red");
-	            data "[30;40]" value: bug count ((each.size > 30) and (each.size < 40)) color: rgb("red");
-	            data "[40;50]" value: bug count ((each.size > 40) and (each.size < 50)) color: rgb("red");
-	            data "[50;60]" value: bug count ((each.size > 50) and (each.size < 60)) color: rgb("red");
-	            data "[60;70]" value: bug count ((each.size > 60) and (each.size < 70)) color: rgb("red");
-	            data "[70;80]" value: bug count ((each.size > 70) and (each.size < 80)) color: rgb("red");
-	            data "[80;90]" value: bug count ((each.size > 80) and (each.size < 90)) color: rgb("red");
-	            data "[90;100]" value: bug count (each.size > 90) color: rgb("red");
+	            data "[10;20]" value: bug count ((each.size > 10) and (each.size < 20)) color:#red;
+	            data "[20;30]" value: bug count ((each.size > 20) and (each.size < 30)) color:#red;
+	            data "[30;40]" value: bug count ((each.size > 30) and (each.size < 40)) color:#red;
+	            data "[40;50]" value: bug count ((each.size > 40) and (each.size < 50)) color:#red;
+	            data "[50;60]" value: bug count ((each.size > 50) and (each.size < 60)) color:#red;
+	            data "[60;70]" value: bug count ((each.size > 60) and (each.size < 70)) color:#red;
+	            data "[70;80]" value: bug count ((each.size > 70) and (each.size < 80)) color:#red;
+	            data "[80;90]" value: bug count ((each.size > 80) and (each.size < 90)) color:#red;
+	            data "[90;100]" value: bug count (each.size > 90) color: #red;
 	        }
 	    }
 	}

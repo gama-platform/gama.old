@@ -11,7 +11,7 @@ global {
   
 species cells{                      
   aspect default {
-    draw sphere(1) color:rgb('blue');   
+    draw sphere(1) color:#blue;   
   }
 }
 

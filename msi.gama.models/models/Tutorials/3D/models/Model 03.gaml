@@ -22,7 +22,7 @@ species cells skills: [moving] {
     }
 		
 	aspect default {
-		draw sphere(1) color:rgb('orange');
+		draw sphere(1) color:#orange;
 		loop pp over: neighbours {
 			draw line([self.location,pp.location]);
 		}	

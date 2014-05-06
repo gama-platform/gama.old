@@ -1,6 +1,5 @@
-
 model prey_predator
-//Model 4 of the predator/prey tutorial
+
 global {
 	int nb_preys_init <- 200 ;
 	float prey_max_energy <- 1.0;

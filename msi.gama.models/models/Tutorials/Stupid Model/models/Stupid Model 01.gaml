@@ -23,7 +23,7 @@ species bug {
 		}
 	}
 	aspect basic {
-		draw circle(0.5) color: rgb('red');
+		draw circle(0.5) color: #red;
 	}
 
 }

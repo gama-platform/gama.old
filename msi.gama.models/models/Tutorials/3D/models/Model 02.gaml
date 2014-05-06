@@ -14,7 +14,7 @@ species cells skills:[moving]{
   	do wander_3D;
   }	                    
   aspect default {
-    draw sphere(1) color:rgb('blue');   
+    draw sphere(1) color:#blue;   
   }
 }
 
