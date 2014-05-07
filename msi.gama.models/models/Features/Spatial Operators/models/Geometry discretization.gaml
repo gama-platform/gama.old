@@ -88,5 +88,18 @@ experiment main type: gui {
 				} 
 			} 
 		}
+		
+		display voronoi {
+			graphics "geoms" transparency: 0.5{
+				loop g over: voronoi([{10,10},{10,10},{80,80},{80,10},{10,80}, {40,40}]) {
+					draw g color: °red;
+				}
+			}
+			graphics "points" {
+				loop pt over: [{10,10},{10,10},{80,80},{80,10},{10,80}, {40,40}] {
+					draw circle(2) at: pt color: °black;
+				}
+			} 
+		}
 	}
 }
