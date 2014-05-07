@@ -20,8 +20,7 @@ public class HelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/wiki/Documentation",
-			null);
+		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/wiki/", null);
 		return null;
 	}
 }
