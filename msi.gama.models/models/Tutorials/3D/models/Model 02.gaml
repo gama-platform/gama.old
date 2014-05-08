@@ -24,7 +24,7 @@ species cells skills:[moving3D]{
 experiment Display  type: gui {
   parameter "Initial number of cells: " var: nb_cells min: 1 max: 1000 category: "Cells" ;
   output {
-    display View1 type:opengl ambient_light:10 diffuse_light:100{
+    display View1 type:opengl{
       species cells;
     }
   }
