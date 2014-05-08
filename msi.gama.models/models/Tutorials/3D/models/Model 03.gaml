@@ -1,4 +1,5 @@
-model model3   
+model Tuto3D   
+//Model 3 of the 3D tutorial  
 
 global {
 	init { 

@@ -1,5 +1,5 @@
-model model2   
-
+model Tuto3D   
+//Model 2 of the 3D tutorial   
 global {
   int nb_cells <-100;
   int environmentSize <-100;
