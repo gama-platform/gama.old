@@ -1,4 +1,3 @@
-
 model prey_predator
 //Model 8 of the predator/prey tutorial
 
