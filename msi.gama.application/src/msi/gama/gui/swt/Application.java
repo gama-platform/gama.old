@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Application.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'Application.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -51,7 +51,7 @@ public class Application implements IApplication {
 			lastUsedWs = instanceLoc.getURL().getFile();
 			String ret =
 				PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs, false,
-					false);
+					false, false);
 			if ( ret != null ) {
 				GuiUtils.debug(ret);
 				// remember = false;
@@ -78,7 +78,7 @@ public class Application implements IApplication {
 				 */
 				String ret =
 					PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
-						false, false);
+						false, false, false);
 				if ( ret != null ) {
 					if ( ret.equals("models") ) {
 						remember =

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PickWorkspaceDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'PickWorkspaceDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
 import msi.gama.gui.swt.*;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -35,8 +34,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * The name of the file that tells us that the workspace directory belongs to our application
 	 */
 	private static final String WS_IDENTIFIER = ".gama_application_workspace";
-	private static final String VERSION_IDENTIFIER = ".gama_version_" +
-		Platform.getProduct().getDefiningBundle().getVersion().toString();
+	// private static final String VERSION_IDENTIFIER = ".gama_version_" +
+	// Platform.getProduct().getDefiningBundle().getVersion().toString();
 	private static final String MODEL_IDENTIFIER = WorkspaceModelsManager.getCurrentGamaStampString();
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
@@ -66,6 +65,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/* Whatever the user picks ends up on this variable */
 	private String selectedWorkspaceRootLocation;
+	private boolean cloning = false;
 
 	/**
 	 * Creates a new workspace dialog with a specific image as title-area image.
@@ -218,75 +218,87 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 
 		/* Clone workspace needs a lot of checks */
-		Button clone = createButton(parent, IDialogConstants.IGNORE_ID, "Clone", false);
+		Button clone = createButton(parent, IDialogConstants.IGNORE_ID, "Clone current workspace", false);
 		clone.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(final Event arg0) {
-				try {
-					String txt = workspacePathCombo.getText();
-					File workspaceDirectory = new File(txt);
-					if ( !workspaceDirectory.exists() ) {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"The currently entered workspace path does not exist. Please enter a valid path.");
-						return;
-					}
-
-					if ( !workspaceDirectory.canRead() ) {
-						MessageDialog
-							.openError(Display.getDefault().getActiveShell(), "Error",
-								"The currently entered workspace path is not readable. Please check file system permissions.");
-						return;
-					}
-
-					// check for workspace file (empty indicator that it's a workspace)
-					File wsFile = new File(txt + File.separator + WS_IDENTIFIER);
-					if ( !wsFile.exists() ) {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"The currently entered workspace path does not contain a valid workspace.");
-						return;
-					}
-
-					DirectoryDialog dd = new DirectoryDialog(Display.getDefault().getActiveShell());
-					dd.setFilterPath(txt);
-					String directory = dd.open();
-					if ( directory == null ) { return; }
-
-					File targetDirectory = new File(directory);
-					if ( targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"Source and target workspaces are the same");
-						return;
-					}
-
-					// recursive check, if new directory is a subdirectory of
-					// our workspace, that's a big no-no or we'll
-					// create directories forever
-					if ( isTargetSubdirOfDir(workspaceDirectory, targetDirectory) ) {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"Target folder is a subdirectory of the current workspace");
-						return;
-					}
-
-					try {
-						copyFiles(workspaceDirectory, targetDirectory);
-					} catch (Exception err) {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"There was an error cloning the workspace: " + err.getMessage());
-						return;
-					}
-
-					boolean setActive =
-						MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Workspace Cloned",
-							"Would you like to set the newly cloned workspace to be the active one?");
-					if ( setActive ) {
-						workspacePathCombo.setText(directory);
-					}
-				} catch (Exception err) {
-					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-						"There was an internal error, please check the logs");
-					err.printStackTrace();
-				}
+				cloneCurrentWorkspace();
+				// try {
+				// String txt = workspacePathCombo.getText();
+				// File workspaceDirectory = new File(txt);
+				// if ( !workspaceDirectory.exists() ) {
+				// MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				// "The path entered does not exist. Please enter a valid path.");
+				// return;
+				// }
+				//
+				// if ( !workspaceDirectory.canRead() ) {
+				// MessageDialog
+				// .openError(Display.getDefault().getActiveShell(), "Error",
+				// "The currently entered workspace path is not readable. Please check file system permissions.");
+				// return;
+				// }
+				//
+				// // check for workspace file (empty indicator that it's a workspace)
+				// File wsFile = new File(txt + File.separator + WS_IDENTIFIER);
+				// if ( !wsFile.exists() ) {
+				// boolean b =
+				// MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Confirm cloning",
+				// "A new workspace will be created at location " + txt +
+				// " and the current workspace contents will be copied to it. Confirm ?");
+				// if ( !b ) { return; }
+				// if ( !checkAndCreateWorkspaceRoot(txt) ) { return; }
+				// } else {
+				// boolean b =
+				// MessageDialog
+				// .openConfirm(
+				// Display.getDefault().getActiveShell(),
+				// "Existing workspace",
+				// "The path entered is a path to an existing workspace. All its contents will be erased and replaced by the current workspace contents. Proceed anyway ?");
+				// if ( !b ) { return; }
+				// }
+				//
+				// DirectoryDialog dd = new DirectoryDialog(Display.getDefault().getActiveShell());
+				// dd.setFilterPath(txt);
+				// String directory = dd.open();
+				// if ( directory == null ) { return; }
+				//
+				// File targetDirectory = new File(directory);
+				// if ( targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
+				// MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				// "Source and target workspaces are the same");
+				// return;
+				// }
+				//
+				// // recursive check, if new directory is a subdirectory of
+				// // our workspace, that's a big no-no or we'll
+				// // create directories forever
+				// if ( isTargetSubdirOfDir(workspaceDirectory, targetDirectory) ) {
+				// MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				// "The path entered is a subdirectory of the current workspace");
+				// return;
+				// }
+				//
+				// try {
+				// copyFiles(workspaceDirectory, targetDirectory);
+				// } catch (Exception err) {
+				// MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				// "There was an error cloning the workspace: " + err.getMessage());
+				// return;
+				// }
+				//
+				// boolean setActive =
+				// MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Workspace Cloned",
+				// "Would you like to set the newly cloned workspace to be the active one?");
+				// if ( setActive ) {
+				// workspacePathCombo.setText(directory);
+				// }
+				// } catch (Exception err) {
+				// MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				// "There was an internal error, please check the logs");
+				// err.printStackTrace();
+				// }
 			}
 		});
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -378,6 +390,42 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 	}
 
+	protected void cloneCurrentWorkspace() {
+		// Some checks first
+		String newLocation = workspacePathCombo.getText();
+		String currentLocation = getNode().get(keyWorkspaceRootDir, "");
+		if ( currentLocation.isEmpty() ) {
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				"No current workspace exists. Can only clone from an existing workspace");
+			return;
+		}
+		File workspaceDirectory = new File(currentLocation);
+		File targetDirectory = new File(newLocation);
+		if ( targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				"Please enter a different location for the new workspace. A workspace cannot be cloned into itself.");
+			return;
+		}
+		// recursive check, if new directory is a subdirectory of
+		// our workspace, that's a big no-no or we'll
+		// create directories forever
+		if ( isTargetSubdirOfDir(workspaceDirectory, targetDirectory) ) {
+			MessageDialog
+				.openError(
+					Display.getDefault().getActiveShell(),
+					"Error",
+					"The path entered is a subdirectory of the current workspace. A workspace cannot be cloned in one of its sub-directories");
+			return;
+		}
+		// If the checks are ok, we set "cloning" to true and do as if ok was pressed.
+		cloning = true;
+		try {
+			okPressed();
+		} finally {
+			cloning = false;
+		}
+	}
+
 	@Override
 	protected void okPressed() {
 		String str = workspacePathCombo.getText();
@@ -387,7 +435,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			return;
 		}
 
-		String ret = checkWorkspaceDirectory(getParentShell(), str, true, true);
+		String ret = checkWorkspaceDirectory(getParentShell(), str, true, true, cloning);
 		if ( ret != null ) {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
@@ -432,7 +480,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		boolean ok = checkAndCreateWorkspaceRoot(str);
 		if ( !ok ) {
 			// GuiUtils.debug("Problem creating " + str);
-			setMessage("The workspace could not be created, please check the error log");
+			setMessage("No workspace could be created at location " + str + ", please check the error log");
 			return;
 		}
 
@@ -441,6 +489,18 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* And on our preferences as well */
 		// GuiUtils.debug("Writing " + str + " in the preferences");
+		if ( cloning ) {
+			String previousLocation = getNode().get(keyWorkspaceRootDir, "");
+			File workspaceDirectory = new File(previousLocation);
+			File targetDirectory = new File(str);
+			try {
+				copyFiles(workspaceDirectory, targetDirectory);
+			} catch (Exception err) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+					"There was an error cloning the workspace: " + err.getMessage());
+				return;
+			}
+		}
 		getNode().put(keyWorkspaceRootDir, str);
 		try {
 			getNode().flush();
@@ -464,13 +524,15 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @return null if everything is ok, or an error message if not
 	 */
 	public static String checkWorkspaceDirectory(final Shell parentShell, final String workspaceLocation,
-		final boolean askCreate, final boolean fromDialog) {
+		final boolean askCreate, final boolean fromDialog, final boolean cloning) {
 		File f = new File(workspaceLocation);
 		if ( !f.exists() ) {
 			if ( askCreate ) {
 				boolean create =
-					MessageDialog.openConfirm(parentShell, "New Directory",
-						"The directory does not exist. Would you like to create it and restart the application?");
+					MessageDialog.openConfirm(parentShell, "New Directory", workspaceLocation +
+						" does not exist. Would you like to create a new workspace here" +
+						(cloning ? ", copy the contents of the current workspace into it, " : "") +
+						" and restart the application ?");
 				if ( create ) {
 					try {
 						f.mkdirs();
@@ -512,12 +574,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			if ( !wsTest.exists() ) {
 				boolean create =
 					MessageDialog
-						.openConfirm(
-							parentShell,
-							"New Workspace",
-							"The directory '" +
-								wsTest.getAbsolutePath() +
-								"' is not set to be a workspace. Do note that files will be created directly under the specified directory and it is suggested you create a directory that has a name that represents your workspace. \n\nWould you like to create a workspace in the selected location?");
+						.openConfirm(parentShell, "New Workspace", "The directory '" + wsTest.getAbsolutePath() +
+							"' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
 				if ( create ) {
 					try {
 						f.mkdirs();
@@ -561,6 +619,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			}
 
 			return "models";
+		} else if ( cloning ) {
+			boolean b =
+				MessageDialog
+					.openConfirm(
+						Display.getDefault().getActiveShell(),
+						"Existing workspace",
+						"The path entered is a path to an existing workspace. All its contents will be erased and replaced by the current workspace contents. Proceed anyway ?");
+			if ( !b ) { return "no clone"; }
 		}
 		return null;
 	}
