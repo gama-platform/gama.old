@@ -432,7 +432,7 @@ public class JTSDrawer {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
 			gl.glPolygonOffset(0.0f, -(float) (z_fighting_value * 1.1));
 			// myGl.glPolygonOffset(0.0f,10.0f);
-			gl.glBegin(GL.GL_POLYGON);
+			gl.glBegin(GL.GL_LINES);
 			if ( !colorpicking ) {
 				setColor(border, alpha);
 			}
@@ -442,7 +442,7 @@ public class JTSDrawer {
 			if ( p.getNumInteriorRing() > 0 ) {
 				// Draw Interior ring
 				for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
-					gl.glBegin(GL.GL_POLYGON);
+					gl.glBegin(GL.GL_LINES);
 					p.getInteriorRingN(i).apply(visitor);
 					gl.glEnd();
 				}
