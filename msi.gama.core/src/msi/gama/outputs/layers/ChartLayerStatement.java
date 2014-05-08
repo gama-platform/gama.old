@@ -1253,13 +1253,26 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							}
 						}
 						if ( type == XY_CHART ||  type == SCATTER_CHART) {
-							if ( cumulative ) {
-								serie.addOrUpdate(Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(0)),
-									Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(1)));
-							} else {
-								serie.addOrUpdate(Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(0)),
-									Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(1)));
+//								GamaRuntimeException g = GamaRuntimeException.create(scope);
+								// if ( isAgent ) {
+								// g.addAgent(agent.toString());
+								// }
+//								GAMA.reportAndThrowIfNeeded(scope, g, true);
+							try {
+								if ( cumulative ) {
+									serie.addOrUpdate(Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(0)),
+										Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(1)));
+								} else {
+									serie.addOrUpdate(Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(0)),
+										Double.parseDouble("" + (Cast.asList(scope, n.get(j))).get(1)));
 
+								}
+							} catch (IndexOutOfBoundsException e) {
+//								GamaRuntimeException g = GamaRuntimeException.create(e,scope);
+//								g.addContext("each point value should be a gama-point or a 2-float list, value here: "+(Cast.asList(scope, n.get(j))));
+								GamaRuntimeException g = GamaRuntimeException.error("each point value should be a gama-point or a 2-float list, value here: "+(Cast.asList(scope, n.get(j))),scope);
+								GAMA.reportAndThrowIfNeeded(scope, g, true);
+								// TODO Auto-generated catch block
 							}
 						}
 						history.append(n.get(j));
