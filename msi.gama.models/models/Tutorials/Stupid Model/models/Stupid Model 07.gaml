@@ -56,7 +56,7 @@ experiment stupidModel type: gui {
 		}
 		display histogram_display {
 	        chart "Size distribution" type: histogram {
-	            data "[0;10]" value: bug count (each.size < 10) color: rgb("red");
+	            data "[0;10]" value: bug count (each.size < 10) color:#red;
 	            data "[10;20]" value: bug count ((each.size > 10) and (each.size < 20)) color:#red;
 	            data "[20;30]" value: bug count ((each.size > 20) and (each.size < 30)) color:#red;
 	            data "[30;40]" value: bug count ((each.size > 30) and (each.size < 40)) color:#red;

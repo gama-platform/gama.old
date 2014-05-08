@@ -1,12 +1,12 @@
 model StupidModel15
 
 global {
-	int numberBugs <- 100;
+    int numberBugs <- 100;
     float globalMaxConsumption <- 1.0;
     float globalMaxFoodProdRate <- 0.01;
     float initialBugSizeMean <- 0.1;
-	float initialBugSizeSD <- 0.03;
-	matrix<float> init_data <- matrix<float>(csv_file("../data/Stupid_Cell.Data", "\t"));
+    float initialBugSizeSD <- 0.03;
+    matrix<float> init_data <- matrix<float>(csv_file("../data/Stupid_Cell.Data", "\t"));
     int width <- int(max (copy_between(init_data column_at 0,3, init_data.rows - 1)));
     int height  <- int(max(copy_between(init_data column_at 1, 3,init_data.rows - 1)));
     geometry shape <- rectangle(width,height);
@@ -96,7 +96,7 @@ experiment stupidModel type: gui {
 		}
 		display histogram_display {
 	        chart "Size distribution" type: histogram {
-	            data "[0;10]" value: bug count (each.size < 10) color: rgb("red");
+	            data "[0;10]" value: bug count (each.size < 10) color: #red;
 	            data "[10;20]" value: bug count ((each.size > 10) and (each.size < 20)) color:#red;
 	            data "[20;30]" value: bug count ((each.size > 20) and (each.size < 30)) color:#red;
 	            data "[30;40]" value: bug count ((each.size > 30) and (each.size < 40)) color:#red;
