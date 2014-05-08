@@ -25,7 +25,7 @@ body {
 	background-color: white;
 	/* background: url(headerbg-orange.gif) repeat-x;*/
 	/*color: #111;*/
-	text-align: center;		
+	/* text-align: center;		*/
 }
 
 /* links */
@@ -61,6 +61,7 @@ a.mailto, a.news {
 h1, h2, h3, h4, h5, h6 {
 	font: bold 1em 'Trebuchet MS', Tahoma, Sans-serif;
 	color: #555;
+	text-align: center;
 }
 h1 { font-size: 1.5em; }
 h2 { font-size: 1.3em; }
@@ -93,7 +94,7 @@ p, h1, h2, h3, h4, h5, h6 {
 ul, ol {
 	margin: 10px 30px;
 	padding: 0 15px;	
-	color: #cc831b;	
+	color: #371BCC;	
 }
 ul span, ol span {
 	color: #111;

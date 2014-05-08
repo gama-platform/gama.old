@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NOTE: 
+ - the documentation should begin by a chapter (otherwise the part will not be taken into account)
+-->
+<toc title="Full Documentation of GAMA 1.3">
+		<chapter name="Introduction to GAMA 1.3" file="GAMAIntro13"/>	
+		<chapter name="First Steps with GAMA 1.3" file="FirstSteps13"/>		
+	<part name="Modeling Guide"/>		
+		<chapter name="Structure of a model" file="Sections13"/>					
+		<chapter name="Species Definition" file="Species13"/>
+		<chapter name="Behaviors" file="Behaviors13"/>		
+		<chapter name="Types" file="Types13"/>	
+		<chapter name="Commands" file="Commands13"/>	
+		<chapter name="Operators" file="Operators13"/>			
+		<chapter name="Variables" file="Variables13"/>		
+		<chapter name="Keywords" file="Keywords13"/>	
+		<chapter name="Skills" file="Skills13"/>		
+		<chapter name="Built-in Agents" file="BuiltInAgents13"/>	
+		<chapter name="Built-in Items" file="BuiltIn13"/>	
+		<chapter name="Batch" file="Batch13"/>	
+	<part name="Training sessions GAMA 1.3"/>	
+		<chapter name="Training session GAMA 1.3 for epidemiology (St Louis)" file="TrainingSessionStLouis2010"/>	
+		<chapter name="Training session GAMA 1.3 (Bondy)" file="FormationBondy2010"/>	
+	<part name="Tutorial 1: The Stupid model"/>	
+		<chapter name="Stupid Model GAMA 1.3" file="StupidTutorial13"/>	
+		<chapter name="Basic stupidModel" file="StupidTutorialModel1v13"/>	
+		<chapter name="Bug growth" file="StupidTutorialModel2v13"/>	
+		<chapter name="Habitat cells and resource" file="StupidTutorialModel3v13"/>	
+		<chapter name="Cell and bug probes" file="StupidTutorialModel4v13"/>	
+		<chapter name="Parameters and parameters displays" file="StupidTutorialModel5v13"/>	
+		<chapter name="Histogram output" file="StupidTutorialModel6v13"/>	
+		<chapter name="Stopping the model" file="StupidTutorialModel7v13"/>	
+		<chapter name="File output" file="StupidTutorialModel8v13"/>	
+		<chapter name="Randomized agent actions" file="StupidTutorialModel9v13"/>	
+		<chapter name="Sorted agent actions" file="StupidTutorialModel10v13"/>	
+		<chapter name="Optimal movement" file="StupidTutorialModel11v13"/>	
+		<chapter name="Bug mortality and reproduction" file="StupidTutorialModel12v13"/>	
+		<chapter name="Population abundance graph" file="StupidTutorialModel13v13"/>	
+		<chapter name="Random normal initial size" file="StupidTutorialModel14v13"/>	
+		<chapter name="Habitat data from file input" file="StupidTutorialModel15v13"/>	
+		<chapter name="Predators" file="StupidTutorialModel16v13"/>	
+	<part name="Tutorial 2: GIS tutorial"/>
+		<chapter name="Introduction to the tutorial" file="GISTutorialRoadTraffic13"/>
+		<chapter name="1. Loading of GIS data (buildings and roads)" file="RoadTraficModel1v13"/>	
+		<chapter name="2. Integration of people agents" file="RoadTraficModel2v13"/>		
+		<chapter name="3. Movement of the people agents" file="RoadTraficModel3v13"/>	
+		<chapter name="4. Definition of weight for the road network" file="RoadTraficModel4v13"/>		
+		<chapter name="5. Dynamic update of the road network" file="RoadTraficModel5v13"/>		
+		<chapter name="6. Definition of a chart display" file="RoadTraficModel6v13"/>		
+		<chapter name="7. Automatic repair of roads" file="RoadTraficModel7v13"/>			
+		<chapter name="8. Complex repair of roads" file="RoadTraficModel8v13"/>			
+	<part name="Tutorial 3: Robot exploration"/>	
+		<chapter name="Introduction to the tutorial" file="GISTutorialRobotExploration13"/>
+		<chapter name="1. Loading of GIS data (background and obstacles)" file="RobotExplorationModel1v13"/>	
+		<chapter name="2. Computation of the unknown environment" file="RobotExplorationModel2v13"/>		
+		<chapter name="3. Integration of the robot agent" file="RobotExplorationModel3v13"/>	
+		<chapter name="4. Dynamic building of the known environment" file="RobotExplorationModel4v13"/>		
+		<chapter name="5. Use of a pathfinder for the robot movement" file="RobotExplorationModel5v13"/>		
+		<chapter name="6. Frontier-based approach" file="RobotExplorationModel6v13"/>		
+		<chapter name="7. Dynamic update of the pathfinder" file="RobotExplorationModel7v13"/>		
+		<chapter name="8. Integration of a chart in the display" file="RobotExplorationModel8v13"/>	
+	<part name="Tutorial 4: Batch tutorial"/>	
+		<chapter name="Batch Tutorial" file="BatchTutorial13"/>
+</toc>

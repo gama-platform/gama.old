@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NOTE: 
+ - the documentation should begin by a chapter (otherwise the part will not be taken into account)
+-->
+<toc title="Full Documentation of GAMA 1.4">
+		<chapter name="Introduction to GAMA 1.4" file="GAMAIntro14"/>	
+		<chapter name="First Steps with GAMA 1.4" file="FirstSteps14"/>	
+		<chapter name="Convert GAML 1.3 to 1.4" file="Convert13to14"/>		
+	<part name="Interface Guide"/>	
+<!--		<chapter name="The Modeling perspective" file="modelingPerspective14"/>		
+		<chapter name="The Simulation perspective" file="simulationPerspective14"/>		-->
+		<chapter name="The Batch perspective" file="batchPerspective14"/>							
+	<part name="Modeling Guide"/>		
+		<chapter name="Model sections" file="Sections14"/>					
+		<chapter name="Species Definition" file="Species14"/>
+		<chapter name="Behaviors" file="Behaviors14"/>		
+		<chapter name="Types" file="Types14"/>	
+		<chapter name="Commands" file="Commands14"/>	
+		<chapter name="Operators" file="Operators14"/>			
+		<chapter name="Variables" file="Variables14"/>		
+		<chapter name="Keywords" file="Keywords14"/>	
+		<chapter name="Skills" file="Skills14"/>		
+		<chapter name="Built-in Agents" file="BuiltInAgents14"/>	
+		<chapter name="Built-in Items" file="BuiltIn14"/>	
+		<chapter name="Built-in Variables" file="BuiltInVariables14"/>	
+		<chapter name="Batch" file="batch14"/>	
+	<part name="Developer Guide"/>	
+		<chapter name="Introduction to the Developer Guide" file="DevelopingGuide14"/>					
+		<chapter name="Global view of GAMA architecture" file="Globalview"/>
+		<chapter name="Xtext" file="Xtext"/>						
+		<chapter name="Develop a new plug-in" file="CreationPlugins14"/>		
+		<chapter name="Develop a new skill" file="CreationSkill14"/>			
+<!--		<chapter name="Develop a new action" file="CreationAction14"/>			
+		<chapter name="Develop a new operator" file="CreationOperator14"/>	-->		
+	<part name="Tutorial 1: The Stupid model"/>	
+		<chapter name="Stupid Model GAMA 1.4" file="StupidTutorial14"/>	
+		<chapter name="1. Basic stupidModel" file="StupidTutorialModel1v14"/>	
+		<chapter name="2. Bug growth" file="StupidTutorialModel2v14"/>	
+		<chapter name="3. Habitat cells and resource" file="StupidTutorialModel3v14"/>	
+		<chapter name="4. Cell and bug probes" file="StupidTutorialModel4v14"/>	
+		<chapter name="5. Parameters and parameters displays" file="StupidTutorialModel5v14"/>	
+		<chapter name="6. Histogram output" file="StupidTutorialModel6v14"/>	
+		<chapter name="7. Stopping the model" file="StupidTutorialModel7v14"/>	
+		<chapter name="8. File output" file="StupidTutorialModel8v14"/>	
+		<chapter name="9. Randomized agent actions" file="StupidTutorialModel9v14"/>	
+		<chapter name="10. Sorted agent actions" file="StupidTutorialModel10v14"/>	
+		<chapter name="11. Optimal movement" file="StupidTutorialModel11v14"/>	
+		<chapter name="12. Bug mortality and reproduction" file="StupidTutorialModel12v14"/>	
+		<chapter name="13. Population abundance graph" file="StupidTutorialModel13v14"/>	
+		<chapter name="14. Random normal initial size" file="StupidTutorialModel14v14"/>	
+		<chapter name="15. Habitat data from file input" file="StupidTutorialModel15v14"/>	
+		<chapter name="16. Predators" file="StupidTutorialModel16v13"/>	
+	<part name="Tutorial 2: Epidemiology oriented tutorial"/>	
+		<chapter name="Epidemiology oriented tutorial (for GAMA1.4)" file="EpidemioTutorial14"/>	
+		<chapter name="1. Basic model" file="EpidemioTutorial1V14"/>	
+	<part name="Tutorial 3: GIS tutorial"/>
+		<chapter name="Introduction to the tutorial" file="GISTutorialRoadTraffic14"/>
+		<chapter name="1. Loading of GIS data (buildings and roads)" file="RoadTraficModel1v14"/>
+	<part name="How to do"/>					
+		<chapter name="How to do?" file="HTDMainPage14"/>		
+		<chapter name="How To Import Image and Geographic data" file="HTDImportImages14"/>	
+		<chapter name="Image and Raster data" file="HTDImport1Raster14"/>		
+		<chapter name="Vector data" file="HTDImport1Vectorial14"/>		
+		<chapter name="Raster and Vector data" file="HTDImportRasterVector14"/>			
+</toc>

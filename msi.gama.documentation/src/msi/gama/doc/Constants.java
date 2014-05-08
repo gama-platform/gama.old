@@ -30,11 +30,12 @@ public class Constants {
 	public static String HTML2XML_FOLDER = GEN_FOLDER + File.separator + "html2xml";
 	public static String PDF_FOLDER = GEN_FOLDER + File.separator + "pdf";
 	public static String TEST_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "msi.gama.models" + File.separator + "models" + File.separator + "Tests";
-	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "WIKI";
+//	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "WIKI";
+	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + "WIKI" + File.separator + "Version1.3";
+
 	public static String XML2WIKI_FOLDER = WIKI_FOLDER + File.separator + "dev";
 	
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2wiki";
-	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc161.xml";
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
 	public static String XSL_XML2PDF_FILE = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf" + File.separator + "xhtml-to-xslfo.xsl";
 	public static String XSL_XML2TEST_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";
@@ -42,11 +43,12 @@ public class Constants {
 	public static String DOCGAMA_FILE = "gaml"+ File.separator + "docGAMA.xml";
 	public static String DOCGAMA_GLOBAL_FILE = JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
 	public static String DOCGAMA_FINAL = HTML2XML_FOLDER + File.separator + "docGamaFinal.xml";
-	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv161.pdf";
 	
 	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
 	
 	public static String TEST_OPERATORS_FOLDER = "operatorsTest";
 	public static String TEST_STATEMENTS_FOLDER = "statementsTest";
 	
+	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv13.pdf";	
+	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc13.xml";	
 }

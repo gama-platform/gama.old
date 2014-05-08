@@ -280,7 +280,7 @@ prettyprint = False
 
 # These are the HTML elements that we treat as block elements.
 _blocks = Set(['dd', 'div', 'dl', 'dt', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-               'hr', 'li', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th',
+               'li', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th',
                'thead', 'tr', 'ul', 'blockquote', ])
 
 # These are the HTML elements which are typically only used with
@@ -1206,7 +1206,11 @@ class Formatter(FormatterBase):
             if number: number += ". "
 
         # Add space before heading, easier to check source code
-        result = '\n' + self._open('h%d' % heading_depth, **kw)
+        # Ben modif
+        attrs = {}
+        ## attrs['id'] = 'Table_of_Contents' 
+        # Ben modif
+        result = '\n' + self._open('h%d' % heading_depth, attr=attrs, **kw)
 
         # TODO: convert this to readable code
         if 0 and self.request.user.show_topbottom:

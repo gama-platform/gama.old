@@ -1573,13 +1573,19 @@
       click any of the topics below to link directly to 
       that section.
     </fo:block> -->
-    <xsl:for-each select="
+<!--     <xsl:for-each select="
     					/html/body//part |
     					/html/body//chapter |
     					/html/body//h1 |
                         /html/body//h2 | 
                         /html/body//h3 |
-                        /html/body//h4">
+                        /html/body//h4"> -->
+    <xsl:for-each select="
+    					/html/body//part |
+    					/html/body//chapter |
+    					/html/body//h1 |
+                        /html/body//h2">
+                        
       <fo:block text-align-last="justify" line-height="17pt"
         space-after="3pt" text-align="start"
         text-indent="-1cm">
