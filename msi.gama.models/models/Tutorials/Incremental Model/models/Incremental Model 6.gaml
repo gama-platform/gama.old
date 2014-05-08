@@ -93,11 +93,6 @@ species building {
 		aspect sphere3D{}
 	}
 	
-	species people_in_2 parent: people schedules: [] {
-		aspect circle{}
-		aspect sphere3D{}
-	}
-	
 	reflex let_people_leave  {
 		ask members as: people_in_building{
 			staying_counter <- staying_counter + 1;
