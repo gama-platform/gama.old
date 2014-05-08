@@ -7,7 +7,6 @@ model SI_city
 
 global{ 
 	int nb_people <- 500;
-	float agent_speed <- 5.0 #km/#h;
 	float infection_distance <- 2.0 #m;
 	float proba_infection <- 0.05;
 	int nb_infected_init <- 5;
@@ -15,7 +14,9 @@ global{
 	geometry shape<-envelope(square(500 #m));
 	
 	init{
-		create people number:nb_people;
+		create people number:nb_people {
+			speed <- 5.0 #km/#h;
+		}
 		ask nb_infected_init among people {
 			is_infected <- true;
 		}
@@ -24,7 +25,6 @@ global{
 }
 
 species people skills:[moving]{		
-	float speed <- agent_speed;
 	bool is_infected <- false;
 	reflex move{
 		do wander;

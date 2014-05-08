@@ -6,7 +6,6 @@ model model5
  
 global {
 	int nb_people <- 500;
-	float agent_speed <- 5.0 #km/#h;
 	float step <- 1 #minutes;
 	float infection_distance <- 2.0 #m;
 	float proba_infection <- 0.05;
@@ -27,9 +26,9 @@ global {
 		road_network <- as_edge_graph(road);
 		create building from: buildings_shapefile;
 		create people number:nb_people {
+			speed <- 5.0 #km/#h;
 			building bd <- one_of(building);
 			location <- any_location_in(bd);
-			location <- {location.x,location.y,bd.height};
 		}
 		ask nb_infected_init among people {
 			is_infected <- true;
@@ -41,7 +40,6 @@ global {
 }
 
 species people skills:[moving]{		
-	float speed <- agent_speed;
 	bool is_infected <- false;
 	point target;
 	int staying_counter;
@@ -55,7 +53,6 @@ species people skills:[moving]{
 	reflex move when: target != nil{
 		do goto target:target on: road_network;
 		if (location = target) {
-			location <- {location.x,location.y,(building closest_to self).height};
 			target <- nil;
 			staying_counter <- 0;
 		} 
@@ -71,7 +68,7 @@ species people skills:[moving]{
 		draw circle(5) color:is_infected ? #red : #green;
 	}
 	aspect sphere3D{
-		draw sphere(5) color:is_infected ? #red : #green;
+		draw sphere(3) at: {location.x,location.y,location.z + 3} color:is_infected ? #red : #green;
 	}
 }
 
@@ -99,8 +96,8 @@ experiment main_experiment type:gui{
 		display map_3D type: opengl ambient_light: is_night ? 30 : 120{
 			image "../includes/soil.jpg";
 			species road aspect:geom;
-			species building aspect:geom;
 			species people aspect:sphere3D;			
+			species building aspect:geom transparency: 0.5;
 		}
 		display chart refresh_every: 10 {
 			chart "Disease spreading" type: series {

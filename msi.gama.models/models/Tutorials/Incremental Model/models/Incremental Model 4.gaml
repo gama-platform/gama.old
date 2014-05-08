@@ -6,7 +6,6 @@ model model4
  
 global {
 	int nb_people <- 500;
-	float agent_speed <- 5.0 #km/#h;
 	float step <- 1 #minutes;
 	float infection_distance <- 2.0 #m;
 	float proba_infection <- 0.05;
@@ -26,6 +25,7 @@ global {
 		road_network <- as_edge_graph(road);
 		create building from: buildings_shapefile;
 		create people number:nb_people {
+			speed <- 5.0 #km/#h;
 			building bd <- one_of(building);
 			location <- any_location_in(bd);
 		}
@@ -39,7 +39,6 @@ global {
 }
 
 species people skills:[moving]{		
-	float speed <- agent_speed;
 	bool is_infected <- false;
 	point target;
 	int staying_counter;
