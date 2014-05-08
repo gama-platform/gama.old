@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaNavigator.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GamaNavigator.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 

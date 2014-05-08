@@ -16,9 +16,11 @@ import java.net.*;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.navigator.commands.RefreshHandler;
 import msi.gama.gui.views.BrowserEditor;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.graphics.Point;
@@ -130,6 +132,15 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 
 		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IResourceChangeListener listener = new IResourceChangeListener() {
+
+			@Override
+			public void resourceChanged(final IResourceChangeEvent event) {
+				RefreshHandler.run();
+			}
+		};
+		workspace.addResourceChangeListener(listener);
 		openWelcomePage(true);
 
 	}
