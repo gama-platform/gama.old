@@ -116,9 +116,10 @@ public class ModelGenerator {
 			e1.printStackTrace();
 		}
 		try {
-			GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
+			//GamlJavaValidator validator = EGaml.getInstance(GamlJavaValidator.class);
 			List<GamlCompilationError> errors = new ArrayList<GamlCompilationError>();
-			ErrorCollector erColl = validator.validate((Model) resource.getContents().get(0));
+			
+			ErrorCollector erColl = GAML.getModelFactory().validate(resource);;
 			if (erColl != null) {
 				for ( GamlCompilationError error : erColl ) {
 					if (error.isError())

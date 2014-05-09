@@ -59,7 +59,7 @@ import idees.gama.features.others.UpdateEGamaObjectFeature;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.IOutput;
@@ -332,7 +332,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		 return target;
 	}
     
-    public  EExperiment createXP(ESpecies source, PictogramElement sourceE, IExperimentSpecies xp, Diagram diagram) {
+    public  EExperiment createXP(ESpecies source, PictogramElement sourceE, IExperimentPlan xp, Diagram diagram) {
 		EExperiment target = null; 
     	if (xp.isGui()) {
     		target = gama.GamaFactory.eINSTANCE.createEGUIExperiment();
@@ -548,8 +548,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
    		for (ISpecies sp : gamaSpecies.getMicroSpecies()) {
    			if (built_in_species.contains(sp.getName()))
    				continue;
-   			if (sp instanceof IExperimentSpecies) { 
-   				createXP(species, speciesE, (IExperimentSpecies) sp, diagram);
+   			if (sp instanceof IExperimentPlan) { 
+   				createXP(species, speciesE, (IExperimentPlan) sp, diagram);
    			} else {
    				createMicroSpecies(species, speciesE, sp, diagram,listSpecies);
    			}
