@@ -120,32 +120,7 @@ entities {
 	}	
 }
 
-experiment callback type: gui parent: Complete { //Inherits from experiment "complete" its parameters (outputs will be done later)
-	int i <- 0;
-	
-	
-	action _step_ { // Redefinition of the default _step_ action (could be written in a reflex in that case)
-	
-		write "Experiment step " + i;
-		i <- i + 1; // Right now, experiments do not have "cycles"
-		
-		loop times: 20 {
-			ask simulation {
-				write "Simulation cycle " + cycle;
-				do _step_; // we ask the simulation to run 400 times
-			}
 
-		}
-
-		ask simulation {
-			do die; // the simulation is disposed
-		}
-		int n <- int(user_input( 'Simulation '  + i, ['Ants number ?'::100])['Ants number ?']);
-		create ants_model with: [ants_number:: n]; // automatically modifies "simulation". 'ants_model' is the species of the model in which the experiment is defined
-		write "Number of ants: " + simulation.ants_number; // We verify it is correct
-	}
-
-}
 
 experiment Displays type: gui {
 	point quadrant_size <- { 0.5, 0.5 };
@@ -254,7 +229,7 @@ experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered =
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
 }
 
-experiment name: 'Show Quadtree' type: gui {
+experiment Quadtree type: gui {
 	output {
 		monitor name: 'Food gathered' value: food_gathered;
 		display QuadTree {
@@ -266,6 +241,33 @@ experiment name: 'Show Quadtree' type: gui {
 			species ant aspect: default;
 		}
 
+	}
+
+}
+
+experiment Callback type: gui parent: Complete { //Inherits from experiment "complete" its parameters (outputs will be done later)
+	int i <- 0;
+	
+	
+	action _step_ { // Redefinition of the default _step_ action (could be written in a reflex in that case)
+	
+		write "Experiment step " + i;
+		i <- i + 1; // Right now, experiments do not have "cycles"
+		
+		loop times: 20 {
+			ask simulation {
+				write "Simulation cycle " + cycle;
+				do _step_; // we ask the simulation to run 400 times
+			}
+
+		}
+
+		ask simulation {
+			do die; // the simulation is disposed
+		}
+		int n <- int(user_input( 'Simulation '  + i, ['Ants number ?'::100])['Ants number ?']);
+		create ants_model with: [ants_number:: n]; // automatically modifies "simulation". 'ants_model' is the species of the model in which the experiment is defined
+		write "Number of ants: " + simulation.ants_number; // We verify it is correct
 	}
 
 }
