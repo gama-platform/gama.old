@@ -35,6 +35,17 @@ public class TypesManager {
 		// current_index = parent == null ? msi.gaml.types.IType.SPECIES_TYPES : parent.current_index;
 	}
 
+	public void alias(final String existingTypeName, final String otherTypeName) {
+		TypeDescription td = modelSpecies.get(existingTypeName);
+		if ( td != null ) {
+			modelSpecies.put(otherTypeName, td);
+		}
+		IType t = stringToIType.get(existingTypeName);
+		if ( t != null ) {
+			stringToIType.put(otherTypeName, t);
+		}
+	}
+
 	public IType addSpeciesType(final TypeDescription species) {
 		String name = species.getName();
 		modelSpecies.put(name, species);
@@ -197,7 +208,10 @@ public class TypesManager {
 	}
 
 	public TypeTree<SpeciesDescription> getSpeciesHierarchy() {
-		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(msi.gaml.types.IType.AGENT))));
+		TypeTree<SpeciesDescription> result =
+			new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(msi.gaml.types.IType.AGENT))));
+		System.out.println(result.toStringWithDepth());
+		return result;
 	}
 
 	private TypeNode<SpeciesDescription> createSpeciesNodesFrom(final TypeNode<IType> type) {
