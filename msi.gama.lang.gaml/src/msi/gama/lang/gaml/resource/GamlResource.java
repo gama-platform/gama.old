@@ -12,12 +12,12 @@
 package msi.gama.lang.gaml.resource;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
-import gnu.trove.set.hash.TLinkedHashSet;
 import java.net.URLDecoder;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.ImportImpl;
 import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
@@ -31,8 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
 
 /*
  * 
@@ -122,19 +121,30 @@ public class GamlResource extends LazyLinkingResource {
 	// AD 8/4/14 The resource itself is now responsible for returning the whole syntactic contents of the set of files
 	// that constitute the model
 
-	private Iterable<ISyntacticElement> getAllSyntacticContents(final Set<GamlResource> totalResources) {
-		return Iterables.transform(totalResources, new Function<GamlResource, ISyntacticElement>() {
+	// private Iterable<ISyntacticElement> getAllSyntacticContents(final Set<GamlResource> totalResources) {
+	// return Iterables.transform(totalResources, new Function<GamlResource, ISyntacticElement>() {
+	//
+	// @Override
+	// public ISyntacticElement apply(final GamlResource r) {
+	// return r.getSyntacticContents();
+	// }
+	//
+	// });
+	// }
 
-			@Override
-			public ISyntacticElement apply(final GamlResource r) {
-				return r.getSyntacticContents();
+	private ModelDescription buildModelDescription(final Map<GamlResource, Boolean> resources) {
+
+		// AD -> Nghi: microModels to use
+		final List<ISyntacticElement> microModels = new ArrayList();
+		final List<ISyntacticElement> models = new ArrayList();
+		for ( Map.Entry<GamlResource, Boolean> entry : resources.entrySet() ) {
+			if ( entry.getValue() ) {
+				models.add(entry.getKey().getSyntacticContents());
+			} else {
+				microModels.add(entry.getKey().getSyntacticContents());
 			}
-
-		});
-	}
-
-	private ModelDescription buildModelDescription(final Set<GamlResource> resources) {
-		final Iterable<ISyntacticElement> models = getAllSyntacticContents(resources);
+		}
+		// final Iterable<ISyntacticElement> models = getAllSyntacticContents(resources);
 		GAML.getExpressionFactory().resetParser();
 		IPath path = getPath();
 		String modelPath, projectPath;
@@ -150,23 +160,34 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
-		return getModelFactory().createModelDescription(projectPath, modelPath, ImmutableList.copyOf(models),
-			getErrorCollector(), isEdited);
+		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited);
 	}
 
+	public LinkedHashMap<URI, Boolean> computeAllImportedURIs(final ResourceSet set) {
+		// TODO A Revoir pour éviter trop de créations de listes/map, etc.
 
-	public LinkedHashSet<URI> computeAllImportedURIs(final ResourceSet set) {
-
-		final LinkedHashSet<URI> totalResources = new LinkedHashSet();
-		final TLinkedHashSet<GamlResource> newResources = new TLinkedHashSet<GamlResource>();
-		newResources.add(this);
+		final LinkedHashMap<URI, Boolean> totalResources = new LinkedHashMap();
+		// Map<Resource, Boolean> = if true, resources are used to compose the model; if false, they are used as sub-models
+		final LinkedHashMap<GamlResource, Boolean> newResources = new LinkedHashMap();
+		// The current resource is considered as imported "normally"
+		newResources.put(this, true);
 		while (!newResources.isEmpty()) {
-			final List<GamlResource> resourcesToConsider = new ArrayList(newResources);
+			final Map<GamlResource, Boolean> resourcesToConsider = new LinkedHashMap(newResources);
 			newResources.clear();
-			for ( final GamlResource gr : resourcesToConsider ) {
-				if ( totalResources.add(gr.getURI()) ) {
+			for ( final GamlResource gr : resourcesToConsider.keySet() ) {
+				if ( !totalResources.containsKey(gr.getURI()) ) {
+					totalResources.put(gr.getURI(), resourcesToConsider.get(gr));
 					final TOrderedHashMap<GamlResource, Import> imports = gr.loadImports(set);
-					newResources.addAll(imports.keySet());
+					for ( Map.Entry<GamlResource, Import> entry : imports.entrySet() ) {
+						ImportImpl impl = (ImportImpl) entry.getValue();
+						if ( impl.eIsSet(GamlPackage.IMPORT__NAME) ) {
+							newResources.put(entry.getKey(), false);
+						} else {
+							// "normal" Import (no "as")
+							newResources.put(entry.getKey(), true);
+						}
+					}
+					// newResources.addAll(imports.keySet());
 				}
 			}
 		}
@@ -194,14 +215,16 @@ public class GamlResource extends LazyLinkingResource {
 		return imports;
 	}
 
-	public TLinkedHashSet<GamlResource> loadAllResources(final ResourceSet resourceSet) {
-		final TLinkedHashSet<GamlResource> totalResources = new TLinkedHashSet<GamlResource>();
-		Set<URI> uris = computeAllImportedURIs(resourceSet);
-		for ( URI uri : uris ) {
+	public LinkedHashMap<GamlResource, Boolean> loadAllResources(final ResourceSet resourceSet) {
+		final LinkedHashMap<GamlResource, Boolean> totalResources = new LinkedHashMap();
+		Map<URI, Boolean> uris = computeAllImportedURIs(resourceSet);
+		for ( URI uri : uris.keySet() ) {
+			// if ( uris.get(uri) ) {
 			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
 			if ( ir != null ) {
-				totalResources.add(ir);
+				totalResources.put(ir, uris.get(uri));
 			}
+			// }
 		}
 		return totalResources;
 	}
@@ -230,8 +253,8 @@ public class GamlResource extends LazyLinkingResource {
 
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
-		Set<GamlResource> imports = loadAllResources(set);
-		for ( GamlResource r : imports ) {
+		Map<GamlResource, Boolean> imports = loadAllResources(set);
+		for ( GamlResource r : imports.keySet() ) {
 			if ( !r.getErrors().isEmpty() ) {
 				invalidateBecauseOfImportedProblem("Syntax errors detected ", r);
 				return null;

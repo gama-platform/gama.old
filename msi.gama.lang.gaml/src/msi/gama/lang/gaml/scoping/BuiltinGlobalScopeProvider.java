@@ -67,7 +67,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 		@Override
 		protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
-			return ((GamlResource) resource).computeAllImportedURIs(resource.getResourceSet());
+			return new LinkedHashSet(((GamlResource) resource).computeAllImportedURIs(resource.getResourceSet())
+				.keySet());
 		}
 	}
 
