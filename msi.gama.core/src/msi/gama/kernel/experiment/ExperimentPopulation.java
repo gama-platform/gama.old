@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExperimentPopulation.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ExperimentPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -20,6 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.variables.IVariable;
 
 public class ExperimentPopulation extends GamaPopulation {
 
@@ -35,9 +36,29 @@ public class ExperimentPopulation extends GamaPopulation {
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
 			// exp.setIndex(0);
 			/* agents. */add(exp);
-			createVariablesFor(scope, this /* agents */, initialValues);
+			createVariables(scope, exp, initialValues.get(0));
 		}
 		return /* agents */this;
+	}
+
+	public void createVariables(final IScope scope, final IAgent a, final Map<String, Object> inits)
+		throws GamaRuntimeException {
+		// IAgent a = get(0);
+		Set<String> names = inits.keySet();
+		try {
+			a.acquireLock();
+			for ( final String s : orderedVarNames ) {
+				final IVariable var = species.getVar(s);
+				var.initializeWith(scope, a, inits.get(s));
+				names.remove(s);
+			}
+			for ( final String s : names ) {
+				a.getScope().setAgentVarValue(a, s, inits.get(s));
+			}
+		} finally {
+			a.releaseLock();
+		}
+
 	}
 
 	@Override
