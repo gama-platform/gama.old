@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AgentVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AgentVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,13 +25,13 @@ public class AgentVariableExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return scope.getAgentVarValue(getName());
+		return scope.getAgentVarValue(scope.getAgentScope(), getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		scope.setAgentVarValue(getName(), v);
+		scope.setAgentVarValue(scope.getAgentScope(), getName(), v);
 	}
 
 	@Override

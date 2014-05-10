@@ -602,7 +602,8 @@ public abstract class AbstractScope implements IScope {
 		Object result = null;
 		final boolean pushed = push(agent);
 		try {
-			result = getAgentVarValue(name);
+			result = agent.getDirectVarValue(this, name);
+			// result = getAgentVarValue(name);
 		} finally {
 			if ( pushed ) {
 				pop(agent);
@@ -615,22 +616,22 @@ public abstract class AbstractScope implements IScope {
 	 * Method getAgentVarValue()
 	 * @see msi.gama.runtime.IScope#getAgentVarValue(java.lang.String)
 	 */
-	@Override
-	public Object getAgentVarValue(final String name) throws GamaRuntimeException {
-		if ( interrupted() ) { return null; } // TODO INTERRUPTED ?
-		return agents.peek().getDirectVarValue(this, name);
-	}
+	// @Override
+	// public Object getAgentVarValue(final String name) throws GamaRuntimeException {
+	// if ( interrupted() ) { return null; } // TODO INTERRUPTED ?
+	// return agents.peek().getDirectVarValue(this, name);
+	// }
 
 	/**
 	 * Method setAgentVarValue()
 	 * @see msi.gama.runtime.IScope#setAgentVarValue(java.lang.String, java.lang.Object)
 	 */
-	@Override
-	public void setAgentVarValue(final String name, final Object v) throws GamaRuntimeException {
-		if ( !interrupted() ) {
-			agents.peek().setDirectVarValue(this, name, v);
-		}
-	}
+	// @Override
+	// public void setAgentVarValue(final String name, final Object v) throws GamaRuntimeException {
+	// if ( !interrupted() ) {
+	// agents.peek().setDirectVarValue(this, name, v);
+	// }
+	// }
 
 	/**
 	 * Method setAgentVarValue()
@@ -641,7 +642,8 @@ public abstract class AbstractScope implements IScope {
 		if ( agent == null || agent.dead() || interrupted() ) { return; }
 		final boolean pushed = push(agent);
 		try {
-			setAgentVarValue(name, v);
+			agent.setDirectVarValue(this, name, v);
+			// setAgentVarValue(name, v);
 		} finally {
 			if ( pushed ) {
 				pop(agent);

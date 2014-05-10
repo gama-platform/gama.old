@@ -119,9 +119,9 @@ public interface IScope {
 
 	public abstract Object getAgentVarValue(IAgent agent, String name) throws GamaRuntimeException;
 
-	public abstract Object getAgentVarValue(String name) throws GamaRuntimeException;
+	// public abstract Object getAgentVarValue(String name) throws GamaRuntimeException;
 
-	public abstract void setAgentVarValue(String name, Object v) throws GamaRuntimeException;
+	// public abstract void setAgentVarValue(String name, Object v) throws GamaRuntimeException;
 
 	public abstract void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
 

@@ -16,7 +16,6 @@ import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.IPopulation.IsLiving;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -291,10 +290,11 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 				final Map<Object, Object> init = initialValues.get(i);
 				if ( init.containsKey(IKeyword.SHAPE) ) {
 					Object val = init.get(IKeyword.SHAPE);
-					if (val instanceof GamaPoint)
-						a.setGeometry(new GamaShape((IShape)val));
-					else
-						a.setGeometry((GamaShape)val);
+					if ( val instanceof GamaPoint ) {
+						a.setGeometry(new GamaShape((IShape) val));
+					} else {
+						a.setGeometry((GamaShape) val);
+					}
 					init.remove(IKeyword.SHAPE);
 				} else if ( init.containsKey(IKeyword.LOCATION) ) {
 					a.setLocation((GamaPoint) init.get(IKeyword.LOCATION));
@@ -707,8 +707,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	/**
 	 * Method accept()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
@@ -725,8 +724,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	/**
 	 * Method filter()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
