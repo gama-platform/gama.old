@@ -213,13 +213,19 @@ public class TypeTree<T> {
 		 * We're going to assume a pre-order traversal by default
 		 */
 
-		String stringRepresentation = "";
-
 		if ( root != null ) {
-			stringRepresentation = buildWithDepth(Order.PRE_ORDER).toString();
+			Map<TypeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
+			StringBuilder sb = new StringBuilder();
+			for ( TypeNode<T> t : map.keySet() ) {
+				for ( int i = 0; i < map.get(t); i++ ) {
+					sb.append("\t");
+				}
+				sb.append(t.getData().toString());
+				sb.append("\n");
+			}
+			return sb.toString();
 		}
-
-		return stringRepresentation;
+		return "";
 	}
 
 	public void dispose() {
