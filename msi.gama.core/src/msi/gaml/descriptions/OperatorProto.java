@@ -12,6 +12,7 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -39,22 +40,29 @@ public class OperatorProto implements IGamlDescription {
 	public final int[] expectedContentType;
 
 	public IExpression create(final IDescription context, final IExpression ... exprs) {
-		switch (signature.size()) {
-			case 1:
-				if ( isVarOrField ) { return new TypeFieldExpression(this, context, exprs); }
-				return UnaryOperator.create(this, context, exprs);
-			case 2:
-				if ( isVarOrField ) {
-					if ( !(exprs[1] instanceof IVarExpression) ) {
-						context.error("Attribute " + exprs[1].literalValue() + " unknown for " + exprs[0].getType() +
-							" instances");
-						return null;
+		try {
+			switch (signature.size()) {
+				case 1:
+					if ( isVarOrField ) { return new TypeFieldExpression(this, context, exprs); }
+					return UnaryOperator.create(this, context, exprs);
+				case 2:
+					if ( isVarOrField ) {
+						if ( !(exprs[1] instanceof IVarExpression) ) {
+							context.error("Attribute " + exprs[1].literalValue() + " unknown for " +
+								exprs[0].getType() + " instances");
+							return null;
+						}
+						return new BinaryOperator.BinaryVarOperator(this, context, exprs);
 					}
-					return new BinaryOperator.BinaryVarOperator(this, context, exprs);
-				}
-				return BinaryOperator.create(this, context, exprs);
-			default:
-				return NAryOperator.create(this, exprs);
+					return BinaryOperator.create(this, context, exprs);
+				default:
+					return NAryOperator.create(this, exprs);
+			}
+		} catch (GamaRuntimeException e) {
+			// this can happen when optimizing the code
+			// in that case, report an error and return null as it means that the code is not functional
+			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, name);
+			return null;
 		}
 	}
 
