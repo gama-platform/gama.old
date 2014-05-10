@@ -36,7 +36,7 @@ public class ExperimentPopulation extends GamaPopulation {
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
 			// exp.setIndex(0);
 			/* agents. */add(exp);
-			createVariables(scope, exp, initialValues.get(0));
+			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(0));
 		}
 		return /* agents */this;
 	}
