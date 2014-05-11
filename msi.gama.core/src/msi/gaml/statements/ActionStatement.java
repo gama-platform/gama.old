@@ -24,7 +24,6 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -84,7 +83,7 @@ import msi.gaml.types.*;
 				@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
 	see = { "do" })
 @validator(ActionValidator.class)
-public class ActionStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 	public static class ActionValidator implements IDescriptionValidator {
 
@@ -137,7 +136,6 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 
 	}
 
-	Arguments actualArgs;
 	Arguments formalArgs = new Arguments();
 
 	/**
@@ -155,13 +153,6 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		scope.stackArguments(actualArgs);
-		final Object result = super.privateExecuteIn(scope);
-		return result;
-	}
-
-	@Override
 	public void leaveScope(final IScope scope) {
 		// Clears any _action_halted status present
 		scope.popAction();
@@ -170,7 +161,7 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
-		actualArgs = new Arguments(args);
+		super.setRuntimeArgs(args);
 		actualArgs.complementWith(formalArgs);
 	}
 

@@ -34,24 +34,40 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CaptureStatement.CaptureValidator;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.CAPTURE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = false, remote_context = true)
+@symbol(name = { IKeyword.CAPTURE },
+	kind = ISymbolKind.SEQUENCE_STATEMENT,
+	with_sequence = false,
+	remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(doc = @doc("an expression that is evaluated as an agent or a list of the agent to be captured"), name = IKeyword.TARGET, type = {
-		IType.AGENT, IType.CONTAINER }, optional = false),
-	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true, doc = @doc("the species that the captured agent(s) will become, this is a micro-species of the calling agent's species")),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a list of the newly captured agent(s)")) }, omissible = IKeyword.TARGET)
-@doc(value = "Allows an agent to capture other agent(s) as its micro-agent(s).", usages = {
+	@facet(doc = @doc("an expression that is evaluated as an agent or a list of the agent to be captured"),
+		name = IKeyword.TARGET,
+		type = { IType.AGENT, IType.CONTAINER },
+		optional = false),
+	@facet(name = IKeyword.AS,
+		type = IType.SPECIES,
+		optional = true,
+		doc = @doc("the species that the captured agent(s) will become, this is a micro-species of the calling agent's species")),
+	@facet(name = IKeyword.RETURNS,
+		type = IType.NEW_TEMP_ID,
+		optional = true,
+		doc = @doc("a list of the newly captured agent(s)")) },
+	omissible = IKeyword.TARGET)
+@doc(value = "Allows an agent to capture other agent(s) as its micro-agent(s).",
+	usages = {
 
-	@usage(value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).", examples = {
-		@example(value = "species A {", isExecutable = false), @example(value = "...", isExecutable = false),
-		@example(value = "}", isExecutable = false), @example(value = "species B {", isExecutable = false),
-		@example(value = "...", isExecutable = false),
-		@example(value = "   species C parent: A {", isExecutable = false),
-		@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
-		@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false) }),
-	@usage(value = "To capture all \"A\" agents as \"C\" agents, we can ask an \"B\" agent to execute the following statement:", examples = { @example(value = "capture list(B) as: C;", isExecutable = false) }),
-	@usage(value = "Deprecated writing:", examples = { @example(value = "capture target: list (B) as: C;", isExecutable = false) }) }, see = { "release" })
+		@usage(value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).",
+			examples = { @example(value = "species A {", isExecutable = false),
+				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "species B {", isExecutable = false), @example(value = "...", isExecutable = false),
+				@example(value = "   species C parent: A {", isExecutable = false),
+				@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
+				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false) }),
+		@usage(value = "To capture all \"A\" agents as \"C\" agents, we can ask an \"B\" agent to execute the following statement:",
+			examples = { @example(value = "capture list(B) as: C;", isExecutable = false) }),
+		@usage(value = "Deprecated writing:", examples = { @example(value = "capture target: list (B) as: C;",
+			isExecutable = false) }) },
+	see = { "release" })
 @validator(CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
 
@@ -80,7 +96,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 	private final String returnString;
 	private String microSpeciesName = null;
 
-	private AbstractStatementSequence sequence = null;
+	private RemoteSequence sequence = null;
 
 	public CaptureStatement(final IDescription desc) {
 		super(desc);
@@ -102,7 +118,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> com) {
-		sequence = new AbstractStatementSequence(description);
+		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
 	}
@@ -160,7 +176,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 					microAgents.clear();
 
 					if ( !capturedAgents.isEmpty() ) {
-						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+						// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( sequence != null && !sequence.isEmpty() ) {
 							for ( final IAgent capturedA : capturedAgents ) {
 								Object[] result = new Object[1];
@@ -174,7 +190,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 			} else { // micro-species name is not specified in the "as" facet.
 				ISpecies microSpecies;
 				IAgent capturedAgent;
-				scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+				// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 				for ( final IAgent c : microAgents ) {
 					microSpecies = macroSpecies.getMicroSpecies(c.getSpeciesName());
 

@@ -34,22 +34,39 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.AGENT, IType.LIST }, optional = false, doc = @doc("an expression that is evaluated as an agent or a list of the agents to be released")),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true, doc = @doc("an expression that is evaluated as a species in which the micro-agent will be released")),
-	@facet(name = IKeyword.IN, type = { IType.AGENT }, optional = true, doc = @doc("an expresion that is evaluated as an agent that will be the macro-agent in which micro-agent will be released, i.e. their new host")),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a new variable containing a list of the newly released agent(s)")) }, omissible = IKeyword.TARGET)
-@doc(value = "Allows an agent to release its micro-agent(s). The preliminary for an agent to release its micro-agents is that species of these micro-agents are sub-species of other species (cf. [Species161#Nesting_species Nesting species]). The released agents won't be micro-agents of the calling agent anymore. Being released from a macro-agent, the micro-agents will change their species and host (macro-agent).", usages = {
-	@usage(value = "We consider the following species. Agents of \"C\" species can be released from a \"B\" agent to become agents of \"A\" species. Agents of \"D\" species cannot be released from the \"A\" agent because species \"D\" has no parent species.", examples = {
-		@example(value = "species A {", isExecutable = false), @example(value = "...", isExecutable = false),
-		@example(value = "}", isExecutable = false), @example(value = "species B {", isExecutable = false),
-		@example(value = "...", isExecutable = false),
-		@example(value = "   species C parent: A {", isExecutable = false),
-		@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
-		@example(value = "   species D {", isExecutable = false), @example(value = "   ...", isExecutable = false),
-		@example(value = "   }", isExecutable = false), @example(value = "...", isExecutable = false),
-		@example(value = "}", isExecutable = false) }),
-	@usage(value = "To release all \"C\" agents from a \"B\" agent, agent \"C\" has to execute the following statement. The \"C\" agent will change to \"A\" agent. The won't consider \"B\" agent as their macro-agent (host) anymore. Their host (macro-agent) will the be the host (macro-agent) of the \"B\" agent.", examples = { @example(value = "release list(C);", isExecutable = false) }),
-	@usage(value = "The modeler can specify the new host and the new species of the released agents:", examples = @example(value = "release list (C) as: new_species in: new host;", isExecutable = false)) }, see = "capture")
+	@facet(name = IKeyword.TARGET,
+		type = { IType.AGENT, IType.LIST },
+		optional = false,
+		doc = @doc("an expression that is evaluated as an agent or a list of the agents to be released")),
+	@facet(name = IKeyword.AS,
+		type = { IType.SPECIES },
+		optional = true,
+		doc = @doc("an expression that is evaluated as a species in which the micro-agent will be released")),
+	@facet(name = IKeyword.IN,
+		type = { IType.AGENT },
+		optional = true,
+		doc = @doc("an expresion that is evaluated as an agent that will be the macro-agent in which micro-agent will be released, i.e. their new host")),
+	@facet(name = IKeyword.RETURNS,
+		type = IType.NEW_TEMP_ID,
+		optional = true,
+		doc = @doc("a new variable containing a list of the newly released agent(s)")) },
+	omissible = IKeyword.TARGET)
+@doc(value = "Allows an agent to release its micro-agent(s). The preliminary for an agent to release its micro-agents is that species of these micro-agents are sub-species of other species (cf. [Species161#Nesting_species Nesting species]). The released agents won't be micro-agents of the calling agent anymore. Being released from a macro-agent, the micro-agents will change their species and host (macro-agent).",
+	usages = {
+		@usage(value = "We consider the following species. Agents of \"C\" species can be released from a \"B\" agent to become agents of \"A\" species. Agents of \"D\" species cannot be released from the \"A\" agent because species \"D\" has no parent species.",
+			examples = { @example(value = "species A {", isExecutable = false),
+				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "species B {", isExecutable = false), @example(value = "...", isExecutable = false),
+				@example(value = "   species C parent: A {", isExecutable = false),
+				@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
+				@example(value = "   species D {", isExecutable = false),
+				@example(value = "   ...", isExecutable = false), @example(value = "   }", isExecutable = false),
+				@example(value = "...", isExecutable = false), @example(value = "}", isExecutable = false) }),
+		@usage(value = "To release all \"C\" agents from a \"B\" agent, agent \"C\" has to execute the following statement. The \"C\" agent will change to \"A\" agent. The won't consider \"B\" agent as their macro-agent (host) anymore. Their host (macro-agent) will the be the host (macro-agent) of the \"B\" agent.",
+			examples = { @example(value = "release list(C);", isExecutable = false) }),
+		@usage(value = "The modeler can specify the new host and the new species of the released agents:",
+			examples = @example(value = "release list (C) as: new_species in: new host;", isExecutable = false)) },
+	see = "capture")
 public class ReleaseStatement extends AbstractStatementSequence {
 
 	private final IExpression target;
@@ -57,7 +74,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	private final IExpression inExpr;
 	private final String returnString;
 
-	private AbstractStatementSequence sequence = null;
+	private RemoteSequence sequence = null;
 
 	public ReleaseStatement(final IDescription desc) {
 		super(desc);
@@ -77,7 +94,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> com) {
-		sequence = new AbstractStatementSequence(description);
+		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
 	}
@@ -175,7 +192,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		// TODO change the following code
 
 		if ( !releasedMicroAgents.isEmpty() ) {
-			scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+			// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 			if ( !sequence.isEmpty() ) {
 				for ( final IAgent releasedA : releasedMicroAgents ) {
 					Object[] result = new Object[1];

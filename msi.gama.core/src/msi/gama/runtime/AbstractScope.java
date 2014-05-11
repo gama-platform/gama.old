@@ -358,6 +358,11 @@ public abstract class AbstractScope implements IScope {
 			if ( args != null && statement instanceof IStatement.WithArgs ) {
 				args.setCaller(agent);
 				((IStatement.WithArgs) statement).setRuntimeArgs(args);
+			} else if ( statement instanceof RemoteSequence ) {
+				((RemoteSequence) statement).setMyself(getAgentScope());
+				// We delegate to the remote scope
+				result[0] = statement.executeOn(agent.getScope());
+				return true;
 			}
 			result[0] = statement.executeOn(this);
 		} catch (final GamaRuntimeException g) {

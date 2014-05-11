@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractStatementSequence.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AbstractStatementSequence.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -78,34 +78,6 @@ public class AbstractStatementSequence extends AbstractStatement {
 	public void enterScope(final IScope scope) {
 		scope.push(this);
 	}
-
-	// @Override
-	// public IType getType() {
-	// IType result = null;
-	// for ( int i = 0; i < commands.length; i++ ) {
-	// final IStatement c = commands[i];
-	// final IType rt = c.getType();
-	// if ( rt == null ) {
-	// continue;
-	// }
-	// if ( result == null ) {
-	// result = rt;
-	// } else {
-	// final IType ft = result;
-	// final IType nt = rt;
-	// if ( ft != nt ) {
-	// if ( ft.id() == IType.INT && nt.id() == IType.FLOAT || nt.id() == IType.INT &&
-	// rt.id() == IType.FLOAT ) {
-	// result = Types.get(IType.FLOAT);
-	// } else {
-	// result = Types.NO_TYPE;
-	// }
-	// }
-	// }
-	//
-	// }
-	// return result;
-	// }
 
 	public IStatement[] getCommands() {
 		return commands;

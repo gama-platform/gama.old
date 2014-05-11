@@ -84,7 +84,7 @@ import msi.gaml.types.IType;
 				@example(value = "}", isExecutable = false) }) })
 public class AskStatement extends AbstractStatementSequence implements Breakable {
 
-	private AbstractStatementSequence sequence = null;
+	private RemoteSequence sequence = null;
 	private final IExpression target;
 
 	public AskStatement(final IDescription desc) {
@@ -97,16 +97,17 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> com) {
-		sequence = new AbstractStatementSequence(description);
+		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
 	}
 
-	@Override
-	public void enterScope(final IScope scope) {
-		super.enterScope(scope);
-		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
-	}
+	//
+	// @Override
+	// public void enterScope(final IScope scope) {
+	// super.enterScope(scope);
+	// // scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
+	// }
 
 	@Override
 	public void leaveScope(final IScope scope) {
