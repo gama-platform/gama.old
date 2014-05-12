@@ -29,7 +29,7 @@ grid cell file: grid_file {
 		color <- colors at int(grid_value);
 	}
 
-	reflex decreaseVamue {
+	reflex decreaseValue {
 		grid_value <- grid_value - 0.01;
 	}
 }
@@ -111,7 +111,7 @@ experiment GridDEMComplete type: gui {
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
 		display gridTextured type: opengl ambient_light: 100 { 
-			grid cell texture: texture text: false triangulation: true elevation: true;
+			grid cell texture: texture text: false triangulation: false elevation: true;
 			species people aspect: base;
 		}
 
