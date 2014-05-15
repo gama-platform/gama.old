@@ -350,6 +350,8 @@ public abstract class AbstractScope implements IScope {
 	public boolean
 		execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
+//		IScope scope = agent == null ? this :(statement instanceof RemoteSequence ? this : agent.getScope());
+		IAgent caller = this.getAgentScope();
 		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
@@ -359,7 +361,7 @@ public abstract class AbstractScope implements IScope {
 				args.setCaller(agent);
 				((IStatement.WithArgs) statement).setRuntimeArgs(args);
 			} else if ( statement instanceof RemoteSequence ) {
-				((RemoteSequence) statement).setMyself(getAgentScope());
+				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
 				result[0] = statement.executeOn(agent.getScope());
 				return true;
