@@ -80,11 +80,11 @@ public class PathFactory {
 		final IList<IShape> edges, final boolean modify_edges) {
 		if ( g instanceof GraphTopology ) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges, modify_edges);
-		} else if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
+		} else {//if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
 			return new GamaSpatialPath(null, start, target, edges, modify_edges);
-		} else {
+		}/* else {
 			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");
-		}
+		}*/
 	}
 
 	public static IPath newInstance(final IList<IShape> edgesNodes, final boolean isEdges) {

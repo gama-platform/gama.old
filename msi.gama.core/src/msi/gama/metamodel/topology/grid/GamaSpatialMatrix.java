@@ -659,7 +659,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final Set<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
 		final List<IAgent> neighs = new GamaList<IAgent>();
 		for ( IAgent ag : agents ) {
-			if ( !dists.contains(scope, ag) && !currentList.contains(ag) ) {
+			if ( !dists.containsKey(ag) && !currentList.contains(ag) ) {
 				neighs.add(ag);
 			}
 		}
@@ -683,7 +683,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final List<IAgent> agents = new GamaList(getNeighboursOf(scope, agent.getLocation(), 1.0, null));
 		Collections.shuffle(agents);
 		for ( final IAgent ag : agents ) {
-			if ( dists.contains(scope, ag) && dists.get(ag).equals(Integer.valueOf(cpt)) ) { return ag; }
+			if ( dists.containsKey(ag) && dists.get(ag).equals(Integer.valueOf(cpt)) ) { return ag; }
 		}
 		return null;
 	}
