@@ -169,7 +169,7 @@ public class DrivingSkill extends MovingSkill {
 			laneAttributes = "lanes_number";
 		}
 
-		final ILocation goal = computeTarget(scope, agent);
+		final IShape goal = computeTarget(scope, agent);
 		if ( goal == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
@@ -248,7 +248,7 @@ public class DrivingSkill extends MovingSkill {
 			laneAttributes = "lanes_number";
 		}
 
-		final ILocation goal = computeTarget(scope, agent);
+		final IShape goal = computeTarget(scope, agent);
 		if ( goal == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;

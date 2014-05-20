@@ -165,11 +165,11 @@ public class MovingSkill extends Skill {
 		return s * scope.getClock().getStep();
 	}
 
-	protected ILocation computeTarget(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	protected IShape computeTarget(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Object target = scope.getArg("target", IType.NONE);
-		ILocation result = null;
-		if ( target != null && target instanceof ILocated ) {
-			result = ((ILocated) target).getLocation();
+		IShape result = null;
+		if ( target != null && target instanceof IShape ) {
+			result = (IShape) target;//((ILocated) target).getLocation();
 		}
 		// if ( result == null ) {
 		// scope.setStatus(ExecutionStatus.failure);
@@ -408,7 +408,7 @@ public class MovingSkill extends Skill {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
-		final ILocation goal = computeTarget(scope, agent);
+		final IShape goal = computeTarget(scope, agent);
 		final Boolean returnPath =
 			scope.hasArg("return_path") ? (Boolean) scope.getArg("return_path", IType.NONE) : false;
 		final ITopology topo = computeTopology(scope, agent);
@@ -434,7 +434,6 @@ public class MovingSkill extends Skill {
 		if ( path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
-
 		} else {
 
 			if ( topo instanceof GraphTopology ) {

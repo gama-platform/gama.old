@@ -506,7 +506,11 @@ public class Graphs {
 	@operator(value = "grid_cells_to_graph", content_type = IType.GEOMETRY, index_type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.GRAPH })
 	@doc(value = "creates a graph from a list of cells (operand). An edge is created between neighbours.", masterDoc = true, comment = "", examples = @example(value = "my_cell_graph<-grid_cells_to_graph(cells_list)", isExecutable = false), see = {})
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope);
+		IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope);
+		for (Object e : graph.getEdges()) {
+			graph.setEdgeWeight(e, ((IShape)e).getPerimeter());
+		}
+		return graph;
 	}
 
 	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY, category = { IOperatorCategory.GRAPH })

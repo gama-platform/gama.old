@@ -66,17 +66,40 @@ public class GraphTopology extends AbstractTopology {
 
 		IShape edgeS = null, edgeT = null;
 
-		final IAgentFilter filter = In.edgesOf(getPlaces());
-
-		if ( !sourceNode ) {
-			edgeS = getAgentClosestTo(scope, source, filter);
-			// We avoid computing the target if we cannot find any source.
-			if ( edgeS == null ) { return null; }
+		if (graph.isAgentEdge()) {
+			final IAgentFilter filter = In.edgesOf(getPlaces());
+			if ( !sourceNode ) {
+				edgeS = getAgentClosestTo(scope, source, filter);
+				// We avoid computing the target if we cannot find any source.
+				if ( edgeS == null ) { return null; }
+			}
+			if ( !targetNode ) {
+				edgeT = getAgentClosestTo(scope, target, filter);
+				if ( edgeT == null ) { return null; }
+			}
+		} else {
+			double distSMin = Double.MAX_VALUE;
+			double distTMin = Double.MAX_VALUE;
+			for (Object e : graph.getEdges()) {
+				IShape edge = (IShape) e;
+				if (!sourceNode && distSMin > 0) {
+					double distS = edge.euclidianDistanceTo(source);
+					if (distS < distSMin) {
+						distSMin = distS;
+						edgeS = edge;
+					}
+				}
+				if (!targetNode && distTMin > 0) {
+					double distT = edge.euclidianDistanceTo(target);
+					if (distT < distTMin) {
+						distTMin = distT;
+						edgeT = edge;
+					}
+				}
+			}
+			if ( (!sourceNode && edgeS == null) || (!targetNode && edgeT == null)) { return null; }
 		}
-		if ( !targetNode ) {
-			edgeT = getAgentClosestTo(scope, target, filter);
-			if ( edgeT == null ) { return null; }
-		}
+		
 
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(scope, edgeS, edgeT, source, target,
 			sourceNode, targetNode); }
@@ -129,7 +152,7 @@ public class GraphTopology extends AbstractTopology {
 		} else if ( !sourceNode && targetNode ) {
 			IShape nodeS1 = (IShape) graph.getEdgeSource(edgeS);
 			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
-			double l1 = 0;
+				double l1 = 0;
 			boolean computeOther = true;
 			if ( nodeS1 == target ) {
 				l1 = lengthEdge(edgeS, source, nodeS2, nodeS1);
@@ -170,13 +193,7 @@ public class GraphTopology extends AbstractTopology {
 			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
 			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
 			IShape nodeT2 = (IShape) graph.getEdgeTarget(edgeT);
-			/*
-			 * System.out.println("*************************\nlocation : " + source);
-			 * System.out.println("nodeS1 : " + nodeS1);
-			 * System.out.println("nodeS2 : " + nodeS2);
-			 * System.out.println("nodeT1 : " + nodeT1);
-			 * System.out.println("nodeT2 : " + nodeT2);
-			 */
+			
 			double lmin = Double.MAX_VALUE;
 
 			boolean computeS1T2 = true;
@@ -227,7 +244,6 @@ public class GraphTopology extends AbstractTopology {
 					}
 				}
 			}
-			// System.out.println("edges : " + edges + " lmin : " + lmin);
 			if ( computeS2T1 ) {
 				double l2 = 0;
 				IList<IShape> edges2 = new GamaList<IShape>();
@@ -270,7 +286,6 @@ public class GraphTopology extends AbstractTopology {
 
 					}
 				}
-				// System.out.println("edges2 : " + edges2 + " l2 : " + l2);
 				if ( l2 < lmin ) {
 					edges = edges2;
 					lmin = l2;
@@ -302,7 +317,6 @@ public class GraphTopology extends AbstractTopology {
 
 					}
 				}
-				// System.out.println("edges3 : " + edges2 + " l3 : " + l2);
 				if ( l2 < lmin ) {
 					edges = edges2;
 					lmin = l2;
@@ -320,7 +334,6 @@ public class GraphTopology extends AbstractTopology {
 							lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				}
 
-				// System.out.println("edges4 : " + edges2 + " l4 : " + l2);
 				if ( l2 < lmin ) {
 					edges = edges2;
 					lmin = l2;
@@ -333,8 +346,6 @@ public class GraphTopology extends AbstractTopology {
 
 			if ( edges.get(edges.size() - 1) != edgeT ) {
 				edges.add(edgeT);
-				// System.out.println("lmin : " + lmin);
-				// System.out.println("edges : " + edges);
 			}
 
 		}
@@ -393,7 +404,8 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	public double lengthEdge(final IShape edge, final IShape location, final IShape source, final IShape target) {
-		return edge.getPerimeter() * location.euclidianDistanceTo(target) / source.euclidianDistanceTo(target);
+		double dist = source.getLocation().euclidianDistanceTo(target.getLocation());
+		return  dist == 0 ? 0: edge.getPerimeter() * location.euclidianDistanceTo(target.getLocation()) / dist;
 	}
 
 	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
