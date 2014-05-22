@@ -181,7 +181,7 @@ public class DrivingSkill2d extends MovingSkill {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
-		ILocation goal = computeTarget(scope, agent);
+		IShape goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		// System.out.println("obstacle species: " + obsSpecies.toString());
 		final GamaList<ISpecies> backgroundSpecies = computeBackgroundSpecies(scope, agent);
@@ -219,7 +219,7 @@ public class DrivingSkill2d extends MovingSkill {
 			goal = falseTarget;
 		}
 
-		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
+		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal.getLocation());
 		if ( isReachedTargetCheck ) { return 2; }
 		final boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
 		/**
@@ -405,7 +405,7 @@ public class DrivingSkill2d extends MovingSkill {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
-		ILocation goal = computeTarget(scope, agent);
+		IShape goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		// System.out.println("obstacle species: " + obsSpecies.toString());
 		final GamaList<ISpecies> backgroundSpecies = computeBackgroundSpecies(scope, agent);
@@ -443,7 +443,7 @@ public class DrivingSkill2d extends MovingSkill {
 			goal = falseTarget;
 		}
 
-		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
+		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal.getLocation());
 		if ( isReachedTargetCheck ) { return 2; }
 		final boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
 		/**
