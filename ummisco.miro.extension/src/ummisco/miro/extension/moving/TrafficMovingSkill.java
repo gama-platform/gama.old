@@ -50,7 +50,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
 
-		final ILocation goal = computeTarget(scope, agent);
+		final IShape goal = computeTarget(scope, agent);
 		if ( goal == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
 			return;
