@@ -217,7 +217,6 @@ entities {
 	species boids skills: [moving] {
 		float speed max: maximal_speed <- maximal_speed;
 		float range <- minimal_distance * 2;
-		int heading max: heading + maximal_turn min: heading - maximal_turn;
 		point velocity <- {0,0};
 		int size <- 5;
 		float hue <- rnd(360) / 360;
