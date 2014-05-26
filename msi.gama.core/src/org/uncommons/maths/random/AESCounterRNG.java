@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AESCounterRNG.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AESCounterRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -32,15 +32,12 @@ import org.uncommons.maths.binary.BinaryUtils;
 
 /**
  * <p>
- * Non-linear random number generator based on the AES block cipher in counter mode. Uses the seed
- * as a key to encrypt a 128-bit counter using AES(Rijndael).
+ * Non-linear random number generator based on the AES block cipher in counter mode. Uses the seed as a key to encrypt a 128-bit counter using AES(Rijndael).
  * </p>
  * 
  * <p>
- * By default, we only use a 128-bit key for the cipher because any larger key requires the
- * inconvenience of installing the unlimited strength cryptography policy files for the Java
- * platform. Larger keys may be used (192 or 256 bits) but if the cryptography policy files are not
- * installed, a {@link java.security.GeneralSecurityException} will be thrown.
+ * By default, we only use a 128-bit key for the cipher because any larger key requires the inconvenience of installing the unlimited strength cryptography policy files for the Java platform. Larger
+ * keys may be used (192 or 256 bits) but if the cryptography policy files are not installed, a {@link java.security.GeneralSecurityException} will be thrown.
  * </p>
  * 
  * <p>
@@ -67,9 +64,9 @@ public class AESCounterRNG extends Random implements RepeatableRNG {
 	 * Creates a new RNG and seeds it using 128 bits from the default seeding strategy.
 	 * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
 	 */
-	public AESCounterRNG() throws GeneralSecurityException {
-		this(DEFAULT_SEED_SIZE_BYTES);
-	}
+	// public AESCounterRNG() throws GeneralSecurityException {
+	// this(DEFAULT_SEED_SIZE_BYTES);
+	// }
 
 	/**
 	 * Seed the RNG using the provided seed generation strategy to create a 128-bit seed.
@@ -78,8 +75,7 @@ public class AESCounterRNG extends Random implements RepeatableRNG {
 	 * @throws SeedException If there is a problem generating a seed.
 	 * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
 	 */
-	public AESCounterRNG(final SeedGenerator seedGenerator) throws SeedException,
-		GeneralSecurityException {
+	public AESCounterRNG(final SeedGenerator seedGenerator) throws SeedException, GeneralSecurityException {
 		this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
 	}
 
@@ -92,9 +88,9 @@ public class AESCounterRNG extends Random implements RepeatableRNG {
 	 * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
 	 * @since 1.0.2
 	 */
-	public AESCounterRNG(final int seedSizeBytes) throws GeneralSecurityException {
-		this(DefaultSeedGenerator.getInstance().generateSeed(seedSizeBytes));
-	}
+	// public AESCounterRNG(final int seedSizeBytes) throws GeneralSecurityException {
+	// this(DefaultSeedGenerator.getInstance().generateSeed(seedSizeBytes));
+	// }
 
 	/**
 	 * Creates an RNG and seeds it with the specified seed data.
@@ -102,8 +98,7 @@ public class AESCounterRNG extends Random implements RepeatableRNG {
 	 * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
 	 */
 	public AESCounterRNG(final byte[] seed) throws GeneralSecurityException {
-		if ( seed == null ) { throw new IllegalArgumentException(
-			"AES RNG requires a 128-bit, 192-bit or 256-bit seed."); }
+		if ( seed == null ) { throw new IllegalArgumentException("AES RNG requires a 128-bit, 192-bit or 256-bit seed."); }
 		this.seed = seed.clone();
 
 		cipher = Cipher.getInstance("AES/ECB/NoPadding");

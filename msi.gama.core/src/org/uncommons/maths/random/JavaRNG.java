@@ -30,13 +30,11 @@ import org.uncommons.maths.binary.BinaryUtils;
 
 /**
  * <p>
- * This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRNG} interface (for consistency
- * with the other RNGs in this package).
+ * This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRNG} interface (for consistency with the other RNGs in this package).
  * </p>
  * 
  * <p>
- * The {@link MersenneTwisterRNG} should be used in preference to this class because it is statistically more random and
- * performs slightly better.
+ * The {@link MersenneTwisterRNG} should be used in preference to this class because it is statistically more random and performs slightly better.
  * </p>
  * 
  * @author Daniel Dyer
@@ -50,9 +48,9 @@ public class JavaRNG extends Random implements RepeatableRNG {
 	/**
 	 * Creates a new RNG and seeds it using the default seeding strategy.
 	 */
-	public JavaRNG() {
-		this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
-	}
+	// public JavaRNG() {
+	// this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
+	// }
 
 	/**
 	 * Seed the RNG using the provided seed generation strategy.

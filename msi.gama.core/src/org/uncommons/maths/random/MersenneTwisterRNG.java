@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MersenneTwisterRNG.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'MersenneTwisterRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -30,27 +30,23 @@ import org.uncommons.maths.binary.BinaryUtils;
 
 /**
  * <p>
- * Random number generator based on the <a
- * href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html" target="_top">Mersenne
- * Twister</a> algorithm developed by Makoto Matsumoto and Takuji Nishimura.
+ * Random number generator based on the <a href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html" target="_top">Mersenne Twister</a> algorithm developed by Makoto Matsumoto and Takuji
+ * Nishimura.
  * </p>
  * 
  * <p>
- * This is a very fast random number generator with good statistical properties (it passes the full
- * DIEHARD suite). This is the best RNG for most experiments. If a non-linear generator is required,
+ * This is a very fast random number generator with good statistical properties (it passes the full DIEHARD suite). This is the best RNG for most experiments. If a non-linear generator is required,
  * use the slower {@link AESCounterRNG} RNG.
  * </p>
  * 
  * <p>
- * This PRNG is deterministic, which can be advantageous for testing purposes since the output is
- * repeatable. If multiple instances of this class are created with the same seed they will all have
+ * This PRNG is deterministic, which can be advantageous for testing purposes since the output is repeatable. If multiple instances of this class are created with the same seed they will all have
  * identical output.
  * </p>
  * 
  * <p>
- * This code is translated from the original C version and assumes that we will always seed from an
- * array of bytes. I don't pretend to know the meanings of the magic numbers or how it works, it
- * just does.
+ * This code is translated from the original C version and assumes that we will always seed from an array of bytes. I don't pretend to know the meanings of the magic numbers or how it works, it just
+ * does.
  * </p>
  * 
  * @author Makoto Matsumoto and Takuji Nishimura (original C version)
@@ -85,9 +81,9 @@ public class MersenneTwisterRNG extends Random implements RepeatableRNG {
 	/**
 	 * Creates a new RNG and seeds it using the default seeding strategy.
 	 */
-	public MersenneTwisterRNG() {
-		this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
-	}
+	// public MersenneTwisterRNG() {
+	// this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
+	// }
 
 	/**
 	 * Seed the RNG using the provided seed generation strategy.

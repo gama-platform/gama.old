@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.util;
 
+import java.security.SecureRandom;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
@@ -21,6 +22,8 @@ public class RandomUtils implements SeedGenerator {
 
 	/** The seed. */
 	private Long seed = null;
+
+	private static final SecureRandom SEED_SOURCE = new SecureRandom();
 
 	// private static RandomUtils defaultRandom = null;
 
@@ -243,11 +246,11 @@ public class RandomUtils implements SeedGenerator {
 	@Override
 	public byte[] generateSeed(final int length) {
 		byte[] result;
-		if ( seed == null ) { return DefaultSeedGenerator.getInstance().generateSeed(length); }
+		if ( seed == null ) { return SEED_SOURCE.generateSeed(length); }
 		try {
 			result = createSeed(seed, length);
 		} catch (final SeedException e) {
-			result = DefaultSeedGenerator.getInstance().generateSeed(length);
+			result = SEED_SOURCE.generateSeed(length);
 		}
 		return result;
 	}
@@ -293,7 +296,7 @@ public class RandomUtils implements SeedGenerator {
 			Double s =
 				GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
 			if ( s == null ) {
-				seed = BinaryUtils.convertBytesToLong(DefaultSeedGenerator.getInstance().generateSeed(8), 0);
+				seed = BinaryUtils.convertBytesToLong(SEED_SOURCE.generateSeed(8), 0);
 			} else {
 				seed = Math.round(s);
 			}

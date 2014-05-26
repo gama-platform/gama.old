@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'XORShiftRNG.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'XORShiftRNG.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -31,8 +31,7 @@ import org.uncommons.maths.binary.BinaryUtils;
 /**
  * Very fast pseudo random number generator. See <a
  * href="http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html">this page</a>
- * for a description. This RNG has a period of about 2^160, which is not as long as the
- * {@link MersenneTwisterRNG} but it is faster.
+ * for a description. This RNG has a period of about 2^160, which is not as long as the {@link MersenneTwisterRNG} but it is faster.
  * @author Daniel Dyer
  * @since 1.2
  */
@@ -56,9 +55,9 @@ public class XORShiftRNG extends Random implements RepeatableRNG {
 	/**
 	 * Creates a new RNG and seeds it using the default seeding strategy.
 	 */
-	public XORShiftRNG() {
-		this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
-	}
+	// public XORShiftRNG() {
+	// this(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE_BYTES));
+	// }
 
 	/**
 	 * Seed the RNG using the provided seed generation strategy.
