@@ -776,8 +776,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.SEXPERIMENT:
-				if(context == grammarAccess.getS_ExperimentRule() ||
-				   context == grammarAccess.getS_SectionRule()) {
+				if(context == grammarAccess.getGamlDefinitionRule() ||
+				   context == grammarAccess.getS_ExperimentRule() ||
+				   context == grammarAccess.getS_SectionRule() ||
+				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_S_Experiment(context, (S_Experiment) semanticObject); 
 					return; 
 				}

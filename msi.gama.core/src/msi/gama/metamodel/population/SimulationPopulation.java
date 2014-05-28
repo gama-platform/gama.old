@@ -49,6 +49,7 @@ public class SimulationPopulation extends GamaPopulation {
 		GuiUtils.waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
+		world.setScheduled(toBeScheduled);
 		add(world);
 		getHost().setSimulation(world);
 		if ( scope.interrupted() ) { return null; }
@@ -56,6 +57,10 @@ public class SimulationPopulation extends GamaPopulation {
 		createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
 		if ( toBeScheduled ) {
 			world.schedule();
+		//hqnghi if simulation is created manually, it's not scheduled and have to init implicitely
+		}else {
+			world._init_(scope);
+		//end-hqnghi
 		}
 		// GuiUtils.informStatus("Simulation Ready");
 		return this;

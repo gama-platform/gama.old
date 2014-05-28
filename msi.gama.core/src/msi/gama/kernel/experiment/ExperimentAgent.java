@@ -33,6 +33,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import org.eclipse.core.runtime.Platform;
 
@@ -106,6 +107,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
 
+	private Boolean scheduled = false;
+	
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
@@ -175,7 +178,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( scope.interrupted() ) { return null; }
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
-		createSimulation(getParameterValues(), true);
+		createSimulation(getParameterValues(), scheduled);
 		return this;
 	}
 
@@ -198,6 +201,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	protected Object stepSubPopulations(final IScope scope) {
 		// The experiment DOES NOT step its subpopulations
+		if (!scheduled) {
+			return super.stepSubPopulations(scope);
+		}
 		return this;
 	}
 
@@ -208,6 +214,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void schedule() {
+		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
 		IOutputManager outputs = getSpecies().getExperimentOutputs();
 		// if ( outputs != null ) {
@@ -416,6 +423,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
+	public IPopulation getPopulationFor(ISpecies species) {
+		// TODO Auto-generated method stub
+		return ((SimulationAgent)((ExperimentAgent)this).getSimulation()).getPopulationFor(species.getName());
+
+	}
+	
+	@Override
 	public boolean step(final IScope scope) {
 		clock.beginCycle();
 		boolean result;
@@ -501,8 +515,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null && getSimulation().getSpecies().hasVar(name) ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
-			} else if ( getSpecies().hasParameter(name) ) {
-				getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
+				//TODO extraParameter does not contains model's variables???
+//			} else if ( getSpecies().hasParameter(name) ) {
+//				getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}

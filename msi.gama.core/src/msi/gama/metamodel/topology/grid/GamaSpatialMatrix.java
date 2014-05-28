@@ -1244,6 +1244,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			}
 
+			//hqnghi must-implement methods from GamlAgent
+			@Override
+			public void addExternMicroPopulation(String expName, IPopulation pop) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public IPopulation getExternMicroPopulationFor(String expName) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Map<String, IPopulation> getExternMicroPopulations() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			//end-hqnghi
 		}
 
 	}

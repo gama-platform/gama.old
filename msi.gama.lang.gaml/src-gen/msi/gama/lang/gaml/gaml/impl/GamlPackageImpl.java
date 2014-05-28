@@ -1,4 +1,8 @@
 /**
+ * <copyright>
+ * </copyright>
+ *
+
  */
 package msi.gama.lang.gaml.gaml.impl;
 
@@ -915,16 +919,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getS_Experiment()
   {
     return s_ExperimentEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getS_Experiment_Name()
-  {
-    return (EAttribute)s_ExperimentEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1993,7 +1987,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_SpeciesEClass = createEClass(SSPECIES);
 
     s_ExperimentEClass = createEClass(SEXPERIMENT);
-    createEAttribute(s_ExperimentEClass, SEXPERIMENT__NAME);
 
     s_DoEClass = createEClass(SDO);
 
@@ -2198,6 +2191,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_SpeciesEClass.getESuperTypes().add(this.getS_Declaration());
     s_SpeciesEClass.getESuperTypes().add(this.getTypeDefinition());
     s_ExperimentEClass.getESuperTypes().add(this.getStatement());
+    s_ExperimentEClass.getESuperTypes().add(this.getVarDefinition());
     s_DoEClass.getESuperTypes().add(this.getStatement());
     s_LoopEClass.getESuperTypes().add(this.getS_Declaration());
     s_IfEClass.getESuperTypes().add(this.getStatement());
@@ -2296,7 +2290,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(s_SpeciesEClass, S_Species.class, "S_Species", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(s_ExperimentEClass, S_Experiment.class, "S_Experiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getS_Experiment_Name(), ecorePackage.getEString(), "name", null, 0, 1, S_Experiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_DoEClass, S_Do.class, "S_Do", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

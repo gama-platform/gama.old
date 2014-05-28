@@ -520,7 +520,7 @@ public class StatementDescription extends SymbolDescription {
 		IType t = facet.getType();
 		SpeciesDescription result = null;
 		if ( t.id() == IType.SPECIES && facet instanceof SpeciesConstantExpression ) {
-			result = getSpeciesDescription(facet.literalValue());
+			result = facet.getType().getContentType().getSpecies();//getSpeciesDescription(facet.literalValue());
 		} else if ( t.id() == IType.STRING && facet.isConst() ) {
 			result = getSpeciesDescription(facet.literalValue());
 		} else if ( t.isAgentType() ) {
@@ -622,7 +622,9 @@ public class StatementDescription extends SymbolDescription {
 		}
 		for ( final IDescription arg : args ) {
 			final String name = arg.getName();
-			if ( !sd.hasVar(name) ) {
+			//hqnghi check attribute is not exist in both main model and micro-model 
+			if ( !sd.hasVar(name) && ( sd instanceof ExperimentDescription && !sd.getModelDescription().hasVar(name)) ) {
+			//end-hqnghi
 				error("Attribute " + name + " does not exist in species " + sd.getName(), IGamlIssue.UNKNOWN_ARGUMENT,
 					arg.getFacets().get(VALUE).getTarget(), (String[]) null);
 			} else {

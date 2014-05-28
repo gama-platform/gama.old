@@ -13,11 +13,13 @@ package msi.gama.outputs;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
@@ -34,18 +36,6 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	boolean open = false;
 	private Integer nextRefreshTime;
 	private int refreshRate;
-	// hqnghi: identify experiment name
-	private String expName = "";
-
-	public String getExpName() {
-		return expName;
-	}
-
-	public void setExpName(final String expName) {
-		this.expName = expName;
-	}
-
-	// end-hqnghi
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
 		name = getLiteral(IKeyword.NAME);
@@ -73,15 +63,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public boolean init(final IScope scope) {
-		// setScope(scope.copy());
-		// hqnghi: if experiment is not blank, it mean that output is come frome other experiment
-		if ( expName.equals("") ) {
-			setScope(scope.copy());
-		} else {
-			setScope(GAMA.getController(expName).getExperiment().getAgent().getSimulation().getScope());
-		}
-		// GuiUtils.informConsole("scope " + expName);
-		// end-hqnghi
+		setScope(scope.copy());
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
@@ -171,8 +153,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public String getId() {
-		if ( !this.getDescription().getModelDescription().getComodelName().equals("") ) { return getName() + "#" +
-			this.getDescription().getModelDescription().getComodelName(); }
+		if(!this.getDescription().getModelDescription().getAlias().equals("")){
+			return getName()+"#"+this.getDescription().getModelDescription().getAlias()+"#"+getScope().getExperiment().getName(); 
+		}
 		return getName(); // by default
 	}
 
@@ -180,7 +163,15 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if ( this.scope != null ) {
 			GAMA.releaseScope(this.scope);
 		}
-		this.scope = scope;
+		ModelDescription micro = this.getDescription().getModelDescription();
+		ModelDescription main  = (ModelDescription) scope.getModel().getDescription(); 
+		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null ;
+		if( fromMicroModel ) {
+			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope().getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+			this.scope = exp.getSimulation().getScope();
+		}else{			
+			this.scope = scope;
+		}
 	}
 
 	@Override

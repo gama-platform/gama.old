@@ -1,9 +1,15 @@
 /**
+ * <copyright>
+ * </copyright>
+ *
+
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.S_Experiment;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -154,6 +160,58 @@ public class S_ExperimentImpl extends StatementImpl implements S_Experiment
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        case GamlPackage.SEXPERIMENT__NAME: return GamlPackage.GAML_DEFINITION__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == VarDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        case GamlPackage.GAML_DEFINITION__NAME: return GamlPackage.SEXPERIMENT__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == VarDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
   }
 
   /**

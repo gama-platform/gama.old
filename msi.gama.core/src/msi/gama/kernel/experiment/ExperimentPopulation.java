@@ -31,12 +31,12 @@ public class ExperimentPopulation extends GamaPopulation {
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
 		final boolean isRestored) throws GamaRuntimeException {
-		if ( size() == 0 ) {
+		for(int i=0; i < number ; i++){			
 			boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
 			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
-			// exp.setIndex(0);
+			exp.setIndex(currentAgentIndex++);
 			/* agents. */add(exp);
-			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(0));
+			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
 		}
 		return /* agents */this;
 	}

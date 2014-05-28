@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.AgentScheduler;
@@ -19,7 +20,9 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.outputs.IOutput;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,6 +33,9 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -65,6 +71,15 @@ public class SimulationAgent extends GamlAgent {
 	IScope scope;
 	IOutputManager outputs;
 	ProjectionFactory projectionFactory;
+	private Boolean scheduled = false;
+
+	public Boolean getScheduled() {
+		return scheduled;
+	}
+
+	public void setScheduled(Boolean scheduled) {
+		this.scheduled = scheduled;
+	}
 
 	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
 		super(pop);
@@ -137,6 +152,11 @@ public class SimulationAgent extends GamlAgent {
 		// A simulation always runs in its own scope
 		try {
 			super._step_(this.scope);
+			//if simulation is not scheduled, their outputs must do step manually
+			if(!scheduled) {
+				outputs.step(this.scope);
+			}
+			//end-hqnghi
 		} finally {
 			clock.step(this.scope);
 		}
@@ -182,6 +202,15 @@ public class SimulationAgent extends GamlAgent {
 			scheduler.dispose();
 			scheduler = null;
 		}
+		//hqnghi if simulation come from popultion extern, dispose pop first and then their outputs 
+		for(IPopulation pop:this.getExternMicroPopulations().values()){
+			pop.dispose();
+		}
+		if ( !scheduled &&  outputs != null ) {
+			outputs.dispose();
+			outputs = null;
+		}
+		//end-hqnghi
 		projectionFactory = new ProjectionFactory();
 
 	}
@@ -311,7 +340,29 @@ public class SimulationAgent extends GamlAgent {
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
-		outputs = iOutputManager;
+		//hqnghi push outputManager down to Simulation level 
+		// create a copy of outputs from description
+		if(!scheduled && !getExperiment().getSpecies().isBatch()) {			
+			IDescription des=((ISymbol)iOutputManager).getDescription();
+			outputs=(IOutputManager) des.compile();
+			GamaMap<String, IOutput> mm=new GamaMap<String,IOutput>();
+			for(IOutput output:outputs.getOutputs().values()) {
+				String oName=output.getName() + "#" +  this.getSpecies().getDescription().getModelDescription().getAlias() + "#" + this.getExperiment().getSpecies().getName()+"#"+this.getExperiment().getIndex();
+				mm.put(oName,output);
+			}
+			outputs.removeAllOutput();
+			for(Entry<String, IOutput> output : mm.entrySet()) {			
+				output.getValue().setName(output.getKey());
+				outputs.addOutput(output.getKey(),output.getValue());
+			}
+		}else {			
+			outputs = iOutputManager;
+		}
+		//end-hqnghi
+	}
+	
+	public SimulationOutputManager getOutputManger() {
+		return (SimulationOutputManager) outputs;
 	}
 
 }

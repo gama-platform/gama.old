@@ -13,8 +13,13 @@ package msi.gaml.species;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.*;
+
+import javax.naming.spi.DirStateFactory.Result;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -67,12 +72,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		IPopulation result = null;
 		if ( a != null ) {
 			// AD 19/09/13 Patch to allow experiments to gain access to the simulation populations
-			result = a.getPopulationFor(this);
-			if ( result == null ) {
-				if ( a instanceof ExperimentAgent ) {
-					result = ((ExperimentAgent) a).getSimulation().getPopulationFor(this);
-				}
-			}
+			result = a.getPopulationFor(this);			
 		}
 		return result;
 	}

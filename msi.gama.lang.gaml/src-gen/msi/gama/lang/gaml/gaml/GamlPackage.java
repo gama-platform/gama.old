@@ -1,4 +1,8 @@
 /**
+ * <copyright>
+ * </copyright>
+ *
+
  */
 package msi.gama.lang.gaml.gaml;
 
@@ -4156,17 +4160,6 @@ public interface GamlPackage extends EPackage
   EClass getS_Experiment();
 
   /**
-   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.S_Experiment#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see msi.gama.lang.gaml.gaml.S_Experiment#getName()
-   * @see #getS_Experiment()
-   * @generated
-   */
-  EAttribute getS_Experiment_Name();
-
-  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.S_Do <em>SDo</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5451,14 +5444,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass SEXPERIMENT = eINSTANCE.getS_Experiment();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SEXPERIMENT__NAME = eINSTANCE.getS_Experiment_Name();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.S_DoImpl <em>SDo</em>}' class.

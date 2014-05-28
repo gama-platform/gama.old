@@ -14,6 +14,10 @@ package msi.gama.gui.views;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.actions.*;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import org.eclipse.swt.widgets.Composite;
@@ -41,22 +45,46 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 			IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
 			if ( manager != null ) {
 				out = (IDisplayOutput) manager.getOutput(id);
-			}
-			if ( out == null ) {
-				manager = GAMA.getExperiment().getExperimentOutputs();
-				if ( manager != null ) {
-					out = (IDisplayOutput) manager.getOutput(id);
-				}
 				if ( out == null ) {
-					for ( FrontEndController fec : GAMA.getControllers().getValues() ) {
-						manager = fec.getExperiment().getSimulationOutputs();
+					manager = GAMA.getExperiment().getExperimentOutputs();
+					if ( manager != null ) {
+						out = (IDisplayOutput) manager.getOutput(id);
+					}
+				}
+			}
+			
+			//hqnghi in case of multi-controller
+			if ( out == null ) {
+				for ( FrontEndController fec : GAMA.getControllers().getValues() ) {
+					manager = fec.getExperiment().getSimulationOutputs();
+					if ( manager != null ) {
+						out = (IDisplayOutput) manager.getOutput(id);
+					}
+					if ( out == null ) {
+						manager = fec.getExperiment().getExperimentOutputs();
 						if ( manager != null ) {
 							out = (IDisplayOutput) manager.getOutput(id);
 						}
-						if ( out == null ) {
-							manager = fec.getExperiment().getExperimentOutputs();
-							if ( manager != null ) {
-								out = (IDisplayOutput) manager.getOutput(id);
+					}
+				}
+			}
+			
+			//hqngh in case of micro-model
+			if ( out == null ) {
+				SimulationAgent sim = (SimulationAgent) GAMA.getExperiment().getCurrentSimulation();
+				if ( sim != null ) {
+					String[] stemp = id.split("#");
+					if ( stemp.length > 1 ) {
+						IPopulation externPop = sim.getExternMicroPopulationFor(stemp[2]);
+						if ( externPop != null ) {
+							for ( IAgent expAgent : externPop ) {
+								SimulationAgent spec = (SimulationAgent) ((ExperimentAgent) expAgent).getSimulation();
+								if ( spec != null ) {
+									manager = spec.getOutputManger();
+									if ( manager != null ) {
+										out = (IDisplayOutput) manager.getOutput(s_id);
+									}
+								}
 							}
 						}
 					}

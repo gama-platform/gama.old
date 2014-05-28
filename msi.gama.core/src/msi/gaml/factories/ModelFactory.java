@@ -18,7 +18,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
@@ -34,22 +33,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 @factory(handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	
-	private GamaMap<String, ModelDescription> COMODELS=new GamaMap<String,ModelDescription>();
-	
-	public GamaMap<String, ModelDescription> getCoModels(){
-		return COMODELS;
-	}
-	
-	public ModelDescription getCoModel(String name){
-		if(COMODELS.size()>0)
-			return COMODELS.get(name);
-		return null;
-	}
-	
-	public void addCoModel(String mName, ModelDescription md){
-		COMODELS.addValue(null, new GamaPair<String, ModelDescription>(mName, md));
-	}
-	
 	ModelAssembler assembler = new ModelAssembler();
 	IModelBuilder delegate;
 
@@ -58,8 +41,8 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	}
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document) {
-		return assembler.assemble(projectPath, modelPath, models, collector, document);
+		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document, final GamaMap<String, ModelDescription> mm) {
+		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,

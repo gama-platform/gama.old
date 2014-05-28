@@ -132,16 +132,16 @@ public class GamlResource extends LazyLinkingResource {
 	// });
 	// }
 
-	private ModelDescription buildModelDescription(final Map<GamlResource, Boolean> resources) {
+	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
 
 		// AD -> Nghi: microModels to use
-		final List<ISyntacticElement> microModels = new ArrayList();
+		final  Map<ISyntacticElement, String> microModels = new GamaMap();
 		final List<ISyntacticElement> models = new ArrayList();
-		for ( Map.Entry<GamlResource, Boolean> entry : resources.entrySet() ) {
-			if ( entry.getValue() ) {
+		for ( Map.Entry<GamlResource, String> entry : resources.entrySet() ) {
+			if ( entry.getValue()==null ) {
 				models.add(entry.getKey().getSyntacticContents());
 			} else {
-				microModels.add(entry.getKey().getSyntacticContents());
+				microModels.put(entry.getKey().getSyntacticContents(),entry.getValue());
 			}
 		}
 		// final Iterable<ISyntacticElement> models = getAllSyntacticContents(resources);
@@ -160,19 +160,29 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
-		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited);
+		// hqnghi build micro-model
+		GamaMap<String, ModelDescription>  mm=new GamaMap<String, ModelDescription>();
+		for ( ISyntacticElement r: microModels.keySet() ) {
+			List<ISyntacticElement> res=new ArrayList<ISyntacticElement>();
+			res.add(r);
+			ModelDescription mic=getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited, new GamaMap());
+			mic.setAlias(microModels.get(r));
+			mm.addValue(null, new GamaPair<String, ModelDescription>(microModels.get(r),mic));
+		} 
+		//end-hqnghi
+		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited, mm);
 	}
 
-	public LinkedHashMap<URI, Boolean> computeAllImportedURIs(final ResourceSet set) {
+	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
 		// TODO A Revoir pour éviter trop de créations de listes/map, etc.
 
-		final LinkedHashMap<URI, Boolean> totalResources = new LinkedHashMap();
+		final LinkedHashMap<URI, String> totalResources = new LinkedHashMap();
 		// Map<Resource, Boolean> = if true, resources are used to compose the model; if false, they are used as sub-models
-		final LinkedHashMap<GamlResource, Boolean> newResources = new LinkedHashMap();
+		final LinkedHashMap<GamlResource, String> newResources = new LinkedHashMap();
 		// The current resource is considered as imported "normally"
-		newResources.put(this, true);
+		newResources.put(this, null);
 		while (!newResources.isEmpty()) {
-			final Map<GamlResource, Boolean> resourcesToConsider = new LinkedHashMap(newResources);
+			final Map<GamlResource, String> resourcesToConsider = new LinkedHashMap(newResources);
 			newResources.clear();
 			for ( final GamlResource gr : resourcesToConsider.keySet() ) {
 				if ( !totalResources.containsKey(gr.getURI()) ) {
@@ -181,10 +191,10 @@ public class GamlResource extends LazyLinkingResource {
 					for ( Map.Entry<GamlResource, Import> entry : imports.entrySet() ) {
 						ImportImpl impl = (ImportImpl) entry.getValue();
 						if ( impl.eIsSet(GamlPackage.IMPORT__NAME) ) {
-							newResources.put(entry.getKey(), false);
+							newResources.put(entry.getKey(), impl.getName());
 						} else {
 							// "normal" Import (no "as")
-							newResources.put(entry.getKey(), true);
+							newResources.put(entry.getKey(), null);
 						}
 					}
 					// newResources.addAll(imports.keySet());
@@ -215,9 +225,9 @@ public class GamlResource extends LazyLinkingResource {
 		return imports;
 	}
 
-	public LinkedHashMap<GamlResource, Boolean> loadAllResources(final ResourceSet resourceSet) {
-		final LinkedHashMap<GamlResource, Boolean> totalResources = new LinkedHashMap();
-		Map<URI, Boolean> uris = computeAllImportedURIs(resourceSet);
+	public LinkedHashMap<GamlResource, String> loadAllResources(final ResourceSet resourceSet) {
+		final LinkedHashMap<GamlResource, String> totalResources = new LinkedHashMap();
+		Map<URI, String> uris = computeAllImportedURIs(resourceSet);
 		for ( URI uri : uris.keySet() ) {
 			// if ( uris.get(uri) ) {
 			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
@@ -253,7 +263,7 @@ public class GamlResource extends LazyLinkingResource {
 
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
-		Map<GamlResource, Boolean> imports = loadAllResources(set);
+		Map<GamlResource, String> imports = loadAllResources(set);
 		for ( GamlResource r : imports.keySet() ) {
 			if ( !r.getErrors().isEmpty() ) {
 				invalidateBecauseOfImportedProblem("Syntax errors detected ", r);

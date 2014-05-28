@@ -60,6 +60,15 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		outputs.put(output.getId(), output);
 	}
 
+	//hqnghi add output with alias name from micro-model
+	@Override
+	public void addOutput(final String name, final IOutput output) {
+		if (output == null) {
+			return;
+		}// || outputs.containsValue(output) ) { return; }
+		outputs.put(name, output);
+	}
+	//end-hqnghi
 	@Override
 	public synchronized void dispose() {
 		super.dispose();

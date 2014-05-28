@@ -15,6 +15,8 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -41,13 +43,37 @@ public class ModelDescription extends SpeciesDescription {
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
 	protected boolean document;
-	private String comodelName="";
-	public void setComodelName(final String nnn){
-		comodelName=nnn;
-	}
-	public String getComodelName(){
-		return comodelName;
-	}
+	// hqnghi new attribute manipulate micro-models
+	private GamaMap<String, ModelDescription> MICRO_MODELS = new GamaMap<String, ModelDescription>();
+	private String alias = "";
+
+	public void setMicroModels(final GamaMap<String, ModelDescription> mm) {
+		MICRO_MODELS = mm;
+    }
+	
+	public GamaMap<String, ModelDescription> getMicroModels() {
+		return MICRO_MODELS;
+    }
+	
+	public ModelDescription getMicroModel(String name) {
+		if (MICRO_MODELS.size() > 0)
+			return MICRO_MODELS.get(name);
+		return null;
+    }
+
+	public void addMicroModel(String mName, ModelDescription md) {
+		MICRO_MODELS.addValue(null, new GamaPair<String, ModelDescription>(
+				mName, md));
+    }
+
+	public void setAlias(final String as) {
+		alias = as;
+    }
+
+	public String getAlias() {
+		return alias;
+    }
+	// end-hqnghi
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
 		final SpeciesDescription parent, final Facets facets) {
@@ -88,6 +114,16 @@ public class ModelDescription extends SpeciesDescription {
 		return true;
 	}
 
+	//hqnghi does it need to verify parent of micro-model??
+	@Override
+	protected void verifyParent() {		
+		if( parent == ModelDescription.ROOT) {
+			return;
+		}
+		super.verifyParent();		
+	}
+	//end-hqnghi	
+	
 	@Override
 	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
 		if ( newVar.isBuiltIn() ) { return; }

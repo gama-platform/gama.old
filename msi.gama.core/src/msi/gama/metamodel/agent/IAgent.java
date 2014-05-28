@@ -201,5 +201,11 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @return
 	 */
 	public abstract IPopulation getPopulationFor(final String speciesName);
-
+	//hqnghi  manipulate micro-models
+	public abstract void addExternMicroPopulation(final String expName, final IPopulation pop);
+	
+	public abstract IPopulation getExternMicroPopulationFor(final String expName);
+	
+	public abstract Map<String, IPopulation> getExternMicroPopulations();
+	//end-hqnghi
 }

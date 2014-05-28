@@ -47,19 +47,17 @@ public class PauseItem extends GamaViewItem {
 					IOutput output = ((GamaViewPart) view).getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
-							// hqnghi resume thread of co-experiment
-							if ( !((AbstractOutput) output).getExpName().equals("") ) {
-								GAMA.getController(((AbstractOutput) output).getExpName()).offer(
-									FrontEndController._START);
+							//hqnghi resume  thread  of co-experiment							
+							if(!output.getDescription().getModelDescription().getAlias().equals("")){								
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(FrontEndController._START);
 							}
 							// end-hqnghi
 							resume(output);
 						} else {
 							pause(output);
-							// hqnghi pause thread of co-experiment
-							if ( !((AbstractOutput) output).getExpName().equals("") ) {
-								GAMA.getController(((AbstractOutput) output).getExpName()).offer(
-									FrontEndController._PAUSE);
+							//hqnghi pause thread  of co-experiment
+							if(!output.getDescription().getModelDescription().getAlias().equals("")){								
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(FrontEndController._PAUSE);
 							}
 							// end-hqnghi
 						}

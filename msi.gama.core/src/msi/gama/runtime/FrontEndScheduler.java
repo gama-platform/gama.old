@@ -100,14 +100,7 @@ public class FrontEndScheduler implements Runnable {
 		if ( toStop.isEmpty() ) { return; }
 		synchronized (toStop) {
 			for ( final IStepable s : toStop ) {
-				final IScope scope = toStep.get(s);
-
-				// hqnghi 11/Oct/13 in some cases scope of comodel's experiment is null
-				if ( scope == null ) {
-					continue;
-				}
-				// end-hqnghi
-
+				final IScope scope = toStep.get(s);	
 				if ( !scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);

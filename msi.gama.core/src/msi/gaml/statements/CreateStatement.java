@@ -14,6 +14,8 @@ package msi.gaml.statements;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.database.sql.SqlConnection;
+import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -162,6 +164,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				SpeciesDescription macro = species.getMacroSpecies();
 				if ( macro == null ) {
 					cd.error("The macro-species of " + species + " cannot be determined");
+				//hqnghi special case : create instances of model from model
+				}else if( macro instanceof ModelDescription && callerSpecies instanceof ModelDescription){
+
+				//end-hqnghi
 				} else if ( callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro) &&
 					!callerSpecies.hasParent(macro) ) {
 					cd.error("No instance of " + macro.getName() + " available for creating instances of " +
@@ -223,6 +229,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.toGaml() +
 				" is accessible in the context of " + executor + ".", scope); }
 			pop = executor.getPopulationFor(s);
+			//hqnghi population of micro-model's experiment is not exist, we must create the new one
+			if( pop == null && s instanceof ExperimentPlan ){
+				pop = new ExperimentPopulation(s);
+				final IScope sc = ((ExperimentPlan)s).getExperimentScope();
+				pop.initializeFor(sc);
+				executor.addExternMicroPopulation(s.getName(), pop);
+			}
+			//end-hqnghi
 		}
 		// scope.addVarWithValue(IKeyword.MYSELF, executor);
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
@@ -379,7 +393,15 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private IList<? extends IAgent>
 		createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
-
+		//hqnghi in case of creating experiment of micro-models, we must implicitely initialize it and its simulation output
+		if(population instanceof ExperimentPopulation){
+				for ( final IAgent a : population ) {					
+					((ExperimentAgent)a)._init_(scope);			
+					SimulationAgent sim=(SimulationAgent) ((ExperimentAgent)a).getSimulation();
+					sim.getOutputManger().init(sim.getScope());
+				}
+		}
+		//end-hqnghi
 		if ( !sequence.isEmpty() ) {
 			for ( final IAgent remoteAgent : list.iterable(scope) ) {
 				Object[] result = new Object[1];

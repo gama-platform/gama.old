@@ -403,7 +403,7 @@ TypeDefinition:
 
 
 VarDefinition:
-	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import);
+	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import | S_Experiment);
 
 ActionDefinition:
 	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;

@@ -6,6 +6,7 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
+import java.util.Map.Entry;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
@@ -30,7 +31,7 @@ public class ModelAssembler {
 	public ModelAssembler() {}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document) {
+		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document, final GamaMap<String, ModelDescription> mm) {
 		final Map<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final Map<String, Map<String, ISyntacticElement>> experimentNodes = new TOrderedHashMap();
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
@@ -92,6 +93,12 @@ public class ModelAssembler {
 		model.addSpeciesType(model);
 		model.isDocumenting(document);
 
+		//hqnghi add micro-models
+		if(mm != null ){
+			model.setMicroModels(mm);
+			model.addChildren(new ArrayList(mm.values()));
+		}
+		//end-hqnghi		
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			addMicroSpecies(model, speciesNode);
@@ -113,6 +120,11 @@ public class ModelAssembler {
 		}
 		// Initialize the hierarchy of types
 		model.buildTypes();
+		//hqnghi build micro-models as types
+		for(  Entry<String, ModelDescription> entry:mm.entrySet()) {
+			model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
+		}
+		//end-hqnghi
 
 		// Make species and experiments recursively create their attributes, actions....
 		complementSpecies(model, globalNodes);

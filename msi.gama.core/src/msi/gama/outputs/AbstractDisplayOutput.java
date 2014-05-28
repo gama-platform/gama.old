@@ -95,7 +95,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public String getId() {
-		String cName=((AbstractOutput)this).getDescription().getModelDescription().getComodelName();
+		String cName=((AbstractOutput)this).getDescription().getModelDescription().getAlias();
 		if(!cName.equals("") && !getName().contains("#")){
 			return isUnique() ? getViewId() : getViewId() + getName()+ "#"+cName;
 		}

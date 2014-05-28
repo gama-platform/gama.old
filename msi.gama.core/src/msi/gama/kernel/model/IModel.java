@@ -13,6 +13,7 @@ package msi.gama.kernel.model;
 
 import java.util.Map;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -24,6 +25,8 @@ import msi.gaml.species.ISpecies;
 public interface IModel extends ISpecies {
 
 	public abstract ISpecies getSpecies(String speciesName);
+	
+	public abstract ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
 
 	public abstract IExperimentPlan getExperiment(final String s);
 

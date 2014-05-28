@@ -1,4 +1,8 @@
 /**
+ * <copyright>
+ * </copyright>
+ *
+
  */
 package msi.gama.lang.gaml.gaml.impl;
 
@@ -30,7 +34,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     try
     {
-      GamlFactory theGamlFactory = (GamlFactory)EPackage.Registry.INSTANCE.getEFactory(GamlPackage.eNS_URI);
+      GamlFactory theGamlFactory = (GamlFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.gama.msi/lang/gaml/Gaml"); 
       if (theGamlFactory != null)
       {
         return theGamlFactory;

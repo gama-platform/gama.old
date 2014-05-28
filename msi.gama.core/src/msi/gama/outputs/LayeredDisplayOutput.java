@@ -17,6 +17,7 @@ import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
@@ -428,6 +429,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 		SimulationAgent sim = getScope().getSimulationScope();
+		//hqnghi if layer come from micro-model 
+		ModelDescription micro = this.getDescription().getModelDescription();
+		ModelDescription main  = (ModelDescription) scope.getModel().getDescription(); 
+		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null ;
+		if( fromMicroModel ) {
+			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope().getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+			sim = (SimulationAgent) exp.getSimulation();
+		}
+		//end-hqnghi
 		Envelope env = null;
 		if ( sim != null ) {
 			env = sim.getEnvelope();

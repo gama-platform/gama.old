@@ -60,7 +60,7 @@ import com.vividsolutions.jts.geom.Envelope;
 @file(name = "gaml", extensions = { "gaml" }, buffer_type = IType.LIST, buffer_content = IType.SPECIES)
 public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
-	private final IModel mymodel;
+	private IModel mymodel = null;
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
@@ -68,15 +68,14 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	 */
 	// private GamaList sharedResource;
 	private String experimentName = "default";
-	private String controllerName = "default";
-	private String comodelName = "";
+//	private String controllerName = "default";
+	private String aliasName = "";
 	private boolean initDisplay = false;
 
 	// private IExperimentPlan exp = null;
 	public GAMLFile(final IScope scope, final String pathName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
-		mymodel = null;
 	}
 
 	public GAMLFile(final IScope scope, final String pathName,
@@ -84,13 +83,13 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			throws GamaRuntimeException {
 		super(scope, pathName);
 		experimentName = expName;
-		comodelName = cName;
+		aliasName = cName;
 		ModelDescription mm=((GamlExpressionFactory) GAML.getExpressionFactory())
 		.getParser().createModelDescriptionFromFile(getFile().getName());		
-		mm.setComodelName(comodelName);
+		mm.setAlias(aliasName);
 		mymodel=(IModel) mm.compile();
 		// multithread
-		controllerName = experimentName + comodelName;
+//		controllerName = experimentName + aliasName;
 
 		// initDisplay = false;
 	}
@@ -103,19 +102,15 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			IExperimentPlan exp = mymodel.getExperiment("Experiment "
 					+ expName);
 			for(IOutput o:exp.getSimulationOutputs().getOutputs().values()){
-				o.setName(o.getName() + "#" + comodelName);
-				((AbstractOutput) o).setExpName(experimentName
-						+ comodelName);
+				o.setName(o.getName() + "#" + aliasName);
 			}
 			for(IOutput o:exp.getExperimentOutputs().getOutputs().values()){
-				o.setName(o.getName() + "#" + comodelName);
-				((AbstractOutput) o).setExpName(experimentName
-						+ comodelName);
+				o.setName(o.getName() + "#" + aliasName);
 			}
-		((ExperimentPlan) exp).setControllerName(controllerName);
+		((ExperimentPlan) exp).setControllerName(aliasName);
 		// multithread
 		// eliminate conflict in close-open current Layer to initialize displays
-		GAMA.getController(controllerName).newExperiment(exp);
+		GAMA.getController(aliasName).newExperiment(exp);
 		// singlethread
 		// GAMA.getController(controllerName).addExperiment(
 		// experimentName + comodelName, exp);
@@ -126,13 +121,13 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		final IExpression param_output, GamaMap in, GamaMap out, final IExpression reset, final IExpression repeat,
  final IExpression stopCondition,
 			IExpression share) {
-		if (GAMA.getController(controllerName) == null) {
+		if (GAMA.getController(aliasName) == null) {
 			FrontEndController fec = new FrontEndController(
 					new FrontEndScheduler());
-			GAMA.addController(controllerName, fec);
+			GAMA.addController(aliasName, fec);
 		}
 		// multithread
-		if (GAMA.getController(controllerName).getExperiment() == null) {
+		if (GAMA.getController(aliasName).getExperiment() == null) {
 
 			// singlethread
 			// if (GAMA.getController(controllerName)
@@ -146,13 +141,13 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			if (param_input != null) {
 				in = (GamaMap) param_input.value(scope);
 				for (int i = 0; i < in.getKeys().size(); i++) {
-					GAMA.getController(controllerName)
+					GAMA.getController(aliasName)
 							.getExperiment()
 							.getModel().getVar(in.getKeys().get(i).toString())
 							.setValue(null, in.getValues().get(i));
 				}
 			}
-			GAMA.getController(controllerName).directOpenExperiment(); 
+			GAMA.getController(aliasName).directOpenExperiment(); 
 		}
 	}
 
@@ -165,16 +160,12 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		setBuffer(new GamaList());
 //		IModel mymodel=  ((GamlExpressionFactory) GAML.getExpressionFactory())
 //				.getParser().createModelFromFile(getFile().getName());
-		ModelDescription mm=((GamlExpressionFactory) GAML.getExpressionFactory())
-				.getParser().createModelDescriptionFromFile(getFile().getName());		
-		GAML.getModelFactory().addCoModel(mm.getName(),mm);
-		for(ISpecies spec:((GamlModelSpecies)mymodel.getSpecies()).getExperiments().values()) {		
-			//TODO must change to add displays
-			((ExperimentPlan)spec).getExperimentOutputs().removeAllOutput();
-			((ExperimentPlan)spec).getSimulationOutputs().removeAllOutput();
-			((IList) getBuffer()).add(spec);
+		if(mymodel==null){
+			ModelDescription mm=((GamlExpressionFactory) GAML.getExpressionFactory())
+			.getParser().createModelDescriptionFromFile(getFile().getName());	
+			mymodel=(IModel) mm.compile();
 		}
-
+		((IList) getBuffer()).add(((GamlModelSpecies)mymodel.getSpecies()));
 	}
 
 	public IModel getModel() {

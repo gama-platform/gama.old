@@ -25,6 +25,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
@@ -40,6 +41,26 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
+	//hqnghi manipulate micro-models
+	protected GamaMap<String, IPopulation> externMicroPopulations = new GamaMap<String, IPopulation>();
+	
+	@Override
+	public void addExternMicroPopulation(final String expName, final IPopulation pop) {
+		externMicroPopulations.put(expName, pop);
+	}
+	
+	@Override
+	public IPopulation getExternMicroPopulationFor(final String expName) {
+		if(externMicroPopulations.size()>0)
+			return externMicroPopulations.get(expName);
+		return null;
+	}
+	
+	@Override
+	public GamaMap<String, IPopulation> getExternMicroPopulations() {
+		return externMicroPopulations;
+	}
+	//end-hqnghi
 
 	protected IShape geometry;
 	protected String name;
@@ -612,8 +633,17 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
-		final IPopulation microPopulation = this.getMicroPopulation(species);
-		if ( microPopulation == null && getHost() != null ) { return getHost().getPopulationFor(species); }
+		//hqnghi adjust to get population for species which come from main as well micro models
+		ModelDescription micro = species.getDescription().getModelDescription();
+		ModelDescription main  = (ModelDescription) this.getModel().getDescription();		
+		IPopulation microPopulation = null;
+		if( main.getMicroModel(micro.getAlias()) == null ) {
+			microPopulation = this.getMicroPopulation(species);
+			if ( microPopulation == null && getHost() != null ) { microPopulation =  getHost().getPopulationFor(species); }
+		}else {
+				microPopulation = this.getExternMicroPopulationFor(species.getName());
+		}
+		//end-hqnghi
 		return microPopulation;
 	}
 

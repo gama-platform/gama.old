@@ -1,4 +1,8 @@
 /**
+ * <copyright>
+ * </copyright>
+ *
+
  */
 package msi.gama.lang.gaml.gaml.util;
 
@@ -170,6 +174,8 @@ public class GamlSwitch<T> extends Switch<T>
         S_Experiment s_Experiment = (S_Experiment)theEObject;
         T result = caseS_Experiment(s_Experiment);
         if (result == null) result = caseStatement(s_Experiment);
+        if (result == null) result = caseVarDefinition(s_Experiment);
+        if (result == null) result = caseGamlDefinition(s_Experiment);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
