@@ -23,7 +23,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'equation'", "'solve'", "'do'", "'action:'", "'var:'", "';'", "'value:'", "'<-'", "'output'", "'permanent'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'var'", "'const'", "'let'", "'arg'", "'signal'", "'init'", "'reflex'", "'aspect'", "'<<'", "'<<+'", "'+<-'", "'<+'", "'>-'", "'name:'", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'!='", "'='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'\\u00C2\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'$$$'", "'model'", "'import'", "'as'", "'else'", "'when'", "':'", "'('", "')'", "'{'", "'}'", "','", "'::'", "']'", "'['", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'", "'global'", "'entities'", "'environment'", "'experiment'", "'loop'", "'if'", "'condition:'", "'return'", "'action'", "'set'", "'equation:'", "'display'", "'function:'", "'->'", "'?'", "'or'", "'and'", "'^'", "'.'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'equation'", "'solve'", "'do'", "'action:'", "'var:'", "';'", "'value:'", "'<-'", "'output'", "'permanent'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'var'", "'const'", "'let'", "'arg'", "'signal'", "'init'", "'reflex'", "'aspect'", "'<<'", "'<<+'", "'+<-'", "'<+'", "'>-'", "'name:'", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'!='", "'='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'$$$'", "'model'", "'import'", "'as'", "'else'", "'when'", "':'", "'('", "')'", "'{'", "'}'", "','", "'::'", "']'", "'['", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'", "'global'", "'entities'", "'environment'", "'experiment'", "'loop'", "'if'", "'condition:'", "'return'", "'action'", "'set'", "'equation:'", "'display'", "'function:'", "'->'", "'?'", "'or'", "'and'", "'^'", "'.'"
     };
     public static final int RULE_ID=5;
     public static final int T__29=29;
@@ -15804,13 +15804,13 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__OpAlternatives_1_0_1_0"
-    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4862:1: rule__Unit__OpAlternatives_1_0_1_0 : ( ( '\\u00C2\\u00B0' ) | ( '#' ) );
+    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4862:1: rule__Unit__OpAlternatives_1_0_1_0 : ( ( '\\u00B0' ) | ( '#' ) );
     public final void rule__Unit__OpAlternatives_1_0_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4866:1: ( ( '\\u00C2\\u00B0' ) | ( '#' ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4866:1: ( ( '\\u00B0' ) | ( '#' ) )
             int alt51=2;
             int LA51_0 = input.LA(1);
 
@@ -15829,17 +15829,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             }
             switch (alt51) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4867:1: ( '\\u00C2\\u00B0' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4867:1: ( '\\u00B0' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4867:1: ( '\\u00C2\\u00B0' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4868:1: '\\u00C2\\u00B0'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4867:1: ( '\\u00B0' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4868:1: '\\u00B0'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0_0()); 
+                       before(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0()); 
                     }
                     match(input,104,FOLLOW_104_in_rule__Unit__OpAlternatives_1_0_1_010711); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0_0()); 
+                       after(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0()); 
                     }
 
                     }
@@ -16078,13 +16078,13 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__OpAlternatives_1_1_0_0_0"
-    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4932:1: rule__Unary__OpAlternatives_1_1_0_0_0 : ( ( '\\u00C2\\u00B0' ) | ( '#' ) );
+    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4932:1: rule__Unary__OpAlternatives_1_1_0_0_0 : ( ( '\\u00B0' ) | ( '#' ) );
     public final void rule__Unary__OpAlternatives_1_1_0_0_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4936:1: ( ( '\\u00C2\\u00B0' ) | ( '#' ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4936:1: ( ( '\\u00B0' ) | ( '#' ) )
             int alt54=2;
             int LA54_0 = input.LA(1);
 
@@ -16103,17 +16103,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             }
             switch (alt54) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4937:1: ( '\\u00C2\\u00B0' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4937:1: ( '\\u00B0' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4937:1: ( '\\u00C2\\u00B0' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4938:1: '\\u00C2\\u00B0'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4937:1: ( '\\u00B0' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:4938:1: '\\u00B0'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0_0()); 
+                       before(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0()); 
                     }
                     match(input,104,FOLLOW_104_in_rule__Unary__OpAlternatives_1_1_0_0_010867); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0_0()); 
+                       after(grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0()); 
                     }
 
                     }

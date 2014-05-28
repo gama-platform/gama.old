@@ -6181,9 +6181,9 @@ ruleUnit returns [EObject current=null]
 )(
 (
 (
-		lv_op_2_1=	'\u00C2\u00B0' 
+		lv_op_2_1=	'\u00B0' 
     {
-        newLeafNode(lv_op_2_1, grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0_0());
+        newLeafNode(lv_op_2_1, grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0());
     }
  
 	    {
@@ -6266,9 +6266,9 @@ ruleUnary returns [EObject current=null]
 )(((
 (
 (
-		lv_op_2_1=	'\u00C2\u00B0' 
+		lv_op_2_1=	'\u00B0' 
     {
-        newLeafNode(lv_op_2_1, grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0_0());
+        newLeafNode(lv_op_2_1, grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0());
     }
  
 	    {

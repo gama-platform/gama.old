@@ -22,7 +22,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'<-'", "'$$$'", "'model'", "'import'", "'as'", "'global'", "';'", "'entities'", "'environment'", "'name:'", "'experiment'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'when'", "':'", "'('", "')'", "'action'", "'set'", "'{'", "'}'", "'='", "'equation:'", "'display'", "'output'", "'permanent'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'signal'", "'init'", "'reflex'", "'aspect'", "'<<'", "'>'", "'<<+'", "'>-'", "'+<-'", "'<+'", "','", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'var:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00C2\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'<-'", "'$$$'", "'model'", "'import'", "'as'", "'global'", "';'", "'entities'", "'environment'", "'name:'", "'experiment'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'when'", "':'", "'('", "')'", "'action'", "'set'", "'{'", "'}'", "'='", "'equation:'", "'display'", "'output'", "'permanent'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'signal'", "'init'", "'reflex'", "'aspect'", "'<<'", "'>'", "'<<+'", "'>-'", "'+<-'", "'<+'", "','", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'var:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
     };
     public static final int RULE_ID=4;
     public static final int T__29=29;
@@ -17668,7 +17668,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnit"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6162:1: ruleUnit returns [EObject current=null] : (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6162:1: ruleUnit returns [EObject current=null] : (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) ;
     public final EObject ruleUnit() throws RecognitionException {
         EObject current = null;
 
@@ -17682,11 +17682,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6165:28: ( (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6166:1: (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6165:28: ( (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6166:1: (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6166:1: (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6167:5: this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6166:1: (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6167:5: this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
             {
             if ( state.backtracking==0 ) {
                
@@ -17704,7 +17704,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                       afterParserOrEnumRuleCall();
                   
             }
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:1: ( ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:1: ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
             int alt109=2;
             int LA109_0 = input.LA(1);
 
@@ -17713,10 +17713,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             }
             switch (alt109) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:2: ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:2: ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:2: ( () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:3: () ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:2: ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:3: () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) )
                     {
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6175:3: ()
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6176:5: 
@@ -17731,13 +17731,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6181:2: ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6182:1: ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6181:2: ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6182:1: ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6182:1: ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6183:1: (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6182:1: ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6183:1: (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6183:1: (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6183:1: (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' )
                     int alt108=2;
                     int LA108_0 = input.LA(1);
 
@@ -17756,12 +17756,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt108) {
                         case 1 :
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6184:3: lv_op_2_1= '\\u00C2\\u00B0'
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6184:3: lv_op_2_1= '\\u00B0'
                             {
                             lv_op_2_1=(Token)match(input,135,FOLLOW_135_in_ruleUnit14043); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                                      newLeafNode(lv_op_2_1, grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0_0());
+                                      newLeafNode(lv_op_2_1, grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0_0());
                                   
                             }
                             if ( state.backtracking==0 ) {
@@ -17911,7 +17911,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnary"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6246:1: ruleUnary returns [EObject current=null] : (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6246:1: ruleUnary returns [EObject current=null] : (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) ;
     public final EObject ruleUnary() throws RecognitionException {
         EObject current = null;
 
@@ -17932,10 +17932,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6249:28: ( (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6250:1: (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6249:28: ( (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6250:1: (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6250:1: (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6250:1: (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
             int alt113=2;
             int LA113_0 = input.LA(1);
 
@@ -17976,10 +17976,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:6: ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:6: ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:6: ( () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:7: () ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:6: ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:7: () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
                     {
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6260:7: ()
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6261:5: 
@@ -17994,7 +17994,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:2: ( ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:2: ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
                     int alt112=2;
                     int LA112_0 = input.LA(1);
 
@@ -18013,18 +18013,18 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt112) {
                         case 1 :
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:3: ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:3: ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:3: ( ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:4: ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:3: ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:4: ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:4: ( ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6267:1: ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6266:4: ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6267:1: ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6267:1: ( (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6268:1: (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6267:1: ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6268:1: (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6268:1: (lv_op_2_1= '\\u00C2\\u00B0' | lv_op_2_2= '#' )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6268:1: (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' )
                             int alt110=2;
                             int LA110_0 = input.LA(1);
 
@@ -18043,12 +18043,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             }
                             switch (alt110) {
                                 case 1 :
-                                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6269:3: lv_op_2_1= '\\u00C2\\u00B0'
+                                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:6269:3: lv_op_2_1= '\\u00B0'
                                     {
                                     lv_op_2_1=(Token)match(input,135,FOLLOW_135_in_ruleUnary14242); if (state.failed) return current;
                                     if ( state.backtracking==0 ) {
 
-                                              newLeafNode(lv_op_2_1, grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0_0());
+                                              newLeafNode(lv_op_2_1, grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0_0());
                                           
                                     }
                                     if ( state.backtracking==0 ) {
