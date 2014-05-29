@@ -363,7 +363,7 @@ public abstract class AbstractScope implements IScope {
 			} else if ( statement instanceof RemoteSequence ) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
-				result[0] = statement.executeOn(agent.getScope());
+				result[0] = statement.executeOn(this);
 				return true;
 			}
 			result[0] = statement.executeOn(this);
