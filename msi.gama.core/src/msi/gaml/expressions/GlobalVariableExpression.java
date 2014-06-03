@@ -42,13 +42,13 @@ public class GlobalVariableExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return scope.getGlobalVarValue(getName());
+		return scope.getAgentScope().getScope().getGlobalVarValue(getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		scope.setGlobalVarValue(getName(), v);
+		scope.getAgentScope().getScope().setGlobalVarValue(getName(), v);
 	}
 
 	@Override
