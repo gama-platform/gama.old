@@ -13,8 +13,8 @@ package msi.gaml.skills;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -65,17 +65,11 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 @skill(name = IKeyword.MOVING_SKILL)
 public class MovingSkill extends Skill {
 
-	/**
-	 * @throws GamaRuntimeException
-	 * @throws GamaRuntimeException Gets the destination of the agent. The destination is the next
-	 *             absolute coordinates the agent could reach if it keeps the current speed and the
-	 *             current heading
-	 */
 	@getter(IKeyword.HEADING)
 	public Integer getHeading(final IAgent agent) {
 		Integer h = (Integer) agent.getAttribute(IKeyword.HEADING);
 		if ( h == null ) {
-			h = RandomUtils.getDefault().between(0, 359);
+			h = agent.getScope().getRandom().between(0, 359);
 			setHeading(agent, h);
 		}
 		return Maths.checkHeading(h);
@@ -169,7 +163,7 @@ public class MovingSkill extends Skill {
 		final Object target = scope.getArg("target", IType.NONE);
 		IShape result = null;
 		if ( target != null && target instanceof IShape ) {
-			result = (IShape) target;//((ILocated) target).getLocation();
+			result = (IShape) target;// ((ILocated) target).getLocation();
 		}
 		// if ( result == null ) {
 		// scope.setStatus(ExecutionStatus.failure);
@@ -287,8 +281,7 @@ public class MovingSkill extends Skill {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
 			}
-			((GamaPoint) loc).z =
-				Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
+			((GamaPoint) loc).z = Math.max(0, ((GamaPoint) location).z + dist * (2 * scope.getRandom().next() - 1));
 			((GamaPoint) loc).z = Math.min(((GamaPoint) loc).z, z_max);
 			setLocation(agent, loc);
 		}
@@ -387,10 +380,7 @@ public class MovingSkill extends Skill {
 				type = IType.FLOAT,
 				optional = true,
 				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "on",
-				type = { IType.GRAPH},
-				optional = true,
-				doc = @doc("graph that restrains this move")),
+			@arg(name = "on", type = { IType.GRAPH }, optional = true, doc = @doc("graph that restrains this move")),
 			@arg(name = "recompute_path",
 				type = IType.BOOL,
 				optional = true,
