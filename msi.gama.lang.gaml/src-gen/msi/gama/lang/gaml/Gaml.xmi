@@ -769,7 +769,7 @@
         <terminal xsi:type="xtext:RuleCall" rule="//@rules.42"/>
       </elements>
       <elements xsi:type="xtext:Assignment" feature="expr" operator="=">
-        <terminal xsi:type="xtext:RuleCall" rule="//@rules.91"/>
+        <terminal xsi:type="xtext:RuleCall" rule="//@rules.67"/>
       </elements>
       <elements xsi:type="xtext:Assignment" cardinality="*" feature="facets" operator="+=">
         <terminal xsi:type="xtext:RuleCall" rule="//@rules.52"/>

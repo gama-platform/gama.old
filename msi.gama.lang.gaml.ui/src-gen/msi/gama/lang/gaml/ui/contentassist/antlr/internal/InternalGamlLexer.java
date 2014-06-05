@@ -5335,8 +5335,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u00b1",
             "\1\u00b2",
             "\1\u00b3",
-            "\1\72\13\uffff\12\72\1\u00b7\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\12\72\1\u00b4\4\72\1\u00b6\2\72\1\u00b5\7\72",
+            "\1\72\13\uffff\12\72\1\u00b7\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\12\72\1\u00b4\4\72\1\u00b6\2\72\1\u00b5\7\72",
             "\1\u00b9",
             "\1\u00ba",
             "\1\u00bb",
@@ -5400,8 +5400,8 @@ public class InternalGamlLexer extends Lexer {
             "",
             "",
             "",
-            "\1\u00f2\3\uffff\1\u00f5\15\uffff\1\u00f3\1\u00f1\1\u00f0"+
-            "\1\u00f4",
+            "\1\u00f2\3\uffff\1\u00f5\15\uffff\1\u00f3\1\u00f1\1\u00f0\1"+
+            "\u00f4",
             "",
             "",
             "",
@@ -5464,8 +5464,8 @@ public class InternalGamlLexer extends Lexer {
             "\72",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
-            "\1\72\13\uffff\12\72\1\u0114\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u0114\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u0116",
             "",
             "",
@@ -5553,8 +5553,8 @@ public class InternalGamlLexer extends Lexer {
             "\72",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
-            "\1\72\13\uffff\12\72\1\u0157\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\13\72\1\u0156\16\72",
+            "\1\72\13\uffff\12\72\1\u0157\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\13\72\1\u0156\16\72",
             "\1\u0159",
             "\1\u015a",
             "",
@@ -5594,8 +5594,8 @@ public class InternalGamlLexer extends Lexer {
             "\72",
             "\1\u0174",
             "\1\u0175",
-            "\1\72\13\uffff\12\72\1\u0176\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u0176\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u0178",
             "\1\u0179",
             "\1\u017a",
@@ -5606,8 +5606,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u017f",
             "\1\u0180",
             "\1\u0181",
-            "\1\72\13\uffff\12\72\1\u0182\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u0182\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u0184",
             "\1\u0185",
             "",
@@ -5665,8 +5665,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u01aa",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
-            "\1\72\13\uffff\12\72\1\u01ac\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01ac\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u01ae",
             "\1\u01af",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
@@ -5678,13 +5678,13 @@ public class InternalGamlLexer extends Lexer {
             "\1\u01b1",
             "",
             "",
-            "\1\72\13\uffff\12\72\1\u01b2\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01b2\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u01b4",
             "",
             "\1\u01b5",
-            "\1\72\13\uffff\12\72\1\u01b6\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01b6\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u01b8",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\u01b9\1\uffff"+
             "\32\72",
@@ -5718,12 +5718,12 @@ public class InternalGamlLexer extends Lexer {
             "\72",
             "\1\u01c9",
             "\1\u01ca",
-            "\1\72\13\uffff\12\72\1\u01cb\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01cb\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
-            "\1\72\13\uffff\12\72\1\u01ce\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01ce\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
             "",
@@ -5776,8 +5776,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u01ed",
             "\1\u01ee",
             "\1\u01ef",
-            "\1\72\13\uffff\12\72\1\u01f0\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u01f0\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "",
             "",
             "\1\u01f2",
@@ -5819,8 +5819,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u0203",
             "\1\u0204",
             "\1\u0205",
-            "\1\72\13\uffff\12\72\1\u0206\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u0206\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u0208",
             "\1\u0209",
             "\1\u020a",
@@ -5863,8 +5863,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u021d",
             "\1\72\13\uffff\12\72\7\uffff\32\72\4\uffff\1\72\1\uffff\32"+
             "\72",
-            "\1\72\13\uffff\12\72\1\u021f\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u021f\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "",
             "\1\u0221",
             "\1\u0222",
@@ -5888,8 +5888,8 @@ public class InternalGamlLexer extends Lexer {
             "\1\u022a",
             "",
             "",
-            "\1\72\13\uffff\12\72\1\u022b\6\uffff\32\72\4\uffff\1\72\1"+
-            "\uffff\32\72",
+            "\1\72\13\uffff\12\72\1\u022b\6\uffff\32\72\4\uffff\1\72\1\uffff"+
+            "\32\72",
             "\1\u022d",
             "\1\u022e",
             "\1\u022f",

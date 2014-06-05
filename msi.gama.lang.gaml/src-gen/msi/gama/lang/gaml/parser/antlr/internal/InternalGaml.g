@@ -3273,9 +3273,9 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprTypeRefParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprExpressionParserRuleCall_1_0()); 
 	    }
-		lv_expr_1_0=ruleTypeRef		{
+		lv_expr_1_0=ruleExpression		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getSpeciesOrGridDisplayStatementRule());
 	        }
@@ -3283,7 +3283,7 @@ rulespeciesOrGridDisplayStatement returns [EObject current=null]
        			$current, 
        			"expr",
         		lv_expr_1_0, 
-        		"TypeRef");
+        		"Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 

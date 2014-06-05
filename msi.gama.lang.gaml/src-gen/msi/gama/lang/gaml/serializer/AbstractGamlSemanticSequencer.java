@@ -2100,7 +2100,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_SpeciesKey expr=TypeRef facets+=Facet* block=displayBlock?)
+	 *     (key=_SpeciesKey expr=Expression facets+=Facet* block=displayBlock?)
 	 */
 	protected void sequence_speciesOrGridDisplayStatement(EObject context, speciesOrGridDisplayStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

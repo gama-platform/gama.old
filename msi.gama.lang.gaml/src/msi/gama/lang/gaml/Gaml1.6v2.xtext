@@ -158,7 +158,7 @@ displayStatement returns Statement:
 ;
 
 speciesOrGridDisplayStatement:
-	key=_SpeciesKey expr=TypeRef (facets+=Facet)* (block=displayBlock | ";")
+	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";")
 ;
 
 	/**

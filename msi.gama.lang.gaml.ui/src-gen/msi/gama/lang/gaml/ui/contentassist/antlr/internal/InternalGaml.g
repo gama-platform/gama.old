@@ -18603,8 +18603,8 @@ rule__SpeciesOrGridDisplayStatement__ExprAssignment_1
     }
 :
 (
-{ before(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprTypeRefParserRuleCall_1_0()); }
-	ruleTypeRef{ after(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprTypeRefParserRuleCall_1_0()); }
+{ before(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprExpressionParserRuleCall_1_0()); }
+	ruleExpression{ after(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprExpressionParserRuleCall_1_0()); }
 )
 
 ;
