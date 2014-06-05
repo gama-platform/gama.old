@@ -218,12 +218,15 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 					continue;
 				}
 				Collection<IAgent> pop = null;
+				pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
 				if ( isSpeciesLayer ) {
-					pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
+					// pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
 				} else {
-					pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
+					// pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
+					// pop = new ArrayList(pop);
 				}
 				pop = new ArrayList(pop);
+				// pop = new ArrayList(pop);
 				if ( pop.isEmpty() ) {
 					continue;
 				}

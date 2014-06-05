@@ -28,6 +28,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
@@ -116,9 +117,11 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if ( hostSpecies == null && scope.getSimulationScope() != null ) {
 			hostSpecies = scope.getSimulationScope().getSpecies();
 		}
-		if ( hostSpecies == null ) { return false; }
-
-		species = hostSpecies.getMicroSpecies(getName());
+		// if ( hostSpecies == null ) { return false; }
+		species = Cast.asSpecies(scope, getFacet(IKeyword.SPECIES).value(scope));
+		if ( species == null && hostSpecies != null ) {
+			species = hostSpecies.getMicroSpecies(getName());
+		}
 		if ( species == null ) { throw GamaRuntimeException.error("not a suitable species to display: " + getName(),
 			scope); }
 		if ( super._init(scope) ) {
@@ -176,6 +179,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		aspect = species.getAspect(constantAspectName);
 	}
 
+	@Override
 	public IExecutable getAspect() {
 		return aspect;
 	}
