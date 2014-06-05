@@ -232,8 +232,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	public void selectSeveralAgents(final Collection<IAgent> agents, final int layerId) {
-		menuManager
-			.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agents);
+		menuManager.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y,
+			getModelCoordinates(), agents);
 	}
 
 	@Override
@@ -494,7 +494,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 		final Point positionInPixels) {
-		// TODO Auto-generated method stub
 		Point mp = new Point(xOnScreen, yOnScreen);
 		GamaPoint p = GLUtil.getRealWorldPointFromWindowPoint(renderer, mp);
 		return new GamaPoint(p.x, -p.y);

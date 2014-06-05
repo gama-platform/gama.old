@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'JOGLAWTDisplaySurface.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'JOGLAWTDisplaySurface.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -232,8 +232,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	public void selectSeveralAgents(final Collection<IAgent> agents, final int layerId) {
-		menuManager
-			.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agents);
+		menuManager.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y,
+			getModelCoordinates(), agents);
 	}
 
 	@Override
