@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'DisplaySurfaceMenu.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'DisplaySurfaceMenu.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -19,6 +19,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
@@ -38,7 +39,8 @@ public class DisplaySurfaceMenu {
 
 	org.eclipse.swt.widgets.Menu menu;
 
-	public void buildMenu(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
+	public void buildMenu(final int mousex, final int mousey, final int x, final int y,
+		final GamaPoint modelCoordinates, final List<ILayer> displays) {
 		if ( displays.isEmpty() ) { return; }
 		if ( menu != null && !menu.isDisposed() ) {
 			menu.dispose();
@@ -53,14 +55,17 @@ public class DisplaySurfaceMenu {
 			// p = display.getModelCoordinatesFrom(x, y, surface);
 			all.addAll(agents);
 		}
-		buildMenu(true, mousex, mousey, all);
+		buildMenu(true, mousex, mousey, modelCoordinates, all);
 	}
 
 	public void buildMenu(final int mousex, final int mousey, final IAgent agent) {
-		buildMenu(false, mousex, mousey, agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
+		GamaPoint modelCoordinates = agent == null ? null : (GamaPoint) agent.getLocation();
+		buildMenu(false, mousex, mousey, modelCoordinates,
+			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
 
-	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents) {
+	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final GamaPoint modelCoordinates,
+		final Collection<IAgent> agents) {
 		GuiUtils.asyncRun(new Runnable() {
 
 			@Override
@@ -68,7 +73,8 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(swtControl, true, byLayer, agents);
+				menu = menuBuilder.getMenu(swtControl, true, byLayer, agents, modelCoordinates);
+				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
 				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :

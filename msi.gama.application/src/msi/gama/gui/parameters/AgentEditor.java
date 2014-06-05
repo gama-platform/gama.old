@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AgentEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AgentEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -115,7 +115,7 @@ public class AgentEditor extends AbstractEditor {
 		}, IGamaIcons.MENU_AGENT.image(), "Choose");
 
 		Menu dropMenu = new Menu(agentChooser);
-		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), action);
+		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), null, action);
 		agentChooser.setMenu(dropMenu);
 		dropMenu.setVisible(true);
 

@@ -242,13 +242,14 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void selectAgents(final int mousex, final int mousey) {
 		final int xc = mousex - origin.x;
 		final int yc = mousey - origin.y;
-		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
-
+		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		if ( layers.isEmpty() ) { return; }
+		final GamaPoint modelCoordinates = layers.get(0).getModelCoordinatesFrom(xc, yc, this);
 		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
-				menuManager.buildMenu(mousex, mousey, xc, yc, displays);
+				menuManager.buildMenu(mousex, mousey, xc, yc, modelCoordinates, layers);
 			}
 		});
 	}

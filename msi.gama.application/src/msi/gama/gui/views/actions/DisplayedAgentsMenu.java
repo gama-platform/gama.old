@@ -18,6 +18,7 @@ import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.GAMA;
 import org.eclipse.jface.action.*;
@@ -86,10 +87,10 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 	}
 
 	public Menu getMenu(final Control parent, final boolean withWorld, final boolean byLayer,
-		final Collection<IAgent> filteredList) {
+		final Collection<IAgent> filteredList, final GamaPoint userLocation) {
 		// Dispose ?
 		Menu menu = new Menu(parent);
-		fill(menu, -1, withWorld, byLayer, filteredList);
+		fill(menu, -1, withWorld, byLayer, filteredList, userLocation);
 		return menu;
 	}
 
@@ -174,17 +175,17 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	@Override
 	public void fill(final Menu menu, final int index) {
-		fill(menu, index, false, true, null);
+		fill(menu, index, false, true, null, null);
 	}
 
 	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
-		final Collection<IAgent> filteredList) {
+		final Collection<IAgent> filteredList, final GamaPoint userLocation) {
 		final LayeredDisplayView view = (LayeredDisplayView) this.view;
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
 		// AgentsMenu.MenuAction follow =
 		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
-			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World");
+			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), userLocation, "World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
 				AgentsMenu.separate(menu);
 			}
@@ -202,9 +203,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			if ( view.getOutput().isOpenGL() ) {
 				// FIXME: 18/03/2014 a.g the follow item has been temporaly remove from opengl because not yet
 				// implemented but should be available in 1.7
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus /* , follow */);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus /* , follow */);
 			} else {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
 			}
 		} else {
 			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
@@ -229,9 +230,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 				String layerName = layer.getType() + ": " + layer.getName();
 
 				if ( view.getOutput().isOpenGL() ) {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus/* , follow */);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
 				} else {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
 				}
 
 			}
@@ -239,7 +240,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 	}
 
 	void fill(final Menu menu, final Image image, final String layerName, final Collection<IAgent> pop,
-		final Collection<IAgent> filteredList, final AgentsMenu.MenuAction ... actions) {
+		final Collection<IAgent> filteredList, final GamaPoint userLocation, final AgentsMenu.MenuAction ... actions) {
 		if ( filteredList != null ) {
 			pop.retainAll(filteredList);
 		}
@@ -249,7 +250,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		layerMenu.setImage(image);
 		Menu submenu = new Menu(layerMenu);
 		layerMenu.setMenu(submenu);
-		AgentsMenu.fillPopulationSubMenu(submenu, pop, actions);
+		AgentsMenu.fillPopulationSubMenu(submenu, pop, userLocation, actions);
 
 	}
 

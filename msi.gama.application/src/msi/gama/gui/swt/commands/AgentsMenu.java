@@ -22,8 +22,10 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.*;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
+import msi.gaml.types.*;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -43,14 +45,14 @@ public class AgentsMenu extends ContributionItem {
 		return string;
 	}
 
-	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final String title,
-		final MenuAction ... actions) {
+	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final GamaPoint userLocation,
+		final String title, final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
 		result.setImage(IGamaIcons.MENU_AGENT.image());
 		Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
-		createMenuForAgent(agentMenu, agent, false, actions);
+		createMenuForAgent(agentMenu, agent, userLocation, false, actions);
 		return result;
 	}
 
@@ -85,13 +87,13 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
-		final IPopulation population, final Image image) {
+		final IPopulation population, final GamaPoint userLocation, final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText("Population of " + population.getName());
 		result.setImage(image);
 		Menu agentsMenu = new Menu(result);
 		result.setMenu(agentsMenu);
-		fillPopulationSubMenu(agentsMenu, population);
+		fillPopulationSubMenu(agentsMenu, population, userLocation);
 		return result;
 	}
 
@@ -200,11 +202,17 @@ public class AgentsMenu extends ContributionItem {
 
 					@Override
 					public Object run(final IScope scope) {
-						if ( p != null ) {
-							scope.addVarWithValue(IKeyword.USER_LOCATION, p);
-						}
+						// if ( p != null ) {
+						// scope.addVarWithValue(IKeyword.USER_LOCATION, p);
+						// }
 						Object[] result = new Object[1];
-						scope.execute(c, a, null, result);
+						Arguments args = new Arguments();
+						if ( p != null ) {
+							args.put(IKeyword.USER_LOCATION,
+								GAML.getExpressionFactory().createConst(p, Types.get(IType.POINT)));
+						}
+						scope.execute(c, a, args, result);
+						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 						return result[0];
 					}
 
@@ -234,8 +242,8 @@ public class AgentsMenu extends ContributionItem {
 
 	}
 
-	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
-		final MenuAction ... actions) {
+	public static void createMenuForAgent(final Menu menu, final IAgent agent, final GamaPoint userLocation,
+		final boolean topLevel, final MenuAction ... actions) {
 		separate(menu, "Actions");
 		if ( topLevel ) {
 			browsePopulationMenuItem(menu, agent.getPopulation(), IGamaIcons.MENU_BROWSE.image());
@@ -257,7 +265,7 @@ public class AgentsMenu extends ContributionItem {
 		if ( !commands.isEmpty() ) {
 			separate(menu);
 			for ( final UserCommandStatement c : commands ) {
-				actionAgentMenuItem(menu, agent, c, null, "Apply");
+				actionAgentMenuItem(menu, agent, c, userLocation, "Apply");
 			}
 		}
 
@@ -272,7 +280,7 @@ public class AgentsMenu extends ContributionItem {
 				separate(menu, "Micro-populations");
 				for ( final IPopulation pop : macro.getMicroPopulations() ) {
 					if ( !pop.isEmpty() ) {
-						cascadingPopulationMenuItem(menu, agent, pop, IGamaIcons.MENU_POPULATION.image());
+						cascadingPopulationMenuItem(menu, agent, pop, userLocation, IGamaIcons.MENU_POPULATION.image());
 					}
 				}
 			}
@@ -281,7 +289,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
-		final MenuAction ... actions) {
+		final GamaPoint userLocation, final MenuAction ... actions) {
 
 		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
 		if ( subMenuSize < 2 ) {
@@ -298,7 +306,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 		if ( size < subMenuSize ) {
 			for ( final IAgent agent : agents ) {
-				cascadingAgentMenuItem(menu, agent, agent.getName(), actions);
+				cascadingAgentMenuItem(menu, agent, userLocation, agent.getName(), actions);
 			}
 		} else {
 			final int nb = size / subMenuSize + 1;
@@ -325,7 +333,7 @@ public class AgentsMenu extends ContributionItem {
 						for ( int j = begin; j < end; j++ ) {
 							IAgent ag = agents.get(j);
 							if ( ag != null && !ag.dead() ) {
-								cascadingAgentMenuItem(rangeMenu, ag, ag.getName(), actions);
+								cascadingAgentMenuItem(rangeMenu, ag, userLocation, ag.getName(), actions);
 							}
 						}
 					}
@@ -337,6 +345,6 @@ public class AgentsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getSimulation(), true);
+		createMenuForAgent(parent, GAMA.getSimulation(), null, true);
 	}
 }
