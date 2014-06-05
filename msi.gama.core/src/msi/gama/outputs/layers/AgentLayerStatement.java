@@ -26,10 +26,16 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.AspectStatement;
+import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 
 /**
@@ -38,7 +44,7 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = false)
+@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.CONTAINER, optional = false, doc = @doc("the set of agents to display")),
@@ -113,6 +119,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	HashSet<IAgent> agentsForLayer = new HashSet();
 	protected String constantAspectName = null;
 	protected IExpression aspectExpr;
+	private IExecutable aspect = null;
 
 	// protected IExpression focusExpr;
 
@@ -184,4 +191,25 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	IExpression getAgentsExpr() {
 		return setOfAgents;
 	}
+
+	public IExecutable getAspect() {
+		return aspect;
+	}
+
+	@Override
+	public void setChildren(final List<? extends ISymbol> commands) {
+		final List<IStatement> aspectStatements = new GamaList();
+		for ( final ISymbol c : commands ) {
+			if ( c instanceof IStatement ) {
+				aspectStatements.add((IStatement) c);
+			}
+		}
+		if ( !aspectStatements.isEmpty() ) {
+			constantAspectName = "inline";
+			IDescription d = DescriptionFactory.create(IKeyword.ASPECT, getDescription(), IKeyword.NAME, "inline");
+			aspect = new AspectStatement(d);
+			((AspectStatement) aspect).setChildren(aspectStatements);
+		}
+	}
+
 }
