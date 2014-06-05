@@ -209,7 +209,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public RandomUtils getRandomGenerator() {
-		return random == null ? RandomUtils.getDefault() : random;
+		return random;
 	}
 
 	@Override
@@ -380,7 +380,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		} else {
 			seed = s;
 		}
-		getRandomGenerator().setSeed(seed);
+		getRandomGenerator().setSeed(seed, true);
 	}
 
 	@getter(value = IKeyword.RNG, initializer = true)
@@ -392,7 +392,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void setRng(final String newRng) {
 		rng = newRng;
 		// GuiUtils.debug("ExperimentAgent.setRng" + newRng);
-		getRandomGenerator().setGenerator(newRng);
+		getRandomGenerator().setGenerator(newRng, true);
 	}
 
 	private SimulationPopulation getSimulationPopulation() {

@@ -58,7 +58,7 @@ public class JavaRNG extends Random implements RepeatableRNG {
 	 *            the seed value for this RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public JavaRNG(final SeedGenerator seedGenerator) throws SeedException {
+	public JavaRNG(final SeedGenerator seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 

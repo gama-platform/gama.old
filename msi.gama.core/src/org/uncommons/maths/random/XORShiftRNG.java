@@ -65,7 +65,7 @@ public class XORShiftRNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public XORShiftRNG(final SeedGenerator seedGenerator) throws SeedException {
+	public XORShiftRNG(final SeedGenerator seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 

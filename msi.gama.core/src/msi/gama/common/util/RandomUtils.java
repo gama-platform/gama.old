@@ -15,26 +15,13 @@ import java.security.SecureRandom;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import org.uncommons.maths.binary.BinaryUtils;
 import org.uncommons.maths.random.*;
 
 public class RandomUtils implements SeedGenerator {
 
 	/** The seed. */
 	private Long seed = null;
-
 	private static final SecureRandom SEED_SOURCE = new SecureRandom();
-
-	// private static RandomUtils defaultRandom = null;
-
-	public static RandomUtils getDefault() {
-		// if ( defaultRandom == null ) {
-		Double doubleSeed =
-			GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
-		RandomUtils defaultRandom = new RandomUtils(doubleSeed == null ? null : doubleSeed.longValue());
-		// }
-		return defaultRandom;
-	}
 
 	/** The generator name. */
 	private String generatorName = GamaPreferences.CORE_RNG.getValue();
@@ -43,43 +30,30 @@ public class RandomUtils implements SeedGenerator {
 	private Random generator;
 	private ContinuousUniformGenerator uniform;
 
-	public RandomUtils(final Long seed) {
-		setSeed(seed);
-	}
-
 	public RandomUtils(final Double seed, final String rng) {
-		setSeed(seed);
-		setGenerator(rng);
-	}
+		setSeed(seed, false);
+		setGenerator(rng, true);
 
-	public void initDefaultDistributions() {
-		uniform = createUniform(0., 1.);
 	}
 
 	/**
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
-		// GuiUtils.debug("RandomUtils.initGenerator: " + generatorName);
-		try {
-			if ( generatorName.equals(IKeyword.CELLULAR) ) {
-				generator = createCAGenerator();
-			} else if ( generatorName.equals(IKeyword.XOR) ) {
-				generator = createXORShiftGenerator();
-			} else if ( generatorName.equals(IKeyword.JAVA) ) {
-				generator = createJavaGenerator();
-			} else if ( generatorName.equals(IKeyword.MERSENNE) ) {
-				generator = createMersenneTwisterGenerator();
-			}
-		} catch (final SeedException e) {
-			generator = new Random(seed);
+		if ( generatorName.equals(IKeyword.CELLULAR) ) {
+			generator = new CellularAutomatonRNG(this);
+		} else if ( generatorName.equals(IKeyword.XOR) ) {
+			generator = new XORShiftRNG(this);
+		} else if ( generatorName.equals(IKeyword.JAVA) ) {
+			generator = new JavaRNG(this);
+		} else if ( generatorName.equals(IKeyword.MERSENNE) ) {
+			generator = new MersenneTwisterRNG(this);
 		}
+		uniform = createUniform(0., 1.);
 	}
 
-	// Distributions
-
 	/**
-	 * Creates a new Random object.
+	 * Creates a new Discrete Uniform Generator object.
 	 * 
 	 * @param min the min
 	 * @param max the max
@@ -91,7 +65,7 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	/**
-	 * Creates a new Random object.
+	 * Creates a new Continuous Uniform Generator object.
 	 * 
 	 * @param min the min
 	 * @param max the max
@@ -103,7 +77,7 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	/**
-	 * Creates a new Random object.
+	 * Creates a new Gaussian Generator object.
 	 * 
 	 * @param mean the mean
 	 * @param stdv the stdv
@@ -115,7 +89,7 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	/**
-	 * Creates a new Random object.
+	 * Creates a new Binomial Generator object.
 	 * 
 	 * @param n the n
 	 * @param p the p
@@ -127,7 +101,7 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	/**
-	 * Creates a new Random object.
+	 * Creates a new Poisson Generator object.
 	 * 
 	 * @param mean the mean
 	 * 
@@ -137,104 +111,29 @@ public class RandomUtils implements SeedGenerator {
 		return new PoissonGenerator(mean, generator);
 	}
 
-	// Random numbers generators
-
-	/**
-	 * Creates a new Random object.
-	 * 
-	 * @return the random
-	 * 
-	 * @throws SeedException the seed exception
-	 */
-	public Random createCAGenerator() throws SeedException {
-		return new CellularAutomatonRNG(this);
-	}
-
-	/**
-	 * Creates a new Random object.
-	 * 
-	 * @return the random
-	 * 
-	 * @throws SeedException the seed exception
-	 */
-	public Random createJavaGenerator() throws SeedException {
-		return new JavaRNG(this);
-	}
-
-	/**
-	 * Creates a new Random object.
-	 * 
-	 * @return the random
-	 * 
-	 * @throws SeedException the seed exception
-	 */
-	public Random createMersenneTwisterGenerator() throws SeedException {
-		return new MersenneTwisterRNG(this);
-	}
-
-	public Random createXORShiftGenerator() throws SeedException {
-		return new XORShiftRNG(this);
-	}
-
-	// Random number generator seed
-
-	private static byte[] create8BytesSeed(final long seed) {
+	private static byte[] createSeed(final Long seed, final int length) {
 		long l = seed;
-		final byte[] retVal = new byte[8];
-
-		for ( int i = 0; i < 8; i++ ) {
-			retVal[i] = (byte) l;
-			l >>= 8;
-		}
-
-		return retVal;
-	}
-
-	private static byte[] createSeed(final Long seed, final int length) throws SeedException {
+		final byte[] result = new byte[length];
 		switch (length) {
 			case 4:
-				return create4BytesSeed(seed);
+				for ( int i1 = 0; i1 < 4; i1++ ) {
+					result[i1] = (byte) (l & 0xff);
+					l >>= 8;
+				}
+				break;
 			case 8:
-				return create8BytesSeed(seed);
+				for ( int i = 0; i < 8; i++ ) {
+					result[i] = (byte) l;
+					l >>= 8;
+				}
+				break;
 			case 16:
-				return create16BytesSeed(seed);
-			default:
-				throw new SeedException("cannot generate a seed of length " + length);
+				for ( int i = 0; i < 8; i++ ) {
+					result[i] = result[i + 8] = (byte) (l & 0xff);
+					l >>= 8;
+				}
 		}
-	}
-
-	/**
-	 * Creates a new Random object.
-	 * 
-	 * @param seed the seed
-	 * 
-	 * @return the byte[]
-	 */
-	private static byte[] create16BytesSeed(final long seed) {
-		final byte s[] = new byte[16];
-		long v = seed;
-		for ( int i = 0; i < 8; i++ ) {
-			s[i] = s[i + 8] = (byte) (v & 0xff);
-			v >>= 8;
-		}
-		return s;
-	}
-
-	/**
-	 * Creates a new Random object.
-	 * 
-	 * @param seed the seed
-	 * 
-	 * @return the byte[]
-	 */
-	private static byte[] create4BytesSeed(final long seed) {
-		final byte s[] = new byte[4];
-		long v = seed;
-		for ( int i = 0; i < 4; i++ ) {
-			s[i] = (byte) (v & 0xff);
-			v >>= 8;
-		}
-		return s;
+		return result;
 	}
 
 	public void dispose() {
@@ -247,34 +146,13 @@ public class RandomUtils implements SeedGenerator {
 	public byte[] generateSeed(final int length) {
 		byte[] result;
 		if ( seed == null ) { return SEED_SOURCE.generateSeed(length); }
-		try {
-			result = createSeed(seed, length);
-		} catch (final SeedException e) {
-			result = SEED_SOURCE.generateSeed(length);
-		}
-		return result;
+		return createSeed(seed, length);
 	}
 
-	/**
-	 * Sets the seed.
-	 * 
-	 * @param newSeed the new seed
-	 */
-	public void setSeed(final Long newSeed) {
-		// GuiUtils.debug("New seed for RandomAgent: " + newSeed);
-		// final Long oldSeed = seed;
-		seed = newSeed;
-		// if ( seed == null || !seed.equals(oldSeed) ) {
-		initGenerator();
-		initDefaultDistributions();
-		// }
-	}
-
-	public void setSeed(final Double newSeed) {
-		if ( newSeed == null ) {
-			setSeed((Long) null);
-		} else {
-			setSeed(Math.round(newSeed));
+	public void setSeed(final Double newSeed, final boolean init) {
+		seed = newSeed == null ? null : Math.round(newSeed);
+		if ( init ) {
+			initGenerator();
 		}
 	}
 
@@ -283,48 +161,47 @@ public class RandomUtils implements SeedGenerator {
 	 * 
 	 * @param newGen the new generator
 	 */
-	public void setGenerator(final String newGen) {
-		// GuiUtils.debug("RandomUtils.setGenerator " + newGen);
-		// if ( newGen == null || generatorName.equals(newGen) ) { return; }
+	public void setGenerator(final String newGen, final boolean init) {
 		generatorName = newGen;
-		initGenerator();
-		initDefaultDistributions();
-	}
-
-	public long getSeed() {
-		if ( seed == null ) {
-			Double s =
-				GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
-			if ( s == null ) {
-				seed = BinaryUtils.convertBytesToLong(SEED_SOURCE.generateSeed(8), 0);
-			} else {
-				seed = Math.round(s);
-			}
+		if ( init ) {
+			initGenerator();
 		}
-		return seed;
 	}
 
-	public String getGeneratorName() {
-		return generatorName;
-	}
+	// public long getSeed() {
+	// if ( seed == null ) {
+	// Double s =
+	// GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
+	// if ( s == null ) {
+	// seed = BinaryUtils.convertBytesToLong(SEED_SOURCE.generateSeed(8), 0);
+	// } else {
+	// seed = Math.round(s);
+	// }
+	// }
+	// return seed;
+	// }
 
-	public Random getGenerator() {
-		return generator;
-	}
+	// public String getGeneratorName() {
+	// return generatorName;
+	// }
+	//
+	// public Random getGenerator() {
+	// return generator;
+	// }
 
-	public void shuffle(final Set list) {
-		final Object[] copy = list.toArray(new Object[list.size()]);
-		list.clear();
-		for ( int i = copy.length; i > 1; i-- ) {
-			final int i1 = i - 1;
-			final int j = between(0, i - 1);
-			final Object tmp = copy[i1];
-			copy[i1] = copy[j];
-			copy[j] = tmp;
-		}
-		list.addAll(Arrays.asList(copy));
-
-	}
+	// public void shuffle(final Set list) {
+	// final Object[] copy = list.toArray(new Object[list.size()]);
+	// list.clear();
+	// for ( int i = copy.length; i > 1; i-- ) {
+	// final int i1 = i - 1;
+	// final int j = between(0, i - 1);
+	// final Object tmp = copy[i1];
+	// copy[i1] = copy[j];
+	// copy[j] = tmp;
+	// }
+	// list.addAll(Arrays.asList(copy));
+	//
+	// }
 
 	public void shuffle2(final Set list) {
 		int size = list.size();

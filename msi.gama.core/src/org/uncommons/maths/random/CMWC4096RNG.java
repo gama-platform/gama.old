@@ -69,7 +69,7 @@ public class CMWC4096RNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public CMWC4096RNG(final SeedGenerator seedGenerator) throws SeedException {
+	public CMWC4096RNG(final SeedGenerator seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 

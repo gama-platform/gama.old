@@ -75,7 +75,7 @@ public class AESCounterRNG extends Random implements RepeatableRNG {
 	 * @throws SeedException If there is a problem generating a seed.
 	 * @throws GeneralSecurityException If there is a problem initialising the AES cipher.
 	 */
-	public AESCounterRNG(final SeedGenerator seedGenerator) throws SeedException, GeneralSecurityException {
+	public AESCounterRNG(final SeedGenerator seedGenerator) throws GeneralSecurityException {
 		this(seedGenerator.generateSeed(DEFAULT_SEED_SIZE_BYTES));
 	}
 

@@ -91,7 +91,7 @@ public class MersenneTwisterRNG extends Random implements RepeatableRNG {
 	 *            RNG.
 	 * @throws SeedException If there is a problem generating a seed.
 	 */
-	public MersenneTwisterRNG(final SeedGenerator seedGenerator) throws SeedException {
+	public MersenneTwisterRNG(final SeedGenerator seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
 	}
 
