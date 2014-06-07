@@ -49,7 +49,7 @@ public class Conversation extends GamaList<Message> {
 	private IAgent initiator;
 
 	/** Other Agent in the conversations. */
-	private final GamaList<IAgent> participants = new GamaList();
+	private final GamaList<IAgent> participants = new GamaList<IAgent>();
 
 	/** The protocol node participant map. */
 	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<IAgent, ProtocolNode>();
@@ -91,12 +91,9 @@ public class Conversation extends GamaList<Message> {
 		protocol = FIPAProtocol.named(proto);
 		if ( protocol == null ) { throw new UnknownProtocolException(scope, proto); }
 		initiator = message.getSender();
-		participants.addAll(message.getReceivers()); // @ANVD : verify the number of
-		// participants with the
-		// protocolModel.
+		participants.addAll(message.getReceivers()); 
 
 		if ( participants == null || participants.isEmpty() || participants.contains(null) ) {
-			// + participants);
 			throw new ProtocolErrorException(scope, "The message : " + message.toString() + " has no receivers.");
 		}
 
@@ -105,12 +102,6 @@ public class Conversation extends GamaList<Message> {
 		final List<IAgent> members = new GamaList<IAgent>();
 		members.addAll(message.getReceivers());
 		members.add(initiator);
-
-		// add the (newly created) conversation to agent
-		for ( IAgent m : members ) {
-			List<Conversation> conversations = (List<Conversation>) m.getAttribute("conversations");
-			conversations.add(this);
-		}
 
 		MessageBroker.getInstance().addConversation(this);
 	}
@@ -228,7 +219,7 @@ public class Conversation extends GamaList<Message> {
 	 * @return the messages
 	 */
 	@getter(MESSAGES)
-	public GamaList getMessages() {
+	public GamaList<Message> getMessages() {
 		return messages;
 	}
 
@@ -332,8 +323,13 @@ public class Conversation extends GamaList<Message> {
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
 			this.getParticipants();
+	}
+	
+	@Override
+	public String toString() {
+		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
+				this.getParticipants();
 	}
 }

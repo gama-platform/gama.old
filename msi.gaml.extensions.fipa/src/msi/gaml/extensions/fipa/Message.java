@@ -281,7 +281,7 @@ public class Message implements IValue {
 
 	@Override
 	public String toGaml() {
-		return "message GAML to be implemented";
+		return data.getContent().toString();
 	}
 
 	//

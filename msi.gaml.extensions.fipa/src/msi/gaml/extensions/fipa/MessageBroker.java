@@ -12,6 +12,7 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
+
 import msi.gama.kernel.experiment.AgentScheduler;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
@@ -158,7 +159,6 @@ public class MessageBroker {
 			});
 		}
 		return instance;
-		// TODO Il faudrait pouvoir en gérer plusieurs (par simulation)
 	}
 
 	public void dispose() {
@@ -166,21 +166,13 @@ public class MessageBroker {
 	}
 
 	public IList<Message> getMessagesFor(final IAgent agent) {
-		if ( !conversationsMessages.containsKey(agent) ) {
-			ConversationsMessages cm = new ConversationsMessages();
-			conversationsMessages.put(agent, cm);
-			return cm.messages;
-		}
-
+		if ( !conversationsMessages.containsKey(agent) ) { return GamaList.EMPTY_LIST; }
+		
 		return conversationsMessages.get(agent).messages;
 	}
 
 	public List<Conversation> getConversationsFor(final IAgent agent) {
-		if ( !conversationsMessages.containsKey(agent) ) {
-			ConversationsMessages cm = new ConversationsMessages();
-			conversationsMessages.put(agent, cm);
-			return cm.conversations;
-		}
+		if ( !conversationsMessages.containsKey(agent) ) { return GamaList.EMPTY_LIST; }
 
 		return conversationsMessages.get(agent).conversations;
 	}
@@ -198,9 +190,13 @@ public class MessageBroker {
 	}
 
 	private void addConversation(final IAgent a, final Conversation c) {
-		ConversationsMessages cm = new ConversationsMessages();
+		ConversationsMessages cm = conversationsMessages.get(a);
+		if (cm == null) {
+			cm = new ConversationsMessages();
+			conversationsMessages.put(a, cm);
+		}
+
 		cm.conversations.add(c);
-		conversationsMessages.put(a, cm);
 	}
 
 	/**
@@ -233,6 +229,14 @@ public class MessageBroker {
 			for ( final Conversation endedConv : endedConversations ) {
 				endedConv.dispose();
 			}
+			
+			List<Message> alreadyReadMessages = new GamaList<Message>();
+			for (final Message m : conversationsMessages.get(a).messages) {
+				if (!m.isUnread()) { alreadyReadMessages.add(m); }
+			}
+			conversationsMessages.get(a).messages.removeAll(alreadyReadMessages);
+			
+			
 			conversations.removeAll(endedConversations);
 		}
 	}
@@ -240,6 +244,8 @@ public class MessageBroker {
 	class ConversationsMessages {
 
 		IList<Conversation> conversations;
+		
+		// agent mailbox : all un-read messages of an agent
 		IList<Message> messages;
 
 		ConversationsMessages() {

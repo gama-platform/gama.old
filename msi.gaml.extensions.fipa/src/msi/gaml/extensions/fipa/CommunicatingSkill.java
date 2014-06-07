@@ -119,6 +119,7 @@ public class CommunicatingSkill extends Skill {
 		if ( protocol == null ) {
 			protocol = FIPAConstants.Protocols.NO_PROTOCOL_STR;
 		}
+		
 		MessageBroker.getInstance().scheduleForDelivery(scope, message, protocolIndexes.get(protocol));
 
 		return message;
@@ -165,7 +166,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return a list of currently active conversations.
 	 */
 	@getter("conversations")
-	public List getConversations(final IAgent agent) throws GamaRuntimeException {
+	public List<Conversation> getConversations(final IAgent agent) throws GamaRuntimeException {
 		return MessageBroker.getInstance().getConversationsFor(agent);
 	}
 
@@ -476,7 +477,6 @@ public class CommunicatingSkill extends Skill {
 		result.addAll(received);
 		for ( final Iterator<Message> it = result.iterator(); it.hasNext(); ) {
 			final Message m = it.next();
-			// if ( !m.isUnread() || m.getConversation().isEnded() ) {
 			if ( !m.isUnread() ) {
 				it.remove();
 			}
