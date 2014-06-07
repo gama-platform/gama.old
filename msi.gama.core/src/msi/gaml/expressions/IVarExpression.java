@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IVarExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IVarExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -19,6 +19,8 @@ import msi.gama.runtime.IScope;
  * @author drogoul 4 sept. 07
  */
 public interface IVarExpression extends IExpression {
+
+	public interface Agent extends IVarExpression {}
 
 	public static final int GLOBAL = 0;
 	public static final int AGENT = 1;

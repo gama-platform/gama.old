@@ -16,7 +16,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-public class AgentVariableExpression extends VariableExpression {
+public class AgentVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
 	protected AgentVariableExpression(final String n, final IType type, final boolean notModifiable,
 		final IDescription def) {

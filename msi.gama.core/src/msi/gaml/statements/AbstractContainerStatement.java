@@ -224,8 +224,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		Object object = item != null ? buildValue(scope, container) : null;
 		// And apply the operation (add, put or remove)
 		apply(scope, object, position, container);
-		// If the list is a variable, we change its value
-		if ( isDirect && list instanceof IVarExpression ) {
+		// Added fix for Issue 1048 (dont change the value of temp variables
+		// If the list is an attribute of an agent, we change its value
+		if ( isDirect && list instanceof IVarExpression.Agent ) {
 			((IVarExpression) list).setVal(scope, container, false);
 		}
 		// The defaut return value is the changed container

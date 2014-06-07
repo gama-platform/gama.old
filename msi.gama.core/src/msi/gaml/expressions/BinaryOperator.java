@@ -24,7 +24,8 @@ import msi.gaml.operators.Cast;
  */
 public class BinaryOperator extends NAryOperator {
 
-	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
+	public static IExpression
+		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
 		BinaryOperator u = new BinaryOperator(proto, context, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
@@ -72,7 +73,7 @@ public class BinaryOperator extends NAryOperator {
 		return new BinaryOperator(prototype, null, exprs);
 	}
 
-	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {
+	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression.Agent {
 
 		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression ... args) {
 			super(proto, context, args);

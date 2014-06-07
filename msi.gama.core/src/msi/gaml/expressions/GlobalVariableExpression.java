@@ -18,7 +18,7 @@ import msi.gama.util.GAML;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
-public class GlobalVariableExpression extends VariableExpression {
+public class GlobalVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
 	public static IExpression create(final String n, final IType type, final boolean notModifiable,
 		final IDescription world) {
