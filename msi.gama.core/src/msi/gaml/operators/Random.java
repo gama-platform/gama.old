@@ -11,6 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
@@ -171,5 +174,37 @@ public class Random {
 	public static Boolean opFlip(final IScope scope, final Double probability) {
 		return probability > RANDOM(scope).between(0., 1.);
 	}
+	
+	@operator(value="rnd_choice")
+	public static Integer opRndChoice(final IScope scope, final IList distribution){
+		final IList<Double> normalizedDistribution = new GamaList<Double>();
+		Double sumElt = 0.0;
+		
+		for(Object eltDistrib : distribution) {
+			Double elt = Cast.asFloat(scope, eltDistrib);
+			if(elt < 0.0) { throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."), scope); }
+			normalizedDistribution.add(elt);
+			sumElt = sumElt + elt;
+		}
+		if(sumElt == 0.0) {
+			throw GamaRuntimeException.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
+		}
+		
+		for(int i = 0 ; i < normalizedDistribution.size() ; i++) {
+			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
+		}
+		
+		double randomValue = RANDOM(scope).between(0., 1.);
+		
+		for(int i = 0 ; i < distribution.size() ; i++) {
+			randomValue = randomValue - normalizedDistribution.get(i);
+			if(randomValue <= 0) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+	
 
 }
