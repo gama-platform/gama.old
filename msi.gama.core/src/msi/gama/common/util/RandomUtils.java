@@ -168,19 +168,6 @@ public class RandomUtils implements SeedGenerator {
 		}
 	}
 
-	// public long getSeed() {
-	// if ( seed == null ) {
-	// Double s =
-	// GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
-	// if ( s == null ) {
-	// seed = BinaryUtils.convertBytesToLong(SEED_SOURCE.generateSeed(8), 0);
-	// } else {
-	// seed = Math.round(s);
-	// }
-	// }
-	// return seed;
-	// }
-
 	// public String getGeneratorName() {
 	// return generatorName;
 	// }
@@ -297,6 +284,13 @@ public class RandomUtils implements SeedGenerator {
 			array[j] = tmp;
 		}
 		return array;
+	}
+
+	/**
+	 * @return
+	 */
+	public Long getSeed() {
+		return seed;
 	}
 
 }
