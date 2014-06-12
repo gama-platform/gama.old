@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AspectStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AspectStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -18,16 +18,15 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
@@ -35,17 +34,20 @@ import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species)")) }, omissible = IKeyword.NAME)
-@doc(value="Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.", usages = {
-	@usage(value="An example of use of the aspect statement:", examples= {
-		@example(value="species one_species {", isExecutable=false),
-		@example(value="	int a <- rnd(10);", isExecutable=false),
-		@example(value="	aspect aspect1 {", isExecutable=false),
-		@example(value="		if(a mod 2 = 0) { draw circle(a);}", isExecutable=false),
-		@example(value="		else {draw square(a);}", isExecutable=false),
-		@example(value="		draw text: \"a= \" + a color: #black size: 5;", isExecutable=false),
-		@example(value="	}", isExecutable=false),
-		@example(value="}", isExecutable=false)})})
+@facets(value = { @facet(name = IKeyword.NAME,
+	type = IType.ID,
+	optional = true,
+	doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species)")) },
+	omissible = IKeyword.NAME)
+@doc(value = "Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.",
+	usages = { @usage(value = "An example of use of the aspect statement:", examples = {
+		@example(value = "species one_species {", isExecutable = false),
+		@example(value = "	int a <- rnd(10);", isExecutable = false),
+		@example(value = "	aspect aspect1 {", isExecutable = false),
+		@example(value = "		if(a mod 2 = 0) { draw circle(a);}", isExecutable = false),
+		@example(value = "		else {draw square(a);}", isExecutable = false),
+		@example(value = "		draw text: \"a= \" + a color: #black size: 5;", isExecutable = false),
+		@example(value = "	}", isExecutable = false), @example(value = "}", isExecutable = false) }) })
 public class AspectStatement extends AbstractStatementSequence {
 
 	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
@@ -53,12 +55,12 @@ public class AspectStatement extends AbstractStatementSequence {
 		@Override
 		public Rectangle2D executeOn(final IScope scope) throws GamaRuntimeException {
 			IAgent agent = scope.getAgentScope();
-			if ( agent != null ) {
+			if ( agent != null && !agent.dead() ) {
 				final IGraphics g = scope.getGraphics();
 				if ( g == null ) { return null; }
 				try {
 					agent.acquireLock();
-					if ( agent.dead() ) { return null; }
+					// if ( agent.dead() ) { return null; }
 					if ( agent == GuiUtils.getHighlightedAgent() ) {
 						g.beginHighlight();
 					}
@@ -85,9 +87,12 @@ public class AspectStatement extends AbstractStatementSequence {
 							ag = GamaGeometryType.createPoint(point);
 						}
 					}
-					final IShape ag2 = (IShape) ag.copy(scope);
+					final IShape ag2 = ag.copy(scope);
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, false);
 					return r;
+				} catch (GamaRuntimeException e) {
+					// cf. Issue 1052: exceptions are not thrown, just displayed
+					e.printStackTrace();
 				} finally {
 					g.endHighlight();
 					agent.releaseLock();
@@ -110,16 +115,16 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	@Override
 	// public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-	public Rectangle2D executeOn(final IScope scope) {
+		public
+		Rectangle2D executeOn(final IScope scope) {
 		IAgent agent = scope.getAgentScope();
-		if ( agent != null ) {
+		if ( agent != null && !agent.dead() ) {
 			IGraphics g = scope.getGraphics();
-			//hqnghi: try to find scope from experiment
-			if (g == null) {
-				g = GAMA.getExperiment().getAgent().getSimulation().getScope()
-						.getGraphics();
+			// hqnghi: try to find scope from experiment
+			if ( g == null ) {
+				g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics();
 			}
-			//end-hqnghi
+			// end-hqnghi
 			if ( g == null ) { return null; }
 			try {
 				agent.acquireLock();
@@ -132,6 +137,9 @@ public class AspectStatement extends AbstractStatementSequence {
 				// if ( scope.execute(this, agent, null, result) && result[0] instanceof Rectangle2D ) { return
 				// (Rectangle2D) result[0]; }
 				// return null;
+			} catch (GamaRuntimeException e) {
+				// cf. Issue 1052: exceptions are not thrown, just displayed
+				e.printStackTrace();
 			} finally {
 				g.endHighlight();
 				agent.releaseLock();
