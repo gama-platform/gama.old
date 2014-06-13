@@ -710,6 +710,16 @@ public class SpeciesDescription extends TypeDescription {
 					IGamlIssue.WRONG_TYPE, MIRRORS);
 			}
 		}
+
+		// We try to issue information about the state of the species: at first, abstract.
+
+		for ( final StatementDescription a : getActions() ) {
+			if ( a.isAbstract() ) {
+				this.info("Action '" + a.getName() + "' is defined or inherited as virtual. In consequence, " +
+					getName() + " is considered as abstract and cannot be instantiated.", IGamlIssue.MISSING_ACTION);
+			}
+		}
+
 		super.validateChildren();
 	}
 
