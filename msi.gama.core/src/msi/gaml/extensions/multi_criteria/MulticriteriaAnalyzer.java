@@ -134,7 +134,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		}
 		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return scope.getRandom().between(0, candidates.size() - 1); }
-		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>((Iterable) candsFilter).firstValue(scope)
+		if ( candsFilter.size() == 1 ) { return ((Candidate) GamaList.from((Iterable) candsFilter).firstValue(scope))
 			.getIndex(); }
 		final Candidate decision = promethee.decision(candsFilter);
 		return decision.getIndex();

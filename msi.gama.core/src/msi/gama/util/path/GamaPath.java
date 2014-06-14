@@ -12,7 +12,6 @@
 package msi.gama.util.path;
 
 import gnu.trove.map.hash.THashMap;
-import java.util.List;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -40,17 +39,18 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	// FIXME virer le constructeur par d�faut... used for the inheritance...
 	public GamaPath() {}
 
-	public GamaPath(final G g, final V start, final V target, final IList<E> _edges) {
+	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges) {
 		init(g, start, target, _edges, true);
 		this.graph = g;
 	}
 
-	public GamaPath(final G g, final V start, final V target, final IList<E> _edges, final boolean modify_edges) {
+	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges,
+		final boolean modify_edges) {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
 
-	public GamaPath(final IList<V> nodes) {
+	public GamaPath(final IList<? extends V> nodes) {
 		final IList<E> _edges = new GamaList<E>();
 		for ( int i = 0; i < nodes.size() - 1; i++ ) {
 			E edge = createEdge(nodes.get(i), nodes.get(i + 1));
@@ -67,7 +67,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		return null;
 	}
 
-	public void init(final G g, final V start, final V target, final IList<E> _edges, final boolean modify_edges) {
+	public void init(final G g, final V start, final V target, final IList<? extends E> _edges,
+		final boolean modify_edges) {
 		this.source = start;
 		this.target = target;
 		this.edges = new GamaList<E>();
@@ -80,7 +81,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		}
 	}
 
-	public GamaPath(final G g, final List<V> nodes) {
+	public GamaPath(final G g, final IList<? extends V> nodes) {
 		if ( !(g instanceof GamaSpatialGraph) && nodes.isEmpty() ) {
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
 		} else if ( nodes.isEmpty() ) {
@@ -190,43 +191,50 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	// FIXME
-	public void acceptVisitor(final IAgent agent) {
+		public
+		void acceptVisitor(final IAgent agent) {
 		agent.setAttribute("current_path", this); // ???
 	}
 
 	@Override
 	// FIXME
-	public void forgetVisitor(final IAgent agent) {
+		public
+		void forgetVisitor(final IAgent agent) {
 		agent.setAttribute("current_path", null); // ???
 	}
 
 	@Override
 	// FIXME
-	public int indexOf(final IAgent a) {
+		public
+		int indexOf(final IAgent a) {
 		return Cast.asInt(null, a.getAttribute("index_on_path")); // ???
 	}
 
 	@Override
 	// FIXME
-	public int indexSegmentOf(final IAgent a) {
+		public
+		int indexSegmentOf(final IAgent a) {
 		return Cast.asInt(null, a.getAttribute("index_on_path_segment")); // ???
 	}
 
 	@Override
 	// FIXME
-	public boolean isVisitor(final IAgent a) {
+		public
+		boolean isVisitor(final IAgent a) {
 		return a.getAttribute("current_path") == this;
 	}
 
 	@Override
 	// FIXME
-	public void setIndexOf(final IAgent a, final int index) {
+		public
+		void setIndexOf(final IAgent a, final int index) {
 		a.setAttribute("index_on_path", index);
 	}
 
 	@Override
 	// FIXME
-	public void setIndexSegementOf(final IAgent a, final int indexSegement) {
+		public
+		void setIndexSegementOf(final IAgent a, final int indexSegement) {
 		a.setAttribute("index_on_path_segment", indexSegement);
 	}
 

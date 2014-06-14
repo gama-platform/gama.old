@@ -181,7 +181,7 @@ public class GamlSpecies extends AbstractSpecies {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents() {
+	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
 		return this;
 	}
 

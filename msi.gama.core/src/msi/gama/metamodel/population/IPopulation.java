@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IPopulation.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,6 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
-import com.google.common.base.Predicate;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
@@ -23,6 +22,7 @@ import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.variables.IVariable;
+import com.google.common.base.Predicate;
 
 /**
  * A population is a collection of agents of a species.
@@ -49,7 +49,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	}
 
 	public static class IsLiving implements Predicate<IAgent> {
-	
+
 		/**
 		 * Method apply()
 		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
@@ -58,7 +58,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 		public boolean apply(final IAgent input) {
 			return input != null && !input.dead();
 		}
-	
+
 	}
 
 	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
@@ -79,7 +79,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<Map> initialValues,
+	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
 		boolean isRestored) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)

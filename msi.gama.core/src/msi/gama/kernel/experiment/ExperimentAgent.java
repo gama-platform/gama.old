@@ -108,7 +108,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected String ownModelPath;
 
 	private Boolean scheduled = false;
-	
+
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
@@ -155,6 +155,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if ( !getSpecies().isBatch() ) {
 				GuiUtils.cleanAfterSimulation();
 			}
+			// simulation = null;
 		}
 	}
 
@@ -200,10 +201,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	protected Object stepSubPopulations(final IScope scope) {
-		// The experiment DOES NOT step its subpopulations
-		if (!scheduled) {
-			return super.stepSubPopulations(scope);
-		}
+		// The experiment DOES NOT step its subpopulations unless it has not been already scheduled (i.e. it is an experiment called on a micromodel)
+		if ( !scheduled ) { return super.stepSubPopulations(scope); }
 		return this;
 	}
 
@@ -423,12 +422,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public IPopulation getPopulationFor(ISpecies species) {
+	public IPopulation getPopulationFor(final ISpecies species) {
 		// TODO Auto-generated method stub
-		return ((SimulationAgent)((ExperimentAgent)this).getSimulation()).getPopulationFor(species.getName());
+		return ((SimulationAgent) this.getSimulation()).getPopulationFor(species.getName());
 
 	}
-	
+
 	@Override
 	public boolean step(final IScope scope) {
 		clock.beginCycle();
@@ -515,9 +514,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null && getSimulation().getSpecies().hasVar(name) ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
-				//TODO extraParameter does not contains model's variables???
-//			} else if ( getSpecies().hasParameter(name) ) {
-//				getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
+				// TODO extraParameter does not contains model's variables???
+				// } else if ( getSpecies().hasParameter(name) ) {
+				// getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}

@@ -339,14 +339,14 @@ public abstract class AbstractTopology implements ITopology {
 		if ( p == null ) { return null; }
 		double z = p.getZ();
 		if ( z < 0 ) { return null; }
-		if(((GamaShape) environment.getGeometry()).getDepth() !=null){
+		if ( ((GamaShape) environment.getGeometry()).getDepth() != null ) {
 			if ( z > ((GamaShape) environment.getGeometry()).getDepth() ) { return null; }
-			return point;	
+			return point;
+		} else {
+			throw GamaRuntimeException
+				.error("The environement must be a 3D environment (e.g shape <- cube(100).", null);
 		}
-		else{
-			throw GamaRuntimeException.error("The environement must be a 3D environment (e.g shape <- cube(100).", null);
-		}
-		
+
 	}
 
 	@Override
@@ -407,7 +407,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if ( filter != null ) {
-			shps = filter.getAgents();
+			shps = filter.getAgents(scope);
 		} else {
 			shps = scope.getSimulationScope().getAgents(scope);
 		}

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaSpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaSpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,6 +17,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -29,7 +30,7 @@ import msi.gaml.species.ISpecies;
 import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener {
+public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener, IAgentFilter {
 
 	/*
 	 * Own topology of the graph. Lazily instantiated, and invalidated at each modification of the
@@ -295,6 +296,49 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		agentEdge = true;
 		buildByEdgeWithNode(scope, edges, vertices);
 		version = 1;
+	}
+
+	/**
+	 * Method getSpecies()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
+	 */
+	@Override
+	public ISpecies getSpecies() {
+		return null; // See if we can identify the species of edges / vertices
+	}
+
+	/**
+	 * Method getAgents()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
+	 */
+	@Override
+	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+		return getEdges();
+	}
+
+	/**
+	 * Method accept()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 */
+	@Override
+	public boolean accept(final IScope scope, final IShape source, final IShape a) {
+		return a.getGeometry() != source.getGeometry() && containsEdge(a);
+	}
+
+	/**
+	 * Method filter()
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 */
+	@Override
+	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+		System.out.println("results size : " + results.size() + " graph size : " + edgeSet().size());
+		Iterator<? extends IShape> it = results.iterator();
+		while (it.hasNext()) {
+			if ( !edgeMap.containsKey(it.next()) ) {
+				it.remove();
+			}
+		}
+		// results.retainAll(edgeSet());
 	}
 
 }

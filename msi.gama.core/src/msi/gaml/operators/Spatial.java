@@ -186,7 +186,7 @@ public abstract class Spatial {
 		@doc(value = "An sphere geometry which radius is equal to the operand made of n pie.",
 			special_cases = { "returns a point if the operand is lower or equal to 0." },
 			comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value="spherical_pie(10/2,[0.1,0.9],[#red,#green])",
+			examples = { @example(value = "spherical_pie(10/2,[0.1,0.9],[#red,#green])",
 				equals = "a circle geometry of radius 10, displayed as a sphere with 2 slices.",
 				test = false) }, see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 				"rectangle", "square", "triangle", "hemisphere", "pie3D" })
@@ -553,10 +553,10 @@ public abstract class Spatial {
 				equals = "a polygon geometry composed of the 4 points.",
 				test = false) }, see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline",
 				"rectangle", "square", "triangle" })
-		public static IShape polygon(final IScope scope, final IContainer<?, IShape> points) {
+		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
-			final IList<IShape> shapes = new GamaList(scope, points);
+			final IList<IShape> shapes = GamaList.from(scope, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -581,7 +581,7 @@ public abstract class Spatial {
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
-			final IList<IShape> shapes = new GamaList(scope, points);
+			final IList<IShape> shapes = GamaList.from(scope, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -1334,19 +1334,18 @@ public abstract class Spatial {
 			IList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
-		
+
 		@operator(value = "voronoi", content_type = IType.GEOMETRY, category = { IOperatorCategory.SPATIAL,
-				IOperatorCategory.SP_TRANSFORMATIONS })
-			@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
-				masterDoc = true,
-				examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
-					equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
-					test = false) })
-			public static
-				IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts) {
-				if ( pts == null ) { return null; }
-				return GeometryUtils.voronoi(scope, pts);
-			}
+			IOperatorCategory.SP_TRANSFORMATIONS })
+		@doc(value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
+			masterDoc = true,
+			examples = { @example(value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
+				equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
+				test = false) })
+		public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts) {
+			if ( pts == null ) { return null; }
+			return GeometryUtils.voronoi(scope, pts);
+		}
 
 		@operator(value = "to_squares", type = IType.LIST, content_type = IType.GEOMETRY, category = {
 			IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS })
@@ -1935,7 +1934,7 @@ public abstract class Spatial {
 			final GamaList<ILocation> locations = new GamaList();
 			final ILocation loc = scope.getAgentScope().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
-			
+
 			for ( int i = 0; i < nbLoc; i++ ) {
 				final GamaPoint p =
 					new GamaPoint(loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
@@ -2314,7 +2313,7 @@ public abstract class Spatial {
 				IList groupeF = new GamaList();
 				groupeF.add(g2);
 				groupeF.add(g1);
-				
+
 				for ( final IList groupe : groups ) {
 					final Set<IList> newDistGp = new THashSet<IList>();
 					newDistGp.add(groupe);

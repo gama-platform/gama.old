@@ -165,7 +165,11 @@ public class BatchAgent extends ExperimentAgent {
 				simulation.getScheduler().init(scope);
 
 				// This inner while loop runs the simulation and controls its execution
-				while (simulation != null && simulation.step(scope)) {
+				while (simulation != null) {
+					boolean stepOk = simulation.step(scope);
+					if ( !stepOk ) {
+						break;
+					}
 					boolean mustStop = Cast.asBool(scope, scope.evaluate(stopCondition, simulation));
 					if ( mustStop ) {
 						break;

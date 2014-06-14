@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PathFactory.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'PathFactory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,7 +22,7 @@ import msi.gama.util.graph.IGraph;
 
 public class PathFactory {
 
-	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g, final IList<V> nodes) {
+	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g, final IList<? extends V> nodes) {
 		if ( nodes.isEmpty() && g instanceof GamaSpatialGraph ) {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IList<IShape>) nodes);
 		} else if ( nodes.get(0) instanceof ILocation || g instanceof GamaSpatialGraph ) {
@@ -53,7 +53,7 @@ public class PathFactory {
 	}
 
 	// With Topology
-	public static GamaSpatialPath newInstance(final ITopology g, final IList<IShape> nodes) {
+	public static GamaSpatialPath newInstance(final ITopology g, final IList<? extends IShape> nodes) {
 		if ( g instanceof GraphTopology ) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
 		} else if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
@@ -80,11 +80,13 @@ public class PathFactory {
 		final IList<IShape> edges, final boolean modify_edges) {
 		if ( g instanceof GraphTopology ) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges, modify_edges);
-		} else {//if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
+		} else {// if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
 			return new GamaSpatialPath(null, start, target, edges, modify_edges);
-		}/* else {
-			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");
-		}*/
+		}/*
+		 * else {
+		 * throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");
+		 * }
+		 */
 	}
 
 	public static IPath newInstance(final IList<IShape> edgesNodes, final boolean isEdges) {

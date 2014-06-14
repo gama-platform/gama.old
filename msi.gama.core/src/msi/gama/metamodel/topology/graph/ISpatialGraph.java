@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ISpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ISpatialGraph.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.graph;
 
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
@@ -24,7 +25,7 @@ import msi.gama.util.graph.IGraph;
  * @since 3 f�vr. 2012
  * 
  */
-public interface ISpatialGraph extends IGraph<IShape, IShape> {
+public interface ISpatialGraph extends IGraph<IShape, IShape>, IAgentFilter {
 
 	public abstract ITopology getTopology(IScope scope);
 

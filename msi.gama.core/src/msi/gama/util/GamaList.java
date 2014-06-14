@@ -20,7 +20,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
@@ -153,23 +152,24 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		public boolean addAll(final int index, final Collection c) {
 			return false;
 		}
-
 	}
 
 	public GamaList() {
 		super();
 	}
 
-	public GamaList(final IScope scope, final IContainer<?, E> container) {
-		this(container.iterable(scope));
-	}
 
-	public GamaList(final java.lang.Iterable i) {
-		super(i instanceof Collection ? (Collection) i : ImmutableList.copyOf(i));
-	}
+
+//	public GamaList(final java.lang.Iterable i) {
+//
+//	}
 
 	public GamaList(final Iterator<E> i) {
-		super(ImmutableList.copyOf(i));
+		super();
+		while (i.hasNext()) {
+			add(i.next());
+		}
+		// super(ImmutableList.copyOf(i));
 	}
 
 	public GamaList(final Collection arg0) {
@@ -372,8 +372,18 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return list;
 	}
 
-	public static <T> GamaList with(final T ... a) {
+	public static <T> GamaList<T> with(final T ... a) {
 		return new GamaList<T>(a);
+	}
+	
+	public static <E> GamaList from(final IScope scope, final IContainer<?, E> container) {
+		return from(container.iterable(scope));
+	}
+
+	public static <T> GamaList<T> from(final Iterable<T> i) {
+		if ( i == null ) { return new GamaList(); }
+		if ( i instanceof Collection ) { return new GamaList((Collection) i); }
+		return new GamaList(i.iterator());
 	}
 
 	@Override

@@ -33,8 +33,7 @@ import com.google.common.collect.Iterables;
  * @since 8 déc. 2013
  * 
  */
-public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>,
-	IAgentFilter, IPopulationSet {
+public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>, IAgentFilter, IPopulationSet {
 
 	protected final List<IPopulationSet> populationSets;
 	// We cache the value in case.
@@ -49,14 +48,17 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents() {
-		return new GamaList(Iterables.concat(populationSets));
+	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+		List<java.lang.Iterable<? extends IAgent>> result = new ArrayList();
+		for ( IPopulationSet p : populationSets ) {
+			result.add(p.iterable(scope));
+		}
+		return GamaList.from(Iterables.concat(result));
 	}
 
 	/**
 	 * Method accept()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
@@ -67,8 +69,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 
 	/**
 	 * Method filter()
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
@@ -229,8 +230,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 
 	/**
 	 * Method add()
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, java.lang.Object,
-	 *      boolean, boolean)
+	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, java.lang.Object, boolean, boolean)
 	 */
 	// @Override
 	// public void add(final IScope scope, final Integer index, final Object value, final Object parameter,
@@ -254,7 +254,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	@Override
 	public IList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
 		// WARNING: Double copy of the list
-		return new GamaList(iterable(scope)).listValue(scope, contentsType);
+		return GamaList.from(iterable(scope)).listValue(scope, contentsType);
 	}
 
 	/**
@@ -333,5 +333,18 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return getMapOfPopulations(scope).values();
 	}
+
+	/**
+	 * Method iterator()
+	 * @see java.lang.Iterable#iterator()
+	 */
+	// @Override
+	// public Iterator<IAgent> iterator() {
+	// List<Iterator<? extends IAgent>> iterators = new ArrayList();
+	// for ( IPopulationSet p : populationSets ) {
+	// iterators.add(p.iterator());
+	// }
+	// return Iterators.concat(iterators.iterator());
+	// }
 
 }

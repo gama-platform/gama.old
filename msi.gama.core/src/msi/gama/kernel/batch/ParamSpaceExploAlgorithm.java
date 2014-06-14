@@ -92,10 +92,10 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		}
 	}
 
-	@Override
-	public void start() {
-		new Thread(this, getName() + " thread").start();
-	}
+	// @Override
+	// public void start() {
+	// new Thread(this, getName() + " thread").start();
+	// }
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {}

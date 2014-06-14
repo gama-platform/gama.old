@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Different.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Different.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -34,7 +34,7 @@ public class Different implements IAgentFilter {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents() {
+	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
 		return GamaList.EMPTY_LIST;
 	}
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GraphTopology.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GraphTopology.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -66,7 +66,7 @@ public class GraphTopology extends AbstractTopology {
 
 		IShape edgeS = null, edgeT = null;
 
-		if (graph.isAgentEdge()) {
+		if ( graph.isAgentEdge() ) {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
 			if ( !sourceNode ) {
 				edgeS = getAgentClosestTo(scope, source, filter);
@@ -80,26 +80,25 @@ public class GraphTopology extends AbstractTopology {
 		} else {
 			double distSMin = Double.MAX_VALUE;
 			double distTMin = Double.MAX_VALUE;
-			for (Object e : graph.getEdges()) {
+			for ( Object e : graph.edgeSet() ) {
 				IShape edge = (IShape) e;
-				if (!sourceNode && distSMin > 0) {
+				if ( !sourceNode && distSMin > 0 ) {
 					double distS = edge.euclidianDistanceTo(source);
-					if (distS < distSMin) {
+					if ( distS < distSMin ) {
 						distSMin = distS;
 						edgeS = edge;
 					}
 				}
-				if (!targetNode && distTMin > 0) {
+				if ( !targetNode && distTMin > 0 ) {
 					double distT = edge.euclidianDistanceTo(target);
-					if (distT < distTMin) {
+					if ( distT < distTMin ) {
 						distTMin = distT;
 						edgeT = edge;
 					}
 				}
 			}
-			if ( (!sourceNode && edgeS == null) || (!targetNode && edgeT == null)) { return null; }
+			if ( !sourceNode && edgeS == null || !targetNode && edgeT == null ) { return null; }
 		}
-		
 
 		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(scope, edgeS, edgeT, source, target,
 			sourceNode, targetNode); }
@@ -107,8 +106,9 @@ public class GraphTopology extends AbstractTopology {
 		return pathBetweenCommon(scope, graph, edgeS, edgeT, source, target, sourceNode, targetNode);
 	}
 
-	public GamaSpatialPath pathBetweenCommon(final IScope scope, final GamaSpatialGraph graph, final IShape edgeS,
-		final IShape edgeT, final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
+	public GamaSpatialPath
+		pathBetweenCommon(final IScope scope, final GamaSpatialGraph graph, final IShape edgeS, final IShape edgeT,
+			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges = new GamaList<IShape>();
 		if ( sourceNode && !targetNode ) {
 			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
@@ -152,7 +152,7 @@ public class GraphTopology extends AbstractTopology {
 		} else if ( !sourceNode && targetNode ) {
 			IShape nodeS1 = (IShape) graph.getEdgeSource(edgeS);
 			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
-				double l1 = 0;
+			double l1 = 0;
 			boolean computeOther = true;
 			if ( nodeS1 == target ) {
 				l1 = lengthEdge(edgeS, source, nodeS2, nodeS1);
@@ -193,7 +193,7 @@ public class GraphTopology extends AbstractTopology {
 			IShape nodeS2 = (IShape) graph.getEdgeTarget(edgeS);
 			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
 			IShape nodeT2 = (IShape) graph.getEdgeTarget(edgeT);
-			
+
 			double lmin = Double.MAX_VALUE;
 
 			boolean computeS1T2 = true;
@@ -405,7 +405,7 @@ public class GraphTopology extends AbstractTopology {
 
 	public double lengthEdge(final IShape edge, final IShape location, final IShape source, final IShape target) {
 		double dist = source.getLocation().euclidianDistanceTo(target.getLocation());
-		return  dist == 0 ? 0: edge.getPerimeter() * location.euclidianDistanceTo(target.getLocation()) / dist;
+		return dist == 0 ? 0 : edge.getPerimeter() * location.euclidianDistanceTo(target.getLocation()) / dist;
 	}
 
 	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
@@ -508,8 +508,7 @@ public class GraphTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry,
-	 *      java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
@@ -527,8 +526,7 @@ public class GraphTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
@@ -546,8 +544,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
-	 *      boolean)
+	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter, boolean)
 	 */
 	@Override
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,

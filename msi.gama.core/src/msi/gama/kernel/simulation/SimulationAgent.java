@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SimulationAgent.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SimulationAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,15 +14,12 @@ package msi.gama.kernel.simulation;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.AgentScheduler;
-import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.outputs.IOutput;
-import msi.gama.outputs.IOutputManager;
-import msi.gama.outputs.SimulationOutputManager;
+import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -50,13 +47,28 @@ import msi.gaml.types.IType;
  */
 @species(name = IKeyword.MODEL)
 @vars({
-	@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
-	@var(name = SimulationAgent.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
+	@var(name = IKeyword.STEP,
+		type = IType.FLOAT,
+		doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles",
+			comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
+	@var(name = SimulationAgent.TIME,
+		type = IType.FLOAT,
+		doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation",
+			comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
-	@var(name = SimulationAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
-	@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
-	@var(name = SimulationAgent.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
-	@var(name = SimulationAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")), })
+	@var(name = SimulationAgent.DURATION,
+		type = IType.STRING,
+		doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
+	@var(name = SimulationAgent.TOTAL_DURATION,
+		type = IType.STRING,
+		doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
+	@var(name = SimulationAgent.AVERAGE_DURATION,
+		type = IType.STRING,
+		doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
+	@var(name = SimulationAgent.MACHINE_TIME,
+		type = IType.FLOAT,
+		doc = @doc(value = "Returns the current system time in milliseconds",
+			comment = "The return value is a float number")), })
 public class SimulationAgent extends GamlAgent {
 
 	public static final String DURATION = "duration";
@@ -77,7 +89,7 @@ public class SimulationAgent extends GamlAgent {
 		return scheduled;
 	}
 
-	public void setScheduled(Boolean scheduled) {
+	public void setScheduled(final Boolean scheduled) {
 		this.scheduled = scheduled;
 	}
 
@@ -95,31 +107,28 @@ public class SimulationAgent extends GamlAgent {
 		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
 		// everything in the errors/console view that is being written by the init of the simulation
 		GuiUtils.prepareForSimulation(this);
-//		GAMA.controller.getScheduler().schedule(scheduler, scope);
-//		if ( outputs != null ) {
-//			final IScope simulationScope = obtainNewScope();
-//			if ( simulationScope != null ) {
-//				GAMA.controller.getScheduler().schedule(outputs, simulationScope);
-//			} else {
-//				// TODO What does it do here ? Should be elsewhere (but where ?)
-//				GuiUtils.cleanAfterSimulation();
-//				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-//				// GuiUtils.hideMonitorView();
-//			}
-//		}
-		
-		//hqnghi: 2 case: multi controllers and mono controller
-		if(!((ExperimentPlan)getExperiment().getSpecies()).getControllerName().equals("")){
-			GAMA.getController(((ExperimentPlan)getExperiment().getSpecies()).getControllerName())
-			.getScheduler()
-			.schedule(scheduler,
-			scope);
+		// GAMA.controller.getScheduler().schedule(scheduler, scope);
+		// if ( outputs != null ) {
+		// final IScope simulationScope = obtainNewScope();
+		// if ( simulationScope != null ) {
+		// GAMA.controller.getScheduler().schedule(outputs, simulationScope);
+		// } else {
+		// // TODO What does it do here ? Should be elsewhere (but where ?)
+		// GuiUtils.cleanAfterSimulation();
+		// // GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+		// // GuiUtils.hideMonitorView();
+		// }
+		// }
+
+		// hqnghi: 2 case: multi controllers and mono controller
+		if ( !((ExperimentPlan) getExperiment().getSpecies()).getControllerName().equals("") ) {
+			GAMA.getController(((ExperimentPlan) getExperiment().getSpecies()).getControllerName()).getScheduler()
+				.schedule(scheduler, scope);
 			if ( outputs != null ) {
 				final IScope simulationScope = obtainNewScope();
 				if ( simulationScope != null ) {
-					GAMA.getController(((ExperimentPlan)getExperiment().getSpecies()).getControllerName()).getScheduler()
-							.schedule(
-							outputs, simulationScope);
+					GAMA.getController(((ExperimentPlan) getExperiment().getSpecies()).getControllerName())
+						.getScheduler().schedule(outputs, simulationScope);
 				} else {
 					// TODO What does it do here ? Should be elsewhere (but where ?)
 					GuiUtils.cleanAfterSimulation();
@@ -127,7 +136,7 @@ public class SimulationAgent extends GamlAgent {
 					// GuiUtils.hideMonitorView();
 				}
 			}
-		}else{			
+		} else {
 			GAMA.controller.getScheduler().schedule(scheduler, scope);
 			if ( outputs != null ) {
 				final IScope simulationScope = obtainNewScope();
@@ -141,22 +150,26 @@ public class SimulationAgent extends GamlAgent {
 				}
 			}
 		}
-		//end-hqnghi
+		// end-hqnghi
 	}
 
 	@Override
 	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
 	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
-	public Object _step_(final IScope scope) {
+		public
+		Object _step_(final IScope scope) {
+
+		// System.out.println("Stepping simulation at cycle " + clock.getCycle());
+
 		clock.beginCycle();
 		// A simulation always runs in its own scope
 		try {
 			super._step_(this.scope);
-			//if simulation is not scheduled, their outputs must do step manually
-			if(!scheduled) {
+			// if simulation is not scheduled, their outputs must do step manually
+			if ( !scheduled ) {
 				outputs.step(this.scope);
 			}
-			//end-hqnghi
+			// end-hqnghi
 		} finally {
 			clock.step(this.scope);
 		}
@@ -202,15 +215,15 @@ public class SimulationAgent extends GamlAgent {
 			scheduler.dispose();
 			scheduler = null;
 		}
-		//hqnghi if simulation come from popultion extern, dispose pop first and then their outputs 
-		for(IPopulation pop:this.getExternMicroPopulations().values()){
+		// hqnghi if simulation come from popultion extern, dispose pop first and then their outputs
+		for ( IPopulation pop : this.getExternMicroPopulations().values() ) {
 			pop.dispose();
 		}
-		if ( !scheduled &&  outputs != null ) {
+		if ( !scheduled && outputs != null ) {
 			outputs.dispose();
 			outputs = null;
 		}
-		//end-hqnghi
+		// end-hqnghi
 		projectionFactory = new ProjectionFactory();
 
 	}
@@ -320,47 +333,54 @@ public class SimulationAgent extends GamlAgent {
 		// NOTHING
 	}
 
-	@action(name = "pause", doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
+	@action(name = "pause",
+		doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 	@args(names = {})
-	public Object pause(final IScope scope) {
-		String ctrlName=((ExperimentPlan)scope.getExperiment().getSpecies()).getControllerName();
-		if(!ctrlName.equals("")){
+	public
+		Object pause(final IScope scope) {
+		String ctrlName = ((ExperimentPlan) scope.getExperiment().getSpecies()).getControllerName();
+		if ( !ctrlName.equals("") ) {
 			GAMA.getController(ctrlName).offer(FrontEndController._PAUSE);
-		}else{
+		} else {
 			GAMA.controller.offer(FrontEndController._PAUSE);
 		}
 		return null;
 	}
 
-	@action(name = "halt", doc = @doc(deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily", value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
+	@action(name = "halt",
+		doc = @doc(deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
+			value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
 	@args(names = {})
-	public Object halt(final IScope scope) {
+	public
+		Object halt(final IScope scope) {
 		getExperiment().closeSimulation();
 		return null;
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
-		//hqnghi push outputManager down to Simulation level 
+		// hqnghi push outputManager down to Simulation level
 		// create a copy of outputs from description
-		if(!scheduled && !getExperiment().getSpecies().isBatch()) {			
-			IDescription des=((ISymbol)iOutputManager).getDescription();
-			outputs=(IOutputManager) des.compile();
-			GamaMap<String, IOutput> mm=new GamaMap<String,IOutput>();
-			for(IOutput output:outputs.getOutputs().values()) {
-				String oName=output.getName() + "#" +  this.getSpecies().getDescription().getModelDescription().getAlias() + "#" + this.getExperiment().getSpecies().getName()+"#"+this.getExperiment().getIndex();
-				mm.put(oName,output);
+		if ( !scheduled && !getExperiment().getSpecies().isBatch() ) {
+			IDescription des = ((ISymbol) iOutputManager).getDescription();
+			outputs = (IOutputManager) des.compile();
+			GamaMap<String, IOutput> mm = new GamaMap<String, IOutput>();
+			for ( IOutput output : outputs.getOutputs().values() ) {
+				String oName =
+					output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias() + "#" +
+						this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
+				mm.put(oName, output);
 			}
 			outputs.removeAllOutput();
-			for(Entry<String, IOutput> output : mm.entrySet()) {			
+			for ( Entry<String, IOutput> output : mm.entrySet() ) {
 				output.getValue().setName(output.getKey());
-				outputs.addOutput(output.getKey(),output.getValue());
+				outputs.addOutput(output.getKey(), output.getValue());
 			}
-		}else {			
+		} else {
 			outputs = iOutputManager;
 		}
-		//end-hqnghi
+		// end-hqnghi
 	}
-	
+
 	public SimulationOutputManager getOutputManger() {
 		return (SimulationOutputManager) outputs;
 	}

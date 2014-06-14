@@ -276,8 +276,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
-		final boolean isRestored) throws GamaRuntimeException {
+	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
+		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		final IList<IAgent> list = new GamaList(number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
@@ -317,7 +317,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-		final List<Map> initialValues) throws GamaRuntimeException {
+		final List<? extends Map> initialValues) throws GamaRuntimeException {
 		if ( agents == null || agents.isEmpty() ) { return; }
 		final boolean empty = initialValues == null || initialValues.isEmpty();
 		Map<String, Object> inits;
@@ -701,8 +701,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents() {
-		return new GamaList(GamaPopulation.allLivingAgents(this));
+	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+		return GamaList.from(GamaPopulation.allLivingAgents(this));
 	}
 
 	/**

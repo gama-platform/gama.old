@@ -164,8 +164,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
 			if ( p2 instanceof IShape ) {
 				_Edge ed = getEdge(p2);
-				if (ed != null)
+				if ( ed != null ) {
 					ed.setWeight(((IShape) p2).getPerimeter());
+				}
 			}
 		}
 	}
@@ -631,7 +632,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	// public IPath<V,E> computeShortestPathBetween(final Object source, final Object target) {
-	public IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final IScope scope, final V source, final V target) {
+		public
+		IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final IScope scope, final V source, final V target) {
 		return pathFromEdges(scope, source, target, computeBestRouteBetween(scope, source, target));
 	}
 
@@ -645,7 +647,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 				GraphPath<V, E> path = optimizer.getShortestPath(source, target);
 				if ( path == null ) { return new GamaList<E>(); }
-				return new GamaList<E>((Iterable) path.getEdgeList());
+				return GamaList.from(path.getEdgeList());
 			case 2:
 				VertexPair<V> nodes1 = new VertexPair<V>(source, target);
 				GamaList<GamaList<E>> sp1 = shortestPathComputed.get(nodes1);
@@ -1321,8 +1323,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildValue()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public GraphObjectToAdd buildValue(final IScope scope, final Object object, final IContainerType containerType) {
@@ -1337,8 +1338,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildValues()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public IContainer<?, GraphObjectToAdd> buildValues(final IScope scope, final IContainer objects,
@@ -1358,8 +1358,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildIndex()
-	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
-	 *      msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public GamaPair<V, V> buildIndex(final IScope scope, final Object object, final IContainerType containerType) {

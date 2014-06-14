@@ -12,7 +12,6 @@
 package msi.gama.util.path;
 
 import gnu.trove.map.hash.THashMap;
-import java.util.List;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -50,7 +49,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		// this.init(g, start, target, _edges, modify_edges);
 	}
 
-	public GamaSpatialPath(final IShape start, final IShape target, final IList<IShape> edges) {
+	public GamaSpatialPath(final IShape start, final IShape target, final IList<? extends IShape> edges) {
 		super(null, start, target, edges, false);
 		// this.init(null, start, target, edges, false);
 	}
@@ -67,7 +66,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	@Override
 	public void init(final IGraph<IShape, IShape> g, final IShape start, final IShape target,
-		final IList<IShape> _edges, final boolean modify_edges) {
+		final IList<? extends IShape> _edges, final boolean modify_edges) {
 		super.init(g, start, target, _edges, modify_edges);
 		source = start;
 		this.target = target;
@@ -115,7 +114,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					}
 					if ( cpt == 0 && !source.equals(pt) ) {
 						GamaPoint falseSource = new GamaPoint(source.getLocation());
-						if (source.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
+						if ( source.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000) ) {
 							falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
 							falseSource.z = zVal(falseSource, edge2);
 						}
@@ -124,9 +123,9 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					if ( cpt == _edges.size() - 1 &&
 						!target.equals(edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry()
 							.getNumPoints() - 1]) ) {
-						
+
 						GamaPoint falseTarget = new GamaPoint(target.getLocation());
-						if (target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
+						if ( target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000) ) {
 							falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 							falseTarget.z = zVal(falseTarget, edge2);
 						}
@@ -147,8 +146,8 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			}
 		}
 	}
-	
-	protected double zVal (GamaPoint point, IShape edge) {
+
+	protected double zVal(final GamaPoint point, final IShape edge) {
 		double z = 0.0;
 		int nbSp = edge.getPoints().size();
 		final Coordinate[] temp = new Coordinate[2];
@@ -156,20 +155,20 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		double distanceS = Double.MAX_VALUE;
 		for ( int i = 0; i < nbSp - 1; i++ ) {
 			temp[0] = (Coordinate) edge.getPoints().get(i);
-			temp[1] = (Coordinate) edge.getPoints().get(i+1);
+			temp[1] = (Coordinate) edge.getPoints().get(i + 1);
 			final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 			final double distS = segment.distance(pointGeom);
 			if ( distS < distanceS ) {
 				distanceS = distS;
 				GamaPoint pt0 = new GamaPoint(temp[0]);
 				GamaPoint pt1 = new GamaPoint(temp[1]);
-				z = pt0.z + ((pt1.z - pt0.z) * point.distance(pt0)/ segment.getLength());
+				z = pt0.z + (pt1.z - pt0.z) * point.distance(pt0) / segment.getLength();
 			}
 		}
 		return z;
 	}
 
-	public GamaSpatialPath(final GamaSpatialGraph g, final List<IShape> nodes) {
+	public GamaSpatialPath(final GamaSpatialGraph g, final IList<? extends IShape> nodes) {
 		// FIXME call super super(param...);
 		if ( nodes.isEmpty() ) {
 			source = new GamaPoint(0, 0);

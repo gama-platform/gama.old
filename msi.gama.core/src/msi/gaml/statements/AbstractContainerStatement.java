@@ -329,8 +329,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	public static class NodesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
 
-		public NodesToAdd(final IScope scope, final IContainer object) {
-			super(object.iterable(scope));
+		public static NodesToAdd from(final IScope scope, final IContainer object) {
+			NodesToAdd n = new NodesToAdd();
+			for ( Object o : object.iterable(scope) ) {
+				n.add((GraphObjectToAdd) o);
+			}
+			return n;
 		}
 
 		@Override
@@ -342,8 +346,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	public static class EdgesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
 
-		public EdgesToAdd(final IScope scope, final IContainer object) {
-			super(object.iterable(scope));
+		public static EdgesToAdd from(final IScope scope, final IContainer object) {
+			EdgesToAdd n = new EdgesToAdd();
+			for ( Object o : object.iterable(scope) ) {
+				n.add((GraphObjectToAdd) o);
+			}
+			return n;
 		}
 
 		@Override
@@ -464,7 +472,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static
 		IContainer nodes(final IScope scope, final IContainer nodes) {
-		return new NodesToAdd(scope, nodes);
+		return NodesToAdd.from(scope, nodes);
 	}
 
 	@operator(value = "edges",
@@ -474,7 +482,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static
 		IContainer edges(final IScope scope, final IContainer nodes) {
-		return new EdgesToAdd(scope, nodes);
+		return EdgesToAdd.from(scope, nodes);
 	}
 
 }

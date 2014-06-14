@@ -33,7 +33,7 @@ public interface IExploration extends ISymbol, Runnable {
 
 	public abstract String getCombinationName();
 
-	public abstract void start();
+	// public abstract void start();
 
 	public abstract void addParametersTo(final List<IParameter.Batch> exp, BatchAgent agent);
 
