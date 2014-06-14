@@ -498,7 +498,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		public Object getGlobalVarValue(final String name) {
 			if ( ExperimentAgent.this.hasAttribute(name) ) {
 				return super.getGlobalVarValue(name);
-			} else if ( getSimulation() != null ) {
+			} else if ( getSimulation() != null && !getSimulation().dead() ) {
 				return getSimulation().getScope().getGlobalVarValue(name);
 			} else if ( getSpecies().hasParameter(name) ) { return getSpecies().getExperimentScope().getGlobalVarValue(
 				name); }
@@ -512,7 +512,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// }
 			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
-			} else if ( getSimulation() != null && getSimulation().getSpecies().hasVar(name) ) {
+			} else if ( getSimulation() != null && !getSimulation().dead() && getSimulation().getSpecies().hasVar(name) ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
 				// TODO extraParameter does not contains model's variables???
 				// } else if ( getSpecies().hasParameter(name) ) {

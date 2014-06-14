@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExpressionControl.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ExpressionControl.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,6 +14,7 @@ package msi.gama.gui.parameters;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -90,6 +91,10 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			currentException = null;
 			IAgent a = editor.getAgent();
 			String s = text.getText();
+			// AD: Fix for Issue 1042
+			if ( a != null && a.getScope().interrupted() && a instanceof SimulationAgent ) {
+				a = a.getExperiment();
+			}
 			if ( a == null ) {
 				currentValue = Cast.as(s, editor.getExpectedType().toClass());
 			} else {
