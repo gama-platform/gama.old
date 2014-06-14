@@ -331,7 +331,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
-		System.out.println("results size : " + results.size() + " graph size : " + edgeSet().size());
+		// System.out.println("results size : " + results.size() + " graph size : " + edgeSet().size());
 		Iterator<? extends IShape> it = results.iterator();
 		while (it.hasNext()) {
 			if ( !edgeMap.containsKey(it.next()) ) {
