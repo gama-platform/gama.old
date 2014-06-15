@@ -159,6 +159,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated",
 						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
+				} else if ( species.isBuiltIn() ) {
+					cd.error(
+						"Species " +
+							species.getName() +
+							" is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
+						IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					return;
 				}
 				SpeciesDescription callerSpecies = cd.getSpeciesContext();
 				SpeciesDescription macro = species.getMacroSpecies();
