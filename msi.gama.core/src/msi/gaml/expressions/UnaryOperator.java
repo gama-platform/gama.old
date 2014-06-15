@@ -26,7 +26,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	final protected IExpression child;
 	final OperatorProto prototype;
 
-	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
+	public static IExpression
+		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
 		UnaryOperator u = new UnaryOperator(proto, context, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
@@ -59,7 +60,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			throw e1;
 
 		} catch (final Exception e) {
-			final GamaRuntimeException ee = GamaRuntimeException.create(e);
+			final GamaRuntimeException ee = GamaRuntimeException.create(e, scope);
 			ee.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw ee;
 		}

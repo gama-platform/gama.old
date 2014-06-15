@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PrefuseStaticLayoutAbstract.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'PrefuseStaticLayoutAbstract.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -131,7 +131,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		while (itPrefuseNodes.hasNext()) {
 			VisualItem prefuseNode = (VisualItem) itPrefuseNodes.next();
 			Object pn = prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
-			if (pn instanceof IShape) {
+			if ( pn instanceof IShape ) {
 				IShape gamaNode = (IShape) pn;
 				prefuseNode.setX(gamaNode.getLocation().getX());
 				prefuseNode.setY(gamaNode.getLocation().getY());
@@ -162,8 +162,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		}
 
 		// stop and end layout
-		 viz.cancel("layout");
-		//viz.cancel("layout");
+		viz.cancel("layout");
+		// viz.cancel("layout");
 		logger.fine("layout finished in: " + (System.currentTimeMillis() - timeBegin));
 
 		// retrieve the resulting coordinates
@@ -172,14 +172,13 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		while (itPrefuseNodes.hasNext()) {
 			VisualItem prefuseNode = (VisualItem) itPrefuseNodes.next();
 			Object pn = prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
-			if (pn instanceof IShape) {
+			if ( pn instanceof IShape ) {
 				IShape gamaNode = (IShape) pn;
 				ILocation newloc = new GamaPoint(prefuseNode.getX(), prefuseNode.getY());
 				gamaNode.setLocation(newloc);
 
 			}
-			
-			
+
 		}
 
 		// free memory
@@ -251,7 +250,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			sb.append(uselessOptions);
 			sb.append(" (as a reminder, this layout accepts the following options: ");
 			sb.append(getLayoutOptions()).append(")");
-			GAMA.reportError(GamaRuntimeException.warning(sb.toString()), false);
+			GAMA.reportError(scope, GamaRuntimeException.warning(sb.toString()), false);
 		}
 	}
 

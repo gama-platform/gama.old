@@ -74,7 +74,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			Files.newFolder(scope, snapshotFolder);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1, false);
+			GAMA.reportError(scope, e1, false);
 			e1.printStackTrace();
 			return;
 		}
@@ -87,7 +87,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		} catch (final java.io.IOException ex) {
 			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e, false);
+			GAMA.reportError(getDisplayScope(), e, false);
 		} finally {
 			try {
 				if ( os != null ) {
@@ -96,7 +96,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			} catch (final Exception ex) {
 				final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e, false);
+				GAMA.reportError(getDisplayScope(), e, false);
 			}
 		}
 	}
@@ -110,6 +110,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void outputChanged(final IScope scope, final double env_width, final double env_height,
 		final LayeredDisplayOutput output) {
 		this.scope = scope.copy();
+		scope.disableErrorReporting();
 		widthHeightConstraint = env_height / env_width;
 		envWidth = env_width;
 		envHeight = env_height;

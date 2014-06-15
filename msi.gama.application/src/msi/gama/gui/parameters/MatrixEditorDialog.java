@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MatrixEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'MatrixEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -204,7 +204,7 @@ public class MatrixEditorDialog extends Dialog {
 				try {
 					data = getNewMatrix();
 				} catch (GamaRuntimeException e1) {
-					GAMA.reportError(e1, false);
+					GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 				}
 			}
 		});

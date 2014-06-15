@@ -711,8 +711,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
-		final double prop, final double variation, final ILocation location, final double range, final Object candidates) {
+	public void
+		diffuseVariable(final IScope scope, final String name, final double value, final short type, final double prop,
+			final double variation, final ILocation location, final double range, final Object candidates) {
 		getDiffuser(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range, candidates);
 	}
 
@@ -1244,15 +1245,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			}
 
-			//hqnghi must-implement methods from GamlAgent
+			// hqnghi must-implement methods from GamlAgent
 			@Override
-			public void addExternMicroPopulation(String expName, IPopulation pop) {
+			public void addExternMicroPopulation(final String expName, final IPopulation pop) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
-			public IPopulation getExternMicroPopulationFor(String expName) {
+			public IPopulation getExternMicroPopulationFor(final String expName) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -1262,7 +1263,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			//end-hqnghi
+			// end-hqnghi
 		}
 
 	}
@@ -1611,7 +1612,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
 				} catch (final GamaRuntimeException e) {
 					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(e, false);
+					GAMA.reportError(scope, e, false);
 					useNeighboursCache = true;
 					neighbourhood = null;
 					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);
@@ -1671,7 +1672,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
 				} catch (final GamaRuntimeException e) {
 					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(e, false);
+					GAMA.reportError(scope, e, false);
 					useNeighboursCache = true;
 					neighbourhood = null;
 					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);

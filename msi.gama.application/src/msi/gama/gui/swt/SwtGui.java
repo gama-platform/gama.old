@@ -498,7 +498,7 @@ public class SwtGui implements IGui {
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
 		if ( o instanceof Exception ) {
-			GAMA.reportError(GamaRuntimeException.create((Exception) o), false);
+			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create((Exception) o), false);
 		}
 		return null;
 	}
@@ -1074,7 +1074,7 @@ public class SwtGui implements IGui {
 						new InspectDisplayOutput("Inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
 					} catch (final GamaRuntimeException g) {
 						g.addContext("In opening the agent inspector");
-						GAMA.reportError(g, false);
+						GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 					}
 				}
 				AgentInspectView v =

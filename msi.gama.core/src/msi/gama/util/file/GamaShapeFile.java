@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaShapeFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaShapeFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -41,13 +41,13 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @param pathName
 	 */
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName, (Integer)null);
+		super(scope, pathName, (Integer) null);
 	}
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
-	
+
 	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
@@ -122,8 +122,9 @@ public class GamaShapeFile extends GamaGisFile {
 					} else {
 						// See Issue 725
 						GAMA.reportError(
+							scope,
 							GamaRuntimeException.warning("GamaShapeFile.fillBuffer; geometry could not be added : " +
-								feature.getID()), false);
+								feature.getID(), scope), false);
 					}
 				}
 			} else {

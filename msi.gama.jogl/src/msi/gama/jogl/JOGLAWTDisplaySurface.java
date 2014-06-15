@@ -121,13 +121,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
-			IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
-
-				@Override
-				public IShape run(final IScope scope) {
-					return Cast.asGeometry(scope, temp_focus.value(scope));
-				}
-			});
+			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
+			// IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
+			//
+			// @Override
+			// public IShape run(final IScope scope) {
+			// return Cast.asGeometry(scope, temp_focus.value(scope));
+			// }
+			// });
 			if ( geometry != null ) {
 				temp_focus = null;
 				canBeUpdated(true);
@@ -253,8 +254,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		GAMA.releaseScope(scope);
-		scope = null;
+		GAMA.releaseScope(getDisplayScope());
+		setDisplayScope(null);
 	}
 
 	@Override
@@ -502,15 +503,16 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public IList<IAgent> selectAgent(final int x, final int y) {
-		if ( scope.getSimulationScope() == null ) { return GamaList.EMPTY_LIST; }
+		if ( getDisplayScope().getSimulationScope() == null ) { return GamaList.EMPTY_LIST; }
 		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		Set<IAgent> agents = null;
 		agents =
-			(Set<IAgent>) scope
+			(Set<IAgent>) getDisplayScope()
 				.getSimulationScope()
 				.getPopulation()
 				.getTopology()
-				.getNeighboursOf(scope, new GamaPoint(pp.x, pp.y), this.renderer.getMaxEnvDim() / 100, Different.with());
+				.getNeighboursOf(getDisplayScope(), new GamaPoint(pp.x, pp.y), this.renderer.getMaxEnvDim() / 100,
+					Different.with());
 		return new GamaList<IAgent>(agents);
 	}
 }

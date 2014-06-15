@@ -110,8 +110,13 @@ public class GAMA {
 	 * 
 	 */
 
-	public static boolean reportError(final GamaRuntimeException g, final boolean shouldStopSimulation) {
+	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
+		final boolean shouldStopSimulation) {
 		// Returns whether or not to continue
+		if ( scope != null && !scope.reportErrors() ) {
+			g.printStackTrace();
+			return true;
+		}
 		GuiUtils.runtimeError(g);
 		if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return false; }
 		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
@@ -125,13 +130,17 @@ public class GAMA {
 
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) throws GamaRuntimeException {
+		if ( !scope.reportErrors() ) {
+			g.printStackTrace();
+			return;
+		}
 		if ( scope != null && scope.getAgentScope() != null ) {
 			String name = scope.getAgentScope().getName();
 			if ( !g.getAgentsNames().contains(name) ) {
 				g.addAgent(name);
 			}
 		}
-		boolean shouldStop = !reportError(g, shouldStopSimulation);
+		boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if ( shouldStop ) {
 			controller.userPause();
 			throw g;

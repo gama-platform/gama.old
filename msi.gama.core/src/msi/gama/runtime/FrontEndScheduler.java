@@ -100,7 +100,7 @@ public class FrontEndScheduler implements Runnable {
 		if ( toStop.isEmpty() ) { return; }
 		synchronized (toStop) {
 			for ( final IStepable s : toStop ) {
-				final IScope scope = toStep.get(s);	
+				final IScope scope = toStep.get(s);
 				if ( !scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
@@ -164,7 +164,7 @@ public class FrontEndScheduler implements Runnable {
 			if ( scope != null && scope.interrupted() ) {
 				toStop.add(stepable);
 			} else {
-				GAMA.reportError(GamaRuntimeException.create(e), true);
+				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 			}
 		}
 

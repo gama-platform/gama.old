@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'WarnStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'WarnStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -37,9 +37,12 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.WARNING, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false,
-	doc =@doc("the message to display as a warning.")) },omissible = IKeyword.MESSAGE)
-@doc(value = "The statement makes the agent output an arbitrary message in the error view as a warning.", usages = {@usage(examples = {@example("warn 'This is a warning from ' + self;")})})
+@facets(value = { @facet(name = IKeyword.MESSAGE,
+	type = IType.STRING,
+	optional = false,
+	doc = @doc("the message to display as a warning.")) }, omissible = IKeyword.MESSAGE)
+@doc(value = "The statement makes the agent output an arbitrary message in the error view as a warning.",
+	usages = { @usage(examples = { @example("warn 'This is a warning from ' + self;") }) })
 public class WarnStatement extends AbstractStatement {
 
 	final IExpression message;
@@ -55,7 +58,7 @@ public class WarnStatement extends AbstractStatement {
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
 			mes = Cast.asString(stack, message.value(stack));
-			GAMA.reportError(GamaRuntimeException.warning(mes), false);
+			GAMA.reportError(stack, GamaRuntimeException.warning(mes), false);
 		}
 		return mes;
 	}

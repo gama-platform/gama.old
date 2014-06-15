@@ -429,15 +429,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 		SimulationAgent sim = getScope().getSimulationScope();
-		//hqnghi if layer come from micro-model 
+		// hqnghi if layer come from micro-model
 		ModelDescription micro = this.getDescription().getModelDescription();
-		ModelDescription main  = (ModelDescription) scope.getModel().getDescription(); 
-		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null ;
-		if( fromMicroModel ) {
-			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope().getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+		if ( fromMicroModel ) {
+			ExperimentAgent exp =
+				(ExperimentAgent) scope.getAgentScope()
+					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			sim = (SimulationAgent) exp.getSimulation();
 		}
-		//end-hqnghi
+		// end-hqnghi
 		Envelope env = null;
 		if ( sim != null ) {
 			env = sim.getEnvelope();
@@ -534,10 +536,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression agg = getFacet(IKeyword.TRACE);
 		if ( agg != null ) {
 			int limit = 0;
-			if ( agg.getType().id() == IType.BOOL && Cast.asBool(getScope(), agg.value(getScope())) ) {
+			if ( agg.getType().id() == IType.BOOL && Cast.asBool(scope, agg.value(scope)) ) {
 				limit = Integer.MAX_VALUE;
 			} else {
-				limit = Cast.asInt(getScope(), agg.value(getScope()));
+				limit = Cast.asInt(scope, agg.value(scope));
 			}
 			setTraceDisplay(limit);
 		}
@@ -598,9 +600,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// }
 	}
 
-	public void setSurface(final IDisplaySurface sur) {
-		surface = sur;
-	}
+	// public void setSurface(final IDisplaySurface sur) {
+	// surface = sur;
+	// }
 
 	public double getEnvWidth() {
 		return envWidth;

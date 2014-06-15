@@ -121,13 +121,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
-			IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
-
-				@Override
-				public IShape run(final IScope scope) {
-					return Cast.asGeometry(scope, temp_focus.value(scope));
-				}
-			});
+			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
+			// IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
+			//
+			// @Override
+			// public IShape run(final IScope scope) {
+			// return Cast.asGeometry(scope, temp_focus.value(scope));
+			// }
+			// });
 			if ( geometry != null ) {
 				temp_focus = null;
 				canBeUpdated(true);
@@ -253,8 +254,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		GAMA.releaseScope(scope);
-		scope = null;
+		GAMA.releaseScope(getDisplayScope());
+		setDisplayScope(null);
 	}
 
 	@Override

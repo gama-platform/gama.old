@@ -254,4 +254,10 @@ public interface IScope {
 	 */
 	public abstract RandomUtils getRandom();
 
+	public void disableErrorReporting();
+
+	public void enableErrorReporting();
+
+	public boolean reportErrors();
+
 }

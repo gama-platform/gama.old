@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GraphUtilsGraphStream.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GraphUtilsGraphStream.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -110,11 +110,11 @@ public class GraphUtilsGraphStream {
 					}
 				}
 			} catch (EdgeRejectedException e) {
-				GAMA.reportError(GamaRuntimeException
+				GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException
 					.warning("an edge was rejected during the transformation, probably because it was a double one"),
 					true);
 			} catch (IdAlreadyInUseException e) {
-				GAMA.reportError(GamaRuntimeException
+				GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException
 					.warning("an edge was rejected during the transformation, probably because it was a double one"),
 					true);
 			}
@@ -124,12 +124,14 @@ public class GraphUtilsGraphStream {
 		// some basic tests for integrity
 		if ( gamaGraph.getVertices().size() != g.getNodeCount() ) {
 			GAMA.reportError(
+				GAMA.getRuntimeScope(),
 				GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: " +
 					"the number of vertices is not correct(" + g.getNodeCount() + " instead of " +
 					gamaGraph.getVertices().size() + ")"), true);
 		}
 		if ( gamaGraph.getEdges().size() != g.getEdgeCount() ) {
 			GAMA.reportError(
+				GAMA.getRuntimeScope(),
 				GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: " +
 					"the number of edges is not correct(" + g.getEdgeCount() + " instead of " +
 					gamaGraph.getEdges().size() + ")"), true);

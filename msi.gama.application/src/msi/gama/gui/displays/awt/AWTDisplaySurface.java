@@ -97,7 +97,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
-			IShape geometry = Cast.asGeometry(scope, temp_focus.value(scope));
+			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
 			if ( geometry != null ) {
 				Rectangle2D r = this.getManager().focusOn(geometry, this);
 				System.out.println("Rectangle = " + r);
@@ -296,8 +296,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( buffImage != null ) {
 			buffImage.flush();
 		}
-		GAMA.releaseScope(scope);
-		scope = null;
+		GAMA.releaseScope(getDisplayScope());
+		setDisplayScope(null);
 	}
 
 	@Override
@@ -428,7 +428,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
 		tempGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(tempGraphics);
-		save(scope, newImage);
+		save(getDisplayScope(), newImage);
 		newImage.flush();
 
 	}

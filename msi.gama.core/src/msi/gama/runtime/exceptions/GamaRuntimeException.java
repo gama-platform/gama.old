@@ -95,16 +95,18 @@ public class GamaRuntimeException extends RuntimeException {
 	// Constructors
 
 	public GamaRuntimeException(final IScope scope, final Throwable ex) {
-		super(ex.toString(), ex);
+		super(ex == null ? "Unknown error" : ex.toString(), ex);
 		if ( scope != null ) {
 			IStatement statement = scope.getStatement();
 			if ( statement != null ) {
 				addContext(statement);
 			}
 		}
-		addContext(ex.toString());
-		for ( StackTraceElement element : ex.getStackTrace() ) {
-			addContext(element.toString());
+		if ( ex != null ) {
+			addContext(ex.toString());
+			for ( StackTraceElement element : ex.getStackTrace() ) {
+				addContext(element.toString());
+			}
 		}
 		cycle = computeCycle(scope);
 

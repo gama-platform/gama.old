@@ -88,7 +88,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		try {
 			findBestSolution();
 		} catch (GamaRuntimeException e) {
-			GAMA.reportError(e, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 		}
 	}
 

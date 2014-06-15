@@ -732,7 +732,7 @@ public class PopulationInspectView extends GamaViewPart {
 			Files.newFolder(output.getScope(), exportFolder);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + exportFolder);
-			GAMA.reportError(e1, false);
+			GAMA.reportError(output.getScope(), e1, false);
 			e1.printStackTrace();
 			return;
 		}

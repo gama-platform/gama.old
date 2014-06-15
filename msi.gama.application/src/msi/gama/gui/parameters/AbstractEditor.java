@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -28,8 +28,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractEditor implements SelectionListener, ModifyListener, Comparable<AbstractEditor>,
-	IParameterEditor {
+public abstract class AbstractEditor implements SelectionListener, ModifyListener, Comparable<AbstractEditor>, IParameterEditor {
 
 	public static final Color normal_bg = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	public static final Color changed_bg = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
@@ -137,7 +136,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
-			GAMA.reportError(e1, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 		}
 		currentValue = getOriginalValue();
 		final Composite comp = new Composite(parent, SWT.NONE);
@@ -154,7 +153,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 					: createCustomParameterControl(comp);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
-			GAMA.reportError(e1, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			return;
 		}
 
@@ -203,7 +202,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
-					GAMA.reportError(GamaRuntimeException.create(e), false);
+					GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e), false);
 					return;
 				}
 			}
@@ -310,7 +309,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			internalModification = false;
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
-			GAMA.reportError(e, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 			return;
 		}
 	}

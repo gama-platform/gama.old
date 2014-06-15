@@ -56,7 +56,7 @@ public class PostponedWarningList {
 
 		// raise errors
 		if ( header != null && !header.isEmpty() && warning2count.size() > 1 ) {
-			GAMA.reportError(GamaRuntimeException.error(header), true);
+			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.error(header), true);
 		}
 		warning2count.forEachEntry(new TObjectIntProcedure<String>() {
 
@@ -72,7 +72,7 @@ public class PostponedWarningList {
 				if ( writeSystemOut ) {
 					System.err.println(sb.toString());
 				}
-				GAMA.reportError(GamaRuntimeException.error(sb.toString()), true);
+				GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.error(sb.toString()), true);
 				return true;
 			}
 		});

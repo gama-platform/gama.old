@@ -866,7 +866,7 @@ public class Containers {
 			return new GamaMap(Maps.uniqueIndex(nullCheck(scope, original).iterable(scope),
 				Guava.function(scope, keyProvider)));
 		} catch (IllegalArgumentException e) {
-			GAMA.reportError(GamaRuntimeException.warning("The key computed by " + Cast.toGaml(keyProvider) +
+			GAMA.reportError(scope, GamaRuntimeException.warning("The key computed by " + Cast.toGaml(keyProvider) +
 				" is not unique.", scope), false);
 			return group_by(scope, original, keyProvider);
 		}

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaGridFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaGridFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -49,8 +49,9 @@ public class GamaGridFile extends GamaGisFile {
 			} catch (GamaRuntimeException e) {
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
 				GAMA.reportError(
+					scope,
 					GamaRuntimeException.warning("The format of " + getFile().getName() +
-						" is incorrect. Attempting to read it anyway."), false);
+						" is incorrect. Attempting to read it anyway.", scope), false);
 				StringBuilder text = new StringBuilder();
 				String NL = System.getProperty("line.separator");
 				Scanner scanner = null;
@@ -146,6 +147,7 @@ public class GamaGridFile extends GamaGisFile {
 	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
+
 	public GamaGridFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}

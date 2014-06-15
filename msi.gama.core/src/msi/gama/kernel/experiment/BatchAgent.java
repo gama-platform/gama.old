@@ -110,7 +110,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 			} catch (GamaRuntimeException e) {
 				e.addContext("in saving the results of the batch");
-				GAMA.reportError(e, true);
+				GAMA.reportError(getScope(), e, true);
 			}
 		}
 		super.reset();

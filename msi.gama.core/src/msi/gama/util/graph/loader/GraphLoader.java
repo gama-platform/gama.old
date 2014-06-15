@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GraphLoader.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GraphLoader.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -113,6 +113,7 @@ public class GraphLoader {
 						edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(loaderName), filename,
 						spatial);
 				GAMA.reportError(
+					scope,
 					GamaRuntimeException.warning("Automatically detected the type of this graph :'" + loaderName +
 						"'; loaded " + res.vertexSet().size() + " vertices and " + res.edgeSet().size() +
 						" edges. Hope this was the relevant type ?"), false);

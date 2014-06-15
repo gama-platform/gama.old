@@ -65,7 +65,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private IZoomListener zoomListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected static final int MAX_ZOOM_FACTOR = 2;
-	protected IScope scope;
+	private IScope scope;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -102,7 +102,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void outputChanged(final IScope scope, final double env_width, final double env_height,
 		final LayeredDisplayOutput output) {
 		// We first copy the scope
-		this.scope = scope.copy();
+		setDisplayScope(scope.copy());
+		// We disable error reporting
+		getDisplayScope().disableErrorReporting();
 		//
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
@@ -170,7 +172,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void snapshot() {
-		save(scope, getImage());
+		save(getDisplayScope(), getImage());
 	}
 
 	/**
@@ -179,12 +181,13 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	 * @param image
 	 */
 	public final void save(final IScope scope, final RenderedImage image) {
+		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to prevent the exceptions from being masked.
 		if ( image == null ) { return; }
 		try {
 			Files.newFolder(scope, snapshotFolder);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			e1.printStackTrace();
 			return;
 		}
@@ -201,7 +204,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		} catch (java.io.IOException ex) {
 			GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 		} finally {
 			try {
 				if ( os != null ) {
@@ -210,7 +213,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			} catch (Exception ex) {
 				GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e, false);
+				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 			}
 		}
 	}
@@ -512,6 +515,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			}
 		}
 		return result;
+	}
+
+	protected void setDisplayScope(final IScope scope) {
+		this.scope = scope;
 	}
 
 }

@@ -54,6 +54,9 @@ public abstract class AbstractScope implements IScope {
 	private int tabLevel = -1;
 	private boolean trace;
 
+	// Allows to disable error reporting for this scope (the value will be read by the error reporting mechnanism).
+	private boolean reportErrors = true;
+
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
 		if ( root != null ) {
@@ -67,6 +70,18 @@ public abstract class AbstractScope implements IScope {
 			simulation = null;
 		}
 		statements.push(new NullRecord());
+	}
+
+	public void disableErrorReporting() {
+		reportErrors = false;
+	}
+
+	public void enableErrorReporting() {
+		reportErrors = true;
+	}
+
+	public boolean reportErrors() {
+		return reportErrors;
 	}
 
 	@Override
@@ -350,7 +365,7 @@ public abstract class AbstractScope implements IScope {
 	public boolean
 		execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
-//		IScope scope = agent == null ? this :(statement instanceof RemoteSequence ? this : agent.getScope());
+		// IScope scope = agent == null ? this :(statement instanceof RemoteSequence ? this : agent.getScope());
 		IAgent caller = this.getAgentScope();
 		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
 		// We then try to push the agent on the stack

@@ -240,11 +240,8 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public synchronized void setGeometry(final IShape geom) {
 		if ( geometry != null ) {
-			GAMA.reportError(
-				GamaRuntimeException
-					.warning(
-						"Changing the shape of the world after its creation is a bad idea that can have unexpected consequences",
-						scope), false);
+			GAMA.reportError(scope, GamaRuntimeException.warning(
+				"Changing the shape of the world after its creation can have unexpected consequences", scope), false);
 		}
 
 		// We systematically translate the geometry to {0,0}

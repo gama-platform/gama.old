@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Output3D.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'Output3D.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -291,7 +291,7 @@ public class Output3D {
 			Files.newFolder(scope, FILE3DFOLDER);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + FILE3DFOLDER);
-			GAMA.reportError(e1, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			e1.printStackTrace();
 			return;
 		}
