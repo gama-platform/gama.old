@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.PutStatement.PutValidator;
@@ -127,6 +127,11 @@ public class PutStatement extends AddStatement {
 	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
 		// if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType);
 		// }
+		// AD: Added to fix issue 1043: the value computed by maps is a pair (whose key is never used afterwards). However,
+		// when casting an existing pair to the key type/content type of the map, this would produce wrong values for the
+		// contents of the pair (or the list with 2 elements).
+		if ( this.list.getType().id() == IType.MAP ) { return container.buildValue(scope,
+			new GamaPair(null, this.item.value(scope)), containerType); }
 		return container.buildValue(scope, this.item.value(scope), containerType);
 	}
 

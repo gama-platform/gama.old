@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AddStatement.AddValidator;
@@ -92,7 +92,7 @@ import msi.gaml.types.*;
 				@example(value = "add 50 to: workingList;",
 					var = "workingList",
 					equals = "[10,0,20,50]",
-					returnType = "null") , // workingList now equals [10,0,20,50]
+					returnType = "null"), // workingList now equals [10,0,20,50]
 				@example(value = "add [60,70] all: true to: workingList;",
 					var = "workingList",
 					equals = "[10,0,20,50,60,70]",
@@ -120,25 +120,23 @@ import msi.gaml.types.*;
 		@usage(value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) "
 			+ "will only modify the value associated with the given key.",
 			examples = { @example(value = "add \"val3\" at: \"x\" to: workingMap;",
-					var = "workingMap",
-					equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
-					returnType = "null")}), // workingMap now equals [x::val3, val2::value2, 5::val4]
-		@usage(value="On a map, the all facet will add all value of a container  in the map (so as pair val_cont::val_cont)", examples= {
-				@example(value = "add [\"val4\",\"val5\"] all: true at: \"x\" to: workingMap;",
-					var = "workingMap",
-					equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\",\"val4\"::\"val4\",\"val5\"::\"val5\"]",
-					returnType = "null") }), // workingMap now equals [x::val3, val2::value2, 5::val4, val4::value4, val5::value5]
+				var = "workingMap",
+				equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
+				returnType = "null") }), // workingMap now equals [x::val3, val2::value2, 5::val4]
+		@usage(value = "On a map, the all facet will add all value of a container  in the map (so as pair val_cont::val_cont)",
+			examples = { @example(value = "add [\"val4\",\"val5\"] all: true at: \"x\" to: workingMap;",
+				var = "workingMap",
+				equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\",\"val4\"::\"val4\",\"val5\"::\"val5\"]",
+				returnType = "null") }), // workingMap now equals [x::val3, val2::value2, 5::val4, val4::value4, val5::value5]
 
 		@usage(value = "In case of a graph, we can use the facets `node`, `edge` and `weight` to add a node, an edge or weights to the graph. However, these facets are now considered as deprecated, and it is advised to use the various edge(), node(), edges(), nodes() operators, which can build the correct objects to add to the graph ",
 			examples = {
 				@example(value = "graph g <- as_edge_graph([{1,5}::{12,45}]);"),
 				@example(value = "add edge: {1,5}::{2,3} to: g;"),
-				@example(value = "g.vertices",
-					returnType = IKeyword.LIST,
-					equals = "[{1,5},{12,45},{2,3}]"),
+				@example(value = "g.vertices", returnType = IKeyword.LIST, equals = "[{1,5},{12,45},{2,3}]"),
 				@example(value = "g.edges",
 					returnType = IKeyword.LIST,
-					equals = "[polyline({1.0,5.0}::{12.0,45.0}),polyline({1.0,5.0}::{2.0,3.0})]"),					
+					equals = "[polyline({1.0,5.0}::{12.0,45.0}),polyline({1.0,5.0}::{2.0,3.0})]"),
 				@example(value = "add node: {5,5} to: g;"),
 				@example(value = "g.vertices",
 					returnType = IKeyword.LIST,
@@ -193,6 +191,17 @@ public class AddStatement extends AbstractContainerStatement {
 	public AddStatement(final IDescription desc) {
 		super(desc);
 		setName("add to " + list.toGaml());
+	}
+
+	@Override
+	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+		// if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType);
+		// }
+		// AD: Added to fix issue 1043: a "add" + an index on a map is equivalent to a "put", so the same operation
+		// is applied when building the value (see PutStatement#buildValue()).
+		if ( this.list.getType().id() == IType.MAP && index != null ) { return container.buildValue(scope,
+			new GamaPair(null, this.item.value(scope)), containerType); }
+		return super.buildValue(scope, container);
 	}
 
 	@Override
