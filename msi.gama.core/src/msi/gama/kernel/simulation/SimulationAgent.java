@@ -19,6 +19,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.metamodel.topology.projection.WorldProjection;
 import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -248,6 +249,7 @@ public class SimulationAgent extends GamlAgent {
 		final Envelope3D env = geom.getEnvelope();
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
+		projectionFactory.world = new WorldProjection(projectionFactory.world.getInitialCRS(), env, projectionFactory);
 		getPopulation().setTopology(getScope(), geometry);
 	}
 

@@ -35,7 +35,7 @@ public class ProjectionFactory {
 	private static final String defaultSaveCRS = String.valueOf(GamaPreferences.LIB_OUTPUT_CRS.getInitialValue(null));
 	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap();
 
-	private IProjection world;
+	public IProjection world;
 	public CoordinateReferenceSystem targetCRS;
 
 	void computeTargetCRS(final CoordinateReferenceSystem crs, final double longitude, final double latitude) {
