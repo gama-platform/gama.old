@@ -14,6 +14,7 @@ package msi.gama.metamodel.topology.projection;
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
 import msi.gama.common.GamaPreferences;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
 import org.geotools.referencing.CRS;
@@ -35,8 +36,13 @@ public class ProjectionFactory {
 	private static final String defaultSaveCRS = String.valueOf(GamaPreferences.LIB_OUTPUT_CRS.getInitialValue(null));
 	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap();
 
-	public IProjection world;
+	private IProjection world;
 	public CoordinateReferenceSystem targetCRS;
+
+	public void setWorldProjectionEnv(final Envelope3D env) {
+		if ( world == null ) { return; }
+		world = new WorldProjection(world.getInitialCRS(), env, this);
+	}
 
 	void computeTargetCRS(final CoordinateReferenceSystem crs, final double longitude, final double latitude) {
 		// If we already know in which CRS we project the data in GAMA, no need to recompute it. This information is
