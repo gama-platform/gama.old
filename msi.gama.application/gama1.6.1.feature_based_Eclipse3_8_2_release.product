@@ -32,7 +32,6 @@ openFile</programArgs>
 -XX:PermSize=128m
 -XX:MaxPermSize=256m
 -XX:+UseParallelGC
--XX:+UseCompressedOops
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
@@ -60,6 +59,7 @@ openFile</programArgs>
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
