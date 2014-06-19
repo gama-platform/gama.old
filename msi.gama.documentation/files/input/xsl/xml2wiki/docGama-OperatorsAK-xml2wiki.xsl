@@ -3,7 +3,7 @@
 <xsl:import href="docGama-Operators-xml2wiki.xsl"/>
 
 <xsl:variable name="alphabetID" select="'ak'"/>
-
+<xsl:variable name="fileName" select="'Operators (A to K)'"/>
 
  
 </xsl:stylesheet>

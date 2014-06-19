@@ -64,6 +64,8 @@ class Parser:
     #               ol_rule = ur"^\s+#\s*"
     formatting_rules = ur"""(?P<ent_numeric>&#(\d{1,5}|x[0-9a-fA-F]+);)
 (?:(?P<asterisk>\\\*)
+(?P<HTMLtag>\<img\ssrc=\"%(url_rule)s\"\/\>|\<br\s?\/\>)
+(?P<uselessWikiTags>\<wiki\:video\surl=\"%(url_rule)s\"\/\>)
 (?P<underscore>\\_)
 (?P<newline>\\n)
 (?P<bold>\*)
@@ -161,6 +163,12 @@ class Parser:
 
     def _underscore_repl(self, word):
         return u'_'
+
+    def _HTMLtag_repl(self, word):
+        return word
+
+    def _uselessWikiTags_repl(self, word):
+        return ''
 
     def _newline_repl(self, word):
         return self.formatter.linebreak(False)

@@ -96,16 +96,20 @@ public class WikiCleaner {
 		// - do the job (remove the markups) 
 		// -.... 
 		Config.ConvertNonBreakingSpaces = false;
+		//System.out.println(line);
 		line = CharacterReference.encodeWithWhiteSpaceFormatting(line);
 		line = CharacterReference.decode(line);
+		//System.out.println(line);
 	    
 		Source htmlSrc = new Source(line);
 	    Segment htmlSeg = new Segment(htmlSrc, 0, htmlSrc.length());
 	    Renderer htmlRend = new Renderer(htmlSeg);
 	    htmlRend.setMaxLineLength(line.length() + 1);
 		Config.ConvertNonBreakingSpaces = true;	    
-	    
-		return htmlRend.toString();
+		//System.out.println(htmlRend.toString());
+
+		//return htmlRend.toString();
+		return line;
 	}
 	
 	public static void selectWikiFiles() throws JDOMException, IOException{

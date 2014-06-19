@@ -1741,7 +1741,7 @@ public abstract class Spatial {
 					equals = "true"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
 					equals = "true") },
-			see = { "<--:", "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches" })
+			see = { "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches" })
 		public static
 			Boolean overlaps(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -1780,7 +1780,7 @@ public abstract class Spatial {
 					equals = "true"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
 					equals = "false") },
-			see = { "<--:", "disjoint_from", "crosses", "overlaps", "intersects", "touches" })
+			see = { "disjoint_from", "crosses", "overlaps", "intersects", "touches" })
 		public static
 			Boolean partially_overlaps(final IShape g1, final IShape g) {
 			if ( g == null ) { return false; }
@@ -1813,7 +1813,7 @@ public abstract class Spatial {
 					equals = "true"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15}", equals = "false"),
 				@example(value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {10,15}", equals = "true") },
-			see = { "<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
+			see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
 		public static
 			Boolean touches(final IShape g, final IShape g2) {
 			if ( g == null ) { return false; }
@@ -1837,7 +1837,7 @@ public abstract class Spatial {
 				@example(value = "polyline([{10,10},{20,20}]) crosses {15,15}", equals = "true"),
 				@example(value = "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}])",
 					equals = "true") },
-			see = { "<--:", "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
+			see = { "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
 		public static
 			Boolean crosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -1848,7 +1848,7 @@ public abstract class Spatial {
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
 			examples = { @example(value = "square(5) intersects {10,10}", equals = "false") },
-			see = { "<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+			see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static
 			Boolean intersects(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -1867,7 +1867,7 @@ public abstract class Spatial {
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
 			examples = { @example(value = "square(5) covers square(2)", equals = "true") },
-			see = { "<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+			see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static
 			Boolean covers(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -1879,7 +1879,7 @@ public abstract class Spatial {
 			value = "A boolean, equal to true if the left-geometry (or agent/point) is covered by the right-geometry (or agent/point).",
 			usages = { @usage("if one of the operand is null, returns false.") },
 			examples = { @example(value = "square(5) covered_by square(2)", equals = "false") },
-			see = { "<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+			see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static
 			Boolean covered_by(final IShape g1, final IShape g2) {
 			return covers(g2, g1);

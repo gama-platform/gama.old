@@ -37,6 +37,7 @@ public class UnifyDoc {
 		XMLElements.OPERATORS_CATEGORIES,
 		XMLElements.OPERATORS,
 		XMLElements.SKILLS,
+		XMLElements.ARCHITECTURES,
 		XMLElements.SPECIESS,
 		XMLElements.STATEMENTS,
 		XMLElements.CONSTANTS_CATEGORIES,

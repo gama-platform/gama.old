@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
 
 public class XmlToWiki {
 
-	public static String suffix = "161"; // "Dev"
+	public static String suffix = ""; // "Dev"
 	
 	public static void createAllWikis() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
@@ -38,43 +38,50 @@ public class XmlToWiki {
 		System.out.print("Creation of the wiki page for Operators from A to K.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsAK"+suffix+".wiki");
+				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsAK"+suffix+".wiki");
 		System.out.println("Done");	
 		//
 		System.out.print("Creation of the wiki page for Operators from L to Z.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsLZ"+suffix+".wiki");
+				Constants.XML2WIKI_FOLDER + File.separator + "G__OperatorsLZ"+suffix+".wiki");
 		System.out.println("Done");	
 		//
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".wiki");
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Operators"+suffix+".wiki");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Statements-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "Statements"+suffix+".wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Statements"+suffix+".wiki");	
 		System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for Skills.......");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "Skills"+suffix+".wiki");	
-		System.out.println("Done");			
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".wiki");	
+		System.out.println("Done");		
+		
+		// To uncomment when we want to generate Architectures
+		// System.out.print("Creation of the wiki page for Architectures.......");		
+		// createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+		//		Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Architectures-xml2wiki.xsl",
+		//		Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInArchitectures"+suffix+".wiki");	
+		// System.out.println("Done");		
 		//
 		System.out.print("Creation of the wiki page for Built-in Species.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Species-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "SpeciesBuiltIn"+suffix+".wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSpecies"+suffix+".wiki");	
 		System.out.println("Done");	
 		//
 		System.out.print("Creation of the wiki page for Constants and units.....");		
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Constants-xml2wiki.xsl",
-				Constants.XML2WIKI_FOLDER + File.separator + "Constants"+suffix+".wiki");	
+				Constants.XML2WIKI_FOLDER + File.separator + "G__UnitsAndConstants"+suffix+".wiki");	
 		System.out.println("Done");	
 		//
 		System.out.println("End of the transformation");		
@@ -100,21 +107,6 @@ public class XmlToWiki {
 		}		
 		
 		DocTransformer.transformDocument(document, xsl, wiki); 		
-		
-//		Source source = new DOMSource(document);
-//		
-//		// Creation of the output file
-//		File fileWiki = new File(wiki);
-//		Result resultat = new StreamResult(fileWiki);
-//		
-//		// configuration of the transformer
-//		TransformerFactory fabriqueT = TransformerFactory.newInstance();
-//		StreamSource stylesource = new StreamSource(xsl);
-//		Transformer transformer = fabriqueT.newTransformer(stylesource);
-//		transformer.setOutputProperty(OutputKeys.METHOD, "text");
-//		
-//		// Transformation
-//		transformer.transform(source, resultat);
 	}
 	
 	/**

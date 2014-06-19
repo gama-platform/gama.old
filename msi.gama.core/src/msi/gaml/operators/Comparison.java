@@ -34,8 +34,7 @@ public class Comparison {
 
 	@operator(value = "between", can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "returns true the first integer operand is bigger than the second integer operand and smaller than the third integer operand",
-		examples = @example(value = "between(5, 1, 10)", equals = "true"),
-		see = "")
+		examples = @example(value = "between(5, 1, 10)", equals = "true"))
 	public static
 		Boolean between(final Integer a, final Integer inf, final Integer sup) {
 		if ( inf > sup ) { return false; }
@@ -44,8 +43,7 @@ public class Comparison {
 
 	@operator(value = "between", can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "returns true if the first float operand is bigger than the second float operand and smaller than the third float operand",
-		examples = @example(value = "between(5.0, 1.0, 10.0)", equals = "true"),
-		see = "")
+		examples = @example(value = "between(5.0, 1.0, 10.0)", equals = "true"))
 	public static
 		Boolean between(final Double a, final Double inf, final Double sup) {
 		if ( inf > sup ) { return false; }

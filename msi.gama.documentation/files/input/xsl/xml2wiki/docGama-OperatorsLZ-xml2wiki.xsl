@@ -3,5 +3,6 @@
 <xsl:import href="docGama-Operators-xml2wiki.xsl"/>
 
 <xsl:variable name="alphabetID" select="'lz'"/>
+<xsl:variable name="fileName" select="'Operators (L to Z)'"/>
 
 </xsl:stylesheet>
