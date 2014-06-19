@@ -119,7 +119,9 @@ public class BrowserEditor extends EditorPart {
 	}
 
 	@Override
-	public void setFocus() {}
+	public void setFocus() {
+		browser.setFocus();
+	}
 
 	public Browser getBrowser() {
 		return browser;
