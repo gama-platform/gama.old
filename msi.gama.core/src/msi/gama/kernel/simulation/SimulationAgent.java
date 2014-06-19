@@ -260,7 +260,7 @@ public class SimulationAgent extends GamlAgent {
 		final Envelope3D env = geom.getEnvelope();
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
-		projectionFactory.setWorldProjectionEnv(env);
+		//projectionFactory.setWorldProjectionEnv(env);
 		getPopulation().setTopology(getScope(), geometry);
 	}
 
