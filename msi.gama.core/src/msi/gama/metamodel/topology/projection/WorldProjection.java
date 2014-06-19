@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
 
@@ -27,6 +28,7 @@ public class WorldProjection extends Projection {
 			createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 		}
 	}
+	
 
 	@Override
 	public void translate(final Geometry geom) {
@@ -41,7 +43,14 @@ public class WorldProjection extends Projection {
 			geom.apply(absoluteToGisTranslation);
 		}
 	}
-
+	public void updateTranslations(Envelope env) {
+		if ( env != null ) {
+			// We project the envelope and we use it for initializing the translations
+			projectedEnv = transform(env);
+			// createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
+		}
+		createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
+	}
 	public void createTranslations(final double minX, final double height, final double minY) {
 		if ( gisToAbsoluteTranslation != null && absoluteToGisTranslation != null ) { return; }
 		gisToAbsoluteTranslation = new CoordinateFilter() {

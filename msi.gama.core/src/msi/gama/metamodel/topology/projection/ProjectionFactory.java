@@ -41,7 +41,8 @@ public class ProjectionFactory {
 
 	public void setWorldProjectionEnv(final Envelope3D env) {
 		if ( world == null ) { return; }
-		world = new WorldProjection(world.getInitialCRS(), env, this);
+
+		((WorldProjection) world).updateTranslations(env);
 	}
 
 	void computeTargetCRS(final CoordinateReferenceSystem crs, final double longitude, final double latitude) {
