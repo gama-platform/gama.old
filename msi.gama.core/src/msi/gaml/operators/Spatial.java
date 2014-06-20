@@ -815,7 +815,7 @@ public abstract class Spatial {
 			IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
 			Geometry res = difference(g1.getInnerGeometry(), g2.getInnerGeometry());
-			if ( res != null ) { return new GamaShape(g1, res); }
+			if ( res != null && ! res.isEmpty() ) { return new GamaShape(g1, res); }
 			return null;
 		}
 
@@ -834,7 +834,7 @@ public abstract class Spatial {
 					if ( geom1 == null || geom1.isEmpty() ) { return null; }
 				}
 			}
-			if ( geom1 == null ) { return null; }
+			if ( geom1 == null || geom1.isEmpty()) { return null; }
 			return new GamaShape(g1, geom1);
 		}
 
