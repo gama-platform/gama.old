@@ -61,6 +61,9 @@ public class XMLElements {
 	public static final String INSIDE_STAT_SYMBOL = "insideStatementSymbol";	
 	public static final String CONSTANTS_CATEGORIES = "constantsCategories";
 	
+	public static final String ARCHITECTURES = "architectures";
+	public static final String ARCHITECTURE = "architecture";
+	
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
 
@@ -132,6 +135,10 @@ public class XMLElements {
 	public static final String ATT_SKILL_CLASS = "class";
 	public static final String ATT_SKILL_EXTENDS = "extends";
 	
+	// Attributes of ARCHITECTURE element
+	public static final String ATT_ARCHI_ID = "id";
+	public static final String ATT_ARCHI_NAME = "name";
+	
 	// Attributes of VAR element
 	public static final String ATT_VAR_NAME = "name";
 	public static final String ATT_VAR_TYPE = "type";
@@ -152,5 +159,6 @@ public class XMLElements {
 	
 	// Attributes of KIND element
 	public static final String ATT_KIND_STAT = "symbol";
+
 
 }

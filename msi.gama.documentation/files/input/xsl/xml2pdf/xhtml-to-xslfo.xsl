@@ -28,7 +28,8 @@
     to the command.)
     =============================================== -->
 
-  <xsl:variable name="page-size" select="'ltr'"/>
+<!--  <xsl:variable name="page-size" select="'ltr'"/>-->  
+  <xsl:variable name="page-size" select="'A4'"/>
 
   <xsl:template match="html">
 
@@ -1012,7 +1013,7 @@
   <xsl:template match="img">
     <fo:block space-after="12pt" space-before="12pt" text-align="center">
       <fo:external-graphic src="{@src}" content-height="auto" content-width="6in">
- <!--        <xsl:if test="@width">
+<!--         <xsl:if test="@width">
           <xsl:attribute name="width">
             <xsl:choose>
               <xsl:when test="contains(@width, 'px')">
@@ -1035,7 +1036,7 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
-        </xsl:if> -->
+        </xsl:if>   -->
       </fo:external-graphic>
     </fo:block>
   </xsl:template>
@@ -1151,7 +1152,7 @@
         </fo:block>
       </fo:list-item-label>
       <fo:list-item-body start-indent="body-start()">
-        <fo:block>
+        <fo:block font-size="10pt" line-height="14pt" space-after="12pt">
           <xsl:apply-templates select="*|text()"/>
         </fo:block>
       </fo:list-item-body>
@@ -1163,7 +1164,7 @@
     =============================================== -->
 
   <xsl:template match="p">
-    <fo:block font-size="12pt" line-height="15pt"
+    <fo:block font-size="10pt" line-height="14pt"
       space-after="12pt">
       <xsl:apply-templates select="*|text()"/>
     </fo:block>
@@ -1178,7 +1179,7 @@
     =============================================== -->
 
   <xsl:template match="pre">
-    <fo:block font-family="monospace" font-size="10pt" space-after="12pt"
+    <fo:block font-family="monospace" font-size="10pt" line-height="14pt" space-after="12pt"
     linefeed-treatment="preserve" background-color="#EEEEEE">
       <xsl:apply-templates select="*|text()"/>
     </fo:block>
@@ -1526,7 +1527,7 @@
         <fo:block>&#x2022;</fo:block>
       </fo:list-item-label>
       <fo:list-item-body start-indent="body-start() - 20pt"> <!-- start-indent="body-start()  - 27pt" -->
-        <fo:block>
+        <fo:block font-size="10pt" line-height="14pt" space-after="12pt">
           <xsl:apply-templates select="*|text()"/>
         </fo:block>
       </fo:list-item-body>

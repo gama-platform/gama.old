@@ -39,6 +39,7 @@ public interface IOperatorCategory {
 	public static final String SP_RELATIONS		= "Spatial relations operators";
 	public static final String SP_TRANSFORMATIONS = "Spatial transformations operators";
 	
+	public static final String ITERATOR			= "Iterator operators";
 	public static final String CONTAINER		= "Containers-related operators";
 	public static final String MATRIX			= "Matrix-related operators";
 	public static final String STRING			= "Strings-related operators";

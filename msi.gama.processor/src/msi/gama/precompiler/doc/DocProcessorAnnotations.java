@@ -29,6 +29,9 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -73,9 +76,6 @@ public class DocProcessorAnnotations {
 						resultElt.setTextContent(value);			
 						resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");
 					} 
-					// eltResult.setTextContent(eltResult.getTextContent() + value);
-					//	docElt.getElementsByTagName("result").item(0)
-					//		.setTextContent(docElt.getElementsByTagName("result").item(0).getTextContent() + value);					
 				} else {
 					org.w3c.dom.Element resultElt = doc.createElement(XMLElements.RESULT);
 					resultElt.setTextContent(value);
@@ -180,25 +180,9 @@ public class DocProcessorAnnotations {
 			// Parse examples	
 			if (docAnnot.examples().length != 0) {
 				org.w3c.dom.Element usageExElt = doc.createElement(XMLElements.USAGE);
-				// org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);	
 				
 				org.w3c.dom.Element examplesElt = DocProcessorAnnotations.getExamplesElt(docAnnot.examples(), doc, e, tc);
-				// usageElt.appendChild(examplesUsageElt);
-				
-				/* for ( example example : docAnnot.examples() ) {
-					org.w3c.dom.Element exampleElt = doc.createElement(XMLElements.EXAMPLE);
-					// TODO: 
-					// org.w3c.dom.Element examplesUsageElt = DocProcessorAnnotations.getExamplesElt(usage.examples(), doc, e, tc);
-					// usageElt.appendChild(examplesUsageElt);
-					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_CODE, example);
-					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TEST_ONLY, "false");
-					exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_EXECUTABLE, "true");
-					
-					examplesElt.appendChild(exampleElt);	
 
-					numberOfUsagesWithExamplesOnly++;				
-				}
-				*/
 				numberOfUsagesWithExamplesOnly += docAnnot.examples().length; 
 				usageExElt.appendChild(examplesElt);
 				usagesExampleElt.appendChild(usageExElt);				
@@ -218,10 +202,6 @@ public class DocProcessorAnnotations {
 			if(numberOfUsagesWithExamplesOnly != 0) {docElt.appendChild(usagesExampleElt);}
 			if(numberOfUsagesWithoutExample != 0) {docElt.appendChild(usagesNoExampleElt);}
 			if(numberOfUsages != 0) {docElt.appendChild(usagesElt);}
-			
-//			public static @interface usages {
-//				String value() default "";
-//				String[] examples() default {};}
 			
 		}
 		return docElt;
@@ -256,16 +236,7 @@ public class DocProcessorAnnotations {
 				exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, tc.getProperType(e.getReturnType().toString()));
 			}
 		}
-		return exampleElt;
-//		public static @interface example {
-//			String value() default "";
-//			String var() default "";			
-//			String equals() default "";
-//			String isnot() default "";
-//			String raises() default "";	
-//			boolean isTestOnly() default false;		
-// 			boolean isExecutable() default true;		
-//		}		
+		return exampleElt;	
 	}		
 
 	public static org.w3c.dom.Element getConstantElt(constant constant, Document doc, Element e, Messager mes, TypeConverter tc){ 
@@ -285,6 +256,36 @@ public class DocProcessorAnnotations {
 
 		return constantElt;
 	}
+
+	public static org.w3c.dom.Element getVarsElt(vars varsAnnot, Document doc, Messager mes, String skillName, TypeConverter tc){
+		if ( varsAnnot != null ) {
+			org.w3c.dom.Element varsElt = doc.createElement(XMLElements.VARS);
+			for ( var v : varsAnnot.value() ) {
+				org.w3c.dom.Element varElt = doc.createElement(XMLElements.VAR);
+				varElt.setAttribute(XMLElements.ATT_VAR_NAME, v.name());
+				varElt.setAttribute(XMLElements.ATT_VAR_TYPE, tc.getTypeString(Integer.valueOf(v.type())));
+				varElt.setAttribute(XMLElements.ATT_VAR_CONSTANT, "" + v.constant());
+				
+				org.w3c.dom.Element docEltVar = 
+						DocProcessorAnnotations.getDocElt(v.doc(), doc, mes, "Var " + v.name() + " from " + skillName, tc, null);
+				if(docEltVar != null){
+					varElt.appendChild(docEltVar);
+				}
+				
+				String dependsOn = new String();
+				for ( String dependElement : v.depends_on() ) {
+					dependsOn = ("".equals(dependsOn) ? "" : dependsOn + ",") + dependElement;
+				}
+				varElt.setAttribute(XMLElements.ATT_VAR_DEPENDS_ON, dependsOn);
+				varsElt.appendChild(varElt);
+			}
+			return varsElt;
+		} else {
+			return null;
+		}
+	}
+	
+	
 	
 	public static org.w3c.dom.Element getActionElt(action actionAnnot, Document doc, Messager mes, Element e, TypeConverter tc){
 		if((!(e instanceof ExecutableElement)) || (actionAnnot == null)){
@@ -303,7 +304,6 @@ public class DocProcessorAnnotations {
 			
 			String tabType = "";
 			for(int i = 0; i < eltArg.type().length ; i++){
-				// tabType = tabType + ((i < eltArg.type().length - 1) ? typeStringFromIType.get(eltArg.type()[i]) + "," : typeStringFromIType.get(eltArg.type()[i]));
 				tabType = tabType + ((i < eltArg.type().length - 1) ? tc.getTypeString(eltArg.type()[i]) + "," : tc.getTypeString(eltArg.type()[i]));
 			}
 			argElt.setAttribute(XMLElements.ATT_ARG_TYPE, tabType);
@@ -430,24 +430,14 @@ public class DocProcessorAnnotations {
 				categoriesElt.appendChild(catElt);
 			}			
 		}
-		
-//		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0) {
-//			for(String categoryName : e.getAnnotation(operator.class).category()){
-//				if(!categories.contains(categoryName)){
-//					categories.add(categoryName);
-//					
-//					org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
-//					catElt.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
-//					categoriesElt.appendChild(catElt);
-//				}
-//			}
-//		} else {
-//			if(!categories.contains(tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()))) {
-//				org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
-//				catElt.setAttribute(XMLElements.ATT_CAT_ID, tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()));
-//				categoriesElt.appendChild(catElt);
-//			}
-//		}		
+
+		// We had a particular category that is red from the iterator 
+		if(e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).iterator()){
+			org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+			catElt.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
+			categoriesElt.appendChild(catElt);
+		}
+	
 		return categoriesElt;
 	}
 	
