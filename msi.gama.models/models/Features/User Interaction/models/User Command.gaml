@@ -7,7 +7,7 @@
 model usercommand
 
 global {
-	int nbAgent <- 500;
+	int nbAgent <- 1;
 	
 	init {
 		create cell number: nbAgent {
@@ -20,7 +20,7 @@ global {
    		} 
 	}
 	user_command "Create agents" {
-		 map input_values <- user_input(["Number" :: 1, "shape" :: "circle"]);
+		 map input_values <- user_input(["Number" :: nbAgent, "shape" :: "circle"]);
      	 create cell number : int(input_values at "Number") with: [color:: °pink, is_square:: string(input_values at "shape") = "square"];
 	}
 	
@@ -50,7 +50,7 @@ species cell {
 experiment Displays type: gui {
 	output {
 		display map { 
-			species cell;
+			species simulation.cell;
 		}
 	}
 }
