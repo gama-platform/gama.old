@@ -134,7 +134,7 @@ experiment Displays type: gui {
 		if (pos > 0.5 or pos <= 0) {
 			inc <- -inc;
 		}
-
+		
 	}
 
 	float carrying -> { cycle = 0 ? 0 : (((100 * world.ant count (each.has_food or each.state = "followingRoad")) / length(world.ant)) with_precision 2) };
@@ -166,9 +166,7 @@ experiment Displays type: gui {
 			style: bold;
 			text 'Carrying ants: ' + carrying + '%' position: { 0.75, 0.53 } color: rgb('black') size: font_size style: bold;
 		}
-
 	}
-
 }
 
 experiment Complete type: gui {
@@ -177,17 +175,15 @@ experiment Complete type: gui {
 	parameter name: 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 
 	// Experimentator
-	int a <- 1000;
+
 	init {
 		write "Experimentator agent running " + self;
-		ants_number <- 200;
+	   ants_number <- 200;
 	}
 
-	//	reflex {
-	//		write "I'm here : " + cycle;
-	//	}
+
 	output {
-		display Ants background: rgb('white') refresh_every: 1 {
+		display Ants background: rgb('white') refresh_every: 1{
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
@@ -198,7 +194,6 @@ experiment Complete type: gui {
 		inspect "One" type: table value: ant attributes: ['name', 'location', 'heading','state'];
 		inspect "Two" type: table value: 10 among ant attributes: ['state'];
 	}
-
 }
 
 experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 400) {
@@ -240,9 +235,7 @@ experiment Quadtree type: gui {
 			grid ant_grid lines: rgb('black');
 			species ant aspect: default;
 		}
-
 	}
-
 }
 
 experiment Callback type: gui parent: Complete { //Inherits from experiment "complete" its parameters (outputs will be done later)
@@ -259,7 +252,6 @@ experiment Callback type: gui parent: Complete { //Inherits from experiment "com
 				write "Simulation cycle " + cycle;
 				do _step_; // we ask the simulation to run 400 times
 			}
-
 		}
 
 		ask simulation {
@@ -269,5 +261,4 @@ experiment Callback type: gui parent: Complete { //Inherits from experiment "com
 		create ants_model with: [ants_number:: n]; // automatically modifies "simulation". 'ants_model' is the species of the model in which the experiment is defined
 		write "Number of ants: " + simulation.ants_number; // We verify it is correct
 	}
-
 }
