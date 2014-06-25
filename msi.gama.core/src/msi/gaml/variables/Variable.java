@@ -91,24 +91,28 @@ public class Variable extends Symbol implements IVariable {
 		@Override
 		public void validate(final IDescription vd) {
 			VariableDescription cd = (VariableDescription) vd;
+			boolean isParameter = cd.isExperimentParameter();
 			String name = cd.getName();
 			// Verifying that the name is not null
 			if ( name == null ) {
 				cd.error("The variable name is missing", IGamlIssue.MISSING_NAME);
 				return;
 			}
-			// Verifying that the name is not a type
-			IType t = cd.getTypeNamed(name);
-			if ( t != Types.NO_TYPE && !t.isAgentType() ) {
-				cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
-					name);
-				return;
-			}
-			// Verifying that the name is not reserved
-			if ( IExpressionCompiler.RESERVED.contains(name) ) {
-				cd.error(name + " is a reserved keyword. It cannot be used as a variable name", IGamlIssue.IS_RESERVED,
-					NAME, name);
-				return;
+
+			if ( !isParameter ) {
+				// Verifying that the name is not a type
+				IType t = cd.getTypeNamed(name);
+				if ( t != Types.NO_TYPE && !t.isAgentType() ) {
+					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE,
+						NAME, name);
+					return;
+				}
+				// Verifying that the name is not reserved
+				if ( IExpressionCompiler.RESERVED.contains(name) ) {
+					cd.error(name + " is a reserved keyword. It cannot be used as a variable name",
+						IGamlIssue.IS_RESERVED, NAME, name);
+					return;
+				}
 			}
 			// The name is ok. Now verifying the logic of facets
 			Facets ff = cd.getFacets();

@@ -99,6 +99,11 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
+	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
+		return Collections.EMPTY_LIST;
+	}
+
+	@Override
 	public void setTransparency(final Double transparency) {
 		definition.setTransparency(transparency);
 	}

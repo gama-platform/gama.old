@@ -13,7 +13,7 @@ package msi.gama.common.interfaces;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.Set;
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -98,5 +98,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 * @param newValue
 	 */
 	void setExtent(ILocation newValue);
+
+	public Collection<IAgent> getAgentsForMenu(final IScope scope);
 
 }

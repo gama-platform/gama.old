@@ -15,13 +15,12 @@ import gnu.trove.set.hash.THashSet;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
-import java.util.Set;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.grid.IGrid;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import com.vividsolutions.jts.geom.Envelope;
@@ -119,6 +118,11 @@ public class GridLayer extends ImageLayer {
 	@Override
 	public String getType() {
 		return "Grid layer";
+	}
+
+	@Override
+	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
+		return ((GridLayerStatement) definition).getAgentsToDisplay();
 	}
 
 	/**

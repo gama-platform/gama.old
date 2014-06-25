@@ -54,6 +54,10 @@ public class VariableDescription extends SymbolDescription {
 
 	}
 
+	public boolean isExperimentParameter() {
+		return facets.equals(KEYWORD, PARAMETER);
+	}
+
 	@Override
 	public void dispose() {
 		if ( /* isDisposed || */isBuiltIn() ) { return; }
@@ -216,7 +220,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( getEnclosingDescription() == null ) { return "This statement declares " + getName() + " as " + title +
 			"<br/>" + super.getDocumentation(); }
 		String s =
-			"This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle()  + ", in " +
+			"This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle() + ", in " +
 				this.getEnclosingDescription().getTitle() + "<br/>";
 		return s + super.getDocumentation();
 	}

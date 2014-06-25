@@ -209,28 +209,27 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			}
 		} else {
 			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
-				final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
-				AgentsMenu.MenuAction focus =
-					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
-				boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
-				boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
-				if ( !isAgentLayer ) {
-					continue;
-				}
-				Collection<IAgent> pop = null;
-				pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
-				if ( isSpeciesLayer ) {
-					// pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
-				} else {
-					// pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
-					// pop = new ArrayList(pop);
-				}
+				// boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
+				// boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
+				// if ( !isAgentLayer ) {
+				// continue;
+				// }
+				Collection<IAgent> pop = layer.getAgentsForMenu(displaySurface.getDisplayScope());
+				// if ( isSpeciesLayer ) {
+				// pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
+				// } else {
+				// pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
+				// pop = new ArrayList(pop);
+				// }
 				pop = new ArrayList(pop);
 				// pop = new ArrayList(pop);
 				if ( pop.isEmpty() ) {
 					continue;
 				}
 				String layerName = layer.getType() + ": " + layer.getName();
+				final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
+				AgentsMenu.MenuAction focus =
+					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 
 				if ( view.getOutput().isOpenGL() ) {
 					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
