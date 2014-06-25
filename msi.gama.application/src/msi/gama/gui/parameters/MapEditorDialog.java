@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MapEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'MapEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,7 +14,6 @@ package msi.gama.gui.parameters;
 import java.util.ArrayList;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gaml.types.Types;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -45,7 +44,7 @@ public class MapEditorDialog extends Dialog {
 
 	protected MapEditorDialog(final IScope scope, final Shell parentShell, final GamaMap list) {
 		super(parentShell);
-		GamaList<GamaPair> l = list.listValue(scope, Types.NO_TYPE);
+		IList<GamaPair> l = list.getPairs();
 		for ( GamaPair p : l ) {
 			data.add(p.first());
 			data.add(p.last());

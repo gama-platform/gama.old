@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MapEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'MapEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,7 +14,6 @@ package msi.gama.gui.parameters;
 import java.util.Map;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
@@ -24,7 +23,7 @@ import msi.gaml.types.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 public class MapEditor extends AbstractEditor {
@@ -47,7 +46,7 @@ public class MapEditor extends AbstractEditor {
 		this.createComposite(parent);
 	}
 
-	private Button mapAdd = null;
+	// private Button mapAdd = null;
 	private ExpressionControl expression;
 
 	@Override
@@ -60,13 +59,13 @@ public class MapEditor extends AbstractEditor {
 		layout.marginWidth = 1;
 		comp.setLayout(layout);
 		expression = new ExpressionControl(comp, this);
-		mapAdd = new Button(comp, SWT.NONE);
-		mapAdd.setImage(IGamaIcons.BUTTON_EDIT.image());
-		mapAdd.setText("Edit");
-		mapAdd.setAlignment(SWT.LEFT);
-		mapAdd.addSelectionListener(this);
-		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		mapAdd.setLayoutData(d);
+		// mapAdd = new Button(comp, SWT.NONE);
+		// mapAdd.setImage(IGamaIcons.BUTTON_EDIT.image());
+		// mapAdd.setText("Edit");
+		// mapAdd.setAlignment(SWT.LEFT);
+		// mapAdd.addSelectionListener(this);
+		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		// mapAdd.setLayoutData(d);
 		return expression.getControl();
 	}
 
@@ -92,7 +91,7 @@ public class MapEditor extends AbstractEditor {
 		internalModification = true;
 		expression.getControl().setText(StringUtils.toGaml(currentValue));
 		internalModification = false;
-		mapAdd.setEnabled(currentValue instanceof GamaMap);
+		// mapAdd.setEnabled(currentValue instanceof GamaMap);
 	}
 
 	@Override
