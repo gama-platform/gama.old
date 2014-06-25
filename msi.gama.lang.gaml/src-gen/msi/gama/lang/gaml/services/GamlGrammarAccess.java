@@ -3134,20 +3134,26 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cCastLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
 		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
 		private final Keyword cOpAsKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
-		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRightTypeRefParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final Assignment cRightAssignment_1_1_0 = (Assignment)cAlternatives_1_1.eContents().get(0);
+		private final RuleCall cRightTypeRefParserRuleCall_1_1_0_0 = (RuleCall)cRightAssignment_1_1_0.eContents().get(0);
+		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
+		private final Assignment cRightAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
+		private final RuleCall cRightTypeRefParserRuleCall_1_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_1_1_2 = (Keyword)cGroup_1_1_1.eContents().get(2);
 		
 		//Cast returns Expression:
-		//	Comparison (({Cast.left=current} op="as") right=TypeRef)?;
+		//	Comparison (({Cast.left=current} op="as") (right=TypeRef | "(" right=TypeRef ")"))?;
 		public ParserRule getRule() { return rule; }
 
-		//Comparison (({Cast.left=current} op="as") right=TypeRef)?
+		//Comparison (({Cast.left=current} op="as") (right=TypeRef | "(" right=TypeRef ")"))?
 		public Group getGroup() { return cGroup; }
 
 		//Comparison
 		public RuleCall getComparisonParserRuleCall_0() { return cComparisonParserRuleCall_0; }
 
-		//(({Cast.left=current} op="as") right=TypeRef)?
+		//(({Cast.left=current} op="as") (right=TypeRef | "(" right=TypeRef ")"))?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{Cast.left=current} op="as"
@@ -3162,11 +3168,29 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"as"
 		public Keyword getOpAsKeyword_1_0_1_0() { return cOpAsKeyword_1_0_1_0; }
 
+		//right=TypeRef | "(" right=TypeRef ")"
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+
 		//right=TypeRef
-		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
+		public Assignment getRightAssignment_1_1_0() { return cRightAssignment_1_1_0; }
 
 		//TypeRef
-		public RuleCall getRightTypeRefParserRuleCall_1_1_0() { return cRightTypeRefParserRuleCall_1_1_0; }
+		public RuleCall getRightTypeRefParserRuleCall_1_1_0_0() { return cRightTypeRefParserRuleCall_1_1_0_0; }
+
+		//"(" right=TypeRef ")"
+		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
+
+		//"("
+		public Keyword getLeftParenthesisKeyword_1_1_1_0() { return cLeftParenthesisKeyword_1_1_1_0; }
+
+		//right=TypeRef
+		public Assignment getRightAssignment_1_1_1_1() { return cRightAssignment_1_1_1_1; }
+
+		//TypeRef
+		public RuleCall getRightTypeRefParserRuleCall_1_1_1_1_0() { return cRightTypeRefParserRuleCall_1_1_1_1_0; }
+
+		//")"
+		public Keyword getRightParenthesisKeyword_1_1_1_2() { return cRightParenthesisKeyword_1_1_1_2; }
 	}
 
 	public class ComparisonElements extends AbstractParserRuleElementFinder {
@@ -5672,7 +5696,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Cast returns Expression:
-	//	Comparison (({Cast.left=current} op="as") right=TypeRef)?;
+	//	Comparison (({Cast.left=current} op="as") (right=TypeRef | "(" right=TypeRef ")"))?;
 	public CastElements getCastAccess() {
 		return (pCast != null) ? pCast : (pCast = new CastElements());
 	}

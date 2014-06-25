@@ -5683,10 +5683,10 @@ ruleCast returns [EObject current=null]
 	    }
 
 )
-))(
+))((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getCastAccess().getRightTypeRefParserRuleCall_1_1_0()); 
+	        newCompositeNode(grammarAccess.getCastAccess().getRightTypeRefParserRuleCall_1_1_0_0()); 
 	    }
 		lv_right_3_0=ruleTypeRef		{
 	        if ($current==null) {
@@ -5701,7 +5701,34 @@ ruleCast returns [EObject current=null]
 	    }
 
 )
-))?)
+)
+    |(	otherlv_4='(' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getCastAccess().getLeftParenthesisKeyword_1_1_1_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCastAccess().getRightTypeRefParserRuleCall_1_1_1_1_0()); 
+	    }
+		lv_right_5_0=ruleTypeRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCastRule());
+	        }
+       		set(
+       			$current, 
+       			"right",
+        		lv_right_5_0, 
+        		"TypeRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)	otherlv_6=')' 
+    {
+    	newLeafNode(otherlv_6, grammarAccess.getCastAccess().getRightParenthesisKeyword_1_1_1_2());
+    }
+)))?)
 ;
 
 

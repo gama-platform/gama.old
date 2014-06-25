@@ -300,7 +300,7 @@ Cast returns Expression:
 	Comparison
 	(({Cast.left = current}
 		op='as'
-	) right=TypeRef)?
+	) ((right= TypeRef) | ('(' right=TypeRef ')') ))?
 ;
 
 Comparison returns Expression:
