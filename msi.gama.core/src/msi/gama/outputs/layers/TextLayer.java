@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 
 /**
@@ -26,6 +25,7 @@ public class TextLayer extends AbstractLayer {
 
 	public TextLayer(final ILayerStatement layer) {
 		super(layer);
+		setName(((TextLayerStatement) layer).getTextExpr().toGaml());
 	}
 
 	@Override
