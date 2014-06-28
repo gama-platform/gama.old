@@ -36,7 +36,11 @@ class Parser:
     # Ben modif
     #schema_pattern = ur'\w+'    
     schema_pattern = ur'(http|https|ftp|ftps|file)'
-
+    
+    html_tags = ur'(div|table|tr|td|strong|ul|ol|li)'
+    html_attr = ur'(\s?[a-zA-Z]+=\"([a-zA-Z0-9])*\"\s?)'
+   # html_attr = ur'(\s?[a-zA-Z]*=\"(%(url_rule)s|[a-zA-Z0-9])*\"\s?)'
+    
     # some common rules
     word_rule = ur'(?:(?<![%(u)s%(l)s])|^)(?:[%(u)s][%(l)s]+){2,}(?:(?![%(u)s%(l)s])|$)' % {
         'u': chartypes.chars_upper,
@@ -62,9 +66,12 @@ class Parser:
     #     modified: (?P<heading>^\s*(?P<hmarker>=+)\s.*\s(?P=hmarker)\s*$)
     #               (?P<li>^\s+\*\s*)
     #               ol_rule = ur"^\s+#\s*"
+# (?P<HTMLtag>\<img\s?src=\"%(url_rule)s\"\/\>|\<br\s?\/\>|\<div\salign=\"center\"\s?\>|\<img\s([a-zA-Z]*=\"[0-9a-zA-Z]*\"\s?)?src=\"%(url_rule)s\"\/\>)
+    
     formatting_rules = ur"""(?P<ent_numeric>&#(\d{1,5}|x[0-9a-fA-F]+);)
 (?:(?P<asterisk>\\\*)
-(?P<HTMLtag>\<img\ssrc=\"%(url_rule)s\"\/\>|\<br\s?\/\>|\<strong\s?\>|\<\/strong\s?\>|\<div\salign=\"center\"\s?\>|\<\/div\s?\>|\<img\s(width=\"[0-9]*\"\s)?src=\"%(url_rule)s\"\/\>)
+(?P<HTMLtag>\<br\s?\/\>|\<div\salign=\"center\"\s?\>|\<img\s([a-zA-Z]*=\"[0-9a-zA-Z]*\"\s?)*src=\"%(url_rule)s\"([a-zA-Z]*=\"[0-9a-zA-Z]*\"\s?)*\/\>)
+(?P<HTMLtag2>\<%(html_tags)s\s*\>|\<\/%(html_tags)s\s*\>)
 (?P<uselessWikiTags>\<wiki\:video\surl=\"%(url_rule)s\"\/\>|\<wiki\:toc\smax\_depth=\"[0-9]\"\s?\/\>)
 (?P<underscore>\\_)
 (?P<newline>\\n)
@@ -104,6 +111,8 @@ class Parser:
         'pair_rule': pair_rule,
         'url_rule': url_rule,
         'word_rule': word_rule,
+        'html_tags': html_tags,
+        'html_attr': html_attr,
       }
 
     # Don't start p before these 
@@ -166,10 +175,13 @@ class Parser:
 
     def _HTMLtag_repl(self, word):
         return word
-
+    
+    def _HTMLtag2_repl(self, word):
+        return word
+    
     def _uselessWikiTags_repl(self, word):
         return ''
-
+    
     def _newline_repl(self, word):
         return self.formatter.linebreak(False)
 
