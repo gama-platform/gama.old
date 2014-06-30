@@ -91,14 +91,14 @@ public class GamaOsmFile extends GamaGisFile {
 							boolean keepObject = false;
 							for ( String keyN : filteringOptions.getKeys() ) {
 								GamaList valsPoss = filteringOptions.get(keyN);
-								for ( Tag tagN : ((Way) entity).getTags() ) {
-
-									if ( keyN.equals(tagN.getKey()) ) {
-										if ( valsPoss.contains(tagN.getValue()) ) {
-											keepObject = true;
-											break;
+									for ( Tag tagN : ((Way) entity).getTags() ) {
+										if ( keyN.equals(tagN.getKey()) ) {
+											if ( valsPoss == null || valsPoss.isEmpty() || valsPoss.contains(tagN.getValue()) ) {
+												keepObject = true;
+												break;
+											}
 										}
-									}
+									
 								}
 							}
 							if ( !keepObject ) { return; }
