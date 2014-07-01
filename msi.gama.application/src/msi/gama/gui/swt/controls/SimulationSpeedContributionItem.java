@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SimulationSpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'SimulationSpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -65,15 +65,16 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 				}
 
 			}, IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB.image(), SwtGui.getOkColor());
+		SwtGui.setSpeedControl(this);
 	}
 
 	/**
 	 * @param id
 	 */
-	public SimulationSpeedContributionItem(final String id) {
-		this();
-		setId(id);
-	}
+	// public SimulationSpeedContributionItem(final String id) {
+	// this();
+	// setId(id);
+	// }
 
 	@Override
 	protected double getInitialValue() {

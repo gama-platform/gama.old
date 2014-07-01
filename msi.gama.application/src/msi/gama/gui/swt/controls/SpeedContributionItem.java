@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'SpeedContributionItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,7 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ISpeedDisplayer;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gaml.operators.Comparison;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -30,7 +30,7 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 	private final Color popupColor;
 	private final IPositionChangeListener listener;
 	private final IToolTipProvider tip;
-	private CoolSlider slider;
+	private CoolSlider2 slider;
 
 	public SpeedContributionItem(final String toolTip, final double init, final IPositionChangeListener listener,
 		final IToolTipProvider tip, final Image thumb, final Image over, final Color popupColor) {
@@ -41,7 +41,7 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		this.tip = tip;
 		this.init = init;
 		this.listener = listener;
-		SwtGui.setSpeedControl(this);
+		// SwtGui.setSpeedControl(this);
 	}
 
 	@Override
@@ -56,14 +56,12 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 		layout.horizontalSpacing = 4;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
-		layout.marginWidth = 4;
+		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = size;
-		slider =
-			new CoolSlider(composite, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, IGamaIcons.TOOLBAR_SLIDER.image(),
-				IGamaIcons.TOOLBAR_SLIDER.image(), thumb_image, thumb_image, thumb_image_hover,
-				IGamaIcons.TOOLBAR_SLIDER.image(), IGamaIcons.TOOLBAR_SLIDER.image());
+		data.minimumWidth = size;
+		slider = new CoolSlider2(composite, IGamaIcons.TOOLBAR_SLIDER.image(), thumb_image, thumb_image_hover);
 		slider.setTooltipInterperter(tip);
 		slider.setLayoutData(data);
 		slider.setSize(size, 16);
