@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import java.util.Arrays;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.*;
@@ -26,7 +27,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	protected OperatorProto prototype;
 
 	public AbstractNAryOperator(final OperatorProto proto, final IExpression ... expressions) {
-		this.exprs = expressions;
+		// Copy introduced in order to circumvent issue 1060
+		exprs = Arrays.copyOf(expressions, expressions.length);
+		// this.exprs = expressions;
 		this.prototype = proto;
 		if ( prototype != null ) {
 			type = prototype.returnType;
