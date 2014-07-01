@@ -352,46 +352,50 @@ public class GamaPreferences {
 	 */
 	public static final Entry<String> CORE_DISPLAY = create("core.display",
 		"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL").in(DISPLAY)
-		.group("Properties");
+		.group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync", "Synchronize displays with simulations", false,
-		IType.BOOL).in(DISPLAY).group("Properties");
+		IType.BOOL).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay", false, IType.BOOL)
-		.in(DISPLAY).activates("core.scale").group("Properties");
+		.in(DISPLAY).activates("core.scale").group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_SCALE =
-		create("core.scale", "Show scale bar in overlay", false, IType.BOOL).in(DISPLAY).group("Properties");
+		create("core.scale", "Show scale bar in overlay", false, IType.BOOL).in(DISPLAY).group(
+			"Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing", false,
-		IType.BOOL).in(DISPLAY).group("Properties");
+		IType.BOOL).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Color> CORE_BACKGROUND = create("core.background", "Default background color",
-		Color.white, IType.COLOR).in(DISPLAY).group("Properties");
+		Color.white, IType.COLOR).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Color> CORE_HIGHLIGHT = create("core.highlight", "Default highlight color",
-		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group("Properties");
+		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group(
+		"Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
-		"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY).group("Properties");
+		"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY).group(
+		"Properties (settings effective after experiment relaunch)");
 	/**
 	 * Default Aspect
 	 */
 	public static final Entry<String> CORE_SHAPE = create("core.shape", "Defaut shape to use for agents", "shape",
 		IType.STRING).among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
-		.group("Default aspect");
+		.group("Default aspect (settings effective after experiment relaunch)");
 	public static final Entry<Double> CORE_SIZE = create("core.size", "Default size to use for agents", 1.0,
-		IType.FLOAT).between(0.01, null).in(DISPLAY).group("Default aspect");
+		IType.FLOAT).between(0.01, null).in(DISPLAY)
+		.group("Default aspect (settings effective after experiment relaunch)");
 	public static final Entry<Color> CORE_COLOR = create("core.color", "Default color to use for agents", Color.yellow,
-		IType.COLOR).in(DISPLAY).group("Default aspect");
+		IType.COLOR).in(DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
 	/**
 	 * OpenGL
 	 */
 	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use improved z positioning", true,
-		IType.BOOL).in(DISPLAY).group("OpenGL");
+		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw 3D referential", true, IType.BOOL)
-		.in(DISPLAY).group("OpenGL");
+		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_SHOW_FPS = create("core.show_fps", "Show number of frames per second",
-		false, IType.BOOL).in(DISPLAY).group("OpenGL");
+		false, IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_IS_LIGHT_ON = create("core.islighton", "Enable lighting", true, IType.BOOL)
-		.in(DISPLAY).group("OpenGL");
+		.in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_NORM = create("core.draw_norm", "Draw normals to objects", false,
-		IType.BOOL).in(DISPLAY).group("OpenGL");
+		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_CUBEDISPLAY = create("core.cubedisplay", "Display as a cube", false,
-		IType.BOOL).in(DISPLAY).group("OpenGL");
+		IType.BOOL).in(DISPLAY).group("OpenGL (settings effective after experiment relaunch)");
 
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
