@@ -168,7 +168,21 @@ public class Random {
 		final Integer y = RANDOM(scope).between(0, (int) max.y);
 		return new GamaPoint(x, y);
 	}
+	
+	@operator(value="rnd_float")
+	@doc(value = "returns an uniformly distributed double random number in ]0.0, to[", examples = { @example(value = "rnd_float(3.4)", equals = "a random float between 0.0 and 3.4", test = false) }, see = { "rnd" })	
+	public static Double opRndFloat(final IScope scope, final Double max){
+		final RandomUtils r = RANDOM(scope);
+		return r.between(0.0, max);
+	}
 
+	@operator(value="rnd_float")
+	@doc(examples = { @example(value = "rnd_float(3)", equals = "a random float between 0.0 and 3.0", test = false) }, see = { "rnd" })	
+	public static Double opRndFloat(final IScope scope, final Integer max){
+		final RandomUtils r = RANDOM(scope);
+		return r.between(0.0, max);
+	}
+	
 	@operator(value = "flip", category = { IOperatorCategory.RANDOM })
 	@doc(value = "true or false given the probability represented by the operand", usages = { @usage(value = "flip 0 always returns false, flip 1 true") }, examples = { @example(value = "flip (0.66666)", equals = "2/3 chances to return true.", test = false) }, see = { "rnd" })
 	public static Boolean opFlip(final IScope scope, final Double probability) {
@@ -176,6 +190,7 @@ public class Random {
 	}
 	
 	@operator(value="rnd_choice")
+	@doc(value = "returns an index of the given list with a probability following the (normalized) distribution described in the list (a form of lottery)", examples = { @example(value = "rnd_choice([0.2,0.5,0.3])", equals = "2/10 chances to return 0, 5/10 chances to return 1, 3/10 chances to return 2", test = false) }, see = { "rnd" })	
 	public static Integer opRndChoice(final IScope scope, final IList distribution){
 		final IList<Double> normalizedDistribution = new GamaList<Double>();
 		Double sumElt = 0.0;
@@ -205,6 +220,7 @@ public class Random {
 
 		return -1;
 	}
+	
 	
 
 }
