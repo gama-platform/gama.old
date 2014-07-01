@@ -52,8 +52,8 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 					}
 				}
 			}
-			
-			//hqnghi in case of multi-controller
+
+			// hqnghi in case of multi-controller
 			if ( out == null ) {
 				for ( FrontEndController fec : GAMA.getControllers().getValues() ) {
 					manager = fec.getExperiment().getSimulationOutputs();
@@ -68,10 +68,10 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 					}
 				}
 			}
-			
-			//hqngh in case of micro-model
+
+			// hqngh in case of micro-model
 			if ( out == null ) {
-				SimulationAgent sim = (SimulationAgent) GAMA.getExperiment().getCurrentSimulation();
+				SimulationAgent sim = GAMA.getExperiment().getCurrentSimulation();
 				if ( sim != null ) {
 					String[] stemp = id.split("#");
 					if ( stemp.length > 1 ) {
@@ -92,7 +92,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 			}
 		}
 		setOutput(out);
-		GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
+		// GamaToolbarFactory.buildToolbar(this, getToolbarActionsId());
 	}
 
 	/**
@@ -145,9 +145,9 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 	@Override
 	public void setOutput(final IDisplayOutput out) {
-		if ( output != null ) {
-			resetButtonStates();
-		}
+		// if ( output != null ) {
+		resetButtonStates();
+		// }
 		output = out;
 	}
 
