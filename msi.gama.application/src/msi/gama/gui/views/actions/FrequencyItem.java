@@ -37,7 +37,7 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 	}
 
 	double getInit() {
-		// refresh every 1 = 1d ; refresh every 1000 = 0d;
+		// refresh every 1 = 1d ; refresh every 100 = 0d;
 		IDisplayOutput output = ((GamaViewPart) view).getOutput();
 		if ( output == null ) { return 1d; }
 		int refresh = output.getRefreshRate();
@@ -45,10 +45,10 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 		return (100 - refresh) / 100d;
 	}
 
-	int getRefresh(final Double slider) {
+	int getRefresh(final double slider) {
 		// slider = 0d, refresh = 100; slider= 1d = , refresh = 1
-		if ( slider.equals(0d) ) { return 100; }
-		if ( slider.equals(1d) ) { return 1; }
+		if ( slider == 0d ) { return 100; }
+		if ( slider == 1d ) { return 1; }
 		return (int) (100 * (1 - slider));
 	}
 
@@ -65,7 +65,9 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 
 	@Override
 	public String getToolTipText(final double value) {
-		return "Update every " + getRefresh(value) + " step";
+		int i = getRefresh(value);
+		String name = getView().getTitle();
+		return "Update " + name + " every" + (i > 1 ?" " + i + " steps" : " step");
 	}
 
 	@Override
