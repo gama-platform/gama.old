@@ -641,6 +641,7 @@ public class GeometryUtils {
 			final int nbSp = geom.getNumPoints();
 			final Coordinate[] coordsSimp = geom.getCoordinates();
 			boolean same = false;
+			final boolean is_ring = ((LineString) geom).isClosed();
 			double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
 			for ( int i = 0; i < nbSp - 1; i++ ) {
 				if ( !same ) {
@@ -650,7 +651,7 @@ public class GeometryUtils {
 					y_t = t.y;
 					x_s = s.x;
 					y_s = s.y;
-				} else {
+				} else if (is_ring) {
 					i = i - 1;
 				}
 				final double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
@@ -661,6 +662,9 @@ public class GeometryUtils {
 					locs.add(new GamaPoint(x_s, y_s));
 					dist_cur = distance;
 					same = true;
+					if (!is_ring) {
+						i = i - 1;
+					} 
 				} else if ( dist_cur > dist ) {
 					dist_cur = dist_cur - dist;
 					same = false;
