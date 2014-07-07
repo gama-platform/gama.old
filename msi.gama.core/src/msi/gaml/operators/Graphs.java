@@ -1031,10 +1031,6 @@ public class Graphs {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the load_shortest_paths operator, the graph should not be null!"); }
 		int n = graph.vertexSet().size();
-		if ( n != matrix.numCols || n != matrix.numRows ) { throw GamaRuntimeException
-			.error(
-				"In the load_shortest_paths operator, the number of vertices of the graph should be equal to the number of rows and columns of the matrix!",
-				scope); }
 		graph.loadShortestPaths(scope, matrix);
 		return graph;
 		// throw GamaRuntimeException.error("not implemented: loading from gama file");
