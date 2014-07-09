@@ -64,7 +64,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 		doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 	@facet(name = IKeyword.STEP,
 		type = IType.FLOAT,
-		optional = true,
+		optional = false,
 		doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
 	@facet(name = "min_step",
 		type = IType.FLOAT,
@@ -137,7 +137,7 @@ public class SolveStatement extends AbstractStatement {
 		discret = Cast.asInt(scope, discretExp.value(scope));
 		cycle_length = Cast.asFloat(scope, cycleExp.value(scope));
 		double step = Cast.asFloat(scope, stepExp.value(scope));
-
+		step = 1.0 / cycle_length != step?step:1.0 / cycle_length;
 		if ( getEquations(scope) == null ) { return null; }
 		equations.currentScope = scope;
 

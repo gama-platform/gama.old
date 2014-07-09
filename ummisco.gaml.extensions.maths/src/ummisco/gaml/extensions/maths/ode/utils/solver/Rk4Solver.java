@@ -123,13 +123,13 @@ public class Rk4Solver extends Solver {
 			if (y.length > 0)
 			try {
 				integrator.integrate(eq, (time_initial)
-						* (step / cycle_length / step), y, time_final
-						* (step / cycle_length / step), y);
+						* (step), y, time_final
+						* (step), y);
 
 			} catch (final Exception ex) {
 					ex.printStackTrace();
 			}
-			eq.assignValue(time_final * (step / cycle_length / step), y);
+			eq.assignValue(time_final * (step), y);
 
 		}
 
