@@ -167,9 +167,17 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
 			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
-			final int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
-			Object[] result = new Object[1];
-			for ( int i = f, n = t + 1; i < n && loopBody(scope, i); i += s ) {}
+			int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
+			boolean negative = f - t > 0;
+			// if ( f == t ) { return null; }
+			if ( negative ) {
+				if ( s > 0 ) {
+					s = -s;
+				}
+				for ( int i = f, n = t - 1; i > n && loopBody(scope, i); i += s ) {}
+			} else {
+				for ( int i = f, n = t + 1; i < n && loopBody(scope, i); i += s ) {}
+			}
 			return result[0];
 		}
 	}
