@@ -454,7 +454,7 @@ public class Graphs {
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
 		GamaMap mapResult = new GamaMap();
-		GamaList vertices = (GamaList) graph.vertexSet();
+		GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
 		for ( Object v1 : vertices ) {
 			for ( Object v2 : vertices ) {
 				if ( v1 == v2 ) {
