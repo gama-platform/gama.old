@@ -22,7 +22,7 @@ global skills: [moving] control: fsm {
 		diff(y, t) = x + y * 2;
 	}
 
-	reflex solving {solve eq method: rk4;}
+	reflex solving {solve eq step: 1 method: rk4;}
 
 	/** 
  * ATTRIBUTES
