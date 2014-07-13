@@ -64,6 +64,13 @@ public class XmlToWiki {
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Skills-xml2wiki.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "G__BuiltInSkills"+suffix+".wiki");	
 		System.out.println("Done");		
+		//
+		System.out.print("Creation of the wiki page for the Index.......");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2wiki.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "G__Index"+suffix+".wiki");	
+		System.out.println("Done");	
+		
 		
 		// To uncomment when we want to generate Architectures
 		// System.out.print("Creation of the wiki page for Architectures.......");		
