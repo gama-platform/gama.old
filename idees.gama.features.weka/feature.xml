@@ -2,10 +2,12 @@
 <feature
       id="idees.gama.features.weka"
       label="Weka"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="IDEES">
 
    <description url="http://www.example.com/description">
-      Plug-in allowing to use Weka Clustring algorithms through GAMA operators.
+      Plug-in allowing to use Weka Clustring algorithms through GAML
+operators.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -15,6 +17,10 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <url>
+      <update label="Gama 1.6.1 Update Site" url="https://gama-platform.googlecode.com/svn/update_site"/>
+   </url>
 
    <plugin
          id="idees.gama.weka"
