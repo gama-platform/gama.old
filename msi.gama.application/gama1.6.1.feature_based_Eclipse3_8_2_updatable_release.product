@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1.1" useFeatures="true" includeLaunchers="true">
+<product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.1" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
@@ -250,10 +250,7 @@ openFile</programArgs>
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.dependencies"/>
-      <feature id="ummisco.gama.feature.core"/>
-      <feature id="ummisco.gama.feature.models"/>
-      <feature id="ummisco.gama.feature.opengl.jogl1"/>
+      <feature id="ummisco.gama.feature.product" version="1.6.1.qualifier"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
