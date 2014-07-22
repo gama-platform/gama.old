@@ -28,6 +28,7 @@ import msi.gama.lang.gaml.gaml.impl.S_DisplayImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ExperimentImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ReflexImpl;
 import msi.gama.lang.gaml.gaml.impl.S_SpeciesImpl;
+import msi.gama.lang.gaml.gaml.impl.VariableRefImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
@@ -340,6 +341,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			for (EAspectLink ob : sp.getAspectLinks())  {eObjs.add(ob.getAspect());}
 			for (EReflexLink ob : sp.getReflexLinks())  {eObjs.add(ob.getReflex());}
 			for (EVariable ob : sp.getVariables())  {eObjs.add(ob);}
+			
+			
 		}
 		if (obj instanceof EWorldAgent) {
 			EWorldAgent sp = (EWorldAgent) obj;
@@ -351,7 +354,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		}
 		for (EObject o : eObjs) {
 			GamaList<String> cu2 = new GamaList<String>(current);
-			getEObjects((EGamaObject) o, cu2, tot);
+			getEObjects((EObject) o, cu2, tot);
 		}
 	}
 
@@ -389,6 +392,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		getEObjects(worldAgent, new GamaList<String>(), tot);
 		for (GamlCompilationError error : errors) {
 			EObject toto = error.getStatement();
+			
 			GamaList<String> ids = new GamaList<String>();
 			final String erStr = error.getCode();
 			do {
@@ -432,7 +436,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 										EVariable var =  ((EVariable) obj);
 										var.setHasError(true);
 										var.setError(erStr);
-										
+										((EGamaObject) var.eContainer()).setHasError(true);
+										((EGamaObject)  var.eContainer()).setError(erStr);
 									}
 								}
 							}
