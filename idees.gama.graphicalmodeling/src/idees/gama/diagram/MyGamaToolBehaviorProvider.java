@@ -61,9 +61,9 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 				    customFeature = new EditAspectFeature(getFeatureProvider());
 		        } else if (bo instanceof EDisplay ) {
 				    customFeature = new EditDisplayFeature(getFeatureProvider());
-				} else {
+				} /*else {
 		        	customFeature = new RenameEGamaObjectFeature(getFeatureProvider());
-		        }
+		        }*/
 		        // canExecute() tests especially if the context contains a EClass
 		        if (customFeature != null && customFeature.canExecute(context)) {
 		            return customFeature;

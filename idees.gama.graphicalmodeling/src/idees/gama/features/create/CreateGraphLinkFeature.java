@@ -8,6 +8,7 @@ import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -74,6 +75,10 @@ public class CreateGraphLinkFeature extends AbstractCreateSpeciesComponentLinkFe
 		return false;
 	}
 	
+	public void execute(IContext context) {
+		super.execute(context);
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
+	}
 	
 
 }

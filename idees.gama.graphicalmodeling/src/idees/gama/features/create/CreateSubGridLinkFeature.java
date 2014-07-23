@@ -10,6 +10,7 @@ import idees.gama.ui.image.GamaImageProvider;
 
 import idees.gama.features.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
@@ -98,5 +99,8 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 		return GamaImageProvider.IMG_SUBGRIDLINK;
 	}
 	
-
+	public void execute(IContext context) {
+		super.execute(context);
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
+	}
 }

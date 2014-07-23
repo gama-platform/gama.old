@@ -28,7 +28,6 @@ import msi.gama.lang.gaml.gaml.impl.S_DisplayImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ExperimentImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ReflexImpl;
 import msi.gama.lang.gaml.gaml.impl.S_SpeciesImpl;
-import msi.gama.lang.gaml.gaml.impl.VariableRefImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
@@ -330,6 +329,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 	
 	public void getEObjects(EObject obj, List<String> current, GamaMap<List<String>, EObject> tot) {
+		if (obj == null) return;
 		String objStr = obj instanceof EGamaObject ? ((EGamaObject) obj).getName() :((EVariable) obj).getName() ;
 		current.add(objStr);
 		tot.put(current, obj);
@@ -354,7 +354,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		}
 		for (EObject o : eObjs) {
 			GamaList<String> cu2 = new GamaList<String>(current);
-			getEObjects((EObject) o, cu2, tot);
+			getEObjects(o, cu2, tot);
 		}
 	}
 
@@ -362,7 +362,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		this.errors = errors;
 		final IFeatureProvider fp = getDiagramTypeProvider().getFeatureProvider();
 		final List<Shape> contents = diagram.getChildren();
-		if (contents == null) return;			
+		
+		if (contents == null) return;	
 		final List<EWorldAgent> worldAgents = new GamaList<EWorldAgent>();
 			TransactionalEditingDomain domain = TransactionUtil
 					.getEditingDomain(getDiagram());
@@ -370,8 +371,11 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				domain.getCommandStack().execute(
 						new RecordingCommand(domain) {
 							public void doExecute() {
+			
 			for (Shape obj : contents) {
+				
 				final Object bo = fp.getBusinessObjectForPictogramElement(obj);
+				
 				if (bo instanceof EGamaObject) {
 					((EGamaObject) bo).setHasError(false);
 					((EGamaObject) bo).setError("");

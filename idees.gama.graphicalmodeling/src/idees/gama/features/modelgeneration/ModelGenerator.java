@@ -32,9 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;

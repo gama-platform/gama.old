@@ -1,10 +1,10 @@
 package idees.gama.features.add;
 
-import java.util.List;
-
-import idees.gama.ui.image.GamaImageProvider;
 import gama.EVariable;
 import gama.EWorldAgent;
+import idees.gama.ui.image.GamaImageProvider;
+
+import java.util.List;
 
 import msi.gama.util.GamaList;
 
@@ -24,8 +24,6 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.util.ColorConstant;
-import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddWorldFeature extends AbstractAddShapeFeature {
  
@@ -162,4 +160,6 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
         layoutPictogramElement(containerShape);
         return containerShape;
     }
+    
+    
 }

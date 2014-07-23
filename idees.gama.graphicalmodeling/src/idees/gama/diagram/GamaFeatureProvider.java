@@ -53,7 +53,8 @@ import idees.gama.features.layout.LayoutEExperimentFeature;
 import idees.gama.features.layout.LayoutESpeciesFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
 import idees.gama.features.others.ChangeColorEGamaObjectFeature;
-import idees.gama.features.others.RenameEGamaObjectFeature;
+import idees.gama.features.others.CustomDeleteFeature;
+import idees.gama.features.others.EmptyRemoveFeature;
 import idees.gama.features.others.UpdateEGamaObjectFeature;
 
 import java.util.List;
@@ -81,13 +82,17 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
+import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
+import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
+import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
@@ -116,6 +121,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 	 
 	public GamaFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
+       
     }
     
     @Override
@@ -595,10 +601,22 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this), new LayoutDiagramFeature(this), new ChangeColorEGamaObjectFeature(this)};
+    	return new ICustomFeature[] {/* new RenameEGamaObjectFeature(this),*/new ModelGenerationFeature(this), new LayoutDiagramFeature(this), new ChangeColorEGamaObjectFeature(this)};
     }
     
+    
     @Override
+	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
+    	return new EmptyRemoveFeature(this);
+	}
+    
+    
+	@Override
+	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
+		return new CustomDeleteFeature(this);
+	}
+
+	@Override
     public IUpdateFeature getUpdateFeature(IUpdateContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();
         if (pictogramElement instanceof ContainerShape) {

@@ -9,6 +9,7 @@ import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
@@ -97,6 +98,11 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 	@Override
 	public String getCreateImageId() {
 		return GamaImageProvider.IMG_SUBSPECIESLINK;
+	}
+	
+	public void execute(IContext context) {
+		super.execute(context);
+		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 	}
 	
 	
