@@ -27,7 +27,7 @@ global {
 species LotkaVolterra_agent {
 
 	float nb_prey <- nb_prey_init ; 			// number of preys initialized with the values given by the user
-	float nb_predator <- nb_prey_init ; 		// number of predators initialized with the values given by the user
+	float nb_predator <- nb_predator_init ; 		// number of predators initialized with the values given by the user
 
 	equation lotka_volterra {
 		diff(nb_prey,t) =   nb_prey * (prey_birth_rate - predation_rate * nb_predator); 					// evolution of the number of preys duting an integration time step
