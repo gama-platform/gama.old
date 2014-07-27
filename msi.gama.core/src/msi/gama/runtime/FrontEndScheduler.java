@@ -53,7 +53,10 @@ public class FrontEndScheduler implements Runnable {
 			try {
 				executionThread.start();
 			} catch (final Exception e) {
-				GuiUtils.error("FrontEndScheduler.startThread : reloading thread due to an internal error");
+				e.printStackTrace();
+				GamaRuntimeException ee = GamaRuntimeException.create(e);
+				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
+				GuiUtils.raise(ee);
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
 			}
@@ -101,7 +104,7 @@ public class FrontEndScheduler implements Runnable {
 		synchronized (toStop) {
 			for ( final IStepable s : toStop ) {
 				final IScope scope = toStep.get(s);
-				if ( !scope.interrupted() ) {
+				if ( scope != null && !scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
 					scope.setInterrupted(true);
 				}
