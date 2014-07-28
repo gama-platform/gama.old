@@ -5,6 +5,7 @@ import gama.EGraphTopologyEdge;
 import gama.EGraphTopologyNode;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddSpeciesFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
@@ -114,7 +115,8 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 			eReference.setMicro(targetNode);
 			source.getMicroSpeciesLinks().add(eReference);
 			targetNode.getMacroSpeciesLinks().add(eReference);
-	
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+			
 			if (source != null && targetEdge != null) {
 				// create new business object
 				ESubSpeciesLink eReference2 = createEReference(source, targetEdge);
@@ -130,6 +132,7 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 				eReference2.setMicro(targetEdge);
 				source.getMicroSpeciesLinks().add(eReference2);
 				targetEdge.getMacroSpeciesLinks().add(eReference2);
+				diagramEditor.addEOject(targetEdge);
 			}
 			if (targetNode != null && targetEdge != null) {
 				// create new business object
@@ -144,7 +147,7 @@ public class CreateSubGraphSpeciesFeature extends AbstractCreateSpeciesComponent
 						addContext3);
 				eReference3.setNode(targetNode);
 				eReference3.setEdge(targetEdge);
-				
+				diagramEditor.addEOject(targetNode);
 			}
 		}
 		return newConnectionNode;

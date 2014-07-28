@@ -1,12 +1,10 @@
 package idees.gama.ui.editFrame;
 
-import java.util.List;
 
 import gama.EGamaObject;
 import gama.EWorldAgent;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
-import idees.gama.features.modelgeneration.ModelGenerator;
-
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
 import msi.gama.lang.gaml.gaml.impl.S_DefinitionImpl;
@@ -27,19 +25,13 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -111,7 +103,7 @@ public abstract class EditFrame extends ApplicationWindow {
 	}
 
 	
-	protected void canvasValidation(Composite container) {
+/*	protected void canvasValidation(Composite container) {
 		Group group = new Group(container, SWT.BORDER);
 		group.setLayout( new FillLayout(SWT.HORIZONTAL));
 	    group.setText("GAML code compilation result");
@@ -165,7 +157,7 @@ public abstract class EditFrame extends ApplicationWindow {
 		});
 		btnValidate.setText("Validate"); 		
 	}
-	
+	*/
 	protected void groupName(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		GridData gridData = new GridData();
@@ -178,7 +170,9 @@ public abstract class EditFrame extends ApplicationWindow {
 	    CLabel lblName = new CLabel(group, SWT.NONE);
 		lblName.setText("Name:");
 		
-	    textName = new Text(group, SWT.BORDER);
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		textName = new ValidateText(group, SWT.BORDER,diagram, fp,this, diagramEditor, "name", null,null);
+		
 	    GridData gridData2 = new GridData();
 		gridData2.horizontalAlignment = SWT.FILL;
 		gridData2.grabExcessHorizontalSpace = true;
@@ -187,14 +181,17 @@ public abstract class EditFrame extends ApplicationWindow {
 		if (eobject instanceof EWorldAgent) {
 			textName.setEditable(false);
 		}
+		((ValidateText)textName).setSaveData(true);
 		
 	}
 	
 	protected Canvas canvasName(Composite container) {	
 		Canvas canvasName = new Canvas(container, SWT.BORDER);
-		textName = new Text(canvasName, SWT.BORDER);
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		textName = new ValidateText(canvasName, SWT.BORDER,diagram, fp,this, diagramEditor, "name", null, null);
 		UtilEditFrame.buildCanvasName(container, canvasName, textName, eobject, ef);
 		canvasName.setBounds(10, 10, 720, 30);
+		((ValidateText)textName).setSaveData(true);
 		return canvasName;
 	}
 
@@ -248,7 +245,7 @@ public abstract class EditFrame extends ApplicationWindow {
 		return new Point(743, 727);
 	}
 	
-	protected Canvas canvasOkCancel(Composite container) {
+	/*protected Canvas canvasOkCancel(Composite container) {
 		//****** CANVAS OK CANCEL BUTTONS *********
 		Canvas canvasOKCancel = new Canvas(container, SWT.BORDER);
 		canvasOKCancel.setBounds(10, 460, 720, 30);	
@@ -276,9 +273,9 @@ public abstract class EditFrame extends ApplicationWindow {
 			}
 		});
 		return canvasOKCancel;
-	}
+	}*/
 	
-	protected Group groupOkCancel(Composite container) {
+	/*protected Group groupOkCancel(Composite container) {
 		//****** CANVAS OK CANCEL BUTTONS *********
 		
 		Group groupOkCancel = new Group(container, SWT.NONE);
@@ -317,21 +314,13 @@ public abstract class EditFrame extends ApplicationWindow {
 			}
 		});
 		return groupOkCancel;
-	}
-	protected abstract void save();
+	}*/
+	protected abstract void save(String name);
 	
 	protected void handleShellCloseEvent() {
 		// create dialog with ok and cancel button and info icon
-		MessageBox dialog = 
-		  new MessageBox(shell, SWT.ICON_WARNING | SWT.OK| SWT.CANCEL);
-		dialog.setText("Warning");
-		dialog.setMessage("You have unsaved data. Close the '"+ name +"' windows anyway?");
-
-		int result = dialog.open();
-		if (result == SWT.OK) {
-			frame.clean();
-			frame.close();
-		}
+		frame.clean();
+		frame.close();
 	}
 	
 	

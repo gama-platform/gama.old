@@ -40,6 +40,7 @@ public class UpdateEGamaObjectFeature extends AbstractUpdateFeature {
             final ContainerShape cs = (ContainerShape) pictogramElement;
             if (bo instanceof EGamaObject) {
        		 	final EGamaObject eClass = (EGamaObject) bo;
+       		 	System.out.println("eClass : " + eClass + " eClass.getHasError():" + eClass.getHasError());
        		 	final boolean error = (eClass.getHasError()  != null && eClass.getHasError()) ;
        		 	if (cs != null && cs.getGraphicsAlgorithm() != null && cs.getGraphicsAlgorithm().getForeground() != null) {
        		 		if ((cs.getGraphicsAlgorithm().getForeground().getGreen() == 255) == error) {

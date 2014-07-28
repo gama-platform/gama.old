@@ -3,6 +3,7 @@ package idees.gama.features.create;
 import gama.EAction;
 import gama.EActionLink;
 import gama.ESpecies;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddActionFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
@@ -44,8 +45,7 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
-		return newAction;
+		return newAction; 
 	}
 	
 	private PictogramElement addEAction(ICreateConnectionContext context, EAction action) {
@@ -80,7 +80,9 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			source.getActionLinks().add(eReference);
 			target.getActionLinks().add(eReference);
 		}
-
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnection;
 	}
 
@@ -88,7 +90,7 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		EActionLink eReference = gama.GamaFactory.eINSTANCE.createEActionLink();
 		eReference.setSource(source);
 		eReference.setTarget(target);
-		return eReference;
+		return eReference; 
 	}
 	
 	@Override

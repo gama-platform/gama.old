@@ -62,7 +62,7 @@ public class EditAspectFrame extends EditFrame {
 		groupLayers(container);
 				
 		//****** CANVAS OK/CANCEL *********
-		groupOkCancel(container);
+		//groupOkCancel(container);
 		
 		return container;
 	}
@@ -245,7 +245,7 @@ public class EditAspectFrame extends EditFrame {
 	}
 
 	@Override
-	protected void save() {
+	protected void save(String name) {
 		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
 			if (domain != null) {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {

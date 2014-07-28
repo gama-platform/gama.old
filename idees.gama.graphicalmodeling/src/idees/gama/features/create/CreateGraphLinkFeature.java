@@ -4,6 +4,7 @@ import gama.EGraphLink;
 import gama.EGraphTopologyEdge;
 import gama.EGraphTopologyNode;
 import gama.ESpecies;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
 
@@ -46,7 +47,9 @@ public class CreateGraphLinkFeature extends AbstractCreateSpeciesComponentLinkFe
 				eReference.setEdge(target);
 			}
 		}
-		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnectionNode;
 	}
 

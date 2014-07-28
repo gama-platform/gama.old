@@ -1,5 +1,6 @@
 package idees.gama.features.create;
 
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.add.AddGuiExperimentFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
@@ -88,7 +89,9 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 			source.getExperimentLinks().add(eReference);
 			target.setExperimentLink(eReference);
 		}
-
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnection;
 	}
 	

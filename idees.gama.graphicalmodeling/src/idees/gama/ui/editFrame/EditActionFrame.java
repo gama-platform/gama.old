@@ -1,9 +1,14 @@
 package idees.gama.ui.editFrame;
 
+import java.util.List;
+
 import gama.EAction;
 import gama.EGamaObject;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import msi.gama.util.GamaList;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -40,13 +45,14 @@ public class EditActionFrame extends EditFrame {
 		container.setLayout(new GridLayout(1, false));
 		//****** CANVAS NAME *********
 		groupName(container);
+		
 		//****** CANVAS GAMLCODE *********
 		groupGamlCode(container);
 		
 		//canvasValidation(container);
 		
 		//****** CANVAS OK/CANCEL *********
-		groupOkCancel(container);
+		//groupOkCancel(container);
 		
 		return container;
 	}
@@ -73,7 +79,11 @@ public class EditActionFrame extends EditFrame {
 	   gridData2.grabExcessHorizontalSpace = true;
 	   gridData2.grabExcessVerticalSpace= true;
 	 
-	   gamlCode = new StyledText(group, SWT.BORDER);
+	   GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	   List<String> uselessName = new GamaList<String>();
+	   uselessName.add("name");
+	   gamlCode = new ValidateStyledText(group, SWT.BORDER, diagram, fp, this, diagramEditor, "",uselessName);
+	  ((ValidateText) textName).getLinkedVsts().add((ValidateStyledText) gamlCode);
 	   gamlCode.setLayoutData(gridData2);
 		
 		//gamlCode.setBounds(5, 30, 700, 265);
@@ -92,13 +102,16 @@ public class EditActionFrame extends EditFrame {
 	}
 
 	@Override
-	protected void save() {
+	protected void save(final String name) {
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
 		if (domain != null) {
 			domain.getCommandStack().execute(new RecordingCommand(domain) {
 	    	     public void doExecute() {
-	    	    	 eobject.setName(textName.getText());
-		    	    ((EAction) eobject).setGamlCode(gamlCode.getText());
+	    	    	 if (name.equals("name")) {
+	    	    		 eobject.setName(textName.getText());
+	    	    	 } else {
+	    	    		 ((EAction) eobject).setGamlCode(gamlCode == null ? "" : gamlCode.getText());
+	    	    	 }
 	    	     }
 	    	  });
 		} 

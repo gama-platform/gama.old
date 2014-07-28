@@ -20,6 +20,7 @@ import gama.ESubSpeciesLink;
 import gama.EVariable;
 import gama.EWorldAgent;
 import idees.gama.diagram.GamaDiagramEditor;
+import idees.gama.ui.editFrame.ValidateStyledText;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class ModelGenerator {
 
 	public static IModel modelGeneration(IFeatureProvider fp, Diagram diagram) {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.initIdsEObjects();
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
 		URI uri = URI.createPlatformResourceURI("toto/"+ diagramEditor.getTitle()+".gaml", true);
@@ -98,16 +100,53 @@ public class ModelGenerator {
         path = path.replace(".gadl", ".gaml");
         return path;
 	}
-	public static List<GamlCompilationError> modelValidation(IFeatureProvider fp, Diagram diagram) {
+	public static boolean hasSyntaxError(String expression, boolean isExpression ) {
+		return hasSyntaxError(expression, isExpression, false );
+	}
+		
+	public static boolean hasSyntaxError(String expression, boolean isExpression, boolean isString ) {
+		if(expression.isEmpty()) return false;
+		System.out.println("isString: " + isString);
+		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
+		rs.setClasspathURIContext(ModelGenerator.class);
+		URI uri = URI.createPlatformResourceURI("toto/toto.gaml", true);
+		GamlResource resource = (GamlResource) rs.createResource(uri);
+		String gamlModel = "model toto2733663525\nglobal{init{"+ (isExpression ? "var toto <-":"") + (isString ? "\"":"") +expression+ (isString ? "\"":"") +(isExpression ? ";":"")+"}}";
+		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
+		System.out.println("gamlModel: " + gamlModel);
+		try {
+			resource.load(is, null);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			ErrorCollector erColl = GAML.getModelFactory().validate(resource);
+			for ( GamlCompilationError error : erColl ) {
+				System.out.println("error : " + error);
+				
+				if (error.isError() && error.toString().equals("Syntax errors detected ")) {
+					System.out.println("has syntax error");
+					return true;
+				}
+			}
+			return false;
+		} catch (GamaRuntimeException e1) {
+			return true;
+		} catch (Exception e) {
+			return true;
+		} 
+	}
+	
+	public static List<GamlCompilationError> modelValidation(IFeatureProvider fp, Diagram diagram/*,ValidateStyledText vst*/) {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
 		URI uri = URI.createPlatformResourceURI("toto/"+ diagramEditor.getTitle()+".gaml", true);
 		GamlResource resource = (GamlResource) rs.createResource(uri);
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
+		System.out.println("model to test: " + gamlModel);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
-		
 		try {
 			resource.load(is, null);
 		} catch (IOException e1) {
@@ -123,8 +162,11 @@ public class ModelGenerator {
 					if (error.isError())
 						errors.add(error);
 				}
-			}
+			} 
+			diagramEditor.getErrorsLoc().clear();
+			
 			diagramEditor.setErrors(errors);
+			if (errors.isEmpty()) diagramEditor.getSyntaxErrorsLoc().clear();
 			return errors;
 		} catch (GamaRuntimeException e1) {
 			return null;
@@ -145,16 +187,17 @@ public class ModelGenerator {
 		if (species.getTopology() != null
 				&& species.getTopology() instanceof EGridTopology) {
 			EGridTopology gt = (EGridTopology) species.getTopology();
-			model += "grid " + species.getName() + " width:"
-					+ gt.getNb_columns() + " height:" + gt.getNb_rows();
-			model += " neighbours:";
+			model += "grid " + species.getName() + ((gt.getNb_columns() != null) &&  !(gt.getNb_columns().isEmpty())? " width:"
+					+ gt.getNb_columns() : "") + ((gt.getNb_rows() != null) &&  !(gt.getNb_rows().isEmpty())? " height:" + gt.getNb_rows(): "");
 			if (gt.getNeighbourhoodType() == null) {
-				model += "4";
+				model += " neighbours:4";
 			} else {
-				if (gt.getNeighbourhoodType().equals("expression"))
-					model += gt.getNeighbourhood();
-				else
-					model += gt.getNeighbourhoodType().toCharArray()[0];
+				if (gt.getNeighbourhoodType().equals("expression") ) {
+					if (gt.getNeighbourhood() != null && !gt.getNeighbourhood().isEmpty()) {
+						model += " neighbours:"+gt.getNeighbourhood();
+					}
+				} else
+					model += " neighbours:"+gt.getNeighbourhoodType().toCharArray()[0];
 			}
 		} else
 			model += "species " + species.getName();
@@ -465,13 +508,14 @@ public class ModelGenerator {
 			}
 			if (worldAgent.getBoundsType() != null) {
 				if (worldAgent.getBoundsType().equals("expression")) {
+					if (worldAgent.getBoundsExpression() != null && !worldAgent.getBoundsExpression().isEmpty())
 					model += "\tgeometry shape <-"
 							+ worldAgent.getBoundsExpression() + ";" + EL;
 				} else if (worldAgent.getBoundsType().equals("width-height")) {
 					model += "\tgeometry shape <- rectangle("
-							+ worldAgent.getBoundsWidth() + ","
-							+ worldAgent.getBoundsHeigth() + ");" + EL;
-				} else if (worldAgent.getBoundsType().equals("file")) {
+							+((worldAgent.getBoundsWidth() != null && ! worldAgent.getBoundsWidth().isEmpty() ) ? worldAgent.getBoundsWidth(): "100") + ","
+							+ ((worldAgent.getBoundsHeigth() != null && ! worldAgent.getBoundsHeigth().isEmpty() ) ? worldAgent.getBoundsHeigth(): "100") + ");" + EL;
+				} else if (worldAgent.getBoundsType().equals("file") && worldAgent.getBoundsPath() != null && !worldAgent.getBoundsPath().isEmpty()) {
 					model += "\tgeometry shape <- envelope(file(\""
 							+ worldAgent.getBoundsPath() + "\"));" + EL;
 				}

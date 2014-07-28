@@ -187,7 +187,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          			 ac.setLocation(100, 50);
          			 ac.setSize(0, 0);
          			 ac.setTargetContainer(diagram);
-         			 
+         			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+         			diagramEditor.addEOject(newClass);
+         			
          			 PictogramElement worldPE = addIfPossible(new AddContext(ac, newClass));
          			 if ("skeleton".equals(typeOfModel)) {
          				initSkeleton(newClass, diagram);
@@ -335,6 +337,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setMicro(target);
 			source.getMicroSpeciesLinks().add(eReference);
 			target.getMacroSpeciesLinks().add(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 			
 		 return target;
 	}
     
@@ -374,6 +379,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setExperiment(target);
 			source.getExperimentLinks().add(eReference);
 			target.setExperimentLink(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 		
 		 return target;
 	}
     
@@ -411,6 +419,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setAction(target);
 			source.getActionLinks().add(eReference);
 			target.getActionLinks().add(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 			
 		 return target;
 	}
    
@@ -442,6 +453,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setDisplay(target);
 			source.getDisplayLinks().add(eReference);
 			target.setDisplayLink(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 			
 		 return target;
 	}
    
@@ -473,6 +487,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setAspect(target);
 			source.getAspectLinks().add(eReference);
 			target.getAspectLinks().add(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 			
 		 return target;
 	}
    
@@ -515,6 +532,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setReflex(target);
 			source.getReflexLinks().add(eReference);
 			target.getReflexLinks().add(eReference);
+			GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getDiagramTypeProvider().getDiagramEditor());
+ 			diagramEditor.addEOject(target);
+ 			
 		 return target;
 	}
   

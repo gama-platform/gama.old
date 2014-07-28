@@ -79,9 +79,9 @@ public class EditExperimentFrame extends EditFrame {
 		Canvas canvasParameter = canvasParameter(container);
 		canvasParameter.setBounds(10, 50, 720, 305);
 
-		//****** CANVAS OK/CANCEL *********
+		/*//****** CANVAS OK/CANCEL *********
 		Canvas canvasOkCancel = canvasOkCancel(container);
-		canvasOkCancel.setBounds(10, 365, 720, 30);
+		canvasOkCancel.setBounds(10, 365, 720, 30);*/
 		return container;
 	}
 	
@@ -291,7 +291,7 @@ public class EditExperimentFrame extends EditFrame {
 	}
 
 	@Override
-	protected void save() {
+	protected void save(String name) {
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
 		if (domain != null) {
 			domain.getCommandStack().execute(new RecordingCommand(domain) {

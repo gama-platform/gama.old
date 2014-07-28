@@ -1,6 +1,7 @@
 package idees.gama.features.create;
 
 
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.add.AddAspectFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
@@ -77,7 +78,9 @@ public class CreateAspectLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			source.getAspectLinks().add(eReference);
 			target.getAspectLinks().add(eReference);
 		}
-
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnection;
 	}
 

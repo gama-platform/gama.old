@@ -1,9 +1,14 @@
 package idees.gama.ui.editFrame;
 
+import java.util.List;
+
 import gama.EGamaObject;
 import gama.EReflex;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import msi.gama.util.GamaList;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -11,7 +16,6 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -49,7 +53,7 @@ public class EditReflexFrame extends EditActionFrame {
 		groupGamlCode(container);
 		
 		//****** CANVAS OK/CANCEL *********
-		groupOkCancel(container);
+	//	groupOkCancel(container);
 		
 		return container;
 	}
@@ -72,7 +76,10 @@ public class EditReflexFrame extends EditActionFrame {
 	   gridData2.horizontalAlignment = SWT.FILL;
 	   gridData2.grabExcessHorizontalSpace = true;
 	  
-	   conditionCode = new Text(group, SWT.BORDER);
+	   GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	   List<String> uselessName = new GamaList<String>();
+	   uselessName.add("name");
+	   conditionCode = new ValidateText(group, SWT.BORDER, diagram, fp, this, diagramEditor, "",uselessName,null);
 	   conditionCode.setLayoutData(gridData2);
 		
 	   if (((EReflex) eobject).getCondition() != null)
@@ -101,7 +108,12 @@ public class EditReflexFrame extends EditActionFrame {
 	   gridData2.grabExcessHorizontalSpace = true;
 	   gridData2.grabExcessVerticalSpace= true;
 	 
-	   gamlCode = new StyledText(group, SWT.BORDER);
+	   GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	   List<String> uselessName = new GamaList<String>();
+	   uselessName.add("name");
+	   gamlCode = new ValidateStyledText(group, SWT.BORDER, diagram, fp, this, diagramEditor, "",uselessName);
+	   ((ValidateText) textName).getLinkedVsts().add((ValidateStyledText) gamlCode);
+		  
 	   gamlCode.setLayoutData(gridData2);
 		
 		//gamlCode.setBounds(5, 30, 700, 265);
@@ -120,14 +132,19 @@ public class EditReflexFrame extends EditActionFrame {
 	}
 	
 	@Override
-	protected void save() {
+	protected void save(final String name) {
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
 		if (domain != null) {
 			domain.getCommandStack().execute(new RecordingCommand(domain) {
 	    	     public void doExecute() {
-	    	    	 eobject.setName(textName.getText());
-		    	    ((EReflex) eobject).setGamlCode(gamlCode.getText());
-		    	    ((EReflex) eobject).setCondition(conditionCode.getText());
+	    	    	 if (name.equals("name")) {
+	    	    		 eobject.setName(textName.getText());
+	    	    	 } else {
+	    	    		if  (gamlCode != null)
+	    	    			((EReflex) eobject).setGamlCode(gamlCode.getText());
+	    	    		if  (conditionCode != null)
+	    	    			((EReflex) eobject).setCondition(conditionCode.getText());
+	    	    	 }
 	    	     }
 	    	  });
 		} 

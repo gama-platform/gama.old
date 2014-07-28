@@ -1,6 +1,7 @@
 package idees.gama.features.create;
 
 
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.add.AddReflexFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.ui.image.GamaImageProvider;
@@ -43,7 +44,6 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newReflex;
 	}
 	
@@ -77,7 +77,9 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			source.getReflexLinks().add(eReference);
 			target.getReflexLinks().add(eReference);
 		}
-
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnection;
 	}
 

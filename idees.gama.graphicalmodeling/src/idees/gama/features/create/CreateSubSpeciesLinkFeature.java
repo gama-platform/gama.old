@@ -3,6 +3,7 @@ package idees.gama.features.create;
 import gama.EContinuousTopology;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddSpeciesFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
@@ -14,10 +15,8 @@ import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
-import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
 
 public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentLinkFeature {
 
@@ -49,7 +48,6 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		ModelGenerator.modelValidation(getFeatureProvider(), getDiagram());
 		return newSpecies;
 	}
 	
@@ -82,7 +80,9 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 			source.getMicroSpeciesLinks().add(eReference);
 			target.getMacroSpeciesLinks().add(eReference);
 		}
-
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.addEOject(target);
+		
 		return newConnection;
 	}
 

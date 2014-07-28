@@ -136,7 +136,7 @@ public class EditDisplayFrame extends EditFrame {
 		buildCanvasParam(container);
 				
 		//****** CANVAS OK/CANCEL *********
-		groupOkCancel(container);
+		//groupOkCancel(container);
 		loadData();
 		
 		return container;
@@ -522,7 +522,7 @@ public class EditDisplayFrame extends EditFrame {
 	}
 
 	@Override
-	protected void save() {
+	protected void save(String name) {
 		TransactionalEditingDomain domain = TransactionUtil
 				.getEditingDomain(eobject);
 		if (domain != null) {
