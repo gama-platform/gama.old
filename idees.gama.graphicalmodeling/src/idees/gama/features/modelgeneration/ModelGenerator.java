@@ -400,17 +400,26 @@ public class ModelGenerator {
 		return parStr;
 	}
 
-	static String defineDisplay(EDisplayLink link) {
-		if (link == null || link.getDisplay() == null)
-			return "";
-		EDisplay disp = link.getDisplay();
-		String model = EL + "\t\t";
-		if (disp.getGamlCode() == null || disp.getGamlCode().isEmpty()) {
-			model += "display " + disp.getName() + "{}";
-			return model;
-		} else {
-			model += disp.getGamlCode() + EL;
-		}
+	 static String defineDisplay(EDisplayLink link) {
+	    	System.out.println("defineDisplay: " + link);
+	    	if (link == null || link.getDisplay() == null) return "";
+	    	EDisplay disp = link.getDisplay();
+	    	String model = EL + "\t\t";
+	    	System.out.println("disp.getRefresh(): " + disp.getRefresh());
+	    	model += "display " + disp.getName() ;
+	    	if ((disp.getRefresh() != null) && (!disp.getRefresh().isEmpty()) && !disp.getRefresh().equals("1"))
+	    		model += " refresh_every: " + disp.getRefresh();
+	    	if (disp.getOpengl() != null && disp.getOpengl())
+	    		model += " type: opengl";
+	    	if (disp.getColorRBG().get(0) != 255 || disp.getColorRBG().get(1) != 255 || disp.getColorRBG().get(2) != 255  || !disp.getIsColorCst()) {
+	    		if (disp.getIsColorCst()) {
+	        		model += " background: rgb(" + disp.getColorRBG() + ")" ;
+	    		} else if (disp.getColor() != null && !disp.getColor().isEmpty()) {
+	    			model += " background: " + disp.getColor();
+	    		}
+	    	}
+	    	
+	    	model += " {";
 		Map<String, ELayer> layerMap = new Hashtable<String, ELayer>();
 		for (ELayer lay : disp.getLayers()) {
 			layerMap.put(lay.getName(), lay);

@@ -5,6 +5,7 @@ import gama.EGamaObject;
 import gama.EGridTopology; 
 import gama.ELayer;
 import gama.ESpecies;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
@@ -43,21 +44,22 @@ import org.eclipse.swt.widgets.Text;
 
 public class EditDisplayFrame extends EditFrame {
 
-	StyledText gamlCode;
 	org.eclipse.swt.widgets.List layerViewer;
 	EditDisplayFrame frame;
 	List<ELayer> layers;
+	
+	List<ESpecies> species;
+	List<ESpecies> grids;
 	Text textColor;
 	Text textRefresh;
 
-	List<ESpecies> species;
-	List<ESpecies> grids;
-
 	Button btnCstCol;
+	Button btnExpressionCol;
 	Color color;
 	int[] rgb;
 	Label colorLabel;
 	Button btnOpenGL;
+	Button btnJava2D;
 
 	Diagram diagram;
 	/**
@@ -86,6 +88,7 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		}
 		frame = this;
+		
 	}
 	
 	private void loadData() {
@@ -94,13 +97,18 @@ public class EditDisplayFrame extends EditFrame {
 		for (ELayer la : layers) {
 			layerViewer.add(la.getName());
 		}
-		if (display.getIsColorCst()!= null)
+		if (display.getIsColorCst()!= null) {
 			btnCstCol.setSelection(display.getIsColorCst());
+			btnExpressionCol.setSelection(!display.getIsColorCst());
+		}
 		if (display.getName()!= null)
 			textName.setText(display.getName());
 		if (display.getColor()!= null)
 			textColor.setText(display.getColor());
-		
+		if (btnCstCol.getSelection()) {
+			textColor.setEnabled(false);
+		}
+		System.out.println("display.getColorRBG(): " + display.getColorRBG());
 		if (display.getColorRBG().size() == 3) {
 			rgb[0] = display.getColorRBG().get(0);
 			rgb[1] = display.getColorRBG().get(1);
@@ -110,10 +118,20 @@ public class EditDisplayFrame extends EditFrame {
 	         color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1],rgb[2]));
 	         colorLabel.setBackground(color);
 		}
-		if (display.getOpengl()!= null)
+		System.out.println("isplay.getOpengl(): " + display.getOpengl());
+		if (display.getOpengl()!= null) {
 			btnOpenGL.setSelection(display.getOpengl());
+			btnJava2D.setSelection(!display.getOpengl());
+		}
 		if (display.getRefresh()!= null)
 			textRefresh.setText(display.getRefresh());
+		System.out.println("AFTER LOADING display: " + display);
+		((ValidateText)textName).setSaveData(true);
+		((ValidateText)textRefresh).setSaveData(true);
+		((ValidateText) textName).getLinkedVts().add((ValidateText) textRefresh);
+		((ValidateText)textColor).setSaveData(true);
+		((ValidateText) textName).getLinkedVts().add((ValidateText) textColor);
+
 	}
 
 
@@ -279,7 +297,8 @@ public class EditDisplayFrame extends EditFrame {
 	public void buildCanvasParam(Composite container) {
 		// ****** CANVAS PARAMETERS *********
 		Group group = new Group(container, SWT.NONE);
-		
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+        
 		group.setLayout( new GridLayout(1, false));
 	    group.setText("Display properties");
 	    GridData gridData = new GridData();
@@ -304,6 +323,11 @@ public class EditDisplayFrame extends EditFrame {
 		btnCstCol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(false);
+				if (((ValidateText)textColor).isSaveData()) {
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
+				}
 			}
 		});
  
@@ -340,6 +364,10 @@ public class EditDisplayFrame extends EditFrame {
 					rgb[0] = rgbL.red;
 					rgb[1] = rgbL.green;
 					rgb[2] = rgbL.blue;
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
+				
 					
 					// Dispose the old color, create the
 					// new one, and set into the label
@@ -351,16 +379,23 @@ public class EditDisplayFrame extends EditFrame {
 		});
 		
 		
-		Button btnExpressionCol = new Button(containerColor, SWT.RADIO);
+		btnExpressionCol = new Button(containerColor, SWT.RADIO);
 		btnExpressionCol.setText("Expression:");
 		btnExpressionCol.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(true);
+				if (((ValidateText)textColor).isSaveData()) {
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
+				}
 			}
 		});
 
-		textColor = new Text(containerColor, SWT.BORDER);
+		//textColor = new Text(containerColor, SWT.BORDER);
+		textColor = new ValidateText(containerColor, SWT.BORDER,diagram, fp,frame, diagramEditor, "background:", null, null);
+     	
 		GridData gridDataTC = new GridData();
 		gridDataTC.horizontalAlignment = SWT.FILL;
 		gridDataTC.grabExcessHorizontalSpace = true;
@@ -377,29 +412,15 @@ public class EditDisplayFrame extends EditFrame {
 		CLabel lblRefresh = new CLabel(containerRefresh, SWT.NONE);
 		lblRefresh.setText("Refresh:");
 
-		textRefresh = new Text(containerRefresh, SWT.BORDER);
+		//textRefresh = new Text(containerRefresh, SWT.BORDER);
+		textRefresh = new ValidateText(containerRefresh, SWT.BORDER,diagram, fp,frame, diagramEditor, "refresh_every:", null, null);
+     	
 		textRefresh.setText("1");
 		 GridData gridDataR = new GridData();
 		 gridDataR.horizontalAlignment = SWT.FILL;
 		 gridDataR.grabExcessHorizontalSpace = true;
 		 textRefresh.setLayoutData(gridDataR);
 			
-		textRefresh.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				TransactionalEditingDomain domain = TransactionUtil
-						.getEditingDomain(eobject);
-				if (domain != null) {
-					domain.getCommandStack().execute(
-							new RecordingCommand(domain) {
-								public void doExecute() {
-									((EDisplay) eobject).setRefresh(textRefresh.getText());
-								}
-							});
-				}
-				ef.hasDoneChanges = true;
-			}
-		});
-
 		// OPENGL
 		Composite containerType = new Composite(group, SWT.NONE);
 		GridData gridDataT = new GridData();
@@ -418,22 +439,16 @@ public class EditDisplayFrame extends EditFrame {
 		 cOpenGl.setLayoutData(gridDataOp);
 		 cOpenGl.setLayout(new GridLayout(2, false));
 		
-		Button btnJava2D = new Button(cOpenGl, SWT.RADIO);
+		btnJava2D = new Button(cOpenGl, SWT.RADIO);
 		btnJava2D.setText("Java 2D");
 		btnJava2D.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				TransactionalEditingDomain domain = TransactionUtil
-						.getEditingDomain(eobject);
-				if (domain != null) {
-					domain.getCommandStack().execute(
-							new RecordingCommand(domain) {
-								public void doExecute() {
-									((EDisplay) eobject).setOpengl(false);
-								}
-							});
+				if (((ValidateText)textColor).isSaveData()) {
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
 				}
-				ef.hasDoneChanges = true;
 			}
 		});
 
@@ -442,20 +457,14 @@ public class EditDisplayFrame extends EditFrame {
 		btnOpenGL.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TransactionalEditingDomain domain = TransactionUtil
-						.getEditingDomain(eobject);
-				if (domain != null) {
-					domain.getCommandStack().execute(
-							new RecordingCommand(domain) {
-								public void doExecute() {
-									((EDisplay) eobject).setOpengl(true);
-								}
-							});
+				if (((ValidateText)textColor).isSaveData()) {
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
 				}
-				ef.hasDoneChanges = true;
 			}
 		});
-
+		
 	}
 
 	/**
@@ -487,15 +496,15 @@ public class EditDisplayFrame extends EditFrame {
 		display.getColorRBG().add(rgb[0]);
 		display.getColorRBG().add(rgb[1]);
 		display.getColorRBG().add(rgb[2]);
-		
 		display.setOpengl(btnOpenGL.getSelection());
 		display.setRefresh(textRefresh.getText());
+		System.out.println("eDisplay : " + eobject);
 		
-		String model = "display " + display.getName() ;
+		/*String model = "display " + display.getName() ;
     	String refresh = ((display.getRefresh() == null)|| (display.getRefresh().isEmpty())|| display.getRefresh().equals("1")) ? "" : " refresh_every: " + display.getRefresh();
     	String type = (display.getOpengl() != null && display.getOpengl()) ? " type: opengl" : "";
     	String background = "";
-    	if (rgb[0] != 255 || rgb[1] != 255 ||rgb[2] != 255) {
+    	if (rgb[0] != 255 || rgb[1] != 255 ||rgb[2] != 255 || !display.getIsColorCst()) {
     		if (display.getIsColorCst()) {
         		background += " background: rgb(" + display.getColorRBG() + ")" ;
     		} else {
@@ -504,7 +513,8 @@ public class EditDisplayFrame extends EditFrame {
     	}
     	
     	model +=  background + refresh + type+" {";
-    	display.setGamlCode(model);
+    	System.out.println("model: " + model);
+    	display.setGamlCode(model);*/
     	
 	}
 
@@ -522,19 +532,25 @@ public class EditDisplayFrame extends EditFrame {
 	}
 
 	@Override
-	protected void save(String name) {
+	protected void save(final String name) {
+		System.out.println("******* SAVE ******");
 		TransactionalEditingDomain domain = TransactionUtil
 				.getEditingDomain(eobject);
 		if (domain != null) {
 			domain.getCommandStack().execute(new RecordingCommand(domain) {
 				public void doExecute() {
-					modifyLayerOrder();
-					modifyOtherProperties();
+					if (name.equals("name")) {
+	    	    		 eobject.setName(textName.getText());
+	    	    	 } else {
+	    	    		 modifyLayerOrder();
+	    	    		 modifyOtherProperties();
+	    	    	 }
 				}
 			});
 		}
 		ef.hasDoneChanges = true;
-		ModelGenerator.modelValidation(fp, diagram);
+		System.out.println("******* RESULT ******");
+		
 		
 	}
 	

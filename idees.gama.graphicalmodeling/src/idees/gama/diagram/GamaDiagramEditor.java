@@ -537,7 +537,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			FacetImpl vv = (FacetImpl) toto;
 			System.out.println("vv :" + vv.getKey() + ";");
 			if (vv.getKey().equals("torus:") || vv.getKey().equals("width:") ||  vv.getKey().equals("height:") || vv.getKey().equals("neighbours:") 
-					|| vv.getKey().equals("among:") || vv.getKey().equals("->")  || vv.getKey().equals("<-")  || vv.getKey().equals("update:")   || vv.getKey().equals("min:")  || vv.getKey().equals("max:")  || vv.getKey().equals("step:") ) {
+					|| vv.getKey().equals("refresh_every:") || vv.getKey().equals("background:")|| vv.getKey().equals("among:") || vv.getKey().equals("->")  || vv.getKey().equals("<-")  || vv.getKey().equals("update:")   || vv.getKey().equals("min:")  || vv.getKey().equals("max:")  || vv.getKey().equals("step:") ) {
+
 				fist_obj = vv.getKey();		
 			}
 		}else if (toto instanceof S_ActionImpl) {
