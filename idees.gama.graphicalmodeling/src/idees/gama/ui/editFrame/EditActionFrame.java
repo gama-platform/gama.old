@@ -90,6 +90,10 @@ public class EditActionFrame extends EditFrame {
 		if (((EAction) eobject).getGamlCode() != null)
 			gamlCode.setText(((EAction) eobject).getGamlCode());
 		gamlCode.setEditable(true);
+		
+
+		((ValidateStyledText)gamlCode).setSaveData(true);
+		((ValidateText) textName).getLinkedVsts().add((ValidateStyledText) gamlCode);
 	}
 	
 	

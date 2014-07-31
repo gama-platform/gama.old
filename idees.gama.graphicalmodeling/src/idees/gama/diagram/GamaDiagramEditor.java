@@ -29,6 +29,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.BlockImpl;
 import msi.gama.lang.gaml.gaml.impl.FacetImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
@@ -444,7 +445,11 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			System.out.println("error.getCode() : " + error.getCode());
 			String key = (error.getCode().equals("gaml.duplicate.definition.issue") || error.getCode().equals("gaml.duplicate.name.issue")) ? "name":fist_obj;
 			locs.put(key, (locs.containsKey(key) ? locs.get(key) : "") + "\n" +error.toString());
-			errorsLoc.put(ids, locs);
+			if (error.toString().equals("Syntax errors detected ")) {
+				if (syntaxErrorsLoc.isEmpty())
+					syntaxErrorsLoc.put(ids, locs);
+			} else 
+				errorsLoc.put(ids, locs);
 			/*final EObject obj = idsEObjects.get(ids);
 			
 			System.out.println("error :" + error.toString() + "-error.getCode(): " + error.getCode() + " error.getStatement():" + error.getStatement());
@@ -531,7 +536,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		} else if (toto instanceof FacetImpl) {
 			FacetImpl vv = (FacetImpl) toto;
 			System.out.println("vv :" + vv.getKey() + ";");
-			if (vv.getKey().equals("torus:") || vv.getKey().equals("width:") ||  vv.getKey().equals("height:") || vv.getKey().equals("neighbours:")) {
+			if (vv.getKey().equals("torus:") || vv.getKey().equals("width:") ||  vv.getKey().equals("height:") || vv.getKey().equals("neighbours:") 
+					|| vv.getKey().equals("among:") || vv.getKey().equals("->")  || vv.getKey().equals("<-")  || vv.getKey().equals("update:")   || vv.getKey().equals("min:")  || vv.getKey().equals("max:")  || vv.getKey().equals("step:") ) {
 				fist_obj = vv.getKey();		
 			}
 		}else if (toto instanceof S_ActionImpl) {
@@ -548,9 +554,21 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				}
 			} else if (toto instanceof BlockImpl) {
 				BlockImpl vv = (BlockImpl) toto;
-				System.out.println("block:" + vv );
-				System.out.println("block getFunction:" + vv.getFunction() );
-				System.out.println("block getStatements:" + vv.getStatements() );
+				//System.out.println("block:" + vv );
+				//System.out.println("block getFunction:" + vv.getFunction() );
+				//System.out.println("block getStatements:" + vv.getStatements() );
+				if (vv.getStatements() != null) {
+					for (Statement st : vv.getStatements()) {
+						if (st != null && st.getKey() != null && st.getKey().equals("parameter")) {
+							ids.add(0,st.getExpr().getOp());
+							//System.out.println("st.getExpr " + st.getExpr());
+							//System.out.println("st.getFacets " + st.getFacets());
+
+							//System.out.println("st.getBlock " + st.getBlock());
+						}
+					}
+				}
+				
 			} else if (toto instanceof S_DefinitionImpl) {
 				S_DefinitionImpl vv = (S_DefinitionImpl) toto;
 				ids.add(0,vv.getName());

@@ -4,6 +4,7 @@ import gama.EExperiment;
 import gama.EParameter;
 import gama.ESpecies;
 import gama.EVariable;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
@@ -29,12 +30,15 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -77,7 +81,7 @@ public class EditExperimentFrame extends EditFrame {
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = canvasParameter(container);
-		canvasParameter.setBounds(10, 50, 720, 305);
+		canvasParameter.setBounds(10, 50, 820, 305);
 
 		/*//****** CANVAS OK/CANCEL *********
 		Canvas canvasOkCancel = canvasOkCancel(container);
@@ -86,17 +90,18 @@ public class EditExperimentFrame extends EditFrame {
 	}
 	
 	protected Canvas canvasParameter(Composite container) {
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = new Canvas(container, SWT.BORDER);
-		canvasParameter.setBounds(10, 515, 720, 305);
+		canvasParameter.setBounds(10, 515, 820, 305);
 		
 		CLabel lblCompilation = new CLabel(canvasParameter, SWT.NONE);
 		lblCompilation.setText("Parameters");
 		lblCompilation.setBounds(5, 5, 70, 20);
 		
 		table_params = createTableEditor(canvasParameter);
-		table_params.setBounds(10, 30, 700, 230);
+		table_params.setBounds(10, 30, 800, 230);
 		table_params.setHeaderVisible(true);
 		table_params.setLinesVisible(true);
 		table_params.setLinesVisible(true);
@@ -113,6 +118,11 @@ public class EditExperimentFrame extends EditFrame {
 				TableItem ti =  new TableItem(table_params, SWT.NONE);
 				final String var = variables.get(0);
 				ti.setText(new String[] {var, var,"","","","",""});
+				ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+				List<String> locs = new GamaList<String>(((ValidateText) textName).getLoc());
+				locs.add(var);
+				diagramEditor.getIdsEObjects().put(locs, eobject);
+				save("variables");
 			}
 		});
 		btnAddVariable.setBounds(50, 275, 130, 20);
@@ -124,8 +134,17 @@ public class EditExperimentFrame extends EditFrame {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int[] indices = table_params.getSelectionIndices();
+				for (int i : indices) {
+					List<String> locs = new GamaList<String>(((ValidateText) textName).getLoc());
+					locs.add(table_params.getItem(i).getText(0));
+					diagramEditor.getIdsEObjects().remove(locs);
+				}
 				table_params.remove( indices);
+				save("variables");
+				ModelGenerator.modelValidation(fp, diagram);
+				diagramEditor.updateEObjectErrors();
 				table_params.redraw();
+				
 			}
 		});
 		btnDeleteVariable.setBounds(220, 275, 130, 20);
@@ -148,10 +167,18 @@ public class EditExperimentFrame extends EditFrame {
 		   */
 	private Table createTableEditor(Composite container) {
 		    // Create the table
-		    final Table tableVars = new Table(container, SWT.SINGLE | SWT.FULL_SELECTION
+			final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		
+			final Table tableVars = new Table(container, SWT.SINGLE | SWT.FULL_SELECTION
 		        | SWT.HIDE_SELECTION);
 		    tableVars.setHeaderVisible(true);
 		    tableVars.setLinesVisible(true);
+		    
+		    tableVars.addListener(SWT.MeasureItem, new Listener() {
+		    	   public void handleEvent(Event event) {
+		    	      event.height = 20;
+		    	   }
+		    	});
 
 		    TableColumn tblclmnVar = new TableColumn(tableVars, SWT.NONE);
 		    tblclmnVar.setWidth(100);
@@ -240,21 +267,46 @@ public class EditExperimentFrame extends EditFrame {
 		            final int col = column;
 		            combo.addSelectionListener(new SelectionAdapter() {
 		              public void widgetSelected(SelectionEvent event) {
-		                item.setText(col, combo.getText());
+		                List<String> locs = new GamaList<String>(((ValidateText) textName).getLoc());
+						locs.add(item.getText(col));
+						diagramEditor.getIdsEObjects().remove(locs);
+					
+						item.setText(col, combo.getText());
+		                
+						locs = new GamaList<String>(((ValidateText) textName).getLoc());
+						locs.add(item.getText(col));
+						diagramEditor.getIdsEObjects().put(locs, eobject);
+					
+						save("variables");
+						ModelGenerator.modelValidation(fp, diagram);
+						diagramEditor.updateEObjectErrors();
 		                // They selected an item; end the editing session
 		                combo.dispose();
+		                
 		              }
 		            });
 		          } else {
 		            // Create the Text object for our editor
-		            final Text text = new Text(tableVars, SWT.NONE);
-		            text.setForeground(item.getForeground());
-
+		            final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		            String name = "";
+		        	  switch (column) {
+		        	  	case 1: name = "legend:"; break;
+		        	  	case 2: name = "category:"; break;
+		        	  	case 3: name = "<-"; break;
+		        	  	case 4: name = "min:"; break;
+		        	  	case 5: name = "max:"; break;
+		        	  	case 6: name = "step:"; break;
+		        	  	case 7: name = "among:"; break;
+		        	  }  
+		            final ValidateText text = new ValidateText(tableVars, SWT.BORDER,diagram, fp,frame, diagramEditor, name, null, item.getText(0));
+		        	  text.setString(column == 1 || column == 2);
+		        	  item.setBackground(column, text.getBackground());
+		        	  	
 		            // Transfer any text from the cell to the Text control,
 		            // set the color to match this row, select the text,
 		            // and set focus to the control
 		            text.setText(item.getText(column));
-		            text.setForeground(item.getForeground());
+		        	text.setForeground(item.getForeground());
 		            text.selectAll();
 		            text.setFocus();
 
@@ -272,9 +324,44 @@ public class EditExperimentFrame extends EditFrame {
 		                // Set the text of the editor's control back into the cell
 		          
 		            	 item.setText(col, text.getText());
+		            	 save("parameters");
+		            	 text.applyModification();
+		            	 if (diagramEditor.getErrorsLoc().isEmpty() && diagramEditor.getSyntaxErrorsLoc().isEmpty()){
+		            		 item.setBackground(text.getBackground());
+		            	 } else 
+		            		 item.setBackground(col,text.getBackground());
+		            	 
+		            	 item.setBackground(col,text.getBackground());
+		            	 for (int i = 1; i < table_params.getColumnCount(); i++) {
+		            		 if (i == col) continue;
+		            		 String name = "";
+		            		 switch (i) {
+		            			case 1: name = "legend:"; break;
+				        	  	case 2: name = "category:"; break;
+		            		 	case 3: name = "<-"; break;
+				        	  	case 4: name = "min:"; break;
+				        	  	case 5: name = "max:"; break;
+				        	  	case 6: name = "step:"; break;
+				        	  	case 7: name = "among:"; break;
+		            		 } 
+		            		 String error =diagramEditor.containErrors(text.getLoc(), name, null);
+		            		 System.out.println("error = " + error);
+		            		 String textI = item.getText(i);
+		            		 if (error != null && !error.isEmpty()) {
+		            			 item.setBackground(i,new Color(text.getDisplay(), 255, 100, 100));
+		            		 } else if (!textI.contains(";") && !textI.contains("{") && !textI.contains("}")) {
+		            			 item.setBackground(i,new Color(text.getDisplay(), 100, 255, 100));
+		            		 }
+		            	 }
+		            	  System.out.println("text.getBackground(): " + text.getBackground());
+		            	  System.out.println("item.getBackground() : " + item.getBackground());
+		  	            
+		            	 
 		              }
 		            });
 		          }
+		        }else {
+		        	  tableVars.deselectAll();
 		        }
 		      }
 		    });
@@ -287,7 +374,7 @@ public class EditExperimentFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(763, 470);
+		return new Point(840, 470);
 	}
 
 	@Override

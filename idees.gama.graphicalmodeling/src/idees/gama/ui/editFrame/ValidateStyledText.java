@@ -88,6 +88,11 @@ public class ValidateStyledText extends StyledText{
 				        
 				 } else {
 					 error = "Syntax errors detected";
+					 GamaList<String> wStr = new GamaList<String>();
+					 wStr.add("world");
+					 editor.getSyntaxErrorsLoc().remove(wStr);
+					 System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
+					
 					 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc);
 						if (locs == null) 
 							locs = new GamaMap<String, String>();

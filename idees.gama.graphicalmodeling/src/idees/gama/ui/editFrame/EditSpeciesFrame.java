@@ -15,10 +15,12 @@ import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.text.TableView.TableRow;
 
 import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gaml.compilation.AbstractGamlAdditions;
 
 import org.eclipse.emf.ecore.EObject;
@@ -575,13 +577,22 @@ public class EditSpeciesFrame extends EditFrame {
 	            });
 	          } else if (column != 1) {
 	            // Create the Text object for our editor
-	        	  GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
-	        	  final ValidateText text = new ValidateText(tableVars, SWT.BORDER,diagram, fp,frame, diagramEditor, (column == 0) ? "name" : "", null, item.getText(0));
-	        	  text.setAllErrors(true);
+	        	  final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	        	  String name = "name";
+	        	  switch (column) {
+	        	  	case 2: name = "<-"; break;
+	        	  	case 3: name = "update:"; break;
+	        		case 4: name = "->"; break;
+	        	  	case 5: name = "min:"; break;
+	        	  	case 6: name = "max:"; break;
+	        	  }  
+	           
+	        	  final ValidateText text = new ValidateText(tableVars, SWT.BORDER,diagram, fp,frame, diagramEditor, name, null, item.getText(0));
+	        	  //text.setAllErrors(true);
 	        	 
 	        	  //Listener[] lis = text.getListeners(SWT.Modify);
 	        	 // for (Listener li : lis) {text.removeModifyListener((ModifyListener) li);}
-	        	  	 item.setBackground(text.getBackground());
+	        	  	 item.setBackground(column,text.getBackground());
 	        	  	System.out.println("text.getBackground() init: " + text.getBackground());
 	        		System.out.println("item.getBackground() init: " + item.getBackground());
 		            
@@ -613,7 +624,26 @@ public class EditSpeciesFrame extends EditFrame {
 	            	 text.applyModification();
 	            	  System.out.println("item.getBackground() avant: " + item.getBackground());
 		  	           
-	            	 item.setBackground(text.getBackground());
+	            	 item.setBackground(col,text.getBackground());
+	            	 for (int i = 2; i < table_vars.getColumnCount(); i++) {
+	            		 if (i == col) continue;
+	            		 String name = "name";
+	            		 switch (i) {
+		   	        	  	case 2: name = "<-"; break;
+		   	        	  	case 3: name = "update:"; break;
+		   	        		case 4: name = "->"; break;
+		   	        	  	case 5: name = "min:"; break;
+		   	        	  	case 6: name = "max:"; break;
+	            		 } 
+	            		 String error =diagramEditor.containErrors(text.getLoc(), name, null);
+	            		 System.out.println("error = " + error);
+	            		 String textI = item.getText(i);
+	            		 if (error != null && !error.isEmpty()) {
+	            			 item.setBackground(i,new Color(text.getDisplay(), 255, 100, 100));
+	            		 } else if (!textI.contains(";") && !textI.contains("{") && !textI.contains("}")) {
+	            			 item.setBackground(i,new Color(text.getDisplay(), 100, 255, 100));
+	            		 }
+	            	 }
 	            	  System.out.println("text.getBackground(): " + text.getBackground());
 	            	  System.out.println("item.getBackground() : " + item.getBackground());
 	  	            

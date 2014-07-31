@@ -387,9 +387,9 @@ public class ModelGenerator {
 		if (par.getCategory() != null && !par.getCategory().isEmpty())
 			parStr += " category: \"" + par.getCategory() + "\"";
 		if (par.getAmong() != null && !par.getAmong().isEmpty())
-			parStr += " among:" + par.getCategory();
+			parStr += " among:" + par.getAmong();
 		if (par.getInit() != null && !par.getInit().isEmpty())
-			parStr += " init:" + par.getInit();
+			parStr += " <-" + par.getInit();
 		if (par.getMin() != null && !par.getMin().isEmpty())
 			parStr += " min:" + par.getMin();
 		if (par.getMax() != null && !par.getMax().isEmpty())

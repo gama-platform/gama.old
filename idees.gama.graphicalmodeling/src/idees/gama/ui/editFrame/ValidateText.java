@@ -112,6 +112,61 @@ public class ValidateText extends Text{
         });
 	}
 	
+	public void updateColor() {
+		if (nameLoc.equals("name")) 
+			isValid = !getText().isEmpty() && !getText().contains(" ") && !getText().contains(";") && !getText().contains("{") && !getText().contains("}") && !getText().contains("\t");
+		else 
+			isValid = !ModelGenerator.hasSyntaxError(getText(),  true, isString);
+		if (isValid) {
+			  Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
+			  if (locs != null)
+				  locs.remove(nameLoc);
+			  if (nameLoc.equals("name")) {
+				  addToLoc = getText();
+				  List<String> oldLoc = new GamaList<String>();
+				  oldLoc.addAll(loc);
+				  loc.clear();
+				  editor.buildLocation(frame.eobject, loc);
+					if(addToLoc != null && !addToLoc.isEmpty() && !loc.get(loc.size()-1).equals(addToLoc)) loc.add(addToLoc);
+						
+		        	for (ValidateStyledText vst :linkedVsts) {
+		        		if (vst != null)vst.updateLoc(loc);
+		        	}
+		        	for (ValidateText vst :linkedVts) {
+		        		if (vst != null)vst.updateLoc(loc);
+		        	}
+		        	editor.updateErrors(oldLoc,loc);
+		    		
+		        }
+			  if (allErrors)
+				  error = editor.containErrors(loc, "", uselessName);
+			  else 
+				  error = editor.containErrors(loc, nameLoc, uselessName);
+		        
+		 } else {
+			 error = "Syntax errors detected ";
+			  GamaList<String> wStr = new GamaList<String>();
+			 wStr.add("world");
+			 editor.getSyntaxErrorsLoc().remove(wStr);
+			 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
+				
+			 if (locs == null) {
+					locs = new GamaMap<String,String>();
+				}
+				locs.put(nameLoc,"Syntax errors detected ");
+				
+			 editor.getSyntaxErrorsLoc().put(loc, locs);
+		 } 
+       if (error != null) {	
+        	tip.setMessage(error);
+        	isValid = error.equals(""); 
+        }
+        setBackground(isValid ? colValid: colNotValid);
+        if (isValid) {
+        	tip.setVisible(false);
+        }
+        editor.updateEObjectErrors();
+	}
 	
 	public void applyModification() {
 		System.out.println("nameLoc: " + nameLoc + " saveData:" + saveData);
@@ -155,13 +210,18 @@ public class ValidateText extends Text{
 				  error = editor.containErrors(loc, nameLoc, uselessName);
 		        
 		 } else {
-			 error = "Syntax errors detected";
+			 error = "Syntax errors detected ";
+			  GamaList<String> wStr = new GamaList<String>();
+			 wStr.add("world");
+			 editor.getSyntaxErrorsLoc().remove(wStr);
+			 System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
 			 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
 				
-				if (locs == null) {
+			 if (locs == null) {
 					locs = new GamaMap<String,String>();
 				}
-				locs.put(nameLoc,"Syntax errors detected");
+				locs.put(nameLoc,"Syntax errors detected ");
+				
 			 editor.getSyntaxErrorsLoc().put(loc, locs);
 		 } 
        System.out.println("location:" + loc);

@@ -84,6 +84,10 @@ public class EditReflexFrame extends EditActionFrame {
 		
 	   if (((EReflex) eobject).getCondition() != null)
 			conditionCode.setText(((EReflex) eobject).getCondition());
+	   
+	   ((ValidateText)conditionCode).setSaveData(true);
+		((ValidateText) textName).getLinkedVts().add((ValidateText) conditionCode);
+		
 	}
 
 	protected void groupGamlCode(Composite container) {
@@ -120,6 +124,9 @@ public class EditReflexFrame extends EditActionFrame {
 		if (((EReflex) eobject).getGamlCode() != null)
 			gamlCode.setText(((EReflex) eobject).getGamlCode());
 		gamlCode.setEditable(true);
+		
+		((ValidateStyledText)gamlCode).setSaveData(true);
+		((ValidateText) textName).getLinkedVsts().add((ValidateStyledText) gamlCode);
 	}
 	
 	
