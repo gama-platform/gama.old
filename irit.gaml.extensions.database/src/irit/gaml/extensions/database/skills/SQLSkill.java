@@ -12,6 +12,11 @@
 package irit.gaml.extensions.database.skills;
 
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.database.sql.*;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -59,7 +64,11 @@ import msi.gaml.types.IType;
  * Change all method appropriately
  * 07-Jan-2014:
  * Move arg "transform" of select and insert action as key of arg "Param"
- * Last Modified: 07-Jan-2014
+ * 01-Aug-2014:
+ *   Add date time functions:
+ *     getCurrentDateTime: get system datetime
+ *     getDateOffset: get (datetime + offsettime)
+ * Last Modified: 01-Aug-2014
  */
 @skill(name = "SQLSKILL")
 public class SQLSkill extends Skill {
@@ -74,7 +83,6 @@ public class SQLSkill extends Skill {
 		GuiUtils.informConsole("Hello World");
 		return null;
 	}
-
 	// Get current time of system
 	// added from MaeliaSkill
 	@action(name = "timeStamp")
@@ -82,6 +90,45 @@ public class SQLSkill extends Skill {
 		Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
 	}
+	//Get current time of system
+	@action(name="getCurrentDateTime",
+			args = {
+			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' "))
+	})
+	public String getCurrentDateTime(final IScope scope) throws GamaRuntimeException {
+		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);	
+		DateFormat datef = new SimpleDateFormat(dateFormat);
+		Calendar c = Calendar.getInstance();
+		return datef.format(c.getTime());
+	}
+
+	@action(name="getDateOffset",
+			args = {
+			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")),
+			@arg(name = "dateStr", type = IType.STRING, optional = false, doc = @doc("Start date")),
+			@arg(name = "offset", type = IType.STRING, optional = false, doc = @doc("number on day to increase or decrease"))
+	})
+	public  String getDateOffset(final IScope scope) throws GamaRuntimeException
+	{
+		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);	
+		String dateStr = (String)scope.getArg("dateStr", IType.STRING);	
+		int dateOffset =  Integer.parseInt(scope.getArg("offset", IType.INT).toString());	
+		DateFormat datef = new SimpleDateFormat(dateFormat);
+		Calendar c = Calendar.getInstance();
+		try {
+			c.setTime(datef.parse(dateStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			throw GamaRuntimeException.error("getDate error: Date format may not correct!"+ e.toString(), scope ) ;
+		}
+		c.add(Calendar.DATE, dateOffset);  // number of days to add
+		   // dt is now the new date
+
+		return datef.format(c.getTime());
+	}
+	
+
 
 	/*
 	 * Make a connection to BDMS
