@@ -72,14 +72,17 @@ public abstract class AbstractScope implements IScope {
 		statements.push(new NullRecord());
 	}
 
+	@Override
 	public void disableErrorReporting() {
 		reportErrors = false;
 	}
 
+	@Override
 	public void enableErrorReporting() {
 		reportErrors = true;
 	}
 
+	@Override
 	public boolean reportErrors() {
 		return reportErrors;
 	}
@@ -373,7 +376,7 @@ public abstract class AbstractScope implements IScope {
 		try {
 			// Otherwise we compute the result of the statement, pushing the arguments if the statement expects them
 			if ( args != null && statement instanceof IStatement.WithArgs ) {
-				args.setCaller(agent);
+				args.setCaller(caller);
 				((IStatement.WithArgs) statement).setRuntimeArgs(args);
 			} else if ( statement instanceof RemoteSequence ) {
 				((RemoteSequence) statement).setMyself(caller);
