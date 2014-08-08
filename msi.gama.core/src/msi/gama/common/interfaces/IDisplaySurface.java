@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IDisplaySurface.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IDisplaySurface.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -100,7 +100,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	int[] computeBoundsFrom(int width, int height);
 
-	boolean resizeImage(int width, int height);
+	boolean resizeImage(int width, int height, boolean force);
 
 	// void outputChanged(final double env_width, final double env_height, final
 	// IDisplayOutput output);

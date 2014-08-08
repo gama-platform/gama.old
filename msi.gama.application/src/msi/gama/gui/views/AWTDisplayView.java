@@ -173,7 +173,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
 						((SwingControl) surfaceComposite).getFrame().validate();
-						getOutput().getSurface().resizeImage(x, y);
+						getOutput().getSurface().resizeImage(x, y, false);
 						// getOutput().getSurface().setSize(x, y);
 						getOutput().getSurface().updateDisplay();
 

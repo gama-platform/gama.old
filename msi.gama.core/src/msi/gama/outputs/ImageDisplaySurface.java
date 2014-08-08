@@ -137,8 +137,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public boolean resizeImage(final int newWidth, final int newHeight) {
-		if ( width == newWidth && height == newHeight ) { return false; }
+	public boolean resizeImage(final int newWidth, final int newHeight, final boolean force) {
+		if ( !force && width == newWidth && height == newHeight ) { return false; }
 		this.width = newWidth;
 		this.height = newHeight;
 		final Image copy = buffImage;
@@ -476,7 +476,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void setSize(final int x, final int y) {
-		resizeImage(x, y);
+		resizeImage(x, y, false);
 	}
 
 	/**

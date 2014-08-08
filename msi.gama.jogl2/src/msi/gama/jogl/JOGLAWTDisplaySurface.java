@@ -270,7 +270,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void zoomFit() {
-		resizeImage(getWidth(), getHeight());
+		resizeImage(getWidth(), getHeight(), false);
 		if ( renderer != null ) {
 			renderer.frame = 0;
 			renderer.camera.zeroVelocity();
@@ -422,8 +422,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public final boolean resizeImage(final int x, final int y) {
-		super.resizeImage(x, y);
+	public final boolean resizeImage(final int x, final int y, final boolean force) {
+		super.resizeImage(x, y, force);
 		// int[] point = computeBoundsFrom(x, y);
 		// int imageWidth = Math.max(1, point[0]);
 		// int imageHeight = Math.max(1, point[1]);

@@ -335,7 +335,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		try {
 			success =
 				resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+					Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 		} catch (Exception e) {
 			// System.gc();
 			// GuiUtils.debug("AWTDisplaySurface.applyZoom: not enough memory available to zoom at :" + real_factor);
@@ -343,7 +343,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			try {
 				success =
 					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -362,7 +362,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			try {
 				success =
 					resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
-						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)));
+						Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 			} catch (Exception e1) {
 				// GuiUtils.debug("AWTDisplaySurface.applyZoom : not enough memory available to zoom at :" +
 				// real_factor);
@@ -390,7 +390,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public void zoomFit() {
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-		if ( resizeImage(getWidth(), getHeight()) ) {
+		if ( resizeImage(getWidth(), getHeight(), false) ) {
 			super.zoomFit();
 			centerImage();
 			updateDisplay();

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NullDisplaySurface.java', in plugin 'msi.gama.headless', is part of the source code of the 
+ * 
+ * 'NullDisplaySurface.java', in plugin 'msi.gama.headless', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -79,7 +79,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int)
 	 */
 	@Override
-	public boolean resizeImage(final int width, final int height) {
+	public boolean resizeImage(final int width, final int height, final boolean force) {
 		return false;
 	}
 
@@ -272,8 +272,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method outputChanged()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#outputChanged(double, double,
-	 *      msi.gama.outputs.LayeredDisplayOutput)
+	 * @see msi.gama.common.interfaces.IDisplaySurface#outputChanged(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
 	public void outputChanged(final IScope scope, final double env_width, final double env_height,

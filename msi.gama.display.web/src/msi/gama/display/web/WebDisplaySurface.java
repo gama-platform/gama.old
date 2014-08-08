@@ -124,7 +124,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int)
 	 */
 	@Override
-	public boolean resizeImage(final int width, final int height) {
+	public boolean resizeImage(final int width, final int height, final boolean force) {
 		return false;
 	}
 

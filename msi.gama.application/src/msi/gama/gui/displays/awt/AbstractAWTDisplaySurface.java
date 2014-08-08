@@ -122,6 +122,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			manager.outputChanged();
 		}
 		temp_focus = output.getFacet(IKeyword.FOCUS);
+		resizeImage(getWidth(), getHeight(), true);
+		if ( zoomFit ) {
+			zoomFit();
+		}
 	}
 
 	// FIXME Ugly code. The hack must be better written
@@ -393,8 +397,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	@Override
-	public boolean resizeImage(final int x, final int y) {
-		if ( x == displayWidth && y == displayHeight ) { return true; }
+	public boolean resizeImage(final int x, final int y, final boolean force) {
+		if ( !force && x == displayWidth && y == displayHeight ) { return true; }
 		if ( getWidth() <= 0 && getHeight() <= 0 ) { return false; }
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
