@@ -69,8 +69,10 @@ public class GAML {
 		if ( a == null ) { return null; }
 		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
-		IScope scope = a.getScope();
-		return scope.evaluate(expr, a);
+		IScope scope = a.getScope().copy();
+		Object o = scope.evaluate(expr, a);
+		GAMA.releaseScope(scope);
+		return o;
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent)
