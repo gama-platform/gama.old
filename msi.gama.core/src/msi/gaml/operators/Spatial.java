@@ -321,15 +321,15 @@ public abstract class Spatial {
 			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			final double originx = origin.getX();
 			final double originy = origin.getY();
-			final double worldWidth = scope.getTopology().getWidth() - originx;
-			final double worldHeight = scope.getTopology().getHeight() - originy;
-
-			final double min_point_x = originx + Maths.cos(min_angle) * worldWidth;
-			final double min_point_y = originy + Maths.sin(min_angle) * worldHeight;
+			final double worldWidth = scope.getTopology().getWidth();// - originx;
+			final double worldHeight = scope.getTopology().getHeight();// - originy;
+			final double max = Math.max(worldWidth, worldHeight);
+			final double min_point_x = originx + Maths.cos(min_angle) * max;
+			final double min_point_y = originy + Maths.sin(min_angle) * max;
 			final ILocation minPoint = new GamaPoint(min_point_x, min_point_y);
 
-			final double max_point_x = originx + Maths.cos(max_angle) * worldWidth;
-			final double max_point_y = originy + Maths.sin(max_angle) * worldHeight;
+			final double max_point_x = originx + Maths.cos(max_angle) * max;
+			final double max_point_y = originy + Maths.sin(max_angle) * max;
 			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
 			return polygon(scope, GamaList.with(origin, minPoint, maxPoint));
