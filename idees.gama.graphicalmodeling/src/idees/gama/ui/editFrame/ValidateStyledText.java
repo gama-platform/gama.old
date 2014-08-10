@@ -79,7 +79,7 @@ public class ValidateStyledText extends StyledText{
 		      public void modifyText(ModifyEvent event) {
 				if (saveData)frame.save(nameLoc);
 				frame.getShell().forceFocus();
-				isValid = !ModelGenerator.hasSyntaxError(getText(),  false);
+				isValid = !ModelGenerator.hasSyntaxError(fp,getText(),  false);
 
 	        	System.out.println("isValid1: " + isValid);
 				if (isValid) {

@@ -20,7 +20,6 @@ import gama.ESubSpeciesLink;
 import gama.EVariable;
 import gama.EWorldAgent;
 import idees.gama.diagram.GamaDiagramEditor;
-import idees.gama.ui.editFrame.ValidateStyledText;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -95,17 +94,18 @@ public class ModelGenerator {
         if (uri.isPlatform()) {
             uri = URI.createURI( uri.toPlatformString( true ) );
         }
-        String containerStr = "/"+ uri.segment(0);
+       // String containerStr = "/"+ uri.segment(0);
         String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
         path = path.replace(".gadl", ".gaml");
         return path;
 	}
-	public static boolean hasSyntaxError(String expression, boolean isExpression ) {
-		return hasSyntaxError(expression, isExpression, false );
+	public static boolean hasSyntaxError(IFeatureProvider fp,String expression, boolean isExpression ) {
+		return hasSyntaxError(fp,expression, isExpression, false );
 	}
 		
-	public static boolean hasSyntaxError(String expression, boolean isExpression, boolean isString ) {
+	public static boolean hasSyntaxError(IFeatureProvider fp,String expression, boolean isExpression, boolean isString ) {
 		if(expression.isEmpty()) return false;
+		//GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		System.out.println("isString: " + isString);
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
@@ -126,6 +126,8 @@ public class ModelGenerator {
 				
 				if (error.isError() && error.toString().equals("Syntax errors detected ")) {
 					System.out.println("has syntax error");
+					
+					//diagramEditor.updateToolbar(false);
 					return true;
 				}
 			}
@@ -139,12 +141,14 @@ public class ModelGenerator {
 	
 	public static List<GamlCompilationError> modelValidation(IFeatureProvider fp, Diagram diagram/*,ValidateStyledText vst*/) {
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		diagramEditor.initIdsEObjects();
+		
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
 		URI uri = URI.createPlatformResourceURI("toto/"+ diagramEditor.getTitle()+".gaml", true);
 		GamlResource resource = (GamlResource) rs.createResource(uri);
 		String gamlModel = ModelGenerator.generateModel(fp, diagram);
-		System.out.println("model to test: " + gamlModel);
+		//System.out.println("model to test: " + gamlModel);
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
 		diagramEditor.setResource(resource);
 		try {
@@ -401,17 +405,15 @@ public class ModelGenerator {
 	}
 
 	 static String defineDisplay(EDisplayLink link) {
-	    	System.out.println("defineDisplay: " + link);
 	    	if (link == null || link.getDisplay() == null) return "";
 	    	EDisplay disp = link.getDisplay();
 	    	String model = EL + "\t\t";
-	    	System.out.println("disp.getRefresh(): " + disp.getRefresh());
 	    	model += "display " + disp.getName() ;
 	    	if ((disp.getRefresh() != null) && (!disp.getRefresh().isEmpty()) && !disp.getRefresh().equals("1"))
 	    		model += " refresh_every: " + disp.getRefresh();
 	    	if (disp.getOpengl() != null && disp.getOpengl())
 	    		model += " type: opengl";
-	    	if (disp.getColorRBG().get(0) != 255 || disp.getColorRBG().get(1) != 255 || disp.getColorRBG().get(2) != 255  || !disp.getIsColorCst()) {
+	    	if (disp.getColor() != null && (disp.getColorRBG().get(0) != 255 || disp.getColorRBG().get(1) != 255 || disp.getColorRBG().get(2) != 255  || !disp.getIsColorCst())) {
 	    		if (disp.getIsColorCst()) {
 	        		model += " background: rgb(" + disp.getColorRBG() + ")" ;
 	    		} else if (disp.getColor() != null && !disp.getColor().isEmpty()) {
@@ -420,52 +422,71 @@ public class ModelGenerator {
 	    	}
 	    	
 	    	model += " {";
-		Map<String, ELayer> layerMap = new Hashtable<String, ELayer>();
 		for (ELayer lay : disp.getLayers()) {
-			layerMap.put(lay.getName(), lay);
-		}
-		for (String layStr : disp.getLayerList()) {
-			ELayer lay = layerMap.get(layStr);
-			model += "\t\t\t";
-			// "species", "grid", "agents","image", "text"
+			System.out.println("lay: " + lay);
+			if (lay.getType() == null) continue;
+			model += "\n\t\t\t";
 			if (lay.getType().equals("species")) {
-				model += lay.getType() + " " + lay.getSpecies() + " aspect: "
-						+ lay.getAspect();
+				model += lay.getType() + " " + lay.getSpecies() + ((lay.getAspect() == null || lay.getAspect().isEmpty() || lay.getAspect().equals("default"))? "":(" aspect: "
+						+ lay.getAspect()));
 			} else if (lay.getType().equals("grid")) {
 				model += lay.getType() + " " + lay.getGrid();
 			} else if (lay.getType().equals("agents")) {
-				model += lay.getType() + " " + lay.getAgents() + " aspect: "
-						+ lay.getAspect();
+				model += lay.getType() + " \"" + lay.getName()+ "\" value:" + lay.getAgents() + ((lay.getAspect() == null || lay.getAspect().isEmpty()) ? "" : " aspect: "
+						+ lay.getAspect());
 			} else if (lay.getType().equals("image")) {
-				model += lay.getType() + lay.getFile() + " size: "
-						+ lay.getSize();
+				model += lay.getType() + "\""+ lay.getFile() + "\"" + (lay.getSize().isEmpty() ? "" : " size: "
+						+ lay.getSize());
+				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
+					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+						model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+					}
+				} else {
+					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
+						model += " color:" + lay.getColor();
+				}
 			} else if (lay.getType().equals("text")) {
-				model += lay.getType() + lay.getText() + " size: "
-						+ lay.getSize();
+				model += lay.getType() + "\""+ lay.getText() + "\""+ (lay.getSize().isEmpty() ? "" : " size: "
+						+ lay.getSize());
+				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
+					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+						model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+					}
+				} else {
+					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
+						model += " color:" + lay.getColor();
+				}
 			} else if (lay.getType().equals("chart")) {
 				String background = "";
-				if (lay.getColor() != null
-						&& lay.getColor().equals("rgb(255,255,255)"))
-					background = " background:" + lay.getColor();
+				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
+					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+						background = " background:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+					}
+				} else {
+					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
+						background = " background:" + lay.getColor();
+				}
 				model += lay.getType() + " \"" + lay.getName() + "\" type:"
 						+ lay.getChart_type() + background;
 			}
-
+			if (lay.getTransparency() != null && !lay.getTransparency().isEmpty() && !lay.getTransparency().equals("0.0")) {
+				model += " transparency:" + lay.getTransparency(); 
+			}
 			String size = "";
 			if (lay.getSize_x() != null
 					&& lay.getSize_y() != null
 					&& (!lay.getSize_x().equals("1.0") || !lay.getSize_y()
 							.equals("1.0"))) {
-				size = " size:{" + lay.getSize_x() + "," + lay.getSize_y()
+				size = " size:{" + (lay.getSize_x().isEmpty() ? "1.0" :lay.getSize_x()) + "," + (lay.getSize_y().isEmpty() ? "1.0" :lay.getSize_y())
 						+ "}";
 			}
 			String position = "";
 			if (lay.getPosition_x() != null
 					&& lay.getPosition_y() != null
-					&& (!lay.getPosition_x().equals("0.0") && !lay
+					&& (!lay.getPosition_x().equals("0.0") || !lay
 							.getPosition_y().equals("0.0"))) {
-				position = " position:{" + lay.getPosition_x() + ","
-						+ lay.getPosition_y() + "}";
+				position = " position:{" + (lay.getPosition_x().isEmpty() ? "0.0" :lay.getPosition_x()) + ","
+						+ (lay.getPosition_y().isEmpty() ? "0.0" :lay.getPosition_y()) + "}";
 			}
 			if (lay.getType().equals("chart")) {
 				model += size + position + "{" + EL;
@@ -473,8 +494,8 @@ public class ModelGenerator {
 						&& !lay.getChartlayers().isEmpty()) {
 					for (EChartLayer cl : lay.getChartlayers()) {
 						model += "\t\t\t\tdata \"" + cl.getName() + "\" style:"
-								+ cl.getStyle() + " value:" + cl.getValue()
-								+ " color:" + cl.getColor() + ";" + EL;
+								+ cl.getStyle() + " value:" + ((cl.getValue() == null || cl.getValue().isEmpty()) ? "0.0" : cl.getValue())
+								+ ((cl.getColor() == null || cl.getColor().isEmpty()) ? "" :(" color:" + cl.getColor())) + ";" + EL;
 					}
 				}
 				model += "\t\t\t}" + EL;

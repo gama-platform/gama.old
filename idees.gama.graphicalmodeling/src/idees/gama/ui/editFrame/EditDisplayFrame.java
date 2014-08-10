@@ -2,7 +2,7 @@ package idees.gama.ui.editFrame;
 
 import gama.EDisplay;
 import gama.EGamaObject;
-import gama.EGridTopology; 
+import gama.EGridTopology;
 import gama.ELayer;
 import gama.ESpecies;
 import idees.gama.diagram.GamaDiagramEditor;
@@ -10,10 +10,10 @@ import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import msi.gama.util.GamaList;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -23,9 +23,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -40,13 +37,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class EditDisplayFrame extends EditFrame {
 
-	org.eclipse.swt.widgets.List layerViewer;
+	Table layerViewer;
 	EditDisplayFrame frame;
-	List<ELayer> layers;
 	
 	List<ESpecies> species;
 	List<ESpecies> grids;
@@ -71,7 +69,6 @@ public class EditDisplayFrame extends EditFrame {
 				: name);
 		species = new GamaList<ESpecies>();
 		grids = new GamaList<ESpecies>();
-		layers = new GamaList<ELayer>();
 		this.diagram = diagram;
 		rgb = new int[3];
 		rgb[0] = rgb[1] = rgb[2] = 255;
@@ -88,15 +85,29 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		}
 		frame = this;
+	      
+		updateLayerId();
+		ModelGenerator.modelValidation(fp, diagram);
 		
 	}
 	
+	private static final Pattern DOUBLE_PATTERN = Pattern.compile(
+		    "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)" +
+		    "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|" +
+		    "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
+		    "[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
+	
 	private void loadData() {
 		EDisplay display = (EDisplay) eobject;
-		layers.addAll(display.getLayers());
-		for (ELayer la : layers) {
-			layerViewer.add(la.getName());
+		for (ELayer la : display.getLayers()) {
+			//layerViewer.add(la.getName());
+			TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+			ti.setText(la.getName());
+			//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+			ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+			
 		}
+		
 		if (display.getIsColorCst()!= null) {
 			btnCstCol.setSelection(display.getIsColorCst());
 			btnExpressionCol.setSelection(!display.getIsColorCst());
@@ -108,7 +119,6 @@ public class EditDisplayFrame extends EditFrame {
 		if (btnCstCol.getSelection()) {
 			textColor.setEnabled(false);
 		}
-		System.out.println("display.getColorRBG(): " + display.getColorRBG());
 		if (display.getColorRBG().size() == 3) {
 			rgb[0] = display.getColorRBG().get(0);
 			rgb[1] = display.getColorRBG().get(1);
@@ -118,14 +128,12 @@ public class EditDisplayFrame extends EditFrame {
 	         color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1],rgb[2]));
 	         colorLabel.setBackground(color);
 		}
-		System.out.println("isplay.getOpengl(): " + display.getOpengl());
 		if (display.getOpengl()!= null) {
 			btnOpenGL.setSelection(display.getOpengl());
 			btnJava2D.setSelection(!display.getOpengl());
 		}
 		if (display.getRefresh()!= null)
 			textRefresh.setText(display.getRefresh());
-		System.out.println("AFTER LOADING display: " + display);
 		((ValidateText)textName).setSaveData(true);
 		((ValidateText)textRefresh).setSaveData(true);
 		((ValidateText) textName).getLinkedVts().add((ValidateText) textRefresh);
@@ -154,7 +162,6 @@ public class EditDisplayFrame extends EditFrame {
 		buildCanvasParam(container);
 				
 		//****** CANVAS OK/CANCEL *********
-		//groupOkCancel(container);
 		loadData();
 		
 		return container;
@@ -165,7 +172,8 @@ public class EditDisplayFrame extends EditFrame {
 		//****** CANVAS LAYERS *********
 		//****** CANVAS LAYERS *********
 				Group group = new Group(container, SWT.NONE);
-				
+				final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+			       
 				group.setLayout( new FillLayout(SWT.VERTICAL));
 			    group.setText("Display layers");
 			    
@@ -183,11 +191,13 @@ public class EditDisplayFrame extends EditFrame {
 			   gridData2.grabExcessHorizontalSpace = true;
 			   gridData2.grabExcessVerticalSpace= true;
 			 		
-				layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+				//layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+				layerViewer = new Table(group,  SWT.BORDER | SWT.V_SCROLL|SWT.SINGLE | SWT.FULL_SELECTION
+					       /* | SWT.HIDE_SELECTION*/);
+				layerViewer.setHeaderVisible(false);
+				layerViewer.setLinesVisible(false);
+					   
 				layerViewer.setLayoutData(gridData2);
-				for (ELayer lay : layers) {
-					layerViewer.add(lay.getName());
-				}
 				
 				
 				Composite containerButtons = new Composite(group, SWT.NONE);
@@ -210,13 +220,27 @@ public class EditDisplayFrame extends EditFrame {
 								domain.getCommandStack().execute(new RecordingCommand(domain) {
 									public void doExecute() {
 										elayer.setName("Layer");
+										elayer.setDisplay((EDisplay) eobject);
 										diagram.eResource().getContents().add(elayer);
+										TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+										ti.setText(elayer.getName());
+										//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+										ti.setBackground(hasError(elayer) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+										
+										//layerViewer.add(elayer.getName());
+										((EDisplay) eobject).getLayers().add(elayer);
+										
+										
 										
 									}
 								});
 							}
+							
 							ef.hasDoneChanges = true;
-							new EditLayerFrame(elayer, frame, species, grids, false, diagram); 
+							
+							EditLayerFrame eaf = new EditLayerFrame(elayer, frame, species, grids, false, diagram,fp,ef); 
+							eaf.open();
+							frame.updateLayerId();
 						} 
 				});
 				
@@ -226,8 +250,13 @@ public class EditDisplayFrame extends EditFrame {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						if (layerViewer.getSelectionCount() == 1) {
+							updateLayerId();
+							
 							final int index = layerViewer.getSelectionIndex();
-							new EditLayerFrame(layers.get(index), frame, species, grids, true, diagram); 
+							ELayer layer = ((EDisplay) eobject).getLayers().get(index);
+							EditLayerFrame eaf = new EditLayerFrame(layer, frame, species, grids, true, diagram,fp,ef);
+							eaf.open();
+							
 						}
 					}
 				});
@@ -240,17 +269,22 @@ public class EditDisplayFrame extends EditFrame {
 						if (layerViewer.getSelectionCount() == 1) {
 							final int index = layerViewer.getSelectionIndex();
 							layerViewer.remove(index);
-							final ELayer lay =layers.remove(index);
 							TransactionalEditingDomain domain = TransactionUtil
 									.getEditingDomain(eobject);
 							if (domain != null) {
 								domain.getCommandStack().execute(new RecordingCommand(domain) {
 									public void doExecute() {
+										final ELayer lay =((EDisplay) eobject).getLayers().remove(index);
 										diagram.eResource().getContents().remove(lay);
 										EcoreUtil.delete(lay);
 									}
 								});
 							}
+							frame.updateLayerId();
+							
+							save("");
+							 ModelGenerator.modelValidation(fp, diagram);
+							 diagramEditor.updateEObjectErrors();
 							ef.hasDoneChanges = true;
 							
 						}
@@ -263,11 +297,15 @@ public class EditDisplayFrame extends EditFrame {
 						if (layerViewer.getSelectionCount() == 1) {
 							int index = layerViewer.getSelectionIndex();
 							if (index > 0) {
-								ELayer lay = layers.remove(index);
-								layers.add(index - 1, lay);
+								((EDisplay) eobject).getLayers().move(index - 1, index);
 								layerViewer.removeAll();
-								for (ELayer la : layers) {
-									layerViewer.add(la.getName());
+								for (ELayer la : ((EDisplay) eobject).getLayers()) {
+									//layerViewer.add(la.getName());
+									TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+									ti.setText(la.getName());
+									//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+									ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+									
 								}
 								
 							}	
@@ -281,12 +319,15 @@ public class EditDisplayFrame extends EditFrame {
 						if (layerViewer.getSelectionCount() == 1) {
 							int index = layerViewer.getSelectionIndex();
 							if (index < layerViewer.getItemCount() - 1) {
-								
-								ELayer lay = layers.remove(index);
-								layers.add(index + 1, lay);
+								((EDisplay) eobject).getLayers().move(index + 1, index);
 								layerViewer.removeAll();
-								for (ELayer la : layers) {
-									layerViewer.add(la.getName());
+								for (ELayer la : ((EDisplay) eobject).getLayers()) {
+									//layerViewer.add(la.getName());
+									TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+									ti.setText(la.getName());
+								//	ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+									ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+									
 								}
 							}	
 						}
@@ -294,6 +335,24 @@ public class EditDisplayFrame extends EditFrame {
 				});
 			}
 
+	public void updateLayerId(){
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	    List<String> loc = new GamaList<String>();
+	    diagramEditor.buildLocation(eobject, loc);
+		int size = loc.size();
+		List<List<String>> ids = new GamaList<List<String>>(diagramEditor.getIdsEObjects().keySet());
+	    for (List<String> lid: ids) {
+			if ((lid.size() > size) && (lid.get(lid.size() - 2).equals(eobject.getName()))) {
+				diagramEditor.getIdsEObjects().remove(lid);
+			}
+		}
+	    for(ELayer layer : ((EDisplay) eobject).getLayers()) {
+	    	if (layer.getType() == null) continue;
+	    	List<String> key = new GamaList<String>(loc);
+	    	key.add(layer.getType());
+	    	diagramEditor.getIdsEObjects().put(key, eobject);
+	    }
+	}
 	public void buildCanvasParam(Composite container) {
 		// ****** CANVAS PARAMETERS *********
 		Group group = new Group(container, SWT.NONE);
@@ -475,15 +534,8 @@ public class EditDisplayFrame extends EditFrame {
 		return new Point(743, 545);
 	}
 
-	public List<ELayer> getLayers() {
-		return layers;
-	}
 
-	public void setLayers(List<ELayer> layers) {
-		this.layers = layers;
-	}
-
-	public org.eclipse.swt.widgets.List getLayerViewer() {
+	public Table getLayerViewer() {
 		return layerViewer;
 	}
 	
@@ -497,43 +549,11 @@ public class EditDisplayFrame extends EditFrame {
 		display.getColorRBG().add(rgb[1]);
 		display.getColorRBG().add(rgb[2]);
 		display.setOpengl(btnOpenGL.getSelection());
-		display.setRefresh(textRefresh.getText());
-		System.out.println("eDisplay : " + eobject);
-		
-		/*String model = "display " + display.getName() ;
-    	String refresh = ((display.getRefresh() == null)|| (display.getRefresh().isEmpty())|| display.getRefresh().equals("1")) ? "" : " refresh_every: " + display.getRefresh();
-    	String type = (display.getOpengl() != null && display.getOpengl()) ? " type: opengl" : "";
-    	String background = "";
-    	if (rgb[0] != 255 || rgb[1] != 255 ||rgb[2] != 255 || !display.getIsColorCst()) {
-    		if (display.getIsColorCst()) {
-        		background += " background: rgb(" + display.getColorRBG() + ")" ;
-    		} else {
-    			background += " background: " + display.getColor();
-    		}
-    	}
-    	
-    	model +=  background + refresh + type+" {";
-    	System.out.println("model: " + model);
-    	display.setGamlCode(model);*/
-    	
-	}
-
-	private void modifyLayerOrder() {
-		EDisplay display = ((EDisplay) eobject);
-		for (ELayer lay: display.getLayers()) {
-			if (! layers.contains(lay)) {
-				EcoreUtil.delete((EObject) lay, true);
-			}
-		}	
-		display.getLayers().clear();
-		display.getLayers().addAll(layers);
-		display.getLayerList().clear();
-		display.getLayerList().addAll(new GamaList<String>(layerViewer.getItems()));
+		display.setRefresh(textRefresh.getText());	
 	}
 
 	@Override
 	protected void save(final String name) {
-		System.out.println("******* SAVE ******");
 		TransactionalEditingDomain domain = TransactionUtil
 				.getEditingDomain(eobject);
 		if (domain != null) {
@@ -542,26 +562,52 @@ public class EditDisplayFrame extends EditFrame {
 					if (name.equals("name")) {
 	    	    		 eobject.setName(textName.getText());
 	    	    	 } else {
-	    	    		 modifyLayerOrder();
+	    	    		// modifyLayerOrder();
 	    	    		 modifyOtherProperties();
 	    	    	 }
 				}
 			});
 		}
 		ef.hasDoneChanges = true;
-		System.out.println("******* RESULT ******");
 		
 		
 	}
 	
-	protected void clean() {
-		EDisplay display = ((EDisplay) eobject);
-		for (ELayer lay: layers) {
-			if (! display.getLayers().contains(lay)) {
-				EcoreUtil.delete((EObject) lay, true);
-			}
-		}	
-		layers.clear();
+	public void updateLayer() {
+		layerViewer.removeAll();
+		for (ELayer elayer : ((EDisplay) eobject).getLayers()) {
+			TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+			ti.setText(elayer.getName());
+			ti.setBackground(hasError(elayer) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+			
+		}
 	}
+	
+	public boolean testBasicOk(ELayer lay) {
+		return (lay.getType() == null || lay.getType().equals("species")) &&isNumber(lay.getTransparency()) && isNumber(lay.getPosition_x()) && isNumber(lay.getPosition_y()) && isNumber(lay.getSize_x()) && isNumber(lay.getSize_y())
+				&& !ModelGenerator.hasSyntaxError(fp, lay.getName(), true);
+	}
+	 
+		public boolean hasError(ELayer elayer) {
+			final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+			List<String> ids = new GamaList<String>();
+			boolean basicOk = testBasicOk(elayer); 
+			if (basicOk)
+				return false;
+			diagramEditor.buildLocation(elayer, ids);
+			
+			if (diagramEditor.getErrorsLoc().isEmpty() && diagramEditor.getSyntaxErrorsLoc().isEmpty())
+				return false;
+			
+			return diagramEditor.getErrorsLoc().containsKey(ids) || diagramEditor.getSyntaxErrorsLoc().containsKey(ids);
+		}
 
+		public List<ESpecies> getGrids() {
+			return grids;
+		}
+		
+		public static boolean isNumber(String s)
+		{
+			return ((s == null) || s.isEmpty() || DOUBLE_PATTERN.matcher(s).matches());
+		}
 }

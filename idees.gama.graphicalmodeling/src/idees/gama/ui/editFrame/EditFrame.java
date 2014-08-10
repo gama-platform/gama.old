@@ -159,6 +159,9 @@ public abstract class EditFrame extends ApplicationWindow {
 	}
 	*/
 	protected void groupName(Composite container) {
+		groupName(container, true);
+	}
+	protected void groupName(Composite container, boolean hasNameFaeture) {
 		Group group = new Group(container, SWT.NONE);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
@@ -172,7 +175,7 @@ public abstract class EditFrame extends ApplicationWindow {
 		
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		textName = new ValidateText(group, SWT.BORDER,diagram, fp,this, diagramEditor, "name", null,null);
-		
+		((ValidateText) textName).setNameFeature(hasNameFaeture);
 	    GridData gridData2 = new GridData();
 		gridData2.horizontalAlignment = SWT.FILL;
 		gridData2.grabExcessHorizontalSpace = true;
@@ -184,11 +187,14 @@ public abstract class EditFrame extends ApplicationWindow {
 		((ValidateText)textName).setSaveData(true);
 		
 	}
-	
-	protected Canvas canvasName(Composite container) {	
+	protected Canvas canvasName(Composite container) {
+		return canvasName(container, true);
+	}
+	protected Canvas canvasName(Composite container, boolean hasNameFaeture) {	
 		Canvas canvasName = new Canvas(container, SWT.BORDER);
 		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		textName = new ValidateText(canvasName, SWT.BORDER,diagram, fp,this, diagramEditor, "name", null, null);
+		((ValidateText) textName).setNameFeature(hasNameFaeture);
 		UtilEditFrame.buildCanvasName(container, canvasName, textName, eobject, ef);
 		canvasName.setBounds(10, 10, 720, 30);
 		((ValidateText)textName).setSaveData(true);
@@ -335,6 +341,10 @@ public abstract class EditFrame extends ApplicationWindow {
 	}
 	
 	protected void clean() {
+	}
+
+	public void updateError() {
+		
 	}
 	
 }

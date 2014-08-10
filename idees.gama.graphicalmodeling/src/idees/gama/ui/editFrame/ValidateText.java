@@ -47,6 +47,8 @@ public class ValidateText extends Text{
 	
 	boolean saveData = false;
 	
+	boolean nameFeature = true;
+	
 	 String addToLoc;
 	
 	public ValidateText(Composite parent, int style,final Diagram diagram,final IFeatureProvider fp,final EditFrame frame, final GamaDiagramEditor editor, final String name,final List<String> uselessName, final String addToLoc) {
@@ -66,6 +68,7 @@ public class ValidateText extends Text{
 		this.addToLoc = addToLoc;
 		loc = new GamaList<String>();
 		editor.buildLocation(frame.eobject, loc);
+		System.out.println("loc: " + loc);
 		if(addToLoc != null && !addToLoc.isEmpty()) loc.add(addToLoc);
 		//loc.add(0, "world");
 		
@@ -85,6 +88,7 @@ public class ValidateText extends Text{
 			
 			@Override
 		      public void modifyText(ModifyEvent event) {
+				System.out.println("MODIFY TEXT");
 				applyModification();
 		      }
 		    });
@@ -116,12 +120,12 @@ public class ValidateText extends Text{
 		if (nameLoc.equals("name")) 
 			isValid = !getText().isEmpty() && !getText().contains(" ") && !getText().contains(";") && !getText().contains("{") && !getText().contains("}") && !getText().contains("\t");
 		else 
-			isValid = !ModelGenerator.hasSyntaxError(getText(),  true, isString);
+			isValid = !ModelGenerator.hasSyntaxError(fp,getText(),  true, isString);
 		if (isValid) {
 			  Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
 			  if (locs != null)
 				  locs.remove(nameLoc);
-			  if (nameLoc.equals("name")) {
+			  if (nameFeature &&nameLoc.equals("name")) {
 				  addToLoc = getText();
 				  List<String> oldLoc = new GamaList<String>();
 				  oldLoc.addAll(loc);
@@ -154,7 +158,7 @@ public class ValidateText extends Text{
 					locs = new GamaMap<String,String>();
 				}
 				locs.put(nameLoc,"Syntax errors detected ");
-				
+			System.out.println("loc: " + loc);	
 			 editor.getSyntaxErrorsLoc().put(loc, locs);
 		 } 
        if (error != null) {	
@@ -169,21 +173,21 @@ public class ValidateText extends Text{
 	}
 	
 	public void applyModification() {
-		System.out.println("nameLoc: " + nameLoc + " saveData:" + saveData);
+		System.out.println("Loc: " + loc + "nameLoc: " + nameLoc + " saveData:" + saveData);
 		
 		if (saveData)frame.save(nameLoc);
-		System.out.println("isString");
+		//System.out.println("isString");
 		frame.getShell().forceFocus();
 		if (nameLoc.equals("name")) 
 			isValid = !getText().isEmpty() && !getText().contains(" ") && !getText().contains(";") && !getText().contains("{") && !getText().contains("}") && !getText().contains("\t");
 		else 
-			isValid = !ModelGenerator.hasSyntaxError(getText(),  true, isString);
+			isValid = !ModelGenerator.hasSyntaxError(fp,getText(),  true, isString);
 		if (isValid) {
 			  ModelGenerator.modelValidation(fp, diagram);
 			  Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
 			  if (locs != null)
 				  locs.remove(nameLoc);
-			  if (nameLoc.equals("name")) {
+			  if (nameFeature && nameLoc.equals("name")) {
 				  addToLoc = getText();
 				  List<String> oldLoc = new GamaList<String>();
 				  oldLoc.addAll(loc);
@@ -211,10 +215,14 @@ public class ValidateText extends Text{
 		        
 		 } else {
 			 error = "Syntax errors detected ";
+			 if (editor.isWasOK()) {
+				 ModelGenerator.modelValidation(fp, diagram);
+			 }
+			 
 			  GamaList<String> wStr = new GamaList<String>();
 			 wStr.add("world");
 			 editor.getSyntaxErrorsLoc().remove(wStr);
-			 System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
+			// System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
 			 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
 				
 			 if (locs == null) {
@@ -224,10 +232,10 @@ public class ValidateText extends Text{
 				
 			 editor.getSyntaxErrorsLoc().put(loc, locs);
 		 } 
-       System.out.println("location:" + loc);
+    /*   System.out.println("location:" + loc);
         System.out.println("name:" + nameLoc);
     	System.out.println("isValid: " + isValid);
-       if (error != null) {	
+     */  if (error != null) {	
         	tip.setMessage(error);
         	isValid = error.equals(""); 
         }
@@ -237,7 +245,9 @@ public class ValidateText extends Text{
         }
         setFocus();
         editor.updateEObjectErrors();
+        frame.updateError();
 	}
+	
 	@Override
 	protected void checkSubclass() {
 		return;
@@ -288,6 +298,14 @@ public class ValidateText extends Text{
 
 	public void setString(boolean isString) {
 		this.isString = isString;
+	}
+
+	public boolean isNameFeature() {
+		return nameFeature;
+	}
+
+	public void setNameFeature(boolean nameFeature) {
+		this.nameFeature = nameFeature;
 	}
 	
  

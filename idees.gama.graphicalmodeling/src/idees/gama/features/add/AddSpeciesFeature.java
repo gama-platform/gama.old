@@ -142,7 +142,7 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
             Shape shape2 = peCreateService.createShape(containerShape, false);
            // create and set text graphics algorithm
             String variables = "";
-          for (EVariable var:addedClass.getVariables() ) {
+            for (EVariable var:addedClass.getVariables() ) {
             	if (var.getName().equals("shape") || var.getName().equals("location"))
     				continue;
             	variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
