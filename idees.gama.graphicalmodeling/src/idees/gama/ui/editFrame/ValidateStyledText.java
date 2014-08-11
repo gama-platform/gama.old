@@ -1,11 +1,11 @@
 package idees.gama.ui.editFrame;
 
 
-import java.util.List;
-import java.util.Map;
-
 import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import java.util.List;
+import java.util.Map;
 
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
 public class ValidateStyledText extends StyledText{

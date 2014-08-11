@@ -2,7 +2,6 @@ package idees.gama.ui.editFrame;
 
 import gama.EAspect;
 import gama.EDisplay;
-import gama.ELayer;
 import gama.ELayerAspect;
 import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;

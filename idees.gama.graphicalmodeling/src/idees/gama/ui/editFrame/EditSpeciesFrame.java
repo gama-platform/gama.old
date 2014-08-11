@@ -15,12 +15,8 @@ import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import javax.swing.text.TableView.TableRow;
 
 import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
 import msi.gaml.compilation.AbstractGamlAdditions;
 
 import org.eclipse.emf.ecore.EObject;
@@ -30,7 +26,6 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -144,12 +139,7 @@ public class EditSpeciesFrame extends EditFrame {
 		skillsStrs.addAll(AbstractGamlAdditions.getAllSkills());
 		skillsStrs.removeAll(AbstractGamlAdditions.ARCHITECTURES);
 		skillsStrs.remove("grid");
-		if (species.getSkills() != null) {
-			for (String sk: species.getSkills()) {
-				skillsStrs.remove(sk);
-				skillsViewer.add(sk);
-			}
-		}	
+		
 		reflexStrs = new GamaList<String>();
 		List<String> newReflex = new GamaList<String>();
 		for (EReflexLink link: species.getReflexLinks()) {
@@ -443,20 +433,20 @@ public class EditSpeciesFrame extends EditFrame {
 	}
 	
 	private void modifyGridProperties() {
-		System.out.println("LALALALA");
+		//System.out.println("LALALALA");
 		ESpecies species = (ESpecies) eobject;
 	 	EGridTopology gridTopo = (EGridTopology) species.getTopology();
 		gridTopo.setNb_columns(textNbCols.getText());
 		gridTopo.setNb_rows(textNbRows.getText());
 		gridTopo.setNeighbourhoodType(comboNeighborhood.getText());
 		gridTopo.setNeighbourhood(textNeighborhood.getText());
-		System.out.println("gridTopo;getNb_columns: " + gridTopo.getNb_columns());
+	//	System.out.println("gridTopo;getNb_columns: " + gridTopo.getNb_columns());
 	}
 	
 	private void modifyBounds() {
 		EWorldAgent world = (EWorldAgent) eobject;
 		world.setBoundsType(comboBounds.getText());
-		System.out.println("textBoundsExpression.getText(): " + textBoundsExpression.getText());
+	//	System.out.println("textBoundsExpression.getText(): " + textBoundsExpression.getText());
 		world.setBoundsExpression(textBoundsExpression.getText());
 		world.setBoundsHeigth(textBoundsHeight.getText());
 		world.setBoundsWidth(textBoundsWidth.getText());
@@ -593,9 +583,7 @@ public class EditSpeciesFrame extends EditFrame {
 	        	  //Listener[] lis = text.getListeners(SWT.Modify);
 	        	 // for (Listener li : lis) {text.removeModifyListener((ModifyListener) li);}
 	        	  	 item.setBackground(column,text.getBackground());
-	        	  	System.out.println("text.getBackground() init: " + text.getBackground());
-	        		System.out.println("item.getBackground() init: " + item.getBackground());
-		            
+	        	    
 	         //   final Text text = new Text(tableVars, SWT.NONE);
 	           // text.setForeground(item.getForeground());
 
@@ -622,8 +610,7 @@ public class EditSpeciesFrame extends EditFrame {
 	            	 item.setText(col, text.getText());
 	            	 save("variables");
 	            	 text.applyModification();
-	            	  System.out.println("item.getBackground() avant: " + item.getBackground());
-		  	           
+	            	    
 	            	 item.setBackground(col,text.getBackground());
 	            	 for (int i = 2; i < table_vars.getColumnCount(); i++) {
 	            		 if (i == col) continue;
@@ -636,7 +623,7 @@ public class EditSpeciesFrame extends EditFrame {
 		   	        	  	case 6: name = "max:"; break;
 	            		 } 
 	            		 String error =diagramEditor.containErrors(text.getLoc(), name, null);
-	            		 System.out.println("error = " + error);
+	            		 //System.out.println("error = " + error);
 	            		 String textI = item.getText(i);
 	            		 if (error != null && !error.isEmpty()) {
 	            			 item.setBackground(i,new Color(text.getDisplay(), 255, 100, 100));
@@ -644,9 +631,6 @@ public class EditSpeciesFrame extends EditFrame {
 	            			 item.setBackground(i,new Color(text.getDisplay(), 100, 255, 100));
 	            		 }
 	            	 }
-	            	  System.out.println("text.getBackground(): " + text.getBackground());
-	            	  System.out.println("item.getBackground() : " + item.getBackground());
-	  	            
 	            	 
 	              }
 	            });
@@ -1494,8 +1478,7 @@ public class EditSpeciesFrame extends EditFrame {
 					textLoc.setEnabled(true);	
 				}
 			}
-			System.out.println("species.getLocationIsFunction() : " + species.getLocationIsFunction());
-			
+				
 			if (species.getLocationIsFunction() != null && species.getLocationIsFunction())
 			{
 				btnLocFct.setSelection(true);
@@ -1529,7 +1512,9 @@ public class EditSpeciesFrame extends EditFrame {
 	 
 	 public Canvas canvasSkills(Composite container) {
 		//****** CANVAS SKILLS *********
-			Canvas canvasSkills = new Canvas(container, SWT.BORDER);
+		 final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+				
+		 Canvas canvasSkills = new Canvas(container, SWT.BORDER);
 			canvasSkills.setBounds(10, 460, 720, 100);
 			
 			CLabel lblSkills = new CLabel(canvasSkills, SWT.NONE);
@@ -1567,6 +1552,9 @@ public class EditSpeciesFrame extends EditFrame {
 						listAvSkills.remove(listAvSkills.getSelectionIndices());
 						listAvSkills.redraw();
 						skillsViewer.redraw();
+						save("skills");
+						 ModelGenerator.modelValidation(fp, diagram);
+						 diagramEditor.updateEObjectErrors();
 					}
 				}
 			});
@@ -1584,9 +1572,23 @@ public class EditSpeciesFrame extends EditFrame {
 						skillsViewer.remove(skillsViewer.getSelectionIndices());
 						listAvSkills.redraw();
 						skillsViewer.redraw();
+						save("skills");
+						 ModelGenerator.modelValidation(fp, diagram);
+						 diagramEditor.updateEObjectErrors();
 					}
 				}
 			});
+			if (((ESpecies) eobject).getSkills() != null) {
+				for (String sk: ((ESpecies) eobject).getSkills()) {
+					skillsStrs.remove(sk);
+					skillsViewer.add(sk);
+					listAvSkills.remove(sk);
+					
+				}
+				skillsViewer.redraw();
+				listAvSkills.redraw();
+				
+			}	
 			return canvasSkills;
 	 }
 	 protected Canvas canvasInit(Composite container) {
@@ -1681,7 +1683,7 @@ public class EditSpeciesFrame extends EditFrame {
 			if (domain != null) {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
 			    	     public void doExecute() {
-			    	    	 System.out.println("totot name: " + name);
+			    	    	 //System.out.println("totot name: " + name);
 			    	    	
 			    	    	 if (name.equals("name")) {
 			    	    		 eobject.setName(textName.getText());
@@ -1695,6 +1697,7 @@ public class EditSpeciesFrame extends EditFrame {
 			    	    	} else if (name.equals("skills")) {
 			    	    		 species.getSkills().clear();
 				    	    	 species.getSkills().addAll(new GamaList<String>(skillsViewer.getItems()));
+				    	    //	 System.out.println("species: " + species);
 				    	    } else if (name.equals("torus:")) {
 				    	    	modifyIsTorus();
 				    	    } else if (name.equals("width:")||name.equals("height:")||name.equals("neighbours:")){
@@ -1704,7 +1707,7 @@ public class EditSpeciesFrame extends EditFrame {
 			    	 				modifyBounds();
 			    	 			else if (((ESpecies) eobject).getTopology() instanceof EContinuousTopology){
 			    	 				modifyLocation();
-			    	 				System.out.println("modify shape");
+			    	 			//	System.out.println("modify shape");
 			    	 				modifyShape();
 			    	 			}
 			    	 		}

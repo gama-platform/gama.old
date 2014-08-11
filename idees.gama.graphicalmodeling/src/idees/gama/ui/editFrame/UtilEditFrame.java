@@ -1,11 +1,11 @@
 package idees.gama.ui.editFrame;
 
-import java.util.List;
-
 import gama.EGamaObject;
 import gama.EWorldAgent;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import java.util.List;
 
 import msi.gaml.compilation.GamlCompilationError;
 
@@ -13,7 +13,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

@@ -485,7 +485,7 @@ public class ModelGenerator {
 			} else if (lay.getType().equals("chart")) {
 				String background = "";
 				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
-					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+					if (lay.getColorRBG().size() == 3 &&(!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255"))) {
 						background = " background:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
 					}
 				} else {
