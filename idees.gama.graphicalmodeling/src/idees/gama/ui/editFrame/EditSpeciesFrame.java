@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class EditSpeciesFrame extends EditFrame {
 	
@@ -67,14 +66,14 @@ public class EditSpeciesFrame extends EditFrame {
 	//Shapes
 	private CCombo comboShape;
 	private String[] type_shape = {"point", "polyline", "polygon", "circle", "square", "rectangle", "hexagon", "sphere", "expression"};
-	private Text textRadius;
-	private Text textHeight;
-	private Text textWidth;
-	private Text textSize;
-	private Text textPoints;
-	private Text textShape;
-	private Text textShapeUpdate;
-	private Text textShapeFunction;
+	private ValidateText textRadius;
+	private ValidateText textHeight;
+	private ValidateText textWidth;
+	private ValidateText textSize;
+	private ValidateText textPoints;
+	private ValidateText textShape;
+	private ValidateText textShapeUpdate;
+	private ValidateText textShapeFunction;
 	private StyledText textInit;
 	Composite sizeComp;
 	Composite radiusComp;
@@ -93,19 +92,19 @@ public class EditSpeciesFrame extends EditFrame {
 	Button btnShapeNormal;
 	Button btnShapeFct;
 	//Torus
-	private Text textTorus;
+	private ValidateText textTorus;
 	//private String torusStr;
 	
 	//Location
-	private Text textLoc;
-	private Text textLocUpdate;
-	private Text textLocFunction;
+	private ValidateText textLoc;
+	private ValidateText textLocUpdate;
+	private ValidateText textLocFunction;
 	
 	//grid
 	private CCombo comboNeighborhood;
-	private Text textNeighborhood;
-	private Text textNbCols;
-	private Text textNbRows;
+	private ValidateText textNeighborhood;
+	private ValidateText textNbCols;
+	private ValidateText textNbRows;
 	private String[] type_neighborhood = {"4 (square - von Neumann)", "8 (square - Moore)", "6 (hexagon)", "expression"};
 
 	Button btnLocNormal;
@@ -114,10 +113,10 @@ public class EditSpeciesFrame extends EditFrame {
 	//bounds
 	private String[] type_bounds = {"width-height", "file", "expression"};
 	private CCombo comboBounds;
-	private Text textBoundsWidth;
-	private Text textBoundsHeight;
-	private Text textBoundsExpression;
-	private Text textBoundsFile;
+	private ValidateText textBoundsWidth;
+	private ValidateText textBoundsHeight;
+	private ValidateText textBoundsExpression;
+	private ValidateText textBoundsFile;
 	Font titleFont;
 	
 	private int CONST_WIDTH = 763;

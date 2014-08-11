@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 public abstract class EditFrame extends ApplicationWindow {
 	Diagram diagram;
@@ -42,7 +41,7 @@ public abstract class EditFrame extends ApplicationWindow {
 	String name;
 	EGamaObject eobject;
 	StyledText validationResult;
-	Text textName;
+	ValidateText textName;
 	EditFrame frame;
 	Shell shell;
 	

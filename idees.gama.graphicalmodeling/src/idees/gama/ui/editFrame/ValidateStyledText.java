@@ -47,6 +47,8 @@ public class ValidateStyledText extends StyledText{
 		super(parent, style);
 		this.diagram = diagram;
 		vst = this;
+		new UndoRedoStyledText(this);
+		
 		tip = new ToolTip(getShell(), SWT.BALLOON);
         tip.setText("ERROR");
         tip.setAutoHide(false);

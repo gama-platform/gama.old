@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class EditLayerFrame extends EditFrame {
 
@@ -67,17 +66,17 @@ public class EditLayerFrame extends EditFrame {
 	private String[] aspects;
 	EditLayerFrame layerFrame;
 	
-	private Text textX;
-	private Text textY;
-	private Text positionX;
-	private Text positionY;
-	private Text textPath;
-	private Text textText;
-	private Text textSizeText;
-	private Text textAgents;
+	private ValidateText textX;
+	private ValidateText textY;
+	private ValidateText positionX;
+	private ValidateText positionY;
+	private ValidateText textPath;
+	private ValidateText textText;
+	private ValidateText textSizeText;
+	private ValidateText textAgents;
 
-	private Text transparency;
-	//private Text refresh;
+	private ValidateText transparency;
+	private ValidateText textRefresh;
 	
 	
 	
@@ -104,19 +103,19 @@ public class EditLayerFrame extends EditFrame {
 	Color color;
 	int[] rgb;
 
-	Text textColorGrid;
+	ValidateText textColorGrid;
 	Button btnCstColGrid;
 	Button btnExpressionGrid;
 	Label colorLabelGrid;
-	Text textColorText;
+	ValidateText textColorText;
 	Button btnCstColText;
 	Button btnExpressionText;
 	Label colorLabelText;
-	Text textColorImage;
+	ValidateText textColorImage;
 	Button btnCstColImage;
 	Button btnExpressionImage;
 	Label colorLabelImage;
-	Text textColorChart;
+	ValidateText textColorChart;
 	Button btnExpressionChart;
 	Button btnCstColChart;
 	Label colorLabelChart;
@@ -181,8 +180,8 @@ public class EditLayerFrame extends EditFrame {
 			positionY.setText(elayer.getPosition_y());
 		if (elayer.getFile() != null)
 			textPath.setText(elayer.getFile());
-		/*if (((ELayer) eobject).getRefresh() != null)
-			refresh.setText(((ELayer) eobject).getRefresh());*/
+		if (elayer.getRefresh() != null)
+			textRefresh.setText(((ELayer) eobject).getRefresh());
 		if (elayer.getTransparency() != null)
 			transparency.setText(elayer.getTransparency());
 		if (elayer.getText() != null)
@@ -246,7 +245,7 @@ public class EditLayerFrame extends EditFrame {
 		
 	}
 	
-	public void buildColorComposite (Composite compositeColor, final Text textColor, final Label colorLabel,final Button button, final Button btnCstCol, final Button btnExpressionCol, String text){
+	public void buildColorComposite (Composite compositeColor, final ValidateText textColor, final Label colorLabel,final Button button, final Button btnCstCol, final Button btnExpressionCol, String text){
 		// COLOR
 		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 	    compositeColor.setSize(700, 20);
@@ -370,6 +369,7 @@ public class EditLayerFrame extends EditFrame {
 		((ValidateText)textSizeText).setSaveData(true);
 		((ValidateText)textAgents).setSaveData(true);
 		((ValidateText)transparency).setSaveData(true);
+		((ValidateText)textRefresh).setSaveData(true);
 		
 		((ValidateText)textColorGrid).setSaveData(true);
 		((ValidateText)textColorText).setSaveData(true);
@@ -401,7 +401,7 @@ public class EditLayerFrame extends EditFrame {
 			elayer.setPosition_x(positionX.getText());
 			elayer.setPosition_y(positionY.getText());
 			
-			//((ELayer) eobject).setRefresh(refresh.getText());
+			elayer.setRefresh(textRefresh.getText());
 			elayer.setTransparency(transparency.getText());
 			elayer.setFile(textPath.getText());
 			elayer.setText(textText.getText());
@@ -523,13 +523,13 @@ public class EditLayerFrame extends EditFrame {
 		transparency.setBounds(100, 70, 200, 20);
 		transparency.setText("0.0");
 		
-		/*CLabel lblRefresh = new CLabel(canvasProp, SWT.NONE);
+		CLabel lblRefresh = new CLabel(canvasProp, SWT.NONE);
 		lblRefresh.setBounds(10, 100, 90, 20);
-		lblRefresh.setText("Refresh every");
+		lblRefresh.setText("Refresh");
 
-		refresh = new ValidateText(canvasProp, SWT.BORDER,diagram, fp,frame, diagramEditor, "refresh_every:", null, null);
-		refresh.setBounds(100, 100, 200, 20);
-		refresh.setText("1.0");*/
+		textRefresh = new ValidateText(canvasProp, SWT.BORDER,diagram, fp,this, diagramEditor, "refresh:", null, null);
+		textRefresh.setBounds(100, 100, 200, 20);
+		textRefresh.setText("true");
 		
 		return canvasProp;
 	}

@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class EditDisplayFrame extends EditFrame {
 
@@ -48,8 +47,8 @@ public class EditDisplayFrame extends EditFrame {
 	
 	List<ESpecies> species;
 	List<ESpecies> grids;
-	Text textColor;
-	Text textRefresh;
+	ValidateText textColor;
+	ValidateText textRefresh;
 
 	Button btnCstCol;
 	Button btnExpressionCol;

@@ -1,11 +1,11 @@
 package idees.gama.ui.editFrame;
 
 
-import java.util.List;
-import java.util.Map;
-
 import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import java.util.List;
+import java.util.Map;
 
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
@@ -13,16 +13,16 @@ import msi.gama.util.GamaMap;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
-public class ValidateText extends Text{
+public class ValidateText extends StyledText{
 
 	Color colValid;
 	Color colNotValid;
@@ -54,6 +54,7 @@ public class ValidateText extends Text{
 	public ValidateText(Composite parent, int style,final Diagram diagram,final IFeatureProvider fp,final EditFrame frame, final GamaDiagramEditor editor, final String name,final List<String> uselessName, final String addToLoc) {
 		super(parent, style);
 		this.diagram = diagram;
+		new UndoRedoStyledText(this);
 		
 		tip = new ToolTip(getShell(), SWT.BALLOON);
         tip.setText("ERROR");

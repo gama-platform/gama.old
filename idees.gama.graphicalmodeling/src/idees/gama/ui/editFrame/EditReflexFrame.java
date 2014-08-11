@@ -1,12 +1,12 @@
 package idees.gama.ui.editFrame;
 
-import java.util.List;
-
 import gama.EGamaObject;
 import gama.EReflex;
 import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
+
+import java.util.List;
 
 import msi.gama.util.GamaList;
 
@@ -23,11 +23,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
 public class EditReflexFrame extends EditActionFrame {
 	
-	Text conditionCode;
+	ValidateText conditionCode;
 	/**
 	 * Create the application window.
 	 */

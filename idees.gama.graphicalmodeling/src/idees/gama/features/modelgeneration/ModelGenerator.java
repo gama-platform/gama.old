@@ -498,6 +498,9 @@ public class ModelGenerator {
 			if (lay.getTransparency() != null && !lay.getTransparency().isEmpty() && !lay.getTransparency().equals("0.0")) {
 				model += " transparency:" + lay.getTransparency(); 
 			}
+			if (lay.getRefresh() != null && !lay.getRefresh().isEmpty() && !lay.getRefresh().equals("true")) {
+				model += " refresh:" + lay.getRefresh(); 
+			}
 			String size = "";
 			if (lay.getSize_x() != null
 					&& lay.getSize_y() != null

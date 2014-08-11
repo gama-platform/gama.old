@@ -86,7 +86,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	List<GamlCompilationError> errors;
 	
 	List<String> facets = GamaList.with("torus:","width:", "height:", "neighbours:", "refresh_every:" 
-			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:",
+			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:", "refresh:",
 			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:");
 			
 	
