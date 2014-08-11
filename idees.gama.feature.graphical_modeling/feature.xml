@@ -2,7 +2,7 @@
 <feature
       id="idees.gama.feature.graphical_modeling"
       label="Graphical_modeling"
-      version="0.9"
+      version="0.9.0.qualifier"
       provider-name="IDEES">
 
    <description url="http://www.example.com/description">
