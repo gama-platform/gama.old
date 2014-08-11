@@ -120,8 +120,8 @@ public class EditLayerFrame extends EditFrame {
 	Button btnExpressionChart;
 	Button btnCstColChart;
 	Label colorLabelChart;
-	
-
+	List<ESpecies> species;
+	List<ESpecies> grids;
 	Diagram diagram;
 	
 	public EditLayerFrame(Diagram diagram, IFeatureProvider fp, EditFeature ef,EGamaObject eobject, String name) {
@@ -133,6 +133,21 @@ public class EditLayerFrame extends EditFrame {
 		frame = asp;
 		cFrame = this;
 		layerFrame = this;
+		this.species= species;
+		this.grids = grids;
+		updateSpeciesAspect();
+		rgb = new int[3];
+		rgb[0] = rgb[1] = rgb[2] = 255;
+		
+	
+		
+		//init(elayer, asp, species, grids);
+		this.diagram = diagram;
+		this.edit = edit;
+		
+	}
+	
+	public void updateSpeciesAspect() {
 		aspectsSpecies = new Hashtable<String, String[]>();
 		species_list = new String[species.size()];
 		List<String> aspectsL = new GamaList<String>();
@@ -149,15 +164,6 @@ public class EditLayerFrame extends EditFrame {
 		for (int i = 0; i < grid_list.length; i++) {
 			grid_list[i] = grids.get(i).getName();
 		}
-		rgb = new int[3];
-		rgb[0] = rgb[1] = rgb[2] = 255;
-		
-	
-		
-		//init(elayer, asp, species, grids);
-		this.diagram = diagram;
-		this.edit = edit;
-		
 	}
 
 	private void loadData() {
@@ -185,13 +191,25 @@ public class EditLayerFrame extends EditFrame {
 			textSizeText.setText(elayer.getSize());
 		if (elayer.getAgents() != null)
 			textAgents.setText(elayer.getAgents());
-		if (elayer.getSpecies() != null)
-			comboSpecies.setText(elayer.getSpecies());
+		if (elayer.getSpecies() != null) {
+			GamaList<String> ln = new GamaList<String>(species_list);
+			if (ln.contains(elayer.getSpecies())) {
+				comboSpecies.setText(elayer.getSpecies());
+			}else {
+				comboSpecies.setText("world");
+			}
+		}
 		if (elayer.getGrid() != null)
 			comboGrid.setText(elayer.getGrid());
 		if (elayer.getAspect() != null) {
-			comboAspectsSpecies.setText(elayer.getAspect());
-			comboAspectsAgents.setText(elayer.getAspect());
+			GamaList<String> la = new GamaList<String>(aspectsSpecies.get(comboSpecies.getText()));
+			if (la.contains(elayer.getAspect()))
+				comboAspectsSpecies.setText(elayer.getAspect());
+			else 
+				comboAspectsSpecies.setText("");
+			GamaList<String> la2 = new GamaList<String>(aspects);
+			if (la2.contains(elayer.getAspect()))
+				comboAspectsAgents.setText(elayer.getAspect());
 		}
 		if (elayer.getColor() != null) {
 			this.textColorChart.setText(elayer.getColor());
@@ -316,7 +334,7 @@ public class EditLayerFrame extends EditFrame {
 	private Set<String> aspectSpecies (List<String> aspectsL, ESpecies sp) {
 		Set<String> aspL = new HashSet<String>();
 		for (EAspectLink al : sp.getAspectLinks()) {
-			String apN = al.getTarget().getName();
+			String apN = al.getAspect().getName();
 			aspL.add(apN);
 			if (!aspectsL.contains(apN)) aspectsL.add(apN);
 		}
@@ -329,44 +347,8 @@ public class EditLayerFrame extends EditFrame {
 	@Override
 	protected Control createContents(Composite parent) {
 
-	//public void init(final ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
-		
-		/*final Shell dialog = new Shell(asp.getShell(), SWT.APPLICATION_MODAL
-				| SWT.DIALOG_TRIM );
-		this.elayer = elayer;
-		dialog.setText("Edit Layer");*/
-	/*	dialog.addShellListener(new ShellListener() {
-
-		      public void shellActivated(ShellEvent event) {
-		      }
-
-		      public void shellClosed(ShellEvent event) {
-		        if (quitWithoutSaving) {
-			    	MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
-			        messageBox.setText("Warning");
-			        messageBox.setMessage("You have unsaved data. Close the 'Edit Display Layer' window anyway?");
-			        if (messageBox.open() == SWT.OK) {
-			        	if (! layerFrame.edit)
-							EcoreUtil.delete(elayer);
-			        	event.doit = true;
-			        }   else
-			          event.doit = false;
-		        } else {
-		        	event.doit = true;
-		        }
-			  }
-
-		      public void shellDeactivated(ShellEvent arg0) {
-		      }
-
-		      public void shellDeiconified(ShellEvent arg0) {
-		      }
-
-		      public void shellIconified(ShellEvent arg0) {
-		      }
-		    });*/
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setBounds(0, 0, 740, 550);
+		comp.setBounds(0, 0, 740, 390);
 		
 		canvasName(comp, false);
 		buildCanvasTopo(comp);
@@ -393,83 +375,16 @@ public class EditLayerFrame extends EditFrame {
 		((ValidateText)textColorText).setSaveData(true);
 		((ValidateText)textColorChart).setSaveData(true);
 		((ValidateText)textColorImage).setSaveData(true);
-		
-		
-		/*((ValidateText) textName).getLinkedVts().add((ValidateText) textX);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) textY);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) positionX);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) positionY);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) textPath);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) textText);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) textSizeText);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) textAgents);
-		((ValidateText) textName).getLinkedVts().add((ValidateText) transparency);*/
-		
-		if (!edit) save("");
+			
+		if (!edit) {
+			updateError();
+			save("");
+		}
 		
 		return comp;
 	}
 	
-	/*public void builtQuitButtons(final Shell  dialog) {
-
-		Canvas quitTopo = new Canvas(dialog, SWT.BORDER);
-		quitTopo.setBounds(10, 460, 720, 40);
-		final Button buttonOK = new Button(quitTopo, SWT.PUSH);
-		buttonOK.setText("Ok");
-		buttonOK.setBounds(150, 10, 80, 20);
-		buttonOK.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				int index = 0;
-				if (!layerFrame.edit) {
-					frame.getLayers().add(((ELayer) eobject));
-				} else {
-					index = frame.getLayers().indexOf(((ELayer) eobject));
-					frame.layerViewer.remove(index);
-				}
-				TransactionalEditingDomain domain = TransactionUtil
-						.getEditingDomain(((ELayer) eobject));
-				if (domain != null) {
-					domain.getCommandStack().execute(new RecordingCommand(domain) {
-						public void doExecute() {
-							layerFrame.save("");
-						}
-					});
-				}
-				
-				if (!layerFrame.edit) {
-					frame.layerViewer.add(((ELayer) eobject).getName());
-				} else {
-					frame.layerViewer.add(((ELayer) eobject).getName(), index);
-				}
-				quitWithoutSaving = false;
-				dialog.close();
-			}
-		});
-
-		Button buttonCancel = new Button(quitTopo, SWT.PUSH);
-		buttonCancel.setText("Cancel");
-		buttonCancel.setBounds(400, 10, 80, 20);
-		buttonCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				quitWithoutSaving = false;
-				
-				TransactionalEditingDomain domain = TransactionUtil
-						.getEditingDomain(((ELayer) eobject));
-				if (domain != null) {
-					domain.getCommandStack().execute(new RecordingCommand(domain) {
-						public void doExecute() {
-							EcoreUtil.delete(((ELayer) eobject));
-						}
-					});
-				}
-				dialog.close();
-			}
-		});
-	}
-	*/
+	
 	@Override
 	protected void save(String name) {
 		final ELayer elayer = (ELayer) eobject;
@@ -1178,7 +1093,11 @@ public class EditLayerFrame extends EditFrame {
 		 }
 	  }
 	 
-	 
+	 @Override
+		protected Point getInitialSize() {
+			return new Point(743, 490);
+		}
+		
 	
 	
 }

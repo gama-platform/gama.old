@@ -1,7 +1,10 @@
 package idees.gama.ui.editFrame;
 
 import gama.EAspect;
+import gama.EDisplay;
+import gama.ELayer;
 import gama.ELayerAspect;
+import idees.gama.diagram.GamaDiagramEditor;
 import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
@@ -20,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -28,11 +32,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 public class EditAspectFrame extends EditFrame {
 	
 	StyledText gamlCode;
-	org.eclipse.swt.widgets.List layerViewer;
+	Table layerViewer;
 	EditAspectFrame frame;
 	List<ELayerAspect> layers;
 	Diagram diagram;
@@ -68,7 +74,11 @@ public class EditAspectFrame extends EditFrame {
 	}
 	
 	protected void groupLayers(Composite container) {
-		
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		List<String> vals = new GamaList<String>();
+		diagramEditor.buildLocation(eobject, vals);
+		vals.add("draw");
+		diagramEditor.getIdsEObjects().put(vals, eobject);
 		//****** CANVAS LAYERS *********
 		Group group = new Group(container, SWT.NONE);
 		
@@ -89,11 +99,26 @@ public class EditAspectFrame extends EditFrame {
 	   gridData2.grabExcessHorizontalSpace = true;
 	   gridData2.grabExcessVerticalSpace= true;
 	 		
-		layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+		//layerViewer = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL);
+	   layerViewer = new Table(group,  SWT.BORDER | SWT.V_SCROLL|SWT.SINGLE | SWT.FULL_SELECTION
+		       /* | SWT.HIDE_SELECTION*/);
+	   layerViewer.setHeaderVisible(false);
+		layerViewer.setLinesVisible(false);
+		   
 		layerViewer.setLayoutData(gridData2);
-		for (ELayerAspect lay : layers) {
-			layerViewer.add(lay.getName());
+		
+		final EAspect aspect = (EAspect) eobject;
+		for (ELayerAspect la : aspect.getLayers()) {
+			//layerViewer.add(la.getName());
+			TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+			ti.setText(la.getName());
+			//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+			ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+			
 		}
+		/*for (ELayerAspect lay : layers) {
+			layerViewer.add(lay.getName());
+		}*/
 		
 		Composite containerButtons = new Composite(group, SWT.NONE);
 		containerButtons.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -114,12 +139,19 @@ public class EditAspectFrame extends EditFrame {
 				if (domain != null) {
 					domain.getCommandStack().execute(new RecordingCommand(domain) {
 						public void doExecute() {
-							diagram.eResource().getContents().add(elayer);
 							elayer.setName("Layer");
+							elayer.setAspect((EAspect) eobject);
+							diagram.eResource().getContents().add(elayer);
+							TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+							ti.setText(elayer.getName());
+							ti.setBackground(hasError(elayer) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+							((EAspect) eobject).getLayers().add(elayer);
+							
 						}
 					});
 				}
-					new EditLayerAspectFrame(elayer, frame, false); 
+					EditLayerAspectFrame eaf = new EditLayerAspectFrame(elayer, frame, false, diagram,fp,ef); 
+					eaf.open();
 				} 
 		});
 		
@@ -131,7 +163,9 @@ public class EditAspectFrame extends EditFrame {
 			public void widgetSelected(SelectionEvent e) {
 				if (layerViewer.getSelectionCount() == 1) {
 					final int index = layerViewer.getSelectionIndex();
-					new EditLayerAspectFrame(layers.get(index), frame, true);
+					ELayerAspect layer = ((EAspect) eobject).getLayers().get(index);
+					EditLayerAspectFrame eaf = new EditLayerAspectFrame(layer, frame, true, diagram,fp,ef);
+					eaf.open();
 				}
 			}
 		});
@@ -151,11 +185,18 @@ public class EditAspectFrame extends EditFrame {
 					if (domain != null) {
 						domain.getCommandStack().execute(new RecordingCommand(domain) {
 							public void doExecute() {
+								aspect.getLayers().remove(index);
 								diagram.eResource().getContents().remove(lay);
+								EcoreUtil.delete(lay);
+								
 							}
 						});
 					}
-					EcoreUtil.delete(lay);
+					
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
+					ef.hasDoneChanges = true;
 				}
 			}
 		});
@@ -168,13 +209,13 @@ public class EditAspectFrame extends EditFrame {
 				if (layerViewer.getSelectionCount() == 1) {
 					int index = layerViewer.getSelectionIndex();
 					if (index > 0) {
-						ELayerAspect lay = layers.remove(index);
-						layers.add(index - 1, lay);
+						((EDisplay) eobject).getLayers().move(index - 1, index);
 						layerViewer.removeAll();
-						for (ELayerAspect la : layers) {
-							layerViewer.add(la.getName());
-						}
-						
+						for (ELayerAspect la : ((EAspect) eobject).getLayers()) {
+							TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+							ti.setText(la.getName());
+							ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+						}	
 					}	
 				}
 			}
@@ -188,12 +229,12 @@ public class EditAspectFrame extends EditFrame {
 				if (layerViewer.getSelectionCount() == 1) {
 					int index = layerViewer.getSelectionIndex();
 					if (index < layerViewer.getItemCount() - 1) {
-						
-						ELayerAspect lay = layers.remove(index);
-						layers.add(index + 1, lay);
+						((EDisplay) eobject).getLayers().move(index + 1, index);
 						layerViewer.removeAll();
-						for (ELayerAspect la : layers) {
-							layerViewer.add(la.getName());
+						for (ELayerAspect la : ((EAspect) eobject).getLayers()) {
+							TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+							ti.setText(la.getName());
+							ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
 						}
 					}	
 				}
@@ -218,7 +259,7 @@ public class EditAspectFrame extends EditFrame {
 		this.layers = layers;
 	}
 
-	public org.eclipse.swt.widgets.List getLayerViewer() {
+	public Table getLayerViewer() {
 		return layerViewer;
 	}
 	
@@ -233,16 +274,6 @@ public class EditAspectFrame extends EditFrame {
 	}
 
 	
-	private void modifyLayerOrder() {
-		EAspect aspect = ((EAspect) eobject);
-		for (ELayerAspect lay: aspect.getLayers()) {
-			if (! layers.contains(lay)) {
-				EcoreUtil.delete((EObject) lay, true);
-			}
-		}	
-		aspect.getLayers().clear();
-		aspect.getLayers().addAll(layers);
-	}
 
 	@Override
 	protected void save(String name) {
@@ -251,7 +282,7 @@ public class EditAspectFrame extends EditFrame {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
 			    	     public void doExecute() {
 			    	    	 eobject.setName(textName.getText());
-			    	    	 modifyLayerOrder();
+			    	  
 			    	     }
 			    	  });
 			}
@@ -259,7 +290,26 @@ public class EditAspectFrame extends EditFrame {
 	    ModelGenerator.modelValidation(fp, diagram);
 	}
 	
+	public boolean hasError(ELayerAspect elayer) {
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		List<String> ids = new GamaList<String>();
+		diagramEditor.buildLocation(elayer, ids);
+		
+		if (diagramEditor.getErrorsLoc().isEmpty() && diagramEditor.getSyntaxErrorsLoc().isEmpty())
+			return false;
+		
+		return diagramEditor.getErrorsLoc().containsKey(ids) || diagramEditor.getSyntaxErrorsLoc().containsKey(ids);
+	}
 	
+	public void updateLayer() {
+		layerViewer.removeAll();
+		for (ELayerAspect elayer : ((EAspect) eobject).getLayers()) {
+			TableItem ti =  new TableItem(layerViewer, SWT.NONE);
+			ti.setText(elayer.getName());
+			ti.setBackground(hasError(elayer) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
+			
+		}
+	}
 	
 }
 

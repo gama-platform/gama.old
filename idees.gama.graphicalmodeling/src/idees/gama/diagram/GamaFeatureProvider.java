@@ -52,6 +52,7 @@ import idees.gama.features.layout.LayoutDiagramFeature;
 import idees.gama.features.layout.LayoutEExperimentFeature;
 import idees.gama.features.layout.LayoutESpeciesFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 import idees.gama.features.others.ChangeColorEGamaObjectFeature;
 import idees.gama.features.others.CustomDeleteFeature;
 import idees.gama.features.others.EmptyRemoveFeature;
@@ -114,6 +115,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
  
 	private String typeOfModel;
 	private IModel gamaModel;
+	private GamaFeatureProvider fp;
 	private List<String> built_in_species =  GamaList.with("osm_node", "osm_building", "osm_road", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge");
 	private List<String> built_in_variables =  GamaList.with("fatal", "duration", "machine_time", "step", "model_path", "total_duration", "seed", "average_duration", "warnings", "cycle", "time", "rng", "project_path", "workspace_path", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge", "shape", "location", "agents", "peers", "members","name", "population", "host");
 	private List<String> built_in_actions =  GamaList.with("goto", "move", "wander", "follow", "wander_3D", "_init_", "_step_","error", "pause", "die", "write", "tell", "debug", "percieved_area", "halt", "neighbourhood_exclusive");
@@ -121,7 +123,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 	 
 	public GamaFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
-       
+        fp = this;
     }
     
     @Override
@@ -200,6 +202,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          			 } else {
          				initSimple(newClass, diagram);
          			 }
+         			ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
          	     }
          	  });
     	}

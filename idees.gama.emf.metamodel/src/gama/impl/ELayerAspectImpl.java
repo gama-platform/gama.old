@@ -6,6 +6,7 @@
  */
 package gama.impl;
 
+import gama.EAspect;
 import gama.ELayerAspect;
 import gama.GamaPackage;
 
@@ -17,6 +18,7 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeEList;
@@ -48,6 +50,7 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  *   <li>{@link gama.impl.ELayerAspectImpl#getTextSize <em>Text Size</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getImageSize <em>Image Size</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getColorRBG <em>Color RBG</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getAspect <em>Aspect</em>}</li>
  * </ul>
  * </p>
  *
@@ -443,6 +446,16 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	 * @ordered
 	 */
 	protected EList<Integer> colorRBG;
+
+	/**
+	 * The cached value of the '{@link #getAspect() <em>Aspect</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAspect()
+	 * @generated
+	 * @ordered
+	 */
+	protected EAspect aspect;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -879,6 +892,44 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAspect getAspect() {
+		if (aspect != null && aspect.eIsProxy()) {
+			InternalEObject oldAspect = (InternalEObject)aspect;
+			aspect = (EAspect)eResolveProxy(oldAspect);
+			if (aspect != oldAspect) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.ELAYER_ASPECT__ASPECT, oldAspect, aspect));
+			}
+		}
+		return aspect;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAspect basicGetAspect() {
+		return aspect;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAspect(EAspect newAspect) {
+		EAspect oldAspect = aspect;
+		aspect = newAspect;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__ASPECT, oldAspect, aspect));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -922,6 +973,9 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 				return getImageSize();
 			case GamaPackage.ELAYER_ASPECT__COLOR_RBG:
 				return getColorRBG();
+			case GamaPackage.ELAYER_ASPECT__ASPECT:
+				if (resolve) return getAspect();
+				return basicGetAspect();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -996,6 +1050,9 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 				getColorRBG().clear();
 				getColorRBG().addAll((Collection<? extends Integer>)newValue);
 				return;
+			case GamaPackage.ELAYER_ASPECT__ASPECT:
+				setAspect((EAspect)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1068,6 +1125,9 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__COLOR_RBG:
 				getColorRBG().clear();
 				return;
+			case GamaPackage.ELAYER_ASPECT__ASPECT:
+				setAspect((EAspect)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1120,6 +1180,8 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 				return IMAGE_SIZE_EDEFAULT == null ? imageSize != null : !IMAGE_SIZE_EDEFAULT.equals(imageSize);
 			case GamaPackage.ELAYER_ASPECT__COLOR_RBG:
 				return colorRBG != null && !colorRBG.isEmpty();
+			case GamaPackage.ELAYER_ASPECT__ASPECT:
+				return aspect != null;
 		}
 		return super.eIsSet(featureID);
 	}

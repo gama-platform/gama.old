@@ -6,6 +6,7 @@
  */
 package gama.impl;
 
+import gama.EGamaObject;
 import gama.EVariable;
 import gama.GamaPackage;
 
@@ -13,6 +14,7 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
@@ -32,6 +34,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link gama.impl.EVariableImpl#getName <em>Name</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getHasError <em>Has Error</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getError <em>Error</em>}</li>
+ *   <li>{@link gama.impl.EVariableImpl#getOwner <em>Owner</em>}</li>
  * </ul>
  * </p>
  *
@@ -217,6 +220,16 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * @ordered
 	 */
 	protected String error = ERROR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getOwner() <em>Owner</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOwner()
+	 * @generated
+	 * @ordered
+	 */
+	protected EGamaObject owner;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -431,6 +444,44 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EGamaObject getOwner() {
+		if (owner != null && owner.eIsProxy()) {
+			InternalEObject oldOwner = (InternalEObject)owner;
+			owner = (EGamaObject)eResolveProxy(oldOwner);
+			if (owner != oldOwner) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.EVARIABLE__OWNER, oldOwner, owner));
+			}
+		}
+		return owner;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EGamaObject basicGetOwner() {
+		return owner;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOwner(EGamaObject newOwner) {
+		EGamaObject oldOwner = owner;
+		owner = newOwner;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EVARIABLE__OWNER, oldOwner, owner));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -452,6 +503,9 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return getHasError();
 			case GamaPackage.EVARIABLE__ERROR:
 				return getError();
+			case GamaPackage.EVARIABLE__OWNER:
+				if (resolve) return getOwner();
+				return basicGetOwner();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -490,6 +544,9 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return;
 			case GamaPackage.EVARIABLE__ERROR:
 				setError((String)newValue);
+				return;
+			case GamaPackage.EVARIABLE__OWNER:
+				setOwner((EGamaObject)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -530,6 +587,9 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 			case GamaPackage.EVARIABLE__ERROR:
 				setError(ERROR_EDEFAULT);
 				return;
+			case GamaPackage.EVARIABLE__OWNER:
+				setOwner((EGamaObject)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -560,6 +620,8 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return HAS_ERROR_EDEFAULT == null ? hasError != null : !HAS_ERROR_EDEFAULT.equals(hasError);
 			case GamaPackage.EVARIABLE__ERROR:
 				return ERROR_EDEFAULT == null ? error != null : !ERROR_EDEFAULT.equals(error);
+			case GamaPackage.EVARIABLE__OWNER:
+				return owner != null;
 		}
 		return super.eIsSet(featureID);
 	}

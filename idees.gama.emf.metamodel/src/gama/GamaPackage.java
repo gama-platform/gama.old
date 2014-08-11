@@ -604,13 +604,31 @@ public interface GamaPackage extends EPackage {
 	int EACTION__ACTION_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__VARIABLES = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Return Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__RETURN_TYPE = EGAMA_OBJECT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>EAction</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
+	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
@@ -1579,13 +1597,85 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Ambient Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__AMBIENT_LIGHT = EGAMA_OBJECT_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Draw Diffuse Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__DRAW_DIFFUSE_LIGHT = EGAMA_OBJECT_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Diffuse Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__DIFFUSE_LIGHT = EGAMA_OBJECT_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>Diffuse Light Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__DIFFUSE_LIGHT_POS = EGAMA_OBJECT_FEATURE_COUNT + 13;
+
+	/**
+	 * The feature id for the '<em><b>ZFighting</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__ZFIGHTING = EGAMA_OBJECT_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Camera Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__CAMERA_POS = EGAMA_OBJECT_FEATURE_COUNT + 15;
+
+	/**
+	 * The feature id for the '<em><b>Camera Look Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__CAMERA_LOOK_POS = EGAMA_OBJECT_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Camera Up Vector</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__CAMERA_UP_VECTOR = EGAMA_OBJECT_FEATURE_COUNT + 17;
+
+	/**
 	 * The number of structural features of the '<em>EDisplay</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 10;
+	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 18;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EVariableImpl <em>EVariable</em>}' class.
@@ -1679,13 +1769,22 @@ public interface GamaPackage extends EPackage {
 	int EVARIABLE__ERROR = 8;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__OWNER = 9;
+
+	/**
 	 * The number of structural features of the '<em>EVariable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EVARIABLE_FEATURE_COUNT = 9;
+	int EVARIABLE_FEATURE_COUNT = 10;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.
@@ -2792,13 +2891,22 @@ public interface GamaPackage extends EPackage {
 	int ELAYER_ASPECT__COLOR_RBG = EGAMA_OBJECT_FEATURE_COUNT + 19;
 
 	/**
+	 * The feature id for the '<em><b>Aspect</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__ASPECT = EGAMA_OBJECT_FEATURE_COUNT + 20;
+
+	/**
 	 * The number of structural features of the '<em>ELayer Aspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_ASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 20;
+	int ELAYER_ASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 21;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGridTopologyImpl <em>EGrid Topology</em>}' class.
@@ -3916,6 +4024,28 @@ public interface GamaPackage extends EPackage {
 	EReference getEAction_ActionLinks();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link gama.EAction#getVariables <em>Variables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Variables</em>'.
+	 * @see gama.EAction#getVariables()
+	 * @see #getEAction()
+	 * @generated
+	 */
+	EReference getEAction_Variables();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EAction#getReturnType <em>Return Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Return Type</em>'.
+	 * @see gama.EAction#getReturnType()
+	 * @see #getEAction()
+	 * @generated
+	 */
+	EAttribute getEAction_ReturnType();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EAspect <em>EAspect</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4388,6 +4518,94 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEDisplay_GamlCode();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getAmbientLight <em>Ambient Light</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ambient Light</em>'.
+	 * @see gama.EDisplay#getAmbientLight()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_AmbientLight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getDrawDiffuseLight <em>Draw Diffuse Light</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Draw Diffuse Light</em>'.
+	 * @see gama.EDisplay#getDrawDiffuseLight()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_DrawDiffuseLight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getDiffuseLight <em>Diffuse Light</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Diffuse Light</em>'.
+	 * @see gama.EDisplay#getDiffuseLight()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_DiffuseLight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getDiffuseLightPos <em>Diffuse Light Pos</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Diffuse Light Pos</em>'.
+	 * @see gama.EDisplay#getDiffuseLightPos()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_DiffuseLightPos();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getZFighting <em>ZFighting</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>ZFighting</em>'.
+	 * @see gama.EDisplay#getZFighting()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_ZFighting();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getCameraPos <em>Camera Pos</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Camera Pos</em>'.
+	 * @see gama.EDisplay#getCameraPos()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_CameraPos();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getCameraLookPos <em>Camera Look Pos</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Camera Look Pos</em>'.
+	 * @see gama.EDisplay#getCameraLookPos()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_CameraLookPos();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EDisplay#getCameraUpVector <em>Camera Up Vector</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Camera Up Vector</em>'.
+	 * @see gama.EDisplay#getCameraUpVector()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EAttribute getEDisplay_CameraUpVector();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EVariable <em>EVariable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4495,6 +4713,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getEVariable_Error();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EVariable#getOwner <em>Owner</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Owner</em>'.
+	 * @see gama.EVariable#getOwner()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EReference getEVariable_Owner();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EWorldAgent <em>EWorld Agent</em>}'.
@@ -5073,6 +5302,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getELayerAspect_ColorRBG();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.ELayerAspect#getAspect <em>Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Aspect</em>'.
+	 * @see gama.ELayerAspect#getAspect()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EReference getELayerAspect_Aspect();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EGridTopology <em>EGrid Topology</em>}'.
@@ -5770,6 +6010,22 @@ public interface GamaPackage extends EPackage {
 		EReference EACTION__ACTION_LINKS = eINSTANCE.getEAction_ActionLinks();
 
 		/**
+		 * The meta object literal for the '<em><b>Variables</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EACTION__VARIABLES = eINSTANCE.getEAction_Variables();
+
+		/**
+		 * The meta object literal for the '<em><b>Return Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EACTION__RETURN_TYPE = eINSTANCE.getEAction_ReturnType();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6146,6 +6402,70 @@ public interface GamaPackage extends EPackage {
 		EAttribute EDISPLAY__GAML_CODE = eINSTANCE.getEDisplay_GamlCode();
 
 		/**
+		 * The meta object literal for the '<em><b>Ambient Light</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__AMBIENT_LIGHT = eINSTANCE.getEDisplay_AmbientLight();
+
+		/**
+		 * The meta object literal for the '<em><b>Draw Diffuse Light</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__DRAW_DIFFUSE_LIGHT = eINSTANCE.getEDisplay_DrawDiffuseLight();
+
+		/**
+		 * The meta object literal for the '<em><b>Diffuse Light</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__DIFFUSE_LIGHT = eINSTANCE.getEDisplay_DiffuseLight();
+
+		/**
+		 * The meta object literal for the '<em><b>Diffuse Light Pos</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__DIFFUSE_LIGHT_POS = eINSTANCE.getEDisplay_DiffuseLightPos();
+
+		/**
+		 * The meta object literal for the '<em><b>ZFighting</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__ZFIGHTING = eINSTANCE.getEDisplay_ZFighting();
+
+		/**
+		 * The meta object literal for the '<em><b>Camera Pos</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__CAMERA_POS = eINSTANCE.getEDisplay_CameraPos();
+
+		/**
+		 * The meta object literal for the '<em><b>Camera Look Pos</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__CAMERA_LOOK_POS = eINSTANCE.getEDisplay_CameraLookPos();
+
+		/**
+		 * The meta object literal for the '<em><b>Camera Up Vector</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EDISPLAY__CAMERA_UP_VECTOR = eINSTANCE.getEDisplay_CameraUpVector();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EVariableImpl <em>EVariable</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6226,6 +6546,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EVARIABLE__ERROR = eINSTANCE.getEVariable_Error();
+
+		/**
+		 * The meta object literal for the '<em><b>Owner</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EVARIABLE__OWNER = eINSTANCE.getEVariable_Owner();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.
@@ -6660,6 +6988,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ELAYER_ASPECT__COLOR_RBG = eINSTANCE.getELayerAspect_ColorRBG();
+
+		/**
+		 * The meta object literal for the '<em><b>Aspect</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ELAYER_ASPECT__ASPECT = eINSTANCE.getELayerAspect_Aspect();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGridTopologyImpl <em>EGrid Topology</em>}' class.

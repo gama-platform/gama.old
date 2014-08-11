@@ -6,6 +6,7 @@ import gama.EDisplay;
 import gama.EExperiment;
 import gama.EGamaObject;
 import gama.ELayer;
+import gama.ELayerAspect;
 import gama.EReflex;
 import gama.ESpecies;
 import gama.EVariable;
@@ -86,7 +87,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	
 	List<String> facets = GamaList.with("torus:","width:", "height:", "neighbours:", "refresh_every:" 
 			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:",
-			"size:", "position:", "background:", "transparency:", "color:");
+			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:");
 			
 	
 	boolean toRefresh = true;
@@ -350,26 +351,12 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		
 		for (GamlCompilationError error : errors) {
 			EObject toto = error.getStatement();
-			System.out.println("error.getStatement() : " + error.getStatement());
-			
-			/*if (error.toString().equals("Syntax errors detected ")) {
-				System.out.println("la");
-				//hasSyntaxError = true;
-				if (vst != null) {
-					Map<String,String> locs = syntaxErrorsLoc.get(vst.getLoc());
-					if (locs == null) 
-						locs = new GamaMap<String, String>();
-					locs.put(vst.getNameLoc(), error.toString());
-					syntaxErrorsLoc.put(vst.getLoc(), locs);
-					System.out.println("ici");
-				}
-			}
-			System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
+			//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
 			GamaList<String> ids = new GamaList<String>();
 			String fist_obj = buildLocation(toto,ids);
-			System.out.println("location of error: " + ids);
+			//System.out.println("location of error: " + ids);
 			while (!ids.isEmpty()) {
-				System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
+				//System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
 				if (!idsEObjects.getKeys().contains(ids)) {
 					ids.remove(ids.size()-1);
 				} else {
@@ -381,7 +368,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			if (locs == null) {
 				locs = new GamaMap<String,String>();
 			}
-			System.out.println("error.getCode() : " + error.getCode());
+			//System.out.println("error.getCode() : " + error.getCode());
 			String key = (error.getCode().equals("gaml.duplicate.definition.issue") || error.getCode().equals("gaml.duplicate.name.issue")) ? "name":fist_obj;
 			locs.put(key, (locs.containsKey(key) ? locs.get(key) : "") + "\n" +error.toString());
 			if (error.toString().equals("Syntax errors detected ")) {
@@ -474,7 +461,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				}
 			} else if (toto instanceof StatementImpl) {
 				StatementImpl vv = (StatementImpl) toto;
-				if (vv.getKey().equals("text") || vv.getKey().equals("image")  || vv.getKey().equals("chart"))
+				if (vv.getKey().equals("text") || vv.getKey().equals("image")  || vv.getKey().equals("chart") || vv.getKey().equals("draw") ) 
 					ids.add(0,vv.getKey());
 			} else if (toto instanceof VariableRefImpl) {
 				//VariableRefImpl vv = (VariableRefImpl) toto;
@@ -491,6 +478,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				EGamaObject vv = (EGamaObject) toto;
 				if (toto instanceof ELayer) {
 					ids.add(0,((ELayer) vv).getType() == null ? "species" : ((ELayer) vv).getType()); 
+				} else if (toto instanceof ELayerAspect) {
+						ids.add(0,"draw"); 
 				} else {
 					ids.add(0,vv.getName()); 
 				}
@@ -505,6 +494,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				toto = ((EReflex) toto).getReflexLinks().get(0).getSpecies();
 			} else if (toto instanceof ELayer) {
 				toto = ((ELayer) toto).getDisplay();
+			} else if (toto instanceof ELayerAspect) {
+				toto = ((ELayerAspect) toto).getAspect();
 			} else if (toto instanceof EAspect) {
 				toto = ((EAspect) toto).getAspectLinks().get(0).getSpecies();
 			} else if (toto instanceof EExperiment) {
@@ -522,15 +513,15 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		} while ((toto != null) && !(toto instanceof Model)) ;
 		if (!ids.contains("world"))
 			ids.add(0, "world");
-		System.out.println("ids: " + ids);
+		//System.out.println("ids: " + ids);
 		return fist_obj;
 	}
 	public String containErrors (List<String> location, String name, List<String> uselessName) {
-		System.out.println("syntaxErrorsLoc: " + syntaxErrorsLoc);
+		//System.out.println("syntaxErrorsLoc: " + syntaxErrorsLoc);
 		boolean noName = name.equals("");
-		System.out.println("location: " + location + " name: " + name);
+		//System.out.println("location: " + location + " name: " + name);
 				
-		System.out.println("errorsLoc: " + errorsLoc);
+		//System.out.println("errorsLoc: " + errorsLoc);
 		if (errorsLoc == null || errorsLoc.isEmpty()|| !errorsLoc.containsKey(location))
 			return "";
 		
@@ -540,13 +531,13 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				for (String val: uselessName) 
 					er.remove(val);
 			}
-			System.out.println("er 2: " + er);
+			//System.out.println("er 2: " + er);
 			if (! er.isEmpty()) {
 				List<String> l = new GamaList<String>(er.values());
 				return l.get(0);
 			}
 		} else if (errorsLoc.get(location).containsKey(name)) {
-			System.out.println("errorsLoc.get(location).get(name): " + errorsLoc.get(location).get(name));
+			//System.out.println("errorsLoc.get(location).get(name): " + errorsLoc.get(location).get(name));
 			return errorsLoc.get(location).get(name);
 		}
 
@@ -562,6 +553,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				if (toto instanceof EGamaObject) {
 					if (toto instanceof ELayer)
 						ids.add(0,((ELayer) toto).getType());
+					if (toto instanceof ELayerAspect)
+						ids.add(0,"draw");
 					else 
 						ids.add(0,((EGamaObject) toto).getName());
 				}
@@ -580,6 +573,8 @@ public class GamaDiagramEditor extends DiagramEditor implements
 					toto = ((EDisplay) toto).getDisplayLink().getExperiment();
 				} else if (toto instanceof ELayer) {
 					toto = ((ELayer) toto).getDisplay();
+				} else if (toto instanceof ELayerAspect) {
+					toto = ((ELayerAspect) toto).getAspect();
 				} else if (toto instanceof ESpecies) {
 					if (!((ESpecies) toto).getName().equals("world"))
 						toto = ((ESpecies) toto).getMacroSpeciesLinks().get(0).getMacro();
@@ -618,9 +613,9 @@ public class GamaDiagramEditor extends DiagramEditor implements
 					public void doExecute() {
 		
 		initIdsEObjects();
-		System.out.println("idsEObjects : " + idsEObjects.keySet());
-		System.out.println("errorsLoc : " + errorsLoc);
-		System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);
+		//System.out.println("idsEObjects : " + idsEObjects.keySet());
+		//System.out.println("errorsLoc : " + errorsLoc);
+		//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);
 		List<List<String>> vals = new GamaList<List<String>>(idsEObjects.keySet());
 		Map<List<String>, EObject> valM = new GamaMap<List<String>, EObject>(idsEObjects);
 		for (final EObject bo : valM.values()) {
@@ -658,11 +653,11 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 	
 	public void initIdsEObjects() {
-		System.out.println("initIdsEObjects");
+		//System.out.println("initIdsEObjects");
 		if (diagram != null && !diagram.getChildren().isEmpty() && idsEObjects.isEmpty()) {
 			for (Shape obj : getDiagram().getChildren()) {
 				Object bo = featureProvider.getBusinessObjectForPictogramElement(obj);
-				System.out.println("obj : " + bo);
+				//System.out.println("obj : " + bo);
 				if (bo instanceof EObject) {
 					addEOject((EObject) bo);
 					
@@ -683,6 +678,12 @@ public class GamaDiagramEditor extends DiagramEditor implements
 					if (! location) {
 						addEOject((EObject) bo, "location");
 					}
+				} else if (bo instanceof EAspect) {
+					addEOject((EObject) bo, "draw");
+				} else if (bo instanceof EDisplay) {
+					for (ELayer lay: ((EDisplay) bo).getLayers()) {
+						addEOject((EObject) bo, lay.getType());
+					}
 				}
 			}
 		}
@@ -697,11 +698,11 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		if (eMap2 != null)
 			syntaxErrorsLoc.put(newId, eMap2);
 	
-		System.out.println("idsEObjects: " + idsEObjects);
+		//System.out.println("idsEObjects: " + idsEObjects);
 		EObject obj = idsEObjects.remove(oldId);
 		if (obj != null)
 			idsEObjects.put(newId, obj);
-		System.out.println("idsEObjects apres: " + idsEObjects);
+		//System.out.println("idsEObjects apres: " + idsEObjects);
 	}
 
 	public boolean isWasOK() {

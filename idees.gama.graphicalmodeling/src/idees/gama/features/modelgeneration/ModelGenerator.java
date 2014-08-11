@@ -106,14 +106,14 @@ public class ModelGenerator {
 	public static boolean hasSyntaxError(IFeatureProvider fp,String expression, boolean isExpression, boolean isString ) {
 		if(expression.isEmpty()) return false;
 		//GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
-		System.out.println("isString: " + isString);
+		//System.out.println("isString: " + isString);
 		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		rs.setClasspathURIContext(ModelGenerator.class);
 		URI uri = URI.createPlatformResourceURI("toto/toto.gaml", true);
 		GamlResource resource = (GamlResource) rs.createResource(uri);
 		String gamlModel = "model toto2733663525\nglobal{init{"+ (isExpression ? "var toto <-":"") + (isString ? "\"":"") +expression+ (isString ? "\"":"") +(isExpression ? ";":"")+"}}";
 		InputStream is = new ByteArrayInputStream(gamlModel.getBytes());
-		System.out.println("gamlModel: " + gamlModel);
+		//System.out.println("gamlModel: " + gamlModel);
 		try {
 			resource.load(is, null);
 		} catch (IOException e1) {
@@ -122,10 +122,10 @@ public class ModelGenerator {
 		try {
 			ErrorCollector erColl = GAML.getModelFactory().validate(resource);
 			for ( GamlCompilationError error : erColl ) {
-				System.out.println("error : " + error);
+				//System.out.println("error : " + error);
 				
 				if (error.isError() && error.toString().equals("Syntax errors detected ")) {
-					System.out.println("has syntax error");
+					//System.out.println("has syntax error");
 					
 					//diagramEditor.updateToolbar(false);
 					return true;
@@ -353,7 +353,34 @@ public class ModelGenerator {
 		}
 		result += sp + "aspect " + asp.getName() + " {" + EL;
 		for (ELayerAspect lay : asp.getLayers()) {
-			result += sp + "\t" + lay.getGamlCode() + ";" + EL;
+			String code = sp + "\t" + "draw ";
+			String val = lay.getShapeType();
+			if (val == null) continue;
+			if (val.equals("polyline") || val.equals("polygon")) {
+				code += val + "("+lay.getPoints()+")";
+			} else if (val.equals("circle") || val.equals("sphere")) {
+				code += val + "("+ lay.getRadius()+")";
+			} else if (val.equals("square")) {
+				code += val + "("+lay.getSize()+")";
+			} else if (val.equals("rectangle") || val.equals("hexagon")) {
+				code += val + "({"+lay.getWidth()+ ","+ lay.getHeigth()+"})";
+			} else if (val.equals("expression")) {
+				code += lay.getExpression();
+			} else if (val.equals("image")) {
+				code += "file(\"" + lay.getPath() + "\")" + ((lay.getImageSize() != null && ! lay.getImageSize().isEmpty()) ? "": (" size:" + lay.getSize()));
+			} else if (val.equals("text")) {
+				code +=  "\"" +lay.getText() + "\"" + ((lay.getTextSize() != null && ! lay.getTextSize().isEmpty()) ? "": (" size:" + lay.getSize()));
+			}
+			if (lay.getIsColorCst()) {
+				code += " color: rgb(" + (lay.getColorRBG()).toString().replace("[", "").replace("]", "") + ")" ;
+			} else if (lay.getColor() != null && !lay.getColor().isEmpty()){
+				code += " color: " + lay.getColor();
+			}
+			if (lay.getEmpty() != null && ! lay.getEmpty().isEmpty() && ! lay.getEmpty().equals("false"))
+				code += " empty: " + lay.getEmpty();
+			if (lay.getRotate() != null && ! lay.getRotate().isEmpty() && ! lay.getRotate().equals("0.0"))
+				code += " rotate: " + lay.getRotate();
+			result += code + ";" + EL;
 		}
 		result += EL + sp + "}" + EL;
 		return result;
@@ -423,7 +450,6 @@ public class ModelGenerator {
 	    	
 	    	model += " {";
 		for (ELayer lay : disp.getLayers()) {
-			System.out.println("lay: " + lay);
 			if (lay.getType() == null) continue;
 			model += "\n\t\t\t";
 			if (lay.getType().equals("species")) {

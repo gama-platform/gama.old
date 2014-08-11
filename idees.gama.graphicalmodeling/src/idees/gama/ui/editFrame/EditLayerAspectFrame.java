@@ -1,50 +1,50 @@
 package idees.gama.ui.editFrame;
 
+import gama.EGamaObject;
 import gama.ELayerAspect;
+import idees.gama.diagram.GamaDiagramEditor;
+import idees.gama.features.edit.EditFeature;
+import idees.gama.features.modelgeneration.ModelGenerator;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
-public class EditLayerAspectFrame {
+public class EditLayerAspectFrame extends EditFrame {
 
 	// Shapes
 	private CCombo comboShape;
 	private String[] type_shape = { "polyline", "polygon", "circle",
 			"square", "rectangle", "hexagon", "sphere", "image", "text", "expression" };
-	private Text textRadius;
-	private Text textHeight;
-	private Text textWidth;
-	private Text textSize;
-	private Text textPoints;
-	private Text textShape;
-	private Text textColor;
-	private Text textEmpty;
-	private Text textRotate;
-	
-	private Text textSizeText;
-	private Text textSizeImage;
-	private Text textPath;
-	private Text textText;
-	
+	private ValidateText textRadius;
+	private ValidateText textHeight;
+	private ValidateText textWidth;
+	private ValidateText textSize;
+	private ValidateText textPoints;
+	private ValidateText textShape;
+	private ValidateText textColor;
+	private ValidateText textEmpty;
+	private ValidateText textRotate;
+	private ValidateText textSizeText;
+	private ValidateText textSizeImage;
+	private ValidateText textPath;
+	private ValidateText textText;
 	Button btnCstCol;
 	Button btnExpressionCol;
 	
@@ -56,7 +56,6 @@ public class EditLayerAspectFrame {
 	Composite textComp;
 	Composite imageComp;
 	Composite shapeComp;
-	Text textName;
 	ELayerAspect elayer;
 	EditAspectFrame frame;
 	EditLayerAspectFrame layerFrame;
@@ -64,16 +63,53 @@ public class EditLayerAspectFrame {
 	RGB rgb;
 	Label colorLabel;
 	boolean edit;
-
-	private boolean quitWithoutSaving;
 	
-	public EditLayerAspectFrame(ELayerAspect elayer, EditAspectFrame asp, boolean edit) {
-		init(elayer, asp);
+	public EditLayerAspectFrame(Diagram diagram, IFeatureProvider fp, EditFeature ef,EGamaObject eobject, String name) {
+		super(diagram,fp,ef,eobject,name);
+	}
+	
+	public EditLayerAspectFrame(ELayerAspect elayer, EditAspectFrame asp, boolean edit, Diagram diagram,IFeatureProvider fp, EditFeature ef) {
+		super(diagram,fp,ef,elayer,"Edit Aspect Layer");
+		frame = asp;
+		layerFrame = this;
+		
+		this.elayer = elayer;
 		this.edit = edit;
-		quitWithoutSaving = true;
-		if (edit)
+		
+	}
+	
+	@Override
+	protected Control createContents(Composite parent) {
+		
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setBounds(0, 0, 740, 390);
+		
+		canvasName(comp, false);
+		buildCanvasTopo(comp);
+
+		comp.pack();
+		if (edit) {
 			loadData();
-		setVisibility();
+		} 
+		updateVisibility();
+		((ValidateText)textRadius).setSaveData(true);
+		((ValidateText)textHeight).setSaveData(true);
+		((ValidateText)textWidth).setSaveData(true);
+		((ValidateText)textSize).setSaveData(true);
+		((ValidateText)textPoints).setSaveData(true);
+		((ValidateText)textShape).setSaveData(true);
+		((ValidateText)textColor).setSaveData(true);
+		((ValidateText)textEmpty).setSaveData(true);
+		((ValidateText)textRotate).setSaveData(true);
+		
+		((ValidateText)textSizeText).setSaveData(true);
+		((ValidateText)textSizeImage).setSaveData(true);
+		((ValidateText)textPath).setSaveData(true);
+		((ValidateText)textText).setSaveData(true);
+			
+		if (!edit) save("");
+		
+		return comp;
 	}
 	
 	private void loadData() {
@@ -121,99 +157,10 @@ public class EditLayerAspectFrame {
 		
 	}
 
-	public void init(final ELayerAspect elayer, EditAspectFrame asp) {
-		frame = asp;
-		layerFrame = this;
-		
-		final Shell dialog = new Shell(asp.getShell(), SWT.APPLICATION_MODAL
-				| SWT.DIALOG_TRIM );
-		this.elayer = elayer;
-		dialog.setText("Edit Aspect Layer");
-		dialog.addShellListener(new ShellListener() {
-
-		      public void shellActivated(ShellEvent event) {
-		      }
-
-		      public void shellClosed(ShellEvent event) {
-		       if (quitWithoutSaving) {
-		    	  MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
-		        messageBox.setText("Warning");
-		        messageBox.setMessage("You have unsaved data. Close the 'Edit Aspect Layer' window anyway?");
-		        if (messageBox.open() == SWT.OK) {
-		        	if (! layerFrame.edit)
-						EcoreUtil.delete(elayer);
-		        	event.doit = true;
-		        }   else
-		          event.doit = false;
-		       } else {
-		    	   event.doit = true;
-		       }
-		      }
-
-		      public void shellDeactivated(ShellEvent arg0) {
-		      }
-
-		      public void shellDeiconified(ShellEvent arg0) {
-		      }
-
-		      public void shellIconified(ShellEvent arg0) {
-		      }
-		    });
-
-		canvasName(dialog);
-		buildCanvasTopo(dialog);
-		builtQuitButtons(dialog);
-		dialog.pack();
-		dialog.open();
-		dialog.setSize(740, 390);
-	}
 	
 	
-	public void builtQuitButtons(final Shell  dialog) {
 
-		Canvas quitTopo = new Canvas(dialog, SWT.BORDER);
-		quitTopo.setBounds(10, 300, 720, 40);
-		final Button buttonOK = new Button(quitTopo, SWT.PUSH);
-		buttonOK.setText("OK");
-		buttonOK.setBounds(20, 10, 80, 20);
-		buttonOK.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = 0;
-				quitWithoutSaving = false;
-				if (!layerFrame.edit) {
-					frame.getLayers().add(elayer);
-				} else {
-					index = frame.getLayers().indexOf(elayer);
-					frame.layerViewer.remove(index);
-				}
-				
-				layerFrame.saveLayer();
-				if (!layerFrame.edit) {
-					frame.layerViewer.add(elayer.getName());
-				} else {
-					frame.layerViewer.add(elayer.getName(), index);
-				}
-				dialog.close();
-			} 
-		});
-
-		Button buttonCancel = new Button(quitTopo, SWT.PUSH);
-		buttonCancel.setText("Cancel");
-		buttonCancel.setBounds(120, 10, 80, 20);
-		buttonCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				quitWithoutSaving = false;
-				if (! layerFrame.edit)
-					EcoreUtil.delete(elayer);
-				dialog.close();
-			}
-		});
-	}
-
-	protected void saveLayer() {
+	protected void save(String name) {
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(frame.eobject);
 			if (domain != null) {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
@@ -246,7 +193,7 @@ public class EditLayerAspectFrame {
 		elayer.getColorRBG().add(rgb.red > 0 ? rgb.red : 0);
 		elayer.getColorRBG().add(rgb.green > 0 ? rgb.green : 0);
 		elayer.getColorRBG().add(rgb.blue > 0 ? rgb.blue : 0);
-		String code = "draw ";
+		/*String code = "draw ";
 		String val = comboShape.getText();
 		if (val.equals("polyline") || val.equals("polygon")) {
 			code += val + "("+textPoints.getText()+")";
@@ -272,10 +219,10 @@ public class EditLayerAspectFrame {
 			code += " empty: " + elayer.getEmpty();
 		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getRotate().equals("0.0"))
 			code += " rotate: " + elayer.getRotate();
-		elayer.setGamlCode(code);
+		elayer.setGamlCode(code);*/
 	}
 	
-	public void setVisibility(){
+	public void updateVisibility(){
 		String val = comboShape.getText();
 		if (val.equals("polyline") || val.equals("polygon")) {
 			sizeComp.setVisible(false);
@@ -392,7 +339,8 @@ public class EditLayerAspectFrame {
 
 	public void buildCanvasTopo(Composite container) {
 		// ****** CANVAS TOPOLOGY *********
-
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		   
 		Canvas canvasTopo = new Canvas(container, SWT.BORDER);
 		canvasTopo.setBounds(10, 50, 720, 240);
 
@@ -411,7 +359,7 @@ public class EditLayerAspectFrame {
 		// "hexagon", "sphere", "expression"
 		comboShape.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				setVisibility();
+				updateVisibility();
 			}
 
 		});
@@ -425,7 +373,7 @@ public class EditLayerAspectFrame {
 		lblSize.setBounds(0, 0, 60, 20);
 		lblSize.setText("Size");
 
-		textSize = new Text(sizeComp, SWT.BORDER);
+		textSize = new ValidateText(sizeComp, SWT.BORDER,diagram, fp,this, diagramEditor, "", null, null);
 		textSize.setBounds(70, 0, 300, 20);
 		textSize.setText("1.0");
 		
@@ -438,15 +386,16 @@ public class EditLayerAspectFrame {
 		lblPath.setBounds(0, 30, 60, 20);
 		lblPath.setText("Path");
 
-		textPath = new Text(imageComp, SWT.BORDER);
+		textPath = new ValidateText(imageComp, SWT.BORDER,diagram, fp,this, diagramEditor, "file:", null, null);
 		textPath.setBounds(70, 30, 300, 20);
+		textPath.setString(true);
 		textPath.setText("../images/icon.png");
 		
 		CLabel lblSizeIm = new CLabel(imageComp, SWT.NONE);
 		lblSizeIm.setBounds(0, 0, 60, 20);
 		lblSizeIm.setText("Size");
 
-		textSizeImage = new Text(imageComp, SWT.BORDER);
+		textSizeImage = new ValidateText(imageComp, SWT.BORDER,diagram, fp,this, diagramEditor, "size:", null, null);
 		textSizeImage.setBounds(70, 0, 300, 20);
 		textSizeImage.setText("1.0");
 		
@@ -459,15 +408,16 @@ public class EditLayerAspectFrame {
 		lbltext.setBounds(0, 30, 60, 20);
 		lbltext.setText("Text");
 
-		textText = new Text(textComp, SWT.BORDER);
+		textText = new ValidateText(textComp, SWT.BORDER,diagram, fp,this, diagramEditor, "text:", null, null);
 		textText.setBounds(70, 30, 300, 20);
+		textText.setString(true);
 		textText.setText("");
 	
 		CLabel lblSizeTxt = new CLabel(textComp, SWT.NONE);
 		lblSizeTxt.setBounds(0, 0, 60, 20);
 		lblSizeTxt.setText("Size");
 
-		textSizeText = new Text(textComp, SWT.BORDER);
+		textSizeText = new ValidateText(textComp, SWT.BORDER,diagram, fp,this, diagramEditor, "size:", null, null);
 		textSizeText.setBounds(70, 0, 300, 20);
 		textSizeText.setText("1.0");
 		
@@ -476,11 +426,12 @@ public class EditLayerAspectFrame {
 		radiusComp.setVisible(false);
 		radiusComp.setEnabled(false);
 		radiusComp.setBounds(20, 40, 600, 60);
+		
 		CLabel lblRadius = new CLabel(radiusComp, SWT.NONE);
 		lblRadius.setBounds(0, 0, 60, 20);
 		lblRadius.setText("Radius");
 
-		textRadius = new Text(radiusComp, SWT.BORDER);
+		textRadius = new ValidateText(radiusComp, SWT.BORDER,diagram, fp,this, diagramEditor, "", null, null);
 		textRadius.setBounds(70, 0, 300, 20);
 		textRadius.setText("1.0");
 		
@@ -489,11 +440,12 @@ public class EditLayerAspectFrame {
 		wHComp.setBounds(20, 40, 600, 60);
 		wHComp.setVisible(false);
 		wHComp.setEnabled(false);
+		
 		CLabel lblHeight = new CLabel(wHComp, SWT.NONE);
 		lblHeight.setBounds(0, 30, 60, 20);
 		lblHeight.setText("Height");
 
-		textHeight = new Text(wHComp, SWT.BORDER);
+		textHeight = new ValidateText(wHComp, SWT.BORDER,diagram, fp,this, diagramEditor, "", null, null);
 		textHeight.setBounds(70, 30, 300, 20);
 		textHeight.setText("1.0");
 		
@@ -501,7 +453,7 @@ public class EditLayerAspectFrame {
 		lblWidth.setBounds(0, 0, 60, 20);
 		lblWidth.setText("Width");
 
-		textWidth = new Text(wHComp, SWT.BORDER);
+		textWidth = new ValidateText(wHComp, SWT.BORDER,diagram, fp,this, diagramEditor, "", null, null);
 		textWidth.setBounds(70, 0, 300, 20);
 		textWidth.setText("1.0");
 		
@@ -515,7 +467,7 @@ public class EditLayerAspectFrame {
 		lblPoints.setBounds(0, 0, 60, 20);
 		lblPoints.setText("Points");
 
-		textPoints = new Text(pointsComp, SWT.BORDER);
+		textPoints = new ValidateText(pointsComp, SWT.BORDER,diagram, fp,this, diagramEditor, "size:", null, null);
 		textPoints.setBounds(70, 0, 300, 20);
 		textPoints.setText("[{0.0,0.0},{0.0,1.0},{1.0,1.0},{1.0,0.0}]");
 		
@@ -528,7 +480,7 @@ public class EditLayerAspectFrame {
 		lblExpShape.setBounds(0, 0, 70, 20);
 		lblExpShape.setText("Expression");
 
-		textShape = new Text(expShapeComp, SWT.BORDER);
+		textShape = new ValidateText(expShapeComp, SWT.BORDER,diagram, fp,this, diagramEditor, "", null, null);
 		textShape.setBounds(70, 0, 300, 20);
 		
 		
@@ -536,8 +488,8 @@ public class EditLayerAspectFrame {
 		CLabel lblColor = new CLabel(canvasTopo, SWT.NONE);
 		lblColor.setBounds(10, 130, 60, 20);
 		lblColor.setText("Color");
-					 
-		textColor = new Text(canvasTopo, SWT.BORDER);
+		
+		textColor = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "color:", null, null);
 		textColor.setBounds(425, 130, 250, 18);
 		rgb = new RGB(0, 0, 255);	
 		color = new Color(frame.getShell().getDisplay(), rgb);
@@ -567,6 +519,10 @@ public class EditLayerAspectFrame {
 	        RGB rgbN = dlg.open();
 	        if (rgbN != null) {
 	        	rgb = rgbN;
+	        	save("");
+				 ModelGenerator.modelValidation(fp, diagram);
+				 diagramEditor.updateEObjectErrors();
+			
 	          // Dispose the old color, create the
 	          // new one, and set into the label
 	          color.dispose();
@@ -586,6 +542,11 @@ public class EditLayerAspectFrame {
 		btnCstCol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(false);	
+				if (((ValidateText)textColor).isSaveData()) {
+					save("");
+					 ModelGenerator.modelValidation(fp, diagram);
+					 diagramEditor.updateEObjectErrors();
+				}
 			}
 		});
 		
@@ -597,6 +558,11 @@ public class EditLayerAspectFrame {
 						@Override
 			public void widgetSelected(SelectionEvent e) {
 					textColor.setEnabled(true);	
+					if (((ValidateText)textColor).isSaveData()) {
+						save("");
+						 ModelGenerator.modelValidation(fp, diagram);
+						 diagramEditor.updateEObjectErrors();
+					}
 			}
 		});
 		
@@ -604,8 +570,8 @@ public class EditLayerAspectFrame {
 		CLabel lblEmpty = new CLabel(canvasTopo, SWT.NONE);
 		lblEmpty.setBounds(10, 170, 60, 20);
 		lblEmpty.setText("Empty");
-							 
-		textEmpty = new Text(canvasTopo, SWT.BORDER);
+					
+		textEmpty = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "empty:", null, null);
 		textEmpty.setText("false");
 		textEmpty.setBounds(80, 170, 250, 18);
 			
@@ -614,16 +580,18 @@ public class EditLayerAspectFrame {
 		lblRotate.setBounds(10, 210, 60, 20);
 		lblRotate.setText("Rotate");
 									 
-		textRotate = new Text(canvasTopo, SWT.BORDER);
+		textRotate = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "rotate:", null, null);
 		textRotate.setText("0.0");
 		textRotate.setBounds(80, 210, 250, 18);	
 	}
-	protected Canvas canvasName(Composite container) {
-		Canvas canvasName = new Canvas(container, SWT.BORDER);
-		textName = new Text(canvasName, SWT.BORDER);
-		UtilEditFrame.buildCanvasName(container, canvasName, textName, elayer, null);
-		canvasName.setBounds(10, 10, 720, 30);
-		return canvasName;
-	}
-
+	
+	 @Override
+		protected Point getInitialSize() {
+			return new Point(743, 490);
+		}
+		
+		@Override
+		public void updateError() {
+			frame.updateLayer();
+		}
 }

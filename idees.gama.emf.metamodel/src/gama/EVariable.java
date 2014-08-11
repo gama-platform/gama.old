@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link gama.EVariable#getName <em>Name</em>}</li>
  *   <li>{@link gama.EVariable#getHasError <em>Has Error</em>}</li>
  *   <li>{@link gama.EVariable#getError <em>Error</em>}</li>
+ *   <li>{@link gama.EVariable#getOwner <em>Owner</em>}</li>
  * </ul>
  * </p>
  *
@@ -267,5 +268,31 @@ public interface EVariable extends EObject {
 	 * @generated
 	 */
 	void setError(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Owner</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Owner</em>' reference.
+	 * @see #setOwner(EGamaObject)
+	 * @see gama.GamaPackage#getEVariable_Owner()
+	 * @model
+	 * @generated
+	 */
+	EGamaObject getOwner();
+
+	/**
+	 * Sets the value of the '{@link gama.EVariable#getOwner <em>Owner</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Owner</em>' reference.
+	 * @see #getOwner()
+	 * @generated
+	 */
+	void setOwner(EGamaObject value);
 
 } // EVariable

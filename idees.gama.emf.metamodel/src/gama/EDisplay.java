@@ -26,6 +26,14 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.EDisplay#getIsColorCst <em>Is Color Cst</em>}</li>
  *   <li>{@link gama.EDisplay#getColorRBG <em>Color RBG</em>}</li>
  *   <li>{@link gama.EDisplay#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.EDisplay#getAmbientLight <em>Ambient Light</em>}</li>
+ *   <li>{@link gama.EDisplay#getDrawDiffuseLight <em>Draw Diffuse Light</em>}</li>
+ *   <li>{@link gama.EDisplay#getDiffuseLight <em>Diffuse Light</em>}</li>
+ *   <li>{@link gama.EDisplay#getDiffuseLightPos <em>Diffuse Light Pos</em>}</li>
+ *   <li>{@link gama.EDisplay#getZFighting <em>ZFighting</em>}</li>
+ *   <li>{@link gama.EDisplay#getCameraPos <em>Camera Pos</em>}</li>
+ *   <li>{@link gama.EDisplay#getCameraLookPos <em>Camera Look Pos</em>}</li>
+ *   <li>{@link gama.EDisplay#getCameraUpVector <em>Camera Up Vector</em>}</li>
  * </ul>
  * </p>
  *
@@ -263,5 +271,213 @@ public interface EDisplay extends EGamaObject {
 	 * @generated
 	 */
 	void setGamlCode(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Ambient Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Ambient Light</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Ambient Light</em>' attribute.
+	 * @see #setAmbientLight(String)
+	 * @see gama.GamaPackage#getEDisplay_AmbientLight()
+	 * @model
+	 * @generated
+	 */
+	String getAmbientLight();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getAmbientLight <em>Ambient Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ambient Light</em>' attribute.
+	 * @see #getAmbientLight()
+	 * @generated
+	 */
+	void setAmbientLight(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Draw Diffuse Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Draw Diffuse Light</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Draw Diffuse Light</em>' attribute.
+	 * @see #setDrawDiffuseLight(String)
+	 * @see gama.GamaPackage#getEDisplay_DrawDiffuseLight()
+	 * @model
+	 * @generated
+	 */
+	String getDrawDiffuseLight();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getDrawDiffuseLight <em>Draw Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Draw Diffuse Light</em>' attribute.
+	 * @see #getDrawDiffuseLight()
+	 * @generated
+	 */
+	void setDrawDiffuseLight(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Diffuse Light</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Diffuse Light</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Diffuse Light</em>' attribute.
+	 * @see #setDiffuseLight(String)
+	 * @see gama.GamaPackage#getEDisplay_DiffuseLight()
+	 * @model
+	 * @generated
+	 */
+	String getDiffuseLight();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getDiffuseLight <em>Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Diffuse Light</em>' attribute.
+	 * @see #getDiffuseLight()
+	 * @generated
+	 */
+	void setDiffuseLight(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Diffuse Light Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Diffuse Light Pos</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Diffuse Light Pos</em>' attribute.
+	 * @see #setDiffuseLightPos(String)
+	 * @see gama.GamaPackage#getEDisplay_DiffuseLightPos()
+	 * @model
+	 * @generated
+	 */
+	String getDiffuseLightPos();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getDiffuseLightPos <em>Diffuse Light Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Diffuse Light Pos</em>' attribute.
+	 * @see #getDiffuseLightPos()
+	 * @generated
+	 */
+	void setDiffuseLightPos(String value);
+
+	/**
+	 * Returns the value of the '<em><b>ZFighting</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>ZFighting</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>ZFighting</em>' attribute.
+	 * @see #setZFighting(String)
+	 * @see gama.GamaPackage#getEDisplay_ZFighting()
+	 * @model
+	 * @generated
+	 */
+	String getZFighting();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getZFighting <em>ZFighting</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>ZFighting</em>' attribute.
+	 * @see #getZFighting()
+	 * @generated
+	 */
+	void setZFighting(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Camera Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Camera Pos</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Camera Pos</em>' attribute.
+	 * @see #setCameraPos(String)
+	 * @see gama.GamaPackage#getEDisplay_CameraPos()
+	 * @model
+	 * @generated
+	 */
+	String getCameraPos();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getCameraPos <em>Camera Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Camera Pos</em>' attribute.
+	 * @see #getCameraPos()
+	 * @generated
+	 */
+	void setCameraPos(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Camera Look Pos</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Camera Look Pos</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Camera Look Pos</em>' attribute.
+	 * @see #setCameraLookPos(String)
+	 * @see gama.GamaPackage#getEDisplay_CameraLookPos()
+	 * @model
+	 * @generated
+	 */
+	String getCameraLookPos();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getCameraLookPos <em>Camera Look Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Camera Look Pos</em>' attribute.
+	 * @see #getCameraLookPos()
+	 * @generated
+	 */
+	void setCameraLookPos(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Camera Up Vector</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Camera Up Vector</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Camera Up Vector</em>' attribute.
+	 * @see #setCameraUpVector(String)
+	 * @see gama.GamaPackage#getEDisplay_CameraUpVector()
+	 * @model
+	 * @generated
+	 */
+	String getCameraUpVector();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getCameraUpVector <em>Camera Up Vector</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Camera Up Vector</em>' attribute.
+	 * @see #getCameraUpVector()
+	 * @generated
+	 */
+	void setCameraUpVector(String value);
 
 } // EDisplay

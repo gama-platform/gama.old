@@ -70,6 +70,9 @@
         derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actionLinks" upperBound="-1"
         eType="#//EActionLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+        eType="#//EVariable" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EAspect" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -139,6 +142,14 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" unique="false"
         upperBound="3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ambientLight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="drawDiffuseLight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="diffuseLight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="diffuseLightPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="zFighting" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cameraPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cameraLookPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cameraUpVector" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EVariable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="init" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -151,6 +162,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="hasError" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="error" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//EGamaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EWorldAgent" eSuperTypes="#//ESpecies">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="boundsWidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -218,6 +230,7 @@
         derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" unique="false"
         upperBound="3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspect" eType="#//EAspect"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGridTopology" eSuperTypes="#//ETopology">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

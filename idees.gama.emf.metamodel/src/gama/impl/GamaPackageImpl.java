@@ -752,6 +752,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getEAction_Variables() {
+		return (EReference)eActionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEAction_ReturnType() {
+		return (EAttribute)eActionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEAspect() {
 		return eAspectEClass;
 	}
@@ -1148,6 +1166,78 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEDisplay_AmbientLight() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_DrawDiffuseLight() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_DiffuseLight() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_DiffuseLightPos() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_ZFighting() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_CameraPos() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_CameraLookPos() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(16);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_CameraUpVector() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(17);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEVariable() {
 		return eVariableEClass;
 	}
@@ -1231,6 +1321,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EAttribute getEVariable_Error() {
 		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEVariable_Owner() {
+		return (EReference)eVariableEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -1715,6 +1814,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getELayerAspect_Aspect() {
+		return (EReference)eLayerAspectEClass.getEStructuralFeatures().get(20);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEGridTopology() {
 		return eGridTopologyEClass;
 	}
@@ -2031,6 +2139,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eActionEClass = createEClass(EACTION);
 		createEAttribute(eActionEClass, EACTION__GAML_CODE);
 		createEReference(eActionEClass, EACTION__ACTION_LINKS);
+		createEReference(eActionEClass, EACTION__VARIABLES);
+		createEAttribute(eActionEClass, EACTION__RETURN_TYPE);
 
 		eAspectEClass = createEClass(EASPECT);
 		createEAttribute(eAspectEClass, EASPECT__GAML_CODE);
@@ -2087,6 +2197,14 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eDisplayEClass, EDISPLAY__IS_COLOR_CST);
 		createEAttribute(eDisplayEClass, EDISPLAY__COLOR_RBG);
 		createEAttribute(eDisplayEClass, EDISPLAY__GAML_CODE);
+		createEAttribute(eDisplayEClass, EDISPLAY__AMBIENT_LIGHT);
+		createEAttribute(eDisplayEClass, EDISPLAY__DRAW_DIFFUSE_LIGHT);
+		createEAttribute(eDisplayEClass, EDISPLAY__DIFFUSE_LIGHT);
+		createEAttribute(eDisplayEClass, EDISPLAY__DIFFUSE_LIGHT_POS);
+		createEAttribute(eDisplayEClass, EDISPLAY__ZFIGHTING);
+		createEAttribute(eDisplayEClass, EDISPLAY__CAMERA_POS);
+		createEAttribute(eDisplayEClass, EDISPLAY__CAMERA_LOOK_POS);
+		createEAttribute(eDisplayEClass, EDISPLAY__CAMERA_UP_VECTOR);
 
 		eVariableEClass = createEClass(EVARIABLE);
 		createEAttribute(eVariableEClass, EVARIABLE__INIT);
@@ -2098,6 +2216,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eVariableEClass, EVARIABLE__NAME);
 		createEAttribute(eVariableEClass, EVARIABLE__HAS_ERROR);
 		createEAttribute(eVariableEClass, EVARIABLE__ERROR);
+		createEReference(eVariableEClass, EVARIABLE__OWNER);
 
 		eWorldAgentEClass = createEClass(EWORLD_AGENT);
 		createEAttribute(eWorldAgentEClass, EWORLD_AGENT__BOUNDS_WIDTH);
@@ -2156,6 +2275,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__TEXT_SIZE);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__IMAGE_SIZE);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__COLOR_RBG);
+		createEReference(eLayerAspectEClass, ELAYER_ASPECT__ASPECT);
 
 		eGridTopologyEClass = createEClass(EGRID_TOPOLOGY);
 		createEAttribute(eGridTopologyEClass, EGRID_TOPOLOGY__NB_COLUMNS);
@@ -2299,6 +2419,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAction_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getEAction_ActionLinks(), this.getEActionLink(), null, "actionLinks", null, 0, -1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEAction_Variables(), this.getEVariable(), null, "variables", null, 0, -1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEAction_ReturnType(), ecorePackage.getEString(), "returnType", null, 0, 1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eAspectEClass, EAspect.class, "EAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAspect_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
@@ -2355,6 +2477,14 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEDisplay_IsColorCst(), ecorePackage.getEBooleanObject(), "isColorCst", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEDisplay_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEDisplay_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_AmbientLight(), ecorePackage.getEString(), "ambientLight", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_DrawDiffuseLight(), ecorePackage.getEString(), "drawDiffuseLight", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_DiffuseLight(), ecorePackage.getEString(), "diffuseLight", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_DiffuseLightPos(), ecorePackage.getEString(), "diffuseLightPos", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_ZFighting(), ecorePackage.getEString(), "zFighting", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_CameraPos(), ecorePackage.getEString(), "cameraPos", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_CameraLookPos(), ecorePackage.getEString(), "cameraLookPos", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_CameraUpVector(), ecorePackage.getEString(), "cameraUpVector", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eVariableEClass, EVariable.class, "EVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEVariable_Init(), ecorePackage.getEString(), "init", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2366,6 +2496,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_HasError(), ecorePackage.getEBooleanObject(), "hasError", "false", 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_Error(), ecorePackage.getEString(), "error", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEVariable_Owner(), this.getEGamaObject(), null, "owner", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eWorldAgentEClass, EWorldAgent.class, "EWorldAgent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEWorldAgent_BoundsWidth(), ecorePackage.getEString(), "boundsWidth", null, 0, 1, EWorldAgent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2424,6 +2555,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayerAspect_TextSize(), ecorePackage.getEString(), "textSize", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_ImageSize(), ecorePackage.getEString(), "imageSize", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getELayerAspect_Aspect(), this.getEAspect(), null, "aspect", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGridTopologyEClass, EGridTopology.class, "EGridTopology", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGridTopology_Nb_columns(), ecorePackage.getEString(), "nb_columns", "100", 0, 1, EGridTopology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

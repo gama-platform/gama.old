@@ -18,6 +18,8 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link gama.EAction#getGamlCode <em>Gaml Code</em>}</li>
  *   <li>{@link gama.EAction#getActionLinks <em>Action Links</em>}</li>
+ *   <li>{@link gama.EAction#getVariables <em>Variables</em>}</li>
+ *   <li>{@link gama.EAction#getReturnType <em>Return Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -67,5 +69,47 @@ public interface EAction extends EGamaObject {
 	 * @generated
 	 */
 	EList<EActionLink> getActionLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Variables</b></em>' containment reference list.
+	 * The list contents are of type {@link gama.EVariable}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Variables</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Variables</em>' containment reference list.
+	 * @see gama.GamaPackage#getEAction_Variables()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<EVariable> getVariables();
+
+	/**
+	 * Returns the value of the '<em><b>Return Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Return Type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Return Type</em>' attribute.
+	 * @see #setReturnType(String)
+	 * @see gama.GamaPackage#getEAction_ReturnType()
+	 * @model
+	 * @generated
+	 */
+	String getReturnType();
+
+	/**
+	 * Sets the value of the '{@link gama.EAction#getReturnType <em>Return Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Return Type</em>' attribute.
+	 * @see #getReturnType()
+	 * @generated
+	 */
+	void setReturnType(String value);
 
 } // EAction

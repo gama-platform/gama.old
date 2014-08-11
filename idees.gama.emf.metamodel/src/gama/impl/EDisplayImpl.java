@@ -43,6 +43,14 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link gama.impl.EDisplayImpl#getIsColorCst <em>Is Color Cst</em>}</li>
  *   <li>{@link gama.impl.EDisplayImpl#getColorRBG <em>Color RBG</em>}</li>
  *   <li>{@link gama.impl.EDisplayImpl#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getAmbientLight <em>Ambient Light</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getDrawDiffuseLight <em>Draw Diffuse Light</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getDiffuseLight <em>Diffuse Light</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getDiffuseLightPos <em>Diffuse Light Pos</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getZFighting <em>ZFighting</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getCameraPos <em>Camera Pos</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getCameraLookPos <em>Camera Look Pos</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getCameraUpVector <em>Camera Up Vector</em>}</li>
  * </ul>
  * </p>
  *
@@ -208,6 +216,166 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 	 * @ordered
 	 */
 	protected String gamlCode = GAML_CODE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAmbientLight() <em>Ambient Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAmbientLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String AMBIENT_LIGHT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAmbientLight() <em>Ambient Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAmbientLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected String ambientLight = AMBIENT_LIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDrawDiffuseLight() <em>Draw Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDrawDiffuseLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DRAW_DIFFUSE_LIGHT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDrawDiffuseLight() <em>Draw Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDrawDiffuseLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected String drawDiffuseLight = DRAW_DIFFUSE_LIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDiffuseLight() <em>Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiffuseLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DIFFUSE_LIGHT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDiffuseLight() <em>Diffuse Light</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiffuseLight()
+	 * @generated
+	 * @ordered
+	 */
+	protected String diffuseLight = DIFFUSE_LIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDiffuseLightPos() <em>Diffuse Light Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiffuseLightPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DIFFUSE_LIGHT_POS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDiffuseLightPos() <em>Diffuse Light Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiffuseLightPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected String diffuseLightPos = DIFFUSE_LIGHT_POS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getZFighting() <em>ZFighting</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getZFighting()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ZFIGHTING_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getZFighting() <em>ZFighting</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getZFighting()
+	 * @generated
+	 * @ordered
+	 */
+	protected String zFighting = ZFIGHTING_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCameraPos() <em>Camera Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CAMERA_POS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCameraPos() <em>Camera Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected String cameraPos = CAMERA_POS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCameraLookPos() <em>Camera Look Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraLookPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CAMERA_LOOK_POS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCameraLookPos() <em>Camera Look Pos</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraLookPos()
+	 * @generated
+	 * @ordered
+	 */
+	protected String cameraLookPos = CAMERA_LOOK_POS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCameraUpVector() <em>Camera Up Vector</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraUpVector()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CAMERA_UP_VECTOR_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCameraUpVector() <em>Camera Up Vector</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCameraUpVector()
+	 * @generated
+	 * @ordered
+	 */
+	protected String cameraUpVector = CAMERA_UP_VECTOR_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -433,6 +601,174 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getAmbientLight() {
+		return ambientLight;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAmbientLight(String newAmbientLight) {
+		String oldAmbientLight = ambientLight;
+		ambientLight = newAmbientLight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__AMBIENT_LIGHT, oldAmbientLight, ambientLight));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDrawDiffuseLight() {
+		return drawDiffuseLight;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDrawDiffuseLight(String newDrawDiffuseLight) {
+		String oldDrawDiffuseLight = drawDiffuseLight;
+		drawDiffuseLight = newDrawDiffuseLight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__DRAW_DIFFUSE_LIGHT, oldDrawDiffuseLight, drawDiffuseLight));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDiffuseLight() {
+		return diffuseLight;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDiffuseLight(String newDiffuseLight) {
+		String oldDiffuseLight = diffuseLight;
+		diffuseLight = newDiffuseLight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__DIFFUSE_LIGHT, oldDiffuseLight, diffuseLight));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDiffuseLightPos() {
+		return diffuseLightPos;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDiffuseLightPos(String newDiffuseLightPos) {
+		String oldDiffuseLightPos = diffuseLightPos;
+		diffuseLightPos = newDiffuseLightPos;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__DIFFUSE_LIGHT_POS, oldDiffuseLightPos, diffuseLightPos));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getZFighting() {
+		return zFighting;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setZFighting(String newZFighting) {
+		String oldZFighting = zFighting;
+		zFighting = newZFighting;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__ZFIGHTING, oldZFighting, zFighting));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCameraPos() {
+		return cameraPos;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCameraPos(String newCameraPos) {
+		String oldCameraPos = cameraPos;
+		cameraPos = newCameraPos;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__CAMERA_POS, oldCameraPos, cameraPos));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCameraLookPos() {
+		return cameraLookPos;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCameraLookPos(String newCameraLookPos) {
+		String oldCameraLookPos = cameraLookPos;
+		cameraLookPos = newCameraLookPos;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__CAMERA_LOOK_POS, oldCameraLookPos, cameraLookPos));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCameraUpVector() {
+		return cameraUpVector;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCameraUpVector(String newCameraUpVector) {
+		String oldCameraUpVector = cameraUpVector;
+		cameraUpVector = newCameraUpVector;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__CAMERA_UP_VECTOR, oldCameraUpVector, cameraUpVector));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -457,6 +793,22 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 				return getColorRBG();
 			case GamaPackage.EDISPLAY__GAML_CODE:
 				return getGamlCode();
+			case GamaPackage.EDISPLAY__AMBIENT_LIGHT:
+				return getAmbientLight();
+			case GamaPackage.EDISPLAY__DRAW_DIFFUSE_LIGHT:
+				return getDrawDiffuseLight();
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT:
+				return getDiffuseLight();
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT_POS:
+				return getDiffuseLightPos();
+			case GamaPackage.EDISPLAY__ZFIGHTING:
+				return getZFighting();
+			case GamaPackage.EDISPLAY__CAMERA_POS:
+				return getCameraPos();
+			case GamaPackage.EDISPLAY__CAMERA_LOOK_POS:
+				return getCameraLookPos();
+			case GamaPackage.EDISPLAY__CAMERA_UP_VECTOR:
+				return getCameraUpVector();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -503,6 +855,30 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 			case GamaPackage.EDISPLAY__GAML_CODE:
 				setGamlCode((String)newValue);
 				return;
+			case GamaPackage.EDISPLAY__AMBIENT_LIGHT:
+				setAmbientLight((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__DRAW_DIFFUSE_LIGHT:
+				setDrawDiffuseLight((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT:
+				setDiffuseLight((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT_POS:
+				setDiffuseLightPos((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__ZFIGHTING:
+				setZFighting((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_POS:
+				setCameraPos((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_LOOK_POS:
+				setCameraLookPos((String)newValue);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_UP_VECTOR:
+				setCameraUpVector((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -545,6 +921,30 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 			case GamaPackage.EDISPLAY__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
 				return;
+			case GamaPackage.EDISPLAY__AMBIENT_LIGHT:
+				setAmbientLight(AMBIENT_LIGHT_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__DRAW_DIFFUSE_LIGHT:
+				setDrawDiffuseLight(DRAW_DIFFUSE_LIGHT_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT:
+				setDiffuseLight(DIFFUSE_LIGHT_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT_POS:
+				setDiffuseLightPos(DIFFUSE_LIGHT_POS_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__ZFIGHTING:
+				setZFighting(ZFIGHTING_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_POS:
+				setCameraPos(CAMERA_POS_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_LOOK_POS:
+				setCameraLookPos(CAMERA_LOOK_POS_EDEFAULT);
+				return;
+			case GamaPackage.EDISPLAY__CAMERA_UP_VECTOR:
+				setCameraUpVector(CAMERA_UP_VECTOR_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -577,6 +977,22 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 				return colorRBG != null && !colorRBG.isEmpty();
 			case GamaPackage.EDISPLAY__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
+			case GamaPackage.EDISPLAY__AMBIENT_LIGHT:
+				return AMBIENT_LIGHT_EDEFAULT == null ? ambientLight != null : !AMBIENT_LIGHT_EDEFAULT.equals(ambientLight);
+			case GamaPackage.EDISPLAY__DRAW_DIFFUSE_LIGHT:
+				return DRAW_DIFFUSE_LIGHT_EDEFAULT == null ? drawDiffuseLight != null : !DRAW_DIFFUSE_LIGHT_EDEFAULT.equals(drawDiffuseLight);
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT:
+				return DIFFUSE_LIGHT_EDEFAULT == null ? diffuseLight != null : !DIFFUSE_LIGHT_EDEFAULT.equals(diffuseLight);
+			case GamaPackage.EDISPLAY__DIFFUSE_LIGHT_POS:
+				return DIFFUSE_LIGHT_POS_EDEFAULT == null ? diffuseLightPos != null : !DIFFUSE_LIGHT_POS_EDEFAULT.equals(diffuseLightPos);
+			case GamaPackage.EDISPLAY__ZFIGHTING:
+				return ZFIGHTING_EDEFAULT == null ? zFighting != null : !ZFIGHTING_EDEFAULT.equals(zFighting);
+			case GamaPackage.EDISPLAY__CAMERA_POS:
+				return CAMERA_POS_EDEFAULT == null ? cameraPos != null : !CAMERA_POS_EDEFAULT.equals(cameraPos);
+			case GamaPackage.EDISPLAY__CAMERA_LOOK_POS:
+				return CAMERA_LOOK_POS_EDEFAULT == null ? cameraLookPos != null : !CAMERA_LOOK_POS_EDEFAULT.equals(cameraLookPos);
+			case GamaPackage.EDISPLAY__CAMERA_UP_VECTOR:
+				return CAMERA_UP_VECTOR_EDEFAULT == null ? cameraUpVector != null : !CAMERA_UP_VECTOR_EDEFAULT.equals(cameraUpVector);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -607,6 +1023,22 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 		result.append(colorRBG);
 		result.append(", gamlCode: ");
 		result.append(gamlCode);
+		result.append(", ambientLight: ");
+		result.append(ambientLight);
+		result.append(", drawDiffuseLight: ");
+		result.append(drawDiffuseLight);
+		result.append(", diffuseLight: ");
+		result.append(diffuseLight);
+		result.append(", diffuseLightPos: ");
+		result.append(diffuseLightPos);
+		result.append(", zFighting: ");
+		result.append(zFighting);
+		result.append(", cameraPos: ");
+		result.append(cameraPos);
+		result.append(", cameraLookPos: ");
+		result.append(cameraLookPos);
+		result.append(", cameraUpVector: ");
+		result.append(cameraUpVector);
 		result.append(')');
 		return result.toString();
 	}

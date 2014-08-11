@@ -64,11 +64,11 @@ public class ValidateText extends Text{
 		this.fp = fp;
 		this.nameLoc = name;
 		
-		System.out.println("ValidateText");
+		//System.out.println("ValidateText");
 		this.addToLoc = addToLoc;
 		loc = new GamaList<String>();
 		editor.buildLocation(frame.eobject, loc);
-		System.out.println("loc: " + loc);
+		//System.out.println("loc: " + loc);
 		if(addToLoc != null && !addToLoc.isEmpty()) loc.add(addToLoc);
 		//loc.add(0, "world");
 		
@@ -88,7 +88,6 @@ public class ValidateText extends Text{
 			
 			@Override
 		      public void modifyText(ModifyEvent event) {
-				System.out.println("MODIFY TEXT");
 				applyModification();
 		      }
 		    });
@@ -140,6 +139,8 @@ public class ValidateText extends Text{
 		        		if (vst != null)vst.updateLoc(loc);
 		        	}
 		        	editor.updateErrors(oldLoc,loc);
+		        	editor.getIdsEObjects().clear();
+		    		editor.initIdsEObjects();
 		    		
 		        }
 			  if (allErrors)
@@ -158,7 +159,7 @@ public class ValidateText extends Text{
 					locs = new GamaMap<String,String>();
 				}
 				locs.put(nameLoc,"Syntax errors detected ");
-			System.out.println("loc: " + loc);	
+			//.out.println("loc: " + loc);	
 			 editor.getSyntaxErrorsLoc().put(loc, locs);
 		 } 
        if (error != null) {	
@@ -173,7 +174,7 @@ public class ValidateText extends Text{
 	}
 	
 	public void applyModification() {
-		System.out.println("Loc: " + loc + "nameLoc: " + nameLoc + " saveData:" + saveData);
+	//	System.out.println("Loc: " + loc + "nameLoc: " + nameLoc + " saveData:" + saveData);
 		
 		if (saveData)frame.save(nameLoc);
 		//System.out.println("isString");
@@ -191,14 +192,14 @@ public class ValidateText extends Text{
 				  addToLoc = getText();
 				  List<String> oldLoc = new GamaList<String>();
 				  oldLoc.addAll(loc);
-				  System.out.println("oldLoc: " + oldLoc);
+				//  System.out.println("oldLoc: " + oldLoc);
 				  loc.clear();
 				  //editor.buildLocation(frame.eobject, loc);
 				  editor.buildLocation(frame.eobject, loc);
 					if(addToLoc != null && !addToLoc.isEmpty() && !loc.get(loc.size()-1).equals(addToLoc)) loc.add(addToLoc);
 						
 
-				  System.out.println("newLoc: " + loc);
+				 // System.out.println("newLoc: " + loc);
 		        	for (ValidateStyledText vst :linkedVsts) {
 		        		if (vst != null)vst.updateLoc(loc);
 		        	}
@@ -206,6 +207,8 @@ public class ValidateText extends Text{
 		        		if (vst != null)vst.updateLoc(loc);
 		        	}
 		        	editor.updateErrors(oldLoc,loc);
+		        	editor.getIdsEObjects().clear();
+		    		editor.initIdsEObjects();
 		    		
 		        }
 			  if (allErrors)

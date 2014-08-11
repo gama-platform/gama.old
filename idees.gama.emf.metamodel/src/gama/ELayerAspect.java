@@ -36,6 +36,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ELayerAspect#getTextSize <em>Text Size</em>}</li>
  *   <li>{@link gama.ELayerAspect#getImageSize <em>Image Size</em>}</li>
  *   <li>{@link gama.ELayerAspect#getColorRBG <em>Color RBG</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getAspect <em>Aspect</em>}</li>
  * </ul>
  * </p>
  *
@@ -553,5 +554,31 @@ public interface ELayerAspect extends EGamaObject {
 	 * @generated
 	 */
 	EList<Integer> getColorRBG();
+
+	/**
+	 * Returns the value of the '<em><b>Aspect</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Aspect</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Aspect</em>' reference.
+	 * @see #setAspect(EAspect)
+	 * @see gama.GamaPackage#getELayerAspect_Aspect()
+	 * @model
+	 * @generated
+	 */
+	EAspect getAspect();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getAspect <em>Aspect</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Aspect</em>' reference.
+	 * @see #getAspect()
+	 * @generated
+	 */
+	void setAspect(EAspect value);
 
 } // ELayerAspect

@@ -224,10 +224,8 @@ public class EditDisplayFrame extends EditFrame {
 										diagram.eResource().getContents().add(elayer);
 										TableItem ti =  new TableItem(layerViewer, SWT.NONE);
 										ti.setText(elayer.getName());
-										//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
 										ti.setBackground(hasError(elayer) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
 										
-										//layerViewer.add(elayer.getName());
 										((EDisplay) eobject).getLayers().add(elayer);
 										
 										
@@ -300,14 +298,10 @@ public class EditDisplayFrame extends EditFrame {
 								((EDisplay) eobject).getLayers().move(index - 1, index);
 								layerViewer.removeAll();
 								for (ELayer la : ((EDisplay) eobject).getLayers()) {
-									//layerViewer.add(la.getName());
 									TableItem ti =  new TableItem(layerViewer, SWT.NONE);
 									ti.setText(la.getName());
-									//ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
 									ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
-									
-								}
-								
+								}	
 							}	
 						}
 					}
@@ -322,12 +316,9 @@ public class EditDisplayFrame extends EditFrame {
 								((EDisplay) eobject).getLayers().move(index + 1, index);
 								layerViewer.removeAll();
 								for (ELayer la : ((EDisplay) eobject).getLayers()) {
-									//layerViewer.add(la.getName());
 									TableItem ti =  new TableItem(layerViewer, SWT.NONE);
 									ti.setText(la.getName());
-								//	ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
 									ti.setBackground(hasError(la) ?  new Color(frame.getShell().getDisplay(), 255,100,100): new Color(frame.getShell().getDisplay(), 100,255,100));
-									
 								}
 							}	
 						}
@@ -583,15 +574,21 @@ public class EditDisplayFrame extends EditFrame {
 		}
 	}
 	
-	public boolean testBasicOk(ELayer lay) {
-		return (lay.getType() == null || lay.getType().equals("species")) &&isNumber(lay.getTransparency()) && isNumber(lay.getPosition_x()) && isNumber(lay.getPosition_y()) && isNumber(lay.getSize_x()) && isNumber(lay.getSize_y())
+	
+	
+	public boolean testBasicOk(ELayer lay,GamaList<String> speciesStr) {
+		return (lay.getType() == null || (lay.getType().equals("species") && speciesStr.contains(lay.getSpecies()))) &&isNumber(lay.getTransparency()) && isNumber(lay.getPosition_x()) && isNumber(lay.getPosition_y()) && isNumber(lay.getSize_x()) && isNumber(lay.getSize_y())
 				&& !ModelGenerator.hasSyntaxError(fp, lay.getName(), true);
 	}
 	 
 		public boolean hasError(ELayer elayer) {
 			final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+			GamaList<String> speciesStr = new GamaList<String>();
+			for (ESpecies sp : species) {
+				speciesStr.add(sp.getName());
+			}
 			List<String> ids = new GamaList<String>();
-			boolean basicOk = testBasicOk(elayer); 
+			boolean basicOk = testBasicOk(elayer, speciesStr); 
 			if (basicOk)
 				return false;
 			diagramEditor.buildLocation(elayer, ids);

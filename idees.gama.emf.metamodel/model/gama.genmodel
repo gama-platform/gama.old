@@ -15,6 +15,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaObject/name"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/model"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaObject/colorPicto"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaObject/hasError"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaObject/error"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//ESpecies">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ESpecies/variables"/>
@@ -54,6 +56,8 @@
     <genClasses ecoreClass="gama.ecore#//EAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EAction/gamlCode"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EAction/actionLinks"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference gama.ecore#//EAction/variables"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EAction/returnType"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EAspect">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EAspect/gamlCode"/>
@@ -108,6 +112,14 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/isColorCst"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/colorRBG"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/gamlCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/ambientLight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/drawDiffuseLight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/diffuseLight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/diffuseLightPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/zFighting"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/cameraPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/cameraLookPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EDisplay/cameraUpVector"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EVariable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/init"/>
@@ -117,6 +129,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/function"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/hasError"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/error"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EVariable/owner"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EWorldAgent">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EWorldAgent/boundsWidth"/>
@@ -174,6 +189,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/textSize"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/imageSize"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/colorRBG"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ELayerAspect/aspect"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EGridTopology">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGridTopology/nb_columns"/>
