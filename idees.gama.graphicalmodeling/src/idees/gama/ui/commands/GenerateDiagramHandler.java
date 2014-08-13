@@ -21,15 +21,10 @@ package idees.gama.ui.commands;
 import idees.gama.diagram.GamaFeatureProvider;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.GamlCompilationError;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -57,7 +52,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
@@ -90,7 +84,6 @@ public class GenerateDiagramHandler extends AbstractHandler {
 			}
 		}
 		final IFile fileP = container.getFile(new Path("diagrams/" + model.getName() + ".gadl"));
-			
 		createDiagramEditor(fileP, model.getName(), model);
 		return null;
 	}
@@ -117,6 +110,8 @@ public class GenerateDiagramHandler extends AbstractHandler {
 					gfp.setGamaModel(gamaModel);
 					gfp.init();
 					ep.doSave(null);
+					
+					
 				} catch (PartInitException e) {
 					e.printStackTrace();
 				}

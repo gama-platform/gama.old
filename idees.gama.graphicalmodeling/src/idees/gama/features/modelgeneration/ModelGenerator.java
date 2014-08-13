@@ -75,6 +75,8 @@ public class ModelGenerator {
 			resources.add(resource);
 			IModel model = resource.build(resource.getResourceSet(), new ArrayList<GamlCompilationError>());//GAML.getModelFactory().compile(resource);
 			((ModelDescription)model.getDescription()).setModelFilePath(getPath(fp, diagram));
+			
+			((ModelDescription)model.getDescription()).setModelFolderPath(getFolder(fp,diagram));
 			return model;
 		} catch (GamaRuntimeException e1) {
 			return null;
@@ -99,6 +101,16 @@ public class ModelGenerator {
         String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
         path = path.replace(".gadl", ".gaml");
         return path;
+	}
+	
+	public static String getFolder(IFeatureProvider fp,Diagram diagram) {
+		String path = getPath(fp, diagram);
+		String[] pp = path.split("/");
+		String pF = "";
+		for (int i = 0; i < pp.length-1;i++) {
+			pF += pp[i] + "/";
+		}
+		return pF;
 	}
 	public static boolean hasSyntaxError(IFeatureProvider fp,String expression, boolean isExpression ) {
 		return hasSyntaxError(fp,expression, isExpression, false );
