@@ -23,6 +23,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
+import msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl;
 import msi.gama.lang.gaml.gaml.impl.BlockImpl;
 import msi.gama.lang.gaml.gaml.impl.FacetImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
@@ -421,11 +422,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			speciesOrGridDisplayStatementImpl vv = (speciesOrGridDisplayStatementImpl) toto;
 			ids.add(0,vv.getKey());
 			//System.out.println("vv:"+ vv.getKey());
-			/*System.out.println("vv:" + vv.getKey());
-			System.out.println("vv.getExpr().getLeft:"+ vv.getExpr().getLeft());
-			System.out.println("vv.getExpr().getOp:"+ vv.getExpr().getOp());
-			System.out.println("vv.getExpr().getRight:"+ vv.getExpr().getRight());
-			System.out.println("vv : " + vv.getFirstFacet());*/
+			
 		//	System.out.println("vv.getFacets:"+ vv.getFacets());
 		} else if (toto instanceof S_DisplayImpl) {
 			S_DisplayImpl vv = (S_DisplayImpl) toto;
@@ -452,6 +449,9 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				
 			} else if (toto instanceof S_DefinitionImpl) {
 				S_DefinitionImpl vv = (S_DefinitionImpl) toto;
+				ids.add(0,vv.getName());
+			} else if (toto instanceof ArgumentDefinitionImpl) {
+				ArgumentDefinitionImpl vv = (ArgumentDefinitionImpl) toto;
 				ids.add(0,vv.getName());
 			} else if (toto instanceof S_ExperimentImpl) {
 				S_ExperimentImpl vv = (S_ExperimentImpl) toto;

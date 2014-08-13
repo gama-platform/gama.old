@@ -1,5 +1,6 @@
 package idees.gama.features.modelgeneration;
 
+import gama.EAction;
 import gama.EActionLink;
 import gama.EAspect;
 import gama.EAspectLink;
@@ -281,13 +282,19 @@ public class ModelGenerator {
 	static String defineAction(EActionLink link, int level) {
 		if (link == null || link.getAction() == null)
 			return "";
+		EAction action = (EAction) link.getTarget();
 		String result = "";
 		String sp = "";
 		for (int i = 0; i < level; i++) {
 			sp += "\t";
 		}
-		result += sp + "action " + link.getTarget().getName() + " {" + EL;
-		String code = link.getAction().getGamlCode();
+		String returnType = (action.getReturnType() == null || action.getReturnType().isEmpty()) ? "action" : action.getReturnType();
+		String arguments = "";
+		for (EVariable var : action.getVariables()) {
+			arguments += (arguments.isEmpty() ? "" : ", ") + var.getType() + " " + var.getName() + ((var.getInit() == null || var.getInit().isEmpty()) ? "" : (" <- " + var.getInit()));
+		}
+		result += sp + returnType + " " + action.getName() + (arguments.isEmpty() ? "" : "(" + arguments + ")") + " {" + EL;
+		String code = action.getGamlCode();
 		if (code != null && !code.isEmpty()) {
 			for (String line : code.split(EL)) {
 				result += sp + "\t" + line + EL;

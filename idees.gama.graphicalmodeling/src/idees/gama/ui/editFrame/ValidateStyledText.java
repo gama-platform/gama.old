@@ -78,42 +78,8 @@ public class ValidateStyledText extends StyledText{
 			
 			@Override
 		      public void modifyText(ModifyEvent event) {
-				if (saveData)frame.save(nameLoc);
-				frame.getShell().forceFocus();
-				isValid = !ModelGenerator.hasSyntaxError(fp,getText(),  false);
-
-	        	System.out.println("isValid1: " + isValid);
-				if (isValid) {
-					  ModelGenerator.modelValidation(fp, diagram);
-					  error = editor.containErrors(loc, name, uselessName);
-				        
-				 } else {
-					 error = "Syntax errors detected";
-					 GamaList<String> wStr = new GamaList<String>();
-					 wStr.add("world");
-					 editor.getSyntaxErrorsLoc().remove(wStr);
-					 System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
-					
-					 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc);
-						if (locs == null) 
-							locs = new GamaMap<String, String>();
-						locs.put(name, error);
-					
-					 editor.getSyntaxErrorsLoc().put(loc, locs);
-				 } 
-		       System.out.println("location:" + loc);
-		        System.out.println("name:" + name);
-	        	System.out.println("isValid: " + isValid);
-		       if (error != null) {	
-		        	tip.setMessage(error);
-		        	isValid = error.equals(""); 
-		        }
-		        setBackground(isValid ? colValid: colNotValid);
-		        if (isValid) {
-		        	tip.setVisible(false);
-		        }
-		        setFocus();
-		        editor.updateEObjectErrors();
+				applyModification();
+				
 		      }
 		    });
 		
@@ -138,6 +104,45 @@ public class ValidateStyledText extends StyledText{
                 });
             }
         });
+	}
+	
+	public void applyModification() {
+		if (saveData)frame.save(nameLoc);
+		frame.getShell().forceFocus();
+		isValid = !ModelGenerator.hasSyntaxError(fp,getText(),  false);
+
+    	//System.out.println("isValid1: " + isValid);
+		if (isValid) {
+			  ModelGenerator.modelValidation(fp, diagram);
+			  error = editor.containErrors(loc, nameLoc, uselessName);
+		        
+		 } else {
+			 error = "Syntax errors detected";
+			 GamaList<String> wStr = new GamaList<String>();
+			 wStr.add("world");
+			 editor.getSyntaxErrorsLoc().remove(wStr);
+			// System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
+			
+			 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc);
+				if (locs == null) 
+					locs = new GamaMap<String, String>();
+				locs.put(nameLoc, error);
+			
+			 editor.getSyntaxErrorsLoc().put(loc, locs);
+		 } 
+      // System.out.println("location:" + loc);
+       // System.out.println("name:" + name);
+    	//System.out.println("isValid: " + isValid);
+       if (error != null) {	
+        	tip.setMessage(error);
+        	isValid = error.equals(""); 
+        }
+        setBackground(isValid ? colValid: colNotValid);
+        if (isValid) {
+        	tip.setVisible(false);
+        }
+        setFocus();
+        editor.updateEObjectErrors();
 	}
 	@Override
 	protected void checkSubclass() {
