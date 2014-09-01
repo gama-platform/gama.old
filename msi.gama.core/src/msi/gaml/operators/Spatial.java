@@ -2540,6 +2540,8 @@ public abstract class Spatial {
 					return CRS.lookupIdentifier(crs, true).toString();
 				} catch (FactoryException e) {
 					return null;
+				} catch (NullPointerException e) {
+					return null;
 				}
 			} else {
 				throw GamaRuntimeException.error("Impossible to compute the CRS for this type of file");
