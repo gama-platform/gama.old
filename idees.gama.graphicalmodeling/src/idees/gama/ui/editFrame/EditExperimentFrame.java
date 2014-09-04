@@ -49,7 +49,7 @@ public class EditExperimentFrame extends EditFrame {
 	ESpecies species;
 	Table table_params;
 	List<String> variables;
-	List<String> types_parameter_tot = GamaList.with("int", "float", "string", "file", "list", "matrix", "map");
+	List<String> types_parameter_tot = GamaList.with("int", "float", "string", "file", "list", "matrix", "map", "bool");
 	Diagram diagram;
 	/**
 	 * Create the application window.

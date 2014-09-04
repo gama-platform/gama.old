@@ -15,7 +15,7 @@ public class CreateInheritingLinkFeature extends AbstractCreateSpeciesComponentL
 
 	  public CreateInheritingLinkFeature(IFeatureProvider fp) {
           // provide name and description for the UI, e.g. the palette
-          super(fp, "inheriting link", "Create a new inheriting link");
+          super(fp, "is parent of", "The source species is parent of the target species");
   }
 
   public Connection create(ICreateConnectionContext context) {
