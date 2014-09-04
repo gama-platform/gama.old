@@ -169,6 +169,10 @@ public class EditSpeciesFrame extends EditFrame {
 			types.add(sp.getName());
 		types.remove("unknown");
 		types.remove("world");
+		GamaList<String> tt = new GamaList<String>(types);
+		for (String ty : tt) {
+			types.add("list<" + ty + ">");
+		}
 	}
 
 	/**
