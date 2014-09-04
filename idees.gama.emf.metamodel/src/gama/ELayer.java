@@ -37,6 +37,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ELayer#getRefresh <em>Refresh</em>}</li>
  *   <li>{@link gama.ELayer#getChartlayers <em>Chartlayers</em>}</li>
  *   <li>{@link gama.ELayer#getChart_type <em>Chart type</em>}</li>
+ *   <li>{@link gama.ELayer#isShowLines <em>Show Lines</em>}</li>
  * </ul>
  * </p>
  *
@@ -472,7 +473,7 @@ public interface ELayer extends EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Color RBG</em>' attribute list.
 	 * @see gama.GamaPackage#getELayer_ColorRBG()
-	 * @model upper="3"
+	 * @model unique="false" upper="3"
 	 * @generated
 	 */
 	EList<Integer> getColorRBG();
@@ -570,5 +571,32 @@ public interface ELayer extends EGamaObject {
 	 * @generated
 	 */
 	void setChart_type(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Show Lines</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Show Lines</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Show Lines</em>' attribute.
+	 * @see #setShowLines(boolean)
+	 * @see gama.GamaPackage#getELayer_ShowLines()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isShowLines();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayer#isShowLines <em>Show Lines</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Show Lines</em>' attribute.
+	 * @see #isShowLines()
+	 * @generated
+	 */
+	void setShowLines(boolean value);
 
 } // ELayer

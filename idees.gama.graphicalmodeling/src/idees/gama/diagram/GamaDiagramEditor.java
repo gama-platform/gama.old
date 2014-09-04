@@ -88,7 +88,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	
 	List<String> facets = GamaList.with("torus:","width:", "height:", "neighbours:", "refresh_every:" 
 			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:", "refresh:",
-			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:");
+			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:", "schedules:");
 			
 	
 	boolean toRefresh = true;

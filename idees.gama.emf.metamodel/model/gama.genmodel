@@ -52,6 +52,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/locationUpdate"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/init"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ESpecies/inheritingLinks"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ESpecies/schedules"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EAction/gamlCode"/>
@@ -162,6 +163,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayer/refresh"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ELayer/chartlayers"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayer/chart_type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayer/showLines"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EGraphTopologyNode"/>
     <genClasses ecoreClass="gama.ecore#//EExperimentLink">

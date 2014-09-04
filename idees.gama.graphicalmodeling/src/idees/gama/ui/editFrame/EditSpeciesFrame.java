@@ -75,6 +75,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private ValidateText textShapeUpdate;
 	private ValidateText textShapeFunction;
 	private StyledText textInit;
+	private ValidateText textSchedules;
 	Composite sizeComp;
 	Composite radiusComp;
 	Composite wHComp;
@@ -187,7 +188,7 @@ public class EditSpeciesFrame extends EditFrame {
 		sc.setContent(container);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-		int sizeHeader = init ? 160 : 0;
+		int sizeHeader = init ? 200 : 40;
 			//CANVAS SIZE : NAME:30, VAR:200, TORUS:30, LOC:130, REFLEX:110, SHAPE:220, SKILLS: 110 BOUNDS: 80 GRID: 80
 		if (eobject instanceof EWorldAgent) {	
 			Canvas canvasTor = canvasTorus(container);
@@ -221,16 +222,35 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite commonCompositeHeader(Composite container, boolean init) {
 		//CANVAS SIZE : NAME:30, SKILLS: 110 //INIT : 150
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, init ? 310 : 160);
+		comp.setBounds(0, 0, 730, init ? 350 : 200);
 		Canvas canvasName = canvasName(comp);
 		canvasName.setLocation(10, 10);
+		Canvas canvasSchedules = canvasSchedules(comp);
+		canvasSchedules.setLocation(10, 50);
 		Canvas canvasSkills = canvasSkills(comp);
-		canvasSkills.setLocation(10, 50);
+		canvasSkills.setLocation(10, 90);
 		if (init) {
 			Canvas canvasInit = canvasInit(comp);
-			canvasInit.setLocation(10, 160);
+			canvasInit.setLocation(10, 200);
 		}
 		return comp;
+	}
+	
+	protected Canvas canvasSchedules(Composite container) {	
+		Canvas canvasSchedules = new Canvas(container, SWT.BORDER);
+		canvasSchedules.setBounds(10, 10, 720, 30);
+		
+			
+		CLabel lblSchedules = new CLabel(canvasSchedules, SWT.NONE);
+		lblSchedules.setBounds(10, 5, 60, 20);
+		lblSchedules.setText("Schedules");
+		GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		textSchedules = new ValidateText(canvasSchedules, SWT.BORDER,diagram, fp,frame, diagramEditor, "schedules:", null, null);
+		textSchedules.setBounds(70, 5, 300, 20);
+		String val = ((ESpecies)eobject).getSchedules();
+		textSchedules.setText(val == null ? "" : val);
+		((ValidateText)textSchedules).setSaveData(true);
+		return canvasSchedules;
 	}
 	
 	private Composite commonCompositeEnd(Composite container) {
@@ -249,13 +269,13 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite gridTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 160, 730, 500);
-		//Canvas canvasTor = canvasTorus(comp);
-		//canvasTor.setLocation(10, 160);
+		comp.setBounds(0, 200, 730, 500);
+		Canvas canvasTor = canvasTorus(comp);
+		canvasTor.setLocation(10, 90);
 		Canvas canvasGrid = canvasGrid(comp);
 		canvasGrid.setLocation(10, 0);
 		Composite compEnd = commonCompositeEnd(comp);
-		compEnd.setLocation(0, 90);
+		compEnd.setLocation(0, 140);
 		return comp;
 	}
 	private Composite graphNodeTopo(Composite container) {
@@ -424,6 +444,11 @@ public class EditSpeciesFrame extends EditFrame {
 		}
 
         species.setExpressionTorus(textTorus.getText());
+	}
+	
+	private void modifySchedules() {
+		ESpecies species = (ESpecies) eobject;
+		 species.setSchedules(textSchedules.getText());
 	}
 	
 	private void modifyReflexOrder() {
@@ -1699,6 +1724,8 @@ public class EditSpeciesFrame extends EditFrame {
 				    	    //	 System.out.println("species: " + species);
 				    	    } else if (name.equals("torus:")) {
 				    	    	modifyIsTorus();
+				    	    } else if (name.equals("schedules:")) {
+				    	    	modifySchedules();
 				    	    } else if (name.equals("width:")||name.equals("height:")||name.equals("neighbours:")){
 			    	 			modifyGridProperties();
 			    	 		}  else {

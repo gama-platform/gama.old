@@ -49,6 +49,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ESpecies#getLocationUpdate <em>Location Update</em>}</li>
  *   <li>{@link gama.ESpecies#getInit <em>Init</em>}</li>
  *   <li>{@link gama.ESpecies#getInheritingLinks <em>Inheriting Links</em>}</li>
+ *   <li>{@link gama.ESpecies#getSchedules <em>Schedules</em>}</li>
  * </ul>
  * </p>
  *
@@ -814,5 +815,31 @@ public interface ESpecies extends EGamaObject {
 	 * @generated
 	 */
 	EList<EInheritLink> getInheritingLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Schedules</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Schedules</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Schedules</em>' attribute.
+	 * @see #setSchedules(String)
+	 * @see gama.GamaPackage#getESpecies_Schedules()
+	 * @model
+	 * @generated
+	 */
+	String getSchedules();
+
+	/**
+	 * Sets the value of the '{@link gama.ESpecies#getSchedules <em>Schedules</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Schedules</em>' attribute.
+	 * @see #getSchedules()
+	 * @generated
+	 */
+	void setSchedules(String value);
 
 } // ESpecies

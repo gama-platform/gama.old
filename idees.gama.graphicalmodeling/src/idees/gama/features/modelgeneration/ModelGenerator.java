@@ -216,6 +216,11 @@ public class ModelGenerator {
 				} else
 					model += " neighbours:"+gt.getNeighbourhoodType().toCharArray()[0];
 			}
+			if (species.getTorus() != null
+					&& !species.getTorus().isEmpty()
+					&& !species.getTorus().equals("false")) {
+				model += " torus:" + species.getTorus();
+			}
 		} else
 			model += "species " + species.getName();
 		if (species.getInheritsFrom() != null) {
@@ -223,6 +228,9 @@ public class ModelGenerator {
 		}
 		if (species.getSkills() != null && !species.getSkills().isEmpty()) {
 			model += " skills:" + species.getSkills();
+		}
+		if (species.getSchedules() != null && !species.getSchedules().isEmpty()) {
+			model += " schedules:" + species.getSchedules();
 		}
 		model += " {" + EL;
 		for (EVariable var : species.getVariables()) {
@@ -476,6 +484,15 @@ public class ModelGenerator {
 						+ lay.getAspect()));
 			} else if (lay.getType().equals("grid")) {
 				model += lay.getType() + " " + lay.getGrid();
+				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
+					if (lay.getColorRBG().size() == 3)
+						if (lay.isShowLines()) {
+							model += " lines:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+						}
+				} else {
+					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
+						model += " lines:" + lay.getColor();
+				}
 			} else if (lay.getType().equals("agents")) {
 				model += lay.getType() + " \"" + lay.getName()+ "\" value:" + lay.getAgents() + ((lay.getAspect() == null || lay.getAspect().isEmpty()) ? "" : " aspect: "
 						+ lay.getAspect());
@@ -483,9 +500,10 @@ public class ModelGenerator {
 				model += lay.getType() + "\""+ lay.getFile() + "\"" + (lay.getSize().isEmpty() ? "" : " size: "
 						+ lay.getSize());
 				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
-					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
-						model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
-					}
+					if (lay.getColorRBG().size() == 3)
+						if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+							model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+						}
 				} else {
 					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
 						model += " color:" + lay.getColor();
@@ -494,9 +512,10 @@ public class ModelGenerator {
 				model += lay.getType() + "\""+ lay.getText() + "\""+ (lay.getSize().isEmpty() ? "" : " size: "
 						+ lay.getSize());
 				if (lay.getIsColorCst() == null || lay.getIsColorCst()) {
-					if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
-						model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
-					}
+					if (lay.getColorRBG().size() == 3)
+						if (!lay.getColorRBG().get(0).equals("255") || !lay.getColorRBG().get(1).equals("255") || !lay.getColorRBG().get(2).equals("255")) {
+							model += " color:rgb(" + lay.getColorRBG().get(0) + "," + lay.getColorRBG().get(1) + "," + lay.getColorRBG().get(2) + ")"; 
+						}
 				} else {
 					if (lay.getColor() != null && !lay.getColor().equals("rgb(255,255,255)") && !lay.getColor().isEmpty())
 						model += " color:" + lay.getColor();
@@ -579,6 +598,9 @@ public class ModelGenerator {
 					&& !worldAgent.getSkills().isEmpty()) {
 				model += " skills:" + worldAgent.getSkills();
 			}
+			if (worldAgent.getSchedules() != null && !worldAgent.getSchedules().isEmpty()) {
+				model += " schedules:" + worldAgent.getSchedules();
+			}
 			model += " {" + EL;
 			int level = 1;
 			for (EVariable var : worldAgent.getVariables()) {
@@ -599,7 +621,7 @@ public class ModelGenerator {
 				}
 			}
 
-			Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
+			/*Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
 			for (EActionLink link : worldAgent.getActionLinks()) {
 				model += defineAction(link, level + 1);
 			}
@@ -614,6 +636,22 @@ public class ModelGenerator {
 			}
 			for (String reflex : reflexes) {
 				model += defineReflex(reflexMap.get(reflex), level + 1);
+			}*/
+			Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
+			for (EReflexLink link : worldAgent.getReflexLinks()) {
+				if (link.getTarget() == null)
+					continue;
+				reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
+			}
+			List<String> reflexes = new GamaList<String>();
+			if (worldAgent.getReflexList().isEmpty() && !reflexMap.isEmpty()) {
+				reflexes.addAll(reflexMap.keySet());
+			} else {
+				reflexes.addAll(worldAgent.getReflexList());
+			}
+			for (String reflex : reflexes) {
+				if (reflexMap.containsKey(reflex))
+					model += defineReflex(reflexMap.get(reflex), level + 1);
 			}
 			for (EAspectLink link : worldAgent.getAspectLinks()) {
 				model += defineAspect(link, level + 1);

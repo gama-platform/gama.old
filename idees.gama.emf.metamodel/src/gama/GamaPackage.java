@@ -522,13 +522,22 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__INHERITING_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 32;
 
 	/**
+	 * The feature id for the '<em><b>Schedules</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__SCHEDULES = EGAMA_OBJECT_FEATURE_COUNT + 33;
+
+	/**
 	 * The number of structural features of the '<em>ESpecies</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 33;
+	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 34;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -2139,6 +2148,15 @@ public interface GamaPackage extends EPackage {
 	int EWORLD_AGENT__INHERITING_LINKS = ESPECIES__INHERITING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Schedules</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__SCHEDULES = ESPECIES__SCHEDULES;
+
+	/**
 	 * The feature id for the '<em><b>Bounds Width</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2437,13 +2455,22 @@ public interface GamaPackage extends EPackage {
 	int ELAYER__CHART_TYPE = EGAMA_OBJECT_FEATURE_COUNT + 20;
 
 	/**
+	 * The feature id for the '<em><b>Show Lines</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__SHOW_LINES = EGAMA_OBJECT_FEATURE_COUNT + 21;
+
+	/**
 	 * The number of structural features of the '<em>ELayer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 21;
+	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 22;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ETopologyImpl <em>ETopology</em>}' class.
@@ -3992,6 +4019,17 @@ public interface GamaPackage extends EPackage {
 	EReference getESpecies_InheritingLinks();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getSchedules <em>Schedules</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Schedules</em>'.
+	 * @see gama.ESpecies#getSchedules()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Schedules();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EAction <em>EAction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5032,6 +5070,17 @@ public interface GamaPackage extends EPackage {
 	EAttribute getELayer_Chart_type();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#isShowLines <em>Show Lines</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Show Lines</em>'.
+	 * @see gama.ELayer#isShowLines()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_ShowLines();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGraphTopologyNode <em>EGraph Topology Node</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5984,6 +6033,14 @@ public interface GamaPackage extends EPackage {
 		EReference ESPECIES__INHERITING_LINKS = eINSTANCE.getESpecies_InheritingLinks();
 
 		/**
+		 * The meta object literal for the '<em><b>Schedules</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__SCHEDULES = eINSTANCE.getESpecies_Schedules();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6782,6 +6839,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ELAYER__CHART_TYPE = eINSTANCE.getELayer_Chart_type();
+
+		/**
+		 * The meta object literal for the '<em><b>Show Lines</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__SHOW_LINES = eINSTANCE.getELayer_ShowLines();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGraphTopologyNodeImpl <em>EGraph Topology Node</em>}' class.

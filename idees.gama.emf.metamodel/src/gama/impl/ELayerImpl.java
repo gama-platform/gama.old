@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
@@ -53,6 +54,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link gama.impl.ELayerImpl#getRefresh <em>Refresh</em>}</li>
  *   <li>{@link gama.impl.ELayerImpl#getChartlayers <em>Chartlayers</em>}</li>
  *   <li>{@link gama.impl.ELayerImpl#getChart_type <em>Chart type</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#isShowLines <em>Show Lines</em>}</li>
  * </ul>
  * </p>
  *
@@ -450,6 +452,26 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 	protected String chart_type = CHART_TYPE_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #isShowLines() <em>Show Lines</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isShowLines()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean SHOW_LINES_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isShowLines() <em>Show Lines</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isShowLines()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean showLines = SHOW_LINES_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -828,7 +850,7 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 	 */
 	public EList<Integer> getColorRBG() {
 		if (colorRBG == null) {
-			colorRBG = new EDataTypeUniqueEList<Integer>(Integer.class, this, GamaPackage.ELAYER__COLOR_RBG);
+			colorRBG = new EDataTypeEList<Integer>(Integer.class, this, GamaPackage.ELAYER__COLOR_RBG);
 		}
 		return colorRBG;
 	}
@@ -913,6 +935,27 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isShowLines() {
+		return showLines;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setShowLines(boolean newShowLines) {
+		boolean oldShowLines = showLines;
+		showLines = newShowLines;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__SHOW_LINES, oldShowLines, showLines));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -959,6 +1002,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 				return getChartlayers();
 			case GamaPackage.ELAYER__CHART_TYPE:
 				return getChart_type();
+			case GamaPackage.ELAYER__SHOW_LINES:
+				return isShowLines();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1037,6 +1082,9 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 			case GamaPackage.ELAYER__CHART_TYPE:
 				setChart_type((String)newValue);
 				return;
+			case GamaPackage.ELAYER__SHOW_LINES:
+				setShowLines((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1112,6 +1160,9 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 			case GamaPackage.ELAYER__CHART_TYPE:
 				setChart_type(CHART_TYPE_EDEFAULT);
 				return;
+			case GamaPackage.ELAYER__SHOW_LINES:
+				setShowLines(SHOW_LINES_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1166,6 +1217,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 				return chartlayers != null && !chartlayers.isEmpty();
 			case GamaPackage.ELAYER__CHART_TYPE:
 				return CHART_TYPE_EDEFAULT == null ? chart_type != null : !CHART_TYPE_EDEFAULT.equals(chart_type);
+			case GamaPackage.ELAYER__SHOW_LINES:
+				return showLines != SHOW_LINES_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1218,6 +1271,8 @@ public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 		result.append(refresh);
 		result.append(", chart_type: ");
 		result.append(chart_type);
+		result.append(", showLines: ");
+		result.append(showLines);
 		result.append(')');
 		return result.toString();
 	}

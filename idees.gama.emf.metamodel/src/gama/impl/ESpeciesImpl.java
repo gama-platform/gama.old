@@ -74,6 +74,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link gama.impl.ESpeciesImpl#getLocationUpdate <em>Location Update</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getInit <em>Init</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getInheritingLinks <em>Inheriting Links</em>}</li>
+ *   <li>{@link gama.impl.ESpeciesImpl#getSchedules <em>Schedules</em>}</li>
  * </ul>
  * </p>
  *
@@ -619,6 +620,26 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * @ordered
 	 */
 	protected EList<EInheritLink> inheritingLinks;
+
+	/**
+	 * The default value of the '{@link #getSchedules() <em>Schedules</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedules()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SCHEDULES_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSchedules() <em>Schedules</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedules()
+	 * @generated
+	 * @ordered
+	 */
+	protected String schedules = SCHEDULES_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1281,6 +1302,27 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getSchedules() {
+		return schedules;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSchedules(String newSchedules) {
+		String oldSchedules = schedules;
+		schedules = newSchedules;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ESPECIES__SCHEDULES, oldSchedules, schedules));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -1366,6 +1408,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return getInit();
 			case GamaPackage.ESPECIES__INHERITING_LINKS:
 				return getInheritingLinks();
+			case GamaPackage.ESPECIES__SCHEDULES:
+				return getSchedules();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1488,6 +1532,9 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				getInheritingLinks().clear();
 				getInheritingLinks().addAll((Collection<? extends EInheritLink>)newValue);
 				return;
+			case GamaPackage.ESPECIES__SCHEDULES:
+				setSchedules((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1599,6 +1646,9 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 			case GamaPackage.ESPECIES__INHERITING_LINKS:
 				getInheritingLinks().clear();
 				return;
+			case GamaPackage.ESPECIES__SCHEDULES:
+				setSchedules(SCHEDULES_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1677,6 +1727,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return INIT_EDEFAULT == null ? init != null : !INIT_EDEFAULT.equals(init);
 			case GamaPackage.ESPECIES__INHERITING_LINKS:
 				return inheritingLinks != null && !inheritingLinks.isEmpty();
+			case GamaPackage.ESPECIES__SCHEDULES:
+				return SCHEDULES_EDEFAULT == null ? schedules != null : !SCHEDULES_EDEFAULT.equals(schedules);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1737,6 +1789,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 		result.append(locationUpdate);
 		result.append(", init: ");
 		result.append(init);
+		result.append(", schedules: ");
+		result.append(schedules);
 		result.append(')');
 		return result.toString();
 	}

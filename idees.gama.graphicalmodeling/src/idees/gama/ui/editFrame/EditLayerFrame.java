@@ -34,6 +34,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -102,6 +103,8 @@ public class EditLayerFrame extends EditFrame {
 	EditLayerFrame cFrame;
 	Color color;
 	int[] rgb;
+	
+	Button btnShowLines;
 
 	ValidateText textColorGrid;
 	Button btnCstColGrid;
@@ -235,11 +238,17 @@ public class EditLayerFrame extends EditFrame {
 			rgb[0] = elayer.getColorRBG().get(0);
 			rgb[1] = elayer.getColorRBG().get(1);
 			rgb[2] = elayer.getColorRBG().get(2);
-			//rgb = new RGB(((ELayer) eobject).getColorRBG().get(0),((ELayer) eobject).getColorRBG().get(1),((ELayer) eobject).getColorRBG().get(2));	 
+			color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1], rgb[2]));
+			colorLabelGrid.setBackground(color);
+			colorLabelText.setBackground(color);
+			colorLabelImage.setBackground(color);
+			colorLabelChart.setBackground(color);
+		 
 		}
 		if (elayer.getChart_type() != null) {
 			comboTypeChart.setText(elayer.getChart_type());
 		}
+		
 		initTable();
 		frame.updateLayerId();
 		
@@ -415,6 +424,7 @@ public class EditLayerFrame extends EditFrame {
 			elayer.getColorRBG().add(rgb[0]);
 			elayer.getColorRBG().add(rgb[1]);
 			elayer.getColorRBG().add(rgb[2]);
+			elayer.setShowLines(btnShowLines.getSelection());
 			if (elayer.getType().equals("image")) {
 				elayer.setIsColorCst(btnCstColImage.getSelection());
 				//if (btnCstColImage.getSelection())
@@ -440,7 +450,7 @@ public class EditLayerFrame extends EditFrame {
 				//else
 					elayer.setColor(textColorGrid.getText());
 			}	
-				
+
 			}});
 		}		
 	}
@@ -751,6 +761,34 @@ public class EditLayerFrame extends EditFrame {
 				if (grid_list.length > 0)
 					comboGrid.setText(grid_list[0]);
 		
+		CLabel lblSL = new CLabel(gridComp, SWT.NONE);
+		lblSL.setBounds(0, 40, 90, 20);
+		lblSL.setText("Show Lines");
+		btnShowLines = new Button(gridComp, SWT.CHECK);
+		btnShowLines.setBounds(100, 40,20,20);
+		btnShowLines.setSelection(((ELayer)eobject).isShowLines());
+		btnShowLines.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (((ValidateText)textX).isSaveData())
+					save("");
+				
+				 ModelGenerator.modelValidation(fp, diagram);
+				 diagramEditor.updateEObjectErrors();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (((ValidateText)textX).isSaveData())
+					save("");
+				
+				 ModelGenerator.modelValidation(fp, diagram);
+				 diagramEditor.updateEObjectErrors();
+				
+			}
+		});
 		Composite ccg = new Composite(gridComp, SWT.NONE);
 		textColorGrid = new ValidateText(ccg, SWT.NONE,diagram, fp,this, diagramEditor, "color:", null, null);
 		colorLabelGrid = new Label(ccg, SWT.NONE);
@@ -762,7 +800,7 @@ public class EditLayerFrame extends EditFrame {
 		btnExpressionGrid = new Button(cColor1, SWT.RADIO);
 		
 		buildColorComposite(ccg, textColorGrid, colorLabelGrid,button1, btnCstColGrid, btnExpressionGrid,"line color");
-		ccg.setLocation(0, 30);
+		ccg.setLocation(0, 70);
 		
 		// Image
 		imageComp = new Composite(shapeComp, SWT.NONE);

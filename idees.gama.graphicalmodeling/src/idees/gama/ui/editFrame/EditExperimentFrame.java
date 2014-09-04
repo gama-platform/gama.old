@@ -114,6 +114,7 @@ public class EditExperimentFrame extends EditFrame {
 			 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (variables== null || variables.isEmpty()) return;
 				TableItem ti =  new TableItem(table_params, SWT.NONE);
 				final String var = variables.get(0);
 				ti.setText(new String[] {var, var,"","","","",""});
@@ -122,6 +123,13 @@ public class EditExperimentFrame extends EditFrame {
 				locs.add(var);
 				diagramEditor.getIdsEObjects().put(locs, eobject);
 				save("variables");
+				ModelGenerator.modelValidation(fp, diagram);
+				diagramEditor.updateEObjectErrors();
+				  final ValidateText text = new ValidateText(table_params, SWT.BORDER,diagram, fp,frame, diagramEditor, "", null, var);
+	        	  ti.setBackground(3, text.getBackground());
+	        	  text.dispose();
+	        	 
+				table_params.redraw();
 			}
 		});
 		btnAddVariable.setBounds(50, 275, 130, 20);
@@ -291,7 +299,7 @@ public class EditExperimentFrame extends EditFrame {
 		        	  switch (column) {
 		        	  	case 1: name = "legend:"; break;
 		        	  	case 2: name = "category:"; break;
-		        	  	case 3: name = "<-"; break;
+		        	  	case 3: name = ""; break;
 		        	  	case 4: name = "min:"; break;
 		        	  	case 5: name = "max:"; break;
 		        	  	case 6: name = "step:"; break;
