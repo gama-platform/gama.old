@@ -388,7 +388,7 @@ public class ModelGenerator {
 				code += val + "("+lay.getPoints()+")";
 			} else if (val.equals("circle") || val.equals("sphere")) {
 				code += val + "("+ lay.getRadius()+")";
-			} else if (val.equals("square")) {
+			} else if (val.equals("square") || val.equals("cube") ||val.equals("pyramid")) {
 				code += val + "("+lay.getSize()+")";
 			} else if (val.equals("rectangle") || val.equals("hexagon")) {
 				code += val + "({"+lay.getWidth()+ ","+ lay.getHeigth()+"})";
@@ -408,6 +408,12 @@ public class ModelGenerator {
 				code += " empty: " + lay.getEmpty();
 			if (lay.getRotate() != null && ! lay.getRotate().isEmpty() && ! lay.getRotate().equals("0.0"))
 				code += " rotate: " + lay.getRotate();
+			if (lay.getAt() != null && ! lay.getAt().isEmpty())
+				code += " at: " + lay.getAt();
+			if (lay.getDepth() != null && ! lay.getDepth().isEmpty() && ! lay.getDepth().equals("0.0"))
+				code += " depth: " + lay.getDepth();
+			if (lay.getTexture() != null && ! lay.getTexture().isEmpty() && ! lay.getTexture().equals("[]"))
+				code += " texture: " + lay.getTexture();
 			result += code + ";" + EL;
 		}
 		result += EL + sp + "}" + EL;

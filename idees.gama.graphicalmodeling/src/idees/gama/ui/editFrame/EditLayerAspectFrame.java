@@ -31,7 +31,7 @@ public class EditLayerAspectFrame extends EditFrame {
 	// Shapes
 	private CCombo comboShape;
 	private String[] type_shape = { "polyline", "polygon", "circle",
-			"square", "rectangle", "hexagon", "sphere", "image", "text", "expression" };
+			"square", "rectangle", "hexagon", "cube", "sphere", "pyramid", "image", "text", "expression" };
 	private ValidateText textRadius;
 	private ValidateText textHeight;
 	private ValidateText textWidth;
@@ -45,6 +45,10 @@ public class EditLayerAspectFrame extends EditFrame {
 	private ValidateText textSizeImage;
 	private ValidateText textPath;
 	private ValidateText textText;
+	
+	private ValidateText textLoc;
+	private ValidateText textTexture;
+	private ValidateText textDepth;
 	Button btnCstCol;
 	Button btnExpressionCol;
 	
@@ -101,6 +105,9 @@ public class EditLayerAspectFrame extends EditFrame {
 		((ValidateText)textColor).setSaveData(true);
 		((ValidateText)textEmpty).setSaveData(true);
 		((ValidateText)textRotate).setSaveData(true);
+		((ValidateText)textLoc).setSaveData(true);
+		((ValidateText)textDepth).setSaveData(true);
+		((ValidateText)textTexture).setSaveData(true);
 		
 		((ValidateText)textSizeText).setSaveData(true);
 		((ValidateText)textSizeImage).setSaveData(true);
@@ -133,6 +140,12 @@ public class EditLayerAspectFrame extends EditFrame {
 			textEmpty.setText(elayer.getEmpty());
 		if (elayer.getRotate() != null)
 			textRotate.setText(elayer.getRotate());
+		if (elayer.getTexture() != null)
+			textTexture.setText(elayer.getTexture());
+		if (elayer.getDepth() != null)
+			textDepth.setText(elayer.getDepth());
+		if (elayer.getAt() != null)
+			textLoc.setText(elayer.getAt());
 		if (elayer.getTextSize() != null)
 			textSizeText.setText(elayer.getTextSize());
 		if (elayer.getImageSize() != null)
@@ -189,37 +202,13 @@ public class EditLayerAspectFrame extends EditFrame {
 		elayer.setColor(textColor.getText());
 		elayer.setTextSize(textSizeText.getText());
 		elayer.setImageSize(textSizeImage.getText());
+		elayer.setTexture(textTexture.getText());
+		elayer.setAt(textLoc.getText());
+		elayer.setDepth(textDepth.getText());
 		elayer.getColorRBG().clear();
 		elayer.getColorRBG().add(rgb.red > 0 ? rgb.red : 0);
 		elayer.getColorRBG().add(rgb.green > 0 ? rgb.green : 0);
 		elayer.getColorRBG().add(rgb.blue > 0 ? rgb.blue : 0);
-		/*String code = "draw ";
-		String val = comboShape.getText();
-		if (val.equals("polyline") || val.equals("polygon")) {
-			code += val + "("+textPoints.getText()+")";
-		} else if (val.equals("circle") || val.equals("sphere")) {
-			code += val + "("+textRadius.getText()+")";
-		} else if (val.equals("square")) {
-			code += val + "("+textSize.getText()+")";
-		} else if (val.equals("rectangle") || val.equals("hexagon")) {
-			code += val + "({"+textWidth.getText()+ ","+ textHeight.getText()+"})";
-		} else if (val.equals("expression")) {
-			code += textShape.getText();
-		} else if (val.equals("image")) {
-			code += "file(" + textPath.getText() + ")" + " size:" + textSizeImage.getText();
-		} else if (val.equals("text")) {
-			code +=  textText.getText() + " size:" + textSizeText.getText();
-		}
-		if (elayer.getIsColorCst()) {
-			code += " color: rgb(" + (elayer.getColorRBG()).toString().replace("[", "").replace("]", "") + ")" ;
-		} else {
-			code += " color: " + elayer.getColor();
-		}
-		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty() && ! elayer.getEmpty().equals("false"))
-			code += " empty: " + elayer.getEmpty();
-		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty() && ! elayer.getRotate().equals("0.0"))
-			code += " rotate: " + elayer.getRotate();
-		elayer.setGamlCode(code);*/
 	}
 	
 	public void updateVisibility(){
@@ -257,7 +246,7 @@ public class EditLayerAspectFrame extends EditFrame {
 			imageComp.setEnabled(false);
 			textComp.setEnabled(false);
 			textComp.setVisible(false);
-		} else if (val.equals("square")) {
+		} else if (val.equals("square") || val.equals("pyramid") || val.equals("cube")) {
 			sizeComp.setVisible(true);
 			sizeComp.setEnabled(true);
 			radiusComp.setVisible(false);
@@ -342,7 +331,7 @@ public class EditLayerAspectFrame extends EditFrame {
 		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
 		   
 		Canvas canvasTopo = new Canvas(container, SWT.BORDER);
-		canvasTopo.setBounds(10, 50, 720, 240);
+		canvasTopo.setBounds(10, 50, 720, 370);
 
 		// Shape
 		shapeComp = new Composite(canvasTopo, SWT.BORDER);
@@ -583,6 +572,33 @@ public class EditLayerAspectFrame extends EditFrame {
 		textRotate = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "rotate:", null, null);
 		textRotate.setText("0.0");
 		textRotate.setBounds(80, 210, 250, 18);	
+		
+		// At
+		CLabel lblLoc = new CLabel(canvasTopo, SWT.NONE);
+		lblLoc.setBounds(10, 250, 60, 20);
+		lblLoc.setText("Location");
+											 
+		textLoc = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "at:", null, null);
+		textLoc.setText("");
+		textLoc.setBounds(80, 250, 250, 18);	
+				
+		// Depth
+		CLabel lblDepth = new CLabel(canvasTopo, SWT.NONE);
+		lblDepth.setBounds(10, 290, 60, 20);
+		lblDepth.setText("Depth");
+											 
+		textDepth = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "depth:", null, null);
+		textDepth.setText("");
+		textDepth.setBounds(80, 290, 250, 18);	
+				
+		// Texture
+		CLabel lblTexture = new CLabel(canvasTopo, SWT.NONE);
+		lblTexture.setBounds(10, 330, 60, 20);
+		lblTexture.setText("Texture");
+											 
+		textTexture = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "texture:", null, null);
+		textTexture.setText("");
+		textTexture.setBounds(80, 330, 250, 18);	
 	}
 	
 	 @Override

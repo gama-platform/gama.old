@@ -90,7 +90,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	
 	List<String> facets = GamaList.with("torus:","width:", "height:", "neighbours:", "refresh_every:" 
 			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:", "refresh:",
-			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:", "schedules:");
+			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:", "schedules:", "at:", "depth:", "texture:");
 			
 	
 	boolean toRefresh = true;
@@ -357,7 +357,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
 			GamaList<String> ids = new GamaList<String>();
 			String fist_obj = buildLocation(toto,ids);
-			System.out.println("location of error: " + ids);
+			//System.out.println("location of error: " + ids);
 			while (!ids.isEmpty()) {
 				//System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
 				if (!idsEObjects.getKeys().contains(ids)) {
@@ -388,7 +388,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	public String buildLocation(EObject toto, List<String> ids) {
 		String fist_obj = null;
 		do {
-			System.out.println("toto: " + toto);
+			//System.out.println("toto: " + toto);
 			if (toto instanceof S_ReflexImpl) {
 				S_ReflexImpl vv = (S_ReflexImpl) toto;
 				if (vv.getName() != null)
@@ -592,7 +592,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 	public void addEOject(final EObject obj){
 		List<String> ids = computeIds(obj);
-		if (obj instanceof EVariable || obj instanceof EParameter || obj instanceof EMonitor) {
+		if (obj instanceof EVariable ) {
 			idsEObjects.put(ids, ((EVariable) obj).eContainer());
 		} else if (obj instanceof EParameter) {
 			idsEObjects.put(ids, ((EParameter) obj).eContainer());
