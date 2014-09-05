@@ -192,6 +192,10 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 				return createEParameterAdapter();
 			}
 			@Override
+			public Adapter caseEMonitor(EMonitor object) {
+				return createEMonitorAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -628,6 +632,20 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createEParameterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gama.EMonitor <em>EMonitor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gama.EMonitor
+	 * @generated
+	 */
+	public Adapter createEMonitorAdapter() {
 		return null;
 	}
 

@@ -74,6 +74,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EExperiment/experimentLink"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EExperiment/displayLinks"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EExperiment/parameters"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EExperiment/monitors"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EGUIExperiment"/>
     <genClasses ecoreClass="gama.ecore#//EBatchExperiment"/>
@@ -192,6 +193,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/imageSize"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/colorRBG"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ELayerAspect/aspect"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/depth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//ELayerAspect/texture"/>
     </genClasses>
     <genClasses ecoreClass="gama.ecore#//EGridTopology">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGridTopology/nb_columns"/>
@@ -225,6 +228,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EParameter/max"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EParameter/among"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EParameter/category"/>
+    </genClasses>
+    <genClasses ecoreClass="gama.ecore#//EMonitor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EMonitor/value"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

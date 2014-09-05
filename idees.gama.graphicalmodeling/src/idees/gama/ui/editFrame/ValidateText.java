@@ -226,8 +226,9 @@ public class ValidateText extends StyledText{
 			  GamaList<String> wStr = new GamaList<String>();
 			 wStr.add("world");
 			 editor.getSyntaxErrorsLoc().remove(wStr);
-			// System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
-			 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
+			 System.out.println("editor.getSyntaxErrorsLoc() : " + editor.getSyntaxErrorsLoc());
+			 System.out.println("loc : " + loc);
+				 Map<String,String> locs = editor.getSyntaxErrorsLoc().get(loc) ;
 				
 			 if (locs == null) {
 					locs = new GamaMap<String,String>();

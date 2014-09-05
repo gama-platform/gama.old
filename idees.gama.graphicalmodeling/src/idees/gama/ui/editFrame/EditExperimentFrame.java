@@ -1,6 +1,7 @@
 package idees.gama.ui.editFrame;
 
 import gama.EExperiment;
+import gama.EMonitor;
 import gama.EParameter;
 import gama.ESpecies;
 import gama.EVariable;
@@ -48,6 +49,7 @@ public class EditExperimentFrame extends EditFrame {
 	StyledText gamlCode;
 	ESpecies species;
 	Table table_params;
+	Table table_monitors;
 	List<String> variables;
 	List<String> types_parameter_tot = GamaList.with("int", "float", "string", "file", "list", "matrix", "map", "bool");
 	Diagram diagram;
@@ -81,10 +83,11 @@ public class EditExperimentFrame extends EditFrame {
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = canvasParameter(container);
 		canvasParameter.setBounds(10, 50, 820, 305);
+		
+		//****** CANVAS MONITORS *********
+		Canvas canvasMonitors = canvasMonitor(container);
+		canvasMonitors.setBounds(10, 370, 820, 305);
 
-		/*//****** CANVAS OK/CANCEL *********
-		Canvas canvasOkCancel = canvasOkCancel(container);
-		canvasOkCancel.setBounds(10, 365, 720, 30);*/
 		return container;
 	}
 	
@@ -104,7 +107,7 @@ public class EditExperimentFrame extends EditFrame {
 		table_params.setHeaderVisible(true);
 		table_params.setLinesVisible(true);
 		table_params.setLinesVisible(true);
-		initTable();
+		initTableParam();
 		
 		CLabel lblVariables = new CLabel(canvasParameter, SWT.NONE);
 		lblVariables.setBounds(10, 5, 100, 20);
@@ -159,12 +162,81 @@ public class EditExperimentFrame extends EditFrame {
 		return canvasParameter;
 	}
 	
-	  
-	 void initTable() {
+	protected Canvas canvasMonitor(Composite container) {
+		final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+		
+		//****** CANVAS Monitor *********
+		Canvas canvasMonitor = new Canvas(container, SWT.BORDER);
+		canvasMonitor.setBounds(10, 515, 820, 305);
+		
+		CLabel lblCompilation = new CLabel(canvasMonitor, SWT.NONE);
+		lblCompilation.setText("Parameters");
+		lblCompilation.setBounds(5, 5, 70, 20);
+		
+		table_monitors = createTableEditorMonitors(canvasMonitor);
+		table_monitors.setBounds(10, 30, 800, 230);
+		table_monitors.setHeaderVisible(true);
+		table_monitors.setLinesVisible(true);
+		table_monitors.setLinesVisible(true);
+		initTableMonitor();
+		
+		CLabel lblVariables = new CLabel(canvasMonitor, SWT.NONE);
+		lblVariables.setBounds(10, 5, 100, 20);
+		lblVariables.setText("Monitors");
+		Button btnAddVariable = new Button(canvasMonitor, SWT.NONE);
+		btnAddVariable.addSelectionListener(new SelectionAdapter() {
+			 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem ti =  new TableItem(table_monitors, SWT.NONE);
+				ti.setText(new String[] {"monitor", "0"});
+				ti.setBackground(new Color(frame.getShell().getDisplay(), 100,255,100));
+				List<String> locs = new GamaList<String>(((ValidateText) textName).getLoc());
+				locs.add("monitor");
+				diagramEditor.getIdsEObjects().put(locs, eobject);
+				save("monitors");
+					 
+	        	  table_monitors.redraw();
+			}
+		});
+		btnAddVariable.setBounds(50, 275, 130, 20);
+		btnAddVariable.setText("Add monitor");
+		
+		Button btnDeleteVariable = new Button(canvasMonitor, SWT.NONE);
+		btnDeleteVariable.addSelectionListener(new SelectionAdapter() {
+			 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int[] indices = table_monitors.getSelectionIndices();
+				for (int i : indices) {
+					List<String> locs = new GamaList<String>(((ValidateText) textName).getLoc());
+					locs.add(table_monitors.getItem(i).getText(0));
+					diagramEditor.getIdsEObjects().remove(locs);
+				}
+				table_monitors.remove( indices);
+				save("monitors");
+				ModelGenerator.modelValidation(fp, diagram);
+				diagramEditor.updateEObjectErrors();
+				table_monitors.redraw();
+				
+			}
+		});
+		btnDeleteVariable.setBounds(220, 275, 130, 20);
+		btnDeleteVariable.setText("Delete monitor");
+		return canvasMonitor;
+	}
+	
+	void initTableParam() {
 		 for (EParameter var: ((EExperiment) eobject).getParameters()) {
 			TableItem ti =  new TableItem(table_params, SWT.NONE);
 			ti.setText(new String[] {var.getVariable(),var.getName(),var.getCategory(),var.getInit(),var.getMin(),var.getMax(), var.getStep(), var.getAmong()});
 		 }
+	  }
+	 void initTableMonitor() {
+		 for (EMonitor mon: ((EExperiment) eobject).getMonitors()) {
+				TableItem ti =  new TableItem(table_monitors, SWT.NONE);
+				ti.setText(new String[] {mon.getName(),mon.getValue()});
+			 }
 	  }
 		 
 		 /**
@@ -352,7 +424,6 @@ public class EditExperimentFrame extends EditFrame {
 				        	  	case 7: name = "among:"; break;
 		            		 } 
 		            		 String error =diagramEditor.containErrors(text.getLoc(), name, null);
-		            		 System.out.println("error = " + error);
 		            		 String textI = item.getText(i);
 		            		 if (error != null && !error.isEmpty()) {
 		            			 item.setBackground(i,new Color(text.getDisplay(), 255, 100, 100));
@@ -360,10 +431,7 @@ public class EditExperimentFrame extends EditFrame {
 		            			 item.setBackground(i,new Color(text.getDisplay(), 100, 255, 100));
 		            		 }
 		            	 }
-		            	  System.out.println("text.getBackground(): " + text.getBackground());
-		            	  System.out.println("item.getBackground() : " + item.getBackground());
-		  	            
-		            	 
+		            		 
 		              }
 		            });
 		          }
@@ -375,13 +443,109 @@ public class EditExperimentFrame extends EditFrame {
 		    return tableVars;
 		  }
 	 
-	
+	private Table createTableEditorMonitors(Composite container) {
+	    // Create the table
+		
+		final Table tableVars = new Table(container, SWT.SINGLE | SWT.FULL_SELECTION
+	        | SWT.HIDE_SELECTION);
+	    tableVars.setHeaderVisible(true);
+	    tableVars.setLinesVisible(true);
+	    
+	    tableVars.addListener(SWT.MeasureItem, new Listener() {
+	    	   public void handleEvent(Event event) {
+	    	      event.height = 20;
+	    	   }
+	    	});
+
+	    TableColumn tblclmnVar = new TableColumn(tableVars, SWT.NONE);
+	    tblclmnVar.setWidth(400);
+	    tblclmnVar.setText("text");
+		
+		TableColumn tblclmnText = new TableColumn(tableVars, SWT.NONE);
+		tblclmnText.setWidth(400);
+		tblclmnText.setText("value");
+		
+	    // Create an editor object to use for text editing
+	    final TableEditor editor = new TableEditor(tableVars);
+	    editor.horizontalAlignment = SWT.LEFT;
+	    editor.grabHorizontal = true;
+
+	    // Use a mouse listener, not a selection listener, since we're interested
+	    // in the selected column as well as row
+	    tableVars.addMouseListener(new MouseAdapter() {
+	      public void mouseDown(MouseEvent event) {
+	        // Dispose any existing editor
+	        Control old = editor.getEditor();
+	        if (old != null) old.dispose();
+
+	        // Determine where the mouse was clicked
+	        Point pt = new Point(event.x, event.y);
+
+	        // Determine which row was selected
+	        final TableItem item = tableVars.getItem(pt);
+	        if (item != null) {
+	          // Determine which column was selected
+	          int column = -1;
+	          for (int i = 0, n = tableVars.getColumnCount(); i < n; i++) {
+	            Rectangle rect = item.getBounds(i);
+	            if (rect.contains(pt)) {
+	              // This is the selected column
+	              column = i;
+	              break;
+	            }
+	          }
+	          	final GamaDiagramEditor diagramEditor = ((GamaDiagramEditor)fp.getDiagramTypeProvider().getDiagramEditor());
+	           
+	        	
+	            final ValidateText text = new ValidateText(tableVars, SWT.BORDER,diagram, fp,frame, diagramEditor, "", null,item.getText(0));
+	        	  text.setString(column == 0);
+	        	  item.setBackground(column, text.getBackground());
+	        	  	
+	            // Transfer any text from the cell to the Text control,
+	            // set the color to match this row, select the text,
+	            // and set focus to the control
+	            text.setText(item.getText(column));
+	        	text.setForeground(item.getForeground());
+	            text.selectAll();
+	            text.setFocus();
+
+	            // Recalculate the minimum width for the editor
+	            editor.minimumWidth = text.getBounds().width;
+
+	            // Set the control into the editor
+	            editor.setEditor(text, item, column);
+
+	            // Add a handler to transfer the text back to the cell
+	            // any time it's modified
+	            final int col = column;
+	            text.addModifyListener(new ModifyListener() {
+	              public void modifyText(ModifyEvent event) {
+	                // Set the text of the editor's control back into the cell
+	          
+	            	 item.setText(col, text.getText());
+	            	 save("monitors");
+	            	 text.applyModification();
+	            	 item.setBackground(col,text.getBackground());
+	            	 	            
+	            	 
+	              }
+	            });
+	          
+	        }else {
+	        	  tableVars.deselectAll();
+	        }
+	      }
+	    });
+	    return tableVars;
+	  }
+ 
+
 	/**
 	 * Return the initial size of the window.
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(840, 470);
+		return new Point(850, 800);
 	}
 
 	@Override
@@ -399,6 +563,13 @@ public class EditExperimentFrame extends EditFrame {
 	    	 			diagram.eResource().getContents().remove(par);
 	    	 			EcoreUtil.delete((EObject) par, true);
 	    	 		}
+	    	 		List<EMonitor> mons = new GamaList<EMonitor>();
+	    	 		mons.addAll(xp.getMonitors());
+	    	 		xp.getMonitors().clear();
+	    	 		for (EMonitor mon : mons) {
+	    	 			diagram.eResource().getContents().remove(mon);
+	    	 			EcoreUtil.delete((EObject) mon, true);
+	    	 		}
 	    	 		for (final TableItem item : table_params.getItems()) {
 	    	 			final EParameter par = gama.GamaFactory.eINSTANCE.createEParameter();
 	    	 			diagram.eResource().getContents().add(par);
@@ -412,7 +583,15 @@ public class EditExperimentFrame extends EditFrame {
 	    	 			par.setAmong(item.getText(7));
 	    	 			xp.getParameters().add(par);  	  
 	    	 		}
+	    	 		for (final TableItem item : table_monitors.getItems()) {
+	    	 			final EMonitor mon = gama.GamaFactory.eINSTANCE.createEMonitor();
+	    	 			diagram.eResource().getContents().add(mon);
+	    	 			mon.setName(item.getText(0));
+	    	 			mon.setValue(item.getText(1));
+	    	 			xp.getMonitors().add(mon);  	  
+	    	 		}
 	    	     }
+	    	     
 	    	  });
 		} 
 		

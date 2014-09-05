@@ -296,6 +296,15 @@ public interface GamaFactory extends EFactory {
 	EParameter createEParameter();
 
 	/**
+	 * Returns a new object of class '<em>EMonitor</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EMonitor</em>'.
+	 * @generated
+	 */
+	EMonitor createEMonitor();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

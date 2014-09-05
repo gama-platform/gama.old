@@ -97,6 +97,8 @@
         eType="#//EDisplayLink"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//EParameter"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="monitors" upperBound="-1"
+        eType="#//EMonitor"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGUIExperiment" eSuperTypes="#//EExperiment"/>
   <eClassifiers xsi:type="ecore:EClass" name="EBatchExperiment" eSuperTypes="#//EExperiment"/>
@@ -234,6 +236,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" unique="false"
         upperBound="3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="aspect" eType="#//EAspect"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="depth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="texture" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGridTopology" eSuperTypes="#//ETopology">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -271,5 +275,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="among" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EMonitor" eSuperTypes="#//EGamaObject">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

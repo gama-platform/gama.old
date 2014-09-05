@@ -19,6 +19,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.EExperiment#getExperimentLink <em>Experiment Link</em>}</li>
  *   <li>{@link gama.EExperiment#getDisplayLinks <em>Display Links</em>}</li>
  *   <li>{@link gama.EExperiment#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link gama.EExperiment#getMonitors <em>Monitors</em>}</li>
  * </ul>
  * </p>
  *
@@ -84,5 +85,21 @@ public interface EExperiment extends EGamaObject {
 	 * @generated
 	 */
 	EList<EParameter> getParameters();
+
+	/**
+	 * Returns the value of the '<em><b>Monitors</b></em>' reference list.
+	 * The list contents are of type {@link gama.EMonitor}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Monitors</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Monitors</em>' reference list.
+	 * @see gama.GamaPackage#getEExperiment_Monitors()
+	 * @model
+	 * @generated
+	 */
+	EList<EMonitor> getMonitors();
 
 } // EExperiment

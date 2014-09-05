@@ -28,6 +28,7 @@ import gama.EGridTopology;
 import gama.EInheritLink;
 import gama.ELayer;
 import gama.ELayerAspect;
+import gama.EMonitor;
 import gama.EParameter;
 import gama.EReflex;
 import gama.EReflexLink;
@@ -262,6 +263,13 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	private EClass eParameterEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eMonitorEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -880,6 +888,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EReference getEExperiment_Parameters() {
 		return (EReference)eExperimentEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperiment_Monitors() {
+		return (EReference)eExperimentEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1841,6 +1858,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getELayerAspect_Depth() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(21);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Texture() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(22);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEGridTopology() {
 		return eGridTopologyEClass;
 	}
@@ -2084,6 +2119,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getEMonitor() {
+		return eMonitorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEMonitor_Value() {
+		return (EAttribute)eMonitorEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public GamaFactory getGamaFactory() {
 		return (GamaFactory)getEFactoryInstance();
 	}
@@ -2175,6 +2228,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEReference(eExperimentEClass, EEXPERIMENT__EXPERIMENT_LINK);
 		createEReference(eExperimentEClass, EEXPERIMENT__DISPLAY_LINKS);
 		createEReference(eExperimentEClass, EEXPERIMENT__PARAMETERS);
+		createEReference(eExperimentEClass, EEXPERIMENT__MONITORS);
 
 		eguiExperimentEClass = createEClass(EGUI_EXPERIMENT);
 
@@ -2296,6 +2350,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__IMAGE_SIZE);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__COLOR_RBG);
 		createEReference(eLayerAspectEClass, ELAYER_ASPECT__ASPECT);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__DEPTH);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__TEXTURE);
 
 		eGridTopologyEClass = createEClass(EGRID_TOPOLOGY);
 		createEAttribute(eGridTopologyEClass, EGRID_TOPOLOGY__NB_COLUMNS);
@@ -2331,6 +2387,9 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eParameterEClass, EPARAMETER__MAX);
 		createEAttribute(eParameterEClass, EPARAMETER__AMONG);
 		createEAttribute(eParameterEClass, EPARAMETER__CATEGORY);
+
+		eMonitorEClass = createEClass(EMONITOR);
+		createEAttribute(eMonitorEClass, EMONITOR__VALUE);
 	}
 
 	/**
@@ -2387,6 +2446,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGraphLinkEClass.getESuperTypes().add(this.getEGamaLink());
 		eChartLayerEClass.getESuperTypes().add(this.getEGamaObject());
 		eParameterEClass.getESuperTypes().add(this.getEGamaObject());
+		eMonitorEClass.getESuperTypes().add(this.getEGamaObject());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(eGamaModelEClass, EGamaModel.class, "EGamaModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2457,6 +2517,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEReference(getEExperiment_ExperimentLink(), this.getEExperimentLink(), null, "experimentLink", null, 0, 1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEExperiment_DisplayLinks(), this.getEDisplayLink(), null, "displayLinks", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEExperiment_Parameters(), this.getEParameter(), null, "parameters", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEExperiment_Monitors(), this.getEMonitor(), null, "monitors", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eguiExperimentEClass, EGUIExperiment.class, "EGUIExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2578,6 +2639,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayerAspect_ImageSize(), ecorePackage.getEString(), "imageSize", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getELayerAspect_Aspect(), this.getEAspect(), null, "aspect", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Depth(), ecorePackage.getEString(), "depth", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Texture(), ecorePackage.getEString(), "texture", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGridTopologyEClass, EGridTopology.class, "EGridTopology", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGridTopology_Nb_columns(), ecorePackage.getEString(), "nb_columns", "100", 0, 1, EGridTopology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2613,6 +2676,9 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEParameter_Max(), ecorePackage.getEString(), "max", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEParameter_Among(), ecorePackage.getEString(), "among", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEParameter_Category(), ecorePackage.getEString(), "category", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eMonitorEClass, EMonitor.class, "EMonitor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEMonitor_Value(), ecorePackage.getEString(), "value", null, 0, 1, EMonitor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

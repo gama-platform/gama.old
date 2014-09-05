@@ -7,6 +7,8 @@ import gama.EExperiment;
 import gama.EGamaObject;
 import gama.ELayer;
 import gama.ELayerAspect;
+import gama.EMonitor;
+import gama.EParameter;
 import gama.EReflex;
 import gama.ESpecies;
 import gama.EVariable;
@@ -355,7 +357,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
 			GamaList<String> ids = new GamaList<String>();
 			String fist_obj = buildLocation(toto,ids);
-			//System.out.println("location of error: " + ids);
+			System.out.println("location of error: " + ids);
 			while (!ids.isEmpty()) {
 				//System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
 				if (!idsEObjects.getKeys().contains(ids)) {
@@ -386,7 +388,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	public String buildLocation(EObject toto, List<String> ids) {
 		String fist_obj = null;
 		do {
-			//System.out.println("toto: " + toto);
+			System.out.println("toto: " + toto);
 			if (toto instanceof S_ReflexImpl) {
 				S_ReflexImpl vv = (S_ReflexImpl) toto;
 				if (vv.getName() != null)
@@ -432,9 +434,9 @@ public class GamaDiagramEditor extends DiagramEditor implements
 			}
 		} else if (toto instanceof BlockImpl) {
 				BlockImpl vv = (BlockImpl) toto;
-				//System.out.println("block:" + vv );
-				//System.out.println("block getFunction:" + vv.getFunction() );
-				//System.out.println("block getStatements:" + vv.getStatements() );
+				/*System.out.println("block:" + vv );
+				System.out.println("block getFunction:" + vv.getFunction() );
+				System.out.println("block getStatements:" + vv.getStatements() );*/
 				if (vv.getStatements() != null) {
 					for (Statement st : vv.getStatements()) {
 						if (st != null && st.getKey() != null && st.getKey().equals("parameter")) {
@@ -590,7 +592,16 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 	public void addEOject(final EObject obj){
 		List<String> ids = computeIds(obj);
-		idsEObjects.put(ids, obj instanceof EVariable ?((EVariable) obj).eContainer() :obj);
+		if (obj instanceof EVariable || obj instanceof EParameter || obj instanceof EMonitor) {
+			idsEObjects.put(ids, ((EVariable) obj).eContainer());
+		} else if (obj instanceof EParameter) {
+			idsEObjects.put(ids, ((EParameter) obj).eContainer());
+		} else if (obj instanceof EMonitor) {
+			idsEObjects.put(ids, ((EMonitor) obj).eContainer());
+		}
+		else 
+			idsEObjects.put(ids,obj);
+		
 		//System.out.println("add object: " + obj + " ids: " + ids + " idsEObjects: " + idsEObjects.keySet());
 	}
 	
@@ -683,6 +694,13 @@ public class GamaDiagramEditor extends DiagramEditor implements
 				} else if (bo instanceof EDisplay) {
 					for (ELayer lay: ((EDisplay) bo).getLayers()) {
 						addEOject((EObject) bo, lay.getType());
+					}
+				} else if (bo instanceof EExperiment) {
+					for (EParameter v : ((EExperiment) bo).getParameters()) {
+						addEOject(v);
+					}
+					for (EMonitor v : ((EExperiment) bo).getMonitors()) {
+						addEOject(v);
 					}
 				}
 			}

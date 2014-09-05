@@ -9,6 +9,7 @@ package gama.impl;
 import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
+import gama.EMonitor;
 import gama.EParameter;
 import gama.GamaPackage;
 
@@ -35,6 +36,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link gama.impl.EExperimentImpl#getExperimentLink <em>Experiment Link</em>}</li>
  *   <li>{@link gama.impl.EExperimentImpl#getDisplayLinks <em>Display Links</em>}</li>
  *   <li>{@link gama.impl.EExperimentImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link gama.impl.EExperimentImpl#getMonitors <em>Monitors</em>}</li>
  * </ul>
  * </p>
  *
@@ -70,6 +72,16 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	 * @ordered
 	 */
 	protected EList<EParameter> parameters;
+
+	/**
+	 * The cached value of the '{@link #getMonitors() <em>Monitors</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMonitors()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<EMonitor> monitors;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -157,6 +169,18 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<EMonitor> getMonitors() {
+		if (monitors == null) {
+			monitors = new EObjectResolvingEList<EMonitor>(EMonitor.class, this, GamaPackage.EEXPERIMENT__MONITORS);
+		}
+		return monitors;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -167,6 +191,8 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 				return getDisplayLinks();
 			case GamaPackage.EEXPERIMENT__PARAMETERS:
 				return getParameters();
+			case GamaPackage.EEXPERIMENT__MONITORS:
+				return getMonitors();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -191,6 +217,10 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends EParameter>)newValue);
 				return;
+			case GamaPackage.EEXPERIMENT__MONITORS:
+				getMonitors().clear();
+				getMonitors().addAll((Collection<? extends EMonitor>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -212,6 +242,9 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 			case GamaPackage.EEXPERIMENT__PARAMETERS:
 				getParameters().clear();
 				return;
+			case GamaPackage.EEXPERIMENT__MONITORS:
+				getMonitors().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -230,6 +263,8 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 				return displayLinks != null && !displayLinks.isEmpty();
 			case GamaPackage.EEXPERIMENT__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
+			case GamaPackage.EEXPERIMENT__MONITORS:
+				return monitors != null && !monitors.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

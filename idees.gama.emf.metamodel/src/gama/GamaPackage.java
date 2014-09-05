@@ -904,13 +904,22 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT__PARAMETERS = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Monitors</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT__MONITORS = EGAMA_OBJECT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>EExperiment</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 3;
+	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -993,6 +1002,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGUI_EXPERIMENT__PARAMETERS = EEXPERIMENT__PARAMETERS;
+
+	/**
+	 * The feature id for the '<em><b>Monitors</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGUI_EXPERIMENT__MONITORS = EEXPERIMENT__MONITORS;
 
 	/**
 	 * The number of structural features of the '<em>EGUI Experiment</em>' class.
@@ -1084,6 +1102,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EBATCH_EXPERIMENT__PARAMETERS = EEXPERIMENT__PARAMETERS;
+
+	/**
+	 * The feature id for the '<em><b>Monitors</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EBATCH_EXPERIMENT__MONITORS = EEXPERIMENT__MONITORS;
 
 	/**
 	 * The number of structural features of the '<em>EBatch Experiment</em>' class.
@@ -2927,13 +2954,31 @@ public interface GamaPackage extends EPackage {
 	int ELAYER_ASPECT__ASPECT = EGAMA_OBJECT_FEATURE_COUNT + 20;
 
 	/**
+	 * The feature id for the '<em><b>Depth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__DEPTH = EGAMA_OBJECT_FEATURE_COUNT + 21;
+
+	/**
+	 * The feature id for the '<em><b>Texture</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__TEXTURE = EGAMA_OBJECT_FEATURE_COUNT + 22;
+
+	/**
 	 * The number of structural features of the '<em>ELayer Aspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_ASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 21;
+	int ELAYER_ASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 23;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGridTopologyImpl <em>EGrid Topology</em>}' class.
@@ -3535,6 +3580,80 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EPARAMETER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 7;
+
+
+	/**
+	 * The meta object id for the '{@link gama.impl.EMonitorImpl <em>EMonitor</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EMonitorImpl
+	 * @see gama.impl.GamaPackageImpl#getEMonitor()
+	 * @generated
+	 */
+	int EMONITOR = 30;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__NAME = EGAMA_OBJECT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
+	 * The feature id for the '<em><b>Has Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__HAS_ERROR = EGAMA_OBJECT__HAS_ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__ERROR = EGAMA_OBJECT__ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR__VALUE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>EMonitor</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMONITOR_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 
 	/**
@@ -4211,6 +4330,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEExperiment_Parameters();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.EExperiment#getMonitors <em>Monitors</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Monitors</em>'.
+	 * @see gama.EExperiment#getMonitors()
+	 * @see #getEExperiment()
+	 * @generated
+	 */
+	EReference getEExperiment_Monitors();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EGUIExperiment <em>EGUI Experiment</em>}'.
@@ -5364,6 +5494,28 @@ public interface GamaPackage extends EPackage {
 	EReference getELayerAspect_Aspect();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getDepth <em>Depth</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Depth</em>'.
+	 * @see gama.ELayerAspect#getDepth()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Depth();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getTexture <em>Texture</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Texture</em>'.
+	 * @see gama.ELayerAspect#getTexture()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Texture();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGridTopology <em>EGrid Topology</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5651,6 +5803,27 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getEParameter_Category();
+
+	/**
+	 * Returns the meta object for class '{@link gama.EMonitor <em>EMonitor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EMonitor</em>'.
+	 * @see gama.EMonitor
+	 * @generated
+	 */
+	EClass getEMonitor();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EMonitor#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see gama.EMonitor#getValue()
+	 * @see #getEMonitor()
+	 * @generated
+	 */
+	EAttribute getEMonitor_Value();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -6183,6 +6356,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference EEXPERIMENT__PARAMETERS = eINSTANCE.getEExperiment_Parameters();
+
+		/**
+		 * The meta object literal for the '<em><b>Monitors</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT__MONITORS = eINSTANCE.getEExperiment_Monitors();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -7063,6 +7244,22 @@ public interface GamaPackage extends EPackage {
 		EReference ELAYER_ASPECT__ASPECT = eINSTANCE.getELayerAspect_Aspect();
 
 		/**
+		 * The meta object literal for the '<em><b>Depth</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__DEPTH = eINSTANCE.getELayerAspect_Depth();
+
+		/**
+		 * The meta object literal for the '<em><b>Texture</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__TEXTURE = eINSTANCE.getELayerAspect_Texture();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EGridTopologyImpl <em>EGrid Topology</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7293,6 +7490,24 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EPARAMETER__CATEGORY = eINSTANCE.getEParameter_Category();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EMonitorImpl <em>EMonitor</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EMonitorImpl
+		 * @see gama.impl.GamaPackageImpl#getEMonitor()
+		 * @generated
+		 */
+		EClass EMONITOR = eINSTANCE.getEMonitor();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EMONITOR__VALUE = eINSTANCE.getEMonitor_Value();
 
 	}
 

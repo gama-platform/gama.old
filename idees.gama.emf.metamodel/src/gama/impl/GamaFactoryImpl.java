@@ -90,6 +90,7 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 			case GamaPackage.EGRAPH_LINK: return createEGraphLink();
 			case GamaPackage.ECHART_LAYER: return createEChartLayer();
 			case GamaPackage.EPARAMETER: return createEParameter();
+			case GamaPackage.EMONITOR: return createEMonitor();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -393,6 +394,16 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 	public EParameter createEParameter() {
 		EParameterImpl eParameter = new EParameterImpl();
 		return eParameter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EMonitor createEMonitor() {
+		EMonitorImpl eMonitor = new EMonitorImpl();
+		return eMonitor;
 	}
 
 	/**

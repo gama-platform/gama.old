@@ -14,6 +14,7 @@ import gama.EGridTopology;
 import gama.EInheritLink;
 import gama.ELayer;
 import gama.ELayerAspect;
+import gama.EMonitor;
 import gama.EParameter;
 import gama.EReflexLink;
 import gama.ESpecies;
@@ -427,6 +428,9 @@ public class ModelGenerator {
 			}
 
 			model += "\toutput{";
+			for (EMonitor mon : exp.getMonitors()) {
+				model += defineMonitor(mon);
+			}
 			for (EDisplayLink link : exp.getDisplayLinks()) {
 				model += defineDisplay(link);
 			}
@@ -454,6 +458,17 @@ public class ModelGenerator {
 			parStr += " max:" + par.getMax();
 		if (par.getStep() != null && !par.getStep().isEmpty())
 			parStr += " step:" + par.getStep();
+		parStr += ";" + EL;
+		return parStr;
+	}
+	
+	static String defineMonitor(EMonitor mon) {
+		if (mon == null)
+			return "";
+		String parStr = "\t\tmonitor ";
+		parStr += "\"" + mon.getName() + "\"";
+		if (mon.getValue() != null && !mon.getValue().isEmpty())
+			parStr += " value:" + mon.getValue();
 		parStr += ";" + EL;
 		return parStr;
 	}
@@ -651,10 +666,10 @@ public class ModelGenerator {
 			}
 			for (String reflex : reflexes) {
 				if (reflexMap.containsKey(reflex))
-					model += defineReflex(reflexMap.get(reflex), level + 1);
+					model += defineReflex(reflexMap.get(reflex), level);
 			}
 			for (EAspectLink link : worldAgent.getAspectLinks()) {
-				model += defineAspect(link, level + 1);
+				model += defineAspect(link, level);
 			}
 			model += defineInit(worldAgent, 1);
 			model += "}";

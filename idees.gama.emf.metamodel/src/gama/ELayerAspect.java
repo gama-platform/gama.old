@@ -37,6 +37,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ELayerAspect#getImageSize <em>Image Size</em>}</li>
  *   <li>{@link gama.ELayerAspect#getColorRBG <em>Color RBG</em>}</li>
  *   <li>{@link gama.ELayerAspect#getAspect <em>Aspect</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getDepth <em>Depth</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getTexture <em>Texture</em>}</li>
  * </ul>
  * </p>
  *
@@ -580,5 +582,57 @@ public interface ELayerAspect extends EGamaObject {
 	 * @generated
 	 */
 	void setAspect(EAspect value);
+
+	/**
+	 * Returns the value of the '<em><b>Depth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Depth</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Depth</em>' attribute.
+	 * @see #setDepth(String)
+	 * @see gama.GamaPackage#getELayerAspect_Depth()
+	 * @model
+	 * @generated
+	 */
+	String getDepth();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getDepth <em>Depth</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Depth</em>' attribute.
+	 * @see #getDepth()
+	 * @generated
+	 */
+	void setDepth(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Texture</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Texture</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Texture</em>' attribute.
+	 * @see #setTexture(String)
+	 * @see gama.GamaPackage#getELayerAspect_Texture()
+	 * @model
+	 * @generated
+	 */
+	String getTexture();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getTexture <em>Texture</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Texture</em>' attribute.
+	 * @see #getTexture()
+	 * @generated
+	 */
+	void setTexture(String value);
 
 } // ELayerAspect

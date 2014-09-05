@@ -51,6 +51,8 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  *   <li>{@link gama.impl.ELayerAspectImpl#getImageSize <em>Image Size</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getColorRBG <em>Color RBG</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getAspect <em>Aspect</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getDepth <em>Depth</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getTexture <em>Texture</em>}</li>
  * </ul>
  * </p>
  *
@@ -456,6 +458,46 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	 * @ordered
 	 */
 	protected EAspect aspect;
+
+	/**
+	 * The default value of the '{@link #getDepth() <em>Depth</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDepth()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DEPTH_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDepth() <em>Depth</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDepth()
+	 * @generated
+	 * @ordered
+	 */
+	protected String depth = DEPTH_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTexture() <em>Texture</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTexture()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TEXTURE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTexture() <em>Texture</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTexture()
+	 * @generated
+	 * @ordered
+	 */
+	protected String texture = TEXTURE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -930,6 +972,48 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getDepth() {
+		return depth;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDepth(String newDepth) {
+		String oldDepth = depth;
+		depth = newDepth;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__DEPTH, oldDepth, depth));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getTexture() {
+		return texture;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTexture(String newTexture) {
+		String oldTexture = texture;
+		texture = newTexture;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__TEXTURE, oldTexture, texture));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -976,6 +1060,10 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__ASPECT:
 				if (resolve) return getAspect();
 				return basicGetAspect();
+			case GamaPackage.ELAYER_ASPECT__DEPTH:
+				return getDepth();
+			case GamaPackage.ELAYER_ASPECT__TEXTURE:
+				return getTexture();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1053,6 +1141,12 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__ASPECT:
 				setAspect((EAspect)newValue);
 				return;
+			case GamaPackage.ELAYER_ASPECT__DEPTH:
+				setDepth((String)newValue);
+				return;
+			case GamaPackage.ELAYER_ASPECT__TEXTURE:
+				setTexture((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1128,6 +1222,12 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__ASPECT:
 				setAspect((EAspect)null);
 				return;
+			case GamaPackage.ELAYER_ASPECT__DEPTH:
+				setDepth(DEPTH_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER_ASPECT__TEXTURE:
+				setTexture(TEXTURE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1182,6 +1282,10 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 				return colorRBG != null && !colorRBG.isEmpty();
 			case GamaPackage.ELAYER_ASPECT__ASPECT:
 				return aspect != null;
+			case GamaPackage.ELAYER_ASPECT__DEPTH:
+				return DEPTH_EDEFAULT == null ? depth != null : !DEPTH_EDEFAULT.equals(depth);
+			case GamaPackage.ELAYER_ASPECT__TEXTURE:
+				return TEXTURE_EDEFAULT == null ? texture != null : !TEXTURE_EDEFAULT.equals(texture);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1236,6 +1340,10 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 		result.append(imageSize);
 		result.append(", colorRBG: ");
 		result.append(colorRBG);
+		result.append(", depth: ");
+		result.append(depth);
+		result.append(", texture: ");
+		result.append(texture);
 		result.append(')');
 		return result.toString();
 	}

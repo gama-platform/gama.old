@@ -283,6 +283,13 @@ public class GamaSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case GamaPackage.EMONITOR: {
+				EMonitor eMonitor = (EMonitor)theEObject;
+				T result = caseEMonitor(eMonitor);
+				if (result == null) result = caseEGamaObject(eMonitor);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -734,6 +741,21 @@ public class GamaSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseEParameter(EParameter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>EMonitor</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>EMonitor</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEMonitor(EMonitor object) {
 		return null;
 	}
 
