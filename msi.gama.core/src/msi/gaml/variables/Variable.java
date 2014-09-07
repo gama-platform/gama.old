@@ -498,6 +498,22 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	/**
+	 * Method isDefined()
+	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
+	 */
+	@Override
+	public boolean isDefined() {
+		return true;
+	}
+
+	/**
+	 * Method setDefined()
+	 * @see msi.gama.kernel.experiment.IParameter#setDefined(boolean)
+	 */
+	@Override
+	public void setDefined(final boolean b) {}
+
+	/**
 	 * Method getContentType()
 	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
 	 */

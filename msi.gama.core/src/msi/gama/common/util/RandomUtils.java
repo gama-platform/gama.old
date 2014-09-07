@@ -20,11 +20,13 @@ import org.uncommons.maths.random.*;
 public class RandomUtils implements SeedGenerator {
 
 	/** The seed. */
-	private Long seed = null;
+	protected Double seed;
+
+	// private Double seed = null;
 	private static final SecureRandom SEED_SOURCE = new SecureRandom();
 
 	/** The generator name. */
-	private String generatorName = GamaPreferences.CORE_RNG.getValue();
+	private String generatorName;
 
 	/** The generator. */
 	private Random generator;
@@ -33,7 +35,14 @@ public class RandomUtils implements SeedGenerator {
 	public RandomUtils(final Double seed, final String rng) {
 		setSeed(seed, false);
 		setGenerator(rng, true);
+	}
 
+	public RandomUtils(final String rng) {
+		this(GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null, rng);
+	}
+
+	public RandomUtils() {
+		this(GamaPreferences.CORE_RNG.getValue());
 	}
 
 	/**
@@ -46,7 +55,8 @@ public class RandomUtils implements SeedGenerator {
 			generator = new XORShiftRNG(this);
 		} else if ( generatorName.equals(IKeyword.JAVA) ) {
 			generator = new JavaRNG(this);
-		} else if ( generatorName.equals(IKeyword.MERSENNE) ) {
+		} else {
+			/* By default */
 			generator = new MersenneTwisterRNG(this);
 		}
 		uniform = createUniform(0., 1.);
@@ -111,8 +121,18 @@ public class RandomUtils implements SeedGenerator {
 		return new PoissonGenerator(mean, generator);
 	}
 
-	private static byte[] createSeed(final Long seed, final int length) {
-		long l = seed;
+	private byte[] createSeed(final Double seed, final int length) {
+		this.seed = seed;
+		Double realSeed = seed;
+		if ( realSeed < 0 ) {
+			realSeed *= -1;
+		}
+		if ( realSeed < 1 ) {
+			realSeed *= Long.MAX_VALUE;
+		}
+		long l = realSeed.longValue();
+		System.out.println("Initial seed: " + seed + "; normalized seed: " + l);
+
 		final byte[] result = new byte[length];
 		switch (length) {
 			case 4:
@@ -145,12 +165,15 @@ public class RandomUtils implements SeedGenerator {
 	@Override
 	public byte[] generateSeed(final int length) {
 		byte[] result;
-		if ( seed == null ) { return SEED_SOURCE.generateSeed(length); }
 		return createSeed(seed, length);
 	}
 
 	public void setSeed(final Double newSeed, final boolean init) {
-		seed = newSeed == null ? null : Math.round(newSeed);
+		seed = newSeed;
+		if ( seed == null ) {
+			seed = SEED_SOURCE.nextDouble();
+			// byte[] s = SEED_SOURCE.generateSeed(length);
+		}
 		if ( init ) {
 			initGenerator();
 		}
@@ -289,8 +312,15 @@ public class RandomUtils implements SeedGenerator {
 	/**
 	 * @return
 	 */
-	public Long getSeed() {
+	public Double getSeed() {
 		return seed;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getRngName() {
+		return generatorName;
 	}
 
 }

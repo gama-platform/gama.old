@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'FloatEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'FloatEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -51,10 +51,15 @@ public class FloatEditor extends NumberEditor {
 	@Override
 	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		Double i = Cast.as(val, Double.class);
-		if ( minValue != null && i < minValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
-			" should be greater than " + minValue); }
-		if ( maxValue != null && i > maxValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
-			" should be smaller than " + maxValue); }
+		if ( acceptNull && val == null ) {
+			i = null;
+		} else {
+
+			if ( minValue != null && i < minValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
+				" should be greater than " + minValue); }
+			if ( maxValue != null && i > maxValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
+				" should be smaller than " + maxValue); }
+		}
 		currentValue = i;
 		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
 		if ( !internalModification ) {

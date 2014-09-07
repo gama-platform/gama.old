@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Random.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Random.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -10,9 +10,6 @@
  * 
  **********************************************************************************************/
 package msi.gaml.operators;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
@@ -38,20 +35,31 @@ import org.uncommons.maths.number.NumberGenerator;
 public class Random {
 
 	public static RandomUtils RANDOM(final IScope scope) {
-		return scope.getRandom();
+		RandomUtils r = scope.getRandom();
+		if ( r == null ) {
+			r = new RandomUtils();
+		}
+		return r;
 	}
 
 	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM })
-	@doc(value = "A random value from a normally distributed random variable in the interval ]mean - standardDeviation; mean + standardDeviation[.", usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}") }, examples = { @example(value = "truncated_gauss ({0, 0.3})", equals = "an float between -0.3 and 0.3", test = false) }, see = { "gauss" })
-	public static Double opTGauss(final IScope scope, final GamaPoint p) {
+	@doc(value = "A random value from a normally distributed random variable in the interval ]mean - standardDeviation; mean + standardDeviation[.",
+		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}") },
+		examples = { @example(value = "truncated_gauss ({0, 0.3})",
+			equals = "an float between -0.3 and 0.3",
+			test = false) }, see = { "gauss" })
+	public static
+		Double opTGauss(final IScope scope, final GamaPoint p) {
 		return opTGauss(scope, GamaList.with(p.x, p.y));
 	}
 
 	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM })
 	@doc(usages = {
 		@usage(value = "if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]"),
-		@usage(value = "when truncated_gauss is called with a list of only one element mean, it will always return 0.0") }, examples = { @example(value = "truncated_gauss ([0.5, 0.0])", equals = "0.5") })
-	public static Double opTGauss(final IScope scope, final IList list) {
+		@usage(value = "when truncated_gauss is called with a list of only one element mean, it will always return 0.0") },
+		examples = { @example(value = "truncated_gauss ([0.5, 0.0])", equals = "0.5") })
+	public static
+		Double opTGauss(final IScope scope, final IList list) {
 		if ( list.size() < 2 ) { return 0d; }
 		final double mean = Cast.asFloat(scope, list.get(0));
 		final double range = Cast.asFloat(scope, list.get(1));
@@ -76,38 +84,48 @@ public class Random {
 	}
 
 	@operator(value = "gauss", category = { IOperatorCategory.RANDOM })
-	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", usages = {
-		@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
-		@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
-		@example(value = "gauss({0,0.3})", equals = "0.22354", test = false),
-		@example(value = "gauss({0,0.3})", equals = "-0.1357", test = false) }, see = { "truncated_gauss", "poisson" })
-	public static Double opGauss(final IScope scope, final GamaPoint point) {
+	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.",
+		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
+			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") },
+		examples = { @example(value = "gauss({0,0.3})", equals = "0.22354", test = false),
+			@example(value = "gauss({0,0.3})", equals = "-0.1357", test = false) },
+		see = { "truncated_gauss", "poisson" })
+	public static
+		Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
 		return RANDOM(scope).createGaussian(mean, sd).nextValue();
 	}
 
 	@operator(value = "gauss", category = { IOperatorCategory.RANDOM })
-	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", usages = {
-		@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
-		@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
-		@example(value = "gauss(0,0.3)", equals = "0.22354", test = false),
-		@example(value = "gauss(0,0.3)", equals = "-0.1357", test = false) }, see = { "truncated_gauss", "poisson" })
-	public static Double opGauss(final IScope scope, final double mean, final double sd) {
+	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.",
+		usages = { @usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
+			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") },
+		examples = { @example(value = "gauss(0,0.3)", equals = "0.22354", test = false),
+			@example(value = "gauss(0,0.3)", equals = "-0.1357", test = false) },
+		see = { "truncated_gauss", "poisson" })
+	public static
+		Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd).nextValue();
 	}
 
 	@operator(value = "poisson", category = { IOperatorCategory.RANDOM })
-	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).", comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.", examples = { @example(value = "poisson(3.5)", equals = "a random positive integer", test = false) }, see = {
-		"binomial", "gauss" })
-	public static Integer opPoisson(final IScope scope, final Double mean) {
+	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).",
+		comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.",
+		examples = { @example(value = "poisson(3.5)", equals = "a random positive integer", test = false) },
+		see = { "binomial", "gauss" })
+	public static
+		Integer opPoisson(final IScope scope, final Double mean) {
 		return RANDOM(scope).createPoisson(mean).nextValue();
 	}
 
 	@operator(value = "binomial", category = { IOperatorCategory.RANDOM })
-	@doc(value = "A value from a random variable following a binomial distribution. The operand {n,p} represents the number of experiments n and the success probability p.", comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.", examples = { @example(value = "binomial({15,0.6})", equals = "a random positive integer", test = false) }, see = {
-		"poisson", "gauss" })
-	public static Integer opBinomial(final IScope scope, final GamaPoint point) {
+	@doc(value = "A value from a random variable following a binomial distribution. The operand {n,p} represents the number of experiments n and the success probability p.",
+		comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.",
+		examples = { @example(value = "binomial({15,0.6})", equals = "a random positive integer", test = false) },
+		see = { "poisson", "gauss" })
+	public static
+		Integer opBinomial(final IScope scope, final GamaPoint point) {
 		final int n = (int) point.x;
 		final double p = point.y;
 		return RANDOM(scope).createBinomial(n, p).nextValue();
@@ -115,7 +133,10 @@ public class Random {
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
 		IOperatorCategory.RANDOM, IOperatorCategory.CONTAINER })
-	@doc(value = "The elements of the operand in random order.", usages = { @usage(value = "if the operand is empty, returns an empty list (or string, matrix)") }, examples = { @example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) }, see = { "reverse" })
+	@doc(value = "The elements of the operand in random order.",
+		usages = { @usage(value = "if the operand is empty, returns an empty list (or string, matrix)") },
+		examples = { @example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) },
+		see = { "reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if ( target == null || target.isEmpty(scope) ) { return new GamaList(); }
 		final IList list = (IList) target.listValue(scope, Types.NO_TYPE).copy(scope);
@@ -132,7 +153,9 @@ public class Random {
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
 		IOperatorCategory.RANDOM, IOperatorCategory.MATRIX })
-	@doc(examples = { @example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)", test = false) })
+	@doc(examples = { @example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
+		equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)",
+		test = false) })
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
 		final IMatrix matrix2 = target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
@@ -147,80 +170,98 @@ public class Random {
 	}
 
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
-	@doc(value = "a random integer in the interval [0, operand]", masterDoc = true, comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision", usages = {}, examples = {
-		@example(value = "rnd (2)", equals = "0, 1 or 2", test = false),
-		@example(value = "rnd (1000) / 1000", returnType = IKeyword.FLOAT, equals = "a float between 0 and 1 with a precision of 0.001", test = false) }, see = { "flip" })
-	public static Integer opRnd(final IScope scope, final Integer max) {
+	@doc(value = "a random integer in the interval [0, operand]",
+		masterDoc = true,
+		comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision",
+		usages = {},
+		examples = {
+			@example(value = "rnd (2)", equals = "0, 1 or 2", test = false),
+			@example(value = "rnd (1000) / 1000",
+				returnType = IKeyword.FLOAT,
+				equals = "a float between 0 and 1 with a precision of 0.001",
+				test = false) },
+		see = { "flip" })
+	public static
+		Integer opRnd(final IScope scope, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(0, max);
 	}
 
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
-	@doc(usages = { @usage(value = "if the operand is a float, it is casted to an int before being evaluated") }, examples = { @example(value = "rnd (2.5)", equals = "0, 1 or 2", test = false) })
+	@doc(usages = { @usage(value = "if the operand is a float, it is casted to an int before being evaluated") },
+		examples = { @example(value = "rnd (2.5)", equals = "0, 1 or 2", test = false) })
 	public static Integer opRnd(final IScope scope, final Double max) {
 		return RANDOM(scope).between(0, max.intValue());
 	}
 
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
-	@doc(usages = { @usage(value = "if the operand is a point, returns a point with two random integers in the interval [0, operand]") }, examples = { @example(value = "rnd ({2.5,3})", equals = "{x,y} with x in [0,2] and y in [0,3]", test = false) })
-	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
+	@doc(usages = { @usage(value = "if the operand is a point, returns a point with two random integers in the interval [0, operand]") },
+		examples = { @example(value = "rnd ({2.5,3})", equals = "{x,y} with x in [0,2] and y in [0,3]", test = false) })
+	public static
+		ILocation opRnd(final IScope scope, final GamaPoint max) {
 		final Integer x = RANDOM(scope).between(0, (int) max.x);
 		final Integer y = RANDOM(scope).between(0, (int) max.y);
 		return new GamaPoint(x, y);
 	}
-	
-	@operator(value="rnd_float")
-	@doc(value = "returns an uniformly distributed double random number in ]0.0, to[", examples = { @example(value = "rnd_float(3.4)", equals = "a random float between 0.0 and 3.4", test = false) }, see = { "rnd" })	
-	public static Double opRndFloat(final IScope scope, final Double max){
+
+	@operator(value = "rnd_float")
+	@doc(value = "returns an uniformly distributed double random number in ]0.0, to[",
+		examples = { @example(value = "rnd_float(3.4)", equals = "a random float between 0.0 and 3.4", test = false) },
+		see = { "rnd" })
+	public static Double opRndFloat(final IScope scope, final Double max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(0.0, max);
 	}
 
-	@operator(value="rnd_float")
-	@doc(examples = { @example(value = "rnd_float(3)", equals = "a random float between 0.0 and 3.0", test = false) }, see = { "rnd" })	
-	public static Double opRndFloat(final IScope scope, final Integer max){
+	@operator(value = "rnd_float")
+	@doc(examples = { @example(value = "rnd_float(3)", equals = "a random float between 0.0 and 3.0", test = false) },
+		see = { "rnd" })
+	public static Double opRndFloat(final IScope scope, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(0.0, max);
 	}
-	
+
 	@operator(value = "flip", category = { IOperatorCategory.RANDOM })
-	@doc(value = "true or false given the probability represented by the operand", usages = { @usage(value = "flip 0 always returns false, flip 1 true") }, examples = { @example(value = "flip (0.66666)", equals = "2/3 chances to return true.", test = false) }, see = { "rnd" })
+	@doc(value = "true or false given the probability represented by the operand",
+		usages = { @usage(value = "flip 0 always returns false, flip 1 true") },
+		examples = { @example(value = "flip (0.66666)", equals = "2/3 chances to return true.", test = false) },
+		see = { "rnd" })
 	public static Boolean opFlip(final IScope scope, final Double probability) {
 		return probability > RANDOM(scope).between(0., 1.);
 	}
-	
-	@operator(value="rnd_choice")
-	@doc(value = "returns an index of the given list with a probability following the (normalized) distribution described in the list (a form of lottery)", examples = { @example(value = "rnd_choice([0.2,0.5,0.3])", equals = "2/10 chances to return 0, 5/10 chances to return 1, 3/10 chances to return 2", test = false) }, see = { "rnd" })	
-	public static Integer opRndChoice(final IScope scope, final IList distribution){
+
+	@operator(value = "rnd_choice")
+	@doc(value = "returns an index of the given list with a probability following the (normalized) distribution described in the list (a form of lottery)",
+		examples = { @example(value = "rnd_choice([0.2,0.5,0.3])",
+			equals = "2/10 chances to return 0, 5/10 chances to return 1, 3/10 chances to return 2",
+			test = false) }, see = { "rnd" })
+	public static
+		Integer opRndChoice(final IScope scope, final IList distribution) {
 		final IList<Double> normalizedDistribution = new GamaList<Double>();
 		Double sumElt = 0.0;
-		
-		for(Object eltDistrib : distribution) {
+
+		for ( Object eltDistrib : distribution ) {
 			Double elt = Cast.asFloat(scope, eltDistrib);
-			if(elt < 0.0) { throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."), scope); }
+			if ( elt < 0.0 ) { throw GamaRuntimeException.create(new RuntimeException(
+				"Distribution elements should be positive."), scope); }
 			normalizedDistribution.add(elt);
 			sumElt = sumElt + elt;
 		}
-		if(sumElt == 0.0) {
-			throw GamaRuntimeException.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
-		}
-		
-		for(int i = 0 ; i < normalizedDistribution.size() ; i++) {
+		if ( sumElt == 0.0 ) { throw GamaRuntimeException.create(new RuntimeException(
+			"Distribution elements should not be all equal to 0"), scope); }
+
+		for ( int i = 0; i < normalizedDistribution.size(); i++ ) {
 			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
 		}
-		
+
 		double randomValue = RANDOM(scope).between(0., 1.);
-		
-		for(int i = 0 ; i < distribution.size() ; i++) {
+
+		for ( int i = 0; i < distribution.size(); i++ ) {
 			randomValue = randomValue - normalizedDistribution.get(i);
-			if(randomValue <= 0) {
-				return i;
-			}
+			if ( randomValue <= 0 ) { return i; }
 		}
 
 		return -1;
 	}
-	
-	
 
 }

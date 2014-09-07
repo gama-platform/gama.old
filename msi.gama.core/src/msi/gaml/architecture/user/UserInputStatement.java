@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'UserInputStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'UserInputStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -37,20 +37,26 @@ import msi.gaml.types.*;
  */
 @symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.USER_COMMAND)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true, doc = @doc("the displayed name")),
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true, doc = @doc("the displayed name")),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
 	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
 	@facet(name = IKeyword.MIN, type = IType.FLOAT, optional = true, doc = @doc("the minimum value")),
 	@facet(name = IKeyword.MAX, type = IType.FLOAT, optional = true, doc = @doc("the maximum value")),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = false, doc = @doc("a new local variable containing the value given by the user")),
-	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the set of acceptable values for the variable")) }, omissible = IKeyword.NAME)
-@doc(value="It allows to let the user define the value of a variable.", usages={
-	@usage(value="", examples = {
-		@example(value="user_panel \"Advanced Control\" {", isExecutable=false),
-		@example(value="	user_input \"Location\" returns: loc type: point <- {0,0};", isExecutable=false),
-		@example(value="	create cells number: 10 with: [location::loc];", isExecutable=false),
-		@example(value="}", isExecutable=false)})
-	}, see = {IKeyword.USER_COMMAND,IKeyword.USER_INIT,IKeyword.USER_PANEL})
+	@facet(name = IKeyword.RETURNS,
+		type = IType.NEW_TEMP_ID,
+		optional = false,
+		doc = @doc("a new local variable containing the value given by the user")),
+	@facet(name = IKeyword.AMONG,
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("the set of acceptable values for the variable")) }, omissible = IKeyword.NAME)
+@doc(value = "It allows to let the user define the value of a variable.", usages = { @usage(value = "", examples = {
+	@example(value = "user_panel \"Advanced Control\" {", isExecutable = false),
+	@example(value = "	user_input \"Location\" returns: loc type: point <- {0,0};", isExecutable = false),
+	@example(value = "	create cells number: 10 with: [location::loc];", isExecutable = false),
+	@example(value = "}", isExecutable = false) }) }, see = { IKeyword.USER_COMMAND, IKeyword.USER_INIT,
+	IKeyword.USER_PANEL })
 public class UserInputStatement extends AbstractPlaceHolderStatement implements IParameter {
 
 	int order;
@@ -163,5 +169,21 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	 */
 	@Override
 	public void setUnitLabel(final String label) {}
+
+	/**
+	 * Method isDefined()
+	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
+	 */
+	@Override
+	public boolean isDefined() {
+		return true;
+	}
+
+	/**
+	 * Method setDefined()
+	 * @see msi.gama.kernel.experiment.IParameter#setDefined(boolean)
+	 */
+	@Override
+	public void setDefined(final boolean b) {}
 
 }

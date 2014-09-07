@@ -290,7 +290,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public void open() {
 		createAgent();
-		// GuiUtils.prepareForExperiment(this);
+		GuiUtils.prepareForExperiment(this);
 		agent.schedule();
 		if ( isBatch() ) {
 			GuiUtils.informStatus(" Batch ready ");
@@ -306,6 +306,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else {
 			agent.reset();
 			agent.init(agent.getScope());
+			GuiUtils.updateParameterView(this);
 		}
 	}
 

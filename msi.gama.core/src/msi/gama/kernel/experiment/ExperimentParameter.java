@@ -81,6 +81,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	IType type = Types.NO_TYPE/* , contentType = Types.NO_TYPE */;
 	boolean isEditable/* , isLabel */;
 	boolean canBeNull;
+	boolean isDefined = true;
 	final IExpression init, among, min, max, step;
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
@@ -176,10 +177,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return isEditable;
 	}
 
-	// @Override
-	// public boolean isLabel() {
-	// return isLabel;
-	// }
+	@Override
+	public boolean isDefined() {
+		return isDefined;
+	}
+
+	public void setDefined(final boolean defined) {
+		isDefined = defined;
+	}
 
 	@Override
 	public void setEditable(final boolean editable) {

@@ -266,6 +266,14 @@ public class GamaPreferences {
 		}
 
 		@Override
+		public boolean isDefined() {
+			return true;
+		}
+
+		@Override
+		public void setDefined(final boolean b) {}
+
+		@Override
 		public Number getStepValue() {
 			return null;
 		}

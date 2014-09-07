@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
@@ -100,9 +101,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
 	// protected Double minimumDuration = 0d;
-	protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
-		: (Double) null;
-	protected String rng = GamaPreferences.CORE_RNG.getValue();
+	// protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
+	// : (Double) null;
+	// protected String rng = GamaPreferences.CORE_RNG.getValue();
 	protected ExperimentClock clock = new ExperimentClock();
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
@@ -127,7 +128,26 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// We initialize the population that will host the simulation
 		createSimulationPopulation();
 		// We initialize a new random number generator
-		random = new RandomUtils(seed, rng);
+		if ( random == null ) {
+			random = new RandomUtils();
+		} else {
+			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		}
+	}
+
+	public String getDefinedRng() {
+		if ( GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return (String) ((ExperimentPlan) getSpecies()).parameters
+			.get(IKeyword.RNG).value(null); }
+		return GamaPreferences.CORE_RNG.getValue();
+	}
+
+	public Double getDefinedSeed() {
+		if ( GamaPreferences.CORE_RND_EDITABLE.getValue() ) {
+			IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
+			Double result = p.isDefined() ? (Double) p.value(null) : null;
+			return result;
+		}
+		return GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
 	}
 
 	@Override
@@ -291,10 +311,23 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( !GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return new ArrayList(); }
 		List<ExperimentParameter> params = new ArrayList();
 		final String cat = getExperimentParametersCategory();
-		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator",
-			cat, GamaPreferences.GENERATOR_NAMES, false));
-		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Random seed", cat, null,
-			true));
+		ExperimentParameter p =
+			new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator", cat,
+				GamaPreferences.GENERATOR_NAMES, false);
+
+		params.add(p);
+		p =
+			new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Default random seed", cat,
+				"(current seed)", null, true) {
+
+				@Override
+				Object getValue(final IScope scope) {
+					// tryToInit(scope);
+					return getSeed();
+				}
+			};
+		p.setDefined(GamaPreferences.CORE_SEED_DEFINED.getValue());
+		params.add(p);
 		return params;
 	}
 
@@ -367,11 +400,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
+		Double seed = random.getSeed();
+		System.out.println("experiment agent get seed: " + seed);
 		return seed == null ? Double.valueOf(0d) : seed;
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
+		System.out.println("experiment agent set seed: " + s);
+		Double seed;
 		if ( s == null ) {
 			seed = null;
 		} else if ( s.doubleValue() == 0d ) {
@@ -384,12 +421,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng() {
-		return rng;
+		return getRandomGenerator().getRngName();
 	}
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
-		rng = newRng;
+		// rng = newRng;
 		// GuiUtils.debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng, true);
 	}

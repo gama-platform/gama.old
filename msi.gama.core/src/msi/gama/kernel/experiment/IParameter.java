@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IParameter.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IParameter.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -58,6 +58,8 @@ public interface IParameter {
 
 	public abstract Number getStepValue();
 
+	public boolean isDefined();
+
 	public interface Batch extends IParameter {
 
 		public Object value();
@@ -73,5 +75,10 @@ public interface IParameter {
 		public boolean canBeExplored();
 
 	}
+
+	/**
+	 * @param b
+	 */
+	public abstract void setDefined(boolean b);
 
 }

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NumberEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NumberEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -69,8 +69,10 @@ public abstract class NumberEditor extends AbstractEditor {
 			layout.marginWidth = 0;
 			internalComposite.setLayout(layout);
 			defineButton = new Button(internalComposite, SWT.CHECK);
-			defineButton.setText(getOriginalValue() != null ? "Define:" : "Not defined");
-			defineButton.setSelection(getOriginalValue() != null);
+			Object originalValue = getOriginalValue();
+			boolean selected = param.isDefined() && originalValue != null;
+			defineButton.setSelection(selected);
+			defineButton.setText(selected ? "Define:" : "Not defined");
 			defineButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 			defineButton.pack();
 			defineButton.addSelectionListener(new SelectionAdapter() {
@@ -83,12 +85,14 @@ public abstract class NumberEditor extends AbstractEditor {
 						defineButton.pack();
 						internalComposite.layout();
 						expression.widgetDefaultSelected(null);
-
+						param.setDefined(true);
+						modifyValue(expression.currentValue);
 					} else {
 						defineButton.setText("Not defined");
 						expression.getControl().setEnabled(false);
 						defineButton.pack();
 						internalComposite.layout();
+						param.setDefined(false);
 						modifyValue(null);
 					}
 				}

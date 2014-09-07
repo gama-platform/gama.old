@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ParameterWrapper.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ParameterWrapper.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -116,6 +116,16 @@ public abstract class ParameterWrapper implements IParameter {
 	@Override
 	public Number getStepValue() {
 		return wrapped.getStepValue();
+	}
+
+	@Override
+	public boolean isDefined() {
+		return wrapped.isDefined();
+	}
+
+	@Override
+	public void setDefined(final boolean defined) {
+		wrapped.setDefined(defined);
 	}
 
 }
