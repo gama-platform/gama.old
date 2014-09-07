@@ -41,26 +41,26 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
-	//hqnghi manipulate micro-models
+	// hqnghi manipulate micro-models
 	protected GamaMap<String, IPopulation> externMicroPopulations = new GamaMap<String, IPopulation>();
-	
+
 	@Override
 	public void addExternMicroPopulation(final String expName, final IPopulation pop) {
 		externMicroPopulations.put(expName, pop);
 	}
-	
+
 	@Override
 	public IPopulation getExternMicroPopulationFor(final String expName) {
-		if(externMicroPopulations.size()>0)
-			return externMicroPopulations.get(expName);
+		if ( externMicroPopulations.size() > 0 ) { return externMicroPopulations.get(expName); }
 		return null;
 	}
-	
+
 	@Override
 	public GamaMap<String, IPopulation> getExternMicroPopulations() {
 		return externMicroPopulations;
 	}
-	//end-hqnghi
+
+	// end-hqnghi
 
 	protected IShape geometry;
 	protected String name;
@@ -98,12 +98,25 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			final IVariable varOfHost = host.getPopulation().getVar(host, n);
 			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
 		}
+		// TODO: else ? launch an error ?
 		return null;
 	}
 
 	@Override
 	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
-		population.getVar(this, s).setVal(scope, this, v);
+		final IVariable var = population.getVar(this, s);
+		if ( var != null ) {
+			var.setVal(scope, this, v);
+		}
+		final IAgent host = this.getHost();
+		if ( host != null ) {
+			final IVariable varOfHost = host.getPopulation().getVar(host, s);
+			if ( varOfHost != null ) {
+				varOfHost.setVal(scope, host, v);
+			}
+		}
+		// TODO: else ? launch an error ?
+		// population.getVar(this, s).setVal(scope, this, v);
 	}
 
 	/**
@@ -633,17 +646,19 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
-		//hqnghi adjust to get population for species which come from main as well micro models
+		// hqnghi adjust to get population for species which come from main as well micro models
 		ModelDescription micro = species.getDescription().getModelDescription();
-		ModelDescription main  = (ModelDescription) this.getModel().getDescription();		
+		ModelDescription main = (ModelDescription) this.getModel().getDescription();
 		IPopulation microPopulation = null;
-		if( main.getMicroModel(micro.getAlias()) == null ) {
+		if ( main.getMicroModel(micro.getAlias()) == null ) {
 			microPopulation = this.getMicroPopulation(species);
-			if ( microPopulation == null && getHost() != null ) { microPopulation =  getHost().getPopulationFor(species); }
-		}else {
-				microPopulation = this.getExternMicroPopulationFor(species.getName());
+			if ( microPopulation == null && getHost() != null ) {
+				microPopulation = getHost().getPopulationFor(species);
+			}
+		} else {
+			microPopulation = this.getExternMicroPopulationFor(species.getName());
 		}
-		//end-hqnghi
+		// end-hqnghi
 		return microPopulation;
 	}
 
