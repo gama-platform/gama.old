@@ -182,6 +182,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return isDefined;
 	}
 
+	@Override
 	public void setDefined(final boolean defined) {
 		isDefined = defined;
 	}
@@ -257,17 +258,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			int nbSteps = (int) ((max - min) / step);
-			final int val = scope.getRandom().between(0, nbSteps);
-			return min + (int) (val * step);
+			return scope.getRandom().between(min, max, (int) step);
 		}
 		double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 		double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-		final double val = scope.getRandom().between(0., max - min) + 0.5;
-		final int nbStep = (int) (val / step);
-		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000 + 0.5) / 1000000.0;
-		final double low = (int) ((min + nbStep * step) * 1000000 + 0.5) / 1000000.0;
-		return val - low < high - val ? low : high;
+		return scope.getRandom().between(min, max, step);
 	}
 
 	@Override

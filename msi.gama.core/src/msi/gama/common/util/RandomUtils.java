@@ -263,6 +263,23 @@ public class RandomUtils implements SeedGenerator {
 		return (int) (from + (long) ((1L + to - from) * uniform.nextValue()));
 	}
 
+	/**
+	 * @return an uniformly distributed int random number in [min, max] respecting the step
+	 */
+	public int between(final int min, final int max, final int step) {
+		int nbSteps = (max - min) / step;
+		return min + between(0, nbSteps) * step;
+	}
+
+	public double between(final double min, final double max, final double step) {
+		// uniformly distributed double random number in [min, max] respecting the step
+		double val = min + (max - min) * uniform.nextValue();
+		final int nbStep = (int) ((val - min) / step);
+		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
+		final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
+		return val - low < high - val ? low : high;
+	}
+
 	public double between(final double from, final double to) {
 		// uniformly distributed double random number in ]from, to[
 		return from + (to - from) * uniform.nextValue();
@@ -321,6 +338,39 @@ public class RandomUtils implements SeedGenerator {
 	 */
 	public String getRngName() {
 		return generatorName;
+	}
+
+	public static void drawRandomValues(final double min, final double max, final double step) {
+		System.out.println("Drawing 100 double between " + min + " and " + max + " step " + step);
+		RandomUtils r = new RandomUtils(100.0, "mersenne");
+		for ( int i = 0; i < 100; i++ ) {
+			final double val = r.between(min, max);
+			final int nbStep = (int) ((val - min) / step);
+			final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
+			final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
+			System.out.print(val - low < high - val ? low : high);
+			System.out.print(" | ");
+		}
+		System.out.println();
+	}
+
+	public static void drawRandomValues(final int min, final int max, final int step) {
+		System.out.println("Drawing 100 int between " + min + " and " + max + " step " + step);
+		RandomUtils r = new RandomUtils(100.0, "mersenne");
+		int nbSteps = (max - min) / step;
+		for ( int i = 0; i < 100; i++ ) {
+			final int val = min + r.between(0, nbSteps) * step;
+			System.out.print(val);
+			System.out.print(" | ");
+		}
+		System.out.println();
+	}
+
+	public static void main(final String[] args) {
+		drawRandomValues(-0.2, 0.2, 0.1);
+		drawRandomValues(4., 5., 0.2);
+		drawRandomValues(0, 100, 3);
+		drawRandomValues(-5, 5, 3);
 	}
 
 }
