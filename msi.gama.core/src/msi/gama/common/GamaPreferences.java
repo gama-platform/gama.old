@@ -316,8 +316,8 @@ public class GamaPreferences {
 		IType.STRING).among(GENERATOR_NAMES).in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED = create("core.seed_defined", "Define a default seed", false,
 		IType.BOOL).activates("core.seed").in(GENERAL).group("Random Number Generation");
-	public static final Entry<Double> CORE_SEED = create("core.seed", "Default seed value", 0d, IType.FLOAT)
-		.in(GENERAL).group("Random Number Generation");
+	public static final Entry<Double> CORE_SEED = create("core.seed", "Default seed value (0 means undefined)", 1d,
+		IType.FLOAT).in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_RND_EDITABLE = create("core.define_rng",
 		"Include in the parameters of models", true, IType.BOOL).in(GENERAL).group("Random Number Generation");
 	/**
