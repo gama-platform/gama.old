@@ -325,6 +325,13 @@ public class GamaPreferences {
 	 */
 	public static final Entry<Integer> CORE_MENU_SIZE = create("core.menu_size", "Break down agents in menus every",
 		50, IType.INT).between(10, 100).in(GENERAL).group("User interface");
+
+	public static final Entry<Integer> CORE_CONSOLE_SIZE = create("core.console_size",
+		"Max. number of characters to display in the console (-1 means no limit) ", 20000, IType.INT).in(GENERAL)
+		.group("User interface");
+	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
+		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT).in(
+		GENERAL).group("User interface");
 	/**
 	 * Simulation Errors
 	 */

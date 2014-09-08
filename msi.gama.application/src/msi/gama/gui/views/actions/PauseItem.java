@@ -11,9 +11,10 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.views.*;
-import msi.gama.outputs.*;
+import msi.gama.gui.views.GamaViewPart;
+import msi.gama.outputs.IOutput;
 import msi.gama.runtime.*;
 import org.eclipse.jface.action.*;
 
@@ -39,7 +40,7 @@ public class PauseItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Pause", "Pause " + view.getTitle(), IAction.AS_CHECK_BOX,
+			new GamaAction("Pause", "Pause/Resume " + view.getTitle(), IAction.AS_CHECK_BOX,
 				IGamaIcons.DISPLAY_TOOLBAR_PAUSE.descriptor()) {
 
 				@Override
@@ -47,36 +48,48 @@ public class PauseItem extends GamaViewItem {
 					IOutput output = ((GamaViewPart) view).getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
-							//hqnghi resume  thread  of co-experiment							
-							if(!output.getDescription().getModelDescription().getAlias().equals("")){								
-								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(FrontEndController._START);
+							// hqnghi resume thread of co-experiment
+							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
+							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
+									FrontEndController._START);
 							}
 							// end-hqnghi
 							resume(output);
 						} else {
 							pause(output);
-							//hqnghi pause thread  of co-experiment
-							if(!output.getDescription().getModelDescription().getAlias().equals("")){								
-								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(FrontEndController._PAUSE);
+							// hqnghi pause thread of co-experiment
+							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
+							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
+									FrontEndController._PAUSE);
 							}
 							// end-hqnghi
 						}
+					} else {
+						toggle();
+					}
+				}
+
+				void toggle() {
+					if ( view instanceof IGamaView ) {
+						((IGamaView) view).pauseChanged();
 					}
 				}
 
 				void resume(final IOutput out) {
 					out.resume();
 					setToolTipText("Pause " + out.getName());
-					if ( view instanceof LayeredDisplayView ) {
-						((LayeredDisplayView) view).pauseChanged();
+					if ( view instanceof IGamaView ) {
+						((IGamaView) view).pauseChanged();
 					}
 				}
 
 				void pause(final IOutput out) {
 					out.pause();
 					setToolTipText("Resume " + out.getName());
-					if ( view instanceof LayeredDisplayView ) {
-						((LayeredDisplayView) view).pauseChanged();
+					if ( view instanceof IGamaView ) {
+						((IGamaView) view).pauseChanged();
 					}
 				}
 			};

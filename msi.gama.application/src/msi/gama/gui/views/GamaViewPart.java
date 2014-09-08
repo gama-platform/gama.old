@@ -172,4 +172,10 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 	}
 
+	/**
+	 * Only for views that accept "pause". Does nothing by default
+	 */
+	@Override
+	public void pauseChanged() {}
+
 }

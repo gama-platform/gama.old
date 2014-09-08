@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGamaView.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IGamaView.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.outputs.IDisplayOutput;
  * @author drogoul
  */
 public interface IGamaView {
-	
+
 	public void update(IDisplayOutput output);
 
 	public void setRefreshRate(int rate);
@@ -25,5 +25,7 @@ public interface IGamaView {
 	public void setOutput(IDisplayOutput output);
 
 	IDisplayOutput getOutput();
+
+	public void pauseChanged();
 
 }
