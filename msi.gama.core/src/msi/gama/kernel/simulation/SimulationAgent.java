@@ -12,24 +12,14 @@
 package msi.gama.kernel.simulation;
 
 import java.util.Map.Entry;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.AgentScheduler;
-import msi.gama.kernel.experiment.ExperimentPlan;
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.population.SimulationPopulation;
-import msi.gama.metamodel.shape.Envelope3D;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.kernel.experiment.*;
+import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.outputs.IOutput;
-import msi.gama.outputs.IOutputManager;
-import msi.gama.outputs.SimulationOutputManager;
+import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -38,9 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.FrontEndController;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.compilation.ISymbol;
@@ -260,7 +248,7 @@ public class SimulationAgent extends GamlAgent {
 		final Envelope3D env = geom.getEnvelope();
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry = Transformations.translated_by(getScope(), geom, p);
-		//projectionFactory.setWorldProjectionEnv(env);
+		// projectionFactory.setWorldProjectionEnv(env);
 		getPopulation().setTopology(getScope(), geometry);
 	}
 
@@ -350,9 +338,9 @@ public class SimulationAgent extends GamlAgent {
 		Object pause(final IScope scope) {
 		String ctrlName = ((ExperimentPlan) scope.getExperiment().getSpecies()).getControllerName();
 		if ( !ctrlName.equals("") ) {
-			GAMA.getController(ctrlName).offer(FrontEndController._PAUSE);
+			GAMA.getController(ctrlName).directPause();
 		} else {
-			GAMA.controller.offer(FrontEndController._PAUSE);
+			GAMA.controller.directPause();
 		}
 		return null;
 	}
