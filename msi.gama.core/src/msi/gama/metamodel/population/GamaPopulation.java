@@ -431,8 +431,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final int rows = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
-		exp = species.getFacet(IKeyword.TORUS);
-		final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+		// exp = species.getFacet(IKeyword.TORUS);
+		// final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+		boolean isTorus = host.getPopulation().getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbours_cache");

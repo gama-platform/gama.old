@@ -135,7 +135,7 @@ public class GamlSpecies extends AbstractSpecies {
 			IExpression torus = desc.getFacets().getExpr(TORUS);
 			if ( torus != null ) {
 				if ( desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID) ) {
-					desc.warning("'torus' property can only be specified for the model topology (i.e. in 'global')",
+					desc.warning("The 'torus' facet can only be specified for the model topology (i.e. in 'global')",
 						IGamlIssue.WRONG_CONTEXT, TORUS);
 				}
 			}
