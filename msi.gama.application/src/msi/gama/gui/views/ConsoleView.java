@@ -84,14 +84,23 @@ public class ConsoleView extends GamaViewPart {
 				bw.append(text);
 				bw.flush();
 			} else {
-				int max = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
-				if ( max > 0 ) {
+				int maxMemorized = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
+				int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
+				if ( maxDisplayed > -1 ) {
+					// we limit the size of the buffer to the size of the displayed characters, as there is no need to buffer more than what can be displayed
+					if ( maxMemorized == -1 ) {
+						maxMemorized = maxDisplayed;
+					} else {
+						maxMemorized = Math.min(maxMemorized, maxDisplayed);
+					}
+				}
+				if ( maxMemorized > 0 ) {
 					pauseBuffer.append(text);
-					if ( pauseBuffer.length() > max ) {
-						pauseBuffer.delete(0, pauseBuffer.length() - max - 1);
+					if ( pauseBuffer.length() > maxMemorized ) {
+						pauseBuffer.delete(0, pauseBuffer.length() - maxMemorized - 1);
 						pauseBuffer.insert(0, "(...)\n");
 					}
-				} else if ( max == -1 ) {
+				} else if ( maxMemorized == -1 ) {
 					pauseBuffer.append(text);
 				}
 			}
