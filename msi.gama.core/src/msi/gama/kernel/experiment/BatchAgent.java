@@ -177,6 +177,14 @@ public class BatchAgent extends ExperimentAgent {
 					GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
 						getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
 					// TODO This is where any update of the outputs of simulations should be introduced
+					// We then verify that the front scheduler has not been paused
+					while (GAMA.controller.getScheduler().paused && !dead) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 			// When a simulation is finished, we give a chance to the outputs of the experiment and the experiment
@@ -187,14 +195,7 @@ public class BatchAgent extends ExperimentAgent {
 			if ( manager != null ) {
 				manager.step(getScope());
 			}
-			// We then verify that the front scheduler has not been paused
-			while (GAMA.controller.getScheduler().paused && !dead) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+
 			// If the agent is dead, we return immediately
 			if ( dead ) { return 0.0; }
 			// We reset the experiment agent to erase traces of the current simulation
