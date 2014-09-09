@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaTextFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaTextFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,24 +12,27 @@
 package msi.gama.util.file;
 
 import java.io.*;
-
-import rcaller.RCaller;
-import rcaller.RCode;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.matrix.IMatrix;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import rcaller.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "R", extensions = { "r" }, buffer_type = IType.MAP, buffer_content = IType.MAP)
-public class RFile extends GamaFile< GamaMap<String, IList>, GamaPair<String, IList>, String, IList> {
+@file(name = "R",
+	extensions = { "r" },
+	buffer_type = IType.MAP,
+	buffer_content = IType.LIST,
+	buffer_index = IType.STRING)
+public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, IList>, String, IList> {
+
 	private final boolean DEBUG = false; // Change DEBUG = false for release version
 	private final IContainer parameters;
+
 	public RFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		parameters = null;
@@ -59,30 +62,17 @@ public class RFile extends GamaFile< GamaMap<String, IList>, GamaPair<String, IL
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-//		try {
-//			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
-//			final GamaList<String> allLines = new GamaList();
-//			String str;
-//			str = in.readLine();
-//			while (str != null) {
-//				allLines.add(str);
-//				str = in.readLine();
-//			}
-//			in.close();
-//			setBuffer(allLines);
-//		} catch (final IOException e) {
-//			throw GamaRuntimeException.create(e);
-//		}
-		if( parameters == null ){
+		if ( parameters == null ) {
 			doRFileEvaluate(scope);
-		}else{
+		} else {
 			doRFileEvaluate(scope, this.parameters);
 		}
-		
+
 	}
-	
-	public void doRFileEvaluate(IScope scope, final IContainer param ){
-		if ( param.length(scope) == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception"); }
+
+	public void doRFileEvaluate(final IScope scope, final IContainer param) {
+		int size = param.length(scope);
+		// if ( size == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception", scope); }
 
 		final String RFile = getPath();
 		try {
@@ -91,17 +81,12 @@ public class RFile extends GamaFile< GamaMap<String, IList>, GamaPair<String, IL
 
 			String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
 			caller.setRscriptExecutable(RPath);
-			// caller.setRscriptExecutable("\"" + RPath + "\"");
-			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			// {
-			// caller.setRscriptExecutable(RPath);
-			// }
 
 			double[] vectorParam = new double[param.length(scope)];
 
 			int k = 0;
 			for ( Object o : param.iterable(scope) ) {
-				vectorParam[k++] = Double.parseDouble(o.toString());
+				vectorParam[k++] = Cast.asFloat(scope, o);
 			}
 
 			RCode c = new RCode();
@@ -156,27 +141,22 @@ public class RFile extends GamaFile< GamaMap<String, IList>, GamaPair<String, IL
 						" - Value: " + results.toString());
 				}
 
-				// for (int i = 0; i < results.length; i++) {
-				// //java.lang.System.out.println(results[i]);
-				// if (DEBUG) GuiUtils.debug(results[i].toString());
-				// //java.lang.System.out.println("Name: '" + name + "'");
-				// }
 				result.put(name, new GamaList(results));
 			}
 
 			if ( DEBUG ) {
 				GuiUtils.debug("Stats.R_compute_param.return:" + result.toGaml());
 			}
-			
+
 			setBuffer(result);
 
 		} catch (Exception ex) {
 
-			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage());
+			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage(), scope);
 		}
 	}
-	
-	public void doRFileEvaluate(IScope scope){		
+
+	public void doRFileEvaluate(final IScope scope) {
 		final String RFile = getPath();
 		try {
 			// Call R
@@ -240,16 +220,14 @@ public class RFile extends GamaFile< GamaMap<String, IList>, GamaPair<String, IL
 			if ( DEBUG ) {
 				GuiUtils.debug("Stats.R_compute.return:" + result.toGaml());
 			}
-//			return result;
+			// return result;
 			setBuffer(result);
-
 
 		} catch (Exception ex) {
 
-			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage());
+			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage(), scope);
 		}
 	}
-
 
 	private static String computeVariable(final String string) {
 		String[] tokens = string.split("<-");
