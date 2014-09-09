@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AbstractDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -54,11 +54,11 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 		super.resume();
 	}
 
-	@Override
-	public void setRefreshRate(final int refresh) {
-		super.setRefreshRate(refresh);
-		GuiUtils.setViewRateOf(this, refresh);
-	}
+	// @Override
+	// public void setRefreshRate(final int refresh) {
+	// super.setRefreshRate(refresh);
+	// GuiUtils.setViewRateOf(this, refresh);
+	// }
 
 	@Override
 	public void dispose() {
@@ -95,10 +95,9 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public String getId() {
-		String cName=((AbstractOutput)this).getDescription().getModelDescription().getAlias();
-		if(!cName.equals("") && !getName().contains("#")){
-			return isUnique() ? getViewId() : getViewId() + getName()+ "#"+cName;
-		}
+		String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
+		if ( !cName.equals("") && !getName().contains("#") ) { return isUnique() ? getViewId() : getViewId() +
+			getName() + "#" + cName; }
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 

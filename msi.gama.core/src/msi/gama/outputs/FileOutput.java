@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -40,11 +41,22 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.DATA, type = IType.STRING, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.REFRESH_EVERY,
+		type = IType.INT,
+		optional = true,
+		doc = @doc(value = "Allows to save the file every n time steps (default is 1)",
+			deprecated = "Use refresh: every(n) instead")),
+	@facet(name = IKeyword.REFRESH,
+		type = IType.BOOL,
+		optional = true,
+		doc = @doc("Indicates the condition under which this file should be saved (default is true)")),
 	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.CSV, IKeyword.TEXT, IKeyword.XML }, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE,
+		type = IType.ID,
+		values = { IKeyword.CSV, IKeyword.TEXT, IKeyword.XML },
+		optional = true) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
 	/**

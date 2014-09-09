@@ -18,9 +18,8 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 
 /**
@@ -34,10 +33,19 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	private IScope scope;
 	boolean paused = false;
 	boolean open = false;
-	private Integer nextRefreshTime;
-	private int refreshRate;
+	final IExpression refresh;
+
+	// private Integer nextRefreshTime;
+	private int refreshRate = 1;
+
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
+		if ( hasFacet(IKeyword.REFRESH) ) {
+			refresh = this.getFacet(IKeyword.REFRESH);
+		} else {
+			refresh = IExpressionFactory.TRUE_EXPR;
+		}
+
 		name = getLiteral(IKeyword.NAME);
 		if ( name != null ) {
 			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');
@@ -45,7 +53,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 				name = "output";
 			}
 		}
-		setRefreshRate(1);
+		// setRefreshRate(1);
 	}
 
 	private boolean isUserCreated = true;
@@ -68,7 +76,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
-		setNextTime(getScope().getClock().getCycle());
+		// setNextTime(getScope().getClock().getCycle());
 		return true;
 	}
 
@@ -101,7 +109,14 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public void resume() {
 		setPaused(false);
-		reschedule();
+		// reschedule();
+	}
+
+	@Override
+	public boolean isRefreshable() {
+		IScope scope = getScope();
+		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0 &&
+			scope.getClock().getCycle() % refreshRate == 0;
 	}
 
 	@Override
@@ -128,19 +143,19 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		paused = suspended;
 	}
 
-	private void reschedule() {
-		setNextTime(getScope().getClock().getCycle() + getRefreshRate());
-	}
-
-	@Override
-	public void setNextTime(final Integer i) {
-		nextRefreshTime = i;
-	}
-
-	@Override
-	public long getNextTime() {
-		return nextRefreshTime;
-	}
+	// private void reschedule() {
+	// setNextTime(getScope().getClock().getCycle() + getRefreshRate());
+	// }
+	//
+	// @Override
+	// public void setNextTime(final Integer i) {
+	// nextRefreshTime = i;
+	// }
+	//
+	// @Override
+	// public long getNextTime() {
+	// return nextRefreshTime;
+	// }
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
@@ -153,9 +168,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public String getId() {
-		if(!this.getDescription().getModelDescription().getAlias().equals("")){
-			return getName()+"#"+this.getDescription().getModelDescription().getAlias()+"#"+getScope().getExperiment().getName(); 
-		}
+		if ( !this.getDescription().getModelDescription().getAlias().equals("") ) { return getName() + "#" +
+			this.getDescription().getModelDescription().getAlias() + "#" + getScope().getExperiment().getName(); }
 		return getName(); // by default
 	}
 
@@ -164,12 +178,14 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 			GAMA.releaseScope(this.scope);
 		}
 		ModelDescription micro = this.getDescription().getModelDescription();
-		ModelDescription main  = (ModelDescription) scope.getModel().getDescription(); 
-		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null ;
-		if( fromMicroModel ) {
-			ExperimentAgent exp = (ExperimentAgent) scope.getAgentScope().getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+		ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+		Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+		if ( fromMicroModel ) {
+			ExperimentAgent exp =
+				(ExperimentAgent) scope.getAgentScope()
+					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
 			this.scope = exp.getSimulation().getScope();
-		}else{			
+		} else {
 			this.scope = scope;
 		}
 	}

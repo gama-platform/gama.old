@@ -107,11 +107,11 @@ public class GuiUtils {
 		}
 	}
 
-	/**
-	 * @param abstractDisplayOutput
-	 * @param refresh
-	 */
-	public static void setViewRateOf(final IDisplayOutput abstractDisplayOutput, final int refresh) {}
+	// /**
+	// * @param abstractDisplayOutput
+	// * @param refresh
+	// */
+	// public static void setViewRateOf(final IDisplayOutput abstractDisplayOutput, final int refresh) {}
 
 	/**
 	 * 

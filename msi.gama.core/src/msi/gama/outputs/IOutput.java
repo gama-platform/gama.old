@@ -33,6 +33,9 @@ public interface IOutput extends ISymbol, IStepable {
 
 	public int getRefreshRate();
 
+	public boolean isRefreshable();
+
+	// called by the interface, mainly
 	public void setRefreshRate(int rate);
 
 	public boolean isPaused();
@@ -41,9 +44,9 @@ public interface IOutput extends ISymbol, IStepable {
 
 	// public void schedule() throws GamaRuntimeException;
 
-	public void setNextTime(Integer i);
-
-	public long getNextTime();
+	// public void setNextTime(Integer i);
+	//
+	// public long getNextTime();
 
 	public boolean isUserCreated();
 

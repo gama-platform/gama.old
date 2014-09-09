@@ -39,7 +39,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public Map<String, IOutput> getOutputs() {
 		return outputs;
 	}
-	
+
 	@Override
 	public IOutput getOutput(final String id) {
 		return outputs.get(id);
@@ -54,21 +54,18 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void addOutput(final IOutput output) {
-		if (output == null) {
-			return;
-		}// || outputs.containsValue(output) ) { return; }
+		if ( output == null ) { return; }// || outputs.containsValue(output) ) { return; }
 		outputs.put(output.getId(), output);
 	}
 
-	//hqnghi add output with alias name from micro-model
+	// hqnghi add output with alias name from micro-model
 	@Override
 	public void addOutput(final String name, final IOutput output) {
-		if (output == null) {
-			return;
-		}// || outputs.containsValue(output) ) { return; }
+		if ( output == null ) { return; }// || outputs.containsValue(output) ) { return; }
 		outputs.put(name, output);
 	}
-	//end-hqnghi
+
+	// end-hqnghi
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
@@ -85,7 +82,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	// hqnghi
 	// for instant, multi-simulation cannot have their owns outputs display at same time.
-	public void removeAllOutput() {
+		public
+		void removeAllOutput() {
 		outputs.clear();
 	}
 
@@ -122,28 +120,28 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return Iterables.filter(outputs.values(), IDisplayOutput.class);
 	}
 
-//	public boolean initSingleOutput1(final IScope scope, final IOutput output) {
-//		try {
-//			Thread.sleep(200);
-//		} catch (InterruptedException e1) {
-//			e1.printStackTrace();
-//		}
-//
-//		if ( scope.init(output) ) {
-//			output.resume();
-//			if ( scope.step(output) ) {
-//				try {
-//					output.open();
-//					output.update();
-//				} catch (RuntimeException e) {
-//					GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-	
+	// public boolean initSingleOutput1(final IScope scope, final IOutput output) {
+	// try {
+	// Thread.sleep(200);
+	// } catch (InterruptedException e1) {
+	// e1.printStackTrace();
+	// }
+	//
+	// if ( scope.init(output) ) {
+	// output.resume();
+	// if ( scope.step(output) ) {
+	// try {
+	// output.open();
+	// output.update();
+	// } catch (RuntimeException e) {
+	// GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
+	// return false;
+	// }
+	// }
+	// }
+	// return true;
+	// }
+
 	@Override
 	public boolean init(final IScope scope) {
 		List<IOutput> list = new ArrayList(outputs.values());
@@ -186,19 +184,19 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean step(final IScope scope) {
 		final int cycle = scope.getClock().getCycle();
 		for ( final IOutput o : ImmutableList.copyOf(outputs.values()) ) {
-			if ( !o.isPaused() && o.isOpen() ) {
-				final long ii = o.getNextTime();
-				if ( cycle >= ii ) {
-					if ( scope.step(o) ) {
-						try {
-							o.update();
-						} catch (RuntimeException e) {
-							e.printStackTrace();
-							continue;
-						}
-						o.setNextTime(cycle + o.getRefreshRate());
-					}
+			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() && o.getScope().step(o) ) {
+				// final long ii = o.getNextTime();
+				// if ( cycle >= ii ) {
+				// if ( scope.step(o) ) {
+				try {
+					o.update();
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+					continue;
 				}
+				// o.setNextTime(cycle + o.getRefreshRate());
+				// }
+				// }
 			}
 		}
 		return true;
