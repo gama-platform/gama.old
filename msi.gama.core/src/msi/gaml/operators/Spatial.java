@@ -815,7 +815,7 @@ public abstract class Spatial {
 			IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
 			Geometry res = difference(g1.getInnerGeometry(), g2.getInnerGeometry());
-			if ( res != null && ! res.isEmpty() ) { return new GamaShape(g1, res); }
+			if ( res != null && !res.isEmpty() ) { return new GamaShape(g1, res); }
 			return null;
 		}
 
@@ -834,7 +834,7 @@ public abstract class Spatial {
 					if ( geom1 == null || geom1.isEmpty() ) { return null; }
 				}
 			}
-			if ( geom1 == null || geom1.isEmpty()) { return null; }
+			if ( geom1 == null || geom1.isEmpty() ) { return null; }
 			return new GamaShape(g1, geom1);
 		}
 
@@ -2148,7 +2148,7 @@ public abstract class Spatial {
 
 		@operator(value = "agent_closest_to", type = IType.AGENT, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_QUERIES })
-		@doc(value = "A agent, the closest to the operand (casted as a geometry).",
+		@doc(value = "An agent, the closest to the operand (casted as a geometry).",
 			comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
 			examples = { @example(value = "agent_closest_to(self)",
 				equals = "the closest agent to the agent applying the operator.",
