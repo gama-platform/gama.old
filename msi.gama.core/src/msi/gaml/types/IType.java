@@ -75,6 +75,10 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 
 	public boolean isSkillType();
 
+	public boolean isParametricType();
+
+	public boolean isParametricFormOf(final IType l);
+
 	public String getSpeciesName();
 
 	public SpeciesDescription getSpecies();

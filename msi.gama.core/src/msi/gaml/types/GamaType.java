@@ -129,6 +129,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
+	public boolean equals(final Object c) {
+		if ( c instanceof IType ) { return ((IType) c).id() == id; }
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		return name;
 	}
@@ -202,6 +208,15 @@ public abstract class GamaType<Support> implements IType<Support> {
 		for ( int i = 0; i < supports.length; i++ ) {
 			if ( supports[i].isAssignableFrom(c.getClass()) ) { return true; }
 		}
+		return false;
+	}
+
+	@Override
+	public boolean isParametricType() {
+		return false;
+	}
+
+	public boolean isParametricFormOf(final IType l) {
 		return false;
 	}
 

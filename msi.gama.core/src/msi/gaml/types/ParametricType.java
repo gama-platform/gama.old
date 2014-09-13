@@ -38,6 +38,19 @@ public class ParametricType implements IContainerType {
 		keyType = kt;
 	}
 
+	@Override
+	public boolean equals(final Object other) {
+		if ( other instanceof ParametricType ) { return type.equals(((ParametricType) other).getType()) &&
+			keyType.equals(((ParametricType) other).getKeyType()) &&
+			contentsType.equals(((ParametricType) other).getContentType()); }
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return type.hashCode() + contentsType.hashCode() * 100 + keyType.hashCode() * 10000;
+	}
+
 	/**
 	 * Method getType()
 	 * @see msi.gama.common.interfaces.ITyped#getType()
@@ -185,6 +198,15 @@ public class ParametricType implements IContainerType {
 	public boolean isTranslatableInto(final IType l) {
 		return type.isTranslatableInto(l.getType()) && contentsType.isTranslatableInto(l.getContentType()) &&
 			keyType.isTranslatableInto(l.getKeyType());
+	}
+
+	public boolean isParametricFormOf(final IType l) {
+		return !l.isParametricType() && type.equals(l);
+	}
+
+	@Override
+	public boolean isParametricType() {
+		return true;
 	}
 
 	/**
