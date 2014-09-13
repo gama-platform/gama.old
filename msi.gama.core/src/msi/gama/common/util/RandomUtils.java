@@ -259,8 +259,13 @@ public class RandomUtils implements SeedGenerator {
 	/**
 	 * @return an uniformly distributed int random number in [from, to]
 	 */
-	public int between(final int from, final int to) {
-		return (int) (from + (long) ((1L + to - from) * uniform.nextValue()));
+	public int between(final int min, final int max) {
+		return (int) (min + (long) ((1L + max - min) * next()));
+	}
+
+	public double between(final double min, final double max) {
+		// uniformly distributed double random number in [min, max]
+		return min + (max + Double.MIN_VALUE - min) * next();
 	}
 
 	/**
@@ -273,16 +278,11 @@ public class RandomUtils implements SeedGenerator {
 
 	public double between(final double min, final double max, final double step) {
 		// uniformly distributed double random number in [min, max] respecting the step
-		double val = min + (max - min) * uniform.nextValue();
+		double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
 		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 		final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
 		return val - low < high - val ? low : high;
-	}
-
-	public double between(final double from, final double to) {
-		// uniformly distributed double random number in ]from, to[
-		return from + (to - from) * uniform.nextValue();
 	}
 
 	public double next() {
@@ -371,6 +371,14 @@ public class RandomUtils implements SeedGenerator {
 		drawRandomValues(4., 5., 0.2);
 		drawRandomValues(0, 100, 3);
 		drawRandomValues(-5, 5, 3);
+		RandomUtils r = new RandomUtils(100.0, "mersenne");
+		for ( int i = 0; i < 10000000; i++ ) {
+			double d = 0.0;
+			if ( r.between(0.0, 0.1) == 0.0 ) {
+				System.out.println("0.0 !");
+			}
+		}
+		System.out.println("Finished");
 	}
 
 }
