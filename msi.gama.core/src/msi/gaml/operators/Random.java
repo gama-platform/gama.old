@@ -183,42 +183,100 @@ public class Random {
 		see = { "flip" })
 	public static
 		Integer opRnd(final IScope scope, final Integer max) {
+		return opRnd(scope, 0, max);
+	}
+
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(value = "a random integer in the interval [first operand, second operand]",
+		examples = { @example(value = "rnd (2, 4)", equals = "2, 3 or 4", test = false) },
+		see = {})
+	public static Integer opRnd(final IScope scope, final Integer min, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
-		return r.between(0, max);
+		return r.between(min, max);
 	}
 
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
-	@doc(usages = { @usage(value = "if the operand is a float, it is casted to an int before being evaluated") },
-		examples = { @example(value = "rnd (2.5)", equals = "0, 1 or 2", test = false) })
-	public static Integer opRnd(final IScope scope, final Double max) {
-		return RANDOM(scope).between(0, max.intValue());
+	@doc(value = "a random integer in the interval [first operand, second operand], constrained by a step given by the last operand",
+		examples = { @example(value = "rnd (2, 12, 4)", equals = "2, 6 or 10", test = false) },
+		see = {})
+	public static
+		Integer opRnd(final IScope scope, final Integer min, final Integer max, final Integer step) {
+		final RandomUtils r = RANDOM(scope);
+		return r.between(min, max, step);
 	}
 
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
-	@doc(usages = { @usage(value = "if the operand is a point, returns a point with two random integers in the interval [0, operand]") },
-		examples = { @example(value = "rnd ({2.5,3})", equals = "{x,y} with x in [0,2] and y in [0,3]", test = false) })
+	@doc(value = "a random float in the interval [first operand, second operand]",
+		examples = { @example(value = "rnd (2.0, 4.0)", equals = "a float number between 2.0 and 4.0", test = false) },
+		see = {})
+	public static Double opRnd(final IScope scope, final Double min, final Double max) {
+		final RandomUtils r = RANDOM(scope);
+		return r.between(min, max);
+	}
+
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(value = "a random float in the interval [first operand, second operand] constrained by the last operand (step)",
+		examples = { @example(value = "rnd (2.0, 4.0, 0.5)",
+			equals = "a float number between 2.0 and 4.0 every 0.5",
+			test = false) }, see = {})
+	public static
+		Double opRnd(final IScope scope, final Double min, final Double max, final Double step) {
+		final RandomUtils r = RANDOM(scope);
+		return r.between(min, max, step);
+	}
+
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(value = "a random point in the interval [first operand, second operand]",
+		examples = { @example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0})",
+			equals = "a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0",
+			test = false) }, see = {})
+	public static GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max) {
+		final double x = opRnd(scope, min.x, max.x);
+		final double y = opRnd(scope, min.y, max.y);
+		final double z = opRnd(scope, min.z, max.z);
+		return new GamaPoint(x, y, z);
+	}
+
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(value = "a random point in the interval [first operand, second operand], constained by the step provided by the last operand",
+		examples = { @example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}, 1)",
+			equals = "a point with x = 2.0, y equal to 2.0, 3.0 or 4.0 and z between 0.0 and 10.0 every 1.0",
+			test = false) }, see = {})
+	public static
+		GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max, final Double step) {
+		final double x = opRnd(scope, min.x, max.x, step);
+		final double y = opRnd(scope, min.y, max.y, step);
+		final double z = opRnd(scope, min.z, max.z, step);
+		return new GamaPoint(x, y, z);
+	}
+
+	static GamaPoint NULL_POINT = new GamaPoint(0, 0, 0);
+
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(usages = { @usage(value = "if the operand is a point, returns a point with three random float ordinates, each in the interval [0, ordinate of argument]") },
+		examples = { @example(value = "rnd ({2.5,3, 0.0})",
+			equals = "{x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0",
+			test = false) })
 	public static
 		ILocation opRnd(final IScope scope, final GamaPoint max) {
-		final Integer x = RANDOM(scope).between(0, (int) max.x);
-		final Integer y = RANDOM(scope).between(0, (int) max.y);
-		return new GamaPoint(x, y);
+		return opRnd(scope, NULL_POINT, max);
 	}
 
+	@operator(value = "rnd", category = { IOperatorCategory.RANDOM })
+	@doc(usages = { @usage(value = "if the operand is a float, returns an uniformly distributed float random number in [0.0, to]") },
+		examples = { @example(value = "rnd(3.4)", equals = "a random float between 0.0 and 3.4", test = false) })
+	public static
+		Double opRnd(final IScope scope, final Double max) {
+		return opRnd(scope, 0.0, max);
+	}
+
+	@Deprecated
 	@operator(value = "rnd_float")
-	@doc(value = "returns an uniformly distributed double random number in ]0.0, to[",
-		examples = { @example(value = "rnd_float(3.4)", equals = "a random float between 0.0 and 3.4", test = false) },
-		see = { "rnd" })
+	@doc(deprecated = "Use rnd instead with a float argument", examples = { @example(value = "rnd_float(3)",
+		equals = "a random float between 0.0 and 3.0",
+		test = false) }, see = { "rnd" })
 	public static Double opRndFloat(final IScope scope, final Double max) {
-		final RandomUtils r = RANDOM(scope);
-		return r.between(0.0, max);
-	}
-
-	@operator(value = "rnd_float")
-	@doc(examples = { @example(value = "rnd_float(3)", equals = "a random float between 0.0 and 3.0", test = false) },
-		see = { "rnd" })
-	public static Double opRndFloat(final IScope scope, final Integer max) {
-		final RandomUtils r = RANDOM(scope);
-		return r.between(0.0, max);
+		return opRnd(scope, max);
 	}
 
 	@operator(value = "flip", category = { IOperatorCategory.RANDOM })
