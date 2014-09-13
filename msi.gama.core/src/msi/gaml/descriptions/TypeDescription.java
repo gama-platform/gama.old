@@ -20,6 +20,7 @@ import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
 /**
  * A class that represents skills and species (either built-in or introduced by users)
@@ -103,27 +104,44 @@ public abstract class TypeDescription extends SymbolDescription {
 		IType existingType = existingVar.getType();
 		IType newType = newVar.getType();
 		if ( !newType.isTranslatableInto(existingType) ) {
-			if ( existingVar.isBuiltIn() ) {
-				newVar.error("Type (" + newType + ") differs from that (" + existingType +
-					") of the implementation of  " + newVar.getName() + " in " + existingVar.getOriginName(),
-					IGamlIssue.WRONG_REDEFINITION, NAME);
-			} else {
-				EObject newResource = newVar.getUnderlyingElement(null).eContainer();
-				EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
-				if ( newResource.equals(existingResource) ) {
-					// Should not be the case, normally
-					newVar.error("Type (" + newType + ") differs from that (" + existingType +
-						") of the implementation of  " + newVar.getName() + " in " + existingVar.getOriginName(),
-						IGamlIssue.WRONG_REDEFINITION, NAME);
-				} else {
-					newVar.error("Type (" + newType + ") differs from that (" + existingType +
-						") of the implementation of  " + newVar.getName() + " in  imported file " +
-						existingResource.eResource().getURI().lastSegment(), IGamlIssue.WRONG_REDEFINITION, NAME);
-				}
-			}
-			return false;
+			markTypeDifference(existingVar, newVar, existingType, newType, true);
+		} else if ( !newType.equals(existingType) && !newType.isParametricFormOf(existingType) ) {
+			markTypeDifference(existingVar, newVar, existingType, newType, false);
 		}
 		return true;
+	}
+
+	private void markTypeDifference(final VariableDescription existingVar, final VariableDescription newVar,
+		final IType existingType, final IType newType, final boolean error) {
+		String msg =
+			"Type (" + newType + ") differs from that (" + existingType + ") of the implementation of  " +
+				newVar.getName() + " in " + existingVar.getOriginName();
+		if ( existingVar.isBuiltIn() ) {
+			if ( error ) {
+				newVar.error(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
+			} else {
+				newVar.warning(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
+			}
+		} else {
+			Resource newResource = newVar.getUnderlyingElement(null).eResource();
+			Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
+			if ( newResource.equals(existingResource) ) {
+				if ( error ) {
+					newVar.error(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
+				} else {
+					newVar.info(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
+				}
+			} else {
+				if ( error ) {
+					newVar.error(msg + " in  imported file " + existingResource.getURI().lastSegment(),
+						IGamlIssue.WRONG_REDEFINITION, NAME);
+				} else {
+					newVar.info(msg + " in  imported file " + existingResource.getURI().lastSegment(),
+						IGamlIssue.WRONG_REDEFINITION, NAME);
+				}
+			}
+		}
+
 	}
 
 	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
@@ -140,16 +158,15 @@ public abstract class TypeDescription extends SymbolDescription {
 				IGamlIssue.REDEFINES, NAME);
 		} else {
 			// Possibily different resources
-			EObject newResource = newVar.getUnderlyingElement(null).eContainer();
-			EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+			Resource newResource = newVar.getUnderlyingElement(null).eResource();
+			Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
 			if ( newResource.equals(existingResource) ) {
-				// Should not be the case, normally
 				newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
 					IGamlIssue.REDEFINES, NAME);
 			} else {
 				newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file " +
-					existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
+					existingResource.getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
 			}
 		}
 	}
