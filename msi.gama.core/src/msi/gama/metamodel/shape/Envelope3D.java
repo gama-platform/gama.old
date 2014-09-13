@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Envelope3D.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Envelope3D.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import java.util.*;
 import msi.gaml.types.GamaGeometryType;
 import org.opengis.geometry.MismatchedDimensionException;
 import com.vividsolutions.jts.geom.*;
@@ -215,7 +216,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Gets the maximum extent of this envelope across both dimensions.
+	 * Gets the maximum extent of this envelope across all three dimensions.
 	 * 
 	 * @return the maximum extent of this envelope
 	 */
@@ -371,7 +372,7 @@ public class Envelope3D extends Envelope {
 	 *            the z-ordinate of the point
 	 * @return <code>true</code> if the point overlaps this <code>Envelope</code>
 	 */
-	private boolean intersects(final double x, final double y, final double z) {
+	protected boolean intersects(final double x, final double y, final double z) {
 		if ( isNull() ) { return false; }
 		return intersects(x, y) && !(z < minz || z > maxz);
 	}
@@ -386,7 +387,7 @@ public class Envelope3D extends Envelope {
 	 * @return <code>true</code> if <code>(x, y)</code> lies in the interior or
 	 *         on the boundary of this <code>Envelope</code>.
 	 */
-	private boolean covers(final double x, final double y, final double z) {
+	protected boolean covers(final double x, final double y, final double z) {
 		if ( isNull() ) { return false; }
 		return covers(x, y) && z >= minz && z <= maxz;
 	}
@@ -531,8 +532,37 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Enlarges this <code>Envelope</code> so that it contains the <code>other</code> Envelope. Has no effect if
-	 * <code>other</code> is
+	 * Computes the list of envelopes (from 2 to 4, possibily 0 if env covers this) resulting from the extrusion of env from this. Only in 2D for the moment.
+	 * Does not return null envelopes.
+	 * 
+	 */
+	public List<Envelope> extrusion(final Envelope env) {
+		List<Envelope> list = new ArrayList();
+		double x1 = getMinX();
+		double x2 = getMaxX();
+		double y1 = getMinY();
+		double y2 = getMaxY();
+		double xx1 = env.getMinX();
+		double xx2 = env.getMaxX();
+		double yy1 = env.getMinY();
+		double yy2 = env.getMaxY();
+		if ( x2 >= x1 && yy1 >= y1 ) {
+			list.add(new Envelope(x1, x2, y1, yy1));
+		}
+		if ( xx1 >= x1 && y2 >= yy1 ) {
+			list.add(new Envelope(x1, xx1, yy1, y2));
+		}
+		if ( x2 >= xx1 && y2 >= yy2 ) {
+			list.add(new Envelope(xx1, x2, yy2, y2));
+		}
+		if ( x2 >= xx2 && yy2 >= yy1 ) {
+			list.add(new Envelope(xx2, x2, yy1, yy2));
+		}
+		return list;
+	}
+
+	/**
+	 * Enlarges this <code>Envelope</code> so that it contains the <code>other</code> Envelope. Has no effect if <code>other</code> is
 	 * wholly on or within the envelope.
 	 * 
 	 * @param other
@@ -586,9 +616,7 @@ public class Envelope3D extends Envelope {
 		int result = super.hashCode();
 		result = 37 * result + Coordinate.hashCode(minz);
 		result = 37 * result + Coordinate.hashCode(maxz);
-
 		int code = result ^ (int) serialVersionUID;
-
 		return code;
 	}
 
@@ -597,7 +625,6 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public boolean equals(final Object other) {
-
 		if ( !(other instanceof Envelope3D) ) { return false; }
 		Envelope3D otherEnvelope = (Envelope3D) other;
 		if ( isNull() ) { return otherEnvelope.isNull(); }
