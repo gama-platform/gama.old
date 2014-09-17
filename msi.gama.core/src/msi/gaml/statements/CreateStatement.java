@@ -410,8 +410,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			for ( final IAgent a : population ) {
 				((ExperimentAgent) a)._init_(scope);
 				SimulationAgent sim = (SimulationAgent) ((ExperimentAgent) a).getSimulation();
-				// AD: added to fix Issue 1051 (this init was in the population.createAgents of SimulationPopulation)
-				sim.getScheduler().init(sim.getScope());
+				if(sim.getScheduled()) {
+					sim.getScheduler().init(sim.getScope());
+				}else {					
+					sim._init_(sim.getScope());
+				}
 				sim.getOutputManger().init(sim.getScope());
 			}
 		}
