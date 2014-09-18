@@ -303,7 +303,7 @@ public class ModelGenerator {
 	static String defineAction(EActionLink link, int level) {
 		if (link == null || link.getAction() == null)
 			return "";
-		EAction action = (EAction) link.getTarget();
+		EAction action = (EAction) link.getAction();
 		String result = "";
 		String sp = "";
 		for (int i = 0; i < level; i++) {
