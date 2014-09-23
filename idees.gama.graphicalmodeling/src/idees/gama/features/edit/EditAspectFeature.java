@@ -1,7 +1,9 @@
 package idees.gama.features.edit;
 
 import gama.EAspect;
+import idees.gama.diagram.MyGamaToolBehaviorProvider;
 import idees.gama.ui.editFrame.EditAspectFrame;
+import idees.gama.ui.editFrame.EditFrame;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -9,10 +11,10 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class EditAspectFeature  extends EditFeature {
    
-    public EditAspectFeature(IFeatureProvider fp) {
-        super(fp);
+    public EditAspectFeature(IFeatureProvider fp, EditFrame frame, MyGamaToolBehaviorProvider tbp ) {
+        super(fp, frame, tbp);
     }
- 
+    
     @Override
     public String getDescription() {
         return "Edition of an aspect";
@@ -40,8 +42,14 @@ public class EditAspectFeature  extends EditFeature {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EAspect) {
             	EAspect eAspect = (EAspect) bo; 
-            	EditAspectFrame eaf = new EditAspectFrame(getDiagram(), getFeatureProvider(), this,eAspect, null);
-            	eaf.open();
+            	if (frame == null ) {
+            		frame =  new EditAspectFrame(getDiagram(), getFeatureProvider(), this,eAspect, null);
+            		frame.open();
+            		tbp.getFrames().put(eAspect, frame);
+            	
+            	} else {
+            		frame.getShell().setFocus();
+            	}
             }
         }
         this.hasDoneChanges = true;

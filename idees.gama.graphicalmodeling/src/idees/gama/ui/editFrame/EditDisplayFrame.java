@@ -10,9 +10,11 @@ import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -59,6 +61,8 @@ public class EditDisplayFrame extends EditFrame {
 	Button btnJava2D;
 
 	Diagram diagram;
+	final Map<ELayer, EditLayerFrame> layerFrames;
+	
 	/**
 	 * Create the application window.
 	 */
@@ -66,6 +70,7 @@ public class EditDisplayFrame extends EditFrame {
 			EditFeature eaf, EGamaObject display, String name) {
 		super(diagram, fp, eaf, display, name == null ? "Display definition"
 				: name);
+		layerFrames = new GamaMap<ELayer, EditLayerFrame>();
 		species = new GamaList<ESpecies>();
 		grids = new GamaList<ESpecies>();
 		this.diagram = diagram;
@@ -236,6 +241,7 @@ public class EditDisplayFrame extends EditFrame {
 							ef.hasDoneChanges = true;
 							
 							EditLayerFrame eaf = new EditLayerFrame(elayer, frame, species, grids, false, diagram,fp,ef); 
+							layerFrames.put(elayer, eaf);
 							eaf.open();
 							frame.updateLayerId();
 						} 
@@ -251,8 +257,15 @@ public class EditDisplayFrame extends EditFrame {
 							
 							final int index = layerViewer.getSelectionIndex();
 							ELayer layer = ((EDisplay) eobject).getLayers().get(index);
-							EditLayerFrame eaf = new EditLayerFrame(layer, frame, species, grids, true, diagram,fp,ef);
-							eaf.open();
+							EditLayerFrame eaf = layerFrames.get(layer);
+							if (eaf == null ) {
+								eaf =  new EditLayerFrame(layer, frame, species, grids, true, diagram,fp,ef);
+								eaf.open();
+								layerFrames.put(layer, eaf);
+			            	
+			            	} else {
+			            		eaf.getShell().setFocus();
+			            	}
 							
 						}
 					}
@@ -272,6 +285,7 @@ public class EditDisplayFrame extends EditFrame {
 								domain.getCommandStack().execute(new RecordingCommand(domain) {
 									public void doExecute() {
 										final ELayer lay =((EDisplay) eobject).getLayers().remove(index);
+										layerFrames.remove(lay);
 										diagram.eResource().getContents().remove(lay);
 										EcoreUtil.delete(lay);
 									}

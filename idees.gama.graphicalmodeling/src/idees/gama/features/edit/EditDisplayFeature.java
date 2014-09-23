@@ -1,7 +1,9 @@
 package idees.gama.features.edit;
 
 import gama.EDisplay;
+import idees.gama.diagram.MyGamaToolBehaviorProvider;
 import idees.gama.ui.editFrame.EditDisplayFrame;
+import idees.gama.ui.editFrame.EditFrame;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -9,8 +11,9 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class EditDisplayFeature  extends EditFeature {
    
-    public EditDisplayFeature(IFeatureProvider fp) {
-        super(fp);
+    public EditDisplayFeature(IFeatureProvider fp, EditFrame frame, MyGamaToolBehaviorProvider tbp ) {
+        super(fp, frame, tbp);
+       
     }
  
     @Override
@@ -40,8 +43,14 @@ public class EditDisplayFeature  extends EditFeature {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EDisplay) {
             	EDisplay eDisplay = (EDisplay) bo; 
-            	EditDisplayFrame eaf = new EditDisplayFrame(getDiagram(), getFeatureProvider(), this,eDisplay, null);
-            	eaf.open();
+            	if (frame == null ) {
+            		frame =  new EditDisplayFrame(getDiagram(), getFeatureProvider(), this,eDisplay, null);
+            		frame.open();
+            		tbp.getFrames().put(eDisplay, frame);
+            	
+            	} else {
+            		frame.getShell().setFocus();
+            	}
             }
         }
         this.hasDoneChanges = true;

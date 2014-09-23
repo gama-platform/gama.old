@@ -1,10 +1,12 @@
 package idees.gama.features.edit;
 
-import java.util.List;
-
-import idees.gama.ui.editFrame.EditActionFrame;
 import gama.EAction;
 import gama.ESpecies;
+import idees.gama.diagram.MyGamaToolBehaviorProvider;
+import idees.gama.ui.editFrame.EditActionFrame;
+import idees.gama.ui.editFrame.EditFrame;
+
+import java.util.List;
 
 import msi.gama.util.GamaList;
 
@@ -15,8 +17,9 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 
 public class EditActionFeature  extends EditFeature {
    
-    public EditActionFeature(IFeatureProvider fp) {
-        super(fp);
+	 public EditActionFeature(IFeatureProvider fp, EditFrame frame, MyGamaToolBehaviorProvider tbp ) {
+        super(fp, frame, tbp);
+       
     }
  
     @Override
@@ -45,9 +48,16 @@ public class EditActionFeature  extends EditFeature {
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EAction) {
-            	EAction eAction = (EAction) bo; 
-            	EditActionFrame eaf = new EditActionFrame(getDiagram(), getFeatureProvider(), this,eAction, null, speciesList());
-            	eaf.open();
+            	EAction eAction = (EAction) bo;
+            	if (frame == null ) {
+            		frame = new EditActionFrame(getDiagram(), getFeatureProvider(), this,eAction, null, speciesList());
+            		frame.open();
+            		tbp.getFrames().put(eAction, frame);
+            	
+            	} else {
+            		frame.getShell().setFocus();
+            	}
+            	
             }
         }
         this.hasDoneChanges = true;

@@ -8,8 +8,10 @@ import idees.gama.features.edit.EditFeature;
 import idees.gama.features.modelgeneration.ModelGenerator;
 
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -41,11 +43,13 @@ public class EditAspectFrame extends EditFrame {
 	EditAspectFrame frame;
 	List<ELayerAspect> layers;
 	Diagram diagram;
+	final Map<ELayerAspect, EditLayerAspectFrame> layerFrames;
 	/**
 	 * Create the application window.
 	 */
 	public EditAspectFrame(Diagram diagram, IFeatureProvider fp, EditFeature eaf, EAspect aspect, String name) {	
 		super(diagram, fp, eaf,  aspect, name == null ? "Aspect definition" : name );
+		layerFrames = new GamaMap<ELayerAspect, EditLayerAspectFrame>();
 		frame = this;
 		layers = new GamaList<ELayerAspect>();
 		layers.addAll(aspect.getLayers());
@@ -150,6 +154,7 @@ public class EditAspectFrame extends EditFrame {
 					});
 				}
 					EditLayerAspectFrame eaf = new EditLayerAspectFrame(elayer, frame, false, diagram,fp,ef); 
+					layerFrames.put(elayer, eaf); 
 					eaf.open();
 				} 
 		});
@@ -163,7 +168,15 @@ public class EditAspectFrame extends EditFrame {
 				if (layerViewer.getSelectionCount() == 1) {
 					final int index = layerViewer.getSelectionIndex();
 					ELayerAspect layer = ((EAspect) eobject).getLayers().get(index);
-					EditLayerAspectFrame eaf = new EditLayerAspectFrame(layer, frame, true, diagram,fp,ef);
+					EditLayerAspectFrame eaf =layerFrames.get(layer);
+					if (eaf == null ) {
+						eaf =   new EditLayerAspectFrame(layer, frame, true, diagram,fp,ef);
+						eaf.open();
+						layerFrames.put(layer, eaf);
+	            	
+	            	} else {
+	            		eaf.getShell().setFocus();
+	            	}
 					eaf.open();
 				}
 			}
@@ -185,6 +198,7 @@ public class EditAspectFrame extends EditFrame {
 						domain.getCommandStack().execute(new RecordingCommand(domain) {
 							public void doExecute() {
 								aspect.getLayers().remove(index);
+								layerFrames.remove(lay);
 								diagram.eResource().getContents().remove(lay);
 								EcoreUtil.delete(lay);
 								

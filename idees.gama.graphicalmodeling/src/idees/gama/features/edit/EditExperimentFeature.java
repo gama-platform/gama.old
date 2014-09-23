@@ -1,7 +1,9 @@
 package idees.gama.features.edit;
 
 import gama.EExperiment;
+import idees.gama.diagram.MyGamaToolBehaviorProvider;
 import idees.gama.ui.editFrame.EditExperimentFrame;
+import idees.gama.ui.editFrame.EditFrame;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -9,8 +11,8 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class EditExperimentFeature  extends EditFeature {
    
-    public EditExperimentFeature(IFeatureProvider fp) {
-        super(fp);
+    public EditExperimentFeature(IFeatureProvider fp,EditFrame frame, MyGamaToolBehaviorProvider tbp) {
+        super(fp,frame, tbp);
     }
  
     @Override
@@ -40,8 +42,14 @@ public class EditExperimentFeature  extends EditFeature {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EExperiment) {
             	EExperiment eExperiment = (EExperiment) bo; 
-            	EditExperimentFrame eaf = new EditExperimentFrame(getDiagram(), getFeatureProvider(), this,eExperiment, eExperiment.getName());
-            	eaf.open();
+            	if (frame == null ) {
+            		frame = new EditExperimentFrame(getDiagram(), getFeatureProvider(), this,eExperiment, eExperiment.getName());
+            		frame.open();
+            		tbp.getFrames().put(eExperiment, frame);
+            	
+            	} else {
+            		frame.getShell().setFocus();
+            	}
             }
         }
         this.hasDoneChanges = true;

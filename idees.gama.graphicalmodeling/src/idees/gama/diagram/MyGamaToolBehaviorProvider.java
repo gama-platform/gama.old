@@ -19,11 +19,15 @@ import idees.gama.features.edit.EditDisplayFeature;
 import idees.gama.features.edit.EditExperimentFeature;
 import idees.gama.features.edit.EditReflexFeature;
 import idees.gama.features.edit.EditSpeciesFeature;
-import idees.gama.features.others.RenameEGamaObjectFeature;
+import idees.gama.ui.editFrame.EditFrame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import msi.gama.util.GamaMap;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -39,9 +43,12 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 
 public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 
+	final Map<EObject, EditFrame> frames;
 	public MyGamaToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
+		frames = new GamaMap<EObject, EditFrame>();
 	}
+	
 	
 	 @Override
 	    public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
@@ -50,17 +57,17 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 	        if (pes != null && pes.length == 1) {
 	            Object bo = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pes[0]);
 	            if (bo instanceof EExperiment) {
-	            	customFeature = new EditExperimentFeature(getFeatureProvider());
+	            	customFeature = new EditExperimentFeature(getFeatureProvider(),frames.get(bo),this);
 	            } else if (bo instanceof ESpecies ) {
-		        	customFeature = new EditSpeciesFeature(getFeatureProvider());
+		        	customFeature = new EditSpeciesFeature(getFeatureProvider(),frames.get(bo),this);
 		        }  else if (bo instanceof EAction ) {
-		        	customFeature = new EditActionFeature(getFeatureProvider());
+		        	customFeature = new EditActionFeature(getFeatureProvider(),frames.get(bo),this);
 		        } else if (bo instanceof EReflex ) {
-				    customFeature = new EditReflexFeature(getFeatureProvider());
+				    customFeature = new EditReflexFeature(getFeatureProvider(),frames.get(bo),this);
 		        } else if (bo instanceof EAspect ) {
-				    customFeature = new EditAspectFeature(getFeatureProvider());
+				    customFeature = new EditAspectFeature(getFeatureProvider(),frames.get(bo),this);
 		        } else if (bo instanceof EDisplay ) {
-				    customFeature = new EditDisplayFeature(getFeatureProvider());
+				    customFeature = new EditDisplayFeature(getFeatureProvider(),frames.get(bo),this);
 				} /*else {
 		        	customFeature = new RenameEGamaObjectFeature(getFeatureProvider());
 		        }*/
@@ -121,4 +128,10 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 	        return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
 	    }
 
+
+	public Map<EObject, EditFrame> getFrames() {
+		return frames;
+	}
+
+	 
 }
