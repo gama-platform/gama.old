@@ -132,8 +132,6 @@ public class EditLayerAspectFrame extends EditFrame {
 			textSize.setText(elayer.getSize());
 		if (elayer.getPoints() != null)
 			textPoints.setText(elayer.getPoints());
-		if (elayer.getShape() != null)
-			textShape.setText(elayer.getShape());
 		if (elayer.getColor() != null)
 			textColor.setText(elayer.getColor());
 		if (elayer.getEmpty() != null)
@@ -146,6 +144,8 @@ public class EditLayerAspectFrame extends EditFrame {
 			textDepth.setText(elayer.getDepth());
 		if (elayer.getAt() != null)
 			textLoc.setText(elayer.getAt());
+		if (elayer.getExpression() != null)
+			textShape.setText(elayer.getExpression());
 		if (elayer.getTextSize() != null)
 			textSizeText.setText(elayer.getTextSize());
 		if (elayer.getImageSize() != null)
@@ -158,14 +158,14 @@ public class EditLayerAspectFrame extends EditFrame {
 			btnCstCol.setSelection(elayer.getIsColorCst());
 			btnExpressionCol.setSelection(! elayer.getIsColorCst());
 		}
-		if (elayer.getName()!= null)
-			textName.setText(elayer.getName());
-		if (! elayer.getColorRBG().isEmpty()) {
+			if (! elayer.getColorRBG().isEmpty()) {
 			rgb = new RGB(elayer.getColorRBG().get(0), elayer.getColorRBG().get(1), elayer.getColorRBG().get(2));
-			 color.dispose();
+			 if (color != null) color.dispose();
 	         color = new Color(frame.getShell().getDisplay(), rgb);
 	         colorLabel.setBackground(color);
 		}
+			if (elayer.getName()!= null)
+				textName.setText(elayer.getName());
 		
 		
 	}
@@ -480,14 +480,18 @@ public class EditLayerAspectFrame extends EditFrame {
 		
 		textColor = new ValidateText(canvasTopo, SWT.BORDER,diagram, fp,this, diagramEditor, "color:", null, null);
 		textColor.setBounds(425, 130, 250, 18);
-		rgb = new RGB(0, 0, 255);	
-		color = new Color(frame.getShell().getDisplay(), rgb);
-		
+			
 	  // Use a label full of spaces to show the color
 	    colorLabel = new Label(canvasTopo, SWT.NONE);
 	    colorLabel.setText("    ");
-	    colorLabel.setBackground(color);
-	    colorLabel.setBounds(160, 130, 50, 18);
+	    if (elayer.getColorRBG().isEmpty()) {
+	    	rgb = new RGB(0, 0, 255);	
+	    	color = new Color(frame.getShell().getDisplay(), rgb);
+	    	
+		    colorLabel.setBackground(color);
+		  
+	    }
+		  colorLabel.setBounds(160, 130, 50, 18);
 
 	    Button buttonColor = new Button(canvasTopo, SWT.PUSH);
 	    buttonColor.setText("Color...");
@@ -495,7 +499,7 @@ public class EditLayerAspectFrame extends EditFrame {
 	    buttonColor.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent event) {
 	        // Create the color-change dialog
-	        ColorDialog dlg = new ColorDialog(frame.getShell());
+	        ColorDialog dlg = new ColorDialog(layerFrame.getShell());
 
 	        // Set the selected color in the dialog from
 	        // user's selected color

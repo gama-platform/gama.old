@@ -270,7 +270,7 @@ public class EditLayerFrame extends EditFrame {
 				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent event) {
 						// Create the color-change dialog
-						ColorDialog dlg = new ColorDialog(frame.getShell());
+						ColorDialog dlg = new ColorDialog(cFrame.getShell());
 
 						// Set the selected color in the dialog from
 						// user's selected color
@@ -1133,7 +1133,7 @@ public class EditLayerFrame extends EditFrame {
 	 
 	 @Override
 		protected Point getInitialSize() {
-			return new Point(743, 490);
+			return new Point(743, 510);
 		}
 		
 	
