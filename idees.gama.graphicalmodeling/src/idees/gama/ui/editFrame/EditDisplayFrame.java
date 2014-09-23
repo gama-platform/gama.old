@@ -490,6 +490,7 @@ public class EditDisplayFrame extends EditFrame {
 		
 		btnJava2D = new Button(cOpenGl, SWT.RADIO);
 		btnJava2D.setText("Java 2D");
+		btnJava2D.setSelection(true);
 		btnJava2D.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -503,6 +504,7 @@ public class EditDisplayFrame extends EditFrame {
 
 		btnOpenGL = new Button(cOpenGl, SWT.RADIO);
 		btnOpenGL.setText("Open GL");
+		btnOpenGL.setSelection(false);
 		btnOpenGL.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
