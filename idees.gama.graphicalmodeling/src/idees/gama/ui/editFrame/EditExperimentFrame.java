@@ -170,7 +170,7 @@ public class EditExperimentFrame extends EditFrame {
 		canvasMonitor.setBounds(10, 515, 820, 305);
 		
 		CLabel lblCompilation = new CLabel(canvasMonitor, SWT.NONE);
-		lblCompilation.setText("Parameters");
+		lblCompilation.setText("Monitors");
 		lblCompilation.setBounds(5, 5, 70, 20);
 		
 		table_monitors = createTableEditorMonitors(canvasMonitor);

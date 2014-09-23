@@ -603,7 +603,7 @@ public class EditLayerAspectFrame extends EditFrame {
 	
 	 @Override
 		protected Point getInitialSize() {
-			return new Point(743, 490);
+			return new Point(753, 490);
 		}
 		
 		@Override

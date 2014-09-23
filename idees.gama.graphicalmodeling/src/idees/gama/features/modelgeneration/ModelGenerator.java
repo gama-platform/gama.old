@@ -642,22 +642,9 @@ public class ModelGenerator {
 				}
 			}
 
-			/*Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
 			for (EActionLink link : worldAgent.getActionLinks()) {
-				model += defineAction(link, level + 1);
+				model += defineAction(link, level );
 			}
-			for (EReflexLink link : worldAgent.getReflexLinks()) {
-				reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
-			}
-			List<String> reflexes = new GamaList<String>();
-			if (worldAgent.getReflexList().isEmpty() && !reflexMap.isEmpty()) {
-				reflexes.addAll(reflexMap.keySet());
-			} else {
-				reflexes.addAll(worldAgent.getReflexList());
-			}
-			for (String reflex : reflexes) {
-				model += defineReflex(reflexMap.get(reflex), level + 1);
-			}*/
 			Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
 			for (EReflexLink link : worldAgent.getReflexLinks()) {
 				if (link.getTarget() == null)
