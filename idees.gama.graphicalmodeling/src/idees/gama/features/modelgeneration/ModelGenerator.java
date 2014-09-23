@@ -609,7 +609,11 @@ public class ModelGenerator {
 
 				}
 			}
-			model = "model " + diagram.getName() + EL + EL + "global";
+			String modelName = diagram.getName();
+			if (!Character.isLetter(modelName.charAt(0))) {
+				modelName = "_" + modelName;
+			}
+			model = "model " + modelName + EL + EL + "global";
 			if (worldAgent.getTorus() != null
 					&& !worldAgent.getTorus().isEmpty()
 					&& !worldAgent.getTorus().equals("false")) {
