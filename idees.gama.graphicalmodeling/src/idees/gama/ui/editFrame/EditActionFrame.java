@@ -194,7 +194,7 @@ protected void groupReturnType(Composite container) {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 750);
+		return new Point(743, 680);
 	}
 
 	@Override

@@ -82,11 +82,11 @@ public class EditExperimentFrame extends EditFrame {
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = canvasParameter(container);
-		canvasParameter.setBounds(10, 50, 820, 305);
+		canvasParameter.setBounds(10, 50, 820, 205);
 		
 		//****** CANVAS MONITORS *********
 		Canvas canvasMonitors = canvasMonitor(container);
-		canvasMonitors.setBounds(10, 370, 820, 305);
+		canvasMonitors.setBounds(10, 270, 820, 205);
 
 		return container;
 	}
@@ -96,14 +96,14 @@ public class EditExperimentFrame extends EditFrame {
 		
 		//****** CANVAS PARAMETER *********
 		Canvas canvasParameter = new Canvas(container, SWT.BORDER);
-		canvasParameter.setBounds(10, 515, 820, 305);
+		canvasParameter.setBounds(10, 515, 820, 205);
 		
 		CLabel lblCompilation = new CLabel(canvasParameter, SWT.NONE);
 		lblCompilation.setText("Parameters");
 		lblCompilation.setBounds(5, 5, 70, 20);
 		
 		table_params = createTableEditor(canvasParameter);
-		table_params.setBounds(10, 30, 800, 230);
+		table_params.setBounds(10, 30, 800, 130);
 		table_params.setHeaderVisible(true);
 		table_params.setLinesVisible(true);
 		table_params.setLinesVisible(true);
@@ -135,7 +135,7 @@ public class EditExperimentFrame extends EditFrame {
 				table_params.redraw();
 			}
 		});
-		btnAddVariable.setBounds(50, 275, 130, 20);
+		btnAddVariable.setBounds(50, 175, 130, 20);
 		btnAddVariable.setText("Add parameter");
 		
 		Button btnDeleteVariable = new Button(canvasParameter, SWT.NONE);
@@ -157,7 +157,7 @@ public class EditExperimentFrame extends EditFrame {
 				
 			}
 		});
-		btnDeleteVariable.setBounds(220, 275, 130, 20);
+		btnDeleteVariable.setBounds(220, 175, 130, 20);
 		btnDeleteVariable.setText("Delete parameter");
 		return canvasParameter;
 	}
@@ -167,14 +167,14 @@ public class EditExperimentFrame extends EditFrame {
 		
 		//****** CANVAS Monitor *********
 		Canvas canvasMonitor = new Canvas(container, SWT.BORDER);
-		canvasMonitor.setBounds(10, 515, 820, 305);
+		canvasMonitor.setBounds(10, 415, 820, 205);
 		
 		CLabel lblCompilation = new CLabel(canvasMonitor, SWT.NONE);
 		lblCompilation.setText("Monitors");
 		lblCompilation.setBounds(5, 5, 70, 20);
 		
 		table_monitors = createTableEditorMonitors(canvasMonitor);
-		table_monitors.setBounds(10, 30, 800, 230);
+		table_monitors.setBounds(10, 30, 800, 130);
 		table_monitors.setHeaderVisible(true);
 		table_monitors.setLinesVisible(true);
 		table_monitors.setLinesVisible(true);
@@ -199,7 +199,7 @@ public class EditExperimentFrame extends EditFrame {
 	        	  table_monitors.redraw();
 			}
 		});
-		btnAddVariable.setBounds(50, 275, 130, 20);
+		btnAddVariable.setBounds(50, 175, 130, 20);
 		btnAddVariable.setText("Add monitor");
 		
 		Button btnDeleteVariable = new Button(canvasMonitor, SWT.NONE);
@@ -221,7 +221,7 @@ public class EditExperimentFrame extends EditFrame {
 				
 			}
 		});
-		btnDeleteVariable.setBounds(220, 275, 130, 20);
+		btnDeleteVariable.setBounds(220, 175, 130, 20);
 		btnDeleteVariable.setText("Delete monitor");
 		return canvasMonitor;
 	}
@@ -545,7 +545,7 @@ public class EditExperimentFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(850, 800);
+		return new Point(850, 550);
 	}
 
 	@Override
