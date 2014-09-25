@@ -123,8 +123,8 @@ public class Rk4Solver extends Solver {
 			if (y.length > 0)
 			try {
 				integrator.integrate(eq, (time_initial)
-						* (step), y, time_final
-						* (step), y);
+						* (1), y, time_final
+						* (1), y);
 
 			} catch (final Exception ex) {
 					ex.printStackTrace();

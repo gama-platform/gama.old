@@ -137,7 +137,10 @@ public class SolveStatement extends AbstractStatement {
 		discret = Cast.asInt(scope, discretExp.value(scope));
 		cycle_length = Cast.asFloat(scope, cycleExp.value(scope));
 		double step = Cast.asFloat(scope, stepExp.value(scope));
-		step = 1.0 / cycle_length != step?step:1.0 / cycle_length;
+//		step = 1.0 / cycle_length != step?step:1.0 / cycle_length;
+//		step = step*cycle_length>1?1/(step*cycle_length):step*cycle_length;
+//		step = cycle_length > 1?(step/cycle_length):1;
+		step = cycle_length > 1.0 ?(step/cycle_length): step;
 		if ( getEquations(scope) == null ) { return null; }
 		equations.currentScope = scope;
 
@@ -147,6 +150,9 @@ public class SolveStatement extends AbstractStatement {
 			relTolerExp != null ) {
 			double minStep = Cast.asFloat(scope, minStepExp.value(scope));
 			double maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
+			minStep = cycle_length > 1.0 ?(minStep/cycle_length): minStep;
+			maxStep = cycle_length > 1.0 ?(maxStep/cycle_length): maxStep;
+
 			double scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
 			double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
 
@@ -157,8 +163,11 @@ public class SolveStatement extends AbstractStatement {
 
 		timeInit = timeInitExp == null ? scope.getClock().getCycle() : Cast.asFloat(scope, timeInitExp.value(scope));
 		timeFinal =
-			timeFinalExp == null ? scope.getClock().getCycle() + 1 : Cast.asFloat(scope, timeFinalExp.value(scope));
+			timeFinalExp == null ? scope.getClock().getCycle() + 1  : Cast.asFloat(scope, timeFinalExp.value(scope));
 
+		timeInit = cycle_length > 1.0 ?timeInit/cycle_length: timeInit;
+		timeFinal = cycle_length > 1.0 ?timeFinal/cycle_length: timeFinal;
+		
 		equations.addExtern(equationName);
 		solver.solve(scope, equations, timeInit, timeFinal, cycle_length);
 		equations.removeExtern(scope, equationName);
