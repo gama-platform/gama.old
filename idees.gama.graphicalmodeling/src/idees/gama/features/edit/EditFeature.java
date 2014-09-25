@@ -29,4 +29,6 @@ public abstract class EditFeature extends AbstractCustomFeature {
     public boolean hasDoneChanges() {
            return this.hasDoneChanges;
     }
+    
+    
 }

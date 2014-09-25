@@ -258,7 +258,7 @@ public class EditDisplayFrame extends EditFrame {
 							final int index = layerViewer.getSelectionIndex();
 							ELayer layer = ((EDisplay) eobject).getLayers().get(index);
 							EditLayerFrame eaf = layerFrames.get(layer);
-							if (eaf == null ) {
+							if (eaf == null || eaf.getShell() == null || eaf.getShell().isDisposed()) {
 								eaf =  new EditLayerFrame(layer, frame, species, grids, true, diagram,fp,ef);
 								eaf.open();
 								layerFrames.put(layer, eaf);

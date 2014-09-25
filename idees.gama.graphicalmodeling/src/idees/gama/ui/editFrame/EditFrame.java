@@ -340,6 +340,7 @@ public abstract class EditFrame extends ApplicationWindow {
 	}
 	
 	protected void clean() {
+		
 	}
 
 	public void updateError() {

@@ -169,7 +169,7 @@ public class EditAspectFrame extends EditFrame {
 					final int index = layerViewer.getSelectionIndex();
 					ELayerAspect layer = ((EAspect) eobject).getLayers().get(index);
 					EditLayerAspectFrame eaf =layerFrames.get(layer);
-					if (eaf == null ) {
+					if (eaf == null || eaf.getShell() == null || eaf.getShell().isDisposed()) {
 						eaf =   new EditLayerAspectFrame(layer, frame, true, diagram,fp,ef);
 						eaf.open();
 						layerFrames.put(layer, eaf);

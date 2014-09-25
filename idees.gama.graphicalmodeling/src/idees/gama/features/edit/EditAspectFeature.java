@@ -42,8 +42,8 @@ public class EditAspectFeature  extends EditFeature {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EAspect) {
             	EAspect eAspect = (EAspect) bo; 
-            	if (frame == null ) {
-            		frame =  new EditAspectFrame(getDiagram(), getFeatureProvider(), this,eAspect, null);
+            	if (frame == null || frame.getShell() == null || frame.getShell().isDisposed() ) {
+                	frame =  new EditAspectFrame(getDiagram(), getFeatureProvider(), this,eAspect, null);
             		frame.open();
             		tbp.getFrames().put(eAspect, frame);
             	

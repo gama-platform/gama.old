@@ -42,7 +42,7 @@ public class EditExperimentFeature  extends EditFeature {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof EExperiment) {
             	EExperiment eExperiment = (EExperiment) bo; 
-            	if (frame == null ) {
+            	if (frame == null || frame.getShell() == null || frame.getShell().isDisposed() ) {
             		frame = new EditExperimentFrame(getDiagram(), getFeatureProvider(), this,eExperiment, eExperiment.getName());
             		frame.open();
             		tbp.getFrames().put(eExperiment, frame);
