@@ -484,8 +484,8 @@ public class Containers {
 
 	@operator(value = { "group_by" },
 		iterator = true,
-		index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-		content_type = IType.LIST)
+		index_type = ITypeProvider.SECOND_TYPE,
+		content_type = ITypeProvider.FIRST_TYPE)
 	@doc(value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
 		+ "of the left-hand operand associated to the key value",
 		masterDoc = true,
