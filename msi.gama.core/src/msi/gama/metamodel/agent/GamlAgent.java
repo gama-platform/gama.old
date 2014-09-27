@@ -107,12 +107,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final IVariable var = population.getVar(this, s);
 		if ( var != null ) {
 			var.setVal(scope, this, v);
-		}
-		final IAgent host = this.getHost();
-		if ( host != null ) {
-			final IVariable varOfHost = host.getPopulation().getVar(host, s);
-			if ( varOfHost != null ) {
-				varOfHost.setVal(scope, host, v);
+		} else {
+			final IAgent host = this.getHost();
+			if ( host != null ) {
+				final IVariable varOfHost = host.getPopulation().getVar(host, s);
+				if ( varOfHost != null ) {
+					varOfHost.setVal(scope, host, v);
+				}
 			}
 		}
 		// TODO: else ? launch an error ?
