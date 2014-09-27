@@ -34,7 +34,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		// noEntryValue is 0 by default
 		all = new ISpatialIndex[] { new GamaQuadTree(bounds) };
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
-		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest };
+		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * Math.sqrt(2) };
 	}
 
 	private ISpatialIndex findSpatialIndex(final ISpecies s) {
@@ -45,12 +45,6 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 			indexes.put(s, 0);
 		}
 		return all[index];
-		// if ( index == null ) {
-		// indexes.put(s, 0);
-		// return all[0];
-		// } else {
-		// return all[index];
-		// }
 	}
 
 	// Returns the index of the spatial index to use. Return -1 if all spatial indexes are concerned
@@ -58,9 +52,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if ( disposed ) { return -1; }
 		ISpecies s = f.getSpecies();
 		return indexes.get(s);
-		// if (i ==)
-		// if ( indexes.containsKey(s) ) { return indexes.get(s); }
-		// return -1;
+
 	}
 
 	@Override
@@ -120,6 +112,44 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return min_agent;
 
 	}
+
+	// private IAgent closestToAmongIndexes(final IScope scope, final IShape source, final IAgentFilter filter) {
+	// if ( disposed ) { return null; }
+	// final List<IAgent> shapes = new ArrayList();
+	//
+	// for ( final ISpatialIndex si : all ) {
+	// // TODO Not optimized as an agent can be found in a spatial index, farther than one in another
+	// final IAgent first = si.closestTo(scope, source, filter);
+	// if ( first != null ) {
+	// shapes.add(first);
+	// }
+	// }
+	//
+	// if ( shapes.size() == 1 ) { return shapes.get(0); }
+	// // Adresses Issue 722 by shuffling the returned list using GAMA random procedure
+	// scope.getRandom().shuffle(shapes);
+	// double min_dist = Double.MAX_VALUE;
+	// IAgent min_agent = null;
+	// for ( final IAgent s : shapes ) {
+	// final double dd = source.euclidianDistanceTo(s);
+	// if ( dd < min_dist ) {
+	// min_dist = dd;
+	// min_agent = s;
+	// }
+	// }
+	// return min_agent;
+	//
+	// }
+
+	// @Override
+	// public IAgent closestTo(final IScope scope, final IShape source, final IAgentFilter f) {
+	// final int id = findSpatialIndexes(f);
+	// if ( id != -1 ) {
+	// return all[id].closestTo(scope, source, f);
+	// } else {
+	// return closestToAmongIndexes(scope, source, f);
+	// }
+	// }
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
