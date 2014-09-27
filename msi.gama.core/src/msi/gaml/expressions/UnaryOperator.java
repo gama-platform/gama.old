@@ -102,7 +102,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
 				return array[0].getType().getContentType();
 			} else {
-				IType tt = child.getType().getContentType().getType();
+				IType tt = child.getType().getContentType().getContentType();
 				if ( tt != Types.NO_TYPE ) { return tt; }
 			}
 			return def;
