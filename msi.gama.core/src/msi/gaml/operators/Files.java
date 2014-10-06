@@ -11,13 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -64,31 +58,6 @@ public class Files {
 		return from(scope, s, null);
 	}
 
-	@operator(value = "get_URL_content", can_be_const = true, category = IOperatorCategory.FILE)
-	@doc(value = "Test whether the parameter is the path to an existing file.")
-	public static String get_URL_content(final IScope scope, final String s) {
-
-		URL url;
-		String allLines = "";
-		try {
-			url = new URL(s);
-			URLConnection conn = url.openConnection();
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
-			String inputLine;
-			while ((inputLine = br.readLine()) != null) {
-				allLines+=inputLine+"\n";
-			}
-			br.close();
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-			return allLines;		
-	}
-	
 	@operator(value = "file_exists", can_be_const = true, category = IOperatorCategory.FILE)
 	@doc(value = "Test whether the parameter is the path to an existing file.")
 	public static boolean exist_file(final IScope scope, final String s) {
