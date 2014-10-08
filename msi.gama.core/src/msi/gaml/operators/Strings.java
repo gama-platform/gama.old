@@ -156,6 +156,12 @@ public class Strings {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return new GamaList(Collections.list(st));
 	}
+	
+	@operator(value = { "replace" }, can_be_const = true, category = { IOperatorCategory.STRING })
+	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the the second operand by the thrid operand", examples = @example(value = "replace('to be or not to be,that is the question','to', 'do')", equals = "'do be or not do be,that is the question'"))
+	public static String opReplace(final String target, final String pattern, final String replacement) {
+		return target.replaceAll(pattern, replacement);
+	}
 
 	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.STRING })
 	@doc(value = "tests whether the operand represents a numerical value", comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
