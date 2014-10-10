@@ -570,6 +570,17 @@ public class GeometryUtils {
 	private static Geometry buildPoint(final List<List<ILocation>> listPoints) {
 		return FACTORY.createPoint((Coordinate) listPoints.get(0).get(0));
 	}
+	
+	public static Geometry buildGeometryCollection (final List<IShape> geoms) {
+		int nb = geoms.size();
+		Geometry[] geometries = new Geometry[nb];
+		for (int i = 0; i < nb; i++) {
+			geometries[i] = geoms.get(i).getInnerGeometry();
+		}
+		Geometry geom = FACTORY.createGeometryCollection(geometries);
+		
+		return geom;
+	}
 
 	private static Geometry buildLine(final List<List<ILocation>> listPoints) {
 		final List<ILocation> coords = listPoints.get(0);

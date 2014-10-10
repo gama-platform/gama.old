@@ -508,6 +508,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaDynamicLink(first, second);
 	}
 
+	public static IShape buildMultiGeometry( IList<IShape> shapes) {
+		Geometry geom = GeometryUtils.buildGeometryCollection(shapes);
+		if (geom == null) return null;
+		return new GamaShape(geom);
+	}
+
 	// /////////////////////// 3D Shape (Not yet implemented in 3D (e.g a Sphere is displayed as a
 	// sphere but is a JTS circle) /////////////////////////////
 

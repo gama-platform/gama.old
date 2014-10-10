@@ -11,9 +11,15 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.io.*;
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -26,29 +32,48 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.IType;
-import org.geotools.data.*;
+
+import org.geotools.data.DataUtilities;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.*;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.*;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
@@ -187,13 +212,23 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final Map<String, String> attributes = new GamaMap();
 		computeInits(scope, attributes);
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
+		String geomType = "";
 		for ( final IAgent be : agents ) {
 			if ( be.getGeometry() != null ) {
 				final IAgent ag = be;
-				specs.append("geom:" + ag.getInnerGeometry().getClass().getSimpleName());
-				break;
+				geomType = ag.getInnerGeometry().getClass().getSimpleName();
+				if (ag.getInnerGeometry().getNumGeometries() > 1) {
+					if (ag.getInnerGeometry().getGeometryN(0).getClass() == Point.class)
+						geomType = MultiPoint.class.getSimpleName();
+					else if (ag.getInnerGeometry().getGeometryN(0).getClass() == LineString.class)
+						geomType = MultiLineString.class.getSimpleName();
+					else if (ag.getInnerGeometry().getGeometryN(0).getClass() == Polygon.class)
+						geomType = MultiPolygon.class.getSimpleName();
+					break;
+				}
 			}
 		}
+		specs.append("geom:" + geomType);
 		try {
 			ISpecies species = null;
 			if ( agents instanceof IPopulation ) {

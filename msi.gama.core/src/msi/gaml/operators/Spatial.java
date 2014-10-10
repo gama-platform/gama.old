@@ -612,6 +612,26 @@ public abstract class Spatial {
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, points.lastValue(scope)); }
 			return GamaGeometryType.buildPolyline(shapes);
 		}
+		
+		@operator(value = { "geometry_collection" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+			@doc(value = "A geometry collection (multi-geometry) composed of the given list of geometries.",
+				usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+					@usage(value = "if the operand is composed of a single geometry, returns a copy of the geometry.") },
+				examples = { @example(value = "geometry_collection([{0,0}, {0,10}, {10,10}, {10,0}])",
+					equals = "a geometry composed of the 4 points (multi-point).",
+					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+					"square", "triangle", "line" })
+			public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
+				if ( geometries == null || geometries.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
+				final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE);
+				final int size = shapes.length(scope);
+				final IShape first = shapes.firstValue(scope);
+				if ( size == 1 ) { return first.copy(scope); }
+				
+				return GamaGeometryType.buildMultiGeometry(shapes);
+			}
 
 		@operator(value = { "line", "polyline" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
