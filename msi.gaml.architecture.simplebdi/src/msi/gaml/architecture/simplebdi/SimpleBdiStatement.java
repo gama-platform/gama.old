@@ -12,13 +12,17 @@
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -28,12 +32,14 @@ import msi.gaml.types.IType;
 @symbol(name = { SimpleBdiArchitecture.PLAN, SimpleBdiArchitecture.PERCEIVE }, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
+		@facet(name = SimpleBdiArchitecture.EXECUTEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class SimpleBdiStatement extends AbstractStatementSequence {
 
 	private final IExpression _when;
 	private final IExpression _priority;
+	private final IExpression _executedwhen;
 
 	public IExpression getPriorityExpression() {
 		return _priority;
@@ -43,10 +49,15 @@ public class SimpleBdiStatement extends AbstractStatementSequence {
 		return _when;
 	}
 
+	public IExpression getExecutedExpression() {
+		return _executedwhen;
+	}
+
 	public SimpleBdiStatement(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
 		_priority = getFacet(SimpleBdiArchitecture.PRIORITY);
+		_executedwhen = getFacet(SimpleBdiArchitecture.EXECUTEDWHEN);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}
@@ -63,3 +74,4 @@ public class SimpleBdiStatement extends AbstractStatementSequence {
 		return Cast.asFloat(scope, _priority.value(scope));
 	}
 }
+
