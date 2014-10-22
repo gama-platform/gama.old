@@ -1252,42 +1252,56 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 			}
 		} else {
-			for ( int i = 0; i < vertexMap.size(); i++ ) {
-				V v1 = vertices.get(i);
-				for ( int j = 0; j < vertexMap.size(); j++ ) {
-					if ( i == j ) {
-						continue;
+			if (optimizerType == 1) {
+				optimizer = new FloydWarshallShortestPathsGAMA(getProxyGraph());
+				optimizer.lazyCalculateMatrix();
+				for ( int i = 0; i < vertexMap.size(); i++ ) {
+					for ( int j = 0; j < vertexMap.size(); j++ ) {
+						if ( i == j ) {
+							continue;
+						}
+						matrix.set(scope, i, j, optimizer.getBacktrace()[i][j]);
 					}
-					if ( matrix.get(scope, j, i) != i ) {
-						continue;
-					}
-					V v2 = vertices.get(j);
-					List edges = computeBestRouteBetween(scope, v1, v2);
-					// System.out.println("edges : " + edges);
-					if ( edges == null ) {
-						continue;
-					}
-					V source = v1;
-					int s = i;
-					for ( Object edge : edges ) {
-						// System.out.println("s : " + s + " j : " + j + " i: " + i);
-						if ( s != i && matrix.get(scope, j, s) != s ) {
-							break;
+				}
+			} else {
+				for ( int i = 0; i < vertexMap.size(); i++ ) {
+					V v1 = vertices.get(i);
+					for ( int j = 0; j < vertexMap.size(); j++ ) {
+						if ( i == j ) {
+							continue;
+						}
+						if ( matrix.get(scope, j, i) != i ) {
+							continue;
+						}
+						V v2 = vertices.get(j);
+						List edges = computeBestRouteBetween(scope, v1, v2);
+						// System.out.println("edges : " + edges);
+						if ( edges == null ) {
+							continue;
+						}
+						V source = v1;
+						int s = i;
+						for ( Object edge : edges ) {
+							// System.out.println("s : " + s + " j : " + j + " i: " + i);
+							if ( s != i && matrix.get(scope, j, s) != s ) {
+								break;
+							}
+
+							V target = (V) this.getEdgeTarget(edge);
+							if ( !directed && target == source ) {
+								target = (V) this.getEdgeSource(edge);
+							}
+							Integer k = indexVertices.get(scope, target);
+							// System.out.println("k : " +k);
+							matrix.set(scope, j, s, k);
+							s = k;
+							source = target;
 						}
 
-						V target = (V) this.getEdgeTarget(edge);
-						if ( !directed && target == source ) {
-							target = (V) this.getEdgeSource(edge);
-						}
-						Integer k = indexVertices.get(scope, target);
-						// System.out.println("k : " +k);
-						matrix.set(scope, j, s, k);
-						s = k;
-						source = target;
 					}
-
 				}
 			}
+			
 		}
 		return matrix;
 

@@ -55,12 +55,22 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		lazyCalculatePaths();
 		return nShortestPaths;
 	}
+	
+	
+
+	public double[][] getD() {
+		return d;
+	}
+
+	public int[][] getBacktrace() {
+		return backtrace;
+	}
 
 	/**
 	 * Calculates the matrix of all shortest paths, along with the diameter, but
 	 * does not populate the paths map.
 	 */
-	private void lazyCalculateMatrix() {
+	public void lazyCalculateMatrix() {
 		if ( d != null ) {
 			// already done
 			return;
