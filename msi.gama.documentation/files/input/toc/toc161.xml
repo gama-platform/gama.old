@@ -99,59 +99,7 @@
 <!--		<chapter name="7.6 Using FIPA ACL" file="G__UsingFIPAACL"/>			-->
 <!--		<chapter name="7.7 Using the Driving Skill" file="G__UsingDringSkill"/> 	-->
 		<chapter name="7.8 Defining User Interaction" file="G__DefininUserInteraction"/>		
-
-<!--			<part name="Developing Extensions"/>
-		<chapter name="Developing Extensions" file="G__DevelopingExtensions"/>		
-		<chapter name="1. Installing the SVN version" file="G__InstallingSvnVersion"/>		
-		<chapter name="2. Architecture of GAMA" file="G__GamaArchitecture"/>		
-		<chapter name="3. Developing a Plugin" file="G__DevelopingPlugins"/>		
-		<chapter name="4. Developing a Skill" file="G__DevelopingSkills"/>		
-		<chapter name="5. Developing a Statement" file="G__DevelopingStatements"/>		
-		<chapter name="6. Developing an Operator" file="G__DevelopingOperators"/>		
-		<chapter name="7. Developing a Type" file="G__DevelopingTypes"/>		
-		<chapter name="8. Developing a Species" file="G__DevelopingSpecies"/>		
-		<chapter name="9. Developing a Control Architecture" file="G__DevelopingControlArchitectures"/>		-->
 			
-			<part name="References"/>
+	<part name="References"/>
 		<chapter name="References" file="G__References"/>		
-<!--			<part name="Tutorials"/>
-		<chapter name="Tutorials" file="G__Tutorials"/>			-->		
-</toc>
-
-	<!--
-	<part name="Developer Guide"/>		
-		<chapter name="Introduction to the Developer Guide" file="DevelopingGuide15"/>					
-		<chapter name="Installation for Indigo 3.7" file="InstallProcedure15"/>		
-		<chapter name="Global view of GAMA architecture" file="Globalview"/>		
-		<chapter name="How to develop a new plug-in" file="CreationPlugins15"/>		
-		<chapter name="How to develop a new skill" file="CreationSkill15"/>			
-		<chapter name="How to develop a new statement" file="CreationStatement15"/>			
-		<chapter name="How to develop a new facet" file="CreationFacet15"/>			
-		<chapter name="Visualization: OpenGL Display Feature" file="OpenGlDisplay"/>		
-		<chapter name="Visualization: OpenGL Implementation" file="OpenGlImplementation"/>
-	-->
-	<!--
-	<part name="Prey Predator Tutorial for GAMA 1.5"/>	
-		<chapter name="Introduction to the tutorial" file="PredatorPreyTutorial15"/>
-		<chapter name="1.Basic model (prey agents)" file="PredatorPrey1_v15"/>	
-		<chapter name="2.Dynamic of the vegetation" file="PredatorPrey2_v15"/>		
-		<chapter name="3.Behavior of the prey agent" file="PredatorPrey3_v15"/>	
-		<chapter name="4.Use of Inspectors/monitors" file="PredatorPrey4_v15"/>		
-		<chapter name="5.Predator agents" file="PredatorPrey5_v15"/>		
-		<chapter name="6.Breeding of agents" file="PredatorPrey6_v15"/>		
-		<chapter name="7.Agent display (aspect)" file="PredatorPrey7_v15"/>		
-		<chapter name="8.Complex behaviors" file="PredatorPrey8_v15"/>	
-		<chapter name="9.Stopping condition" file="PredatorPrey9_v15"/>	
-		<chapter name="10.Definition of charts" file="PredatorPrey10_v15"/>	
-		<chapter name="11.Writing files" file="PredatorPrey11_v15"/>	
-		<chapter name="12.Image loading" file="PredatorPrey12_v15"/>	
-	<part name="Road traffic tutorial GAMA 1.5"/>
-		<chapter name="Introduction to the tutorial" file="GISTutorialRoadTraffic15"/>
-		<chapter name="1.Road and building agents" file="RoadTraficModel1v15"/>	
-		<chapter name="2.People agents" file="RoadTraficModel2v15"/>		
-		<chapter name="3.Dynamic of the people agents" file="RoadTraficModel3v15"/>	
-		<chapter name="4.Weights for the road network" file="RoadTraficModel4v15"/>		
-		<chapter name="5.Dynamic weights" file="RoadTraficModel5v15"/>		
-		<chapter name="6.Definition of a chart display" file="RoadTraficModel6v15"/>		
-		<chapter name="7.Automatic repair of roads" file="RoadTraficModel7v15"/>			
--->
+</toc>		

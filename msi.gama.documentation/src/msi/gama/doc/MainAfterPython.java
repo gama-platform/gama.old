@@ -24,7 +24,7 @@ public class MainAfterPython {
 		System.out.println("GENERATION OF THE DOCUMENTATION - STEP 3/3");
 
 		System.out.print("Merge all HTML files produced from Wiki................");
-		MergeHTML.mergeHTMLFiles();
+	 	MergeHTML.mergeHTMLFiles();
 		System.out.println("DONE");			
 		
 		System.out.print("Produce the final PDF file................");
