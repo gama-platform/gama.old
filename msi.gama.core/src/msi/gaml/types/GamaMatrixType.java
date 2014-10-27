@@ -14,6 +14,8 @@ package msi.gaml.types;
 import java.io.*;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import au.com.bytecode.opencsv.CSVReader;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -172,6 +174,21 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		}
 		return matrix;
 	}
+	
+	public static IMatrix fromCSV(IScope scope, CSVReader reader, GamaMatrix matrix) throws IOException {
+		final int lineSize = matrix.numRows;
+		final int columnSize =  matrix.numCols;
+		for ( int i = 0; i < lineSize; i++ ) {
+			String[] splitStr = reader.readNext();
+
+			int nbRows = Math.min(columnSize,  splitStr.length);
+			for ( int j = 0; j < nbRows; j++ ) {
+				matrix.set(scope, j, i, splitStr[j]);
+			}
+		}
+		return matrix;	
+	}
+
 
 	/**
 	 * @param scope the global scope
@@ -309,4 +326,5 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		return true;
 	}
 
+	
 }

@@ -13,10 +13,13 @@ package msi.gama.util.file;
 
 import java.io.*;
 import java.util.List;
+
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.*;
 import au.com.bytecode.opencsv.CSVReader;
@@ -31,9 +34,8 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 @file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX)
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
-
+	boolean fillMatrix = false;
 	String csvSeparator = ",";
-
 	/**
 	 * @param scope
 	 * @param pathName
@@ -46,6 +48,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator) {
 		super(scope, pathName);
 		setCsvSeparators(separator);
+	}
+	
+	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final GamaMatrix matrix) {
+		super(scope, pathName);
+		setCsvSeparators(separator);
+		setBuffer(matrix);
+		fillMatrix = true;
+	}
+
+	public GamaCSVFile(final IScope scope, final String pathName, final GamaMatrix matrix) {
+		super(scope, pathName);
+		setBuffer(matrix);
+		fillMatrix = true;
 	}
 
 	public GamaCSVFile(final IScope scope, final String pathName, final IMatrix<Object> matrix) {
@@ -60,13 +75,18 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 
 	@Override
 	public void fillBuffer(final IScope scope) {
-		if ( getBuffer() != null ) { return; }
+		if ( getBuffer() != null &&  !fillMatrix) { return; }
 		if ( csvSeparator != null ) {
 			CSVReader reader = null;
 			try {
 				reader = new CSVReader(new FileReader(getPath()), csvSeparator.charAt(0));
-				List<String[]> strings = reader.readAll();
-				setBuffer(GamaMatrixType.fromCSV(scope, strings));
+				if (fillMatrix) {
+					setBuffer(GamaMatrixType.fromCSV(scope, reader, (GamaMatrix) getBuffer()));
+					fillMatrix = false;
+				} else {
+					List<String[]> strings = reader.readAll();
+					setBuffer(GamaMatrixType.fromCSV(scope, strings));
+				}
 			} catch (FileNotFoundException e) {} catch (IOException e) {
 				throw GamaRuntimeException.create(e, scope);
 			} finally {
