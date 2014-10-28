@@ -36,7 +36,8 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	public FloydWarshallShortestPathsGAMA(final Graph<V, E> graph) {
 		this.graph = graph;
-		this.vertices = new ArrayList<V>(graph.vertexSet());
+		this.vertices = new ArrayList<V>(((GamaGraph<V, E>)graph).getVertexMap().keySet());
+		
 	}
 
 	// ~ Methods ----------------------------------------------------------------
@@ -148,8 +149,9 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		return diameter;
 	}
 
-	private void shortestPathRecur(final List<E> edges, final int v_a, final int v_b) {
+	public void shortestPathRecur(final List<E> edges, final int v_a, final int v_b) {
 		int k = backtrace[v_a][v_b];
+		
 		if ( k == -1 ) {
 			E edge = graph.getEdge(vertices.get(v_a), vertices.get(v_b));
 			if ( edge != null ) {
@@ -160,7 +162,20 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 			shortestPathRecur(edges, k, v_b);
 		}
 	}
-
+	
+	public int succRecur(final int v_a, final int v_b) {
+		int k = backtrace[v_a][v_b];
+		if ( k == -1 ) {
+			if ( ! graph.containsEdge(vertices.get(v_a), vertices.get(v_b)) ) {
+				return -1;
+			}
+			return v_b;
+		} else {
+			return succRecur(v_a, k);
+		}
+	}
+	
+	
 	/**
 	 * Get the shortest path between two vertices. Note: The paths are
 	 * calculated using a recursive algorithm. It *will* give problems on paths

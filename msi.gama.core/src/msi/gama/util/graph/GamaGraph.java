@@ -1260,7 +1260,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 						if ( i == j ) {
 							continue;
 						}
-						matrix.set(scope, i, j, optimizer.getBacktrace()[i][j]);
+						matrix.set(scope,j, i, optimizer.succRecur(i,j));
 					}
 				}
 			} else {
