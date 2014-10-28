@@ -321,10 +321,10 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		return itemType;
 	}
 
-	@Override
-	public boolean canCastToConst() {
-		return true;
-	}
+	// @Override
+	// public boolean canCastToConst() {
+	// return true;
+	// }
 
 	
 }
