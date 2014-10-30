@@ -560,6 +560,54 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		return null;
 	}
+	
+	@action(name = "path_from_nodes",
+			args = {
+				@arg(name = "graph", type = IType.GRAPH, optional = false, doc = @doc("the graph on wich compute the path")),
+				@arg(name = "nodes", type = IType.LIST, optional = false, doc = @doc("the list of nodes composing the path"))},
+			doc = @doc(value = "action to compute a path from a list of nodes according to a given graph",
+				returns = "the computed path, return nil if no path can be taken",
+				examples = { @example("do compute_path graph: road_network nodes: [node1, node5, node10];") }))
+		public
+			IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
+			ISpatialGraph graph = (ISpatialGraph) scope.getArg("graph", IType.GRAPH);
+			IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
+			
+			if (nodes == null || nodes.isEmpty()) return null;
+			IAgent source = nodes.firstValue(scope);
+			IAgent target = nodes.lastValue(scope);
+			IList edges = new GamaList();
+			for (int i = 0; i < nodes.size() - 1; i++) {
+				edges.add(graph.getEdge(nodes.get(i), nodes.get(i+1)));
+			}
+			IPath path = PathFactory.newInstance(graph, source, target, edges);
+			IAgent agent = getCurrentAgent(scope);
+			if ( path != null && !path.getEdgeGeometry().isEmpty() ) {
+				List<GamaPoint> targets = getTargets(agent);
+				targets.clear();
+				for ( Object edge : path.getEdgeGeometry() ) {
+					IShape egGeom = (IShape) edge;
+					Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
+					GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
+					targets.add(pt);
+				}
+				setTargets(agent, targets);
+				IAgent nwRoad = (IAgent) path.getEdgeList().get(0);
+				setCurrentIndex(agent, 0);
+				setCurrentTarget(agent, targets.get(0));
+				setFinalTarget(agent, (GamaPoint) target.getLocation());
+				setCurrentPath(agent, path);
+				RoadSkill.register(nwRoad, agent, 0);
+				return path;
+
+			} else {
+				setTargets(agent, new GamaList<GamaPoint>());
+				setCurrentTarget(agent, null);
+				setFinalTarget(agent, null);
+				setCurrentPath(agent, null);
+			}
+			return null;
+		}
 
 	private Double speedChoice(final IAgent agent, final IAgent road) {
 		return Math.min(
