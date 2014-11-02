@@ -8,6 +8,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="gephi-toolkit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gephi-toolkit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
