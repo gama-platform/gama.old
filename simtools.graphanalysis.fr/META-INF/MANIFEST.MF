@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MultilevelGraphSkills
+Bundle-SymbolicName: simtools.multilevelgraph;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: msi.gama.core;bundle-version="1.6.1",
+ msi.gama.ext;bundle-version="1.0.0",
+ msi.gama.processor;bundle-version="1.4.0"
+Bundle-ClassPath: src/,
+ .,
+ gephi-toolkit.jar
