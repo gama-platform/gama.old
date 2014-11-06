@@ -24,6 +24,7 @@ import msi.gaml.types.IType;
 
 @vars({
 	@var(name = "roads_in", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of input roads")),
+	@var(name = "priority_roads", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of priority roads")),
 	@var(name = "roads_out", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of output roads")),
 	@var(name = "stop", type = IType.LIST, of = IType.LIST, doc = @doc("define for each type of stop, the list of concerned roads")),
 	@var(name = "block", type = IType.MAP, doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
@@ -31,6 +32,7 @@ import msi.gaml.types.IType;
 public class RoadNodeSkill extends MovingSkill {
 
 	public final static String ROADS_IN = "roads_in";
+	public final static String PRIORITY_ROADS = "priority_roads";
 	public final static String ROADS_OUT = "roads_out";
 	public final static String STOP = "stop";
 	public final static String BLOCK = "block";
@@ -73,6 +75,16 @@ public class RoadNodeSkill extends MovingSkill {
 	@setter(BLOCK)
 	public void setBlock(final IAgent agent, final Map<IAgent, List> block) {
 		agent.setAttribute(BLOCK, block);
+	}
+	
+	@getter(PRIORITY_ROADS)
+	public List getPriorityRoads(final IAgent agent) {
+		return (List) agent.getAttribute(PRIORITY_ROADS);
+	}
+
+	@setter(PRIORITY_ROADS)
+	public void setPriorityRoads(final IAgent agent, final List rds) {
+		agent.setAttribute(PRIORITY_ROADS, rds);
 	}
 
 }
