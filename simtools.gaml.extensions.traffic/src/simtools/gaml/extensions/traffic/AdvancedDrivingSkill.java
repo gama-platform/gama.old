@@ -1317,13 +1317,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				temp[1] = coords[i + 1];
 				final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
 				final double distS = segment.distance(pointS);
-				if ( distS < distanceS ) {
+				if ( distS <= distanceS ) {
 					distanceS = distS;
 					indexSegment = i + 1;
 				}
 
 				final double distT = segment.distance(pointT);
-				if ( distT < distanceT ) {
+				if ( distT <= distanceT ) {
 					distanceT = distT;
 					endIndexSegment = i + 1;
 				}

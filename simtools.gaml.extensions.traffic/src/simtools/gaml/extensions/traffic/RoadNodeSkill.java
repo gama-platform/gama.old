@@ -20,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gaml.skills.MovingSkill;
+import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
 @vars({
@@ -29,7 +30,7 @@ import msi.gaml.types.IType;
 	@var(name = "stop", type = IType.LIST, of = IType.LIST, doc = @doc("define for each type of stop, the list of concerned roads")),
 	@var(name = "block", type = IType.MAP, doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
 @skill(name = "skill_road_node")
-public class RoadNodeSkill extends MovingSkill {
+public class RoadNodeSkill extends Skill {
 
 	public final static String ROADS_IN = "roads_in";
 	public final static String PRIORITY_ROADS = "priority_roads";

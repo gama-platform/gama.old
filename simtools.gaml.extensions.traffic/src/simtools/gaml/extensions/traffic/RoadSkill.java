@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.MovingSkill;
+import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.*;
 
@@ -39,7 +40,7 @@ import com.vividsolutions.jts.geom.*;
 	@var(name = "linked_road", type = IType.AGENT, doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")),
 	@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road")) })
 @skill(name = "skill_road")
-public class RoadSkill extends MovingSkill {
+public class RoadSkill extends Skill {
 
 	public final static String AGENTS = "all_agents";
 
