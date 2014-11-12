@@ -658,7 +658,7 @@ public class GeometryUtils {
 				final Coordinate t = coordsSimp[i + 1];
 				while (true) {
 					final double dist = s.distance(t);
-					if ( (distCur + distance) < dist ) {
+					if ( (distance - distCur) < dist ) {
 						double distTravel = distance - distCur; 
 						final double ratio = distTravel / dist;
 						double x_s = s.x + ratio * (t.x - s.x);
@@ -667,7 +667,7 @@ public class GeometryUtils {
 						locs.add(new GamaPoint(s));
 						distCur = 0;
 						
-					} else if ( (distCur + distance) > dist ) {
+					} else if ( (distance - distCur) > dist ) {
 						distCur += dist;
 						break;
 					} else {
