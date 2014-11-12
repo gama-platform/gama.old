@@ -648,41 +648,39 @@ public class GeometryUtils {
 		if ( geom instanceof Point ) {
 			locs.add(new GamaPoint(geom.getCoordinate()));
 		} else if ( geom instanceof LineString ) {
-			double dist_cur = 0;
-			final int nbSp = geom.getNumPoints();
+			double distCur = 0;
 			final Coordinate[] coordsSimp = geom.getCoordinates();
-			boolean same = false;
-			final boolean is_ring = ((LineString) geom).isClosed();
-			double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
+			if (coordsSimp.length > 0) locs.add(new GamaPoint(coordsSimp[0]));
+			final int nbSp =coordsSimp.length;
 			for ( int i = 0; i < nbSp - 1; i++ ) {
-				if ( !same ) {
-					final Coordinate s = coordsSimp[i];
-					final Coordinate t = coordsSimp[i + 1];
-					x_t = t.x;
-					y_t = t.y;
-					x_s = s.x;
-					y_s = s.y;
-				} else if (is_ring) {
-					i = i - 1;
+				
+				Coordinate s = coordsSimp[i];
+				final Coordinate t = coordsSimp[i + 1];
+				while (true) {
+					final double dist = s.distance(t);
+					if ( (distCur + distance) < dist ) {
+						double distTravel = distance - distCur; 
+						final double ratio = distTravel / dist;
+						double x_s = s.x + ratio * (t.x - s.x);
+						double y_s = s.y + ratio * (t.y - s.y);
+						s =new Coordinate(x_s, y_s);
+						locs.add(new GamaPoint(s));
+						distCur = 0;
+						
+					} else if ( (distCur + distance) > dist ) {
+						distCur += dist;
+						break;
+					} else {
+						distCur = 0;
+						locs.add(new GamaPoint(t));
+						break;
+					}
 				}
-				final double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
-				if ( dist_cur < dist ) {
-					final double ratio = dist_cur / dist;
-					x_s = x_s + ratio * (x_t - x_s);
-					y_s = y_s + ratio * (y_t - y_s);
-					locs.add(new GamaPoint(x_s, y_s));
-					dist_cur = distance;
-					same = true;
-					if (!is_ring) {
-						i = i - 1;
-					} 
-				} else if ( dist_cur > dist ) {
-					dist_cur = dist_cur - dist;
-					same = false;
-				} else {
-					locs.add(new GamaPoint(x_t, y_t));
-					dist_cur = distance;
-					same = false;
+				
+			}
+			if (locs.size() > 1) {
+				if (locs.get(0).distance(locs.get(locs.size() - 1)) < 0.1 * distance) {
+					locs.remove(locs.size() - 1);
 				}
 			}
 		} else if ( geom instanceof Polygon ) {
