@@ -18,6 +18,7 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.operators.Strings;
 
 public class TypeTree<T> {
 
@@ -218,10 +219,10 @@ public class TypeTree<T> {
 			StringBuilder sb = new StringBuilder();
 			for ( TypeNode<T> t : map.keySet() ) {
 				for ( int i = 0; i < map.get(t); i++ ) {
-					sb.append("\t");
+					sb.append(Strings.TAB);
 				}
 				sb.append(t.getData().toString());
-				sb.append("\n");
+				sb.append(Strings.LN);
 			}
 			return sb.toString();
 		}
