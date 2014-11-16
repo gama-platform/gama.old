@@ -15,11 +15,10 @@ import gnu.trove.map.hash.THashMap;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.ThreadedStatusUpdater.StatusMessage;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
@@ -1191,6 +1190,33 @@ public class SwtGui implements IGui {
 			});
 
 		}
+	}
+
+	/**
+	 * Method setStatus()
+	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String)
+	 */
+	@Override
+	public void setSubStatusCompletion(final double s) {
+		status.updateWith(new SubTaskMessage(s));
+	}
+
+	/**
+	 * Method beginSubStatus()
+	 * @see msi.gama.common.interfaces.IGui#beginSubStatus(java.lang.String)
+	 */
+	@Override
+	public void beginSubStatus(final String name) {
+		status.updateWith(new SubTaskMessage(name, true));
+	}
+
+	/**
+	 * Method endSubStatus()
+	 * @see msi.gama.common.interfaces.IGui#endSubStatus(java.lang.String)
+	 */
+	@Override
+	public void endSubStatus(final String name) {
+		status.updateWith(new SubTaskMessage(name, false));
 	}
 
 }

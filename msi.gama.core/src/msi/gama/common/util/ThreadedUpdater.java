@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ThreadedUpdater.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ThreadedUpdater.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,7 +25,7 @@ import msi.gama.common.util.ThreadedUpdater.IUpdaterMessage;
 public abstract class ThreadedUpdater<Message extends IUpdaterMessage> implements Runnable, IUpdaterTarget<Message> {
 
 	private Thread runThread;
-	private final BlockingQueue<Message> messages = new LinkedBlockingQueue(100);
+	private final BlockingQueue<Message> messages = new LinkedBlockingQueue(500);
 	private IUpdaterTarget<Message> control;
 
 	@Override
@@ -36,6 +36,11 @@ public abstract class ThreadedUpdater<Message extends IUpdaterMessage> implement
 	@Override
 	public void updateWith(final Message m) {
 		messages.offer(m);
+	}
+
+	@Override
+	public int getCurrentState() {
+		return control.getCurrentState();
 	}
 
 	public static interface IUpdaterMessage {

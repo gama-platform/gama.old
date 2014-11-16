@@ -252,4 +252,14 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 
 		getPopup().layout(true);
 	}
+
+	/**
+	 * Method getCurrentState()
+	 * @see msi.gama.common.interfaces.IUpdaterTarget#getCurrentState()
+	 */
+	@Override
+	public int getCurrentState() {
+		return IGui.NEUTRAL;
+	}
+
 }

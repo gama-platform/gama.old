@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IUpdaterTarget.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IUpdaterTarget.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,4 +16,7 @@ public interface IUpdaterTarget<Message> {
 	public boolean isDisposed();
 
 	public void updateWith(Message m);
+
+	public int getCurrentState();
+
 }

@@ -107,6 +107,22 @@ public class GuiUtils {
 		}
 	}
 
+	public static void beginSubStatus(final String n) {
+		if ( gui != null ) {
+			gui.beginSubStatus(n);
+		}
+	}
+
+	public static void endSubStatus(final String n) {
+		if ( gui != null ) {
+			gui.endSubStatus(n);
+		}
+	}
+
+	public static void updateSubStatusCompletion(final double n) {
+		gui.setSubStatusCompletion(n);
+	}
+
 	// /**
 	// * @param abstractDisplayOutput
 	// * @param refresh

@@ -290,4 +290,25 @@ public class HeadlessListener implements IGui {
 	public Object showWebEditor(final String url, final String html) {
 		return null;
 	}
+
+	/**
+	 * Method beginSubStatus()
+	 * @see msi.gama.common.interfaces.IGui#beginSubStatus(java.lang.String)
+	 */
+	@Override
+	public void beginSubStatus(final String name) {}
+
+	/**
+	 * Method endSubStatus()
+	 * @see msi.gama.common.interfaces.IGui#endSubStatus(java.lang.String)
+	 */
+	@Override
+	public void endSubStatus(final String name) {}
+
+	/**
+	 * Method setSubStatusCompletion()
+	 * @see msi.gama.common.interfaces.IGui#setSubStatusCompletion(double)
+	 */
+	@Override
+	public void setSubStatusCompletion(final double status) {}
 }

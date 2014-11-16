@@ -39,7 +39,13 @@ public interface IGui {
 	public static final String PLUGIN_ID = "msi.gama.application";
 	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap();
 
+	void setSubStatusCompletion(double status);
+
 	void setStatus(String error, int code);
+
+	void beginSubStatus(String name);
+
+	void endSubStatus(String name);
 
 	void run(Runnable block);
 
@@ -73,15 +79,11 @@ public interface IGui {
 
 	void showConsoleView();
 
-	// void hideMonitorView();
-
 	void setWorkbenchWindowTitle(String string);
 
 	void closeViewOf(IDisplayOutput out);
 
 	IGamaView hideView(String viewId);
-
-	// IDisplay createDisplay(IDisplayLayer layer, double w, double h, IGraphics g);
 
 	boolean isModelingPerspective();
 
@@ -92,10 +94,6 @@ public interface IGui {
 	void togglePerspective();
 
 	boolean openSimulationPerspective();
-
-	// IGraphics newGraphics(int width, int height);
-
-	// void clearErrors();
 
 	IDisplaySurface getDisplaySurfaceFor(IScope scope, String keyword, LayeredDisplayOutput layerDisplayOutput,
 		double w, double h, Object ... args);
@@ -113,8 +111,6 @@ public interface IGui {
 	void setSelectedAgent(IAgent a);
 
 	void updateParameterView(IExperimentPlan exp);
-
-	// void cycleDisplayViews(Set<String> names);
 
 	void prepareForExperiment(IExperimentPlan exp);
 
