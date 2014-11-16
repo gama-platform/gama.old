@@ -193,7 +193,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper,
 		final int innerType, final int keyType, final int contentType, final String[] s) {
-		GamaFileType.addFileTypeDefinition(string, clazz, helper, s);
+		helper.setSkillClass(clazz);
+		GamaFileType.addFileTypeDefinition(string, Types.get(keyType), Types.get(contentType), clazz, helper, s);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
@@ -224,10 +225,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// combinations and doc missing
-	protected void _symbol(final Class c, final int docIndex, final IDescriptionValidator validator, final int sKind,
-		final boolean remote, final boolean args, final boolean scope, final boolean sequence, final boolean unique,
-		final boolean name_unique, final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd,
-		final String omissible, final String[][] combinations, final ISymbolConstructor sc, final String ... names) {
+	protected void _symbol(final Class c, final int docIndex, final IDescriptionValidator validator,
+		final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
+		final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
+		final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd, final String omissible,
+		/* final String[][] combinations, */final ISymbolConstructor sc, final String ... names) {
 
 		Set<String> contextKeywords = new THashSet();
 		TIntHashSet contextKinds = new TIntHashSet();
@@ -266,13 +268,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// }
 
 		SymbolProto md =
-			new SymbolProto(sequence, args, sKind, !scope, facets, omissible, combinations, contextKeywords,
-				contextKinds, remote, unique, name_unique, sc, validator, docIndex);
-		if ( names == null || names.length == 0 ) {
-			md.setName("variable declaration");
-		} else {
-			md.setName(names[0]);
-		}
+			new SymbolProto(sequence, args, sKind, !scope, facets, omissible,/* combinations, */contextKeywords,
+				contextKinds, remote, unique, name_unique, sc, validator, serializer, docIndex, names == null ||
+					names.length == 0 ? "variable declaration" : names[0]);
+		// if ( names == null || names.length == 0 ) {
+		// md.setName("variable declaration");
+		// } else {
+		// md.setName(names[0]);
+		// }
 		DescriptionFactory.addProto(md, keywords);
 	}
 
