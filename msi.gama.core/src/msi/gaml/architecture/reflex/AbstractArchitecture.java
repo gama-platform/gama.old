@@ -46,24 +46,9 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 		return (IArchitecture) duplicate;
 	}
 
-	// @Override
-	// public IType getType() {
-	// return null;
-	// }
-
-	// @Override
-	// public IType getContentType() {
-	// return null;
-	// }
-	//
-	// @Override
-	// public IType getKeyType() {
-	// return null;
-	// }
-
 	@Override
 	public String toGaml() {
-		return "'" + getName() + " architecture'";
+		return getName();
 	}
 
 	@Override
