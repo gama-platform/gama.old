@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaIntMatrix.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaIntMatrix.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -118,11 +118,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		updateMatrix(rm);
 	}
 
-	public GamaIntMatrix(final GamaMatrix rm) {
-		super(rm.numCols, rm.numRows);
-		matrix = new int[rm.numCols * rm.numRows];
-		fillMatrix(rm);
-	}
+	// public GamaIntMatrix(final GamaMatrix rm) {
+	// super(rm.numCols, rm.numRows);
+	// matrix = new int[rm.numCols * rm.numRows];
+	// fillMatrix(rm);
+	// }
 
 	@Override
 	public void _clear() {
@@ -272,8 +272,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
 				result.set(scope, j, i, get(scope, i, j));
-				System.out.println("result.get..." + result.get(scope, j, i));
-				System.out.println("result = " + result);
+				// System.out.println("result.get..." + result.get(scope, j, i));
+				// System.out.println("result = " + result);
 			}
 		}
 		return result;
@@ -434,13 +434,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
-	void fillMatrix(final GamaMatrix matrix) {
-		for ( int i = 0; i < this.numRows; i++ ) {
-			for ( int j = 0; j < this.numCols; j++ ) {
-				getMatrix()[i * numCols + j] = Cast.asInt(null, matrix.get(null, j, i));
-			}
-		}
-	}
+	// void fillMatrix(final GamaMatrix matrix2) {
+	// for ( int i = 0; i < this.numRows; i++ ) {
+	// for ( int j = 0; j < this.numCols; j++ ) {
+	// matrix[i * numCols + j] = Cast.asInt(null, matrix2.get(null, j, i));
+	// }
+	// }
+	// }
 
 	@Override
 	public IMatrix plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
