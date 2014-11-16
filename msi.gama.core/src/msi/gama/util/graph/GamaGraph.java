@@ -26,6 +26,7 @@ import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.*;
 import msi.gama.util.path.*;
 import msi.gaml.operators.Spatial.Creation;
+import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractContainerStatement.EdgeToAdd;
 import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
@@ -33,6 +34,7 @@ import msi.gaml.statements.AbstractContainerStatement.NodeToAdd;
 import msi.gaml.statements.AbstractContainerStatement.NodesToAdd;
 import msi.gaml.types.*;
 import org.jgrapht.*;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
 import org.jgrapht.util.VertexPair;
@@ -121,13 +123,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		for ( final Object v : vertexSet() ) {
 			sb.append(v.toString()).append(",");
 		}
-		sb.append("]\n");
-		sb.append("edges (").append(edgeSet().size()).append("): [\n");
+		sb.append("]").append(Strings.LN);
+		sb.append("edges (").append(edgeSet().size()).append("): [").append(Strings.LN);
 		// display each edge
 		for ( final Entry<E, _Edge<V, E>> entry : edgeMap.entrySet() ) {
 			final E e = entry.getKey();
 			final _Edge<V, E> v = entry.getValue();
-			sb.append(e.toString()).append("\t(").append(v.toString()).append("),\n");
+			sb.append(e.toString()).append(Strings.TAB).append("(").append(v.toString()).append("),")
+				.append(Strings.LN);
 		}
 		sb.append("]\n}");
 		/*
@@ -1091,12 +1094,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		GamaList<V> vertices = (GamaList<V>) getVertices();
 		int nbvertices = matrix.numCols;
 		shortestPathComputed = new GamaMap<VertexPair<V>, GamaList<GamaList<E>>>();
-		GamaIntMatrix mat = null;
-		if ( matrix instanceof GamaIntMatrix ) {
-			mat = (GamaIntMatrix) matrix;
-		} else {
-			mat = new GamaIntMatrix(matrix);
-		}
+		GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
+
 		Map<Integer, E> edgesVertices = new GamaMap<Integer, E>();
 		for ( int i = 0; i < nbvertices; i++ ) {
 			V v1 = vertices.get(i);
@@ -1252,7 +1251,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 			}
 		} else {
-			if (optimizerType == 1) {
+			if ( optimizerType == 1 ) {
 				optimizer = new FloydWarshallShortestPathsGAMA(getProxyGraph());
 				optimizer.lazyCalculateMatrix();
 				for ( int i = 0; i < vertexMap.size(); i++ ) {
@@ -1301,7 +1300,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					}
 				}
 			}
-			
+
 		}
 		return matrix;
 
