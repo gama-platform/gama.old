@@ -41,8 +41,8 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	}
 
 	@Override
-	public String toString() {
-		return expression == null ? EGaml.toString(target) : super.toString();
+	public String toOwnString() {
+		return EGaml.toString(target);
 	}
 
 	@Override
@@ -121,7 +121,9 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 		@Override
 		public IExpressionDescription caseStringLiteral(final StringLiteral object) {
-			IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
+			IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
+			// AD: Change 14/11/14
+			// IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
 			// DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
