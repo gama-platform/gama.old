@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaHelper.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaHelper.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,7 +25,7 @@ import msi.gaml.types.*;
  */
 public abstract class GamaHelper<T> {
 
-	final Class skillClass;
+	Class skillClass;
 	final IType returnType;
 
 	public GamaHelper() {
@@ -63,6 +63,13 @@ public abstract class GamaHelper<T> {
 
 	public T run(final IScope scope, final IAgent agent, final ISkill target, final Object ... values) {
 		return null;
+	}
+
+	/**
+	 * @param clazz
+	 */
+	public void setSkillClass(final Class clazz) {
+		skillClass = clazz;
 	}
 
 }
