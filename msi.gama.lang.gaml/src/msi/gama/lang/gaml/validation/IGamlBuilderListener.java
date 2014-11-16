@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import java.util.Set;
-import msi.gaml.descriptions.ErrorCollector;
+import java.util.*;
+import msi.gaml.descriptions.*;
 
 /**
  * The class IGamlBuilder.
@@ -22,6 +22,11 @@ import msi.gaml.descriptions.ErrorCollector;
  * 
  */
 public interface IGamlBuilderListener {
+
+	public static interface IGamlBuilderListener2 extends IGamlBuilderListener {
+
+		void validationEnded(final Collection<? extends IDescription> experiments, final ErrorCollector status);
+	}
 
 	void validationEnded(Set<String> experiments, ErrorCollector status);
 }

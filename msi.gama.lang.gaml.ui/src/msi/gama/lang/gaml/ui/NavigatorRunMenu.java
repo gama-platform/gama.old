@@ -37,15 +37,10 @@ import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 
 public class NavigatorRunMenu extends ContributionItem implements IWorkbenchContribution {
 
-	// private final GamlJavaValidator validator;
-
-	public NavigatorRunMenu() {
-		// validator = GamlActivator.getInstance().getInjector("gaml").getInstance(GamlJavaValidator.class);
-	}
+	public NavigatorRunMenu() {}
 
 	public NavigatorRunMenu(final String id) {
 		super(id);
-		// validator = GamlActivator.getInstance().getInjector("gaml").getInstance(GamlJavaValidator.class);
 	}
 
 	private List<URI> getSelection() {
@@ -143,27 +138,6 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 		boolean onlyOneFile = map.size() == 1;
 		for ( URI uri : map.keySet() ) {
 			List<String> expNames = map.get(uri);
-			// if ( expNames.size() == 1 ) { // No need to create a sub-menu
-			// MenuItem expItem = new MenuItem(parent, SWT.PUSH);
-			// sb.setLength(0);
-			// sb.append(expNames.get(0));
-			// if ( !onlyOneFile ) {
-			// sb.append(" in ");
-			// for ( int i = 1; i < uri.segmentCount(); i++ ) {
-			// String s = URI.decode(uri.segment(i));
-			// if ( !"models".equals(s) && !sourceSegments.contains(s) ) {
-			// sb.append(s);
-			// sb.append('>');
-			// }
-			// }
-			// sb.setLength(sb.length() - 1);
-			// }
-			// expItem.setText(sb.toString());
-			// expItem.setData("uri", uri);
-			// expItem.setData("exp", expNames.get(0));
-			// expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
-			// expItem.addSelectionListener(adapter);
-			// } else {
 			MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
 
 			sb.setLength(0);
@@ -175,8 +149,6 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 				}
 			}
 			modelItem.setText(URI.decode(sb.toString() + uri.lastSegment()));
-			// modelItem.setImage(IGamaIcons.FILE_ICON.image());
-			// modelItem.setEnabled(false);
 			Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);
 
@@ -185,11 +157,9 @@ public class NavigatorRunMenu extends ContributionItem implements IWorkbenchCont
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(IGamaIcons.NAVIGATOR_RUN.image());
+				expItem.setImage(IGamaIcons.BUTTON_GUI.image());
 				expItem.addSelectionListener(adapter);
 			}
-			// }
-
 		}
 	}
 

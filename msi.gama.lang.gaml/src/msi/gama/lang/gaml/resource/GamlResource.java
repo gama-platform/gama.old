@@ -20,7 +20,8 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.ImportImpl;
 import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.lang.gaml.validation.*;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -89,9 +90,14 @@ public class GamlResource extends LazyLinkingResource {
 		return r;
 	}
 
-	public void updateWith(final Set<String> experiments) {
+	public void updateWith(final ModelDescription model) {
 		if ( listener != null ) {
-			listener.validationEnded(experiments, collector);
+			if ( listener instanceof IGamlBuilderListener2 ) {
+				((IGamlBuilderListener2) listener).validationEnded(
+					model == null ? Collections.EMPTY_SET : model.getExperiments(), collector);
+			} else {
+				listener.validationEnded(model == null ? Collections.EMPTY_SET : model.getExperimentNames(), collector);
+			}
 		}
 	}
 
@@ -135,13 +141,13 @@ public class GamlResource extends LazyLinkingResource {
 	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
 
 		// AD -> Nghi: microModels to use
-		final  Map<ISyntacticElement, String> microModels = new GamaMap();
+		final Map<ISyntacticElement, String> microModels = new GamaMap();
 		final List<ISyntacticElement> models = new ArrayList();
 		for ( Map.Entry<GamlResource, String> entry : resources.entrySet() ) {
-			if ( entry.getValue()==null ) {
+			if ( entry.getValue() == null ) {
 				models.add(entry.getKey().getSyntacticContents());
 			} else {
-				microModels.put(entry.getKey().getSyntacticContents(),entry.getValue());
+				microModels.put(entry.getKey().getSyntacticContents(), entry.getValue());
 			}
 		}
 		// final Iterable<ISyntacticElement> models = getAllSyntacticContents(resources);
@@ -161,16 +167,19 @@ public class GamlResource extends LazyLinkingResource {
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
 		// hqnghi build micro-model
-		GamaMap<String, ModelDescription>  mm=new GamaMap<String, ModelDescription>();
-		for ( ISyntacticElement r: microModels.keySet() ) {
-			List<ISyntacticElement> res=new ArrayList<ISyntacticElement>();
+		GamaMap<String, ModelDescription> mm = new GamaMap<String, ModelDescription>();
+		for ( ISyntacticElement r : microModels.keySet() ) {
+			List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
 			res.add(r);
-			ModelDescription mic=getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited, new GamaMap());
+			ModelDescription mic =
+				getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited,
+					new GamaMap());
 			mic.setAlias(microModels.get(r));
-			mm.addValue(null, new GamaPair<String, ModelDescription>(microModels.get(r),mic));
-		} 
-		//end-hqnghi
-		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited, mm);
+			mm.addValue(null, new GamaPair<String, ModelDescription>(microModels.get(r), mic));
+		}
+		// end-hqnghi
+		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited,
+			mm);
 	}
 
 	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
@@ -251,7 +260,7 @@ public class GamlResource extends LazyLinkingResource {
 	private void invalidateBecauseOfImportedProblem(final String msg, final GamlResource resource) {
 		getErrorCollector().add(
 			new GamlCompilationError(msg, IGamlIssue.GENERAL, resource.getContents().get(0), false, false));
-		updateWith(Collections.EMPTY_SET);
+		updateWith(null);
 	}
 
 	private ModelDescription buildCompleteDescription(final ResourceSet set) {
@@ -303,7 +312,7 @@ public class GamlResource extends LazyLinkingResource {
 			// We then validate it and get rid of the description. The documentation is produced only if the resource is
 			// marked as 'edited'
 			model.validate(isEdited);
-			updateWith(model.getExperimentTitles());
+			updateWith(model);
 			model.dispose();
 
 			//

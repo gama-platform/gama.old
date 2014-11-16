@@ -1,7 +1,6 @@
 package ummisco.gaml.editbox;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import ummisco.gaml.editbox.impl.BoxProviderRegistry;
@@ -34,8 +33,8 @@ public class EditBox extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static ImageDescriptor getImageDescriptor(final String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	public IBoxProvider getGamlProvider() {
+		return getProviderRegistry().providerForName("GAML");
 	}
 
 	public BoxProviderRegistry getProviderRegistry() {
@@ -45,10 +44,6 @@ public class EditBox extends AbstractUIPlugin {
 	public boolean isEnabled() {
 		if ( getPreferenceStore().contains(ENABLED) ) { return getPreferenceStore().getBoolean(ENABLED); }
 		return false;
-	}
-
-	public void setEnabled(final boolean flag) {
-		getPreferenceStore().setValue(ENABLED, flag);
 	}
 
 	public static void logError(final Object source, final String msg, final Throwable error) {

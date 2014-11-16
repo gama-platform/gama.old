@@ -19,11 +19,12 @@ import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.validation.*;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -34,16 +35,17 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import ummisco.gaml.editbox.*;
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 
@@ -54,7 +56,7 @@ import com.google.inject.Inject;
  * @since 4 mars 2012
  * 
  */
-public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
+public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IBoxEnabledEditor {
 
 	public GamlEditor() {}
 
@@ -62,18 +64,16 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		.create("editor.cleanup.save", "Applying formatting to models on save", false, IType.BOOL)
 		.in(GamaPreferences.EDITOR).group("Options");
 
-	// Copied from SwtGui. See how to factorize this.
-	// public static Image run = GamaIcons.action_run;
+	protected static Map<IPartService, IPartListener2> partListeners;
 
-	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-	private static final int INITIAL_BUTTONS = 20;
-	private static Font labelFont;
-	Composite toolbar, parent, indicator;
-	Button[] buttons = new Button[INITIAL_BUTTONS];
-	CLabel status;
-	Button menu;
-	List<String> completeNamesOfExperiments = new ArrayList();
-	List<String> abbreviations = new ArrayList();
+	IBoxDecorator decorator;
+	boolean decorationEnabled;
+	ToolBar toolbar;
+	Composite parent, indicator;
+	ToolItem status;
+	final List<String> completeNamesOfExperiments = new ArrayList();
+	final List<Boolean> experimentTypes = new ArrayList();
+	final List<String> abbreviations = new ArrayList();
 	boolean inited = false;
 
 	@Inject
@@ -85,16 +85,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	@Inject
 	private GamlJavaValidator validator;
 
-	// @Inject
-	// private DescriptionUtils descriptionUtils;
-
-	// @Inject
-	// IResourceDescriptions index;
-
-	static {
-		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
-		fd.setStyle(SWT.BOLD);
-		labelFont = new Font(Display.getDefault(), fd);
+	@Override
+	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		assignBoxPartListener();
 	}
 
 	@Override
@@ -110,113 +104,59 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			});
 		}
 
-		if ( buttons != null ) {
-			for ( Button b : buttons ) {
-				if ( b != null && !b.isDisposed() ) {
-					b.dispose();
-				}
-			}
-			buttons = null;
-		}
-
-		// if ( top != null && !top.isDisposed() ) {
-		// top.dispose();
-		// top = null;
-		// }
 		if ( toolbar != null && !toolbar.isDisposed() ) {
 			toolbar.dispose();
 			toolbar = null;
 		}
-		if ( status != null && !status.isDisposed() ) {
-			status.dispose();
-			status = null;
-		}
+		decorator = null;
+
 		super.dispose();
 	}
 
 	@Override
 	public void createPartControl(final Composite parent) {
 		this.parent = parent;
-		GridLayout layout = new GridLayout(2, false);
+
+		GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
+		layout.verticalSpacing = 2;
 		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginHeight = 2;
 		parent.setLayout(layout);
 
-		toolbar = new Composite(parent, SWT.NONE);
+		toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.RIGHT);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		data.heightHint = 26;
-		data.horizontalIndent = 10;
 		toolbar.setLayoutData(data);
-		layout = new GridLayout(INITIAL_BUTTONS + 2, false);
-		layout.horizontalSpacing = 2;
-		layout.verticalSpacing = 0;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		toolbar.setLayout(layout);
-
-		Composite others = new Composite(parent, SWT.None);
-		data = new GridData(SWT.RIGHT, SWT.FILL, false, false);
-		data.heightHint = 26;
-		// data.horizontalIndent = 10;
-		others.setLayoutData(data);
-		layout = new GridLayout(2, false);
-		others.setLayout(layout);
 
 		indicator = new Composite(parent, SWT.None);
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		data.horizontalSpan = 2;
-		data.heightHint = 8;
+		data.heightHint = 5;
 		indicator.setLayoutData(data);
 		FillLayout layout2 = new FillLayout();
 		layout2.marginWidth = 12;
 		layout2.marginHeight = 0;
 		indicator.setLayout(layout2);
 
-		status = new CLabel(toolbar, SWT.NONE);
-		status.setFont(labelFont);
-		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-		data.minimumHeight = SWT.DEFAULT;
-		status.setLayoutData(data);
-		status.setForeground(COLOR_TEXT);
+		final ToolItem b = new ToolItem(toolbar, SWT.FLAT | SWT.CHECK);
 
-		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
-			buttons[i] = new Button(toolbar, SWT.PUSH);
-			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-			buttons[i].setLayoutData(data);
-			buttons[i].setText("Experiment " + i);
-			buttons[i].addSelectionListener(listener);
-			hideButton(buttons[i]);
-		}
-		Label toto = new Label(others, SWT.None);
-		toto.setText("In project: ");
-		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		toto.setLayoutData(data);
-		menu = new Button(others, SWT.DROP_DOWN | SWT.DOWN);
-		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		menu.setLayoutData(data);
-		menu.setText("Other...");
-		menu.setToolTipText("All the experiments defined in the project");
-		menu.addSelectionListener(new SelectionAdapter() {
+		b.setImage(IGamaIcons.BUTTON_EDITBOX.image());
+		b.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				Menu old = menu.getMenu();
-				menu.setMenu(null);
-				if ( old != null ) {
-					old.dispose();
-				}
-				Menu dropMenu = createExperimentsSubMenu(menu);
-				dropMenu.setVisible(true);
+				toggleEditBox(b.getSelection());
 			}
 
 		});
 
+		final ToolItem sep = new ToolItem(toolbar, SWT.SEPARATOR);
+
+		status = new ToolItem(toolbar, SWT.None);
+		status.setEnabled(false);
+
 		// Asking the editor to fill the rest
 		Composite parent2 = new Composite(parent, SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.horizontalSpan = 2;
 		parent2.setLayoutData(data);
 		parent2.setLayout(new FillLayout());
 		super.createPartControl(parent2);
@@ -229,6 +169,44 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				}
 
 			}
+		});
+	}
+
+	private void toggleEditBox(final boolean selection) {
+		decorationEnabled = selection;
+		if ( selection ) {
+			decorate();
+		} else {
+			undecorate();
+		}
+	}
+
+	private void addOtherExperiments(final boolean addSeparator) {
+		if ( addSeparator ) {
+			new ToolItem(toolbar, SWT.SEPARATOR);
+		}
+		final ToolItem menu = new ToolItem(toolbar, SWT.DROP_DOWN | SWT.DOWN);
+		menu.setText("Other...");
+		menu.setToolTipText("Run experiments defined in the project");
+		menu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+
+				Menu old = (Menu) menu.getData();
+				menu.setData(null);
+				if ( old != null ) {
+					old.dispose();
+				}
+				Menu dropMenu = createExperimentsSubMenu();
+				menu.setData(dropMenu);
+				Rectangle rect = menu.getBounds();
+				Point pt = new Point(rect.x, rect.y + rect.height);
+				pt = toolbar.toDisplay(pt);
+				dropMenu.setLocation(pt.x, pt.y);
+				dropMenu.setVisible(true);
+			}
+
 		});
 	}
 
@@ -257,8 +235,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		}
 	};
 
-	public Menu createExperimentsSubMenu(final Button button) {
-		Menu parent = new Menu(button);
+	public Menu createExperimentsSubMenu() {
+		Menu parent = new Menu(this.parent);
 		Map<URI, List<String>> map = grabProjectModelsAndExperiments();
 		if ( map.isEmpty() ) {
 			MenuItem nothing = new MenuItem(parent, SWT.PUSH);
@@ -279,7 +257,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(IGamaIcons.PANEL_CONTINUE.image());
+				expItem.setImage(IGamaIcons.BUTTON_GUI.image());
 				expItem.addSelectionListener(adapter);
 			}
 		}
@@ -375,7 +353,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
-			String name = ((Button) evt.widget).getText();
+			String name = ((ToolItem) evt.widget).getText();
 			int i = abbreviations.indexOf(name);
 			if ( i == -1 ) { return; }
 			name = completeNamesOfExperiments.get(i);
@@ -404,20 +382,24 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
-		((GridData) buttons[index].getLayoutData()).exclude = false;
-		buttons[index].setVisible(true);
-		buttons[index].setText(text);
-		buttons[index].pack();
-	}
-
-	private void hideButton(final Button b) {
-		((GridData) b.getLayoutData()).exclude = true;
-		b.setVisible(false);
+		ToolItem t = new ToolItem(toolbar, SWT.FLAT);
+		t.setText(text);
+		if ( experimentTypes.get(index) ) {
+			t.setImage(IGamaIcons.BUTTON_BATCH.image());
+			t.setHotImage(IGamaIcons.BUTTON_BATCH2.image());
+		} else {
+			t.setImage(IGamaIcons.BUTTON_GUI.image());
+			t.setHotImage(IGamaIcons.BUTTON_GUI2.image());
+		}
+		t.addSelectionListener(listener);
+		t = new ToolItem(toolbar, SWT.SEPARATOR);
 	}
 
 	private void setStatus(final String text, final Color c) {
 		indicator.setBackground(c);
-		status.setText(text);
+		if ( text != null && !text.isEmpty() && status != null && !status.isDisposed() ) {
+			status.setText(text);
+		}
 	}
 
 	private Color getColor(final ErrorCollector status) {
@@ -434,68 +416,42 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			@Override
 			public void run() {
 				if ( toolbar == null || toolbar.isDisposed() ) { return; }
-				for ( Button b : buttons ) {
-					// if ( b.isVisible() ) {
-					hideButton(b);
-					// }
+				boolean addSeparator = false;
+				ToolItem[] items = toolbar.getItems();
+				for ( int i = 3; i < items.length; i++ ) {
+					ToolItem t = items[i];
+					t.dispose();
 				}
 				Color c = getColor(status);
 				if ( !status.hasErrors() ) {
 					int size = abbreviations.size();
 					if ( size == 0 ) {
-						setStatus("This model is functional, but no experiments have been defined.", c);
+						setStatus("This model is functional, but no experiments have been defined", c);
+						addSeparator = true;
 					} else {
-						setStatus("Run :", c);
+						setStatus("Run:", c);
+						int i = 0;
+						for ( String e : abbreviations ) {
+							enableButton(i++, e);
+						}
 					}
-					int i = 0;
-					for ( String e : abbreviations ) {
-						enableButton(i++, e);
-					}
+
 				} else if ( status.hasInternalErrors() || status.hasInternalSyntaxErrors() ) {
 					setStatus("Error(s) were detected. Impossible to run any experiment", c);
+					addSeparator = true;
 				} else if ( status.hasImportedErrors() ) {
-					String msg = "This model is functional but error(s) were detected in imported files.";
+					String msg = "This model is functional but error(s) were detected in imported files";
 					if ( abbreviations.size() != 0 ) {
-						msg += " Impossible to run any experiment";
+						msg += ". Impossible to run any experiment";
 					}
 					setStatus(msg, c);
+					addSeparator = true;
 				}
-
-				toolbar.layout(true);
+				addOtherExperiments(addSeparator);
+				parent.layout();
 			}
 		});
 
-	}
-
-	private void updateExperiments(final Set<String> newExperiments, final ErrorCollector status) {
-		// if ( status.hasErrors() && status.isEquivalentTo(previousStatus) ) { return; }
-		// Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
-		// if ( inited && !previousStatus.hasErrors() && !status.hasErrors() && oldNames.equals(newExperiments) ) {
-		// return; }
-		// inited = true;
-		completeNamesOfExperiments = new ArrayList(newExperiments);
-		buildAbbreviations();
-		updateToolbar(status);
-	}
-
-	private void buildAbbreviations() {
-		// Very simple method used here
-		int size = completeNamesOfExperiments.size();
-		abbreviations.clear();
-		if ( size > 6 ) {
-			// We remove "Experiment".
-			for ( String s : completeNamesOfExperiments ) {
-				abbreviations.add(s.replaceFirst("Experiment ", ""));
-			}
-		} else if ( size > 4 ) {
-			// We replace "Experiment" by "Exp."
-			for ( String s : completeNamesOfExperiments ) {
-				abbreviations.add(s.replaceFirst("Experiment", "Exp."));
-			}
-		} else {
-			// We copy the names as it is
-			abbreviations.addAll(completeNamesOfExperiments);
-		}
 	}
 
 	/**
@@ -503,7 +459,28 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	 */
 	@Override
 	public void validationEnded(final Set<String> newExperiments, final ErrorCollector status) {
-		updateExperiments(newExperiments, status);
+		completeNamesOfExperiments.clear();
+		completeNamesOfExperiments.addAll(newExperiments);
+		abbreviations.clear();
+		for ( String s : completeNamesOfExperiments ) {
+			abbreviations.add(s.replaceFirst("Experiment ", ""));
+			experimentTypes.add(false);
+		}
+		updateToolbar(status);
+	}
+
+	@Override
+	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ErrorCollector status) {
+		completeNamesOfExperiments.clear();
+		experimentTypes.clear();
+		abbreviations.clear();
+		for ( IDescription ep : newExperiments ) {
+			String name = ep.getName();
+			completeNamesOfExperiments.add(name);
+			abbreviations.add(name.replaceFirst("Experiment ", ""));
+			experimentTypes.add(((ExperimentDescription) ep).isBatch());
+		}
+		updateToolbar(status);
 	}
 
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
@@ -544,6 +521,78 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		String[] commonPages = super.collectContextMenuPreferencePages();
 		String[] langSpecificPages = new String[] { "pm.eclipse.editbox.pref.default" };
 		return ObjectArrays.concat(langSpecificPages, commonPages, String.class);
+	}
+
+	/**
+	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#getDecorator()
+	 */
+	@Override
+	public IBoxDecorator getDecorator() {
+		if ( decorator == null ) {
+			createDecorator();
+		}
+		return decorator;
+	}
+
+	/**
+	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#createDecorator(ummisco.gaml.editbox.IBoxProvider)
+	 */
+	@Override
+	public void createDecorator() {
+		if ( decorator != null ) { return; }
+		IBoxProvider provider = EditBox.getDefault().getGamlProvider();
+		decorator = provider.createDecorator();
+		decorator.setStyledText(getStyledText());
+		decorator.setSettings(provider.getEditorsBoxSettings());
+	}
+
+	/**
+	 * @return
+	 */
+	private StyledText getStyledText() {
+		return (StyledText) super.getAdapter(Control.class);
+	}
+
+	/**
+	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#decorate()
+	 */
+	@Override
+	public void decorate() {
+		getDecorator().decorate(false);
+		enableUpdates(true);
+	}
+
+	/**
+	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#undecorate()
+	 */
+	@Override
+	public void undecorate() {
+		getDecorator().undecorate();
+		enableUpdates(false);
+	}
+
+	@Override
+	public void enableUpdates(final boolean visible) {
+		getDecorator().enableUpdates(visible);
+	}
+
+	@Override
+	public boolean isDecorationEnabled() {
+		return decorationEnabled;
+	}
+
+	private void assignBoxPartListener() {
+		IPartService partService = getSite().getWorkbenchWindow().getPartService();
+		if ( partService == null ) { return; }
+		if ( partListeners == null ) {
+			partListeners = new HashMap<IPartService, IPartListener2>();
+		}
+		IPartListener2 oldListener = partListeners.get(partService);
+		if ( oldListener == null ) {
+			IPartListener2 listener = new BoxDecoratorPartListener();
+			partService.addPartListener(listener);
+			partListeners.put(partService, listener);
+		}
 	}
 
 }

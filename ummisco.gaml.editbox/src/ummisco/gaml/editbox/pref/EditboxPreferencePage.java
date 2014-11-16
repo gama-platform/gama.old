@@ -193,7 +193,7 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 
 		if ( providersChanged ) {
-			EditBox.getDefault().getProviderRegistry().setProvideres(null);
+			EditBox.getDefault().getProviderRegistry().setProviders(null);
 		}
 		return true;
 	}

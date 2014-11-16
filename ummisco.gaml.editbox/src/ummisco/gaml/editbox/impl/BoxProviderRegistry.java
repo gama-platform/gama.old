@@ -1,7 +1,6 @@
 package ummisco.gaml.editbox.impl;
 
 import java.util.*;
-import org.eclipse.ui.*;
 import ummisco.gaml.editbox.*;
 
 public class BoxProviderRegistry {
@@ -10,8 +9,6 @@ public class BoxProviderRegistry {
 	private static final String PROVIDER_ID_ = "ummisco.gaml.editbox.provider.";
 
 	protected Collection<IBoxProvider> providers;
-	protected Map<IWorkbenchPart, IBoxDecorator> decorators;
-	protected Map<IPartService, IPartListener2> partListeners;
 
 	public Collection<IBoxProvider> getBoxProviders() {
 		if ( providers == null ) {
@@ -40,7 +37,7 @@ public class BoxProviderRegistry {
 		return result;
 	}
 
-	public void setProvideres(final Collection<IBoxProvider> newProviders) {
+	public void setProviders(final Collection<IBoxProvider> newProviders) {
 		providers = newProviders;
 	}
 
@@ -61,8 +58,6 @@ public class BoxProviderRegistry {
 		List<IBoxProvider> result = new ArrayList<IBoxProvider>();
 		// order important (see supports())
 		result.add(gamlProvider());
-		// result.add(pythonProvider());
-		// result.add(markupProvider());
 		result.add(textProvider());
 		return result;
 	}
@@ -76,14 +71,6 @@ public class BoxProviderRegistry {
 		return provider;
 	}
 
-	// protected BoxProviderImpl markupProvider() {
-	// BoxProviderImpl provider = createProvider("Markup");
-	// if ( provider.getEditorsBoxSettings().getFileNames() == null ) {
-	// provider.getEditorsBoxSettings().setFileNames(Arrays.asList("*.*ml", "*.jsp"));
-	// }
-	// return provider;
-	// }
-
 	protected BoxProviderImpl gamlProvider() {
 		BoxProviderImpl provider = createProvider("GAML");
 		provider.setDefaultSettingsCatalog(Arrays.asList("GAML", "Default", "OnClick", "GreyGradient", "Classic"));
@@ -92,16 +79,6 @@ public class BoxProviderRegistry {
 		}
 		return provider;
 	}
-
-	//
-	// protected BoxProviderImpl pythonProvider() {
-	// BoxProviderImpl provider = createProvider("python");
-	// provider.setDefaultSettingsCatalog(Arrays.asList("Default", "Whitebox"));
-	// if ( provider.getEditorsBoxSettings().getFileNames() == null ) {
-	// provider.getEditorsBoxSettings().setFileNames(Arrays.asList("*.py"));
-	// }
-	// return provider;
-	// }
 
 	protected BoxProviderImpl textProvider() {
 		BoxProviderImpl provider = createProvider("Text");
@@ -119,41 +96,6 @@ public class BoxProviderRegistry {
 		// result.put("Markup", MarkupBuilder2.class);
 		result.put("Text2", TextBoxBuilder.class);
 		return result;
-	}
-
-	public IBoxDecorator getDecorator(final IWorkbenchPart part) {
-		return getDecorators().get(part);
-	}
-
-	protected Map<IWorkbenchPart, IBoxDecorator> getDecorators() {
-		if ( decorators == null ) {
-			decorators = new HashMap<IWorkbenchPart, IBoxDecorator>();
-		}
-		return decorators;
-	}
-
-	public IBoxDecorator removeDecorator(final IWorkbenchPart part) {
-		return getDecorators().remove(part);
-	}
-
-	public void addDecorator(final IBoxDecorator decorator, final IWorkbenchPart part) {
-		getDecorators().put(part, decorator);
-	}
-
-	public void releaseDecorators() {
-		if ( decorators != null ) {
-			for ( Map.Entry<IWorkbenchPart, IBoxDecorator> e : decorators.entrySet() ) {
-				e.getValue().getProvider().releaseDecorator(e.getValue());
-			}
-			decorators.clear();
-		}
-	}
-
-	public IBoxProvider getBoxProvider(final IWorkbenchPart part) {
-		for ( IBoxProvider p : getBoxProviders() ) {
-			if ( p.supports(part) ) { return p; }
-		}
-		return null;
 	}
 
 	public IBoxProvider providerForName(final String name) {
@@ -174,24 +116,4 @@ public class BoxProviderRegistry {
 		}
 	}
 
-	public void setPartListener(final IPartService partService, final IPartListener2 listener) {
-		if ( partService == null ) { return; }
-		if ( partListeners == null ) {
-			partListeners = new HashMap<IPartService, IPartListener2>();
-		}
-		IPartListener2 oldListener = partListeners.get(partService);
-		if ( oldListener != null ) {
-			partService.removePartListener(oldListener);
-		}
-		partService.addPartListener(listener);
-		partListeners.put(partService, listener);
-	}
-
-	public void removePartListener(final IPartService partService) {
-		if ( partService == null || partListeners == null ) { return; }
-		IPartListener2 oldListener = partListeners.remove(partService);
-		if ( oldListener != null ) {
-			partService.removePartListener(oldListener);
-		}
-	}
 }
