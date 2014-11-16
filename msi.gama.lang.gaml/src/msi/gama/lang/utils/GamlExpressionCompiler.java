@@ -134,11 +134,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		IExpression expr = compile(e);
 		if ( expr == null ) { return null; }
 		if ( op.equals("gamlfile") || op.equals("gaml_file") ) {
-//			if(getContext().getModelDescription().getMicroModel(expr.toString())==null){
-//				ModelDescription mymodel=  ((GamlExpressionFactory) GAML.getExpressionFactory())
-//						.getParser().createModelDescriptionFromFile(expr.toString());
-//				getContext().getModelDescription().addMicroModel(expr.toString(), mymodel);				
-//			}
+			// if(getContext().getModelDescription().getMicroModel(expr.toString())==null){
+			// ModelDescription mymodel= ((GamlExpressionFactory) GAML.getExpressionFactory())
+			// .getParser().createModelDescriptionFromFile(expr.toString());
+			// getContext().getModelDescription().addMicroModel(expr.toString(), mymodel);
+			// }
 		}
 		if ( op.equals(MY) ) {
 			IDescription desc = getContext().getDescriptionDeclaringVar(MYSELF);
@@ -372,17 +372,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if ( owner == null ) { return null; }
 		IType type = owner.getType();
 		TypeDescription species = type.getSpecies();
-		//hqnghi 28-05-14  search input variable from model, not experiment
-		if ( type instanceof ParametricType && type.getType().id() == IType.SPECIES) {			
-			if (type.getContentType().getSpecies() instanceof ModelDescription ) {				
-				ModelDescription sd=(ModelDescription) type.getContentType().getSpecies();
+		// hqnghi 28-05-14 search input variable from model, not experiment
+		if ( type instanceof ParametricType && type.getType().id() == IType.SPECIES ) {
+			if ( type.getContentType().getSpecies() instanceof ModelDescription ) {
+				ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
 				String var = EGaml.getKeyOf(fieldExpr);
-				if ( sd.hasExperiment(var)) {
-					return factory.createConst(var, GamaType.from(sd.getExperiment(var))); 
-				}
+				if ( sd.hasExperiment(var) ) { return factory.createConst(var, GamaType.from(sd.getExperiment(var))); }
 			}
 		}
-		//end-hqnghi
+		// end-hqnghi
 		if ( species == null ) {
 			// It can only be a variable as 'actions' are not defined on simple objects, except for matrices, where it
 			// can also represent the dot product
