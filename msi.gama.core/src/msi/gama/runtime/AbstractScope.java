@@ -25,6 +25,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
 
@@ -311,7 +312,7 @@ public abstract class AbstractScope implements IScope {
 	private void writeTrace() {
 		StringBuilder sb = new StringBuilder();
 		for ( int i = 0; i < tabLevel; i++ ) {
-			sb.append('\t');
+			sb.append(Strings.TAB);
 		}
 		sb.append(currentStatement.getTrace(this));
 		GuiUtils.informConsole(sb.toString());
