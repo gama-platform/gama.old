@@ -185,7 +185,6 @@ species modifying_lists {
 		// but they can be introduced at specific positions using the "at:" facet
 		add 0 to: l1 at: 0;
 		// or
-		//l1 << -1 at: 0;
 		l1[0] +<- 0;
 		// what about replacing some elements once they have been added ?
 		// "put" can be used for that purpose
@@ -204,7 +203,7 @@ species modifying_lists {
 			l1[i] <- rnd(3);
 		}
 		write(sample(l1));
-		// To remove values from it, the "remove" statement (and its compact ">>" form) can be used
+		// To remove values from it, the "remove" statement (and its compact forms) can be used
 		// For instance, let's try to remove its first element
 		remove first(l1) from: l1;
 		// it can also be written
