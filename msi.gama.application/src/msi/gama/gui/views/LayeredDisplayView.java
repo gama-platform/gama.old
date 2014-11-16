@@ -52,10 +52,10 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		if ( output == null ) { return new Integer[0]; }
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals(IKeyword.TYPE, "opengl") ||
-			description.getFacets().equals(IKeyword.TYPE, "3D") ) { return new Integer[] { PAUSE, REFRESH, SYNC, SNAP,
-			SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
-		return new Integer[] { PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, SIDEBAR,
-			OVERLAY };
+			description.getFacets().equals(IKeyword.TYPE, "3D") ) { return new Integer[] { REFRESH, PAUSE, SEP, SYNC,
+			SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
+		return new Integer[] { REFRESH, PAUSE, SEP, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP,
+			SIDEBAR, OVERLAY };
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -523,6 +523,7 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		return surfaceComposite;
 	}
 
+	@Override
 	public void pauseChanged() {
 		overlay.update();
 	}

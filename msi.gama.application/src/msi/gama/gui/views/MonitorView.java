@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MonitorView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'MonitorView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -55,7 +55,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH, SEP, NEW_MONITOR };
+		return new Integer[] { REFRESH, PAUSE, SEP, NEW_MONITOR };
 	}
 
 	@Override

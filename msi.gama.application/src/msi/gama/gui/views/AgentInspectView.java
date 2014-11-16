@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AgentInspectView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AgentInspectView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -168,7 +168,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH };
+		return new Integer[] { REFRESH, PAUSE };
 	}
 
 }

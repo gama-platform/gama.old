@@ -35,7 +35,7 @@ public class ConsoleView extends GamaViewPart {
 	@Override
 	public Integer[] getToolbarActionsId() {
 		// TODO Need to be usable (not the case now)
-		return new Integer[] { PAUSE, REFRESH, CLEAR };
+		return new Integer[] { REFRESH, PAUSE, SEP, CLEAR };
 	}
 
 	public void setCharacterLimit(final int limit) {

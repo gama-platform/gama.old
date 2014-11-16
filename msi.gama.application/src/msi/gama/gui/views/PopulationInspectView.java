@@ -549,7 +549,7 @@ public class PopulationInspectView extends GamaViewPart {
 	@Override
 	public Integer[] getToolbarActionsId() {
 		// TODO Need to be usable (not the case now)
-		return new Integer[] { PAUSE, REFRESH, SAVE };
+		return new Integer[] { REFRESH, PAUSE, SEP, SAVE };
 	}
 
 	public class AgentComparator extends ViewerComparator implements Comparator {
