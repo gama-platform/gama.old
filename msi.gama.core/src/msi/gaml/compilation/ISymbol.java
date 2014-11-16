@@ -12,7 +12,7 @@
 package msi.gaml.compilation;
 
 import java.util.List;
-import msi.gama.common.interfaces.INamed;
+import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
@@ -22,7 +22,7 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  * 
  */
-public interface ISymbol extends INamed {
+public interface ISymbol extends INamed, IGamlable {
 
 	public abstract void dispose();
 

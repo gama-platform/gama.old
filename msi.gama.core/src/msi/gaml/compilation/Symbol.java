@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Symbol.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Symbol.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -39,6 +39,12 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
+	public String toGaml() {
+		if ( description == null ) { return ""; }
+		return description.toGaml();
+	}
+
+	@Override
 	public final IExpression getFacet(final String ... keys) {
 		if ( description == null ) { return null; }
 		IExpression result = null;
@@ -52,15 +58,16 @@ public abstract class Symbol implements ISymbol {
 		return result;
 	}
 
-//	 public IExpression getFacet(final String key, final IExpression ifAbsent) {
-//	 return description == null ? ifAbsent : description.getFacets().getExpr(key, ifAbsent);
-//	 }
+	// public IExpression getFacet(final String key, final IExpression ifAbsent) {
+	// return description == null ? ifAbsent : description.getFacets().getExpr(key, ifAbsent);
+	// }
 
 	public Object getFacetValue(final IScope scope, final String key) throws GamaRuntimeException {
 		return getFacetValue(scope, key, null);
 	}
 
-	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue) throws GamaRuntimeException {
+	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue)
+		throws GamaRuntimeException {
 		IExpression exp = getFacet(key);
 		return (T) (exp == null ? defaultValue : exp.value(scope));
 	}
