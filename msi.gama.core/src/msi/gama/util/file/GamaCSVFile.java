@@ -12,17 +12,14 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import java.util.List;
-
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.matrix.GamaMatrix;
-import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.matrix.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-import au.com.bytecode.opencsv.CSVReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -32,10 +29,13 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 9 janv. 2014
  * 
  */
-@file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX)
+@file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX, buffer_index = IType.POINT)
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
-	boolean fillMatrix = false;
+
 	String csvSeparator = ",";
+	IType contentsType;
+	GamaPoint userSize;
+
 	/**
 	 * @param scope
 	 * @param pathName
@@ -46,22 +46,33 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	}
 
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator) {
-		super(scope, pathName);
-		setCsvSeparators(separator);
-	}
-	
-	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final GamaMatrix matrix) {
-		super(scope, pathName);
-		setCsvSeparators(separator);
-		setBuffer(matrix);
-		fillMatrix = true;
+		this(scope, pathName, separator, null);
 	}
 
-	public GamaCSVFile(final IScope scope, final String pathName, final GamaMatrix matrix) {
-		super(scope, pathName);
-		setBuffer(matrix);
-		fillMatrix = true;
+	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type) {
+		this(scope, pathName, separator, type, null);
 	}
+
+	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type,
+		final GamaPoint size) {
+		super(scope, pathName);
+		setCsvSeparators(separator);
+		contentsType = type;
+		userSize = size;
+	}
+
+	// public GamaCSVFile(final IScope scope, final String pathName, final String separator, final GamaMatrix matrix) {
+	// super(scope, pathName);
+	// setCsvSeparators(separator);
+	// setBuffer(matrix);
+	// fillMatrix = true;
+	// }
+	//
+	// public GamaCSVFile(final IScope scope, final String pathName, final GamaMatrix matrix) {
+	// super(scope, pathName);
+	// setBuffer(matrix);
+	// fillMatrix = true;
+	// }
 
 	public GamaCSVFile(final IScope scope, final String pathName, final IMatrix<Object> matrix) {
 		super(scope, pathName, matrix);
@@ -75,27 +86,29 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 
 	@Override
 	public void fillBuffer(final IScope scope) {
-		if ( getBuffer() != null &&  !fillMatrix) { return; }
+		if ( getBuffer() != null ) { return; }
 		if ( csvSeparator != null ) {
-			CSVReader reader = null;
+			CsvReader reader = null;
 			try {
-				reader = new CSVReader(new FileReader(getPath()), csvSeparator.charAt(0));
-				if (fillMatrix) {
-					setBuffer(GamaMatrixType.fromCSV(scope, reader, (GamaMatrix) getBuffer()));
-					fillMatrix = false;
-				} else {
-					List<String[]> strings = reader.readAll();
-					setBuffer(GamaMatrixType.fromCSV(scope, strings));
+				reader = new CsvReader(getPath(), csvSeparator.charAt(0));
+				if ( contentsType == null || userSize == null ) {
+					GuiUtils.beginSubStatus("Opening file " + getName());
+					final CsvReader.Stats stats = CsvReader.getStats(reader);
+					contentsType = contentsType == null ? stats.type : contentsType;
+					userSize = userSize == null ? new GamaPoint(stats.cols, stats.rows) : userSize;
+					GuiUtils.endSubStatus("");
 				}
-			} catch (FileNotFoundException e) {} catch (IOException e) {
+				long t = System.currentTimeMillis();
+				setBuffer(createMatrixFrom(scope, reader));
+				System.out.println("CSV stats: " + userSize.x * userSize.y + " cells read in " +
+					(System.currentTimeMillis() - t) + " ms");
+			} catch (FileNotFoundException e) {
+				throw GamaRuntimeException.create(e, scope);
+			} catch (IOException e) {
 				throw GamaRuntimeException.create(e, scope);
 			} finally {
 				if ( reader != null ) {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					reader.close();
 				}
 			}
 		} else {
@@ -103,6 +116,54 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			final String string = textFile.stringValue(scope);
 			if ( string == null ) { return; }
 			setBuffer(GamaMatrixType.from(scope, string, null)); // Use the default CVS reader
+		}
+	}
+
+	private IMatrix createMatrixFrom(final IScope scope, final CsvReader reader) throws IOException {
+		int t = contentsType.id();
+		double percentage = 0;
+		IMatrix matrix;
+		try {
+			GuiUtils.beginSubStatus("Reading file " + getName());
+			if ( t == IType.INT ) {
+				matrix = new GamaIntMatrix(userSize);
+				int[] m = ((GamaIntMatrix) matrix).getMatrix();
+				int i = 0;
+				while (reader.readRecord()) {
+					percentage = reader.getCurrentRecord() / userSize.y;
+					GuiUtils.updateSubStatusCompletion(percentage);
+					for ( String s : reader.getValues() ) {
+						m[i++] = Cast.asInt(scope, s);
+					}
+				}
+			} else if ( t == IType.FLOAT ) {
+				matrix = new GamaFloatMatrix(userSize);
+				double[] m = ((GamaFloatMatrix) matrix).getMatrix();
+				int i = 0;
+				while (reader.readRecord()) {
+					percentage = reader.getCurrentRecord() / userSize.y;
+					GuiUtils.updateSubStatusCompletion(percentage);
+					for ( String s : reader.getValues() ) {
+						m[i++] = Cast.asFloat(scope, s);
+					}
+				}
+			} else {
+				matrix = new GamaObjectMatrix(userSize);
+				Object[] m = ((GamaObjectMatrix) matrix).getMatrix();
+				int i = 0;
+				while (reader.readRecord()) {
+					percentage = reader.getCurrentRecord() / userSize.y;
+					GuiUtils.updateSubStatusCompletion(percentage);
+
+					for ( String s : reader.getValues() ) {
+						m[i++] = s;
+					}
+				}
+			}
+
+			return matrix;
+		} finally {
+			GuiUtils.endSubStatus("Reading CSV File");
 		}
 	}
 
