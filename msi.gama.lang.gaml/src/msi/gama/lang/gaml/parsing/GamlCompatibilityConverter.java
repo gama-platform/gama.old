@@ -62,7 +62,7 @@ public class GamlCompatibilityConverter {
 
 		SyntacticModelElement syntacticContents =
 			(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), imps);
-		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
+		syntacticContents.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
 	}
@@ -134,7 +134,7 @@ public class GamlCompatibilityConverter {
 		} else if ( stm instanceof S_Do ) {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1: V1, ID2:V2)"
 			Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convertToConstantString(e, EGaml.getKeyOf(e)), errors);
+			addFacet(elt, ACTION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
 			if ( e instanceof Function ) {
 				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				Function f = (Function) e;
@@ -162,6 +162,9 @@ public class GamlCompatibilityConverter {
 			if ( ref.getExpr() != null ) {
 				addFacet(elt, WHEN, convExpr(ref.getExpr(), errors), errors);
 			}
+		} else if ( stm instanceof S_Solve ) {
+			Expression e = stm.getExpr();
+			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
 		}
 
 		// We apply some conversions to the facets expressed in the statement
@@ -202,8 +205,8 @@ public class GamlCompatibilityConverter {
 			// }
 			// We modify the names of experiments so as not to confuse them with species
 			String name = elt.getName();
-			elt.setFacet(TITLE, convertToConstantString(null, "Experiment " + name));
-			elt.setFacet(NAME, convertToConstantString(null, name));
+			elt.setFacet(TITLE, convertToLabel(null, "Experiment " + name));
+			elt.setFacet(NAME, convertToLabel(null, name));
 		} else // TODO Change this by implementing only one class of methods (that delegates to
 				// others)
 		if ( keyword.equals(METHOD) ) {
@@ -292,7 +295,7 @@ public class GamlCompatibilityConverter {
 		if ( args != null ) {
 			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
 				ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
-				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
+				addFacet(arg, NAME, convertToLabel(null, def.getName()), errors);
 				EObject type = def.getType();
 				addFacet(arg, TYPE, convExpr(type, errors), errors);
 				// addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
@@ -398,8 +401,7 @@ public class GamlCompatibilityConverter {
 			}
 
 			// We compute (and convert) the expression attached to the facet
-			FacetProto fp = p == null ? null : p.getPossibleFacets().get(fname);
-			boolean label = fp == null ? false : fp.isLabel;
+			boolean label = p == null ? false : p.isLabel(fname);
 			IExpressionDescription fexpr = convExpr(f, label, errors);
 			addFacet(elt, fname, fexpr, errors);
 		}
@@ -447,16 +449,15 @@ public class GamlCompatibilityConverter {
 		final Set<Diagnostic> errors) {
 		if ( facet != null ) {
 			Expression expr = facet.getExpr();
-			if ( expr != null ) { return label ? convertToConstantString(expr, EGaml.getKeyOf(expr)) : convExpr(expr,
-				errors); }
+			if ( expr != null ) { return label ? convertToLabel(expr, EGaml.getKeyOf(expr)) : convExpr(expr, errors); }
 			String name = facet.getName();
 			// TODO Verify the use of "facet"
-			if ( name != null ) { return convertToConstantString(null, name); }
+			if ( name != null ) { return convertToLabel(null, name); }
 		}
 		return null;
 	}
 
-	final static IExpressionDescription convertToConstantString(final EObject target, final String string) {
+	final static IExpressionDescription convertToLabel(final EObject target, final String string) {
 		IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if ( target != null ) {
@@ -479,7 +480,7 @@ public class GamlCompatibilityConverter {
 		if ( stm == null ) { return null; }
 		// The order below should be important
 		String name = EGaml.getNameOf(stm);
-		if ( name != null ) { return convertToConstantString(stm, name); }
+		if ( name != null ) { return convertToLabel(stm, name); }
 		Expression expr = stm.getExpr();
 		if ( expr != null ) { return convExpr(expr, errors); }
 
