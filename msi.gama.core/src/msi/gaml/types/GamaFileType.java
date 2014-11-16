@@ -16,15 +16,16 @@ import java.io.File;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.expressions.IExpression;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -36,9 +37,10 @@ import org.eclipse.core.runtime.*;
 @type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	static Map<String, Set<String>> typesExtensions = new THashMap();
-	static Map<Class, Set<String>> classExtensions = new THashMap();
-	static Map<String, GamaHelper<IGamaFile>> extensionsToFiles = new THashMap();
+	static Map<String, IContainerType> extensionsToFullType = new THashMap();
+	static Map<String, Set<String>> typesToExtensions = new THashMap();
+	static Map<Class, Set<String>> classToExtensions = new THashMap();
+	static Map<String, GamaHelper<IGamaFile>> extensionsToFileBuilder = new THashMap();
 
 	/**
 	 * Adds a new file type definition.
@@ -47,20 +49,22 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 * @param clazz the class that supports this file type
 	 * @param s an array of allowed extensions for files of this type
 	 */
-	public static void addFileTypeDefinition(final String string, final Class clazz,
-		final GamaHelper<IGamaFile> builder, final String[] extensions) {
-		// GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
-		// Arrays.toString(extensions));
+	public static void addFileTypeDefinition(final String string, final IType keyType, final IType contentType,
+		final Class clazz, final GamaHelper<IGamaFile> builder, final String[] extensions) {
+		GuiUtils.debug("GamaFileFactory registering file type " + string + " with extensions " +
+			Arrays.toString(extensions) + " with key type " + keyType + " and content type " + contentType);
 		Set<String> exts = new HashSet(Arrays.asList(extensions));
-		typesExtensions.put(string, exts);
-		classExtensions.put(clazz, exts);
+		typesToExtensions.put(string, exts);
+		classToExtensions.put(clazz, exts);
 		// Added to ensure that extensions do not begin with a "." or contain blank characters
+		IContainerType t = (IContainerType) GamaType.from(Types.get(FILE), keyType, contentType);
 		for ( String s : extensions ) {
 			String ext = s.trim();
 			if ( ext.startsWith(".") ) {
 				ext = s.substring(1);
 			}
-			extensionsToFiles.put(s, builder);
+			extensionsToFullType.put(s, t);
+			extensionsToFileBuilder.put(s, builder);
 		}
 	}
 
@@ -76,7 +80,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	public static boolean verifyExtension(final String type, final String path) {
 		IPath p = new Path(path);
 		String ext = p.getFileExtension();
-		Set<String> extensions = typesExtensions.get(type);
+		Set<String> extensions = typesToExtensions.get(type);
 		if ( extensions == null ) { return false; }
 		for ( String s : extensions ) {
 			if ( s.equalsIgnoreCase(ext) ) { return true; }
@@ -88,7 +92,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		IPath p = new Path(path);
 		String ext = p.getFileExtension();
 		Class type = file.getClass();
-		Set<String> extensions = classExtensions.get(type);
+		Set<String> extensions = classToExtensions.get(type);
 		if ( extensions == null ) { return false; }
 		for ( String s : extensions ) {
 			if ( s.equalsIgnoreCase(ext) ) { return true; }
@@ -106,8 +110,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	}
 
 	private static GamaHelper<IGamaFile> getHelper(final String extension) {
-		for ( String s : extensionsToFiles.keySet() ) {
-			if ( s.equalsIgnoreCase(extension) ) { return extensionsToFiles.get(s); }
+		for ( String s : extensionsToFileBuilder.keySet() ) {
+			if ( s.equalsIgnoreCase(extension) ) { return extensionsToFileBuilder.get(s); }
 		}
 		return null;
 	}
@@ -125,7 +129,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) throws GamaRuntimeException {
+		final IType contentType) {
 		if ( obj == null ) { return getDefault(); }
 		// 04/03/14 Problem of initialization of files. See if it works or not. No copy of the file is done.
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }
@@ -171,6 +175,18 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	@Override
 	public boolean canCastToConst() {
 		return false;
+	}
+
+	@Override
+	public IContainerType typeIfCasting(final IExpression exp) {
+		if ( exp.isConst() ) {
+			String s = exp.literalValue();
+			IPath p = new Path(s);
+			String ext = p.getFileExtension();
+			IContainerType t = extensionsToFullType.get(ext);
+			if ( t != null ) { return t; }
+		}
+		return super.typeIfCasting(exp);
 	}
 
 }
