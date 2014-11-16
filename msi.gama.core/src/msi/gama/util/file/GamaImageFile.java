@@ -24,7 +24,11 @@ import msi.gama.util.matrix.*;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "image", extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)
+@file(name = "image",
+	extensions = { "tif", "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
+	buffer_type = IType.MATRIX,
+	buffer_content = IType.INT,
+	buffer_index = IType.POINT)
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
 	@file(name = "pgm", extensions = { "pgm" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)

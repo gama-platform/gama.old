@@ -14,6 +14,7 @@ package msi.gama.util.file;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
@@ -29,7 +30,11 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "grid", extensions = { "asc" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
+@file(name = "grid",
+	extensions = { "asc" },
+	buffer_type = IType.LIST,
+	buffer_content = IType.GEOMETRY,
+	buffer_index = IType.INT)
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
@@ -84,6 +89,7 @@ public class GamaGridFile extends GamaGisFile {
 			setBuffer(new GamaList());
 			ArcGridReader store = null;
 			try {
+				GuiUtils.beginSubStatus("Reading file " + getName());
 				// Necessary to compute it here, because it needs to be passed to the Hints
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
 				store =
@@ -112,6 +118,7 @@ public class GamaGridFile extends GamaGisFile {
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
 				for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
+					GuiUtils.updateSubStatusCompletion(i / (double) n);
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
 					p.x = originX + xx * cellWidth + cmx;
@@ -136,6 +143,7 @@ public class GamaGridFile extends GamaGisFile {
 				if ( store != null ) {
 					store.dispose();
 				}
+				GuiUtils.endSubStatus("Opening file " + getName());
 			}
 		}
 	}

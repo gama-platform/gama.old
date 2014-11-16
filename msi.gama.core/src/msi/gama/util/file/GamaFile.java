@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,7 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,11 +27,11 @@ import msi.gaml.types.*;
  * 
  */
 
-public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
-	implements IGamaFile<C, ValueToAdd, K, V> {
+public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V> implements IGamaFile<C, ValueToAdd, K, V> {
 
 	@Override
-	public IContainer<?, K> buildIndexes(final IScope scope, final IContainer value, final IContainerType containerType) {
+	public IContainer<?, K>
+		buildIndexes(final IScope scope, final IContainer value, final IContainerType containerType) {
 		fillBuffer(scope);
 		return getBuffer().buildIndexes(scope, value, containerType);
 	}
@@ -257,7 +257,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	// @getter( IKeyword.EXTENSION)
-	public String getExtension() {
+		public
+		String getExtension() {
 		final String path = getFile().getPath().toLowerCase();
 		final int mid = path.lastIndexOf(".");
 		if ( mid == -1 ) { return ""; }
@@ -271,7 +272,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	// @getter( IKeyword.PATH)
-	public String getPath() {
+		public
+		String getPath() {
 		return getFile().getPath();
 	}
 
@@ -374,7 +376,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public String toGaml() {
-		return "file(" + StringUtils.toGamlString(getPath()) + ")";
+		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath() + "')";
 	}
 
 	@Override

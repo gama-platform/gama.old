@@ -13,6 +13,7 @@ package msi.gama.util.file;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
@@ -32,7 +33,11 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-@file(name = "shape", extensions = { "shp" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
+@file(name = "shape",
+	extensions = { "shp" },
+	buffer_type = IType.LIST,
+	buffer_content = IType.GEOMETRY,
+	buffer_index = IType.INT)
 public class GamaShapeFile extends GamaGisFile {
 
 	/**
@@ -104,15 +109,19 @@ public class GamaShapeFile extends GamaGisFile {
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
+			GuiUtils.beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			ShapefileFileResourceInfo info = new ShapefileFileResourceInfo(store);
 			Envelope env = info.getBounds();
 			computeProjection(scope, env);
 			if ( features != null && returnIt ) {
+				double size = features.size();
 				it = features.features();
 				// return returnIt ? features.features() : null;
+				int i = 0;
 				while (it.hasNext()) {
+					GuiUtils.updateSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
 					if ( g != null && !g.isEmpty() /* Fix for Issue 725 */) {
@@ -131,7 +140,7 @@ public class GamaShapeFile extends GamaGisFile {
 				// return null;
 			}
 		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			if ( it != null ) {
 				it.close();
@@ -139,6 +148,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if ( store != null ) {
 				store.dispose();
 			}
+			GuiUtils.endSubStatus("Opening file " + getName());
 		}
 	}
 

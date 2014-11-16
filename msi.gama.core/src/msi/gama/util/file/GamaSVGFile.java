@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaSVGFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaSVGFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -34,7 +34,11 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 30 déc. 2013
  * 
  */
-@file(name = "svg", extensions = "svg", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
+@file(name = "svg",
+	extensions = "svg",
+	buffer_type = IType.LIST,
+	buffer_content = IType.GEOMETRY,
+	buffer_index = IType.INT)
 public class GamaSVGFile extends GamaGeometryFile {
 
 	GamaPoint size;

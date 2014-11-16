@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaFolderFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaFolderFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -37,7 +36,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 
 	@Override
 	public String toGaml() {
-		return Files.FOLDER + "(" + StringUtils.toGamlString(getPath()) + ")";
+		return Files.FOLDER + "('" + /* StringUtils.toGamlString(getPath()) */getPath() + "')";
 	}
 
 	/*

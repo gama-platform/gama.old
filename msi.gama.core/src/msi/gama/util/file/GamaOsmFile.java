@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
@@ -29,7 +29,11 @@ import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 import com.vividsolutions.jts.geom.*;
 
-@file(name = "osm", extensions = { "osm", "pbf", "bz2", "gz" })
+@file(name = "osm",
+	extensions = { "osm", "pbf", "bz2", "gz" },
+	buffer_type = IType.LIST,
+	buffer_content = IType.GEOMETRY,
+	buffer_index = IType.INT)
 public class GamaOsmFile extends GamaGisFile {
 
 	GamaMap<String, GamaList> filteringOptions;
@@ -91,14 +95,15 @@ public class GamaOsmFile extends GamaGisFile {
 							boolean keepObject = false;
 							for ( String keyN : filteringOptions.getKeys() ) {
 								GamaList valsPoss = filteringOptions.get(keyN);
-									for ( Tag tagN : ((Way) entity).getTags() ) {
-										if ( keyN.equals(tagN.getKey()) ) {
-											if ( valsPoss == null || valsPoss.isEmpty() || valsPoss.contains(tagN.getValue()) ) {
-												keepObject = true;
-												break;
-											}
+								for ( Tag tagN : ((Way) entity).getTags() ) {
+									if ( keyN.equals(tagN.getKey()) ) {
+										if ( valsPoss == null || valsPoss.isEmpty() ||
+											valsPoss.contains(tagN.getValue()) ) {
+											keepObject = true;
+											break;
 										}
-									
+									}
+
 								}
 							}
 							if ( !keepObject ) { return; }

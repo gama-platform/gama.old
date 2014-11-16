@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaTextFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaTextFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -19,7 +19,11 @@ import msi.gama.util.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "text", extensions = { "txt", "data", "csv", "text", "tsv", "xml" }, buffer_type = IType.LIST, buffer_content = IType.STRING)
+@file(name = "text",
+	extensions = { "txt", "data", "csv", "text", "tsv", "xml" },
+	buffer_type = IType.LIST,
+	buffer_content = IType.STRING,
+	buffer_index = IType.INT)
 public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
