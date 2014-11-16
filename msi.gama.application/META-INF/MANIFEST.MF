@@ -38,4 +38,4 @@ Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.swt.perspectives,
  msi.gama.gui.swt.swing,
  msi.gama.gui.views,
- org.polarion.team.svn.connector.svnkit
+ msi.gama.gui.views.actions
