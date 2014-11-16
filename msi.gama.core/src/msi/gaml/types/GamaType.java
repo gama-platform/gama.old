@@ -49,6 +49,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return name;
 	}
 
+	@Override
+	public String toGaml() {
+		return name;
+	}
+
 	protected int id;
 	protected String name;
 	protected Class[] supports;
@@ -216,6 +221,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return false;
 	}
 
+	@Override
 	public boolean isParametricFormOf(final IType l) {
 		return false;
 	}

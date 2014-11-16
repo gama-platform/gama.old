@@ -12,7 +12,7 @@
 package msi.gaml.types;
 
 import java.util.Map;
-import msi.gama.common.interfaces.ITyped;
+import msi.gama.common.interfaces.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -24,7 +24,7 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  * 
  */
-public interface IType<Support> extends IGamlDescription, ITyped {
+public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	/** Constant fields to indicate the types of facets */
 	public static final int LABEL = -200;

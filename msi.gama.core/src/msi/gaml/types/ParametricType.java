@@ -200,6 +200,7 @@ public class ParametricType implements IContainerType {
 			keyType.isTranslatableInto(l.getKeyType());
 	}
 
+	@Override
 	public boolean isParametricFormOf(final IType l) {
 		return !l.isParametricType() && type.equals(l);
 	}
@@ -339,6 +340,14 @@ public class ParametricType implements IContainerType {
 		if ( type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER &&
 			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		if ( type.id() == IType.SPECIES ) { return type.toString() + "<subspecies of " + contentsType.toString() + ">"; }
+		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
+	}
+
+	@Override
+	public String toGaml() {
+		if ( type.id() == IType.SPECIES || type.id() == IType.LIST || type.id() == IType.MATRIX ||
+			type.id() == IType.CONTAINER && keyType == Types.NO_TYPE ) { return type.toString() + "<" +
+			contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
 	}
 
