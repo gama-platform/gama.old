@@ -19,7 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
-import msi.gaml.operators.Maths;
+import msi.gaml.operators.*;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -349,15 +349,15 @@ public class GamaQuadTree implements ISpatialIndex {
 		public String toString(final int tab) {
 			final StringBuilder sb = new StringBuilder();
 			for ( int i = 0; i < tab; i++ ) {
-				sb.append("\t");
+				sb.append(Strings.TAB);
 			}
 			final String tabs = sb.toString();
 			String s = "Bounds " + bounds + " holding " + objects;
 			if ( !isLeaf ) {
-				s = s + "\n" + tabs + "NW: " + nw.toString(tab + 1);
-				s = s + "\n" + tabs + "NE: " + ne.toString(tab + 1);
-				s = s + "\n" + tabs + "SW: " + sw.toString(tab + 1);
-				s = s + "\n" + tabs + "SE: " + se.toString(tab + 1);
+				s = s + Strings.LN + tabs + "NW: " + nw.toString(tab + 1);
+				s = s + Strings.LN + tabs + "NE: " + ne.toString(tab + 1);
+				s = s + Strings.LN + tabs + "SW: " + sw.toString(tab + 1);
+				s = s + Strings.LN + tabs + "SE: " + se.toString(tab + 1);
 			}
 			return s;
 		}
