@@ -432,4 +432,6 @@ public interface IKeyword {
 												// external progam
 	public static final String ALPHA = "alpha";
 
+	public final static String INTERNAL = "internal_";
+
 }
