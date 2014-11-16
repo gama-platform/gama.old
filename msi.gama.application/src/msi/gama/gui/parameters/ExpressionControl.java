@@ -157,20 +157,36 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		getPopup();
 	}
 
+	// @Override
+	// public void focusLost(final FocusEvent e) {
+	// /* async is needed to wait until focus reaches its new Control */
+	// SwtGui.getDisplay().asyncExec(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( SwtGui.getDisplay().isDisposed() ) { return; }
+	// final Control control = SwtGui.getDisplay().getFocusControl();
+	// if ( control != text ) {
+	// widgetDefaultSelected(null);
+	// }
+	// }
+	// });
+	//
+	// }
 	@Override
 	public void focusLost(final FocusEvent e) {
 		/* async is needed to wait until focus reaches its new Control */
-		SwtGui.getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				if ( SwtGui.getDisplay().isDisposed() ) { return; }
-				final Control control = SwtGui.getDisplay().getFocusControl();
-				if ( control != text ) {
-					widgetDefaultSelected(null);
-				}
-			}
-		});
+		// SwtGui.getDisplay().asyncExec(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// if ( SwtGui.getDisplay().isDisposed() ) { return; }
+		// final Control control = SwtGui.getDisplay().getFocusControl();
+		// if ( control != text ) {
+		// widgetDefaultSelected(null);
+		// }
+		// }
+		// });
 
 	}
 
