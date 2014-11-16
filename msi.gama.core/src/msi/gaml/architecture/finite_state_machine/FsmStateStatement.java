@@ -15,7 +15,6 @@ import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -53,8 +52,6 @@ import msi.gaml.types.IType;
 		optional = true,
 		doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state")) },
-	combinations = { @combination({ IKeyword.NAME, FsmStateStatement.FINAL }), @combination({ IKeyword.NAME }),
-		@combination({ IKeyword.NAME, FsmStateStatement.INITIAL }) },
 	omissible = IKeyword.NAME)
 @validator(StateValidator.class)
 @doc(value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.",
