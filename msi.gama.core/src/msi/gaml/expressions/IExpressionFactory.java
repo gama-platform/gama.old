@@ -35,9 +35,6 @@ public interface IExpressionFactory {
 
 	public abstract ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
-	// public abstract IExpression createConst(final Object val, final IType type, final IType contentType)
-	// throws GamaRuntimeException;
-
 	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
 
 	public abstract IExpression createExpr(final String s, IDescription context);
@@ -47,9 +44,6 @@ public interface IExpressionFactory {
 	Map<String, IExpressionDescription> createArgumentMap(StatementDescription action, IExpressionDescription args,
 		IDescription context);
 
-	// public Set<String> parseLiteralArray(final IExpressionDescription s,
-	// final IDescription context, boolean skills);
-
 	public IExpressionCompiler getParser();
 
 	IExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
@@ -57,8 +51,6 @@ public interface IExpressionFactory {
 	public IExpression createList(final List<? extends IExpression> elements);
 
 	public IExpression createMap(final List<? extends IExpression> elements);
-
-	// IExpression createOperator(String op, IDescription context, IExpression ... exprs);
 
 	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression call,
 		IExpression args);
