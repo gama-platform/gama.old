@@ -1,26 +1,26 @@
 /*********************************************************************************************
- *
- *
+ * 
+ * 
  * 'GamaViewItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
+ * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
+ * 
+ * 
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * The class GamaContributionItem.
- *
+ * 
  * @author drogoul
  * @since 19 janv. 2012
- *
+ * 
  */
 public abstract class GamaViewItem implements IContributionItem {
 
@@ -28,13 +28,9 @@ public abstract class GamaViewItem implements IContributionItem {
 	protected final IContributionItem item;
 	boolean disposed = false;
 
-	GamaViewItem(final IWorkbenchPart view) {
+	public GamaViewItem(final IWorkbenchPart view) {
 		this.view = view;
 		item = createItem();
-	}
-
-	protected void updateToolbar() {
-		((IViewSite) view.getSite()).getActionBars().updateActionBars();
 	}
 
 	IWorkbenchPart getView() {
