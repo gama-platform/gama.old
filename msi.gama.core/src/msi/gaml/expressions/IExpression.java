@@ -22,13 +22,11 @@ import msi.gaml.descriptions.IGamlDescription;
  * @todo Description
  * 
  */
-public interface IExpression extends IGamlDescription, ITyped, IDisposable {
+public interface IExpression extends IGamlDescription, ITyped, IDisposable, IGamlable {
 
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 
 	public abstract boolean isConst();
-
-	public abstract String toGaml();
 
 	public abstract String literalValue();
 
@@ -37,21 +35,6 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 	 * are replaced by constants representing their values
 	 */
 	public abstract IExpression resolveAgainst(IScope scope);
-
-	/*
-	 * FIXME Highly exploratory !
-	 * Tries to gather the key and content types of the elements contained in this expression, if
-	 * any. The type of the elements is provided by getContentType(), but these methods try to
-	 * return the key and content types of the elements themselves when they are available.
-	 */
-
-	// public abstract IType getElementsContentType();
-
-	// public abstract IType getElementsKeyType();
-
-	// public abstract void setElementsContentType(IType t);
-
-	// public abstract void setElementsKeyType(IType t);
 
 	public abstract boolean shouldBeParenthesized();
 
