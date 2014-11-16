@@ -16,15 +16,15 @@ import org.eclipse.jface.viewers.*;
 public class VirtualContentProvider implements ITreeContentProvider {
 
 	private static final Object[] EMPTY_ARRAY = new Object[0];
-	private VirtualFolder[] virtualFolder;
+	private VirtualFolder[] virtualFolders;
 
 	@Override
 	public Object[] getChildren(final Object parentElement) {
 		if ( parentElement instanceof NavigatorRoot ) {
-			if ( virtualFolder == null ) {
+			if ( virtualFolders == null ) {
 				initializeVirtualFolders(parentElement);
 			}
-			return virtualFolder;
+			return virtualFolders;
 		}
 		return EMPTY_ARRAY;
 	}
@@ -47,7 +47,7 @@ public class VirtualContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void dispose() {
-		this.virtualFolder = null;
+		this.virtualFolders = null;
 	}
 
 	@Override
@@ -59,12 +59,12 @@ public class VirtualContentProvider implements ITreeContentProvider {
 	 * @return
 	 */
 	private void initializeVirtualFolders(final Object parentElement) {
-		this.virtualFolder = new VirtualFolder[3];
-		this.virtualFolder[0] = new UserProjectsFolder("User models");
-		this.virtualFolder[0].setRootElement(parentElement);
-		this.virtualFolder[1] = new ModelsLibraryFolder("Models library");
-		this.virtualFolder[1].setRootElement(parentElement);
-		this.virtualFolder[2] = new VirtualSharedModelsFolder("Shared models");
-		this.virtualFolder[2].setRootElement(parentElement);
+		this.virtualFolders = new VirtualFolder[3];
+		this.virtualFolders[0] = new UserProjectsFolder("User models");
+		this.virtualFolders[0].setRootElement(parentElement);
+		this.virtualFolders[1] = new ModelsLibraryFolder("Models library");
+		this.virtualFolders[1].setRootElement(parentElement);
+		this.virtualFolders[2] = new VirtualSharedModelsFolder("Shared models");
+		this.virtualFolders[2].setRootElement(parentElement);
 	}
 }
