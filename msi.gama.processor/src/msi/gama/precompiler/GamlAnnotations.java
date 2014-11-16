@@ -39,10 +39,37 @@ public final class GamlAnnotations {
 		String value();
 	}
 
+	/**
+	 * Allows to declare a custom validator for Symbols. This validator, if declared on subclasses of Symbol, will be called after the standard validation is done.
+	 * The validator must be subclass of IDescriptionValidator
+	 * 
+	 * @author drogoul
+	 * @since 11 nov. 2014
+	 * 
+	 */
+
 	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	@Inherited
 	public static @interface validator {
+
+		Class value();
+	}
+
+	/**
+	 * Allows to declare a custom serializer for Symbols (statements, var declarations, species ,experiments, etc.)
+	 * This serializer will be called instead of the standard serializer, superseding this last one.
+	 * Serializers must be sublasses of the SymbolSerializer class
+	 * 
+	 * @author drogoul
+	 * @since 11 nov. 2014
+	 * 
+	 */
+
+	@Retention(RetentionPolicy.SOURCE)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface serializer {
 
 		Class value();
 	}
@@ -68,13 +95,13 @@ public final class GamlAnnotations {
 		 */
 		facet[] value();
 
-		/**
-		 * Combinations.
-		 * 
-		 * @return The different combinations of facets that are allowed. Not completely functional
-		 *         yet.
-		 */
-		combination[] combinations() default {};
+		// /**
+		// * Combinations.
+		// *
+		// * @return The different combinations of facets that are allowed. Not completely functional
+		// * yet.
+		// */
+		// combination[] combinations() default {};
 
 		/**
 		 * Ommissible.
@@ -146,17 +173,18 @@ public final class GamlAnnotations {
 		doc[] doc() default {};
 	}
 
-	@Retention(RetentionPolicy.SOURCE)
-	public static @interface combination {
-
-		/**
-		 * Value.
-		 * 
-		 * @return an Array of String, each representing a possible combination of facets names
-		 */
-		String[] value();
-
-	}
+	//
+	// @Retention(RetentionPolicy.SOURCE)
+	// public static @interface combination {
+	//
+	// /**
+	// * Value.
+	// *
+	// * @return an Array of String, each representing a possible combination of facets names
+	// */
+	// String[] value();
+	//
+	// }
 
 	/**
 	 * 

@@ -25,7 +25,6 @@ import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -36,6 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
@@ -372,8 +372,10 @@ public class GamaProcessor extends AbstractProcessor {
 			StringBuilder sb = new StringBuilder();
 			symbol symbol = e.getAnnotation(symbol.class);
 			validator validator = e.getAnnotation(validator.class);
+			serializer serializer = e.getAnnotation(serializer.class);
 			TypeMirror sup = ((TypeElement) e).getSuperclass();
 			// Workaround for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=419944
+			// Effectively inherits from a given validator
 			while (validator == null && sup != null) {
 
 				if ( sup.getKind().equals(TypeKind.NONE) ) {
@@ -384,20 +386,47 @@ public class GamaProcessor extends AbstractProcessor {
 				validator = te.getAnnotation(validator.class);
 				sup = te.getSuperclass();
 			}
-			TypeMirror type = null;
+			sup = ((TypeElement) e).getSuperclass();
+			while (serializer == null && sup != null) {
+
+				if ( sup.getKind().equals(TypeKind.NONE) ) {
+					sup = null;
+					continue;
+				}
+				TypeElement te = (TypeElement) processingEnv.getTypeUtils().asElement(sup);
+				serializer = te.getAnnotation(serializer.class);
+				sup = te.getSuperclass();
+			}
+			TypeMirror type_validator = null;
+			// getting the class present in validator
 			try {
 				if ( validator != null ) {
 					validator.value();
 				}
 			} catch (MirroredTypeException e1) {
-				type = e1.getTypeMirror();
+				type_validator = e1.getTypeMirror();
 			} catch (MirroredTypesException e1) {
-				type = e1.getTypeMirrors().get(0);
+				type_validator = e1.getTypeMirrors().get(0);
 			}
+			TypeMirror type_serializer = null;
+			// getting the class present in serializer
+			try {
+				if ( serializer != null ) {
+					serializer.value();
+				}
+			} catch (MirroredTypeException e1) {
+				type_serializer = e1.getTypeMirror();
+			} catch (MirroredTypesException e1) {
+				type_serializer = e1.getTypeMirrors().get(0);
+			}
+
 			// prefix
+
 			sb.append(SYMBOL_PREFIX);
 			// validator
-			sb.append(type == null ? "" : rawNameOf(type, e)).append(SEP);
+			sb.append(type_validator == null ? "" : rawNameOf(type_validator, e)).append(SEP);
+			// serializer
+			sb.append(type_serializer == null ? "" : rawNameOf(type_serializer, e)).append(SEP);
 			// kind
 			sb.append(symbol.kind()).append(SEP);
 			// class
@@ -440,21 +469,12 @@ public class GamaProcessor extends AbstractProcessor {
 			facets facets = e.getAnnotation(facets.class);
 			// facets
 			if ( facets == null ) {
-				sb.append('0').append(SEP).append(SEP).append(SEP).append(SEP).append(SEP);
+				sb.append('0').append(SEP).append(SEP).append(SEP);
 			} else {
 				sb.append(facets.value().length).append(SEP);
 				sb.append(facetsToString(facets)).append(SEP);
-				sb.append(facets.combinations().length).append(SEP);
-				sb.append(combinationsFacetsToString(facets)).append(SEP);
 				sb.append(facets.omissible()).append(SEP);
 			}
-			// combinations missing
-			// if(facets.combinations() == null){sb.append('0').append(SEP).append(SEP);}
-			// else
-			// {
-			// sb.append(facets.combinations().length).append(SEP);
-			// sb.append(combinationsFacetsToString(facets)).append(SEP);
-			// }
 			// names
 			for ( String s : symbol.name() ) {
 				sb.append(s).append(SEP);
@@ -531,18 +551,18 @@ public class GamaProcessor extends AbstractProcessor {
 		return sb.toString();
 	}
 
-	private String combinationsFacetsToString(final facets facets) {
-		StringBuilder sb = new StringBuilder();
-		if ( facets.combinations() != null ) {
-			for ( combination cf : facets.combinations() ) {
-				sb.append(arrayToString(cf.value())).append(SEP);
-			}
-			// if ( facets.combinations().length > 0 ) {
-			// sb.setLength(sb.length() - 1);
-			// }
-		}
-		return sb.toString();
-	}
+	// private String combinationsFacetsToString(final facets facets) {
+	// StringBuilder sb = new StringBuilder();
+	// if ( facets.combinations() != null ) {
+	// for ( combination cf : facets.combinations() ) {
+	// sb.append(arrayToString(cf.value())).append(SEP);
+	// }
+	// // if ( facets.combinations().length > 0 ) {
+	// // sb.setLength(sb.length() - 1);
+	// // }
+	// }
+	// return sb.toString();
+	// }
 
 	private String arrayToString(final int[] array) {
 		if ( array.length == 0 ) { return ""; }
