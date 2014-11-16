@@ -26,7 +26,10 @@ import msi.gaml.expressions.IExpression;
  * A generic type for containers. Tentative.
  * 
  */
-@type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.CONTAINER,
+	id = IType.CONTAINER,
+	wraps = { IContainer.class },
+	kind = ISymbolKind.Variable.CONTAINER)
 public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
 
 	@Override
@@ -37,8 +40,9 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	}
 
 	@Override
-	public T cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType)
-		throws GamaRuntimeException {
+	public T
+		cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType)
+			throws GamaRuntimeException {
 		// by default
 		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
 			Types.NO_TYPE, Types.NO_TYPE));
@@ -52,11 +56,6 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	@Override
 	public GamaContainerType getType() {
 		return this;
-	}
-
-	@Override
-	public IType getContentType() {
-		return Types.NO_TYPE;
 	}
 
 	@Override
