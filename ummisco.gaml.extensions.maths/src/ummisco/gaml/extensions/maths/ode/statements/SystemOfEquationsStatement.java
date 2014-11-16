@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SystemOfEquationsStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the 
+ * 
+ * 'SystemOfEquationsStatement.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,14 +15,13 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,37 +39,55 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.*
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics.ClassicalLVEquations;
 
 /**
- * The class SystemOfEquationsStatement. 
- * This class represents a system of equations (SingleEquationStatement) that implements the interface 
+ * The class SystemOfEquationsStatement.
+ * This class represents a system of equations (SingleEquationStatement) that implements the interface
  * FirstOrderDifferentialEquations and can be integrated by any of the integrators available in the Apache Commons Library.
  * 
  * @author drogoul
  * @since 26 janv. 2013
- *
+ * 
  */
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false, doc= @doc("the equation identifier")),
+	@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false, doc = @doc("the equation identifier")),
 	@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SI", "SIS", "SIR", "SIRS",
 		"SEIR", "LV" }, doc = @doc(value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
-	@facet(name = IKeyword.VARS, type = IType.LIST, optional = true, doc= @doc("the list of variables used in predefined equation systems")),
-	@facet(name = IKeyword.PARAMS, type = IType.LIST, optional = true, doc= @doc("the list of pramameters used in predefined equation systems")),
-	@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true, doc= @doc("a list of agents containing a system of equations (all systems will be solved simultaneously)")) }, combinations = {
-	@combination({ IKeyword.NAME }), @combination({ IKeyword.NAME, IKeyword.TYPE, IKeyword.VARS, IKeyword.PARAMS }),
-	@combination({ IKeyword.NAME, IKeyword.SIMULTANEOUSLY }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.VARS,
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("the list of variables used in predefined equation systems")),
+	@facet(name = IKeyword.PARAMS,
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("the list of pramameters used in predefined equation systems")),
+	@facet(name = IKeyword.SIMULTANEOUSLY,
+		type = IType.LIST,
+		optional = true,
+		doc = @doc("a list of agents containing a system of equations (all systems will be solved simultaneously)")) },
+	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@doc(value="The equation statement is used to create an equation system from several single equations.", usages = {
-	@usage(value="The basic syntax to define an equation system is:", examples = {
-		@example(value="float t;", isExecutable=false),@example(value="float S;", isExecutable=false),@example(value="float I;", isExecutable=false),@example(value="equation SI { ", isExecutable=false),@example(value="   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable=false),@example(value="   diff(I,t) = (0.3 * S * I / 100);", isExecutable=false),@example(value="} ", isExecutable=false)}),
-	@usage(value="If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ", examples = {
-		@example(value="equation eqSI type: SI vars: [S,I,t] params: [N,beta];", isExecutable=false),
-		@example(value="equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];", isExecutable=false),
-		@example(value="equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma];", isExecutable=false),
-		@example(value="equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu];", isExecutable=false),
-		@example(value="equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu];", isExecutable=false),
-		@example(value="equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;", isExecutable=false)}),
-	@usage(value="If the simultaneously: facet is used, system of all the agents will be solved simultaneously.")
-}, see = {"=","solve"})
+@doc(value = "The equation statement is used to create an equation system from several single equations.",
+	usages = {
+		@usage(value = "The basic syntax to define an equation system is:", examples = {
+			@example(value = "float t;", isExecutable = false), @example(value = "float S;", isExecutable = false),
+			@example(value = "float I;", isExecutable = false),
+			@example(value = "equation SI { ", isExecutable = false),
+			@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
+			@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
+			@example(value = "} ", isExecutable = false) }),
+		@usage(value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
+			examples = {
+				@example(value = "equation eqSI type: SI vars: [S,I,t] params: [N,beta];", isExecutable = false),
+				@example(value = "equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma];", isExecutable = false),
+				@example(value = "equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma];", isExecutable = false),
+				@example(value = "equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu];",
+					isExecutable = false),
+				@example(value = "equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu];",
+					isExecutable = false),
+				@example(value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;",
+					isExecutable = false) }),
+		@usage(value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
+	see = { "=", IKeyword.SOLVE })
 public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();

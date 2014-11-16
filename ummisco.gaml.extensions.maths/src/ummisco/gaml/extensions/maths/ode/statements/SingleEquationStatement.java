@@ -20,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -32,6 +33,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.*;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.SIngleEquationSerializer;
 import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.SingleEquationValidator;
 
 /**
@@ -60,6 +62,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 	omissible = EQUATION_RIGHT)
 @inside(symbols = EQUATION)
 @validator(SingleEquationValidator.class)
+@serializer(SIngleEquationSerializer.class)
 @doc(value = "Allows to implement an equation in the form function(n, t) = expression. The left function is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.",
 	usages = { @usage(value = "The syntax of the = statement is a bit different from the other statements. It hase to be used as follows (in an equation):",
 		examples = { @example(value = "float t;", isExecutable = false),
@@ -68,7 +71,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 			@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
 			@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
 			@example(value = "} ", isExecutable = false) }) },
-	see = { "equation", "solve" })
+	see = { EQUATION, SOLVE })
 public class SingleEquationStatement extends AbstractStatement {
 
 	public static final Map<String, Integer> orderNames = new TOrderedHashMap();
@@ -76,6 +79,15 @@ public class SingleEquationStatement extends AbstractStatement {
 		orderNames.put(ZERO, 0);
 		orderNames.put(DIFF, 1);
 		orderNames.put(DIF2, 2);
+	}
+
+	public static class SIngleEquationSerializer extends SymbolSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
+			sb.append(desc.getFacets().get(LEFT).toGaml()).append(" = ").append(desc.getFacets().get(RIGHT).toGaml())
+				.append(";");
+		}
 	}
 
 	public static class SingleEquationValidator implements IDescriptionValidator {
