@@ -13,13 +13,12 @@ package irit.gaml.extensions.test.statements;
 
 import java.util.Collection;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -31,18 +30,34 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
 @symbol(name = { "assert" }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("the value that is evaluated and compared to other facets")),
-	@facet(name = IKeyword.EQUALS, type = IType.NONE, optional = true, doc = @doc("an expresion, assert tests whether the value is equals to this expression")),
-	@facet(name = IKeyword.ISNOT, type = IType.NONE, optional = true, doc = @doc("an expression, assert tests whether the value is not equals to this expression")),
-	@facet(name = IKeyword.RAISES, type = IType.ID, optional = true, doc = @doc("\"error\" or \"warning\", used in testing what raises the evaluation of the value: expresion")) }, combinations = {
-	@combination({ IKeyword.VALUE, IKeyword.EQUALS }), @combination({ IKeyword.VALUE, IKeyword.ISNOT }),
-	@combination({ IKeyword.VALUE, IKeyword.RAISES }) }, omissible = IKeyword.VALUE)
+@facets(value = {
+	@facet(name = IKeyword.VALUE,
+		type = IType.NONE,
+		optional = false,
+		doc = @doc("the value that is evaluated and compared to other facets")),
+	@facet(name = IKeyword.EQUALS,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expresion, assert tests whether the value is equals to this expression")),
+	@facet(name = IKeyword.ISNOT,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expression, assert tests whether the value is not equals to this expression")),
+	@facet(name = IKeyword.RAISES,
+		type = IType.ID,
+		optional = true,
+		doc = @doc("\"error\" or \"warning\", used in testing what raises the evaluation of the value: expresion")) },
+	omissible = IKeyword.VALUE)
 @inside(symbols = { "test" })
-@doc(value="Allows to check whether the evaluation of a given expression fulfils a given condition. If it is not fulfilled, an exception is raised.",usages = {
-	@usage(value="if the equals: facet is used, the equality between the evaluation of expressions in the value: and in the equals: facets is tested", examples = @example("assert (2+2) equals: 4;")),
-	@usage(value="if the is_not: facet is used, the inequality between the evaluation of expressions in the value: and in the equals: facets is tested", examples =@example("assert self is_not: nil;")),
-	@usage(value="if the raises: facet is used with either \"warning\" or \"error\", the statement tests whether the evaluation of the value: expression raises an error (resp. a warning)", examples ={@example("int z <- 0;"),@example("assert (3/z) raises: \"error\";")})
-}, see={"test","setup"})
+@doc(value = "Allows to check whether the evaluation of a given expression fulfils a given condition. If it is not fulfilled, an exception is raised.",
+	usages = {
+		@usage(value = "if the equals: facet is used, the equality between the evaluation of expressions in the value: and in the equals: facets is tested",
+			examples = @example("assert (2+2) equals: 4;")),
+		@usage(value = "if the is_not: facet is used, the inequality between the evaluation of expressions in the value: and in the equals: facets is tested",
+			examples = @example("assert self is_not: nil;")),
+		@usage(value = "if the raises: facet is used with either \"warning\" or \"error\", the statement tests whether the evaluation of the value: expression raises an error (resp. a warning)",
+			examples = { @example("int z <- 0;"), @example("assert (3/z) raises: \"error\";") }) },
+	see = { "test", "setup" })
 public class AssertStatement extends AbstractStatement {
 
 	StatementDescription setUpStatement;
