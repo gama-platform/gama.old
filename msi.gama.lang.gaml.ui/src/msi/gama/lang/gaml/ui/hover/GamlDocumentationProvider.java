@@ -16,6 +16,7 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.Strings;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
@@ -56,12 +57,12 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				SymbolProto p = DescriptionFactory.getProto(key, null);
 				if ( p != null ) {
 					FacetProto f = p.getPossibleFacets().get(facetName);
-					if ( f != null ) { return comment + IGamlDescription.ln + f.getDocumentation(); }
+					if ( f != null ) { return comment + Strings.LN + f.getDocumentation(); }
 				}
 				return comment;
 			}
 			if ( comment.isEmpty() ) { return null; }
-			return comment + IGamlDescription.ln + "No documentation yet";
+			return comment + Strings.LN + "No documentation yet";
 		}
 
 		return comment + description.getDocumentation();
