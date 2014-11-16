@@ -275,10 +275,10 @@ public class Variable extends Symbol implements IVariable {
 	// staticValue = coerce(null, getAnyExpression(scope).value(scope));
 	// }
 
-	@Override
-	public String toGaml() {
-		return getName();
-	}
+	// @Override
+	// public String toGaml() {
+	// return getName();
+	// }
 
 	@Override
 	public String toString() {

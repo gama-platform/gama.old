@@ -20,9 +20,6 @@ package msi.gaml.descriptions;
  */
 public interface IGamlDescription {
 
-	static String ln = "\n";
-	static String tab = "\t";
-
 	public String getTitle();
 
 	public String getDocumentation();

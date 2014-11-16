@@ -12,22 +12,23 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IStatement.Breakable;
+import msi.gaml.statements.LoopStatement.LoopSerializer;
 import msi.gaml.types.IType;
 
 // A group of commands that can be executed repeatedly.
@@ -44,11 +45,6 @@ import msi.gaml.types.IType;
 		doc = @doc("a list, point, matrix or map expression")),
 	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true, doc = @doc("a boolean expression")),
 	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true, doc = @doc("an int expression")) },
-	combinations = {
-
-	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME, IKeyword.STEP }),
-		@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME }), @combination({ IKeyword.OVER, IKeyword.NAME }),
-		@combination({ IKeyword.TIMES }), @combination({ IKeyword.WHILE }) },
 	omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(value = "Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of integers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.",
@@ -89,7 +85,21 @@ import msi.gaml.types.IType;
 				@example(value = "loop i from: 0 to: length (the_list) - 1 {"),
 				@example(value = "     ask the_list at i {"), @example(value = "        // ..."),
 				@example(value = "     }"), @example(value = "} // every  agent of the list is asked to do something") }) })
+@serializer(LoopSerializer.class)
 public class LoopStatement extends AbstractStatementSequence implements Breakable {
+
+	public static class LoopSerializer extends SymbolSerializer {
+
+		@Override
+		protected String serializeFacetValue(final SymbolDescription s, final String key) {
+			if ( key.equals(NAME) ) {
+				Facets f = s.getFacets();
+				if ( f.containsKey(TIMES) || f.containsKey(WHILE) ) { return null; }
+			}
+			return super.serializeFacetValue(s, key);
+		}
+
+	}
 
 	private final LoopExecuter executer;
 	private final String varName;

@@ -88,21 +88,29 @@ public abstract class AbstractExpression implements IExpression {
 		return result;
 	}
 
-	protected String parenthesize(final IExpression ... exp) {
-		if ( exp.length == 1 && !exp[0].shouldBeParenthesized() ) { return " " + exp[0].toGaml() + " "; }
-		return surround('(', ')', exp);
+	protected final void parenthesize(final StringBuilder sb, final IExpression ... exp) {
+		if ( exp.length == 1 && !exp[0].shouldBeParenthesized() ) {
+			sb.append(exp[0].toGaml());
+		} else {
+			surround(sb, '(', ')', exp);
+		}
 	}
 
-	protected String surround(final char first, final char last, final IExpression ... exp) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(' ').append(first);
+	protected final String surround(final StringBuilder sb, final char first, final char last,
+		final IExpression ... exp) {
+		sb.append(first);
 		for ( int i = 0; i < exp.length; i++ ) {
 			if ( i > 0 ) {
 				sb.append(',');
 			}
 			sb.append(exp[i] == null ? "nil" : exp[i].toGaml());
 		}
-		sb.append(last).append(' ');
+		int length = sb.length();
+		if ( length > 2 && sb.charAt(length - 1) == ' ' ) {
+			sb.setLength(length - 1);
+		}
+		sb.append(last);
+		// sb.append(' ');
 		return sb.toString();
 	}
 

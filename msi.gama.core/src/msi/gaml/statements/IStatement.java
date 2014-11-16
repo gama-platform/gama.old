@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 
@@ -21,7 +20,7 @@ import msi.gaml.compilation.ISymbol;
  * @todo Description
  * 
  */
-public interface IStatement extends ISymbol, IGamlable, IExecutable {
+public interface IStatement extends ISymbol, IExecutable {
 
 	public interface WithArgs extends IStatement {
 

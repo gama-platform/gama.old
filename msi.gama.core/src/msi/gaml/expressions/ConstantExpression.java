@@ -25,11 +25,14 @@ public class ConstantExpression extends AbstractExpression {
 
 	Object value;
 
-	public ConstantExpression(final Object val, final IType t) {
+	public ConstantExpression(final Object val, final IType t, final String name) {
 		value = val;
 		type = t;
-		// contentType = ct;
-		setName(value == null ? "nil" : value.toString());
+		setName(name);
+	}
+
+	public ConstantExpression(final Object val, final IType t) {
+		this(val, t, val == null ? "nil" : val.toString());
 	}
 
 	public ConstantExpression(final Object val) {

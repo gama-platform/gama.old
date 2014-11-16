@@ -24,11 +24,12 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public final int[] types;
 	public final boolean optional;
 	public final boolean internal;
-	public final boolean isLabel;
+	private final boolean isLabel;
+	private final boolean isId;
 	public final boolean isType;
 	public final Set<String> values;
 	public String doc = "No documentation yet";
-	private SymbolProto owner;
+	// private SymbolProto owner;
 	static FacetProto KEYWORD = KEYWORD();
 	static FacetProto DEPENDS_ON = DEPENDS_ON();
 	static FacetProto NAME = NAME();
@@ -40,6 +41,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		this.optional = optional;
 		this.internal = internal;
 		isLabel = SymbolProto.ids.contains(types[0]);
+		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
 		this.values = new THashSet(Arrays.asList(values));
 		if ( doc != null ) {
@@ -54,9 +56,17 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		}
 	}
 
-	public void setOwner(final SymbolProto symbol) {
-		owner = symbol;
+	boolean isLabel() {
+		return isLabel;
 	}
+
+	public boolean isId() {
+		return isId;
+	}
+
+	// public void setOwner(final SymbolProto symbol) {
+	// owner = symbol;
+	// }
 
 	static FacetProto DEPENDS_ON() {
 		return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST }, new String[0], true, true,
@@ -79,8 +89,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public String getTitle() {
-		String p = owner == null ? "" : " of statement " + owner.getName();
-		return "Facet " + name + p;
+		// String p = owner == null ? "" : " of statement " + owner.getName();
+		return "Facet " + name /* + p */;
 	}
 
 	public String typesToString() {
@@ -160,4 +170,9 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public int compareTo(final FacetProto o) {
 		return getName().compareTo(o.getName());
 	}
+
+	/**
+	 * @return
+	 */
+
 }

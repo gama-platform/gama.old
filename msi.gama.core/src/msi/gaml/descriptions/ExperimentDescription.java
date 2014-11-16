@@ -12,6 +12,7 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.factories.ChildrenProvider;
@@ -98,6 +99,13 @@ public class ExperimentDescription extends SpeciesDescription {
 			variables.put(ExperimentAgent.MODEL_PATH, null);
 		}
 		return variables;
+	}
+
+	/**
+	 * @return
+	 */
+	public Boolean isBatch() {
+		return IKeyword.BATCH.equals(getFacets().getLabel(IKeyword.TYPE));
 	}
 
 }

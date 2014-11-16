@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import gnu.trove.set.hash.THashSet;
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,7 +31,7 @@ public class BinaryOperator extends NAryOperator {
 		BinaryOperator u = new BinaryOperator(proto, context, child);
 		if ( u.isConst() ) {
 			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
-			//System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
+			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
 	}
@@ -39,17 +41,38 @@ public class BinaryOperator extends NAryOperator {
 		prototype.verifyExpectedTypes(context, exprs[1].getType());
 	}
 
-	static List<String> symbols = Arrays.asList("=", "+", "-", "/", "*", "^", "<", ">", "<=", ">=", "?", ":", ".",
-		"where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside", "among",
-		"contains", "contains_any", "contains_all", "min_of", "max_of", "with_max_of", "with_min_of", "of_species",
-		"of_generic_species", "sort_by", "or", "and", "at", "is", "as", "group_by", "index_of", "last_index_of",
-		"index_by", "count", "sort", "::", "as_map");
+	static Set<String> symbols = new THashSet(Arrays.asList("=", "+", "-", "/", "*", "^", "<", ">", "<=", ">=", "?",
+		"!=", ":", ".", "where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in",
+		"inside", "among", "contains", "contains_any", "contains_all", "min_of", "max_of", "with_max_of",
+		"with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or", "and", "at", "is",
+		"group_by", "index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
 
 	@Override
 	public String toGaml() {
-		if ( getName().equals("internal_at") ) { return exprs[0].toGaml() + exprs[1].toGaml(); } // '[' and ']' included
-		if ( symbols.contains(getName()) ) { return parenthesize(exprs[0]) + getName() + parenthesize(exprs[1]); }
-		return getName() + parenthesize(exprs[0], exprs[1]);
+		StringBuilder sb = new StringBuilder();
+		String name = getName();
+		if ( name.equals("internal_at") ) {
+			// '[' and ']' included
+			sb.append(exprs[0].toGaml()).append(exprs[1].toGaml());
+		} else if ( symbols.contains(name) ) {
+			parenthesize(sb, exprs[0]);
+			sb.append(' ').append(name).append(' ');
+			parenthesize(sb, exprs[1]);
+		} else if ( name.equals(IKeyword.AS) ) {
+			// Special case for the "as" operator
+			sb.append(exprs[1].toGaml()).append("(").append(exprs[0].toGaml()).append(")");
+		} else {
+			sb.append(name);
+			parenthesize(sb, exprs[0], exprs[1]);
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		String s = getName();
+		if ( s.equals(".") || s.equals(":") ) { return false; }
+		return symbols.contains(getName());
 	}
 
 	@Override

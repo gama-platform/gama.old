@@ -14,6 +14,7 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
@@ -21,6 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.BreakStatement.BreakSerializer;
 import msi.gaml.statements.BreakStatement.BreakValidator;
 
 /**
@@ -34,7 +36,16 @@ import msi.gaml.statements.BreakStatement.BreakValidator;
 @inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @doc(value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
 @validator(BreakValidator.class)
+@serializer(BreakSerializer.class)
 public class BreakStatement extends AbstractStatement {
+
+	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
+
+		@Override
+		protected void serialize(final StatementDescription desc, final StringBuilder sb) {
+			sb.append(BREAK).append(";");
+		}
+	}
 
 	public static class BreakValidator implements IDescriptionValidator {
 

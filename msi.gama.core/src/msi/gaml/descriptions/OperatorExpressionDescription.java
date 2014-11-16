@@ -46,7 +46,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public String toString() {
+	public String toOwnString() {
 		String result = operator + "(";
 		for ( int i = 0; i < args.length; i++ ) {
 			if ( i > 0 ) {

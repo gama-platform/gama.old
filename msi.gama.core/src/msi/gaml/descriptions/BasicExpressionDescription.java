@@ -33,7 +33,17 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public String toString() {
-		return expression != null ? expression.toGaml() : "";
+		return toGaml();
+	}
+
+	public String toOwnString() {
+		return target.toString();
+	}
+
+	@Override
+	public String toGaml() {
+		return expression == null ? toOwnString() : expression.toGaml();
+		// return expression != null ? expression.toGaml() : "";
 	}
 
 	@Override

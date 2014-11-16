@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -24,8 +25,9 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.AddStatement.AddSerializer;
 import msi.gaml.statements.AddStatement.AddValidator;
 import msi.gaml.types.*;
 
@@ -148,7 +150,27 @@ import msi.gaml.types.*;
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AddValidator.class)
+@serializer(AddSerializer.class)
 public class AddStatement extends AbstractContainerStatement {
+
+	public static class AddSerializer extends SymbolSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+			Facets f = cd.getFacets();
+			IExpression item = f.getExpr(ITEM);
+			IExpression list = f.getExpr(TO);
+			IExpression allFacet = f.getExpr(ALL);
+			IExpression at = f.getExpr(AT);
+			boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
+			sb.append(list.toGaml());
+			if ( at != null ) {
+				sb.append('[').append(at.toGaml()).append(']');
+			}
+			sb.append(isAll ? " <<+ " : " <+ ");
+			sb.append(item.toGaml()).append(';');
+		}
+	}
 
 	public static class AddValidator extends ContainerValidator {
 
@@ -165,8 +187,6 @@ public class AddStatement extends AbstractContainerStatement {
 					cd.getFacets().remove(ALL);
 				}
 			}
-			// IExpression whole = cd.getFacets().getExpr(ALL);
-			// IExpression index = cd.getFacets().getExpr(AT);
 			if ( list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR ) {
 				final IType contentType = list.getType().getContentType();
 				final IType valueType = item.getType().getContentType();

@@ -12,12 +12,12 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -25,8 +25,9 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.PutStatement.PutSerializer;
 import msi.gaml.statements.PutStatement.PutValidator;
 import msi.gaml.types.IType;
 
@@ -54,8 +55,6 @@ import msi.gaml.types.IType;
 		type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
 		optional = false,
 		doc = @doc("an expression that evaluates to a container")) },
-	combinations = { @combination({ IKeyword.AT, IKeyword.ITEM, IKeyword.IN }),
-		@combination({ IKeyword.ALL, IKeyword.IN }) },
 	omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
@@ -95,7 +94,28 @@ import msi.gaml.types.IType;
 				@example(value = "put -30 all: true in: putMap;",
 					var = "putMap",
 					equals = "[\"x\"::-30,\"y\"::-30, \"z\"::-30]") }) })
+@serializer(PutSerializer.class)
 public class PutStatement extends AddStatement {
+
+	public static class PutSerializer extends SymbolSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+			Facets f = cd.getFacets();
+			IExpression item = f.getExpr(ITEM);
+			IExpression list = f.getExpr(TO);
+			IExpression allFacet = f.getExpr(ALL);
+			IExpression at = f.getExpr(AT);
+			sb.append(list.toGaml());
+			sb.append('[');
+			if ( at != null ) {
+				sb.append(at.toGaml());
+			}
+			sb.append(']');
+			sb.append(" <- ");
+			sb.append(item.toGaml()).append(';');
+		}
+	}
 
 	public static class PutValidator extends ContainerValidator {
 

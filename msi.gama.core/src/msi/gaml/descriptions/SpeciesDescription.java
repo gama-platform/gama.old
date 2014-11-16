@@ -24,6 +24,7 @@ import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
+import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
@@ -64,6 +65,11 @@ public class SpeciesDescription extends TypeDescription {
 		setSkills(ff.get(SKILLS), skills2);
 		setParent(parent);
 		setAgentConstructor(helper);
+	}
+
+	@Override
+	public SymbolSerializer createSerializer() {
+		return new SpeciesSerializer();
 	}
 
 	@Override
@@ -259,6 +265,10 @@ public class SpeciesDescription extends TypeDescription {
 		// }
 		// return names;
 		return aspects == null ? Collections.EMPTY_LIST : aspects.keySet();
+	}
+
+	public Collection<IDescription> getAspects() {
+		return aspects == null ? Collections.EMPTY_LIST : aspects.values();
 	}
 
 	public IArchitecture getControl() {
@@ -801,14 +811,14 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public List<IDescription> getChildren() {
 		List<IDescription> result = super.getChildren();
-		if ( aspects != null ) {
-			result.addAll(aspects.values());
+		if ( microSpecies != null ) {
+			result.addAll(microSpecies.values());
 		}
 		if ( behaviors != null ) {
 			result.addAll(behaviors.values());
 		}
-		if ( microSpecies != null ) {
-			result.addAll(microSpecies.values());
+		if ( aspects != null ) {
+			result.addAll(aspects.values());
 		}
 		return result;
 	}

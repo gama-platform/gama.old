@@ -35,8 +35,13 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		string = s;
 	}
 
+	// @Override
+	// public String toString() {
+	// return string;
+	// }
+
 	@Override
-	public String toString() {
+	public String toOwnString() {
 		return string;
 	}
 

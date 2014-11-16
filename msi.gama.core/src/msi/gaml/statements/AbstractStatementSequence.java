@@ -16,7 +16,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.operators.Strings;
 
 public class AbstractStatementSequence extends AbstractStatement {
 
@@ -27,22 +26,9 @@ public class AbstractStatementSequence extends AbstractStatement {
 	}
 
 	@Override
-	public String toGaml() {
-		StringBuilder sb = new StringBuilder(firstLineToGaml());
-		sb.append(' ').append('{').append(Strings.LN);
-		if ( commands != null && !isEmpty() ) {
-			for ( IStatement s : commands ) {
-				sb.append('\t');
-				sb.append(s.toGaml()).append(Strings.LN);
-			}
-		}
-		sb.append('}');
-		return sb.toString();
-	}
-
-	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 		this.commands = commands.toArray(new IStatement[0]);
+		this.toGaml();
 	}
 
 	public boolean isEmpty() {

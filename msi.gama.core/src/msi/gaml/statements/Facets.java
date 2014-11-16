@@ -15,6 +15,7 @@ import gnu.trove.function.TObjectFunction;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.*;
 import java.util.*;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -27,7 +28,7 @@ import msi.gaml.types.*;
  * retrieved.
  * 
  */
-public class Facets extends THashMap<String, IExpressionDescription> { // See if we can pack this class even further
+public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable { // See if we can pack this class even further
 
 	// Strings as UTF8 encoded bytes ? Using the HashCode to store strings directly ?
 
@@ -79,6 +80,19 @@ public class Facets extends THashMap<String, IExpressionDescription> { // See if
 			if ( f != null ) { return f; }
 		}
 		return null;
+	}
+
+	@Override
+	public String toGaml() {
+		StringBuilder sb = new StringBuilder(size() * 20);
+		for ( final Map.Entry<String, IExpressionDescription> e : entrySet() ) {
+			if ( e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
+				IExpressionDescription ed = e.getValue();
+				String exprString = ed == null ? "N/A" : ed.toGaml();
+				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
+			}
+		}
+		return sb.toString();
 	}
 
 	public IType getTypeDenotedBy(final String key, final IDescription context) {

@@ -78,6 +78,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return new ConstantExpression(val, type);
 	}
 
+	// public ConstantExpression createConst(final Object val, final IType type, final String name) {
+	// if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
+	// if ( val == null ) { return NIL_EXPR; }
+	// if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
+	// return new ConstantExpression(val, type, name);
+	// }
+
 	@Override
 	public ConstantExpression getUnitExpr(final String unit) {
 		// FIXME Special cases (to be automated later)

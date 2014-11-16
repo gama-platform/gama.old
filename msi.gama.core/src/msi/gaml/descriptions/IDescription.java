@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  * @todo Description
  * 
  */
-public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable {
+public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
 
 	public void error(final String message);
 

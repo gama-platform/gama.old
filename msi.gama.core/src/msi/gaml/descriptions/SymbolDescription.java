@@ -13,7 +13,6 @@ package msi.gaml.descriptions;
 
 import static msi.gama.util.GAML.getExpressionFactory;
 import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -62,6 +61,28 @@ public abstract class SymbolDescription implements IDescription {
 		} else {
 			// this.children = null;
 		}
+	}
+
+	public final SymbolSerializer getSerializer() {
+		SymbolProto p = getMeta();
+		SymbolSerializer d = p.getSerializer();
+		if ( d == null ) {
+			d = createSerializer();
+			p.setSerializer(d);
+		}
+		return d;
+	}
+
+	/**
+	 * @return
+	 */
+	protected SymbolSerializer createSerializer() {
+		return new SymbolSerializer();
+	}
+
+	@Override
+	public String toGaml() {
+		return getSerializer().serialize(this);
 	}
 
 	@Override
@@ -392,11 +413,6 @@ public abstract class SymbolDescription implements IDescription {
 		originName = null;
 	}
 
-	protected boolean canBeDefinedIn(final IDescription sd) {
-		final SymbolProto proto = getMeta();
-		return proto.contextKinds[sd.getKind()] || proto.contextKeywords.contains(sd.getKeyword());
-	}
-
 	@Override
 	public IDescription validate() {
 		if ( validated ) { return this; }
@@ -415,7 +431,7 @@ public abstract class SymbolDescription implements IDescription {
 				return this;
 			}
 			// If it is supposed to be unique, we verify this
-			if ( proto.isUniqueInContext ) {
+			if ( proto.isUniqueInContext() ) {
 				for ( final IDescription child : sd.getChildren() ) {
 					if ( child.getKeyword().equals(keyword) && child != this ) {
 						final String error =
@@ -430,20 +446,24 @@ public abstract class SymbolDescription implements IDescription {
 		// We then validate its facets
 		validateFacets(true);
 
-		if ( proto.hasSequence && !PRIMITIVE.equals(keyword) ) {
-			if ( proto.isRemoteContext ) {
+		if ( proto.hasSequence() && !PRIMITIVE.equals(keyword) ) {
+			if ( proto.isRemoteContext() ) {
 				copyTempsAbove();
 			}
 			validateChildren();
 		}
 
 		// If a custom validator has been defined, run it
-		if ( proto.validator != null ) {
-			proto.validator.validate(this);
+		if ( proto.getValidator() != null ) {
+			proto.getValidator().validate(this);
 		}
 
 		// getMeta().validate(this);
 		return this;
+	}
+
+	protected boolean canBeDefinedIn(final IDescription sd) {
+		return getMeta().canBeDefinedIn(sd);
 	}
 
 	private final boolean validateFacets(final boolean document) {
@@ -453,13 +473,18 @@ public abstract class SymbolDescription implements IDescription {
 		final boolean isDo = keyword.equals(DO);
 		final boolean isBuiltIn = isBuiltIn();
 		final SymbolProto proto = getMeta();
-		final Set<String> mandatories = new THashSet(proto.mandatoryFacets);
+		Set<String> missingFacets = proto.getMissingMandatoryFacets(facets);
+		if ( missingFacets != null ) {
+			error("Missing facets " + missingFacets, IGamlIssue.MISSING_FACET);
+			return false;
+		}
+		// final Set<String> mandatories = new THashSet(proto.mandatoryFacets);
 		boolean ok = facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
 
 			@Override
 			public boolean execute(final String facet, final IExpressionDescription expr) {
-				mandatories.remove(facet);
-				FacetProto fp = proto.possibleFacets.get(facet);
+				// mandatories.remove(facet);
+				FacetProto fp = proto.getFacet(facet);
 				if ( fp == null ) {
 					if ( !isDo ) {
 						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
@@ -482,7 +507,7 @@ public abstract class SymbolDescription implements IDescription {
 					if ( fp.types[0] == IType.NEW_TEMP_ID ) {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
-					} else if ( !fp.isLabel && !facet.equals(WITH) && !facet.equals(DEPENDS_ON) ) {
+					} else if ( !fp.isLabel() && !facet.equals(WITH) && !facet.equals(DEPENDS_ON) ) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
 						exp = expr.getExpression();
@@ -514,10 +539,10 @@ public abstract class SymbolDescription implements IDescription {
 				return true;
 			}
 		});
-		if ( ok && !mandatories.isEmpty() ) {
-			error("Missing facets " + mandatories, IGamlIssue.MISSING_FACET);
-			return false;
-		}
+		// if ( ok && !mandatories.isEmpty() ) {
+		// error("Missing facets " + mandatories, IGamlIssue.MISSING_FACET);
+		// return false;
+		// }
 		return ok;
 
 	}
@@ -537,13 +562,13 @@ public abstract class SymbolDescription implements IDescription {
 	public final ISymbol compile() {
 		final SymbolProto proto = getMeta();
 		validate();
-		ISymbol cs = proto.constructor.create(this);
+		ISymbol cs = proto.create(this);
 		if ( cs == null ) { return null; }
-		if ( proto.hasArgs ) {
+		if ( proto.isHasArgs() ) {
 			((IStatement.WithArgs) cs).setFormalArgs(((StatementDescription) this).validateArgs());
 		}
-		if ( proto.hasSequence && !keyword.equals(PRIMITIVE) ) {
-			if ( proto.isRemoteContext ) {
+		if ( proto.hasSequence() && !keyword.equals(PRIMITIVE) ) {
+			if ( proto.isRemoteContext() ) {
 				copyTempsAbove();
 			}
 			cs.setChildren(compileChildren());

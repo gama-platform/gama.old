@@ -14,6 +14,7 @@ package msi.gaml.descriptions;
 import gnu.trove.set.hash.*;
 import java.util.*;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -108,6 +109,11 @@ public class VariableDescription extends SymbolDescription {
 		vd.addHelpers(get, init, set);
 		vd.originName = originName;
 		return vd;
+	}
+
+	@Override
+	protected SymbolSerializer createSerializer() {
+		return new VarSerializer();
 	}
 
 	@Override

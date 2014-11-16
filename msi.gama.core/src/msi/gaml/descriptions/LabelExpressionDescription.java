@@ -41,7 +41,6 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		StringConstantExpression(final String constant) {
 			setName(constant);
 			type = Types.get(IType.STRING);
-			// contentType = Types.get(IType.STRING);
 		}
 
 		@Override
@@ -92,6 +91,12 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public String toString() {
 		return value;
+	}
+
+	@Override
+	public String toGaml() {
+		return value;
+		// return StringUtils.toGamlString(value);
 	}
 
 	@Override

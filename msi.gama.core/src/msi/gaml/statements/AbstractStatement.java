@@ -52,34 +52,9 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {}
 
-	//
-	// @Override
-	// public IType getType() {
-	// return null;
-	// }
-
-	// @Override
-	// public IType getContentType() {
-	// final IType t = getType();
-	// if ( t != null ) { return t.getContentType(); }
-	// return null;
-	// }
-	//
-	// @Override
-	// public IType getKeyType() {
-	// final IType t = getType();
-	// if ( t != null ) { return t.getKeyType(); }
-	// return null;
-	// }
-
 	@Override
 	public String toString() {
 		return name + description.getFacets();
-	}
-
-	@Override
-	public String toGaml() {
-		return firstLineToGaml() + ";";
 	}
 
 	@Override
@@ -109,24 +84,6 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 			String exprString = expr == null ? "N/A" : expr.toGaml();
 			String exprValue = expr == null ? "nil" : Cast.toGaml(expr.value(scope));
 			sb.append(e.getKey()).append(": [ ").append(exprString).append(" ] ").append(exprValue).append(" ");
-		}
-		return sb.toString();
-	}
-
-	protected String firstLineToGaml() {
-		final String k = getLiteral(IKeyword.KEYWORD);
-		final StringBuilder sb = new StringBuilder(100);
-		sb.append(k).append(' ');
-		for ( final Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
-			if ( e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
-				IExpressionDescription ed = e.getValue();
-				IExpression expr = null;
-				if ( ed != null ) {
-					expr = ed.getExpression();
-				}
-				String exprString = expr == null ? "N/A" : expr.toGaml();
-				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
-			}
 		}
 		return sb.toString();
 	}

@@ -1,13 +1,13 @@
 /*********************************************************************************************
- *
- *
+ * 
+ * 
  * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
+ * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
+ * 
+ * 
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -15,9 +15,8 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.*;
+import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
@@ -25,9 +24,9 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
- *
+ * 
  * @todo Description
- *
+ * 
  */
 public class ModelDescription extends SpeciesDescription {
 
@@ -49,30 +48,29 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void setMicroModels(final GamaMap<String, ModelDescription> mm) {
 		MICRO_MODELS = mm;
-    }
-	
+	}
+
 	public GamaMap<String, ModelDescription> getMicroModels() {
 		return MICRO_MODELS;
-    }
-	
-	public ModelDescription getMicroModel(String name) {
-		if (MICRO_MODELS.size() > 0)
-			return MICRO_MODELS.get(name);
-		return null;
-    }
+	}
 
-	public void addMicroModel(String mName, ModelDescription md) {
-		MICRO_MODELS.addValue(null, new GamaPair<String, ModelDescription>(
-				mName, md));
-    }
+	public ModelDescription getMicroModel(final String name) {
+		if ( MICRO_MODELS.size() > 0 ) { return MICRO_MODELS.get(name); }
+		return null;
+	}
+
+	public void addMicroModel(final String mName, final ModelDescription md) {
+		MICRO_MODELS.addValue(null, new GamaPair<String, ModelDescription>(mName, md));
+	}
 
 	public void setAlias(final String as) {
 		alias = as;
-    }
+	}
 
 	public String getAlias() {
 		return alias;
-    }
+	}
+
 	// end-hqnghi
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
@@ -95,6 +93,11 @@ public class ModelDescription extends SpeciesDescription {
 		// modelProjectPath);
 	}
 
+	@Override
+	public SymbolSerializer createSerializer() {
+		return new ModelSerializer();
+	}
+
 	public void setTorus(final boolean b) {
 		isTorus = b;
 	}
@@ -114,16 +117,15 @@ public class ModelDescription extends SpeciesDescription {
 		return true;
 	}
 
-	//hqnghi does it need to verify parent of micro-model??
+	// hqnghi does it need to verify parent of micro-model??
 	@Override
-	protected void verifyParent() {		
-		if( parent == ModelDescription.ROOT) {
-			return;
-		}
-		super.verifyParent();		
+	protected void verifyParent() {
+		if ( parent == ModelDescription.ROOT ) { return; }
+		super.verifyParent();
 	}
-	//end-hqnghi	
-	
+
+	// end-hqnghi
+
 	@Override
 	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
 		if ( newVar.isBuiltIn() ) { return; }
@@ -181,7 +183,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	/**
 	 * Gets the model file name.
-	 *
+	 * 
 	 * @return the model file name
 	 */
 	public String getModelFilePath() {
@@ -323,7 +325,15 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
 		super.validate();
+		// System.out.println(toGaml());
 		return this;
+	}
+
+	/**
+	 * @return
+	 */
+	public Collection<? extends IDescription> getExperiments() {
+		return experiments.values();
 	}
 
 }

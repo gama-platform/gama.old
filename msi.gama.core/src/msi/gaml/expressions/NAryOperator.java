@@ -92,7 +92,10 @@ public class NAryOperator extends AbstractNAryOperator {
 
 	@Override
 	public String toGaml() {
-		return literalValue() + parenthesize(exprs);
+		StringBuilder sb = new StringBuilder();
+		sb.append(literalValue());
+		parenthesize(sb, exprs);
+		return sb.toString();
 	}
 
 	@Override

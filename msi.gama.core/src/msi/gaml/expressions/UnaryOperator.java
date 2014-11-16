@@ -12,6 +12,8 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import gnu.trove.set.hash.THashSet;
+import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -25,6 +27,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	final protected IExpression child;
 	final OperatorProto prototype;
+
+	static Set<String> noMandatoryParenthesis = new THashSet(Arrays.asList("-", "!"));
 
 	public static IExpression
 		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
@@ -68,7 +72,19 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public String toGaml() {
-		return literalValue() + " (" + child.toGaml() + ")";
+		String s = literalValue();
+		StringBuilder sb = new StringBuilder(s);
+		if ( noMandatoryParenthesis.contains(s) ) {
+			parenthesize(sb, child);
+		} else {
+			sb.append("(").append(child.toGaml()).append(")");
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return false;
 	}
 
 	@Override
@@ -128,6 +144,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			}
 			IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
 			type = GamaType.from(type, keyType, contentType);
+
 		}
 
 	}

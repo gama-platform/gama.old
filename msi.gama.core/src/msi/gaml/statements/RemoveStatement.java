@@ -17,13 +17,16 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.RemoveStatement.RemoveSerializer;
 import msi.gaml.types.IType;
 
 /**
@@ -62,7 +65,10 @@ import msi.gaml.types.IType;
 		type = IType.NONE,
 		optional = true,
 		doc = @doc("any expression, the key at which to remove the element from the container ")),
-	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true, doc = @doc("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) },
+	@facet(name = IKeyword.ALL,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) },
 	omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
@@ -129,17 +135,38 @@ import msi.gaml.types.IType;
 				@example(value = "global {", isExecutable = false),
 				@example(value = "   init {", isExecutable = false),
 				@example(value = "      create speciesRemove;", isExecutable = false),
-				@example(value = "      speciesRemove sR <- speciesRemove(0); 	// sR.a now equals 100", isExecutable = false),
+				@example(value = "      speciesRemove sR <- speciesRemove(0); 	// sR.a now equals 100",
+					isExecutable = false),
 				@example(value = "      remove key:\"a\" from: sR; 	// sR.a now equals nil", isExecutable = false),
-				@example(value = "   }", isExecutable = false),
-				@example(value = "}", isExecutable = false),
-				@example(value = "", isExecutable = false),				
+				@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "", isExecutable = false),
 				@example(value = "species speciesRemove {", isExecutable = false),
 				@example(value = "   int a <- 100; ", isExecutable = false),
-				@example(value = "}", isExecutable = false)}),				
+				@example(value = "}", isExecutable = false) }),
 		@usage(value = "This statement can not be used on *matrix*.") },
 	see = { "add", "put" })
+@serializer(RemoveSerializer.class)
 public class RemoveStatement extends AbstractContainerStatement {
+
+	public static class RemoveSerializer extends SymbolSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+			Facets f = cd.getFacets();
+			IExpression item = f.getExpr(ITEM);
+			IExpression list = f.getExpr(TO);
+			IExpression allFacet = f.getExpr(ALL);
+			IExpression at = f.getExpr(AT);
+			boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
+			sb.append(list.toGaml());
+			if ( at != null ) {
+				sb.append('[');
+				sb.append(']');
+			}
+			sb.append(isAll ? " >>- " : " >- ");
+			sb.append(at == null ? item.toGaml() : at.toGaml()).append(';');
+		}
+	}
 
 	public RemoveStatement(final IDescription desc) {
 		super(desc);

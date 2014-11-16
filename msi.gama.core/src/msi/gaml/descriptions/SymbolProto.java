@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -28,40 +29,32 @@ import msi.gaml.types.IType;
  */
 public class SymbolProto implements IGamlDescription, INamed {
 
-	final ISymbolConstructor constructor;
-	final IDescriptionValidator validator;
-	final int kind, doc;
-	final boolean hasSequence;
-	final boolean hasArgs;
-	final boolean hasScope;
-	final boolean isRemoteContext;
-	final boolean isUniqueInContext;
-	final Set<String> contextKeywords;
-	final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
-	final Map<String, FacetProto> possibleFacets;
-	final Set<String> mandatoryFacets = new THashSet<String>();
-	final String omissibleFacet;
-	final SymbolFactory factory;
-	String name;
+	private final ISymbolConstructor constructor;
+	private final IDescriptionValidator validator;
+	private SymbolSerializer serializer;
+	private final SymbolFactory factory;
+
+	private final int kind, doc;
+	private final boolean hasSequence, hasArgs, hasScope, isRemoteContext, isUniqueInContext;
+	private final Set<String> contextKeywords;
+	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
+	private final Map<String, FacetProto> possibleFacets;
+	private final Set<String> mandatoryFacets = new THashSet<String>();
+	private final String omissibleFacet, name;
 
 	static final TIntHashSet ids = new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
-		IType.NEW_VAR_ID /* , IType.TYPE_ID */});
-
-	//
-	// static {
-	// nonTypeStatements.add(IKeyword.EXPERIMENT);
-	// nonTypeStatements.add(IKeyword.METHOD);
-	// }
+		IType.NEW_VAR_ID });
 
 	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
-		final String[][] possibleCombinations, final Set<String> contextKeywords, final TIntHashSet contextKinds,
+		/* final String[][] possibleCombinations, */final Set<String> contextKeywords, final TIntHashSet contextKinds,
 		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
-		final ISymbolConstructor constr, final IDescriptionValidator validator, final int doc) {
+		final ISymbolConstructor constr, final IDescriptionValidator validator, final SymbolSerializer serializer,
+		final int doc, final String name) {
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
+		this.serializer = serializer;
 		constructor = constr;
-
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
 		this.hasArgs = hasArgs;
@@ -71,9 +64,10 @@ public class SymbolProto implements IGamlDescription, INamed {
 		this.doc = doc;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
-		for ( FacetProto f : possibleFacets.values() ) {
-			f.setOwner(this);
-		}
+		this.name = name;
+		// for ( FacetProto f : possibleFacets.values() ) {
+		// f.setOwner(this);
+		// }
 		this.possibleFacets.put(IKeyword.KEYWORD, FacetProto.KEYWORD);
 		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetProto.DEPENDS_ON);
 		if ( !possibleFacets.containsKey(IKeyword.NAME) ) {
@@ -109,7 +103,13 @@ public class SymbolProto implements IGamlDescription, INamed {
 	public boolean isLabel(final String s) {
 		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
-		return f.isLabel;
+		return f.isLabel();
+	}
+
+	public boolean isId(final String s) {
+		FacetProto f = getPossibleFacets().get(s);
+		if ( f == null ) { return false; }
+		return f.isId();
 	}
 
 	public boolean hasSequence() {
@@ -117,7 +117,7 @@ public class SymbolProto implements IGamlDescription, INamed {
 	}
 
 	public boolean hasArgs() {
-		return hasArgs;
+		return isHasArgs();
 	}
 
 	public boolean hasScope() {
@@ -201,14 +201,73 @@ public class SymbolProto implements IGamlDescription, INamed {
 	 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(final String newName) {
-		name = newName;
-	}
+	public void setName(final String newName) {}
 
 	/**
 	 * @return
 	 */
 	public boolean isBreakable() {
 		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
+	}
+
+	IDescriptionValidator getValidator() {
+		return validator;
+	}
+
+	public SymbolSerializer getSerializer() {
+		return serializer;
+	}
+
+	public void setSerializer(final SymbolSerializer serializer) {
+		this.serializer = serializer;
+	}
+
+	/**
+	 * @param symbolDescription
+	 * @return
+	 */
+	public ISymbol create(final SymbolDescription description) {
+		return constructor.create(description);
+	}
+
+	/**
+	 * @param sd
+	 * @return
+	 */
+	public boolean canBeDefinedIn(final IDescription sd) {
+		return contextKinds[sd.getKind()] || contextKeywords.contains(sd.getKeyword());
+	}
+
+	public boolean isUniqueInContext() {
+		return isUniqueInContext;
+	}
+
+	public boolean isHasArgs() {
+		return hasArgs;
+	}
+
+	/**
+	 * @param facet
+	 * @return
+	 */
+	public FacetProto getFacet(final String facet) {
+		return possibleFacets.get(facet);
+	}
+
+	/**
+	 * @param facets
+	 * @return
+	 */
+	public Set<String> getMissingMandatoryFacets(final Facets facets) {
+		Set<String> missing = null;
+		for ( String s : mandatoryFacets ) {
+			if ( !facets.containsKey(s) ) {
+				if ( missing == null ) {
+					missing = new THashSet<String>();
+				}
+				missing.add(s);
+			}
+		}
+		return missing;
 	}
 }

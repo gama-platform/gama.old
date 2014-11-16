@@ -95,7 +95,9 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public String toGaml() {
-		return surround('[', ']', elements);
+		StringBuilder sb = new StringBuilder();
+		surround(sb, '[', ']', elements);
+		return sb.toString();
 	}
 
 	@Override

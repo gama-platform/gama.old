@@ -12,6 +12,7 @@
 package msi.gaml.descriptions;
 
 import java.util.Set;
+import msi.gama.common.interfaces.IGamlable;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
@@ -23,7 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  * @since 31 mars 2012
  * 
  */
-public interface IExpressionDescription {
+public interface IExpressionDescription extends IGamlable {
 
 	public abstract void setExpression(final IExpression expr);
 

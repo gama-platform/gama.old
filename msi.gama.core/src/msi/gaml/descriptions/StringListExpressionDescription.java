@@ -43,8 +43,13 @@ public class StringListExpressionDescription extends BasicExpressionDescription 
 		strings = Arrays.asList(exp);
 	}
 
+	// @Override
+	// public String toString() {
+	// return strings.toString();
+	// }
+
 	@Override
-	public String toString() {
+	public String toOwnString() {
 		return strings.toString();
 	}
 

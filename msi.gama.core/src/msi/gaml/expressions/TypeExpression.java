@@ -31,7 +31,12 @@ public class TypeExpression extends AbstractExpression {
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		// Normally never evaluated
-		return null;
+		return getType();
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return false;
 	}
 
 	@Override
@@ -41,7 +46,7 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public String toGaml() {
-		return type.toString();
+		return type.toGaml();
 	}
 
 	@Override
@@ -65,7 +70,7 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public String literalValue() {
-		return type.toString();
+		return type.toGaml();
 	}
 
 }

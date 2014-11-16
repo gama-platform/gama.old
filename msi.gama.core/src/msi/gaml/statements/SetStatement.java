@@ -1,25 +1,25 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'SetStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -28,27 +28,43 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.SetStatement.AssignmentSerializer;
 import msi.gaml.statements.SetStatement.AssignmentValidator;
 import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 @facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NONE, optional = true), */
-	@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the name of an existin variable or attribute to be modified")),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false, doc = @doc("the value to affect to the variable or attribute")) }, combinations = {
-/* @combination({ IKeyword.VAR, IKeyword.VALUE }), */@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.NAME,
+		type = IType.NONE,
+		optional = false,
+		doc = @doc("the name of an existin variable or attribute to be modified")),
+	@facet(name = IKeyword.VALUE,
+		type = { IType.NONE },
+		optional = false,
+		doc = @doc("the value to affect to the variable or attribute")) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @validator(AssignmentValidator.class)
-@doc(value="Allows to assign a value to the variable or attribute specified", usages = {
-	@usage(value="", examples = {@example()})
-})
+@doc(value = "Allows to assign a value to the variable or attribute specified", usages = { @usage(value = "",
+	examples = { @example() }) })
+@serializer(AssignmentSerializer.class)
 public class SetStatement extends AbstractStatement {
+
+	public static class AssignmentSerializer extends SymbolSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
+			Facets f = desc.getFacets();
+			sb.append(f.get(NAME).toGaml()).append(" <- ").append(f.get(VALUE).toGaml()).append(";");
+		}
+
+	}
 
 	public static class AssignmentValidator implements IDescriptionValidator {
 

@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -34,10 +35,12 @@ import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.*;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -138,7 +141,26 @@ import com.vividsolutions.jts.geom.Geometry;
 			@example(value = "create species: a_species number: an_int;", isExecutable = false),
 			@example(value = "", isExecutable = false) }) })
 @validator(CreateValidator.class)
+@serializer(CreateSerializer.class)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+
+	public static class CreateSerializer extends StatementSerializer {
+
+		@Override
+		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb) {
+			Collection<IDescription> args = desc.getArgs();
+			if ( args == null || args.isEmpty() ) { return; }
+			sb.append("with: [");
+			for ( IDescription arg : args ) {
+				String name = arg.getFacets().getLabel(NAME);
+				IExpressionDescription def = arg.getFacets().get(VALUE);
+				sb.append(name).append("::").append(def.toGaml());
+				sb.append(", ");
+			}
+			sb.setLength(sb.length() - 2);
+			sb.append("]");
+		}
+	}
 
 	public static class CreateValidator implements IDescriptionValidator<StatementDescription> {
 
@@ -251,10 +273,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final Object source = getSource(scope);
 		if ( source instanceof GamaCSVFile ) {
 			fillInits(scope, inits, max, (GamaCSVFile) source);
-		} else if (source instanceof List && ( (List)source ).get(0) instanceof String ) {
+		} else if ( source instanceof List && ((List) source).get(0) instanceof String ) {
 			// genstar returns a list in which
-			// 	 the first element is the "genstar_population" string
-			//   other elements are maps of <String, Object>, each map represents variable values of a generated agents
+			// the first element is the "genstar_population" string
+			// other elements are maps of <String, Object>, each map represents variable values of a generated agents
 			fillInitsGenstar(scope, inits, max, (GamaList) source);
 		} else if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
 			// DBAccess
@@ -410,9 +432,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			for ( final IAgent a : population ) {
 				((ExperimentAgent) a)._init_(scope);
 				SimulationAgent sim = (SimulationAgent) ((ExperimentAgent) a).getSimulation();
-				if(sim.getScheduled()) {
+				if ( sim.getScheduled() ) {
 					sim.getScheduler().init(sim.getScope());
-				}else {					
+				} else {
 					sim._init_(sim.getScope());
 				}
 				sim.getOutputManger().init(sim.getScope());
@@ -490,8 +512,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @param max
 	 * @param syntheticPopulation
 	 */
-	private void fillInitsGenstar(final IScope scope, final List<Map> initialValues, final Integer max, final IList<Map> syntheticPopulation) {
-		final int num = max == null ? (syntheticPopulation.length(scope) - 1) : Math.min(syntheticPopulation.length(scope) - 1, max); // the first element of syntheticPopulation a string (i.e., "genstar_population")
+	private void fillInitsGenstar(final IScope scope, final List<Map> initialValues, final Integer max,
+		final IList<Map> syntheticPopulation) {
+		final int num =
+			max == null ? syntheticPopulation.length(scope) - 1 : Math.min(syntheticPopulation.length(scope) - 1, max); // the first element of syntheticPopulation a string (i.e.,
+																														// "genstar_population")
 		for ( int i = 1; i < num; i++ ) {
 			final Map genstarInit = syntheticPopulation.get(i);
 			fillWithUserInit(scope, genstarInit); // mix genstar's init attributes with user's init

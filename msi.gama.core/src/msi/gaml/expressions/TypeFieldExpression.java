@@ -27,7 +27,10 @@ public class TypeFieldExpression extends UnaryOperator {
 
 	@Override
 	public String toGaml() {
-		return child.toGaml() + "." + name;
+		StringBuilder sb = new StringBuilder();
+		parenthesize(sb, child);
+		sb.append(".").append(name);
+		return sb.toString();
 	}
 
 	@Override

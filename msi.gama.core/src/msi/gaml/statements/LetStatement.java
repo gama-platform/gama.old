@@ -12,17 +12,18 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
+import msi.gaml.statements.LetStatement.LetSerializer;
 import msi.gaml.statements.LetStatement.LetValidator;
 import msi.gaml.types.IType;
 
@@ -38,17 +39,26 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false),
 	@facet(name = IKeyword.OF, type = { IType.TYPE_ID }, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) },
-
-combinations = { /* @combination({ IKeyword.VAR, IKeyword.VALUE }), */
-@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.LET },
 	kind = ISymbolKind.SINGLE_STATEMENT,
 	with_sequence = false,
 	doc = @doc("Allows to declare a temporary variable of the specified type and to initialize it with a value"))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @validator(LetValidator.class)
+@serializer(LetSerializer.class)
 public class LetStatement extends SetStatement {
+
+	public static class LetSerializer extends AssignmentSerializer {
+
+		@Override
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
+			sb.append(desc.getType().toGaml()).append(" ");
+			super.serialize(desc, sb);
+
+		}
+
+	}
 
 	public static class LetValidator extends AssignmentValidator {
 

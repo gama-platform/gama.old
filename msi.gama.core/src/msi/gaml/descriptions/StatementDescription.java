@@ -16,6 +16,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
@@ -87,9 +88,9 @@ public class StatementDescription extends SymbolDescription {
 
 	protected final Map<String, IVarExpression> temps;
 	protected final Map<String, StatementDescription> args;
-	private final static String INTERNAL = "internal_";
+
 	private static int COMMAND_INDEX = 0;
-	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
+
 	private IDescription previousDescription;
 
 	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
@@ -100,6 +101,11 @@ public class StatementDescription extends SymbolDescription {
 		if ( hasArgs ) {
 			collectArgs();
 		}
+	}
+
+	@Override
+	protected StatementSerializer createSerializer() {
+		return new StatementSerializer();
 	}
 
 	@Override
@@ -139,18 +145,24 @@ public class StatementDescription extends SymbolDescription {
 		exploreArgs();
 	}
 
+	// Only for "do". Explore the facets that may play the role of arguments
 	private void exploreArgs() {
 		if ( !getKeyword().equals(DO) ) { return; }
+		// final List<String> removed = new ArrayList();
 		facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
 
 			@Override
 			public boolean execute(final String facet, final IExpressionDescription b) {
-				if ( !doFacets.contains(facet) ) {
+				if ( !DoStatement.DO_FACETS.contains(facet) ) {
 					args.put(facet, createArg(facet, b));
+					// removed.add(facet);
 				}
 				return true;
 			}
 		});
+		// for ( String s : removed ) {
+		// facets.remove(s);
+		// }
 	}
 
 	private StatementDescription createArg(final String n, final IExpressionDescription v) {
@@ -160,6 +172,7 @@ public class StatementDescription extends SymbolDescription {
 		return a;
 	}
 
+	// Transforms the arguments passed with the "with:" facets into "arg" statements
 	private void explodeArgs() {
 		if ( getKeyword().equals(ACTION) || getKeyword().equals(PRIMITIVE) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> arg : msi.gama.util.GAML.getExpressionFactory()
@@ -520,7 +533,7 @@ public class StatementDescription extends SymbolDescription {
 		IType t = facet.getType();
 		SpeciesDescription result = null;
 		if ( t.id() == IType.SPECIES && facet instanceof SpeciesConstantExpression ) {
-			result = facet.getType().getContentType().getSpecies();//getSpeciesDescription(facet.literalValue());
+			result = facet.getType().getContentType().getSpecies();// getSpeciesDescription(facet.literalValue());
 		} else if ( t.id() == IType.STRING && facet.isConst() ) {
 			result = getSpeciesDescription(facet.literalValue());
 		} else if ( t.isAgentType() ) {
@@ -549,54 +562,7 @@ public class StatementDescription extends SymbolDescription {
 			ca.put(name, e);
 			if ( !isCalling ) {
 				IType type = sd.getType();
-				// IType type = argFacets.getTypeDenotedBy(TYPE, this);
-				// if ( type == Types.NO_TYPE && e != null ) {
-				// type = e.getType();
-				// }
-				// IType keyType = argFacets.getTypeDenotedBy(INDEX, this, type.getKeyType());
-				// if ( keyType == Types.NO_TYPE && e != null ) {
-				// keyType = e.getKeyType();
-				// }
-				// IType contentType = argFacets.getTypeDenotedBy(OF, this, type.getContentType());
-				// if ( contentType == Types.NO_TYPE && e != null ) {
-				// contentType = e.getContentType();
-				// }
 				addTemp(this, name, type);
-
-				// FIXME These calls should now use the new definition of parametric types
-
-				// List<String> typeNames = getModelDescription().getTypesManager().getTypeNames();
-				// Special case for the calls (create, do, but also primitives) as the "arguments"
-				// passed should not be part of the context
-				// String typeName = argFacets.getLabel(TYPE);
-				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				// if ( !typeNames.contains(typeName) ) {
-				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
-				// }
-				// IType type = sd.getTypeNamed(typeName);
-				// if ( type == Types.NO_TYPE && e != null ) {
-				// type = e.getType();
-				// }
-				// typeName = argFacets.getLabel(OF);
-				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				// if ( typeName != null && !typeNames.contains(typeName) ) {
-				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
-				// }
-				// IType contents = sd.getTypeNamed(typeName);
-				// if ( contents == Types.NO_TYPE && e != null ) {
-				// contents = e.getContentType();
-				// }
-				// typeName = argFacets.getLabel(INDEX);
-				// if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
-				// error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
-				// }
-				//
-				// IType index = sd.getTypeNamed(typeName);
-				// if ( index == Types.NO_TYPE && e != null ) {
-				// index = e.getKeyType();
-				// }
-				//
-				// addTemp(name, type, contents, index);
 			}
 
 		}
@@ -622,9 +588,9 @@ public class StatementDescription extends SymbolDescription {
 		}
 		for ( final IDescription arg : args ) {
 			final String name = arg.getName();
-			//hqnghi check attribute is not exist in both main model and micro-model 
-			if ( !sd.hasVar(name) && ( sd instanceof ExperimentDescription && !sd.getModelDescription().hasVar(name)) ) {
-			//end-hqnghi
+			// hqnghi check attribute is not exist in both main model and micro-model
+			if ( !sd.hasVar(name) && sd instanceof ExperimentDescription && !sd.getModelDescription().hasVar(name) ) {
+				// end-hqnghi
 				error("Attribute " + name + " does not exist in species " + sd.getName(), IGamlIssue.UNKNOWN_ARGUMENT,
 					arg.getFacets().get(VALUE).getTarget(), (String[]) null);
 			} else {

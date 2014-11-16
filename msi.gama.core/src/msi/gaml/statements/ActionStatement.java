@@ -19,14 +19,17 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.statements.ActionStatement.ActionSerializer;
 import msi.gaml.statements.ActionStatement.ActionValidator;
 import msi.gaml.types.*;
 
@@ -83,7 +86,40 @@ import msi.gaml.types.*;
 				@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
 	see = { "do" })
 @validator(ActionValidator.class)
+@serializer(ActionSerializer.class)
 public class ActionStatement extends AbstractStatementSequenceWithArgs {
+
+	public static class ActionSerializer extends StatementSerializer {
+
+		@Override
+		protected String serializeFacetValue(final StatementDescription s, final String key) {
+			if ( key.equals(TYPE) ) { return null; }
+			return super.serializeFacetValue(s, key);
+		}
+
+		@Override
+		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
+			final StringBuilder sb) {
+			Facets f = arg.getFacets();
+			String name = f.getLabel(NAME);
+			IExpressionDescription type = f.get(TYPE);
+			IExpressionDescription def = f.get(DEFAULT);
+			sb.append(type.toGaml()).append(" ").append(name);
+			if ( def != null ) {
+				sb.append(" <- ").append(def.toGaml());
+			}
+		}
+
+		@Override
+		protected void serializeKeyword(final StatementDescription desc, final StringBuilder sb) {
+			String type = desc.getType().toGaml();
+			if ( type.equals(UNKNOWN) ) {
+				type = ACTION;
+			}
+			sb.append(type).append(" ");
+		}
+
+	}
 
 	public static class ActionValidator implements IDescriptionValidator {
 

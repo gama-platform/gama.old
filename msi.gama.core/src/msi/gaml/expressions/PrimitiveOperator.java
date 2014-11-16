@@ -11,13 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 import com.google.common.base.Function;
@@ -107,24 +107,52 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 					@Override
 					public String apply(final IDescription desc) {
 						StringBuilder sb = new StringBuilder(100);
-						sb.append("<li><b>").append(tab).append(desc.getName()).append("</b> of type ")
+						sb.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
 							.append(desc.getType());
 						if ( desc.getFacets().containsKey(IKeyword.DEFAULT) ) {
 							sb.append(" <i>(default: ").append(desc.getFacets().getExpr(IKeyword.DEFAULT).toGaml())
 								.append(")</i>");
 						}
-						sb.append("</li>").append(ln);
+						sb.append("</li>").append(Strings.LN);
 
 						return sb.toString();
 					}
 				}));
-			sb.append("Arguments accepted : ").append("<br/><ul>").append(ln);
+			sb.append("Arguments accepted : ").append("<br/><ul>").append(Strings.LN);
 			for ( String a : args ) {
 				sb.append(a);
 			}
 			sb.append("</ul><br/>");
 		}
 
+		return sb.toString();
+	}
+
+	@Override
+	public String toGaml() {
+		StringBuilder sb = new StringBuilder();
+		parenthesize(sb, exprs[0]);
+		sb.append(".").append(literalValue()).append("(");
+		argsToGaml(sb);
+		sb.append(")");
+		return sb.toString();
+	}
+
+	protected String argsToGaml(final StringBuilder sb) {
+		if ( parameters == null || parameters.isEmpty() ) { return ""; }
+		for ( Map.Entry<String, IExpressionDescription> entry : parameters.entrySet() ) {
+			String name = entry.getKey();
+			IExpressionDescription expr = entry.getValue();
+			if ( Strings.isGamaNumber(name) ) {
+				sb.append(expr.toGaml());
+			} else {
+				sb.append(name).append(":").append(expr.toGaml());
+			}
+			sb.append(", ");
+		}
+		if ( sb.length() > 0 ) {
+			sb.setLength(sb.length() - 2);
+		}
 		return sb.toString();
 	}
 }
