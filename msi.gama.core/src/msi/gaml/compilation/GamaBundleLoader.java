@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaBundleLoader.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaBundleLoader.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,6 +14,7 @@ package msi.gaml.compilation;
 import gnu.trove.set.hash.THashSet;
 import java.util.Set;
 import msi.gama.common.util.GuiUtils;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.Types;
 import org.eclipse.core.runtime.*;
 
@@ -67,7 +68,7 @@ public class GamaBundleLoader {
 			return;
 		}
 		add.initialize();
-		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: \t" + s);
+		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}
 
