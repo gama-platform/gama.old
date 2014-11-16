@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.operators.Strings;
 import org.olap4j.*;
 import org.olap4j.metadata.*;
 
@@ -322,7 +323,8 @@ public abstract class MdxConnection {
 		return selectMDB(connection, mdxStr);
 	}
 
-	public GamaList<Object> selectMDB(final String onColumns, final String onRows, final String from, final String where) {
+	public GamaList<Object>
+		selectMDB(final String onColumns, final String onRows, final String from, final String where) {
 		String mdxStr =
 			"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
 		return selectMDB(mdxStr);
@@ -508,12 +510,12 @@ public abstract class MdxConnection {
 				System.out.println("Hierarchy");
 				int n = hierarchy.size();
 				for ( int j = 0; j < n; ++j ) {
-					System.out.print(hierarchy.get(j).getName() + "\t");
+					System.out.print(hierarchy.get(j).getName() + Strings.TAB);
 				}
 				System.out.println("\n Properties");
 				n = property.size();
 				for ( int j = 0; j < n; ++j ) {
-					System.out.print(property.get(j).getName() + "\t");
+					System.out.print(property.get(j).getName() + Strings.TAB);
 				}
 
 			}
@@ -533,19 +535,18 @@ public abstract class MdxConnection {
 	// public void printOlapResul(GamaList<Object> rowsData){
 	// int m=rowsData.size();
 	// for (int i=0; i<m;++i){
-	// System.out.print("row"+ i+":\t");
 	// GamaList<Object> row= (GamaList<Object>) rowsData.get(i);
 	// GamaList<Object> members= (GamaList<Object>) row.get(0);
 	// GamaList<Object> values= (GamaList<Object>) row.get(1);
 	// // print member
 	// int k = members.size();
 	// for (int j=0;j<k;j++){
-	// System.out.print(members.get(j).toString()+"\t");
+	// System.out.print(members.get(j).toString()+Strings.TAB);
 	// }
 	// //print value
 	// int l = values.size();
 	// for (int j=0;j<l;j++){
-	// System.out.print(values.get(j).toString()+"\t");
+	// System.out.print(values.get(j).toString()+Strings.TAB);
 	// }
 	// System.out.println();
 	// }
@@ -558,16 +559,16 @@ public abstract class MdxConnection {
 
 		int m = this.getAllRowsData(olapResult).size();
 		for ( int rIndex = 0; rIndex < m; ++rIndex ) {
-			System.out.print("row" + rIndex + ":\t");
+			System.out.print("row" + rIndex + ":" + Strings.TAB);
 			// print member
 			int k = this.getAllMembersAt(olapResult, rIndex).size();
 			for ( int mIndex = 0; mIndex < k; mIndex++ ) {
-				System.out.print(this.getRowMemberAt(olapResult, rIndex, mIndex).toString() + "\t");
+				System.out.print(this.getRowMemberAt(olapResult, rIndex, mIndex).toString() + Strings.TAB);
 			}
 			// print value
 			int l = this.getAllCellValuesAt(olapResult, rIndex).size();
 			for ( int cIndex = 0; cIndex < l; ++cIndex ) {
-				System.out.print(this.getCellValueAt(olapResult, rIndex, cIndex).toString() + "\t");
+				System.out.print(this.getCellValueAt(olapResult, rIndex, cIndex).toString() + Strings.TAB);
 			}
 			System.out.println();
 		}
@@ -580,7 +581,7 @@ public abstract class MdxConnection {
 	public void prinColumnsName(final GamaList<Object> olapResult) {
 		int m = this.getAllColummsName(olapResult).size();
 		for ( int cIndex = 0; cIndex < m; ++cIndex ) {
-			System.out.print(this.getColummNameAt(olapResult, cIndex).toString() + "\t");
+			System.out.print(this.getColummNameAt(olapResult, cIndex).toString() + Strings.TAB);
 		}
 
 	}
@@ -590,7 +591,7 @@ public abstract class MdxConnection {
 		for ( int i = 0; i < m; ++i ) {
 			List<Cube> cube = (List<Cube>) cubes.get(i);
 			int n = cube.size();
-			System.out.print(cube.get(i).toString() + "\t");
+			System.out.print(cube.get(i).toString() + Strings.TAB);
 		}
 
 	}
