@@ -481,10 +481,10 @@
                   </not>
                </visibleWhen>
             </command>
-            <control
-                  class="msi.gama.gui.swt.controls.StatusControlContribution"
-                  id="msi.gama.application.status">
-            </control>
+            <separator
+                  name="msi.gama.application.separator2"
+                  visible="true">
+            </separator>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="icons/menu.run.png"
@@ -497,7 +497,7 @@
                   </reference>
                </visibleWhen>
             </command>
-                        <command
+            <command
                   commandId="msi.gama.application.commands.PauseSimulation"
                   icon="icons/menu.pause.png"
                   label="Pause"
@@ -509,16 +509,6 @@
                   </reference>
                </visibleWhen>
             </command>
-                        <control
-                  class="msi.gama.gui.swt.controls.SimulationSpeedContributionItem"
-                  id="msi.gama.application.speed">
-               <visibleWhen
-                     checkEnabled="false">
-                     <reference
-                           definitionId="isSimulationReady">
-                     </reference>
-               </visibleWhen>
-            </control>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
                   icon="icons/menu.step.png"
@@ -531,6 +521,16 @@
                   </reference>
                </visibleWhen>
             </command>
+            <control
+                  class="msi.gama.gui.swt.controls.SimulationSpeedContributionItem"
+                  id="msi.gama.application.speed">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </control>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu.reload.png"
@@ -543,6 +543,14 @@
                   </reference>
                </visibleWhen>
             </command>
+            <separator
+                  name="msi.gama.application.separator1"
+                  visible="true">
+            </separator>
+            <control
+                  class="msi.gama.gui.swt.controls.StatusControlContribution"
+                  id="msi.gama.application.status">
+            </control>
          </toolbar>
        </menuContribution>
       <menuContribution
@@ -1469,6 +1477,69 @@
             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
             viewerId="msi.gama.gui.view.GamaNavigator">
       </dragAssistant>
+      <viewerActionBinding
+            viewerId="msi.gama.gui.view.LibraryNavigator">
+         <includes>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.OpenActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.EditActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.UndoRedoActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.NewActionProvider">
+            </actionExtension>
+         </includes>
+         <excludes>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.WorkingSetActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.RefactorActions">
+            </actionExtension>
+         </excludes>
+      </viewerActionBinding>
+      <viewerContentBinding
+            viewerId="msi.gama.gui.view.LibraryNavigator">
+         <includes>
+            <contentExtension
+                  pattern="msi.gama.application.resourceVirtualNavigatorContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="msi.gama.application.resourceNavigatorContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="msi.gama.application.resourceProjectExplorerContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="msi.gama.application.resourceLocalModelsExplorerContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="msi.gama.application.resourceSharedModelsExplorerContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resourceContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.filters.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.linkHelper">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
    </extension>
       <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -1586,7 +1657,7 @@
       <extension
             point="org.eclipse.team.svn.core.svnconnector">
          <svnconnector
-               class="org.polarion.team.svn.connector.svnkit.SVNKitConnectorFactory">
+               class="msi.gama.gui.svn.SVNKitConnectorFactory">
          </svnconnector>
       </extension>
       <extension
