@@ -404,8 +404,7 @@ Export-Package: msi.gama.common,
    msi.gaml.types",
  org.uncommons.maths.binary,
  org.uncommons.maths.number,
- org.uncommons.maths.random;uses:="org.uncommons.maths.number",
- org.uncommons.maths.statistics
+ org.uncommons.maths.random;uses:="org.uncommons.maths.number"
 Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .
