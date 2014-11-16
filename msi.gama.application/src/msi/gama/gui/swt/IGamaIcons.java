@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'IGamaIcons.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -153,6 +153,14 @@ public interface IGamaIcons {
 	public static final GamaIcon BUTTON_EDIT = GamaIcons.create("button.edit");
 	public static final GamaIcon BUTTON_INSPECT = MENU_INSPECT;
 	public static final GamaIcon BUTTON_BROWSE = MENU_BROWSE;
+
+	// Editor specific
+
+	public static final GamaIcon BUTTON_EDITBOX = GamaIcons.create("editor.editbox");
+	public static final GamaIcon BUTTON_GUI = GamaIcons.create("editor.run2");
+	public static final GamaIcon BUTTON_BATCH = GamaIcons.create("editor.batch4");
+	public static final GamaIcon BUTTON_GUI2 = GamaIcons.create("editor.run3");
+	public static final GamaIcon BUTTON_BATCH2 = GamaIcons.create("editor.batch3");
 
 	// Small Icons
 
