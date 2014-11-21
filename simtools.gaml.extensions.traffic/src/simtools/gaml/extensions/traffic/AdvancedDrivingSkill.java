@@ -955,8 +955,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				for (IAgent ag: ags) {
 					double distTG = getDistanceToGoal(ag);
 					double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
-					if (distTG > length - vLa)
-						return distanceToGoal - vLa;
+					if ((length - distTG) < vLa)
+						return distanceToGoal - (vLa - (length - distTG)) ;
 				}
 				return distance;
 			} else
@@ -1016,7 +1016,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					double distTG = getDistanceToGoal(ag);
 					double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
 					if (distTG > length - vLa)
-						return distanceToGoal - vLa;
+						return distanceToGoal - (vLa - (length - distTG)) ;
 				}
 				return distance;
 			}
@@ -1215,13 +1215,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			target == null ? new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[currentRoad
 				.getInnerGeometry().getCoordinates().length]) : target;
 
-		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation, falseTarget, currentRoad);
+		/*final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation, falseTarget, currentRoad);
 		// t31 +=  java.lang.System.currentTimeMillis() - t;
 		// t =  java.lang.System.currentTimeMillis();
 
 		if ( indexVals == null ) { return 0.0; }
 		int indexSegment = (Integer) indexVals.get(0);
-		final int endIndexSegment = (Integer) indexVals.get(1);
+		final int endIndexSegment = (Integer) indexVals.get(1);*/
+		int indexSegment = getSegmentIndex(agent);
+		final int endIndexSegment = currentRoad.getPoints().size() - 1;
+			
 
 		//if ( indexSegment > endIndexSegment ) { return 0.0; }
 		double distance = _distance;
@@ -1231,14 +1234,14 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 		// t32 +=  java.lang.System.currentTimeMillis() - t;
 		// long t2 =  java.lang.System.currentTimeMillis();
-		for ( int j = indexSegment; j <= endIndexSegment; j++ ) {
+		for ( int j = indexSegment; j < endIndexSegment; j++ ) {
 			// t = System.currentTimeMillis();
 			GamaPoint pt = null;
-			if ( j == endIndexSegment ) {
+			/*if ( j == endIndexSegment ) {
 				pt = falseTarget;
-			} else {
-				pt = new GamaPoint(coords[j]);
-			}
+			} else {*/
+				pt = new GamaPoint(coords[j+1]);
+			//}
 			double dist = pt.euclidianDistanceTo(currentLocation);
 			setDistanceToGoal(agent, dist);
 			boolean onLinkedRoad = getOnLinkedRoad(agent);
@@ -1247,12 +1250,12 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			if ( onLinkedRoad ) {
 				distance =
 					avoidCollisionLinkedRoad(scope, agent, distance, security_distance, currentLocation, falseTarget,
-						currentLane, indexSegment - 1, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
+						currentLane, indexSegment, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
 						probaUseLinkedRoad, rightSide);
 			} else {
 				distance =
 					avoidCollision(scope, agent, distance, security_distance, currentLocation, falseTarget,
-						currentLane, indexSegment - 1, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
+						currentLane, indexSegment, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
 						probaUseLinkedRoad, rightSide);
 			}
 		//	 t34 +=  java.lang.System.currentTimeMillis() - t;
