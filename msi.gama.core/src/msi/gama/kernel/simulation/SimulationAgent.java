@@ -165,8 +165,12 @@ public class SimulationAgent extends GamlAgent {
 		// A simulation always runs in its own scope
 		try {
 			super._step_(this.scope);
-			// if simulation is not scheduled, their outputs must do step manually
+			// hqnghi if simulation is not scheduled, their outputs must do step manually
 			if ( !scheduled ) {
+				// hqnghi temporary added untill elimination of AgentScheduler
+				this.getScheduler().executeActions(scope, 1);
+				this.getScheduler().executeActions(scope, 3);
+				// end-hqnghi
 				outputs.step(this.scope);
 			}
 			// end-hqnghi

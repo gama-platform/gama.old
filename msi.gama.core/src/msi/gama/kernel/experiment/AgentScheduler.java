@@ -137,7 +137,7 @@ public class AgentScheduler implements IStepable {
 		return true;
 	}
 
-	private void executeActions(final IScope scope, final int type) {
+	public void executeActions(final IScope scope, final int type) {
 		if ( actions != null ) {
 			final List<GamaHelper> list = actions[type];
 			if ( list != null ) {
