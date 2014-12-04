@@ -16,8 +16,39 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="msi.gama.core" version="1.6.1" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.junit" version="4.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="com.google.guava" version="10.0.1" match="compatible"/>
+      <import plugin="org.apache.commons.lang"/>
+   </requires>
+
    <plugin
          id="simtools.graphanalysis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="msi.gama.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="msi.gama.ext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="msi.gama.processor"
          download-size="0"
          install-size="0"
          version="0.0.0"
