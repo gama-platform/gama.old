@@ -890,31 +890,123 @@ public abstract class Spatial {
 			final Coordinate point = (Coordinate) p;
 			final Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;
-			final int nb = geometry.getCoordinates().length;
-			final Coordinate[] coord = new Coordinate[nb + 1];
-			if ( geometry instanceof Point || geometry instanceof MultiPoint ) {
+			if ( geometry instanceof Point  ) {
+				Coordinate[] coord = new Coordinate[2];
 				coord[0] = geometry.getCoordinate();
 				coord[1] = point;
 				geom_Tmp = GeometryUtils.FACTORY.createLineString(coord);
-			} else if ( geometry instanceof LineString || geometry instanceof MultiLineString ) {
-				for ( int i = 0; i < nb; i++ ) {
-					coord[i] = geometry.getCoordinates()[i];
+			} else if (geometry instanceof MultiPoint) {
+				Coordinate[] coordinates = new Coordinate[geometry.getNumPoints() + 1];
+				coordinates[coordinates.length-1] = p.toCoordinate();
+				geom_Tmp = GeometryUtils.FACTORY.createMultiPoint(coordinates);
+			}else if ( geometry instanceof LineString  ) {
+				geom_Tmp = createLineStringWithPoint(geometry, point);
+			}else if (geometry instanceof MultiLineString) {
+				Geometry closestGeom = null;
+				double distMin = Double.MAX_VALUE;
+				int id = -1;
+				Point pt = GeometryUtils.FACTORY.createPoint(point);
+				for (int i = 0 ; i < geometry.getNumGeometries(); i++ ) {
+					Geometry geom =  geometry.getGeometryN(i);
+					double dist = geom.distance(pt);
+					if (dist < distMin) {
+						distMin = dist;
+						closestGeom = geom;
+						id = i;
+					}
 				}
-				coord[nb] = point;
-				geom_Tmp = GeometryUtils.FACTORY.createLineString(coord);
-			} else if ( geometry instanceof Polygon || geometry instanceof MultiPolygon ) {
-				for ( int i = 0; i < nb - 1; i++ ) {
-					coord[i] = geometry.getCoordinates()[i];
+				LineString[] lineStrings = new LineString[geometry.getNumGeometries()];
+				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
+					if (i != id)
+						lineStrings[i] = (LineString) geometry.getGeometryN(i);
+					else lineStrings[i] = (LineString) createLineStringWithPoint(closestGeom, point);
+				} 
+				geom_Tmp = GeometryUtils.FACTORY.createMultiLineString(lineStrings);
+			} else if ( geometry instanceof Polygon)  {
+				geom_Tmp = createPolygonWithPoint(geometry, point);
+			} else if  (geometry instanceof MultiPolygon) {
+				Geometry closestGeom = null;
+				double distMin = Double.MAX_VALUE;
+				int id = -1;
+				Point pt = GeometryUtils.FACTORY.createPoint(point);
+				for (int i = 0 ; i < geometry.getNumGeometries(); i++ ) {
+					Geometry geom =  geometry.getGeometryN(i);
+					double dist = geom.distance(pt);
+					if (dist < distMin) {
+						distMin = dist;
+						closestGeom = geom;
+						id = i;
+					}
 				}
-				coord[nb - 1] = point;
-				coord[nb] = geometry.getCoordinates()[nb - 1];
-				final LinearRing ring = GeometryUtils.FACTORY.createLinearRing(coord);
-				geom_Tmp = GeometryUtils.FACTORY.createPolygon(ring, null);
+				Polygon[] polygons = new Polygon[geometry.getNumGeometries()];
+				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
+					if (i != id)
+						polygons[i] = (Polygon) geometry.getGeometryN(i);
+					else polygons[i] = (Polygon) createPolygonWithPoint(closestGeom, point);
+				} 
+				geom_Tmp = GeometryUtils.FACTORY.createMultiPolygon(polygons);
 			}
-			if ( geom_Tmp != null && geom_Tmp.isSimple() ) { return new GamaShape(g, geom_Tmp);
+			if ( geom_Tmp != null ) { 
+				return new GamaShape(g, geom_Tmp);
 
 			}
 			return g;
+		}
+		
+		private static Geometry createPolygonWithPoint(Geometry geometry, Coordinate point) {
+			int index = indexClosestSegment(((Polygon)geometry).getExteriorRing(), point);
+			if (index == -1) {
+				return null;
+			}
+			Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
+			for ( int i = 0; i < index + 1; i++ ) {
+				coord[i] = geometry.getCoordinates()[i];
+			}
+			coord[index + 1] = point;
+			for ( int i = index + 2; i <coord.length; i++ ) {
+				coord[i] = geometry.getCoordinates()[i-1];
+			}
+			LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
+			for (int i = 0; i < lrs.length; i++) {
+				lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
+			}
+			return GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coord), lrs);
+		}
+		private static Geometry createLineStringWithPoint(Geometry geometry, Coordinate point) {
+			int index = indexClosestSegment(geometry, point);
+			if (index == -1) {
+				return null;
+			}
+			Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
+			for ( int i = 0; i < index + 1; i++ ) {
+				coord[i] = geometry.getCoordinates()[i];
+			}
+			coord[index + 1] = point;
+			for ( int i = index + 2; i <coord.length; i++ ) {
+				coord[i] = geometry.getCoordinates()[i-1];
+			}
+			return GeometryUtils.FACTORY.createLineString(coord);
+		}
+		
+		private static int indexClosestSegment(Geometry geom, Coordinate coord) {
+			int index = -1;
+			Point pt = GeometryUtils.FACTORY.createPoint(coord);
+			double distMin = Double.MAX_VALUE;
+			for (int i = 0; i < geom.getCoordinates().length - 1; i++) {
+				Coordinate cc = geom.getCoordinates()[i];
+				if (cc.equals(coord)) return -1;
+				Coordinate[] coordinates = new Coordinate[2];
+				coordinates[0] = cc;
+				coordinates[1] = geom.getCoordinates()[i+1];
+				Geometry geom_Tmp = GeometryUtils.FACTORY.createLineString(coordinates);
+				double dist = geom_Tmp.distance(pt);
+				if (dist < distMin) {
+					distMin = dist;
+					index = i;
+				}
+			}
+			if (geom.getCoordinates()[geom.getCoordinates().length-1].equals(coord)) return -1;
+			return index;
 		}
 
 		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL })
