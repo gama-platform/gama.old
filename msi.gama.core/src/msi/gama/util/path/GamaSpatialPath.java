@@ -98,7 +98,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			int cpt = 0;
 			for ( IShape edge : _edges ) {
 				if ( modify_edges ) {
-					IAgent ag = edge.getAgent();
+					IAgent ag = edge instanceof IAgent ? (IAgent) edge : null;
 					Geometry geom = edge.getInnerGeometry();
 					Geometry geom2;
 					Coordinate c0 = geom.getCoordinates()[0];
