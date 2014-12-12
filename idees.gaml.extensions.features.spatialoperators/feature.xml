@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="idees.gaml.extensions.features.spatialoperators"
+      label="Spatialoperators"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      Provides new spatial operators. In particular:
+- one interpolation operator IDW
+- one projection operator CRS_transform
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="idees.gaml.extensions.spatialoperators"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
