@@ -337,6 +337,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return Math.hypot(Math.hypot(x, y), z);
 	}
 
+	@Override
+	public int hashCode() {
+		int result = 17; 
+	    result = 37 * result + hashCode(x);
+	    result = 370 * result + hashCode(y);
+	    result = 3700 * result + hashCode(z);
+	    return result;
+	}
+
 	public GamaPoint normalized() {
 		double r = this.norm();
 		if ( r == 0d ) { return new GamaPoint(0, 0, 0); }
