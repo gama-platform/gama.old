@@ -967,12 +967,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			Object target = entry.getKey();
 			if ( target instanceof GamaPair ) {
 				target = getEdge(((GamaPair) target).first(), ((GamaPair) target).last());
-				setEdgeWeight(target, entry.getValue());
+				setEdgeWeight(target, Cast.asFloat(scope, entry.getValue()));
 			} else {
 				if ( containsEdge(target) ) {
-					setEdgeWeight(target, entry.getValue());
+					setEdgeWeight(target, Cast.asFloat(scope, entry.getValue()));
 				} else {
-					setVertexWeight(target, entry.getValue());
+					setVertexWeight(target,Cast.asFloat(scope,  entry.getValue()));
 				}
 			}
 		}
