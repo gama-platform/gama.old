@@ -6,7 +6,9 @@
       provider-name="IDEES">
 
    <description url="http://www.example.com/description">
-      Plug-in provinding new spatial operators to GAMA user. In particular, it integrates a spatial interpolation operator (IDW) and some operators linked to projection (CRS_transform)
+      Plug-in provinding new spatial operators to GAMA user. In particular,
+it integrates a spatial interpolation operator (IDW) and some
+operators linked to projection (CRS_transform, to_GAMA_CRS)
    </description>
 
    <copyright url="http://www.example.com/copyright">
