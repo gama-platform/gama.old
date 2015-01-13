@@ -68,4 +68,6 @@ public interface IOperatorCategory {
 	public static final String DEPRECATED 		= "DeprecatedOperators";	
 	
 	public static final String DRIVING 			= "Driving operators";
+	
+	public static final String GENSTAR 			= "Genstar operators";
 }
