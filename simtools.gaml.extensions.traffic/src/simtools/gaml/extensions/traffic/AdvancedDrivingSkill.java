@@ -440,10 +440,28 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		return isReadyNextRoad(scope, road, driver, secDistCoeff, vL, block) &&
 			(testBlockNode || nextRoadTestLane(driver, road, lane, secDistCoeff, vL));
 	}
+	
+	@action(name = "test_next_road",
+			args = { @arg(name = "new_road", type = IType.AGENT, optional = false, doc = @doc("the road to test"))},
+			doc = @doc(value = "action to test if the driver can take the given road",
+				returns = "true (the driver can take the road) or false (the driver cannot take the road)",
+				examples = { @example("do test_next_road new_road: a_road;") }))
+		public Boolean primTestNextRoad(final IScope scope) throws GamaRuntimeException {
+			return true;
+		}
 
 	public Boolean isReadyNextRoad(final IScope scope, final IAgent road, final IAgent driver,
 		final double secDistCoeff, final double vL, final Map<IAgent, List<IAgent>> block) throws GamaRuntimeException {
 		IAgent theNode = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
+		final ISpecies context = driver.getSpecies();
+		final IStatement.WithArgs actionTNR = context.getAction("test_next_road");
+		Arguments argsTNR = new Arguments();
+		argsTNR.put("new_road", ConstantExpressionDescription.create(road));
+		actionTNR.setRuntimeArgs(argsTNR);
+		// t41 +=  java.lang.System.currentTimeMillis() - tt2;
+		// tt2 =  java.lang.System.currentTimeMillis();
+		if  (! (Boolean) actionTNR.executeOn(scope)) return false;
+		
 		List<List> stops = (List<List>) theNode.getAttribute(RoadNodeSkill.STOP);
 		List<Double> respectsStops = getRespectStops(driver);
 		IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
