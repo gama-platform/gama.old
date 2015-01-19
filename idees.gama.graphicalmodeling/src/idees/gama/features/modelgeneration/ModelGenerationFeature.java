@@ -55,7 +55,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
  
     @Override
     public void execute(ICustomContext context) {
-    		String gamlModel = ModelGenerator.generateModel(this.getFeatureProvider(), getDiagram());
+   		String gamlModel = ModelGenerator.generateModel(this.getFeatureProvider(), getDiagram());
     		List<Shape> contents = getDiagram().getChildren();
     		URI uri = null;
     		if (contents != null) {
@@ -70,10 +70,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
             String containerStr = "/"+ uri.segment(0);
             String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
             path = path.replace("diagrams/", "models/");
+            File folder = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation() + containerStr + "/models");
+            if (!folder.exists()) folder.mkdir();
             path = path.replace(".gadl", ".gaml");
-           
             File file = new File(path);
             if (file.exists()) file.delete();
+            
             FileWriter fw;
 			try {
 				fw = new FileWriter(file, false);
