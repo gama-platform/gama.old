@@ -144,6 +144,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		createCells(scope, false);
 	}
 
+	//constructor used to build hexagonal grid (-> useVN = false)
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
 		final boolean useNeighboursCache) {
@@ -160,9 +161,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		createMatrix(size);
 		supportImagePixels = new int[size];
 		this.isTorus = isTorus;
-
-		// WARNING Why "false" ???
-
 		this.usesVN = false;
 		this.isHexagon = isHexagon;
 		actualNumberOfCells = 0;
