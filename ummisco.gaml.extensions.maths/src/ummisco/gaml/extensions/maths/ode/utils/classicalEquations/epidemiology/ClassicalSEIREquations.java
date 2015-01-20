@@ -73,7 +73,7 @@ public class ClassicalSEIREquations {
 					  + v[2].literalValue() + " / " + p[0].literalValue() + ") + " +
 				"(- " + p[4].literalValue() + " * " + v[0].literalValue() + " )", 
 				getDescription()));
-		eq1.etablishVar();
+		eq1.establishVar();
 		cmd.add(eq1);
 
 		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -87,7 +87,7 @@ public class ClassicalSEIREquations {
 				"( - " + p[4].literalValue() + " * " + v[1].literalValue() + ") + " +
 				"( - " + p[3].literalValue() + " * " + v[1].literalValue() + ")",
 				getDescription()));
-		eq2.etablishVar();
+		eq2.establishVar();
 		cmd.add(eq2);
 
 		SingleEquationStatement eq3 = new SingleEquationStatement(stm);
@@ -100,7 +100,7 @@ public class ClassicalSEIREquations {
 				"(- " + p[4].literalValue() + " * " + v[2].literalValue() + ") + " +
 				"(- " + p[2].literalValue() + " * " + v[2].literalValue() + ")", 
 				getDescription()));
-		eq3.etablishVar();
+		eq3.establishVar();
 		cmd.add(eq3);
 
 		SingleEquationStatement eq4 = new SingleEquationStatement(stm);
@@ -109,7 +109,7 @@ public class ClassicalSEIREquations {
 				"("   + p[2].literalValue() + " * " + v[2].literalValue() + ") + " +
 				"(- " + p[4].literalValue() + " * " + v[3].literalValue() + ")", 
 				getDescription()));
-		eq4.etablishVar();
+		eq4.establishVar();
 		cmd.add(eq4);
 		
 		return cmd;

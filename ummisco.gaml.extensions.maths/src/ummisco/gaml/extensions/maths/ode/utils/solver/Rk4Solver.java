@@ -96,10 +96,10 @@ public class Rk4Solver extends Solver {
 
 			integrated_val.clear();
 
-			final double[] y = new double[eq.variables_diff.size()];
+			final double[] y = new double[eq.variables_diff.getValues().size()];
 
 			for (int i = 0, n = eq.variables_diff.size(); i < n; i++) {
-				final IExpression v = eq.variables_diff.get(i);
+				final IExpression v = eq.variables_diff.getValues().get(i);
 				boolean pushed = false;
 				if (eq.equaAgents.size() > 0) {
 					pushed = scope.push(eq.equaAgents.get(i));

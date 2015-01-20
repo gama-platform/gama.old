@@ -174,7 +174,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		expression = getFacet(EQUATION_RIGHT);
 	}
 
-	public void etablishVar() {
+	public void establishVar() {
 		if ( getOrder() == 0 ) { return; }
 		for ( int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++ ) {
 			IExpression tmp = ((AbstractNAryOperator) function).arg(i);
@@ -241,6 +241,12 @@ public class SingleEquationStatement extends AbstractStatement {
 	@operator(ZERO)
 	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return function.toString()+" = "+expression.toString();
 	}
 
 }

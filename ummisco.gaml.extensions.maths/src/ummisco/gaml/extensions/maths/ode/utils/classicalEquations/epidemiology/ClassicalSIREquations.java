@@ -63,7 +63,7 @@ public class ClassicalSIREquations {
 				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
 						+ " * " + v[1].literalValue() + " / "
 						+ p[0].literalValue() + ")", getDescription()));
-		eq1.etablishVar();
+		eq1.establishVar();
 		cmd.add(eq1);
 
 		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -76,7 +76,7 @@ public class ClassicalSIREquations {
 						+ v[1].literalValue() + " / " + p[0].literalValue()
 						+ ") - ("+p[2].literalValue()+" * " + v[1].literalValue() + ")",
 				getDescription()));
-		eq2.etablishVar();
+		eq2.establishVar();
 		cmd.add(eq2);
 
 		SingleEquationStatement eq3 = new SingleEquationStatement(stm);
@@ -85,7 +85,7 @@ public class ClassicalSIREquations {
 		eq3.setExpression(GAML.getExpressionFactory().createExpr(
 				"(" + p[2].literalValue() + " * " + v[1].literalValue() + ")",
 				getDescription()));
-		eq3.etablishVar();
+		eq3.establishVar();
 		cmd.add(eq3);
 		return cmd;
 	}
