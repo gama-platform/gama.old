@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ummisco.gama.feature.stats"
+      label="Stats"
+      version="1.6.1.qualifier">
+
+   <description url="http://www.example.com/description">
+      This plug-in contains additional statistical operators.
+
+It uses the 2 additional library: colt.jar and concurrent.jar.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      Plug-in: GPL v3 licence (GAMA licence)
+
+Aditional library:
+- colt.jar: LGPL and CERN
+- concurrent.jar: public domain and some classes from SUN Microsystems (using sun-licence)
+   </license>
+
+   <plugin
+         id="ummisco.gaml.extensions.stats"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
