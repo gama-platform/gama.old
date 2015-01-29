@@ -249,7 +249,7 @@ public abstract class SwingControl extends Composite {
 		// Make sure Awt environment is initialized.
 		AwtEnvironment.getInstance(display);
 		if ( Platform.isCocoa() && Platform.JAVA_VERSION >= Platform.javaVersion(1, 7, 0) ) {
-			SWT_AWT.embeddedFrameClass = "sun.lwawt.macosx.CEmbeddedFrame";
+			SWT_AWT.embeddedFrameClass = "sun.lwawt.macosx.CViewEmbeddedFrame";
 		}
 		frame = SWT_AWT.new_Frame(borderlessChild);
 
