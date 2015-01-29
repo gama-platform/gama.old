@@ -23,6 +23,7 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
+import msi.gama.util.GamaColor;
 import msi.gama.util.IList;
 import com.google.common.collect.Iterables;
 import com.jogamp.opengl.util.texture.Texture;
@@ -125,12 +126,12 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio) {
-		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textureFileNames, angle, height,
-			roundCorner, type, ratio);
-	}
+			final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
+			final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio, final IList<GamaColor> colors) {
+			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+			currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textureFileNames, angle, height,
+				roundCorner, type, ratio,colors);
+		}
 
 	public Iterable<GeometryObject> getGeometries() {
 		return Iterables.concat(layers.values());
