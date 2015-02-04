@@ -18,6 +18,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -58,11 +59,12 @@ public class System {
 		content_type = ITypeProvider.SECOND_CONTENT_TYPE,
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		category = { IOperatorCategory.SYSTEM })
-	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.",
+	@doc(value = "It has two different uses: it can be the dot product between 2 matrices or return an evaluation of the expresion (right-hand operand) in the scope the given agent.",
+		masterDoc= true,
 		special_cases = "if the agent is nil or dead, throws an exception",
-		examples = {
-			@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
-			@example(value = "map(nil).keys", raises = "exception") })
+		usages = @usage(value="if the left operand is an agent, it evaluates of the expresion (right-hand operand) in the scope the given agent", examples = {
+				@example(value = "agent1.location", equals = "the location of the agent agent1", isExecutable = false),
+				@example(value = "map(nil).keys", raises = "exception", isTestOnly= false) }))
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) {

@@ -81,14 +81,13 @@ public class Strings {
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.STRING })
-	@doc(usages = @usage("if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string"))
 	public static
 		String opPlus(final String a, final String b) {
 		return a + b;
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.STRING })
-	@doc(usages = @usage(value = "if the left-operand is a string, concatenates both operands;",
+	@doc(usages = @usage(value = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string)",
 		examples = @example(value = "\"hello \" + 12", equals = "\"hello 12\"")))
 	public static String opPlus(final IScope scope, final String a, final Object b) throws GamaRuntimeException {
 		return a + Cast.asString(scope, b);
@@ -456,7 +455,7 @@ public class Strings {
 
 	@operator(value = "as_date", can_be_const = true, category = { IOperatorCategory.STRING, IOperatorCategory.TIME })
 	@doc(value = "converts a number into a string with year, month, day, hour, minutes, second following a standard pattern",
-		usages = @usage(value = "used as an unary operator, uses a defined pattern with years, months, days",
+		usages = @usage(value = "used as an unary operator, it uses a defined pattern with years, months, days",
 			examples = @example(value = "as_date(22324234)", equals = "\"8 months, 18 days\"")))
 	public static
 		String asDate(final double time) {

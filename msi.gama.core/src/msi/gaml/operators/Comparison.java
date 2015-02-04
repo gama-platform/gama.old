@@ -54,7 +54,8 @@ public class Comparison {
 	@doc(value = "true if the left-hand operand is greater than the right-hand operand, false otherwise.",
 		masterDoc = true,
 		usages = { @usage("if one of the operands is nil, returns false") },
-		examples = @example(value = "3 > 7", equals = "false"))
+		examples = @example(value = "3 > 7", equals = "false"),
+		see = {LT, GTE, LTE, "=", "!="})
 	public static Boolean greater(final Integer a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
 		return a > b;
@@ -88,7 +89,8 @@ public class Comparison {
 	@doc(value = "true if the left-hand operand is less than the right-hand operand, false otherwise.",
 		masterDoc = true,
 		special_cases = { "if one of the operands is nil, returns false" },
-		examples = { @example(value = "3 < 7", equals = "true") })
+		examples = { @example(value = "3 < 7", equals = "true") },
+		see = {GT, GTE, LTE, "=", "!="})
 	public static Boolean less(final Integer a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
 		return a < b;
@@ -122,7 +124,8 @@ public class Comparison {
 	@doc(value = "true if the left-hand operand is greater or equal than the right-hand operand, false otherwise.",
 		masterDoc = true,
 		usages = { @usage("if one of the operands is nil, returns false") },
-		examples = { @example(value = "3 >= 7", equals = "false") })
+		examples = { @example(value = "3 >= 7", equals = "false") },
+				see = {GT, LT, LTE, "=", "!="})
 	public static Boolean greaterOrEqual(final Integer a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
 		return a >= b;
@@ -164,7 +167,8 @@ public class Comparison {
 
 	@operator(value = LTE, can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "true if the left-hand operand is less or equal than the right-hand operand, false otherwise.",
-		examples = { @example(value = "3 <= 2.5", equals = "false") })
+		examples = { @example(value = "3 <= 2.5", equals = "false") },
+		see = {GT, LT, GTE, "=", "!="})
 	public static Boolean lessOrEqual(final Integer a, final Double b) {
 		if ( a == null || b == null ) { return false; }
 		return a <= b;
@@ -188,7 +192,7 @@ public class Comparison {
 
 	@operator(value = { "=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "returns true if both operands are equal, false otherwise", masterDoc = true, examples = {
-		@example(value = "3 = 3", equals = "true"), @example(value = "4.5 = 4.7", equals = "false") }, see = { "!=" })
+		@example(value = "4.5 = 4.7", equals = "false") }, see = { GT, LT, GTE, LTE, "!=" })
 	public static Boolean equal(final Double a, final Double b) {
 		return a == null ? b == null : IntervalSize.isZeroWidth(a, b);
 		// return !(a < b) && !(a > b);
@@ -196,7 +200,7 @@ public class Comparison {
 
 	@operator(value = { "=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "returns true if both operands are equal, false otherwise", masterDoc = true, examples = {
-		@example(value = "3 = 3", equals = "true"), @example(value = "4 = 5", equals = "false") }, see = { "!=" })
+		@example(value = "4 = 5", equals = "false") }, see = { "!=" })
 	public static Boolean equal(final Integer a, final Integer b) {
 		return a == null ? b == null : a.intValue() == b.intValue();
 		// return !(a < b) && !(a > b);
@@ -212,7 +216,7 @@ public class Comparison {
 
 	@operator(value = { "=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
 	@doc(value = "returns true if both operands are equal, false otherwise", examples = {
-		@example(value = "3.0 = 3", equals = "true"), @example(value = "4.7 = 4", equals = "false") }, see = { "!=" })
+		@example(value = "4.7 = 4", equals = "false") }, see = { "!=" })
 	public static Boolean equal(final Double a, final Integer b) {
 		return a == null ? b == null : new Double(b).equals(a);
 		// return !(a < b) && !(a > b);
@@ -222,7 +226,7 @@ public class Comparison {
 	@doc(value = "true if both operands are different, false otherwise",
 		masterDoc = true,
 		examples = { @example(value = "3.0 != 3.0", equals = "false"), @example(value = "4.0 != 4.7", equals = "true") },
-		see = { "=" })
+		see = { "=", GT, LT, GTE, LTE, "=" })
 	public static Boolean different(final Double a, final Double b) {
 		if ( a == null ) { return b != null; }
 		if ( b == null ) { return false; }
@@ -260,7 +264,7 @@ public class Comparison {
 
 	@operator(value = GTE, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.STRING })
 	@doc(value = "Returns true if the left-hand operand is greater than or equal to the right-hand operand, false otherwise.",
-		usages = @usage(value = "if both operands are String, uses a lexicographic comparison of two strings",
+		usages = @usage(value = "if both operands are string, uses a lexicographic comparison of the two strings",
 			examples = { @example(value = "'abc' >= 'aeb'", equals = "false"),
 				@example(value = "'abc' >= 'abc'", equals = "true") }))
 	public static
@@ -292,8 +296,8 @@ public class Comparison {
 	}
 
 	@operator(value = { "=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON })
-	@doc(value = "Returns true if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.",
-		examples = { @example(value = "3.0 = 3", equals = "true"), @example(value = "[2,3] = [2,3]", equals = "true") })
+	@doc(usages = @usage(value = "if both operands are any kind of objects, returns true if they are identical (i.e., the same object) or equal (comparisons between nil values are permitted)",
+		examples = @example(value = "[2,3] = [2,3]", equals = "true") ))
 	public static
 		Boolean equal(final Object a, final Object b) {
 		return a == null ? b == null : a.equals(b);
@@ -310,7 +314,7 @@ public class Comparison {
 
 	@operator(value = LT, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.POINT })
 	@doc(value = "true if the left-hand operand is lower than the right-hand operand, false otherwise.",
-		usages = { @usage(value = "if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
+		usages = { @usage(value = "if both operands are points, returns true if and only if the left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
 			examples = { @example(value = "{5,7} < {4,6}", equals = "false"),
 				@example(value = "{5,7} < {4,8}", equals = "false") }) })
 	public static
@@ -320,7 +324,7 @@ public class Comparison {
 
 	@operator(value = GT, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.POINT })
 	@doc(value = "true if the left-hand operand is greater than the right-hand operand, false otherwise.",
-		usages = { @usage(value = "if both operands are points, returns true if only if left component (x) of the left operand if greater than x of the right one and if the right component (y) of the left operand is greater than y of the right one.",
+		usages = { @usage(value = "if both operands are points, returns true if abd only if the left component (x) of the left operand if greater than x of the right one and if the right component (y) of the left operand is greater than y of the right one.",
 			examples = { @example(value = "{5,7} > {4,6}", equals = "true"),
 				@example(value = "{5,7} > {4,8}", equals = "false") }) })
 	public static
@@ -330,7 +334,7 @@ public class Comparison {
 
 	@operator(value = LTE, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.POINT })
 	@doc(value = "true if the left-hand operand is lower or equals than the right-hand operand, false otherwise.",
-		usages = { @usage(value = "if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
+		usages = { @usage(value = "if both operands are points, returns true if and only if the left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
 			examples = { @example(value = "{5,7} <= {4,6}", equals = "false"),
 				@example(value = "{5,7} <= {4,8}", equals = "false") }) })
 	public static
@@ -340,7 +344,7 @@ public class Comparison {
 
 	@operator(value = GTE, can_be_const = true, category = { IOperatorCategory.COMPARISON, IOperatorCategory.POINT })
 	@doc(value = "true if the left-hand operand is greater or equals than the right-hand operand, false otherwise.",
-		usages = { @usage(value = "if both operands are points, returns true if only if left component (x) of the left operand if greater than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
+		usages = { @usage(value = "if both operands are points, returns true if and only if the left component (x) of the left operand if greater or equal than x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.",
 			examples = { @example(value = "{5,7} >= {4,6}", equals = "true"),
 				@example(value = "{5,7} >= {4,8}", equals = "false") }) })
 	public static

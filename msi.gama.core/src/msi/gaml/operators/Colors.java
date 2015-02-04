@@ -58,7 +58,7 @@ public class Colors {
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.COLOR })
-	@doc(value = "a new color resulting from the product of each component of the color with the right operand", usages = @usage(value = "if one operand is a color and the other an integer, returns a new color resulting from the product of each component of the color with the right operand", examples = { @example(value = "rgb([255, 128, 32]) * 2", equals = "rgb([255,255,64])") }))
+	@doc(value = "a new color resulting from the product of each component of the color with the right operand", usages = @usage(value = "if one operand is a color and the other an integer, returns a new color resulting from the product of each component of the color with the right operand (with a maximum value at 255)", examples = { @example(value = "rgb([255, 128, 32]) * 2", equals = "rgb([255,255,64])") }))
 	public static GamaColor multiply(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() * i, c.getGreen() * i, c.getBlue() * i, c.alpha());
 	}

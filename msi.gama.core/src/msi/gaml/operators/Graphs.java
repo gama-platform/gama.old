@@ -135,7 +135,7 @@ public class Graphs {
 	@doc(value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).",
 		usages = @usage("if the left-hand operand is nil, returns nil"),
 		examples = { @example(value = "geometry line <- one_of(path_followed.segments);", isExecutable = false),
-			@example(value = "road ag <- road(path_followed agent_from_geometry line);", isExecutable = false) })
+			@example(value = "road ag <- road(path_followed agent_from_geometry line);", isExecutable = false) }, see = "path")
 	public static
 		IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if ( path == null ) { return null; }
@@ -386,7 +386,7 @@ public class Graphs {
 	}
 
 	@operator(value = "alpha_index", category = { IOperatorCategory.GRAPH })
-	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected. alpha = nb_cycles / (2`*`S-5) - planar graph)",
+	@doc(value = "returns the alpha index of the graph (measure of connectivity which evaluates the number of cycles in a graph in comparison with the maximum number of cycles. The higher the alpha index, the more a network is connected: alpha = nb_cycles / (2`*`S-5) - planar graph)",
 		examples = { @example(value = "graph graphEpidemio <- graph([]);", isTestOnly = true),
 			@example(value = "alpha_index(graphEpidemio)", equals = "the alpha index of the graph", test = false) },
 		see = { "beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
@@ -545,7 +545,7 @@ public class Graphs {
 		masterDoc = true,
 		usages = @usage(value = "if the operand is a list, the graph will be built with elements of the list as vertices",
 			examples = { @example(value = "as_edge_graph([{1,5},{12,45},{34,56}])",
-				equals = "build a graph with these three vertices and reflexive links on each vertices",
+				equals = "a graph with these three vertices and reflexive links on each vertices",
 				test = false) }),
 		see = { "as_intersection_graph", "as_distance_graph" })
 	public static
@@ -631,8 +631,6 @@ public class Graphs {
 		index_type = IType.GEOMETRY,
 		category = { IOperatorCategory.GRAPH })
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
-		comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.",
-		examples = @example(value = "list(ant) as_distance_graph 3.0;", isExecutable = false),
 		see = { "as_intersection_graph", "as_edge_graph" })
 	public static
 		IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
@@ -642,8 +640,6 @@ public class Graphs {
 
 	@operator(value = "as_distance_graph", category = { IOperatorCategory.GRAPH })
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
-		comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.",
-		examples = @example(value = "list(ant) as_distance_graph 3.0;", isExecutable = false),
 		see = { "as_intersection_graph", "as_edge_graph" })
 	public static
 		IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final GamaMap params) {
@@ -755,7 +751,8 @@ public class Graphs {
 	@operator(value = "add_node", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
 	@doc(value = "adds a node in a graph.", examples = @example(value = "graph add_node node(0) ",
 		equals = "the graph with node(0)",
-		isExecutable = false))
+		isExecutable = false),
+		see = {"add_edge", "graph"})
 	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
 		g.incVersion();
@@ -800,10 +797,10 @@ public class Graphs {
 	}
 
 	@operator(value = "add_edge", type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
-	@doc(value = "add an edge between source vertex and the target vertex",
-		comment = "If the edge already exists the graph is unchanged",
+	@doc(value = "add an edge between a source vertex and a target vertex (resp. the left and the right element of the pair operand)",
+		comment = "if the edge already exists, the graph is unchanged",
 		examples = @example(value = "graph <- graph add_edge (source::target);", isExecutable = false),
-		see = "")
+		see = {"add_node","graph"})
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
 		g.incVersion();
@@ -1039,8 +1036,8 @@ public class Graphs {
 
 	@operator(value = "all_pairs_shortest_path", type = IType.MATRIX, content_type = IType.INT, category = {
 		IOperatorCategory.GRAPH, IOperatorCategory.PATH })
-	@doc(value = "return a matrix containing all pairs of shortest paths (rows: source, columns: target)",
-		examples = { @example(value = "mall_pairs_shortest_paths(my_graph)",
+	@doc(value = "returns the successor matrix of shortest paths betwenn all node pairs (rows: source, columns: target): a cell (i,j) will thus contains the next node in the shortest path between i and j.",
+		examples = { @example(value = "all_pairs_shortest_paths(my_graph)",
 			equals = "shortest_paths_matrix will contain all pairs of shortest paths",
 			isExecutable = false) })
 	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)

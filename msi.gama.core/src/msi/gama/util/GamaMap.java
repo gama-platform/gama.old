@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
@@ -117,10 +118,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of both operands", examples = {
-		@example(value = "['a'::1,'b'::2] + ['c'::3]", equals = "['a'::1,'b'::2,'c'::3]"),
-		@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") }, see = { "" +
-		IKeyword.MINUS })
+	@doc(usages = { 
+			@usage(value = "if both operands are maps, returns a new map containing all the elements of both operands.",
+				examples = { 
+					@example(value = "['a'::1,'b'::2] + ['b'::2]", returnType="map<string,int>", equals = "['a'::1,'b'::2,'c'::3]"),
+					@example(value = "['a'::1,'b'::2] + [5::3.0]", returnType="map<string,int>", equals = "['a'::1.0,'b'::2.0,5::3.0]") }) })	
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		// special case for the addition of two populations or meta-populations
 		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
@@ -130,10 +132,10 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of both operands", examples = {
-		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
-		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" +
-		IKeyword.MINUS })
+	@doc(usages = { 
+			@usage(value = "if left operand is a map and the right operand is a pair, returns a new map containing all the elements of the map and the pair.",
+				examples = { 
+					@example(value = "['a'::1,'b'::2] + ('c'::3)", returnType="map<string,int>", equals = "['a'::1,'b'::2,'c'::3]") }) })	
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
 		// special case for the addition of two populations or meta-populations
 		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
@@ -143,9 +145,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand", examples = {
-		@example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
-		@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1]") }, see = { "" + IKeyword.MINUS })
+	@doc(usages = { 
+		@usage(value = "if both operands are maps, returns a new map containing all the elements of the first operand not present in the second operand.",
+			examples = { 
+				@example(value = "['a'::1,'b'::2] - ['b'::2]", returnType="map<string,int>", equals = "['a'::1]"),
+				@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", returnType="map<string,int>", equals = "['a'::1]") }) })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		// special case for the addition of two populations or meta-populations
 		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
@@ -155,9 +159,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.BOTH, category = IOperatorCategory.CONTAINER)
-	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand", examples = {
-		@example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
-		@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") }, see = { "" + IKeyword.MINUS })
+	@doc(usages = { 
+			@usage(value = "if left operand is a map and the right operand is a pair, returns a new map containing all the elements of the first operand without the one of the second operand.",
+				examples = { 
+					@example(value = "['a'::1,'b'::2] - ('b'::2)", returnType="map<string,int>", equals = "['a'::1]"),
+					@example(value = "['a'::1,'b'::2] - ('c'::3)", returnType="map<string,int>", equals = "['a'::1,'b'::2]") }) })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
 		// special case for the addition of two populations or meta-populations
 		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);

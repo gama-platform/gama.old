@@ -284,7 +284,7 @@ public class Maths {
 		masterDoc = true,
 		usages = { @usage(value = "if the right-hand operand is outside of the [-1,1] interval, returns NaN") },
 		examples = @example(value = "acos (0)", equals = "90.0"),
-		see = { "asin", "atan" })
+		see = { "asin", "atan", "cos" })
 	public static
 		Double acos(final Double rv) {
 		return Math.acos(rv) * toDeg;
@@ -300,7 +300,7 @@ public class Maths {
 	@doc(value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arcsin of the operand (which should be in [-1,1]).",
 		usages = { @usage(value = "if the right-hand operand is outside of the [-1,1] interval, returns NaN") },
 		examples = @example(value = "asin (0)", equals = "0.0"),
-		see = { "acos", "atan" })
+		see = { "acos", "atan", "sin" })
 	public static
 		Double asin(final Double rv) {
 		return Math.asin(rv) * toDeg;
@@ -317,7 +317,7 @@ public class Maths {
 	@doc(value = "Returns the value (in the interval [-90,90], in decimal degrees) of the arctan of the operand (which can be any real number).",
 		masterDoc = true,
 		examples = @example(value = "atan (1)", equals = "45.0"),
-		see = { "acos", "asin" })
+		see = { "acos", "asin", "tan" })
 	public static
 		Double atan(final Double rv) {
 		return Math.atan(rv) * toDeg;
@@ -535,13 +535,13 @@ public class Maths {
 	}
 
 	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "Returns the opposite or the operand.", masterDoc = true)
+	@doc(value = "If it is used as an unary operator, it returns the opposite of the operand.", masterDoc = true)
 	public static Double negate(final Double x) {
 		return -x;
 	}
 
 	@operator(value = "-", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "Returns the opposite or the operand.", examples = @example(value = "- (-56)", equals = "56"))
+	@doc(value = "Returns the opposite of the operand.", examples = @example(value = "- (-56)", equals = "56"))
 	public static Integer negate(final Integer x) {
 		return -x;
 	}
@@ -588,7 +588,6 @@ public class Maths {
 		masterDoc = true,
 		usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic division and returns a float.",
 			examples = { @example(value = "3 / 5.0", equals = "0.6") }) },
-		// examples = {@example("float f <- 3 / 5.0;		// f equals 0.6")})},
 		special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception",
 		see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.MULTIPLY })
 	public static
@@ -599,9 +598,6 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
-		masterDoc = true,
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception"),
-		examples = {},
 		see = "*")
 	public static Double opDivide(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
@@ -610,8 +606,6 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception"),
-		examples = {},
 		see = "*")
 	public static Double opDivide(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
@@ -620,8 +614,6 @@ public class Maths {
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.",
-		usages = @usage(value = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception"),
-		examples = {},
 		see = "*")
 	public static Double opDivide(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
@@ -631,8 +623,8 @@ public class Maths {
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the product of the two operands.",
 		masterDoc = true,
-		usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic product and returns a float if one of them is a float.") },
-		examples = { @example(value = "1 * 1", equals = "1") },
+		usages = @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic product and returns a float if one of them is a float.",
+		examples = @example(value = "1 * 1", equals = "1")),
 		see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.DIVIDE })
 	public static
 		Integer opTimes(final Integer a, final Integer b) {
@@ -682,7 +674,7 @@ public class Maths {
 	@doc(value = "Returns the sum, union or concatenation of the two operands.",
 		masterDoc = true,
 		usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.",
-			examples = { @example(value = "1 + 1", equals = "2") }) },
+			examples = { @example(value = "1 + 1", equals = "2"), @example(value = "1.0 + 1",equals = "2.0"), @example(value = "1.0 + 2.5", equals = "3.5") }) },
 		see = { IKeyword.MINUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static
 		Integer opPlus(final Integer a, final Integer b) {
@@ -690,22 +682,19 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the sum, union or concatenation of the two operands.", examples = @example(value = "1.0 + 1",
-		equals = "2.0"))
+	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the sum, union or concatenation of the two operands.", examples = @example(value = "1.0 + 2.5",
-		equals = "3.5"))
+	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the sum, union or concatenation of the two operands.", examples = @example(value = "2 + 2.5",
-		equals = "4.5"))
+	@doc(value = "the sum, union or concatenation of the two operands.")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
@@ -735,7 +724,7 @@ public class Maths {
 	@doc(value = "Returns the difference of the two operands.",
 		masterDoc = true,
 		usages = { @usage(value = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.",
-			examples = { @example(value = "1 - 1", equals = "0") }) },
+			examples = { @example(value = "1 - 1", equals = "0"), @example(value = "1.0 - 1", equals = "0.0"), @example(value = "3.7 - 1.2", equals = "2.5"), @example(value = "3 - 1.2", equals = "1.8") }) },
 		see = { IKeyword.PLUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static
 		Integer opMinus(final Integer a, final Integer b) {
@@ -743,19 +732,19 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the difference of the two operands", examples = { @example(value = "1.0 - 1", equals = "0.0") })
+	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the difference of the two operands", examples = @example(value = "3.7 - 1.2", equals = "2.5"))
+	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Double a, final Double b) {
 		return a - b;
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
-	@doc(value = "the difference of the two operands", examples = @example(value = "3 - 1.2", equals = "1.8"))
+	@doc(value = "the difference of the two operands")
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
 	}

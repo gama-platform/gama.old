@@ -175,7 +175,8 @@ public class Cast {
 		index_type = ITypeProvider.SECOND_KEY_TYPE,
 		can_be_const = true,
 		category = { IOperatorCategory.CASTING })
-	@doc(value = "casting of the argument into a given type")
+	@doc(value = "casting of the first argument into a given type", comment = "It is equivalent to the application of the type operator on the left operand.",
+		examples = @example(value="3.5 as int", returnType="int", equals="int(3.5)"))
 	public static Object as(final IScope scope, final Object val, final IExpression expr) {
 		return expr.getType().cast(scope, val, null);
 	}

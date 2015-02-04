@@ -20,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -91,7 +92,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = ".", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	@doc(value = "Matrix dot product.")
+	@doc(usages = @usage(value="if both operands are matrix, returns the dot product of them", examples = @example(value="matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]])", equals="matrix([[2,3],[3,5]])")))
 	public abstract IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
