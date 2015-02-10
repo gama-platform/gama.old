@@ -554,9 +554,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicatePriority==null) predicatePriority=1.0;
 		// System.out.println(predicateName);
 		
-		GamaList<Object> factBase =
+		/*GamaList<Object> factBase =
 			(GamaList<Object>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE) : (GamaList<Object>) agent
-				.getAttribute(DESIRE_BASE));
+				.getAttribute(DESIRE_BASE));*/
 		GamaMap<String,Object> predicateItem = this.new_predicate(predicateName, predicateValue, predicateParameters);
 		predicateItem.put(this.PREDICATE_PRIORITY, predicatePriority);
 		return predicateItem;
