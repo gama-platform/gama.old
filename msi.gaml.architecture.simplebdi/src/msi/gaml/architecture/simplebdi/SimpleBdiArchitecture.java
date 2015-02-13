@@ -132,14 +132,45 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// RANDOMLY REMOVE (last)INTENSION
 			Boolean flipResultgoal = msi.gaml.operators.Random.opFlip(scope,
 					persistenceCoefficientgoal);
-			if (!flipResultgoal) {
+			while (!flipResultgoal) {
+				flipResultgoal = msi.gaml.operators.Random.opFlip(scope,
+						persistenceCoefficientgoal);
 				if (intensionBase.size() > 0) {
-					addThoughts(scope, "check what happens if I remove: "
-							+ intensionBase.get(intensionBase.size() - 1));
-					Predicate previousint = intensionBase.get(intensionBase
-							.size() - 1);
-					intensionBase.remove(intensionBase.size() - 1);
-					addToBase(scope, previousint, desireBase);
+					/*
+					ArrayList<Predicate> toremovelist=new ArrayList<Predicate>();
+					
+					int toremove=(int)Math.random()*intensionBase.size();
+					Predicate previousint = intensionBase.get(toremove);
+					toremovelist.add(previousint);
+					int nbsubgoals=0;
+					String think="check what happens if I remove: "
+							+ intensionBase.get(toremove);					
+					while (toremovelist.size()>0)
+					{
+						previousint=toremovelist.get(toremovelist.size()-1);
+						toremove=intensionBase.indexOf(previousint);
+						if (previousint.subgoals!=null)
+						if (previousint.subgoals.size()>0)
+						{
+							for (Predicate p:previousint.subgoals)
+							{
+								nbsubgoals++;
+								toremovelist.add(p);
+							}
+						}
+						if (toremove>0)	intensionBase.remove(toremove);
+						toremovelist.remove(previousint);
+						addToBase(scope, previousint, desireBase);						
+					}
+					addThoughts(scope, think+" and "+nbsubgoals+ " subgoals");
+					_persistentTask = null;
+					*/
+					int toremove=intensionBase.size()-1;
+					Predicate previousint = intensionBase.get(toremove);
+					intensionBase.remove(toremove);
+					String think="check what happens if I remove: "
+							+ previousint;					
+					addThoughts(scope, think);
 					_persistentTask = null;
 				}
 			}
@@ -383,7 +414,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		return null;
 
-	}
+	}	
 
 	@action(name = "is_current_goal", args = { @arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to check")) }, doc = @doc(value = "check if the predicates is the current goal (last entry of intension base).", returns = "true if it is in the base.", examples = { @example("") }))
 	public Boolean iscurrentGoal(final IScope scope)
