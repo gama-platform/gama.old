@@ -136,35 +136,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				flipResultgoal = msi.gaml.operators.Random.opFlip(scope,
 						persistenceCoefficientgoal);
 				if (intensionBase.size() > 0) {
-					/*
-					ArrayList<Predicate> toremovelist=new ArrayList<Predicate>();
-					
-					int toremove=(int)Math.random()*intensionBase.size();
-					Predicate previousint = intensionBase.get(toremove);
-					toremovelist.add(previousint);
-					int nbsubgoals=0;
-					String think="check what happens if I remove: "
-							+ intensionBase.get(toremove);					
-					while (toremovelist.size()>0)
-					{
-						previousint=toremovelist.get(toremovelist.size()-1);
-						toremove=intensionBase.indexOf(previousint);
-						if (previousint.subgoals!=null)
-						if (previousint.subgoals.size()>0)
-						{
-							for (Predicate p:previousint.subgoals)
-							{
-								nbsubgoals++;
-								toremovelist.add(p);
-							}
-						}
-						if (toremove>0)	intensionBase.remove(toremove);
-						toremovelist.remove(previousint);
-						addToBase(scope, previousint, desireBase);						
-					}
-					addThoughts(scope, think+" and "+nbsubgoals+ " subgoals");
-					_persistentTask = null;
-					*/
 					int toremove=intensionBase.size()-1;
 					Predicate previousint = intensionBase.get(toremove);
 					intensionBase.remove(toremove);
@@ -263,7 +234,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (!(intensionBase.contains(desire))) {
 						maxpriority = desire.priority;
 						newGoal = desire;
-
 					}
 			}
 			if (!(intensionBase.contains(newGoal))) {
