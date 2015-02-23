@@ -35,7 +35,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
 	@Override
 	protected void _draw(final ImageObject img) {
-
+		
 		MyTexture curTexture = img.getTexture(renderer);
 		if ( curTexture == null ) { return; }
 		double width = img.dimensions.x;
@@ -104,7 +104,6 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			renderer.gl.glRotated(img.angle, 0.0d, 0.0d, 1.0d);
 			renderer.gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
-
-		renderer.gl.glDisable(GL_TEXTURE_2D);
+        curTexture.unbindFrom(renderer);
 	}
 }

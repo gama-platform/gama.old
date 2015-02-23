@@ -13,7 +13,10 @@ package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.media.opengl.GLException;
@@ -23,10 +26,12 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.IList;
 import com.google.common.collect.Iterables;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -192,7 +197,6 @@ public class ModelScene {
 			IScope scope = GAMA.obtainNewScope();
 			BufferedImage image = ImageUtils.getInstance().getImageFromFile(scope, fileName);
 			GAMA.releaseScope(scope);
-			// TODO
 			return createTexture(image, isDynamic);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -203,18 +207,48 @@ public class ModelScene {
 	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
 		if ( image == null ) { return null; }
 		if ( textures.containsKey(image) ) { return textures.get(image); }
+		
 		renderer.getContext().makeCurrent();
 		Texture texture;
-		try {
-			texture = AWTTextureIO.newTexture(renderer.profile, image, false /* true for mipmapping */);
-		} catch (final GLException e) {
-			return null;
+
+		if(IsPowerOfTwo(image.getWidth()) && IsPowerOfTwo(image.getHeight())){
+			try {
+				texture = AWTTextureIO.newTexture(renderer.profile, image, false /* true for mipmapping */);	
+			} catch (final GLException e) {
+				return null;
+			}
 		}
+		//Resize the image to get a power of 2 size (mandatory in jogl2)
+		else{
+			BufferedImage resizedImg = new BufferedImage(getClosestPow(image.getWidth()), getClosestPow(image.getHeight()), BufferedImage.TRANSLUCENT);
+		    Graphics2D g2 = resizedImg.createGraphics();
+		    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		    g2.drawImage(image, 0, 0, getClosestPow(image.getWidth()), getClosestPow(image.getHeight()), null);
+		    g2.dispose();
+		    try {
+				texture = AWTTextureIO.newTexture(renderer.profile, resizedImg, false /* true for mipmapping */);	
+			} catch (final GLException e) {
+				return null;
+			}
+		}
+		
 		texture.setTexParameteri(renderer.gl, GL_TEXTURE_MIN_FILTER, renderer.minAntiAliasing);
 		texture.setTexParameteri(renderer.gl, GL_TEXTURE_MAG_FILTER, renderer.magAntiAliasing);
 		final MyTexture curTexture = new MyTexture(texture, isDynamic);
 		textures.put(image, curTexture);
 		return curTexture;
 	}
-
+	
+	boolean IsPowerOfTwo(int x)
+	{
+	   return (x & (x - 1)) == 0;
+	}
+	
+	int getClosestPow(int value){
+		int power = 1;
+		while(power < value){
+			power*=2;	
+		}
+		return power;    
+	}
 }
