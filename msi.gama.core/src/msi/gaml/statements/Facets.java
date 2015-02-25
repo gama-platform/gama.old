@@ -83,12 +83,12 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		StringBuilder sb = new StringBuilder(size() * 20);
 		for ( final Map.Entry<String, IExpressionDescription> e : entrySet() ) {
 			if ( e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
 				IExpressionDescription ed = e.getValue();
-				String exprString = ed == null ? "N/A" : ed.toGaml();
+				String exprString = ed == null ? "N/A" : ed.serialize(includingBuiltIn);
 				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
 			}
 		}

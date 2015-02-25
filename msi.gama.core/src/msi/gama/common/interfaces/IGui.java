@@ -137,4 +137,9 @@ public interface IGui {
 	 */
 	Object showWebEditor(String url, String html);
 
+	/**
+	 * @return
+	 */
+	String getName();
+
 }

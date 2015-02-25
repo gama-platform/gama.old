@@ -282,7 +282,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			int val = Cast.as(value(), Integer.class);
+			int val = Cast.as(value(), Integer.class, false);
 			if ( val >= min + (int) step ) {
 				neighbourValues.add(val - (int) step);
 			}
@@ -416,12 +416,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return GAMA.run(new InScope<String>() {
 
 			@Override
 			public String run(final IScope scope) {
-				return StringUtils.toGaml(getValue(scope));
+				return StringUtils.toGaml(getValue(scope), includingBuiltIn);
 			}
 		});
 

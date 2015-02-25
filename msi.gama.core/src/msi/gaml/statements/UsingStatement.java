@@ -55,7 +55,7 @@ public class UsingStatement extends AbstractStatementSequence {
 	public UsingStatement(final IDescription desc) {
 		super(desc);
 		topology = getFacet(IKeyword.TOPOLOGY);
-		setName("using " + topology.toGaml());
+		setName("using " + topology.serialize(false));
 	}
 
 	/**

@@ -213,7 +213,7 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
-				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
+				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
@@ -267,7 +267,7 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
-				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
+				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
 				// java.lang.System.out.println("define bound w:" + geom.getEnvelope().getWidth() + "h:" +
 				// geom.getEnvelope().getHeight() + "d:" + geom.getEnvelope().getDepth());
 				if ( geom != null && geom.getInnerGeometry() != null ) {
@@ -319,7 +319,7 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
-				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
+				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
@@ -404,15 +404,15 @@ public class MovingSkill extends Skill {
 		final ITopology topo = computeTopology(scope, agent);
 
 		if ( goal == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
 			return null;
 		}
 		if ( topo == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
 			return null;
 		}
 		if ( source.equals(goal) ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST, false); }
 			return null;
 		}
 
@@ -434,15 +434,16 @@ public class MovingSkill extends Skill {
 			}
 		}
 		if ( path == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(), false); }
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source,
+				GamaListFactory.<IShape> create(Types.GEOMETRY), false); }
 			return null;
 		}
 
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		if ( returnPath != null && returnPath ) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
-			if ( pathFollowed == null ) { return PathFactory.newInstance(topo, source, source, new GamaList<IShape>(),
-				false); }
+			if ( pathFollowed == null ) { return PathFactory.newInstance(topo, source, source,
+				GamaListFactory.<IShape> create(Types.GEOMETRY), false); }
 			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
@@ -462,8 +463,8 @@ public class MovingSkill extends Skill {
 	 * @return the next location
 	 */
 
-	protected GamaList initMoveAlongPath(final IAgent agent, final IPath path, GamaPoint currentLocation) {
-		final GamaList initVals = new GamaList();
+	protected IList initMoveAlongPath(final IAgent agent, final IPath path, GamaPoint currentLocation) {
+		final IList initVals = GamaListFactory.create();
 		Integer index = 0;
 		Integer indexSegment = 1;
 		Integer endIndexSegment = 0;
@@ -576,7 +577,7 @@ public class MovingSkill extends Skill {
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
 		final double d, final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if ( indexVals == null ) { return; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -667,7 +668,7 @@ public class MovingSkill extends Skill {
 	private IPath moveToNextLocAlongPath(final IScope scope, final IAgent agent, final IPath path, final double d,
 		final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if ( indexVals == null ) { return null; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -677,7 +678,7 @@ public class MovingSkill extends Skill {
 		final IList<IShape> edges = path.getEdgeGeometry();
 		final int nb = edges.size();
 		double distance = d;
-		final GamaList<IShape> segments = new GamaList();
+		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final THashMap agents = new THashMap();
 		for ( int i = index; i < nb; i++ ) {

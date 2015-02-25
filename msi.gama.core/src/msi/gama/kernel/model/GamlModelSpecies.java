@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.util.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.*;
@@ -139,22 +139,19 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		ISpecies sp = getAllSpecies().get(speciesName);
 		if ( sp == null ) {
 			sp = getExperiment(speciesName);
-			if ( sp == null) {
-				for (ISpecies mm: getAllSpecies().values()) {
-					if(mm instanceof GamlModelSpecies) {
+			if ( sp == null ) {
+				for ( ISpecies mm : getAllSpecies().values() ) {
+					if ( mm instanceof GamlModelSpecies ) {
 						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-					}					
+					}
 				}
 			}
 		}
 		return sp;
 	}
 
-	
-
-
 	@Override
-	public ISpecies getSpecies(final String speciesName, SpeciesDescription specDes) {
+	public ISpecies getSpecies(final String speciesName, final SpeciesDescription specDes) {
 		if ( speciesName == null ) { return null; }
 		if ( speciesName.equals(getName()) ) { return this; }
 		// hqnghi 11/Oct/13
@@ -162,14 +159,12 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		ISpecies sp = null;
 		if ( sp == null ) {
 			sp = getExperiment(speciesName);
-			if ( sp == null) {
-				for (ISpecies mm: getAllSpecies().values()) {
-					if(mm instanceof GamlModelSpecies) {
+			if ( sp == null ) {
+				for ( ISpecies mm : getAllSpecies().values() ) {
+					if ( mm instanceof GamlModelSpecies ) {
 						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-						if( sp != null ) {
-							return sp;
-						}
-					}					
+						if ( sp != null ) { return sp; }
+					}
 				}
 			}
 			sp = getAllSpecies().get(speciesName);
@@ -201,7 +196,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		final GamaList forExperiment = new GamaList();
+		final List forExperiment = new ArrayList();
 
 		final List<IExperimentPlan> experiments = new ArrayList();
 		for ( final Iterator<? extends ISymbol> it = children.iterator(); it.hasNext(); ) {

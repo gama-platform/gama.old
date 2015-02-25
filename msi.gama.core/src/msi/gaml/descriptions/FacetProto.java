@@ -13,11 +13,11 @@ package msi.gaml.descriptions;
 
 import gnu.trove.set.hash.THashSet;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.JavaWriter;
 import msi.gaml.types.*;
 
-public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
+public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGamlable {
 
 	public final String name;
 	public String deprecated = null;
@@ -117,7 +117,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 					s.append("any type");
 					break;
 				default:
-					s.append("a ").append(Types.get(types[i]).toString());
+					s.append(Types.get(types[i]).toString());
 			}
 			if ( i != types.length - 1 ) {
 				s.append(", ");
@@ -162,6 +162,11 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		return name;
 	}
 
+	@Override
+	public void setName(final String name) {
+		// Nothing
+	}
+
 	/**
 	 * Method compareTo()
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -169,6 +174,18 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	@Override
 	public int compareTo(final FacetProto o) {
 		return getName().compareTo(o.getName());
+	}
+
+	/**
+	 * Method serialize()
+	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+	 */
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		if ( deprecated != null ) { return ""; }
+		if ( SymbolSerializer.uselessFacets.contains(name) ) { return ""; }
+		return name + (optional ? ": optional" : ": required") + " (" +
+			(types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
 
 	/**

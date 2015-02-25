@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -18,8 +18,7 @@ import msi.gama.common.util.*;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.file.IGamaFile;
+import msi.gama.util.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
@@ -62,7 +61,7 @@ public class SqlUtils {
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			String EXTRelativeLocation = ((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
+			String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
 			if ( !EXTRelativeLocation.equalsIgnoreCase("") && EXTRelativeLocation != null ) {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, EXTRelativeLocation, transform);
 
@@ -193,19 +192,19 @@ public class SqlUtils {
 	 */
 	// public static GamaList<Object> transform(final GisUtils gis, final GamaList<? extends GamaList<Object>> dataset,
 	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
-	public static GamaList<Object> transform(final IProjection gis, final GamaList<? super GamaList<Object>> dataset,
+	public static IList<Object> transform(final IProjection gis, final IList<? super IList<Object>> dataset,
 		final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 
 		try {
-			GamaList<Object> response = new GamaList<Object>();
-			GamaList<Object> records_new = new GamaList<Object>();
+			IList<Object> response = GamaListFactory.create();
+			IList<Object> records_new = GamaListFactory.create();
 			// GamaList<Object> columnNames = dataset.get(0);
 			// GamaList<Object> columnTypes = dataset.get(1);
 			// GamaList<Object> records = dataset.get(2);
 
-			GamaList<Object> columnNames = (GamaList<Object>) dataset.get(0);
-			GamaList<Object> columnTypes = (GamaList<Object>) dataset.get(1);
-			GamaList<Object> records = (GamaList<Object>) dataset.get(2);
+			IList<Object> columnNames = (GamaList<Object>) dataset.get(0);
+			IList<Object> columnTypes = (GamaList<Object>) dataset.get(1);
+			IList<Object> records = (GamaList<Object>) dataset.get(2);
 
 			int columnSize = columnNames.size();
 			int lineSize = records.size();
@@ -215,8 +214,8 @@ public class SqlUtils {
 
 			// transform
 			for ( int i = 0; i < lineSize; i++ ) {
-				GamaList<Object> rec_old = (GamaList<Object>) records.get(i);
-				GamaList<Object> rec_new = new GamaList<Object>();
+				IList<Object> rec_old = (GamaList<Object>) records.get(i);
+				IList<Object> rec_new = GamaListFactory.create();
 				for ( int j = 0; j < columnSize; j++ ) {
 					if ( ((String) columnTypes.get(j)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE) ) {
 						Geometry geo2 = (Geometry) rec_old.get(j);

@@ -24,6 +24,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.RemoveStatement.RemoveSerializer;
@@ -151,35 +152,31 @@ public class RemoveStatement extends AbstractContainerStatement {
 	public static class RemoveSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = cd.getFacets();
 			IExpression item = f.getExpr(ITEM);
 			IExpression list = f.getExpr(TO);
 			IExpression allFacet = f.getExpr(ALL);
 			IExpression at = f.getExpr(AT);
 			boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
-			sb.append(list.toGaml());
+			sb.append(list.serialize(includingBuiltIn));
 			if ( at != null ) {
 				sb.append('[');
 				sb.append(']');
 			}
 			sb.append(isAll ? " >>- " : " >- ");
-			sb.append(at == null ? item.toGaml() : at.toGaml()).append(';');
+			sb.append(at == null ? item.serialize(includingBuiltIn) : at.serialize(includingBuiltIn)).append(';');
 		}
 	}
 
 	public RemoveStatement(final IDescription desc) {
 		super(desc);
-		setName("remove from " + list.toGaml());
+		setName("remove from " + list.serialize(false));
 	}
 
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final IContainer.Modifiable container) throws GamaRuntimeException {
-		// if ( position != null ) {
-		// if ( !container.checkBounds(position, false) ) { throw GamaRuntimeException.warning("Index " + position +
-		// " out of bounds of " + item.toGaml()); }
-		// }
 
 		if ( position == null ) {
 			// If key/at/index/node is not mentioned
@@ -209,14 +206,13 @@ public class RemoveStatement extends AbstractContainerStatement {
 	}
 
 	@Override
-	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+	protected Object buildValue(final IScope scope, final IGraph container) {
 		return this.item.value(scope);
 	}
 
 	@Override
-	protected Object buildIndex(final IScope scope, final IContainer.Modifiable container) {
+	protected Object buildIndex(final IScope scope, final IGraph container) {
 		Object o = this.index.value(scope);
-		// if ( asAllIndexes && o instanceof IContainer ) { return ((IContainer) o).reverse(scope); }
 		return o;
 	}
 }

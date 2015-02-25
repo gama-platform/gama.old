@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaPropertyFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaPropertyFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,11 +17,15 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "property", extensions = { "properties" }, buffer_type = IType.MAP, buffer_content = IType.STRING, buffer_index = IType.STRING)
-public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, GamaPair<String, String>, String, String> {
+@file(name = "property",
+	extensions = { "properties" },
+	buffer_type = IType.MAP,
+	buffer_content = IType.STRING,
+	buffer_index = IType.STRING)
+public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -35,7 +39,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, GamaPair
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		Properties p = new Properties();
-		GamaMap m = new GamaMap();
+		GamaMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
 		FileReader f = null;
 		try {
 			f = new FileReader(getFile());
@@ -55,6 +59,11 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, GamaPair
 		}
 		m.putAll(p);
 		setBuffer(m);
+	}
+
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.STRING, Types.STRING);
 	}
 
 	@Override

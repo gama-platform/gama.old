@@ -38,9 +38,15 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	protected final List<IPopulationSet> populationSets;
 	// We cache the value in case.
 	protected Map<String, IPopulation> setOfPopulations;
+	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
 	public MetaPopulation(final IPopulationSet ... pop) {
 		populationSets = Arrays.asList(pop);
+	}
+
+	@Override
+	public IContainerType getType() {
+		return type;
 	}
 
 	/**
@@ -53,7 +59,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 		for ( IPopulationSet p : populationSets ) {
 			result.add(p.iterable(scope));
 		}
-		return GamaList.from(Iterables.concat(result));
+		return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result));
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return toGaml();
+		return serialize(false);
 	}
 
 	/**
@@ -108,14 +114,14 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(populationSets.size() * 10);
 		sb.append('[');
 		for ( int i = 0; i < populationSets.size(); i++ ) {
 			if ( i != 0 ) {
 				sb.append(',');
 			}
-			sb.append(StringUtils.toGaml(populationSets.get(i)));
+			sb.append(StringUtils.toGaml(populationSets.get(i), includingBuiltIn));
 		}
 		sb.append(']');
 		return sb.toString();
@@ -128,7 +134,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 */
 	@Override
 	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
-		return listValue(scope, Types.NO_TYPE).get(scope, index);
+		return listValue(scope, Types.NO_TYPE, false).get(scope, index);
 	}
 
 	/**
@@ -137,7 +143,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 */
 	@Override
 	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		return listValue(scope, Types.NO_TYPE).getFromIndicesList(scope, indices);
+		return listValue(scope, Types.NO_TYPE, false).getFromIndicesList(scope, indices);
 	}
 
 	/**
@@ -203,8 +209,8 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.util.IContainer#reverse(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope, Types.NO_TYPE).reverse(scope);
+	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
+		return listValue(scope, Types.AGENT, false).reverse(scope);
 	}
 
 	/**
@@ -252,9 +258,10 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IList<IAgent> listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-		// WARNING: Double copy of the list
-		return GamaList.from(iterable(scope)).listValue(scope, contentsType);
+	public IList<? extends IAgent> listValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
+		// WARNING: Verify it is ok because no casting is made here
+		return GamaListFactory.create(scope, contentsType, iterable(scope));
 	}
 
 	/**
@@ -262,8 +269,9 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-		return listValue(scope, contentsType).matrixValue(scope, contentsType);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
+		return listValue(scope, contentsType, false).matrixValue(scope, contentsType, false);
 	}
 
 	/**
@@ -271,9 +279,9 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
-		throws GamaRuntimeException {
-		return listValue(scope, contentsType).matrixValue(scope, contentsType, preferredSize);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+		final boolean copy) throws GamaRuntimeException {
+		return listValue(scope, contentsType, false).matrixValue(scope, contentsType, preferredSize, false);
 	}
 
 	/**
@@ -281,9 +289,9 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 		throws GamaRuntimeException {
-		return listValue(scope, contentsType).mapValue(scope, keyType, contentsType);
+		return listValue(scope, contentsType, false).mapValue(scope, keyType, contentsType, false);
 	}
 
 	/**

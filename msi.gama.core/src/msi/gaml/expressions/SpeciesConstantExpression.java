@@ -53,8 +53,8 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	}
 
 	@Override
-	public String toGaml() {
-		if ( computed ) { return super.toGaml(); }
+	public String serialize(boolean includingBuiltIn) {
+		if ( computed ) { return super.serialize(includingBuiltIn); }
 		return (String) value;
 	}
 

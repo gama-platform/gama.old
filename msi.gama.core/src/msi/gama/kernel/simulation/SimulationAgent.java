@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.util.*;
 import java.util.Map.Entry;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
@@ -30,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Spatial.Transformations;
@@ -365,7 +366,7 @@ public class SimulationAgent extends GamlAgent {
 		if ( !scheduled && !getExperiment().getSpecies().isBatch() ) {
 			IDescription des = ((ISymbol) iOutputManager).getDescription();
 			outputs = (IOutputManager) des.compile();
-			GamaMap<String, IOutput> mm = new GamaMap<String, IOutput>();
+			Map<String, IOutput> mm = new TOrderedHashMap<String, IOutput>();
 			for ( IOutput output : outputs.getOutputs().values() ) {
 				String oName =
 					output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias() + "#" +

@@ -26,14 +26,17 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IExpressionFactory {
 
-	public static final ConstantExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL));
-	public static final ConstantExpression FALSE_EXPR = new ConstantExpression(false, Types.get(IType.BOOL));
+	public static final ConstantExpression TRUE_EXPR = new ConstantExpression(true, Types.BOOL);
+	public static final ConstantExpression FALSE_EXPR = new ConstantExpression(false, Types.BOOL);
 	public static final ConstantExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
 	public final static Map<String, UnitConstantExpression> UNITS_EXPR = IUnits.UNITS_EXPR;
 
-	public void registerParserProvider(IExpressionCompilerProvider parser);
+	// public void registerParserProvider(IExpressionCompilerProvider parser);
 
 	public abstract ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
+
+	public abstract ConstantExpression createConst(final Object val, final IType type, String name)
+		throws GamaRuntimeException;
 
 	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
 

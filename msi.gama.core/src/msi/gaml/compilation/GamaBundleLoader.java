@@ -67,7 +67,15 @@ public class GamaBundleLoader {
 			GuiUtils.debug(">> Impossible to access additions from " + s);
 			return;
 		}
-		add.initialize();
+		try {
+			add.initialize();
+		} catch (SecurityException e) {
+			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			return;
+		} catch (NoSuchMethodException e) {
+			GuiUtils.debug(">> Impossible to instantiate additions from " + s);
+			return;
+		}
 		GuiUtils.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}

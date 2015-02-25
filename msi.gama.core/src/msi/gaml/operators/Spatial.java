@@ -332,7 +332,7 @@ public abstract class Spatial {
 			final double max_point_y = originy + Maths.sin(max_angle) * max;
 			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
-			return polygon(scope, GamaList.with(origin, minPoint, maxPoint));
+			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
 		}
 
 		@operator(value = "square", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
@@ -556,7 +556,7 @@ public abstract class Spatial {
 		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
-			final IList<IShape> shapes = GamaList.from(scope, points);
+			final IList<IShape> shapes = GamaListFactory.create(scope, Types.GEOMETRY, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -581,7 +581,7 @@ public abstract class Spatial {
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now replaced by a copy of the list (see Issue 740)
-			final IList<IShape> shapes = GamaList.from(scope, points);
+			final IList<IShape> shapes = GamaListFactory.create(scope, Types.POINT, points);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -605,33 +605,33 @@ public abstract class Spatial {
 				"square", "triangle" })
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE);
+			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, points.lastValue(scope)); }
 			return GamaGeometryType.buildPolyline(shapes);
 		}
-		
+
 		@operator(value = { "geometry_collection" },
-				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
-			@doc(value = "A geometry collection (multi-geometry) composed of the given list of geometries.",
-				usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
-					@usage(value = "if the operand is composed of a single geometry, returns a copy of the geometry.") },
-				examples = { @example(value = "geometry_collection([{0,0}, {0,10}, {10,10}, {10,0}])",
-					equals = "a geometry composed of the 4 points (multi-point).",
-					test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
-					"square", "triangle", "line" })
-			public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
-				if ( geometries == null || geometries.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-				final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE);
-				final int size = shapes.length(scope);
-				final IShape first = shapes.firstValue(scope);
-				if ( size == 1 ) { return first.copy(scope); }
-				
-				return GamaGeometryType.buildMultiGeometry(shapes);
-			}
+			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "A geometry collection (multi-geometry) composed of the given list of geometries.",
+			usages = { @usage(value = "if the operand is nil, returns the point geometry {0,0}"),
+				@usage(value = "if the operand is composed of a single geometry, returns a copy of the geometry.") },
+			examples = { @example(value = "geometry_collection([{0,0}, {0,10}, {10,10}, {10,0}])",
+				equals = "a geometry composed of the 4 points (multi-point).",
+				test = false) }, see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle",
+				"square", "triangle", "line" })
+		public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
+			if ( geometries == null || geometries.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
+			final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE, false);
+			final int size = shapes.length(scope);
+			final IShape first = shapes.firstValue(scope);
+			if ( size == 1 ) { return first.copy(scope); }
+
+			return GamaGeometryType.buildMultiGeometry(shapes);
+		}
 
 		@operator(value = { "line", "polyline" },
 			expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -647,7 +647,7 @@ public abstract class Spatial {
 				"rectangle", "square", "triangle" })
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points, final double radius) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE);
+			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -667,7 +667,7 @@ public abstract class Spatial {
 				"square", "triangle" })
 		public static IShape plan(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if ( points == null || points.isEmpty(scope) ) { return new GamaShape(new GamaPoint(0, 0)); }
-			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE);
+			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
@@ -702,7 +702,7 @@ public abstract class Spatial {
 		public static
 			IShape around(final IScope scope, final Double width, final Object toBeCastedIntoGeometry)
 				throws GamaRuntimeException {
-			final IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry);
+			final IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry, false);
 			if ( g == null ) { return circle(scope, width); }
 			return Operators.minus(scope, Transformations.enlarged_by(scope, g, width), g);
 		}
@@ -820,7 +820,7 @@ public abstract class Spatial {
 		public static
 			IShape union(final IScope scope, final IContainer<?, IShape> elements) {
 			try {
-				return Cast.asGeometry(scope, elements);
+				return Cast.asGeometry(scope, elements, false);
 			} catch (final GamaRuntimeException e) {
 				return null;
 			}
@@ -887,26 +887,26 @@ public abstract class Spatial {
 			final Coordinate point = (Coordinate) p;
 			final Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;
-			if ( geometry instanceof Point  ) {
+			if ( geometry instanceof Point ) {
 				Coordinate[] coord = new Coordinate[2];
 				coord[0] = geometry.getCoordinate();
 				coord[1] = point;
 				geom_Tmp = GeometryUtils.FACTORY.createLineString(coord);
-			} else if (geometry instanceof MultiPoint) {
+			} else if ( geometry instanceof MultiPoint ) {
 				Coordinate[] coordinates = new Coordinate[geometry.getNumPoints() + 1];
-				coordinates[coordinates.length-1] = p.toCoordinate();
+				coordinates[coordinates.length - 1] = p.toCoordinate();
 				geom_Tmp = GeometryUtils.FACTORY.createMultiPoint(coordinates);
-			}else if ( geometry instanceof LineString  ) {
+			} else if ( geometry instanceof LineString ) {
 				geom_Tmp = createLineStringWithPoint(geometry, point);
-			}else if (geometry instanceof MultiLineString) {
+			} else if ( geometry instanceof MultiLineString ) {
 				Geometry closestGeom = null;
 				double distMin = Double.MAX_VALUE;
 				int id = -1;
 				Point pt = GeometryUtils.FACTORY.createPoint(point);
-				for (int i = 0 ; i < geometry.getNumGeometries(); i++ ) {
-					Geometry geom =  geometry.getGeometryN(i);
+				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
+					Geometry geom = geometry.getGeometryN(i);
 					double dist = geom.distance(pt);
-					if (dist < distMin) {
+					if ( dist < distMin ) {
 						distMin = dist;
 						closestGeom = geom;
 						id = i;
@@ -914,22 +914,24 @@ public abstract class Spatial {
 				}
 				LineString[] lineStrings = new LineString[geometry.getNumGeometries()];
 				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
-					if (i != id)
+					if ( i != id ) {
 						lineStrings[i] = (LineString) geometry.getGeometryN(i);
-					else lineStrings[i] = (LineString) createLineStringWithPoint(closestGeom, point);
-				} 
+					} else {
+						lineStrings[i] = (LineString) createLineStringWithPoint(closestGeom, point);
+					}
+				}
 				geom_Tmp = GeometryUtils.FACTORY.createMultiLineString(lineStrings);
-			} else if ( geometry instanceof Polygon)  {
+			} else if ( geometry instanceof Polygon ) {
 				geom_Tmp = createPolygonWithPoint(geometry, point);
-			} else if  (geometry instanceof MultiPolygon) {
+			} else if ( geometry instanceof MultiPolygon ) {
 				Geometry closestGeom = null;
 				double distMin = Double.MAX_VALUE;
 				int id = -1;
 				Point pt = GeometryUtils.FACTORY.createPoint(point);
-				for (int i = 0 ; i < geometry.getNumGeometries(); i++ ) {
-					Geometry geom =  geometry.getGeometryN(i);
+				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
+					Geometry geom = geometry.getGeometryN(i);
 					double dist = geom.distance(pt);
-					if (dist < distMin) {
+					if ( dist < distMin ) {
 						distMin = dist;
 						closestGeom = geom;
 						id = i;
@@ -937,72 +939,70 @@ public abstract class Spatial {
 				}
 				Polygon[] polygons = new Polygon[geometry.getNumGeometries()];
 				for ( int i = 0; i < geometry.getNumGeometries(); i++ ) {
-					if (i != id)
+					if ( i != id ) {
 						polygons[i] = (Polygon) geometry.getGeometryN(i);
-					else polygons[i] = (Polygon) createPolygonWithPoint(closestGeom, point);
-				} 
+					} else {
+						polygons[i] = (Polygon) createPolygonWithPoint(closestGeom, point);
+					}
+				}
 				geom_Tmp = GeometryUtils.FACTORY.createMultiPolygon(polygons);
 			}
-			if ( geom_Tmp != null ) { 
-				return new GamaShape(g, geom_Tmp);
+			if ( geom_Tmp != null ) { return new GamaShape(g, geom_Tmp);
 
 			}
 			return g;
 		}
-		
-		private static Geometry createPolygonWithPoint(Geometry geometry, Coordinate point) {
-			int index = indexClosestSegment(((Polygon)geometry).getExteriorRing(), point);
-			if (index == -1) {
-				return null;
-			}
+
+		private static Geometry createPolygonWithPoint(final Geometry geometry, final Coordinate point) {
+			int index = indexClosestSegment(((Polygon) geometry).getExteriorRing(), point);
+			if ( index == -1 ) { return null; }
 			Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
 			for ( int i = 0; i < index + 1; i++ ) {
 				coord[i] = geometry.getCoordinates()[i];
 			}
 			coord[index + 1] = point;
-			for ( int i = index + 2; i <coord.length; i++ ) {
-				coord[i] = geometry.getCoordinates()[i-1];
+			for ( int i = index + 2; i < coord.length; i++ ) {
+				coord[i] = geometry.getCoordinates()[i - 1];
 			}
 			LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
-			for (int i = 0; i < lrs.length; i++) {
+			for ( int i = 0; i < lrs.length; i++ ) {
 				lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
 			}
 			return GeometryUtils.FACTORY.createPolygon(GeometryUtils.FACTORY.createLinearRing(coord), lrs);
 		}
-		private static Geometry createLineStringWithPoint(Geometry geometry, Coordinate point) {
+
+		private static Geometry createLineStringWithPoint(final Geometry geometry, final Coordinate point) {
 			int index = indexClosestSegment(geometry, point);
-			if (index == -1) {
-				return null;
-			}
+			if ( index == -1 ) { return null; }
 			Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
 			for ( int i = 0; i < index + 1; i++ ) {
 				coord[i] = geometry.getCoordinates()[i];
 			}
 			coord[index + 1] = point;
-			for ( int i = index + 2; i <coord.length; i++ ) {
-				coord[i] = geometry.getCoordinates()[i-1];
+			for ( int i = index + 2; i < coord.length; i++ ) {
+				coord[i] = geometry.getCoordinates()[i - 1];
 			}
 			return GeometryUtils.FACTORY.createLineString(coord);
 		}
-		
-		private static int indexClosestSegment(Geometry geom, Coordinate coord) {
+
+		private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
 			int index = -1;
 			Point pt = GeometryUtils.FACTORY.createPoint(coord);
 			double distMin = Double.MAX_VALUE;
-			for (int i = 0; i < geom.getCoordinates().length - 1; i++) {
+			for ( int i = 0; i < geom.getCoordinates().length - 1; i++ ) {
 				Coordinate cc = geom.getCoordinates()[i];
-				if (cc.equals(coord)) return -1;
+				if ( cc.equals(coord) ) { return -1; }
 				Coordinate[] coordinates = new Coordinate[2];
 				coordinates[0] = cc;
-				coordinates[1] = geom.getCoordinates()[i+1];
+				coordinates[1] = geom.getCoordinates()[i + 1];
 				Geometry geom_Tmp = GeometryUtils.FACTORY.createLineString(coordinates);
 				double dist = geom_Tmp.distance(pt);
-				if (dist < distMin) {
+				if ( dist < distMin ) {
 					distMin = dist;
 					index = i;
 				}
 			}
-			if (geom.getCoordinates()[geom.getCoordinates().length-1].equals(coord)) return -1;
+			if ( geom.getCoordinates()[geom.getCoordinates().length - 1].equals(coord) ) { return -1; }
 			return index;
 		}
 
@@ -1027,7 +1027,7 @@ public abstract class Spatial {
 						.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
 						.getEnvelope();
 
-				final IList<Geometry> geoms = new GamaList<Geometry>();
+				final List<Geometry> geoms = new ArrayList<Geometry>();
 				Coordinate prec = new Coordinate(location.getX() + percep_dist, location.getY());
 				for ( int k = 1; k <= precision; k++ ) {
 					final double angle = k / precision * 2 * Math.PI;
@@ -1049,7 +1049,7 @@ public abstract class Spatial {
 						.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null)));
 					prec = next;
 				}
-				final IList<Geometry> geomsVisible = new GamaList<Geometry>();
+				final List<Geometry> geomsVisible = new ArrayList<Geometry>();
 				final Geometry geomObsts[] = new Geometry[obstacles.length(scope)];
 				int i = 0;
 				for ( final IShape shape : obstacles.iterable(scope) ) {
@@ -1058,7 +1058,7 @@ public abstract class Spatial {
 
 				final Geometry obstaclesGeom = GeometryUtils.FACTORY.createGeometryCollection(geomObsts);
 				obstaclesGeom.union();
-				for ( final Geometry geom : geoms.iterable(scope) ) {
+				for ( final Geometry geom : geoms ) {
 					if ( !obstaclesGeom.intersects(geom) ) {
 						geomsVisible.add(geom);
 					} else {
@@ -1109,8 +1109,8 @@ public abstract class Spatial {
 			examples = { @example(value = "polyline([{1,2},{4,6}]) split_at {7,6}",
 				equals = "[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
 		public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
-			final IList<IShape> lines = new GamaList<IShape>();
-			GamaList<Geometry> geoms = null;
+			final IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
+			List<Geometry> geoms = null;
 			if ( geom.getInnerGeometry() instanceof LineString ) {
 				final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
 				final Point pt1 = GeometryUtils.FACTORY.createPoint(new GamaPoint(pt.getLocation()));
@@ -1143,7 +1143,7 @@ public abstract class Spatial {
 					coords2[k] = coords[i];
 					k++;
 				}
-				final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+				final List<Geometry> geoms1 = new ArrayList<Geometry>();
 				geoms1.add(GeometryUtils.FACTORY.createLineString(coords1));
 				geoms1.add(GeometryUtils.FACTORY.createLineString(coords2));
 				geoms = geoms1;
@@ -1191,7 +1191,7 @@ public abstract class Spatial {
 					coords2[k] = coords[i];
 					k++;
 				}
-				final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+				final List<Geometry> geoms1 = new ArrayList<Geometry>();
 				geoms1.add(GeometryUtils.FACTORY.createLineString(coords1));
 				geoms1.add(GeometryUtils.FACTORY.createLineString(coords2));
 				geoms = geoms1;
@@ -1466,7 +1466,8 @@ public abstract class Spatial {
 		public static
 			IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension,
 				final boolean overlaps) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension, dimension, overlaps);
 		}
 
@@ -1479,7 +1480,8 @@ public abstract class Spatial {
 		public static
 			IList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
 				final boolean overlaps) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			return GeometryUtils.discretisation(geom.getInnerGeometry(), dimension.x, dimension.y, overlaps);
 		}
 
@@ -1492,7 +1494,8 @@ public abstract class Spatial {
 		public static
 			IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols, final int nbRows,
 				final boolean overlaps) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			double x_size = geom.getEnvelope().getWidth() / nbCols;
 			double y_size = geom.getEnvelope().getHeight() / nbRows;
 
@@ -1507,7 +1510,8 @@ public abstract class Spatial {
 				test = false) })
 		public static
 			IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			return GeometryUtils.geometryDecomposition(geom, dimension, dimension);
 		}
 
@@ -1519,7 +1523,8 @@ public abstract class Spatial {
 				test = false) })
 		public static
 			IList<IShape> toRectangle(final IScope scope, final IShape geom, final GamaPoint dimension) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			return GeometryUtils.geometryDecomposition(geom, dimension.x, dimension.y);
 		}
 
@@ -1531,7 +1536,8 @@ public abstract class Spatial {
 				test = false) })
 		public static
 			IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols, final int nbRows) {
-			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return new GamaList<IShape>(); }
+			if ( geom == null || geom.getInnerGeometry().getArea() <= 0 ) { return GamaListFactory
+				.create(Types.GEOMETRY); }
 			double x_size = geom.getEnvelope().getWidth() / nbCols;
 			double y_size = geom.getEnvelope().getHeight() / nbRows;
 
@@ -1582,7 +1588,7 @@ public abstract class Spatial {
 		public static
 			IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
-			if ( geoms.isEmpty(scope) ) { return new GamaList<IShape>(); }
+			if ( geoms.isEmpty(scope) ) { return GamaListFactory.create(Types.GEOMETRY); }
 			Geometry nodedLineStrings = geoms.firstValue(scope).getInnerGeometry();
 
 			for ( final Object obj : geoms.iterable(scope) ) {
@@ -1591,7 +1597,7 @@ public abstract class Spatial {
 					nodedLineStrings = nodedLineStrings.union(g);
 				}
 			}
-			final IList<IShape> nwGeoms = new GamaList<IShape>();
+			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
 
 			for ( int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++ ) {
 				final Geometry g = nodedLineStrings.getGeometryN(i);
@@ -1611,7 +1617,7 @@ public abstract class Spatial {
 		public static
 			IList<IShape> skeletonize(final IScope scope, final IShape g) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
-			final IList<IShape> geoms = new GamaList();
+			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for ( final LineString ls : netw ) {
 				geoms.add(new GamaShape(ls));
 			}
@@ -1736,12 +1742,13 @@ public abstract class Spatial {
 			if ( nodes.isEmpty(scope) ) { return null; }
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
-			if ( n == 1 ) { return PathFactory.newInstance(scope.getTopology(), source, source, new GamaList<IShape>());
+			if ( n == 1 ) { return PathFactory.newInstance(scope.getTopology(), source, source,
+				GamaListFactory.<IShape> create(Types.GEOMETRY));
 			// return new GamaPath(scope.getTopology(), source, source, new GamaList());
 			}
 			final IShape target = nodes.lastValue(scope);
 			if ( n == 2 ) { return graph.pathBetween(scope, source, target); }
-			final IList<IShape> edges = new GamaList<IShape>();
+			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 			IShape previous = null;
 			for ( final IShape gg : nodes.iterable(scope) ) {
 				if ( previous != null ) {
@@ -2016,8 +2023,8 @@ public abstract class Spatial {
 			examples = { @example(value = " square(5) points_on(2)",
 				equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
 				test = false) }, see = { "closest_points_with", "farthest_point_to", "points_at" })
-		public static GamaList points_on(final IShape geom, final Double distance) {
-			final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+		public static IList points_on(final IShape geom, final Double distance) {
+			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
 				for ( int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++ ) {
 					locs.addAll(GeometryUtils.locsOnGeometry(geom.getInnerGeometry().getGeometryN(i), distance));
@@ -2041,7 +2048,7 @@ public abstract class Spatial {
 				// scope.setStatus(ExecutionStatus.failure);
 				throw GamaRuntimeException.error("Impossible to compute points_at");
 			}
-			final GamaList<ILocation> locations = new GamaList();
+			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
 			final ILocation loc = scope.getAgentScope().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
 
@@ -2065,7 +2072,7 @@ public abstract class Spatial {
 		public static
 			IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			final Coordinate[] coors = DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
-			return GamaList.with(new GamaPoint(coors[0]), new GamaPoint(coors[1]));
+			return GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
 
 		@operator(value = "farthest_point_to", category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
@@ -2160,7 +2167,7 @@ public abstract class Spatial {
 					test = false) }))
 		public static
 			IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
-			if ( pair == null ) { return GamaList.EMPTY_LIST; }
+			if ( pair == null ) { return GamaListFactory.EMPTY_LIST; }
 			return _neighbours(scope, Different.with(), pair.key, pair.value);
 			// TODO We could compute a filter based on the population if it is an agent
 		}
@@ -2291,8 +2298,8 @@ public abstract class Spatial {
 			return _gather(scope, Different.with(), source, false);
 		}
 
-		@operator(value = "agents_at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-			IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
+		@operator(value = "agents_at_distance", content_type = IType.AGENT, category = { IOperatorCategory.SPATIAL,
+			IOperatorCategory.SP_QUERIES })
 		@doc(value = "A list of agents situated at a distance lower than the right argument.",
 			comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'",
 			examples = { @example(value = "agents_at_distance(20)",
@@ -2307,20 +2314,29 @@ public abstract class Spatial {
 
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
 			final boolean inside) {
-			if ( filter == null || source == null ) { return GamaList.EMPTY_LIST; }
-			return new GamaList(scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source), filter, inside));
+			if ( filter == null || source == null ) { return GamaListFactory.EMPTY_LIST; }
+			IType type =
+				filter.getSpecies() == null ? Types.AGENT : scope.getModelContext().getTypeNamed(
+					filter.getSpecies().getName());
+			return GamaListFactory.createWithoutCasting(type,
+				scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
 		}
 
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
 			if ( filter == null || source == null ) { return null; }
-			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source), filter);
+			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
 		}
 
 		private static IList<IAgent> _neighbours(final IScope scope, final IAgentFilter filter, final Object source,
 			final Object distance) {
-			if ( filter == null || source == null ) { return GamaList.EMPTY_LIST; }
-			return new GamaList(scope.getTopology().getNeighboursOf(scope, Cast.asGeometry(scope, source),
-				Cast.asFloat(scope, distance), filter));
+			if ( filter == null || source == null ) { return GamaListFactory.EMPTY_LIST; }
+			IType type =
+				filter.getSpecies() == null ? Types.AGENT : scope.getModelContext().getTypeNamed(
+					filter.getSpecies().getName());
+			return GamaListFactory.createWithoutCasting(
+				type,
+				scope.getTopology().getNeighboursOf(scope, Cast.asGeometry(scope, source, false),
+					Cast.asFloat(scope, distance), filter));
 		}
 
 	}
@@ -2336,7 +2352,8 @@ public abstract class Spatial {
 				isExecutable = false) }, see = { "hierarchical_clustering" })
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
 			final IContainer<?, IAgent> agents, final Double distance) {
-			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
+			final IList<IList<IAgent>> groups =
+				GamaListFactory.create(Types.LIST.of(agents.getType().getContentType()));
 			IAgentFilter filter = In.list(scope, agents);
 			if ( filter == null ) { return groups; }
 			Set<IAgent> clusteredCells = new THashSet<IAgent>();
@@ -2350,9 +2367,9 @@ public abstract class Spatial {
 
 		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, final IAgentFilter filter,
 			final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
-			GamaList<IAgent> group = new GamaList<IAgent>();
+			IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			List<IAgent> ags =
-				new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
+				new ArrayList<IAgent>(currentAg.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
 			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {
@@ -2374,7 +2391,7 @@ public abstract class Spatial {
 			IList
 			hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents, final Double distance) {
 			final int nb = agents.length(scope);
-			final IList<IList> groups = new GamaList<IList>();
+			final IList<IList> groups = GamaListFactory.create(Types.LIST.of(Types.LIST));
 
 			if ( nb == 0 ) {
 				// scope.setStatus(ExecutionStatus.failure);
@@ -2386,7 +2403,7 @@ public abstract class Spatial {
 
 			final Map<Set<IList>, Double> distances = new HashMap<Set<IList>, Double>();
 			for ( final IAgent ag : agents.iterable(scope) ) {
-				final IList group = new GamaList<IAgent>();
+				final IList group = GamaListFactory.create(Types.AGENT);
 				group.add(ag);
 				groups.add(group);
 			}
@@ -2413,14 +2430,14 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				IList<IList> fusionL = new GamaList<IList>(minFusion);
+				IList<IList> fusionL = GamaListFactory.create(scope, Types.LIST.of(Types.LIST), minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
 				final IList<IAgent> g2 = fusionL.get(1);
 				distances.remove(minFusion);
 				fusionL = null;
 				groups.remove(g2);
 				groups.remove(g1);
-				IList groupeF = new GamaList();
+				IList groupeF = GamaListFactory.create(Types.LIST.of(Types.AGENT));
 				groupeF.add(g2);
 				groupeF.add(g1);
 
@@ -2526,7 +2543,7 @@ public abstract class Spatial {
 			if ( coords == null || coords.isEmpty(scope) ) { return null; }
 			if ( coords.length(scope) > g.getNumPoints() ) { throw GamaRuntimeException.warning(
 				"Trying to modify a point outside the bounds of the geometry", scope); }
-			final Double[] zs = (Double[]) coords.listValue(scope, Types.get(IType.FLOAT)).toArray(new Double[0]);
+			final Double[] zs = (Double[]) coords.listValue(scope, Types.FLOAT, false).toArray(new Double[0]);
 			g.apply(new CoordinateSequenceFilter() {
 
 				@Override
@@ -2611,7 +2628,7 @@ public abstract class Spatial {
 			see = {})
 		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
 
-			final IList<ILocation> points = new GamaList<ILocation>();
+			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
 			BufferedImage texture = null;
 			int rows, cols, x, y;
 

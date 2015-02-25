@@ -7,8 +7,8 @@ package msi.gaml.compilation;
 import java.io.InputStream;
 import java.util.List;
 import msi.gama.kernel.model.IModel;
-import msi.gaml.descriptions.ErrorCollector;
-import msi.gaml.descriptions.ModelDescription;
+import msi.gama.util.file.GAMLFile;
+import msi.gaml.descriptions.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 
@@ -53,7 +53,9 @@ public interface IModelBuilder {
 	IModel compile(URI uri, List<GamlCompilationError> errors);
 
 	IModel compile(InputStream contents, List<GamlCompilationError> errors);
-	
+
 	ModelDescription buildModelDescription(URI uri, List<GamlCompilationError> errors);
+
+	public abstract GAMLFile.GamlInfo getInfo(URI uri, long modificationStamp);
 
 }

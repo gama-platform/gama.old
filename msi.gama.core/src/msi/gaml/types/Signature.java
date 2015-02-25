@@ -143,4 +143,18 @@ public class Signature {
 	public int size() {
 		return list.length;
 	}
+
+	/**
+	 * @return
+	 */
+	public String asPattern(final boolean withVariables) {
+		StringBuilder sb = new StringBuilder();
+		for ( int i = 0; i < list.length; i++ ) {
+			sb.append(withVariables ? list[i].asPattern() : list[i].serialize(true));
+			if ( i < list.length - 1 ) {
+				sb.append(',');
+			}
+		}
+		return sb.toString();
+	}
 }

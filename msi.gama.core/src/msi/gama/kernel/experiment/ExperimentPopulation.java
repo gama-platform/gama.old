@@ -20,6 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 public class ExperimentPopulation extends GamaPopulation {
@@ -63,7 +64,7 @@ public class ExperimentPopulation extends GamaPopulation {
 
 	@Override
 	public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
-		return GamaList.with(/* agents. */get(0));
+		return GamaListFactory.create(scope, Types.AGENT,/* agents. */Arrays.asList(get(0)));
 	}
 
 	@Override

@@ -30,11 +30,13 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 public class GamaStringType extends GamaType<String> {
 
 	@Override
-	public String cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj);
+	public String cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, copy);
 	}
 
-	public static String staticCast(final IScope scope, final Object obj) throws GamaRuntimeException {
+	public static String staticCast(final IScope scope, final Object obj, final boolean copy)
+		throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
 		if ( obj instanceof IValue ) { return ((IValue) obj).stringValue(scope); }
 		return obj.toString();

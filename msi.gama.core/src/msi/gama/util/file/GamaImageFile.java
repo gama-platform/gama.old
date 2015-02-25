@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -30,6 +31,77 @@ import com.vividsolutions.jts.geom.Envelope;
 	buffer_content = IType.INT,
 	buffer_index = IType.POINT)
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
+
+	public static class ImageInfo extends GamaFileMetaData {
+
+		public final static TIntObjectHashMap<String> formatsShortNames = new TIntObjectHashMap() {
+
+			{
+				// Hack: Corresponds to SWT.IMAGE_xxx + ImagePropertyPage constants
+				put(0, "BMP");
+				put(1, "BMP");
+				put(7, "BMP");
+				put(2, "GIF");
+				put(4, "JPEG");
+				put(5, "PNG");
+				put(3, "ICO");
+				put(6, "TIFF");
+				put(-1, "Unknown Format");
+				put(8, "ASCII");
+				put(9, "PGM");
+			}
+		};
+
+		private Object thumbnail;
+		private final int type;
+		private final int width;
+		private final int height;
+
+		public ImageInfo(final long modificationStamp, final Object thumbnail, final int origType, final int origWidth,
+			final int origHeight) {
+			super(modificationStamp);
+			this.thumbnail = thumbnail;
+			this.type = origType;
+			this.width = origWidth;
+			this.height = origHeight;
+		}
+
+		public ImageInfo(final String propertyString) {
+			super(propertyString);
+			String[] segments = split(propertyString);
+			type = Integer.valueOf(segments[1]);
+			width = Integer.valueOf(segments[2]);
+			height = Integer.valueOf(segments[3]);
+			thumbnail = null;
+		}
+
+		public String getShortLabel(final int type) {
+			return formatsShortNames.contains(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
+		}
+
+		public void setThumbnail(final Object thumb) {
+			thumbnail = thumb;
+		}
+
+		@Override
+		public String getSuffix() {
+			return " (" + width + "x" + height + ", " + getShortLabel(type) + ")";
+		}
+
+		@Override
+		public Object getThumbnail() {
+			return thumbnail;
+		}
+
+		public int getType() {
+			return type;
+		}
+
+		@Override
+		public String toPropertyString() {
+			return super.toPropertyString() + DELIMITER + type + DELIMITER + width + DELIMITER + height;
+		}
+	}
 
 	@file(name = "pgm", extensions = { "pgm" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)
 	public static class GamaPgmFile extends GamaImageFile {
@@ -61,6 +133,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	}
 
 	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.POINT, Types.INT);
+	}
+
+	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
 		// Temporary workaround for pgm files, which can be read by ImageIO but produce wrong results. See Issue 880.
@@ -85,12 +162,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+		final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
 		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize).matrixValue(scope,
-			contentsType); }
-		return getBuffer().matrixValue(scope, contentsType);
+			contentsType, copy); }
+		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
 	private void loadImage(final IScope scope) {
@@ -157,7 +234,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			String str = in.readLine();
 			if ( !str.equals("P2") ) { throw new UnsupportedEncodingException("File is not in PGM ascii format"); }
 			str = in.readLine();
-			if ( str == null ) { return GamaMatrixType.with(scope, 0, preferredSize); }
+			if ( str == null ) { return GamaMatrixType.with(scope, 0, preferredSize, Types.INT); }
 			tok = new StringTokenizer(str);
 			final int xSize = Integer.valueOf(tok.nextToken());
 			final int ySize = Integer.valueOf(tok.nextToken());

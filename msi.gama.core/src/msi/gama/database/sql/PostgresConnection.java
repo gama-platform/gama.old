@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'PostgresConnection.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'PostgresConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
 
@@ -30,8 +30,8 @@ import com.vividsolutions.jts.io.*;
  * Created date: 19-Apr-2013
  * Modified:
  * 15-Jan-2014
- *   Fix null error of getInsertString method
- *   
+ * Fix null error of getInsertString method
+ * 
  * 
  * Last Modified: 15-Jan-2014
  */
@@ -101,11 +101,11 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
+	protected IList<IList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 
-		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+		IList<IList<Object>> repRequest = GamaListFactory.create(msi.gaml.types.Types.LIST);
 		try {
 			List<Integer> geoColumn = getGeometryColumns(rsmd);
 			int nbCol = rsmd.getColumnCount();
@@ -122,7 +122,7 @@ public class PostgresConnection extends SqlConnection {
 					GuiUtils.debug("processing at row:" + i);
 				}
 
-				GamaList<Object> rowList = new GamaList<Object>();
+				IList<Object> rowList = GamaListFactory.create();
 				for ( int j = 1; j <= nbCol; j++ ) {
 					// check column is geometry column?
 					if ( DEBUG ) {
@@ -185,10 +185,10 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
+	protected IList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
-		GamaList<Object> columnType = new GamaList<Object>();
+		IList<Object> columnType = GamaListFactory.create();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 			/*
 			 * for Geometry
@@ -212,7 +212,7 @@ public class PostgresConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> cols, final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -242,8 +242,8 @@ public class PostgresConnection extends SqlConnection {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			IList<Object> col_Names = getColumnName(rsmd);
+			IList<Object> col_Types = getColumnTypeName(rsmd);
 
 			if ( DEBUG ) {
 				GuiUtils.debug("list of column Name:" + col_Names);
@@ -255,10 +255,9 @@ public class PostgresConnection extends SqlConnection {
 			IProjection saveProj = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();
@@ -318,7 +317,7 @@ public class PostgresConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -338,8 +337,8 @@ public class PostgresConnection extends SqlConnection {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			IList<Object> col_Names = getColumnName(rsmd);
+			IList<Object> col_Types = getColumnTypeName(rsmd);
 			int col_no = col_Names.size();
 			// Check size of parameters
 			if ( values.size() != col_Names.size() ) { throw new IndexOutOfBoundsException(
@@ -355,10 +354,9 @@ public class PostgresConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();

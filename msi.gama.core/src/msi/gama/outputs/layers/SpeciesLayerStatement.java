@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.SpeciesLayerStatement.SpeciesLayerSerializer;
@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -102,7 +102,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public static class SpeciesLayerSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb) {
+		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
+			final boolean includingBuiltIn) {
 			sb.append("species ");
 		}
 
@@ -119,8 +120,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public SpeciesLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
-		microSpeciesLayers = new GamaList<SpeciesLayerStatement>();
-		gridLayers = new GamaList<GridLayerStatement>();
+		microSpeciesLayers = new ArrayList<SpeciesLayerStatement>();
+		gridLayers = new ArrayList<GridLayerStatement>();
 	}
 
 	@Override
@@ -166,7 +167,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public List<? extends IAgent> computeAgents(final IScope sim) {
-		return GamaList.EMPTY_LIST;
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -206,9 +207,9 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		final List<SpeciesLayerStatement> microL = new GamaList<SpeciesLayerStatement>();
-		final List<GridLayerStatement> gridL = new GamaList<GridLayerStatement>();
-		final List<IStatement> aspectStatements = new GamaList();
+		final List<SpeciesLayerStatement> microL = new ArrayList<SpeciesLayerStatement>();
+		final List<GridLayerStatement> gridL = new ArrayList<GridLayerStatement>();
+		final List<IStatement> aspectStatements = new ArrayList();
 
 		for ( final ISymbol c : commands ) {
 			if ( c instanceof SpeciesLayerStatement ) {
@@ -269,7 +270,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	 */
 	public List<AbstractLayerStatement> getSubLayers() {
 		if ( subLayers == null ) {
-			subLayers = new GamaList<AbstractLayerStatement>();
+			subLayers = new ArrayList<AbstractLayerStatement>();
 			subLayers.addAll(gridLayers);
 			subLayers.addAll(microSpeciesLayers);
 		}

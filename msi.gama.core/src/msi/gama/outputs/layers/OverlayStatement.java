@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'OverlayStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'OverlayStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ThreadedUpdater;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
@@ -33,14 +33,31 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.OVERLAY, kind = ISymbolKind.LAYER, with_sequence = false, unique_in_context = true)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.LEFT, type = IType.NONE, optional = true, doc = @doc("an expression that will be evaluated and displayed in the left section of the overlay")),
-	@facet(name = IKeyword.RIGHT, type = IType.NONE, optional = true, doc = @doc("an expression that will be evaluated and displayed in the right section of the overlay")),
-	@facet(name = IKeyword.CENTER, type = IType.NONE, optional = true, doc = @doc("an expression that will be evaluated and displayed in the center section of the overlay")),
-	@facet(name = IKeyword.COLOR, type = { IType.LIST, IType.COLOR }, optional = true, doc = @doc("the color(s) used to display the expressions given in other facets")) }, omissible = IKeyword.LEFT)
-@doc(value="`"+IKeyword.OVERLAY+"` allows the modeler to display a line to the already existing overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.", usages = {
-	@usage(value = "The general syntax is:", examples = {
-		@example(value="overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];", isExecutable=false)})}, 
-	see={IKeyword.DISPLAY,IKeyword.AGENTS,IKeyword.CHART,IKeyword.EVENT,"graphics",IKeyword.GRID_POPULATION,IKeyword.IMAGE,IKeyword.QUADTREE,IKeyword.POPULATION,IKeyword.TEXT})
+@facets(value = {
+	@facet(name = IKeyword.LEFT,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expression that will be evaluated and displayed in the left section of the overlay")),
+	@facet(name = IKeyword.RIGHT,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expression that will be evaluated and displayed in the right section of the overlay")),
+	@facet(name = IKeyword.CENTER,
+		type = IType.NONE,
+		optional = true,
+		doc = @doc("an expression that will be evaluated and displayed in the center section of the overlay")),
+	@facet(name = IKeyword.COLOR,
+		type = { IType.LIST, IType.COLOR },
+		optional = true,
+		doc = @doc("the color(s) used to display the expressions given in other facets")) }, omissible = IKeyword.LEFT)
+@doc(value = "`" +
+	IKeyword.OVERLAY +
+	"` allows the modeler to display a line to the already existing overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
+	usages = { @usage(value = "The general syntax is:",
+		examples = { @example(value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
+			isExecutable = false) }) },
+	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
+		IKeyword.IMAGE, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class OverlayStatement extends AbstractLayerStatement implements IOverlayProvider<OverlayInfo> {
 
 	final IExpression left, right, center;
@@ -82,7 +99,7 @@ public class OverlayStatement extends AbstractLayerStatement implements IOverlay
 		if ( color == null ) { return null; }
 		if ( color.getType().id() == IType.LIST ) {
 			IList list = Cast.asList(scope, color.value(scope));
-			List<int[]> result = new GamaList();
+			List<int[]> result = new ArrayList();
 			int i = 0;
 			for ( Object o : list ) {
 				int[] rgb = computeColor(scope, o);
@@ -94,7 +111,7 @@ public class OverlayStatement extends AbstractLayerStatement implements IOverlay
 			return result;
 		} else {
 			int[] rgb = computeColor(scope, color.value(scope));
-			return GamaList.with(rgb, rgb, rgb);
+			return Arrays.asList(rgb, rgb, rgb);
 		}
 	}
 

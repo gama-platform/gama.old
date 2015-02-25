@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -48,10 +49,14 @@ public class GamaPreferences {
 	static {
 
 		try {
-			storeKeys = new GamaList(store.keys());
+			storeKeys = Arrays.asList(store.keys());
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static <T> Entry<T> get(final String key, final Class<T> clazz) {
+		return prefs.get(key);
 	}
 
 	public static <T> Entry<T> create(final String key, final T value) {
@@ -68,22 +73,34 @@ public class GamaPreferences {
 		return e;
 	}
 
-	public static interface IPreferenceChange<T> {
+	public static interface IPreferenceChangeListener<T> {
 
 		/**
-		 * A change listener, that receives the valueChange() message before the preference is assigned a new value,
-		 * with this value in parameter. Returning true will enable the change, returning false will veto it. Only one
-		 * change listener can be registered for a preference.
+		 * A change listener, that receives the beforeValueChange() message before the preference is assigned a new value,
+		 * with this value in parameter. Returning true will enable the change, returning false will veto it.
 		 * @param newValue, the new value set to this preference
 		 * @return true or false, wheter or not the change is accepted by the listener.
 		 */
-		public boolean valueChange(T newValue);
+		public boolean beforeValueChange(T newValue);
+
+		/**
+		 * A change listener, that receives the afterValueChange() message after the preference is assigned a new value,
+		 * with this value in parameter, in order to perform anything needed for this change.
+		 * @param newValue, the new value set to this preference
+		 * @return true or false, wheter or not the change is accepted by the listener.
+		 */
+		public void afterValueChange(T newValue);
 	}
 
 	public static class GenericFile extends GamaFile {
 
 		public GenericFile(final String pathName) throws GamaRuntimeException {
 			super(null, pathName);
+		}
+
+		@Override
+		public IContainerType getType() {
+			return Types.FILE;
 		}
 
 		@Override
@@ -107,7 +124,7 @@ public class GamaPreferences {
 		List<T> values;
 		Number min, max;
 		String[] activates, deactivates;
-		IPreferenceChange<T> onChange;
+		Set<IPreferenceChangeListener<T>> listeners = new HashSet();
 
 		private Entry(final String key) {
 			tab = GENERAL;
@@ -120,7 +137,7 @@ public class GamaPreferences {
 		}
 
 		public Entry among(final T ... values) {
-			return among(new GamaList(values));
+			return among(Arrays.asList(values));
 		}
 
 		public Entry among(final List<T> values) {
@@ -151,8 +168,15 @@ public class GamaPreferences {
 		}
 
 		public Entry set(final T value) {
-			this.value = value;
+			if ( isValueChanged(value) && acceptChange(value) ) {
+				this.value = value;
+				afterChange(value);
+			}
 			return this;
+		}
+
+		private boolean isValueChanged(final T newValue) {
+			return value == null ? newValue != null : !value.equals(newValue);
 		}
 
 		public Entry typed(final int type) {
@@ -217,17 +241,21 @@ public class GamaPreferences {
 
 		@Override
 		public void setValue(final IScope scope, final Object value) {
-			this.value = (T) value;
+			set((T) value);
 		}
 
-		public Entry onChange(final IPreferenceChange<T> r) {
-			onChange = r;
+		public Entry addChangeListener(final IPreferenceChangeListener<T> r) {
+			listeners.add(r);
 			return this;
 		}
 
+		public void removeChangeListener(final IPreferenceChangeListener<T> r) {
+			listeners.remove(r);
+		}
+
 		@Override
-		public Object value(final IScope scope) throws GamaRuntimeException {
-			return value;
+		public T value(final IScope scope) throws GamaRuntimeException {
+			return getValue();
 		}
 
 		// @Override
@@ -236,8 +264,8 @@ public class GamaPreferences {
 		// }
 
 		@Override
-		public String toGaml() {
-			return Cast.toGaml(value);
+		public String serialize(final boolean includingBuiltIn) {
+			return StringUtils.toGaml(value, includingBuiltIn);
 		}
 
 		@Override
@@ -279,12 +307,20 @@ public class GamaPreferences {
 		}
 
 		/**
-		 * If the value is modified in the view, this method is called. Should return true to accept the change, false
+		 * If the value is modified, this method is called. Should return true to accept the change, false
 		 * otherwise
 		 */
 		public boolean acceptChange(final T newValue) {
-			if ( onChange != null ) { return onChange.valueChange(newValue); }
+			for ( IPreferenceChangeListener<T> listener : listeners ) {
+				if ( !listener.beforeValueChange(newValue) ) { return false; }
+			}
 			return true;
+		}
+
+		protected void afterChange(final T newValue) {
+			for ( IPreferenceChangeListener<T> listener : listeners ) {
+				listener.afterValueChange(newValue);
+			}
 		}
 
 		public String[] getActivable() {
@@ -417,17 +453,28 @@ public class GamaPreferences {
 		"Automatically switch to modeling perspective when editing a model", false, IType.BOOL).in(EDITOR).group(
 		"Options");
 
+	/**
+	 * Validation
+	 */
+	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
+		.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
+		.in(GamaPreferences.CODE).group("Validation");
+
+	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED = GamaPreferences
+		.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
+		.in(GamaPreferences.CODE).group("Validation");
+
 	// LIBRARIES PAGE
 	/**
 	 * Spatialite
 	 */
-	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite",
+	public static final Entry<IGamaFile> LIB_SPATIALITE = create("core.lib_spatialite",
 		"Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
 		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * R
 	 */
-	public static final Entry<String> LIB_R = create("core.lib_r",
+	public static final Entry<IGamaFile> LIB_R = create("core.lib_r",
 		"Path to the RScript (see http://www.r-project.org) library", new GenericFile(getDefaultRPath()), IType.FILE)
 		.in(LIBRARIES).group("Paths");
 	/**
@@ -440,14 +487,17 @@ public class GamaPreferences {
 	public static final Entry<Integer> LIB_TARGET_CRS = create("core.lib_target_crs",
 		"...or use the following CRS (EPSG code)", 32648, IType.INT).in(LIBRARIES)
 		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.onChange(new IPreferenceChange<Integer>() {
+		.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
-			public boolean valueChange(final Integer newValue) {
+			public boolean beforeValueChange(final Integer newValue) {
 				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 				if ( codes.isEmpty() ) { return false; }
 				return true;
 			}
+
+			@Override
+			public void afterValueChange(final Integer newValue) {}
 		});
 	public static final Entry<Boolean> LIB_PROJECTED =
 		create("core.lib_projected",
@@ -457,14 +507,17 @@ public class GamaPreferences {
 	public static final Entry<Integer> LIB_INITIAL_CRS = create("core.lib_initial_crs",
 		"...or use the following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
 		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.onChange(new IPreferenceChange<Integer>() {
+		.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
-			public boolean valueChange(final Integer newValue) {
+			public boolean beforeValueChange(final Integer newValue) {
 				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 				if ( codes.isEmpty() ) { return false; }
 				return true;
 			}
+
+			@Override
+			public void afterValueChange(final Integer newValue) {}
 		});
 	public static final Entry<Boolean> LIB_USE_DEFAULT = create("core.lib_use_default",
 		"When no CRS is provided, save the GIS data with the current CRS", true, IType.BOOL)
@@ -473,14 +526,17 @@ public class GamaPreferences {
 	public static final Entry<Integer> LIB_OUTPUT_CRS = create("core.lib_output_crs",
 		"... or use this following CRS (EPSG code)", 4326, IType.INT).in(LIBRARIES)
 		.group("GIS Coordinate Reference Systems (see http://spatialreference.org/ref/epsg/ for EPSG codes)")
-		.onChange(new IPreferenceChange<Integer>() {
+		.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
-			public boolean valueChange(final Integer newValue) {
+			public boolean beforeValueChange(final Integer newValue) {
 				Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 				if ( codes.isEmpty() ) { return false; }
 				return true;
 			}
+
+			@Override
+			public void afterValueChange(final Integer newValue) {}
 		});
 
 	private static String getDefaultRPath() {
@@ -505,29 +561,29 @@ public class GamaPreferences {
 		switch (gp.type.id()) {
 			case IType.INT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getInt(key, Cast.as(value, Integer.class)));
+					gp.setValue(scope, store.getInt(key, Cast.as(value, Integer.class, false)));
 				} else {
-					store.putInt(key, Cast.as(value, Integer.class));
+					store.putInt(key, Cast.as(value, Integer.class, false));
 				}
 				break;
 			case IType.FLOAT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getDouble(key, Cast.as(value, Double.class)));
+					gp.setValue(scope, store.getDouble(key, Cast.as(value, Double.class, false)));
 				} else {
-					store.putDouble(key, Cast.as(value, Double.class));
+					store.putDouble(key, Cast.as(value, Double.class, false));
 				}
 				break;
 			case IType.BOOL:
 				value = Cast.asBool(scope, value);
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getBoolean(key, Cast.as(value, Boolean.class)));
+					gp.setValue(scope, store.getBoolean(key, Cast.as(value, Boolean.class, false)));
 				} else {
-					store.putBoolean(key, Cast.as(value, Boolean.class));
+					store.putBoolean(key, Cast.as(value, Boolean.class, false));
 				}
 				break;
 			case IType.STRING:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.get(key, Cast.as(value, String.class)));
+					gp.setValue(scope, store.get(key, Cast.as(value, String.class, false)));
 				} else {
 					store.put(key, (String) value);
 				}
@@ -542,16 +598,16 @@ public class GamaPreferences {
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class))));
+					gp.setValue(scope, GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class, false))));
 				} else {
-					store.putInt(key, Cast.as(value, Integer.class));
+					store.putInt(key, Cast.as(value, Integer.class, false));
 				}
 				break;
 			default:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.get(key, Cast.as(value, String.class)));
+					gp.setValue(scope, store.get(key, Cast.as(value, String.class, false)));
 				} else {
-					store.put(key, Cast.as(value, String.class));
+					store.put(key, Cast.as(value, String.class, false));
 				}
 		}
 		if ( scope != null ) {

@@ -45,10 +45,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	protected void computeType() {
-		type = computeType(prototype.typeProvider, type, _type);
+		type = computeType(prototype.typeProvider, type, GamaType.TYPE);
 		if ( type.isContainer() ) {
-			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(), _content);
-			IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), _key);
+			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(), GamaType.CONTENT);
+			IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), GamaType.KEY);
 			type = GamaType.from(type, keyType, contentType);
 		}
 	}
@@ -58,7 +58,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			case NONE:
 				return def;
 			case BOTH:
-				return findCommonType(exprs, kind);
+				return GamaType.findCommonType(exprs, kind);
 			case FIRST_TYPE:
 				return exprs[0].getType();
 			case FIRST_CONTENT_TYPE_OR_TYPE:
@@ -108,7 +108,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public String getName() {
-		return prototype.name;
+		return prototype.getName();
 	}
 
 	@Override
@@ -124,11 +124,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		String result = literalValue() + "(";
 		if ( exprs != null ) {
 			for ( int i = 0; i < exprs.length; i++ ) {
-				String l = exprs[i] == null ? "nil" : exprs[i].toGaml();
+				String l = exprs[i] == null ? "nil" : exprs[i].serialize(includingBuiltIn);
 				result += l + (i != exprs.length - 1 ? "," : "");
 			}
 		}

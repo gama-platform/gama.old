@@ -13,12 +13,12 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -34,17 +34,31 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 14 nov. 07
  */
-@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE },
+	kind = ISymbolKind.SEQUENCE_STATEMENT,
+	with_sequence = true)
 @inside(symbols = IKeyword.SWITCH)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = true) }, omissible = IKeyword.VALUE)
-@doc(value="In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used", usages = {	
-	@usage(value= IKeyword.MATCH + " block is executed if the switch value is equals to the value of the match:",examples ={
-		@example(value="switch 3 {",test=false), @example(value="   match 1 {write \"Match 1\"; }",test=false), @example(value="   match 3 {write \"Match 2\"; }",test=false), @example(value="}",test=false)}),
-	@usage(value= IKeyword.MATCH_BETWEEN + " block is executed if the switch value is in the interval given in value of the "+IKeyword.MATCH_BETWEEN+":",examples ={
-		@example(value="switch 3 {",test=false), @example(value="   match_between [1,2] {write \"Match OK between [1,2]\"; }",test=false), @example(value="   match_between [2,5] {write \"Match OK between [2,5]\"; }",test=false), @example(value="}",test=false)}),
-	@usage(value= IKeyword.MATCH_ONE + " block is executed if the switch value is equals to one of the values of the "+IKeyword.MATCH_ONE+":",examples ={
-		@example(value="switch 3 {",test=false), @example(value="   match_one [0,1,2] {write \"Match OK with one of [0,1,2]\"; }",test=false), @example(value="   match_between [2,3,4,5] {write \"Match OK with one of [2,3,4,5]\"; }",test=false), @example(value="}",test=false)})},			
-	see={IKeyword.SWITCH,IKeyword.DEFAULT})
+@doc(value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used",
+	usages = {
+		@usage(value = IKeyword.MATCH + " block is executed if the switch value is equals to the value of the match:",
+			examples = { @example(value = "switch 3 {", test = false),
+				@example(value = "   match 1 {write \"Match 1\"; }", test = false),
+				@example(value = "   match 3 {write \"Match 2\"; }", test = false), @example(value = "}", test = false) }),
+		@usage(value = IKeyword.MATCH_BETWEEN +
+			" block is executed if the switch value is in the interval given in value of the " +
+			IKeyword.MATCH_BETWEEN + ":", examples = { @example(value = "switch 3 {", test = false),
+			@example(value = "   match_between [1,2] {write \"Match OK between [1,2]\"; }", test = false),
+			@example(value = "   match_between [2,5] {write \"Match OK between [2,5]\"; }", test = false),
+			@example(value = "}", test = false) }),
+		@usage(value = IKeyword.MATCH_ONE +
+			" block is executed if the switch value is equals to one of the values of the " + IKeyword.MATCH_ONE + ":",
+			examples = {
+				@example(value = "switch 3 {", test = false),
+				@example(value = "   match_one [0,1,2] {write \"Match OK with one of [0,1,2]\"; }", test = false),
+				@example(value = "   match_between [2,3,4,5] {write \"Match OK with one of [2,3,4,5]\"; }",
+					test = false), @example(value = "}", test = false) }) },
+	see = { IKeyword.SWITCH, IKeyword.DEFAULT })
 public class MatchStatement extends AbstractStatementSequence {
 
 	final IExpression value;
@@ -55,7 +69,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		String keyword = desc.getKeyword();
-		setName(keyword + " " + (value == null ? "" : value.toGaml()));
+		setName(keyword + " " + (value == null ? "" : value.serialize(false)));
 		executer =
 			keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE) ? new MatchOne()
 				: keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween() : null;
@@ -75,7 +89,7 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		void acceptValue() {
 			if ( value.isConst() ) {
-				constantValue = Cast.as(value, Object.class);
+				constantValue = Cast.as(value, Object.class, false);
 			}
 		}
 
@@ -109,7 +123,7 @@ public class MatchStatement extends AbstractStatementSequence {
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof IContainer) ) {
 					if ( !(constantValue instanceof ILocation) ) {
-						constantValue = Cast.as(constantValue, IList.class);
+						constantValue = Cast.as(constantValue, IList.class, false);
 					}
 				}
 			}
@@ -140,7 +154,7 @@ public class MatchStatement extends AbstractStatementSequence {
 			super.acceptValue();
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof ILocation) ) {
-					constantValue = Cast.as(constantValue, ILocation.class);
+					constantValue = Cast.as(constantValue, ILocation.class, false);
 				}
 			}
 

@@ -25,7 +25,7 @@ public class TextLayer extends AbstractLayer {
 
 	public TextLayer(final ILayerStatement layer) {
 		super(layer);
-		setName(((TextLayerStatement) layer).getTextExpr().toGaml());
+		setName(((TextLayerStatement) layer).getTextExpr().serialize(false));
 	}
 
 	@Override

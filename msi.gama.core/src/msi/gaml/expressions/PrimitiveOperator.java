@@ -110,8 +110,8 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 						sb.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
 							.append(desc.getType());
 						if ( desc.getFacets().containsKey(IKeyword.DEFAULT) ) {
-							sb.append(" <i>(default: ").append(desc.getFacets().getExpr(IKeyword.DEFAULT).toGaml())
-								.append(")</i>");
+							sb.append(" <i>(default: ")
+								.append(desc.getFacets().getExpr(IKeyword.DEFAULT).serialize(false)).append(")</i>");
 						}
 						sb.append("</li>").append(Strings.LN);
 
@@ -129,24 +129,24 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		StringBuilder sb = new StringBuilder();
 		parenthesize(sb, exprs[0]);
 		sb.append(".").append(literalValue()).append("(");
-		argsToGaml(sb);
+		argsToGaml(sb, includingBuiltIn);
 		sb.append(")");
 		return sb.toString();
 	}
 
-	protected String argsToGaml(final StringBuilder sb) {
+	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
 		if ( parameters == null || parameters.isEmpty() ) { return ""; }
 		for ( Map.Entry<String, IExpressionDescription> entry : parameters.entrySet() ) {
 			String name = entry.getKey();
 			IExpressionDescription expr = entry.getValue();
 			if ( Strings.isGamaNumber(name) ) {
-				sb.append(expr.toGaml());
+				sb.append(expr.serialize(false));
 			} else {
-				sb.append(name).append(":").append(expr.toGaml());
+				sb.append(name).append(":").append(expr.serialize(includingBuiltIn));
 			}
 			sb.append(", ");
 		}

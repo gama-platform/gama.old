@@ -95,7 +95,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	public abstract IExecutable getAspect(String default1);
 
-	public abstract IList<String> getAspectNames();
+	public abstract Collection<String> getAspectNames();
 
 	@Override
 	public abstract ISpecies getSpecies();
@@ -153,5 +153,8 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @return
 	 */
 	IAgent getAgent(IScope scope, ILocation coord);
+
+	@Override
+	IAgent[] toArray();
 
 }

@@ -21,7 +21,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
 import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -57,14 +56,15 @@ public class SimulateStatement extends AbstractStatementSequence {
 	private IExpression repeat = null;
 	private IExpression stopCondition = null;
 	private IExpression sharedResource = null;
-	private final GamaMap in = new GamaMap();
-	private final GamaMap out = new GamaMap();
+
+	// private final Map in = new TOrderedHashMap();
+	// private final Map out = new TOrderedHashMap();
 
 	public SimulateStatement(final IDescription desc) {
 		super(desc);
 		comodel = getFacet("comodel");
 		if ( comodel == null ) { return; }
-		setName("simulate " + comodel.toGaml());
+		setName("simulate " + comodel.serialize(false));
 
 		with_exp = getFacet("with_experiment");
 
@@ -93,8 +93,8 @@ public class SimulateStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) {
 		Object modelfile = comodel.value(scope);
 		if ( modelfile instanceof GAMLFile ) {
-			((GAMLFile) modelfile).execute(scope, with_exp, param_input, param_output, in, out, reset, repeat,
-				stopCondition, sharedResource);
+			((GAMLFile) modelfile).execute(scope, with_exp, param_input, param_output, reset, repeat, stopCondition,
+				sharedResource);
 		}
 
 		// exp.getCurrentSimulation().halt(exp.getAgent().getScope());

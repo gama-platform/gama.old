@@ -28,11 +28,11 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
 	public IGraph cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+		return staticCast(scope, obj, param, copy);
 	}
 
-	public static IGraph staticCast(final IScope scope, final Object obj, final Object param) {
+	public static IGraph staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		// param = true : spatial.
 
 		if ( obj == null ) { return null; }
@@ -47,17 +47,18 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 			return (IGraph) ((VariableExpression) obj).value(scope);
 		}
 
-		if ( obj instanceof Map ) { return from(scope, (Map) obj, spatial); }
+		if ( obj instanceof GamaMap ) { return from(scope, (GamaMap) obj, spatial); }
 		// TODO Matrix, Pair ?
 
 		return null;
 	}
 
-	public static IGraph from(final IScope scope, final Map<?, ?> obj, final boolean spatial) {
+	public static IGraph from(final IScope scope, final GamaMap<?, ?> obj, final boolean spatial) {
 		IGraph result =
-			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope) : new GamaGraph(
-				new GamaList(), false, false, null, null, scope);
-		GamaPair p = new GamaPair(null, null);
+			spatial ? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, null, null, scope, obj
+				.getType().getKeyType(), Types.NO_TYPE) : new GamaGraph(scope, GamaListFactory.create(Types.NO_TYPE),
+				false, false, null, null, obj.getType().getKeyType(), Types.NO_TYPE);
+		GamaPair p = new GamaPair(null, null, Types.NO_TYPE, Types.NO_TYPE);
 		for ( Map.Entry<?, ?> k : obj.entrySet() ) {
 			p.key = k.getKey();
 			p.value = k.getValue();
@@ -67,8 +68,9 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	}
 
 	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
-		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope) : new GamaGraph(obj, false, false,
-			null, null, scope);
+		IType nodeType = obj.getType().getContentType();
+		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope, nodeType, Types.NO_TYPE)
+			: new GamaGraph(scope, obj, false, false, null, null, nodeType, Types.NO_TYPE);
 	}
 
 	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {

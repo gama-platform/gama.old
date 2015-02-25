@@ -33,7 +33,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public String toGaml() {
+	public String serialize(boolean includingBuiltIn) {
 		return getName();
 	}
 

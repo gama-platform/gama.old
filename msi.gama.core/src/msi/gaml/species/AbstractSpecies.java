@@ -27,7 +27,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<String, AspectStatement>();
 	private final Map<String, ActionStatement> actions = new TOrderedHashMap<String, ActionStatement>();
 	private final Map<String, UserCommandStatement> userCommands = new TOrderedHashMap();
-	private final IList<IStatement> behaviors = new GamaList<IStatement>();
+	private final List<IStatement> behaviors = new ArrayList();
 	protected ISpecies macroSpecies, parentSpecies;
 	private boolean isInitOverriden, isStepOverriden;
 
@@ -72,14 +72,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+	public IList listValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
 		// return getPopulation(scope).listValue(scope, contentsType);
 		// hqnghi 16/04/14
 		IPopulation pop = getPopulation(scope);
 		if ( pop == null ) {
 			pop = scope.getSimulationScope().getPopulationFor(contentsType.getName());
 		}
-		return pop.listValue(scope, contentsType);
+		return pop.listValue(scope, contentsType, false);
 		// end-hqnghi
 	}
 
@@ -89,11 +90,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 		throws GamaRuntimeException {
-		final IList<IAgent> agents = listValue(scope, contentsType);
+		final IList<IAgent> agents = listValue(scope, contentsType, false);
 		// Default behavior : Returns a map containing the names of agents as keys and the agents themselves as values
-		final GamaMap result = new GamaMap();
+		final GamaMap result = GamaMapFactory.create(Types.STRING, scope.getModelContext().getTypeNamed(getName()));
 		for ( final IAgent agent : agents.iterable(scope) ) {
 			result.put(agent.getName(), agent);
 		}
@@ -128,7 +129,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<ISpecies> getMicroSpecies() {
-		final IList<ISpecies> retVal = new GamaList<ISpecies>();
+		final IList<ISpecies> retVal = GamaListFactory.create(Types.SPECIES);
 		retVal.addAll(microSpecies.values());
 		final ISpecies parentSpecies = this.getParentSpecies();
 		if ( parentSpecies != null ) {
@@ -182,7 +183,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public List<ISpecies> getSelfWithParents() {
-		final List<ISpecies> retVal = new GamaList<ISpecies>();
+		final List<ISpecies> retVal = new ArrayList<ISpecies>();
 		retVal.add(this);
 		ISpecies currentParent = this.getParentSpecies();
 		while (currentParent != null) {
@@ -242,7 +243,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList<String> getVarNames() {
+	public Collection<String> getVarNames() {
 		return getDescription().getVarNames();
 	}
 
@@ -262,8 +263,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList<ActionStatement> getActions() {
-		return new GamaList<ActionStatement>(actions.values());
+	public Collection<ActionStatement> getActions() {
+		return actions.values();
 	}
 
 	@Override
@@ -277,17 +278,17 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList<IExecutable> getAspects() {
-		return new GamaList<IExecutable>(aspects.values());
+	public Collection<? extends IExecutable> getAspects() {
+		return aspects.values();
 	}
 
 	@Override
-	public IList<String> getAspectNames() {
-		return new GamaList<String>(aspects.keySet());
+	public List<String> getAspectNames() {
+		return new ArrayList<String>(aspects.keySet());
 	}
 
 	@Override
-	public IList<IStatement> getBehaviors() {
+	public Collection<IStatement> getBehaviors() {
 		return behaviors;
 	}
 
@@ -441,7 +442,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
+	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
 		return getPopulation(scope).reverse(scope);
 	}
 
@@ -470,14 +471,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	// }
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, contentsType);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
+		return getPopulation(scope).matrixValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
-		throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, contentsType, preferredSize);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+		final boolean copy) throws GamaRuntimeException {
+		return getPopulation(scope).matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
 	@Override

@@ -16,7 +16,8 @@ import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
+import msi.gaml.types.Types;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -191,13 +192,17 @@ public class StringUtils {
 		DEFAULT_DECIMAL_FORMAT = new DecimalFormat("##0.0################", SYMBOLS);
 	}
 
-	public static String toGaml(final Object val) {
+	public static String toGaml(final Object val, final boolean includingBuiltIn) {
 		if ( val == null ) { return "nil"; }
-		if ( val instanceof IGamlable ) { return ((IGamlable) val).toGaml(); }
+		if ( val instanceof IGamlable ) { return ((IGamlable) val).serialize(includingBuiltIn); }
 		if ( val instanceof IPopulation ) { return ((IPopulation) val).getSpecies().getName(); }
 		if ( val instanceof String ) { return toGamlString((String) val); }
 		if ( val instanceof Double ) { return DEFAULT_DECIMAL_FORMAT.format(val); }
-		if ( val instanceof Collection ) { return new GamaList((Collection) val).toGaml(); }
+		if ( val instanceof Collection ) {
+			IList l = GamaListFactory.create(Types.STRING);
+			l.addAll((Collection) val);
+			return toGaml(l, includingBuiltIn);
+		}
 		return String.valueOf(val);
 	}
 

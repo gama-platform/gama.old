@@ -33,19 +33,19 @@ import msi.gaml.expressions.IExpression;
 public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
 
 	@Override
-	public T cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return cast(scope, obj, param, getKeyType(), getContentType());
+	public T cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return cast(scope, obj, param, getKeyType(), getContentType(), copy);
 		// return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
 		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
 	@Override
-	public T
-		cast(final IScope scope, final Object obj, final Object param, final IType keyType, final IType contentType)
-			throws GamaRuntimeException {
+	public T cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+		final IType contentType, final boolean copy) throws GamaRuntimeException {
 		// by default
 		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null,
-			Types.NO_TYPE, Types.NO_TYPE));
+			Types.NO_TYPE, Types.NO_TYPE, copy));
 	}
 
 	@Override
@@ -83,6 +83,22 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	@Override
 	public boolean canCastToConst() {
 		return false;
+	}
+
+	@Override
+	public IContainerType of(final IType ... subs) {
+		if ( subs.length == 0 ) { return this; }
+		IType kt = subs.length == 1 ? getKeyType() : subs[0];
+		IType ct = subs.length == 1 ? subs[0] : subs[1];
+		if ( ct == Types.NO_TYPE ) {
+			if ( kt == Types.NO_TYPE ) { return this; }
+			ct = getContentType();
+		}
+		if ( kt == Types.NO_TYPE ) {
+			kt = getKeyType();
+		}
+		return new ParametricType(this, kt, ct);
+
 	}
 
 }

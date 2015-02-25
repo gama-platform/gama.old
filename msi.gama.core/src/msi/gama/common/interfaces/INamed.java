@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'INamed.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'INamed.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,7 +16,16 @@ package msi.gama.common.interfaces;
  * 
  * @todo Description
  */
-public interface INamed {
+public interface INamed extends IGamlable {
+
+	public static java.util.Comparator<? super INamed> COMPARATOR = new java.util.Comparator<INamed>() {
+
+		@Override
+		public int compare(final INamed a, final INamed b) {
+			return a.getName().compareToIgnoreCase(b.getName());
+		}
+
+	};
 
 	public String getName();
 

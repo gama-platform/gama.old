@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import static org.apache.commons.lang.StringUtils.*;
+import java.util.Collection;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.IOutput;
@@ -21,7 +23,8 @@ import msi.gama.util.*;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.species.GamlSpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
+import scala.actors.threadpool.Arrays;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -36,6 +39,55 @@ import com.vividsolutions.jts.geom.Envelope;
 	buffer_content = IType.SPECIES,
 	buffer_index = IType.INT)
 public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
+
+	public static class GamlInfo extends GamaFileMetaData {
+
+		public static String BATCH_PREFIX = "***";
+
+		public final Collection<String> experiments;
+		public final Collection<String> imports;
+		public final Collection<String> uses;
+
+		public GamlInfo(final long stamp, final Collection<String> imports, final Collection<String> uses,
+			final Collection<String> exps) {
+			super(stamp);
+			this.imports = imports;
+			this.uses = uses;
+			this.experiments = exps;
+		}
+
+		public GamlInfo(final String propertyString) {
+			super(propertyString);
+			String[] values = split(propertyString);
+			imports = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
+			uses = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
+			experiments = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
+		}
+
+		/**
+		 * Method getSuffix()
+		 * @see msi.gama.util.file.GamaFileMetaInformation#getSuffix()
+		 */
+		@Override
+		public String getSuffix() {
+			int expCount = experiments.size();
+			if ( expCount > 0 ) { return " (" + (expCount == 1 ? "1 experiment)" : expCount + " experiments)"); }
+
+			return "";
+		}
+
+		@Override
+		public String toPropertyString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.toPropertyString()).append(DELIMITER);
+			sb.append(join(imports, SUB_DELIMITER)).append(DELIMITER);
+			sb.append(join(uses, SUB_DELIMITER)).append(DELIMITER);
+			sb.append(join(experiments, SUB_DELIMITER)).append(DELIMITER);
+			return sb.toString();
+
+		}
+
+	}
 
 	private IModel mymodel = null;
 	/**
@@ -52,6 +104,11 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	// private IExperimentPlan exp = null;
 	public GAMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.INT, Types.SPECIES);
 	}
 
 	public GAMLFile(final IScope scope, final String pathName, final String expName, final String cName)
@@ -93,8 +150,8 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	}
 
 	public void execute(final IScope scope, final IExpression with_exp, final IExpression param_input,
-		final IExpression param_output, GamaMap in, final GamaMap out, final IExpression reset,
-		final IExpression repeat, final IExpression stopCondition, final IExpression share) {
+		final IExpression param_output, final IExpression reset, final IExpression repeat,
+		final IExpression stopCondition, final IExpression share) {
 		if ( GAMA.getController(aliasName) == null ) {
 			FrontEndController fec = new FrontEndController(new FrontEndScheduler());
 			GAMA.addController(aliasName, fec);
@@ -112,7 +169,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 		if ( !initDisplay ) {
 			if ( param_input != null ) {
-				in = (GamaMap) param_input.value(scope);
+				GamaMap in = (GamaMap) param_input.value(scope);
 				for ( int i = 0; i < in.getKeys().size(); i++ ) {
 					GAMA.getController(aliasName).getExperiment().getModel().getVar(in.getKeys().get(i).toString())
 						.setValue(null, in.getValues().get(i));
@@ -128,7 +185,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-		setBuffer(new GamaList());
+		setBuffer(GamaListFactory.<IModel> create(Types.SPECIES));
 		// IModel mymodel= ((GamlExpressionFactory) GAML.getExpressionFactory())
 		// .getParser().createModelFromFile(getFile().getName());
 		if ( mymodel == null ) {

@@ -264,11 +264,12 @@ public class Graphs {
 			@example(value = "graphFromMap in_edges_of node({12,45})", equals = "[LineString]", test = false) },
 		see = "out_edges_of")
 	public static
-		IList inEdgesOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the in_edges_of operator, the graph should not be null!"); }
-		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
-		return new GamaList();
+		IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
+		if ( graph == null ) { throw GamaRuntimeException.error(
+			"In the in_edges_of operator, the graph should not be null!", scope); }
+		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getContentType(),
+			graph.incomingEdgesOf(vertex)); }
+		return GamaListFactory.create(graph.getType().getContentType());
 	}
 
 	@operator(value = "edge_between",
@@ -308,11 +309,12 @@ public class Graphs {
 			@example(value = "graphFromMap out_edges_of (node(3))", equals = "3", test = false) },
 		see = "in_edges_of")
 	public static
-		IList outEdgesOf(final IGraph graph, final Object vertex) {
+		IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException
 			.error("In the out_edges_of operator, the graph should not be null!"); }
-		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.outgoingEdgesOf(vertex)); }
-		return new GamaList();
+		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getContentType(),
+			graph.outgoingEdgesOf(vertex)); }
+		return GamaListFactory.create(graph.getType().getContentType());
 	}
 
 	@operator(value = "out_degree_of", type = IType.INT, category = { IOperatorCategory.GRAPH })
@@ -320,9 +322,9 @@ public class Graphs {
 		examples = { @example(value = "graph graphFromMap <- graph([]);", isTestOnly = true),
 			@example(value = "graphFromMap out_degree_of (node(3))", equals = "4", test = false) },
 		see = { "in_degree_of", "degree_of" })
-	public static int outDregreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException
-			.error("In the in_degree_of operator, the graph should not be null!"); }
+	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
+		if ( graph == null ) { throw GamaRuntimeException.error(
+			"In the in_degree_of operator, the graph should not be null!", scope); }
 		if ( graph.containsVertex(vertex) ) { return graph.outDegreeOf(vertex); }
 		return 0;
 	}
@@ -352,7 +354,7 @@ public class Graphs {
 				test = false) },
 		see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static
-		List<List> connectedComponentOf(final IScope scope, final IGraph graph) {
+		IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if ( graph == null ) { throw GamaRuntimeException.error(
 			"In the nb_connected_components_of operator, the graph should not be null!", scope); }
 
@@ -362,9 +364,9 @@ public class Graphs {
 		} else {
 			ci = new ConnectivityInspector((UndirectedGraph) graph);
 		}
-		List<List> results = new GamaList<List>();
+		IList<IList> results = GamaListFactory.create(Types.LIST);
 		for ( Object obj : ci.connectedSets() ) {
-			results.add(new GamaList((Set) obj));
+			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
 
 		}
 		return results;
@@ -439,7 +441,11 @@ public class Graphs {
 		return (S - C) / (S - 1.0);
 	}
 
-	@operator(value = "betweenness_centrality", type = IType.MAP, category = { IOperatorCategory.GRAPH })
+	// WARNING Why FLOAT ???
+	@operator(value = "betweenness_centrality",
+		type = IType.MAP,
+		content_type = IType.FLOAT,
+		category = { IOperatorCategory.GRAPH })
 	@doc(value = "returns a map containing for each vertex (key), its betweenness centrality (value): number of shortest paths passing through each vertex ",
 		examples = {
 			@example(value = "graph graphEpidemio <- graph([]);"),
@@ -453,7 +459,7 @@ public class Graphs {
 			.error("In the betweenness_centrality operator, the graph should not be null!"); }
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
-		GamaMap mapResult = new GamaMap();
+		GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.FLOAT);
 		GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
 		for ( Object v1 : vertices ) {
 			for ( Object v2 : vertices ) {
@@ -496,8 +502,9 @@ public class Graphs {
 		IList neighboursOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw GamaRuntimeException.error(
 			"In the neighbours_of operator, the graph should not be null!", scope); }
-		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
-		return new GamaList();
+		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+			org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
+		return GamaListFactory.create(graph.getType().getKeyType());
 	}
 
 	@operator(value = "predecessors_of",
@@ -512,9 +519,10 @@ public class Graphs {
 			@example(value = "graphEpidemio predecessors_of node({34,56})", equals = "[{12;45}]", test = false) },
 		see = { "neighbours_of", "successors_of" })
 	public static
-		IList predecessorsOf(final IGraph graph, final Object vertex) {
-		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
-		return new GamaList();
+		IList predecessorsOf(final IScope scope, final IGraph graph, final Object vertex) {
+		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+			org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
+		return GamaListFactory.create(graph.getType().getKeyType());
 	}
 
 	@operator(value = "successors_of",
@@ -527,9 +535,10 @@ public class Graphs {
 			@example(value = "graphEpidemio successors_of node({34,56})", equals = "[]") }, see = { "predecessors_of",
 			"neighbours_of" })
 	public static
-		IList successorsOf(final IGraph graph, final Object vertex) {
-		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.successorListOf(graph, vertex)); }
-		return new GamaList();
+		IList successorsOf(final IScope scope, final IGraph graph, final Object vertex) {
+		if ( graph.containsVertex(vertex) ) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+			org.jgrapht.Graphs.successorListOf(graph, vertex)); }
+		return GamaListFactory.create(graph.getType().getKeyType());
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -550,7 +559,8 @@ public class Graphs {
 		see = { "as_intersection_graph", "as_distance_graph" })
 	public static
 		IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
-		return new GamaSpatialGraph(edges, true, false, null, null, scope);
+		return new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY, edges.getType()
+			.getContentType());
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -588,11 +598,13 @@ public class Graphs {
 		see = { "as_distance_graph", "as_edge_graph" })
 	public static
 		IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope);
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope, vertices
+			.getType().getContentType(), Types.GEOMETRY);
 	}
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null, scope);
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null, scope, vertices
+			.getType().getContentType(), Types.GEOMETRY);
 	}
 
 	@operator(value = "as_distance_graph",
@@ -606,7 +618,8 @@ public class Graphs {
 		see = { "as_intersection_graph", "as_edge_graph" })
 	public static
 		IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope);
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope, vertices
+			.getType().getContentType(), Types.GEOMETRY);
 	}
 
 	@operator(value = "grid_cells_to_graph",
@@ -619,7 +632,9 @@ public class Graphs {
 		examples = @example(value = "my_cell_graph<-grid_cells_to_graph(cells_list)", isExecutable = false),
 		see = {})
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
-		IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope);
+		IGraph graph =
+			new GamaSpatialGraph(vertices, false, false, new GridNeighboursRelation(), null, scope, vertices.getType()
+				.getContentType(), Types.GEOMETRY);
 		for ( Object e : graph.edgeSet() ) {
 			graph.setEdgeWeight(e, ((IShape) e).getPerimeter());
 		}
@@ -635,7 +650,9 @@ public class Graphs {
 	public static
 		IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
 			final ISpecies edgeSpecies) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
+		IType edgeType = scope.getModelContext().getTypeNamed(edgeSpecies.getName());
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
+			vertices.getType().getContentType(), edgeType);
 	}
 
 	@operator(value = "as_distance_graph", category = { IOperatorCategory.GRAPH })
@@ -645,7 +662,10 @@ public class Graphs {
 		IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final GamaMap params) {
 		Double distance = (Double) params.get("distance");
 		ISpecies edgeSpecies = (ISpecies) params.get("species");
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
+		IType edgeType =
+			edgeSpecies == null ? Types.GEOMETRY : scope.getModelContext().getTypeNamed(edgeSpecies.getName());
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope,
+			vertices.getType().getContentType(), edgeType);
 	}
 
 	@operator(value = "spatial_graph",
@@ -655,7 +675,8 @@ public class Graphs {
 		see = { "graph" })
 	public static
 		IGraph spatial_graph(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, null, null, scope);
+		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getType().getContentType(),
+			Types.GEOMETRY);
 	}
 
 	// @operator(value = "spatialize")
@@ -864,7 +885,7 @@ public class Graphs {
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 		throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " + Cast.asTopology(scope, graph));
-		IPath path = GamaPathType.staticCast(scope, edgesNodes, null);
+		IPath path = GamaPathType.staticCast(scope, edgesNodes, null, false);
 		path.setGraph(graph);
 		return path;
 
@@ -1077,7 +1098,7 @@ public class Graphs {
 	@doc(value = "layouts a GAMA graph.")
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
 		final int timeout) {
-		return layoutOneshot(scope, graph, layoutEngine, timeout, new GamaMap<String, Object>());
+		return layoutOneshot(scope, graph, layoutEngine, timeout, GamaMapFactory.create(Types.STRING, Types.NO_TYPE));
 	}
 
 	@operator(value = "layout", category = { IOperatorCategory.GRAPH })

@@ -223,7 +223,7 @@ public class Maths {
 		usages = {
 			@usage("if the right-hand operand is equal to 0, returns 1"),
 			@usage("if it is equal to 1, returns the left-hand operand."),
-			@usage(examples = { @example(value = "2 ^ 3", equals = "8.0"),
+			@usage(value = "Various examples of power", examples = { @example(value = "2 ^ 3", equals = "8.0"),
 				@example(value = "4.0^2", equals = "16.0", isTestOnly = true),
 				@example(value = "4.0^0.5", equals = "2.0", isTestOnly = true),
 				@example(value = "8^0", equals = "1.0", isTestOnly = true),
@@ -254,7 +254,7 @@ public class Maths {
 
 	@operator(value = { "^" }, can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the value (always a float) of the left operand raised to the power of the right operand.",
-		usages = { @usage(examples = { @example(value = "4.84 ^ 0.5", equals = "2.2") }) })
+		usages = { @usage(value = "", examples = { @example(value = "4.84 ^ 0.5", equals = "2.2") }) })
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
 	}
@@ -264,7 +264,7 @@ public class Maths {
 	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the absolute value of the operand (so a positive int or float depending on the type of the operand).",
 		masterDoc = true,
-		usages = { @usage(examples = { @example(value = "abs (200 * -1 + 0.5)", equals = "199.5") }) })
+		usages = { @usage(value = "", examples = { @example(value = "abs (200 * -1 + 0.5)", equals = "199.5") }) })
 	public static
 		Double abs(final Double rv) {
 		return rv < 0 ? -rv : rv;
@@ -272,8 +272,9 @@ public class Maths {
 
 	@operator(value = "abs", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns the absolute value of the operand (so a positive int or float depending on the type of the operand).",
-		usages = { @usage(examples = { @example(value = "abs (-10)", equals = "10"),
-			@example(value = "abs (10)", equals = "10"), @example(value = "abs (-0)", equals = "0", isTestOnly = true) }) })
+		usages = { @usage(value = "",
+			examples = { @example(value = "abs (-10)", equals = "10"), @example(value = "abs (10)", equals = "10"),
+				@example(value = "abs (-0)", equals = "0", isTestOnly = true) }) })
 	public static
 		Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);

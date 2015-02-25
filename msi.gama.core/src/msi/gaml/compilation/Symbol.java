@@ -39,9 +39,9 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		if ( description == null ) { return ""; }
-		return description.toGaml();
+		return description.serialize(includingBuiltIn);
 	}
 
 	@Override

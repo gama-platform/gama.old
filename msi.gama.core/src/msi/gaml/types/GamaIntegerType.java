@@ -26,15 +26,19 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(name = IKeyword.INT, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
+@type(name = IKeyword.INT,
+	id = IType.INT,
+	wraps = { Integer.class, int.class, Long.class },
+	kind = ISymbolKind.Variable.NUMBER)
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override
-	public Integer cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public Integer cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, param, copy);
 	}
 
-	public static Integer staticCast(final IScope scope, final Object obj, final Object param) {
+	public static Integer staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if ( obj instanceof Integer ) { return (Integer) obj; }
 		if ( obj instanceof Number ) { return ((Number) obj).intValue(); }
 		if ( obj instanceof Color ) { return ((Color) obj).getRGB(); }

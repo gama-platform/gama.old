@@ -39,13 +39,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
 		ISpecies species = (ISpecies) param;
 		if ( species == null ) {
 			species = scope.getModel().getSpecies(this.species.getName());
 		}
-		if ( species == null ) { return (IAgent) Types.get(IType.AGENT).cast(scope, obj, param); }
+		if ( species == null ) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
@@ -106,7 +107,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 
 	@Override
 	public IType getKeyType() {
-		return Types.get(IType.STRING);
+		return Types.STRING;
 	}
 
 	//

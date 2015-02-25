@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.geotools.brewer.color.*;
 
 /**
@@ -38,7 +38,10 @@ import org.geotools.brewer.color.*;
  */
 
 @doc("The graphic skill is intended to define the minimal set of behaviours required from a " + "graphical agent")
-@vars({ @var(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, init = "1.0", doc = @doc("the transparency of the agent (between 0.0 and 1.0)")), })
+@vars({ @var(name = IKeyword.TRANSPARENCY,
+	type = IType.FLOAT,
+	init = "1.0",
+	doc = @doc("the transparency of the agent (between 0.0 and 1.0)")), })
 @skill(name = IKeyword.GRAPHIC_SKILL)
 public class GraphicSkill extends Skill {
 
@@ -59,7 +62,9 @@ public class GraphicSkill extends Skill {
 		agent.setAttribute(IKeyword.TRANSPARENCY, s);
 	}
 
-	@action(name = "twinkle", args = { @arg(name = "period", type = IType.INT, doc = @doc("make the agent twinkle with a given period")) }, doc = @doc(examples = { @example("do twinkle period: 10;") }))
+	@action(name = "twinkle",
+		args = { @arg(name = "period", type = IType.INT, doc = @doc("make the agent twinkle with a given period")) },
+		doc = @doc(examples = { @example("do twinkle period: 10;") }))
 	public void twinkle(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		double curTrans = getTransparency(agent);
@@ -76,10 +81,12 @@ public class GraphicSkill extends Skill {
 		return;
 	}
 
-	@action(name = "brewer_color", args = {
-		@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")),
-		@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class")),
-		@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index")) }, doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }))
+	@action(name = "brewer_color",
+		args = {
+			@arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")),
+			@arg(name = "class", type = IType.INT, optional = false, doc = @doc("Number of class")),
+			@arg(name = "index", type = IType.INT, optional = false, doc = @doc("index")) },
+		doc = @doc(examples = { @example("rgb myColor<-self.brewer_color(\"sequential\",nb_class,myClass);") }))
 	public GamaColor getBrewerColors(final IScope scope) {
 		String type = scope.getStringArg("type");
 		int nbClass = scope.getIntArg("class");
@@ -130,11 +137,16 @@ public class GraphicSkill extends Skill {
 		return c;
 	}
 
-	@action(name = "brewer_palette", args = { @arg(name = "type", type = IType.STRING, doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")) }, doc = @doc(examples = { @example("list<rgb> colors <- brewer_palette(\"6-class Blues\");") }, comment = "You can get the type of the palette form this websiten http://colorbrewer2.org/"))
-	public GamaList<Color> getBrewerPaletteColors(final IScope scope) {
+	@action(name = "brewer_palette",
+		args = { @arg(name = "type",
+			type = IType.STRING,
+			doc = @doc("Palette Type (Sequential, Diverging, Qualitative)")) },
+		doc = @doc(examples = { @example("list<rgb> colors <- brewer_palette(\"6-class Blues\");") },
+			comment = "You can get the type of the palette form this websiten http://colorbrewer2.org/"))
+	public IList<Color> getBrewerPaletteColors(final IScope scope) {
 		String type = scope.getStringArg("type");
 
-		GamaList<Color> colors = new GamaList<Color>();
+		IList<Color> colors = GamaListFactory.create(Types.COLOR);
 
 		ColorBrewer brewer = ColorBrewer.instance();
 

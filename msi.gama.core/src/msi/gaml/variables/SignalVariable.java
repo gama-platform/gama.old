@@ -120,7 +120,7 @@ public class SignalVariable extends NumberVariable {
 
 			IExpression decay = d.getFacets().getExpr(DECAY);
 			if ( decay == null ) {
-				decay = GAML.getExpressionFactory().createConst(0.1, Types.get(IType.FLOAT));
+				decay = GAML.getExpressionFactory().createConst(0.1, Types.FLOAT);
 				d.getFacets().put(DECAY, decay);
 			}
 
@@ -135,14 +135,14 @@ public class SignalVariable extends NumberVariable {
 					"?",
 					s,
 					null,
-					f.createOperator("<", s, null, v, f.createConst(0.1, Types.get(IType.FLOAT))),
+					f.createOperator("<", s, null, v, f.createConst(0.1, Types.FLOAT)),
 					f.createOperator(
 						":",
 						s,
 						null,
-						f.createConst(0.0, Types.get(IType.FLOAT)),
+						f.createConst(0.0, Types.FLOAT),
 						f.createOperator("*", s, null, v,
-							f.createOperator("-", s, null, f.createConst(1.0, Types.get(IType.FLOAT)), decay))));
+							f.createOperator("-", s, null, f.createConst(1.0, Types.FLOAT), decay))));
 			vd.getFacets().put(UPDATE, value);
 			vd.setUpdatable(true);
 			s.resortVarName(vd);
@@ -156,7 +156,7 @@ public class SignalVariable extends NumberVariable {
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		type = Types.get(IType.FLOAT);
+		type = Types.FLOAT;
 		typeExpr = getFacet(IKeyword.PROPAGATION);
 		propExpr = getFacet(IKeyword.PROPORTION);
 		variationExpr = getFacet(IKeyword.VARIATION);
@@ -170,7 +170,7 @@ public class SignalVariable extends NumberVariable {
 		signalType = typeExpr == null ? IGrid.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;
-		range = rangeExpr == null ? -1000.0 : rangeExpr.isConst() ? Cast.as(rangeExpr, Double.class) : null;
+		range = rangeExpr == null ? -1000.0 : rangeExpr.isConst() ? Cast.as(rangeExpr, Double.class, false) : null;
 	}
 
 	@Override

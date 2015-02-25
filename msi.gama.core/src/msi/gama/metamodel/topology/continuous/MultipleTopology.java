@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MultipleTopology.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'MultipleTopology.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -56,8 +56,8 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @see msi.gama.environment.AbstractTopology#_toGaml()
 	 */
 	@Override
-	protected String _toGaml() {
-		return IKeyword.TOPOLOGY + "(" + places.toGaml() + ")";
+	protected String _toGaml(final boolean includingBuiltIn) {
+		return IKeyword.TOPOLOGY + "(" + places.serialize(includingBuiltIn) + ")";
 	}
 
 	/**

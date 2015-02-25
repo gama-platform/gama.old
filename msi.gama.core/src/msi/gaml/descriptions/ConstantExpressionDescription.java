@@ -18,7 +18,7 @@ import msi.gaml.types.*;
 public class ConstantExpressionDescription extends BasicExpressionDescription {
 
 	private ConstantExpressionDescription(final Object object) {
-		this(object, object == null ? Types.NO_TYPE : Types.get(object.getClass()));
+		this(object, GamaType.of(object));
 	}
 
 	private ConstantExpressionDescription(final Object object, final IType type) {
@@ -57,15 +57,15 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 	}
 
 	public static IExpressionDescription create(final Integer i) {
-		return new ConstantExpressionDescription(i, Types.get(IType.INT));
+		return new ConstantExpressionDescription(i, Types.INT);
 	}
 
 	public static IExpressionDescription create(final Double d) {
-		return new ConstantExpressionDescription(d, Types.get(IType.FLOAT));
+		return new ConstantExpressionDescription(d, Types.FLOAT);
 	}
 
 	public static IExpressionDescription create(final Boolean b) {
-		return new ConstantExpressionDescription(b, Types.get(IType.BOOL));
+		return new ConstantExpressionDescription(b, Types.BOOL);
 	}
 
 	@Override

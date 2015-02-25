@@ -14,10 +14,11 @@ package msi.gaml.descriptions;
 import static msi.gama.util.GAML.getExpressionFactory;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.types.*;
@@ -81,8 +82,8 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public String toGaml() {
-		return getSerializer().serialize(this);
+	public String serialize(final boolean includingBuiltIn) {
+		return getSerializer().serialize(this, includingBuiltIn);
 	}
 
 	@Override
@@ -113,6 +114,9 @@ public abstract class SymbolDescription implements IDescription {
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
 		final EObject source, final String ... data) throws GamaRuntimeException {
 
+		if ( warning && !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
+		if ( info && !GamaPreferences.INFO_ENABLED.getValue() ) { return; }
+
 		IDescription desc = this;
 		EObject e = source;
 		if ( e == null ) {
@@ -130,7 +134,8 @@ public abstract class SymbolDescription implements IDescription {
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
-		if ( e == null ) { throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
+		if ( e == null || e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX) ) { throw warning
+			? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
 		ErrorCollector c = getErrorCollector();
 		if ( c == null ) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
@@ -197,6 +202,11 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public String getName() {
 		return facets.getLabel(NAME);
+	}
+
+	@Override
+	public void setName(final String name) {
+		// / Nothing
 	}
 
 	@Override

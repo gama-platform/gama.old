@@ -1,13 +1,13 @@
 /*********************************************************************************************
- *
- *
+ * 
+ * 
  * 'SetStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
+ * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
+ * 
+ * 
  **********************************************************************************************/
 package msi.gaml.statements;
 
@@ -34,9 +34,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
- *
+ * 
  * @todo Description
- *
+ * 
  */
 
 @facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NONE, optional = true), */
@@ -59,9 +59,10 @@ public class SetStatement extends AbstractStatement {
 	public static class AssignmentSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = desc.getFacets();
-			sb.append(f.get(NAME).toGaml()).append(" <- ").append(f.get(VALUE).toGaml()).append(";");
+			sb.append(f.get(NAME).serialize(includingBuiltIn)).append(" <- ")
+				.append(f.get(VALUE).serialize(includingBuiltIn)).append(";");
 		}
 
 	}
@@ -89,7 +90,7 @@ public class SetStatement extends AbstractStatement {
 
 			// AD 19/1/13: test of the constants
 			if ( ((IVarExpression) expr).isNotModifiable() ) {
-				cd.error("The variable " + expr.toGaml() +
+				cd.error("The variable " + expr.serialize(false) +
 					" is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
 

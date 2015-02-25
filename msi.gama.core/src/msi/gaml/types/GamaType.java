@@ -11,11 +11,14 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.Map;
+import gnu.trove.set.hash.TLinkedHashSet;
+import java.util.*;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
@@ -50,7 +53,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public String toGaml() {
+	public void setName(final String name) {
+		// Nothing
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
 		return name;
 	}
 
@@ -114,13 +122,14 @@ public abstract class GamaType<Support> implements IType<Support> {
 	// }
 
 	@Override
-	public abstract Support cast(IScope scope, final Object obj, final Object param) throws GamaRuntimeException;
+	public abstract Support cast(IScope scope, final Object obj, final Object param, boolean copy)
+		throws GamaRuntimeException;
 
 	@Override
 	public Support cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) throws GamaRuntimeException {
+		final IType contentType, final boolean copy) throws GamaRuntimeException {
 		// by default
-		return cast(scope, obj, param);
+		return cast(scope, obj, param, copy);
 	}
 
 	@Override
@@ -142,6 +151,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public String asPattern() {
+		boolean vowel = StringUtils.startsWithAny(name, vowels);
+		return "${" + (vowel ? "an_" : "a_") + name + "}";
 	}
 
 	@Override
@@ -271,9 +286,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return true;
 	}
 
-	public static Object toType(final IScope scope, final Object value, final IType type) {
+	public static Object toType(final IScope scope, final Object value, final IType type, final boolean copy) {
 		if ( type == null || type.id() == IType.NONE ) { return value; }
-		return type.cast(scope, value, null, Types.NO_TYPE, Types.NO_TYPE);
+		return type.cast(scope, value, null, Types.NO_TYPE, Types.NO_TYPE, copy);
 	}
 
 	public IType keyTypeIfCasting(final IExpression exp) {
@@ -295,17 +310,82 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static IType from(final TypeDescription species) {
-		return from(Types.get(IType.SPECIES), Types.get(IType.INT), species.getType());
+		return from(Types.SPECIES, Types.INT, species.getType());
+	}
+
+	public static IContainerType from(final IContainerType t, final IType keyType, final IType contentType) {
+		if ( keyType == Types.NO_TYPE && contentType == Types.NO_TYPE ) { return t; }
+		IType kt = keyType == Types.NO_TYPE ? t.getType().getKeyType() : keyType;
+		IType ct = contentType == Types.NO_TYPE ? t.getType().getContentType() : contentType;
+		return new ParametricType(t.getType(), kt, ct);
 	}
 
 	public static IType from(final IType t, final IType keyType, final IType contentType) {
-		if ( t instanceof IContainerType ) {
-			if ( keyType == Types.NO_TYPE && contentType == Types.NO_TYPE ) { return t; }
-			IType kt = keyType == Types.NO_TYPE ? t.getType().getKeyType() : keyType;
-			IType ct = contentType == Types.NO_TYPE ? t.getType().getContentType() : contentType;
-			return new ParametricType(((IContainerType) t).getType(), kt, ct);
-		}
+		if ( t instanceof IContainerType ) { return from((IContainerType) t, keyType, contentType); }
 		return t;
+	}
+
+	public static final int TYPE = 0;
+	public static final int CONTENT = 1;
+	public static final int KEY = 2;
+
+	public static IType findCommonType(final IExpression[] elements, final int kind) {
+		IType result = Types.NO_TYPE;
+		if ( elements.length == 0 ) { return result; }
+		final Set<IType> types = new TLinkedHashSet();
+		for ( final IExpression e : elements ) {
+			// TODO Indicates a previous error in compiling expressions. Maybe we should cut this
+			// part
+			if ( e == null ) {
+				continue;
+			}
+			IType eType = e.getType();
+			types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
+		}
+		final IType[] array = types.toArray(new IType[types.size()]);
+		return findCommonType(array);
+	}
+
+	public static IType findCommonType(final IType ... types) {
+		IType result = Types.NO_TYPE;
+		if ( types.length == 0 ) { return result; }
+		result = types[0];
+		if ( types.length == 1 ) { return result; }
+		for ( int i = 1; i < types.length; i++ ) {
+			IType currentType = types[i];
+			if ( currentType == Types.NO_TYPE ) {
+				if ( result.getDefault() != null ) {
+					result = Types.NO_TYPE;
+				}
+			} else {
+				result = result.findCommonSupertypeWith(currentType);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Return the type of the object passed in parameter
+	 * @param obj
+	 * @return
+	 */
+	public static IType of(final Object obj) {
+		if ( obj instanceof IValue ) { return ((IValue) obj).getType(); }
+		if ( obj instanceof IExpression ) { return ((IExpression) obj).getType(); }
+		if ( obj == null ) { return Types.NO_TYPE; }
+		return Types.get(obj.getClass());
+	}
+
+	/**
+	 * @return
+	 */
+	public static IType findSpecificType(final IType castingType, final IType originalType) {
+		return requiresCasting(castingType, originalType) ? castingType : originalType;
+	}
+
+	public static boolean requiresCasting(final IType castingType, final IType originalType) {
+		if ( castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType) ) { return false; }
+		return true;
 	}
 
 }

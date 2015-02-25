@@ -91,12 +91,13 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	public static class LoopSerializer extends SymbolSerializer {
 
 		@Override
-		protected String serializeFacetValue(final SymbolDescription s, final String key) {
+		protected String
+			serializeFacetValue(final SymbolDescription s, final String key, final boolean includingBuiltIn) {
 			if ( key.equals(NAME) ) {
 				Facets f = s.getFacets();
 				if ( f.containsKey(TIMES) || f.containsKey(WHILE) ) { return null; }
 			}
-			return super.serializeFacetValue(s, key);
+			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
 	}
@@ -217,7 +218,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		Times() throws GamaRuntimeException {
 			if ( times.isConst() ) {
-				constantTimes = Cast.as(times, Integer.class);
+				constantTimes = Cast.as(times, Integer.class, false);
 			}
 		}
 

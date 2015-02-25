@@ -20,12 +20,13 @@ public interface IGamaView {
 
 	public void update(IDisplayOutput output);
 
-	public void setRefreshRate(int rate);
-
 	public void setOutput(IDisplayOutput output);
 
 	IDisplayOutput getOutput();
 
-	public void pauseChanged();
+	/**
+	 *
+	 */
+	// public void showToolbars(boolean show);
 
 }

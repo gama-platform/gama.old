@@ -44,7 +44,7 @@ public interface IParameter {
 
 	// public abstract IType getContentType();
 
-	public String toGaml();
+	public String serialize(boolean includingBuiltIn);
 
 	public abstract Object getInitialValue(IScope scope);
 

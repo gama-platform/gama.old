@@ -27,7 +27,7 @@ public class ListExpression extends AbstractExpression {
 	public static IExpression create(final List<? extends IExpression> elements) {
 		ListExpression u = new ListExpression(elements);
 		if ( u.isConst() ) {
-			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
@@ -42,7 +42,7 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
-		type = GamaType.from(Types.get(IType.LIST), Types.get(IType.INT), findCommonType(this.elements, _type));
+		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
 		isConst();
 	}
 
@@ -63,18 +63,18 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	@Override
-	public GamaList value(final IScope scope) throws GamaRuntimeException {
-		if ( isConst && computed ) { return new GamaList(values); }
+	public IList value(final IScope scope) throws GamaRuntimeException {
+		if ( isConst && computed ) { return GamaListFactory.createWithoutCasting(getType().getContentType(), values); }
 		for ( int i = 0; i < elements.length; i++ ) {
 			if ( elements[i] == null ) {
 				computed = false;
-				return GamaList.EMPTY_LIST;
+				return GamaListFactory.EMPTY_LIST;
 			}
 			values[i] = elements[i].value(scope);
 		}
 		computed = true;
 		// Important NOT to return the reference to values (but a copy of it).
-		return new GamaList(values);
+		return GamaListFactory.createWithoutCasting(getType().getContentType(), values);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		StringBuilder sb = new StringBuilder();
 		surround(sb, '[', ']', elements);
 		return sb.toString();

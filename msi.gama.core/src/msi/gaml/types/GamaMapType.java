@@ -25,19 +25,20 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
 	public GamaMap cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) throws GamaRuntimeException {
-		GamaMap result = staticCast(scope, obj, keyType, contentType);
+		final IType contentType, final boolean copy) throws GamaRuntimeException {
+		GamaMap result = staticCast(scope, obj, keyType, contentType, copy);
 		return result;
 	}
 
-	public static GamaMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType) {
-		if ( obj == null ) { return new GamaMap(); }
-		// if ( obj instanceof GamaPair ) { return new GamaMap(GamaPairType.staticCast(scope, obj, keyType,
+	public static GamaMap staticCast(final IScope scope, final Object obj, final IType keyType,
+		final IType contentsType, final boolean copy) {
+		if ( obj == null ) { return GamaMapFactory.create(keyType, contentsType); }
+		// if ( obj instanceof GamaPair ) { return GamaMapFactory.create(GamaPairType.staticCast(scope, obj, keyType,
 		// contentsType)); }
 		if ( obj instanceof IAgent ) {
 			// We collect all the variables / attributes of the agent
 			IAgent agent = (IAgent) obj;
-			GamaMap<String, Object> map = new GamaMap();
+			GamaMap<String, Object> map = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			for ( String s : agent.getSpecies().getVarNames() ) {
 				map.put(s, agent.getDirectVarValue(scope, s));
 			}
@@ -46,11 +47,12 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 			if ( shapeAttr != null ) {
 				map.putAll(shapeAttr);
 			}
-			return map.mapValue(scope, keyType, contentsType);
+			IType kt = keyType == null || keyType == Types.NO_TYPE ? Types.STRING : keyType;
+			return map.mapValue(scope, kt, contentsType, false);
 		}
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope, keyType, contentsType); }
-		final GamaMap result = new GamaMap();
-		result.put(GamaType.toType(scope, obj, keyType), GamaType.toType(scope, obj, contentsType));
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope, keyType, contentsType, copy); }
+		final GamaMap result = GamaMapFactory.create(keyType, contentsType);
+		result.setValueAtIndex(scope, obj, obj);
 		return result;
 	}
 

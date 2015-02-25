@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SyntacticModelElement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SyntacticModelElement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -32,7 +32,7 @@ public class SyntacticModelElement extends SyntacticComposedElement {
 	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement,
 		final Object ... imports) {
 		super(keyword, facets, statement);
-		if ( imports.length == 0 ) {
+		if ( imports == null || imports.length == 0 ) {
 			this.imports = Collections.EMPTY_SET;
 		} else {
 			this.imports = new TLinkedHashSet();

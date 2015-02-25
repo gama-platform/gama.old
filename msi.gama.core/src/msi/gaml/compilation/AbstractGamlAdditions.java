@@ -15,12 +15,14 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.*;
+import java.lang.reflect.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
-import msi.gama.util.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -98,7 +100,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static void buildMetaModel() {
 
-		// We first build "agent" as the root of all other species (incl. "simulation")
+		// We first build "agent" as the root of all other species (incl. "model")
 		SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
 		SpeciesDescription agent = buildSpecies(ap, null, null, false);
@@ -111,8 +113,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// We close the first loop by putting agent "inside" model
 		agent.setEnclosingDescription(model);
 		model.addChild(agent);
-		// // We create the type "agent"
-		// initType("agent", new GamaGenericAgentType(), 11, 104, IA);
 
 		// We create "experiment" as the root of all experiments, sub-species of "agent"
 		SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
@@ -152,7 +152,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// desc.setGlobal(isGlobal);
 		List<IDescription> additions = getAdditions(clazz);
 		if ( additions == null ) {
-			additions = new GamaList();
+			additions = new ArrayList();
 		}
 		for ( Class c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet()) ) {
 			List<IDescription> add = getAdditions(c);
@@ -225,7 +225,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// combinations and doc missing
-	protected void _symbol(final Class c, final int docIndex, final IDescriptionValidator validator,
+	protected void _symbol(final Class c, /* final int docIndex, */final IDescriptionValidator validator,
 		final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 		final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
 		final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd, final String omissible,
@@ -239,6 +239,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				facets.put(f.name, f);
 			}
 		}
+
 		if ( parentSymbols != null ) {
 			for ( String p : parentSymbols ) {
 				contextKeywords.add(p);
@@ -268,8 +269,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// }
 
 		SymbolProto md =
-			new SymbolProto(sequence, args, sKind, !scope, facets, omissible,/* combinations, */contextKeywords,
-				contextKinds, remote, unique, name_unique, sc, validator, serializer, docIndex, names == null ||
+			new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,/* combinations, */contextKeywords,
+				contextKinds, remote, unique, name_unique, sc, validator, serializer, names == null ||
 					names.length == 0 ? "variable declaration" : names[0]);
 		// if ( names == null || names.length == 0 ) {
 		// md.setName("variable declaration");
@@ -279,16 +280,16 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		DescriptionFactory.addProto(md, keywords);
 	}
 
-	public void _iterator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
-		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		final int doc) {
+	public void _iterator(final String[] keywords, final Method method, final Class[] classes,
+		final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
+		final int index, final GamaHelper helper/* , final int doc */) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, index, helper, doc);
+		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, helper/* , doc */);
 	}
 
-	public void _operator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
-		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		final int doc) {
+	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
+		final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
+		final int index, final GamaHelper helper/* , final int doc */) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
@@ -299,27 +300,27 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
 					proto =
-						new OperatorProto(kw, helper, c, false, doc, rt, signature,
+						new OperatorProto(kw, method, helper, c, false, rt, signature,
 							IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes);
 					// new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
 					// IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
 					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType() ) {
 						proto =
-							new OperatorProto(kw, helper, c, true, doc, rt, signature,
+							new OperatorProto(kw, method, helper, c, true, rt, signature,
 								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
 						// new BinaryVarOperator(rt, helper, c, t, content, index,
 						// IExpression.class.equals(classes[1]), expectedContentTypes, signature);
 					} else {
 						proto =
-							new OperatorProto(kw, helper, c, false, doc, rt, signature,
+							new OperatorProto(kw, method, helper, c, false, rt, signature,
 								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes);
 						// new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
 						// expectedContentTypes, signature);
 					}
 				} else {
 					proto =
-						new OperatorProto(kw, helper, c, false, doc, rt, signature,
+						new OperatorProto(kw, method, helper, c, false, rt, signature,
 							IExpression.class.equals(classes[classes.length - 1]), t, content, index,
 							expectedContentTypes);
 					// new NAryOperator(rt, helper, c, t, content, index,
@@ -396,6 +397,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static void initType(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
 		Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
+		Types.cache(id, typeInstance);
 		if ( !VARTYPE2KEYWORDS.containsKey(varKind) ) {
 			VARTYPE2KEYWORDS.put(varKind, new HashSet());
 		}
@@ -415,7 +417,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				continue;
 			}
 			for ( OperatorProto desc : fields ) {
-				fieldsMap.put(desc.name, desc);
+				fieldsMap.put(desc.getName(), desc);
 			}
 		}
 		return fieldsMap;
@@ -508,6 +510,47 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return result;
 	}
 
+	public static Collection<IDescription> getVariablesForSkill(final String s) {
+		Set<IDescription> result = new LinkedHashSet();
+		List<IDescription> descs = ADDITIONS.get(SKILL_CLASSES.get(s));
+		if ( descs != null ) {
+
+			for ( IDescription desc : descs ) {
+				if ( desc instanceof VariableDescription ) {
+					result.add(desc);
+				}
+			}
+
+		}
+		return result;
+	}
+
+	public static Collection<IDescription> getActionsForSkill(final String s) {
+		Set<IDescription> result = new LinkedHashSet();
+		List<IDescription> descs = ADDITIONS.get(SKILL_CLASSES.get(s));
+		if ( descs != null ) {
+
+			for ( IDescription desc : descs ) {
+				if ( desc instanceof PrimitiveDescription ) {
+					result.add(desc);
+				}
+			}
+
+		}
+		return result;
+	}
+
+	public static Collection<SymbolProto> getStatementsForSkill(final String s) {
+		Set<SymbolProto> result = new LinkedHashSet();
+		for ( String p : DescriptionFactory.getStatementProtoNames() ) {
+			SymbolProto proto = DescriptionFactory.getStatementProto(p);
+			if ( proto.shouldBeDefinedIn(s) ) {
+				result.add(proto);
+			}
+		}
+		return result;
+	}
+
 	public static Collection<String> getAllAspects() {
 		Set<String> result = new HashSet();
 		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
@@ -518,6 +561,21 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Collection<String> getAllSkills() {
 		return SKILL_CLASSES.keySet();
+	}
+
+	public static Collection<String> getSkills() {
+		Set<String> result = new LinkedHashSet();
+		for ( String s : getAllSkills() ) {
+			Class c = SKILL_CLASSES.get(s);
+			if ( !IArchitecture.class.isAssignableFrom(c) ) {
+				result.add(s);
+			}
+		}
+		return result;
+	}
+
+	public static Collection<String> getControls() {
+		return ARCHITECTURES;
 	}
 
 	public static Collection<IDescription> getAllActions() {

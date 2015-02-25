@@ -12,12 +12,12 @@
 package msi.gama.outputs.layers;
 
 import java.awt.event.*;
+import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -145,12 +145,12 @@ public class EventLayer extends AbstractLayer {
 			final GamaPoint pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
 			if ( pp.x < 0 || pp.getY() < 0 || pp.x >= surface.getEnvWidth() || pp.y >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
-			final IList<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
+			final Collection<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
 			if ( pointArg != null ) {
 				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
 			}
 			if ( listArg != null ) {
-				args.put(listArg, ConstantExpressionDescription.create(new GamaList(agentset)));
+				args.put(listArg, ConstantExpressionDescription.create(agentset));
 			}
 
 			executer.setRuntimeArgs(args);

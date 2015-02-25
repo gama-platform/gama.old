@@ -235,7 +235,7 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public Object value() {
-				return stopCondition != null ? stopCondition.toGaml() : "none";
+				return stopCondition != null ? stopCondition.serialize(false) : "none";
 			}
 
 		});

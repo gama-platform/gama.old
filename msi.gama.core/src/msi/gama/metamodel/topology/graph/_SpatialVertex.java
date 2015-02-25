@@ -20,7 +20,7 @@ public class _SpatialVertex extends _Vertex<IShape, IShape> {
 
 	public _SpatialVertex(final GamaSpatialGraph graph, final Object vertex) throws GamaRuntimeException {
 		super(graph);
-		if ( !(vertex instanceof IShape) ) { throw GamaRuntimeException.error(StringUtils.toGaml(vertex) +
+		if ( !(vertex instanceof IShape) ) { throw GamaRuntimeException.error(StringUtils.toGaml(vertex, false) +
 			" is not a geometry"); }
 	}
 

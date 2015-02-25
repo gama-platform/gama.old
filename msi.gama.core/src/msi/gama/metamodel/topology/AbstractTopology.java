@@ -25,11 +25,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 public abstract class AbstractTopology implements ITopology {
+
+	@Override
+	public IType getType() {
+		return Types.TOPOLOGY;
+	}
 
 	public static class RootTopology extends ContinuousTopology {
 
@@ -102,7 +108,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public List<Geometry> listToroidalGeometries(final Geometry geom) {
 		Geometry copy = (Geometry) geom.clone();
-		final List<Geometry> geoms = new GamaList<Geometry>();
+		final List<Geometry> geoms = new ArrayList<Geometry>();
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
 		for ( int cnt = 0; cnt < 8; cnt++ ) {
@@ -113,7 +119,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
-		final List<Geometry> geoms = new GamaList<Geometry>();
+		final List<Geometry> geoms = new ArrayList<Geometry>();
 		final Point pt = GeometryUtils.FACTORY.createPoint(loc);
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(pt);
@@ -130,7 +136,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
-		final Map<Geometry, IAgent> geoms = new GamaMap();
+		final Map<Geometry, IAgent> geoms = new TOrderedHashMap();
 		for ( final IShape ag : shps.iterable(scope) ) {
 			IAgent agent = ag.getAgent();
 			if ( agent != null ) {
@@ -221,20 +227,21 @@ public abstract class AbstractTopology implements ITopology {
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
-		return PathFactory.newInstance(this, GamaList.with(source.getLocation(), target.getLocation()));
+		return PathFactory.newInstance(this,
+			GamaListFactory.create(scope, Types.POINT, new IShape[] { source.getLocation(), target.getLocation() }));
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this, GamaListFactory.createWithoutCasting(Types.POINT, source, target));
 	}
 
 	@Override
 	public List<GamaSpatialPath>
 		KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
-		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
@@ -242,7 +249,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 		final int k) {
-		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
@@ -355,14 +362,14 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public String toGaml() {
-		return _toGaml();
+	public String serialize(final boolean includingBuiltIn) {
+		return _toGaml(includingBuiltIn);
 	}
 
 	/**
 	 * @return a gaml description of the construction of this topology.
 	 */
-	protected abstract String _toGaml();
+	protected abstract String _toGaml(boolean includingBuiltIn);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -450,7 +457,7 @@ public abstract class AbstractTopology implements ITopology {
 	// }
 	// IList<IAgent> agents;
 	// final Geometry g0 = returnToroidalGeom(source);
-	// agents = new GamaList<IAgent>();
+	// agents = GamaListFactory.create(Types.AGENT);
 	// final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);
 	// for ( final Geometry g1 : agentsMap.keySet() ) {
 	// final IAgent ag = agentsMap.get(g1);

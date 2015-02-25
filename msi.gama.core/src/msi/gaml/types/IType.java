@@ -26,6 +26,8 @@ import msi.gaml.expressions.IExpression;
  */
 public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
+	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
+
 	/** Constant fields to indicate the types of facets */
 	public static final int LABEL = -200;
 	public static final int ID = -201;
@@ -54,9 +56,9 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
-	public Support cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException;
 
-	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType)
+	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy)
 		throws GamaRuntimeException;
 
 	public int id();
@@ -158,6 +160,11 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	 * @return
 	 */
 	public boolean canCastToConst();
+
+	/**
+	 * @return
+	 */
+	public String asPattern();
 
 	/**
 	 * @param context

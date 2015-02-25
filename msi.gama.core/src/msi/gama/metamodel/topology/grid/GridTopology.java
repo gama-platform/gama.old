@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GridTopology.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GridTopology.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,6 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -21,10 +20,10 @@ import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 
 public class GridTopology extends AbstractTopology {
 
@@ -110,8 +109,8 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_toGaml()
 	 */
 	@Override
-	protected String _toGaml() {
-		return IKeyword.TOPOLOGY + " (" + places.toGaml() + ")";
+	protected String _toGaml(final boolean includingBuiltIn) {
+		return IKeyword.TOPOLOGY + " (" + places.serialize(includingBuiltIn) + ")";
 	}
 
 	/**
@@ -164,8 +163,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry,
-	 *      java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
@@ -182,8 +180,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
@@ -200,7 +197,8 @@ public class GridTopology extends AbstractTopology {
 		if ( filter.getSpecies() == getPlaces().getCellSpecies() ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
 		// cells themselves) and that are accepted by the filter
-		return getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter,
+		return getAgentsIn(scope,
+			GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), filter,
 			false);
 
 	}
@@ -225,19 +223,17 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source,
-			IShape target, int k) {
+	public List<GamaSpatialPath>
+		KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source,
-			ILocation target, int k) {
+	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+		final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);
 	}
-	
-	
 
 }

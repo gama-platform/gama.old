@@ -147,8 +147,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	private final DrawExecuter executer;
 
 	private final IExpression getShapeExpression(final IDescription desc) {
-		return GAML.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), false, IVarExpression.AGENT,
-			desc);
+		return GAML.getExpressionFactory().createVar(SHAPE, Types.GEOMETRY, false, IVarExpression.AGENT, desc);
 	}
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
@@ -195,13 +194,13 @@ public class DrawStatement extends AbstractStatementSequence {
 				if ( old.equals("disc") || old.equals("circle") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
-						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
+						sizeExp = GAML.getExpressionFactory().createConst(1, Types.INT);
 					}
 					newExpr = GAML.getExpressionFactory().createOperator("circle", desc, null, sizeExp);
 				} else if ( old.equals("rectangle") || old.equals("square") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
-						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
+						sizeExp = GAML.getExpressionFactory().createConst(1, Types.INT);
 					}
 
 					newExpr = GAML.getExpressionFactory().createOperator("square", desc, null, sizeExp);
@@ -212,8 +211,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					final IExpression to = getFacet(TO);
 					if ( at == null ) {
 						at =
-							GAML.getExpressionFactory().createVar("location", Types.get(IType.POINT), false,
-								IVarExpression.AGENT, desc);
+							GAML.getExpressionFactory().createVar("location", Types.POINT, false, IVarExpression.AGENT,
+								desc);
 					}
 					final List<IExpression> elements = new ArrayList();
 					elements.add(at);
@@ -286,12 +285,13 @@ public class DrawStatement extends AbstractStatementSequence {
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 
-			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
-			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
-			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
+			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope), false) : null;
+			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope), false) : null;
+			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope), false) : null;
 			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
-			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
-			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
+			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope), false) : null;
+			constRounded =
+				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope), false) : null;
 			GAMA.releaseScope(scope);
 		}
 
@@ -329,11 +329,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				.getLocation() : constLoc;
 		}
 
-		public GamaList getTextures(final IScope scope) throws GamaRuntimeException {
+		public IList getTextures(final IScope scope) throws GamaRuntimeException {
 			if ( textures == null ) { return null; }
 			Object o = textures.value(scope);
 			if ( o instanceof GamaList ) { return (GamaList) o; }
-			return GamaList.with(o);
+			return GamaListFactory.createWithoutCasting(Types.NO_TYPE, o);
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
@@ -356,13 +356,13 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
+			final IShape g1 = Cast.asGeometry(scope, item.value(scope), false); // WARNING Verify no side effect
 			if ( g1 == null ) { return null; }
 			IShape g2 = new GamaShape(g1, null, getRotation(scope), getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
-			GamaList textures = getTextures(scope);
+			IList textures = getTextures(scope);
 			if ( textures != null ) {
 				g2.setAttribute(IShape.TEXTURE_ATTRIBUTE, textures);
 			}
@@ -412,7 +412,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private ImageExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
-			constImg = (GamaImageFile) (item.isConst() ? Cast.as(item, IGamaFile.class) : null);
+			constImg = (GamaImageFile) (item.isConst() ? Cast.as(item, IGamaFile.class, false) : null);
 		}
 
 		// FIXME : Penser � placer des exceptions

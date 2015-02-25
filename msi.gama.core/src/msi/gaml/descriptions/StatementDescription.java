@@ -398,7 +398,7 @@ public class StatementDescription extends SymbolDescription {
 	 * @return
 	 */
 	public List<String> getArgNames() {
-		return args == null ? Collections.EMPTY_LIST : new GamaList(args.keySet());
+		return args == null ? Collections.EMPTY_LIST : new ArrayList(args.keySet());
 	}
 
 	@Override
@@ -634,7 +634,7 @@ public class StatementDescription extends SymbolDescription {
 
 		if ( t == Types.NO_TYPE ) {
 			if ( keyword.equals(CREATE) || keyword.equals(CAPTURE) || keyword.equals(RELEASE) ) {
-				t = Types.get(IType.LIST);
+				t = Types.LIST;
 			} else if ( facets.contains(VALUE) ) {
 				IExpression value = facets.getExpr(VALUE);
 				if ( value != null ) {

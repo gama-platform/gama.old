@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGamlAdditions.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IGamlAdditions.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -56,6 +56,6 @@ public interface IGamlAdditions {
 	public final static Class MSK = MovingSkill.class;
 	public final static Class GSK = GridSkill.class;
 
-	public void initialize();
+	public void initialize() throws SecurityException, NoSuchMethodException;
 
 }

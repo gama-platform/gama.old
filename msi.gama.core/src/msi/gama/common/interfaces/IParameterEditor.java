@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IParameterEditor.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IParameterEditor.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -21,7 +21,7 @@ import msi.gaml.types.IType;
  * @since 18 d�c. 2011
  * 
  */
-public interface IParameterEditor {
+public interface IParameterEditor<T> {
 
 	public abstract IType getExpectedType();
 
@@ -34,5 +34,25 @@ public interface IParameterEditor {
 	public abstract void updateValue();
 
 	public abstract void setActive(Boolean value);
+
+	public T getCurrentValue();
+
+	/**
+	 * Items to add to the editor
+	 */
+
+	static final int PLUS = 0;
+	static final int MINUS = 1;
+	static final int EDIT = 2;
+	static final int INSPECT = 3;
+	static final int BROWSE = 4;
+	static final int CHANGE = 5;
+	static final int REVERT = 6;
+	static final int DEFINE = 7;
+
+	/**
+	 * @param b
+	 */
+	public abstract void isSubParameter(boolean b);
 
 }

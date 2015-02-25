@@ -46,22 +46,35 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @doc(value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. If the value of the target facet is nil or empty, the statement is ignored.",
 	usages = {
-		@usage(value = "It obeys the following syntax, where the target facet denotes the receiver agent(s):",
-			examples = { @example(value = "ask receiver_agent(s) {", isExecutable = false),
-				@example(value = "     [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "The species of the receiver agents must be known in advance for this statement to compile. If not, it is possible to cast them using the `as` facet. If the receiver_agent(s) is not instance(s) of the species a_species_expression, the execution will return a class cast exception in the set of statement:",
-			examples = { @example(value = "ask receiver_agent(s) as: a_species_expression {", isExecutable = false),
-				@example(value = "     [statement_set]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "As alternative form for the castin, if there is only a single receiver agent: ",
-			examples = { @example(value = "ask species_name (receiver_agent) {", isExecutable = false),
-				@example(value = "     [statement_set]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "As alternative form for the castin, if receiver_agent(s) is a list of agents: ",
-			examples = { @example(value = "ask receiver_agents of_species species_name {", isExecutable = false),
-				@example(value = "     [statement_set]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
+		@usage(name = "Ask agents",
+			value = "Ask  a set of receiver agents, stored in a container, to perform a block of statements. The block is evaluated in the context of the agents' species",
+			examples = { @example(value = "ask ${receiver_agents} {", isExecutable = false, isPattern = true),
+				@example(value = "     ${cursor}", isExecutable = false, isPattern = true),
+				@example(value = "}", isExecutable = false, isPattern = true) }),
+		@usage(name = "Ask one agent",
+			menu = usage.CUSTOM,
+			path = "Special",
+			value = "Ask  one agent to perform a block of statements. The block is evaluated in the context of the agent's species",
+			examples = { @example(value = "ask ${one_agent} {", isExecutable = false, isPattern = true),
+				@example(value = "     ${cursor}", isExecutable = false, isPattern = true),
+				@example(value = "}", isExecutable = false, isPattern = true) }),
+		@usage(name = "Ask agents and force their species",
+			value = "If the species of the receiver agent(s) cannot be determined, it is possible to force it using the `as` facet. An error is thrown if an agent is not a direct or undirect instance of this species",
+			examples = {
+				@example(value = "ask${receiver_agent(s)} as: ${a_species_expression} {",
+					isExecutable = false,
+					isPattern = true), @example(value = "     ${cursor}", isExecutable = false, isPattern = true),
+				@example(value = "}", isExecutable = false, isPattern = true) }),
+		@usage(name = "Ask one agent casted to a species",
+			value = "If the species of the receiver agent cannot be determined, it is possible to force it by casting the agent. Nothing happens if the agent cannot be casted to this species",
+			pattern = "ask ${species_name}(${receiver_agent}) {\n\t ${cursor}\n}"),
+		@usage(name = "Ask agents belonging to a species",
+			value = "To ask a set of agents to do something only if they belong to a given species, the `of_species` operator can be used. If none of the agents belong to the species, nothing happens",
+			examples = {
+				@example(value = "ask ${receiver_agents} of_species ${species_name} {",
+					isExecutable = false,
+					isPattern = true), @example(value = "     ${cursor}", isExecutable = false, isPattern = true),
+				@example(value = "}", isExecutable = false, isPattern = true) }),
 		@usage(value = "Any statement can be declared in the block statements. All the statements will be evaluated in the context of the receiver agent(s), as if they were defined in their species, which means that an expression like `self` will represent the receiver agent and not the sender. If the sender needs to refer to itself, some of its own attributes (or temporary variables) within the block statements, it has to use the keyword `myself`.",
 			examples = {
 				@example(value = "species animal {", isExecutable = false),
@@ -82,6 +95,11 @@ import msi.gaml.types.IType;
 					isExecutable = false), @example(value = "              }", isExecutable = false),
 				@example(value = "         }", isExecutable = false), @example(value = "    }", isExecutable = false),
 				@example(value = "}", isExecutable = false) }) })
+// @templates({
+// @template(name = "Ask agents", pattern = "ask ${list_of_agents} { " + "\n\tdo ${an_action} " + "\n}"),
+// @template(name = "Ask agents as a given species",
+// description = "When the species of the agents present in a container cannot be determined, forces the species using the 'as:' facet",
+// pattern = "ask ${list_of_agents} as: ${species_name} { " + "\n\tdo ${an_action} " + "\n}") })
 public class AskStatement extends AbstractStatementSequence implements Breakable {
 
 	private RemoteSequence sequence = null;
@@ -91,7 +109,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
 		if ( target != null ) {
-			setName("ask " + target.toGaml());
+			setName("ask " + target.serialize(false));
 		}
 	}
 
@@ -118,6 +136,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
+
 		final Iterator<IAgent> runners =
 			t instanceof IContainer ? ((IContainer) t).iterable(scope).iterator() : t instanceof IAgent
 				? singletonIterator(t) : emptyIterator();

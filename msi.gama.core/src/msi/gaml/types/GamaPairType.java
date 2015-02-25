@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaDynamicLink;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -31,52 +30,60 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 
 	@Override
 	public GamaPair cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType) {
-		GamaPair p = staticCast(scope, obj, keyType, contentsType);
+		final IType contentsType, final boolean copy) {
+		GamaPair p = staticCast(scope, obj, keyType, contentsType, copy);
 		return p;
 	}
 
 	public static GamaPair staticCast(final IScope scope, final Object obj, final IType keyType,
-		final IType contentsType) throws GamaRuntimeException {
-		GamaPair result = null;
+		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+		Object key, value;
 		if ( obj instanceof GamaPair ) {
-			result = (GamaPair) obj;
+			key = ((GamaPair) obj).key;
+			value = ((GamaPair) obj).value;
 		} else
 		// 8/01/14: No more automatic casting between points and pairs (as points can now have 3 coordinates
 		// if ( obj instanceof ILocation ) { return new GamaPair(((GamaPoint) obj).x, ((GamaPoint) obj).y); }
 		if ( obj instanceof GamaDynamicLink ) {
-			result = new GamaPair(((GamaDynamicLink) obj).getSource(), ((GamaDynamicLink) obj).getTarget());
-		} else if ( obj instanceof Map ) {
-			Map m = (Map) obj;
-			result = new GamaPair(new GamaList(m.keySet()), new GamaList(m.values()));
-		} else if ( obj instanceof List ) {
-			List l = (List) obj;
+			key = ((GamaDynamicLink) obj).getSource();
+			value = ((GamaDynamicLink) obj).getTarget();
+		} else if ( obj instanceof GamaMap ) {
+			GamaMap m = (GamaMap) obj;
+			key = GamaListFactory.create(scope, m.getType().getKeyType(), m.keySet());
+			value = GamaListFactory.create(scope, m.getType().getContentType(), m.values());
+		} else if ( obj instanceof IList ) {
+			IList l = (IList) obj;
 			switch (l.size()) {
 				case 0:
-					result = new GamaPair(null, null);
+					key = null;
+					value = null;
 					break;
 				case 1:
-					result = new GamaPair(l.get(0), l.get(0));
+					key = l.get(0);
+					value = l.get(0);
 					break;
 				case 2:
-					result = new GamaPair(l.get(0), l.get(1));
+					key = l.get(0);
+					value = l.get(1);
 					break;
 				default:
-					result = new GamaPair(l, l);
+					key = l;
+					value = l;
 			}
 
 		} else {
 			// 8/01/14 : Change of behavior for the default pair: now returns a pair object::object
-			result = new GamaPair(obj, obj);
-			// return new GamaPair(Cast.asString(scope, obj), obj);
-
+			key = obj;
+			value = obj;
 		}
-		return new GamaPair(toType(scope, result.key, keyType), toType(scope, result.value, contentsType));
+		IType kt = keyType == null || keyType == Types.NO_TYPE ? GamaType.of(key) : keyType;
+		IType ct = contentsType == null || contentsType == Types.NO_TYPE ? GamaType.of(value) : contentsType;
+		return new GamaPair(toType(scope, key, kt, copy), toType(scope, value, ct, copy), kt, ct);
 	}
 
 	@Override
 	public GamaPair getDefault() {
-		return new GamaPair(null, null);
+		return new GamaPair(null, null, Types.NO_TYPE, Types.NO_TYPE);
 	}
 
 	@Override

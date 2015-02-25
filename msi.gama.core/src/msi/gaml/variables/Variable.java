@@ -157,7 +157,7 @@ public class Variable extends Symbol implements IVariable {
 			IExpression amongExpression = facets.getExpr(AMONG);
 			if ( amongExpression != null && !vType.isAssignableFrom(amongExpression.getType().getContentType()) ) {
 				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among " +
-					amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
+					amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
 				return;
 			}
 		}
@@ -256,7 +256,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		return type.cast(scope, v, null);
+		return type.cast(scope, v, null, false);
 	}
 
 	// private void computeSpeciesConst(final IScope scope) {
@@ -457,7 +457,7 @@ public class Variable extends Symbol implements IVariable {
 		if ( amongExpression == null ) { return null; }
 		if ( !amongExpression.isConst() ) { return null; }
 		try {
-			return Cast.as(amongExpression, IList.class);
+			return Cast.as(amongExpression, IList.class, false);
 		} catch (final GamaRuntimeException e) {
 			return null;
 		}

@@ -12,6 +12,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
+import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.*;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -19,7 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import rcaller.*;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -28,7 +29,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	buffer_type = IType.MAP,
 	buffer_content = IType.LIST,
 	buffer_index = IType.STRING)
-public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, IList>, String, IList> {
+public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
 
 	private final boolean DEBUG = false; // Change DEBUG = false for release version
 	private final IContainer parameters;
@@ -79,7 +80,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
+			String RPath = GamaPreferences.LIB_R.value(scope).getPath();
 			caller.setRscriptExecutable(RPath);
 
 			double[] vectorParam = new double[param.length(scope)];
@@ -94,7 +95,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			c.addDoubleArray("vectorParam", vectorParam);
 
 			// Adding the codes in file
-			GamaList R_statements = new GamaList<String>();
+			List<String> R_statements = new ArrayList<String>();
 
 			// tmthai.begin----------------------------------------------------------------------------
 			String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
@@ -121,19 +122,19 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			fr.close();
 			caller.setRCode(c);
 
-			GamaMap<String, IList> result = new GamaMap();
+			GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
-			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			String var = computeVariable(R_statements.get(R_statements.size() - 1).toString());
 			caller.runAndReturnResult(var);
 
 			// DEBUG:
 			// java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
 			if ( DEBUG ) {
-				GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" + R_statements.length(scope) + "'");
+				GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" + R_statements.size() + "'");
 			}
 
 			for ( String name : caller.getParser().getNames() ) {
-				Object[] results = null;
+				String[] results = null;
 				results = caller.getParser().getAsStringArray(name);
 				// java.lang.System.out.println("Name: '" + name + "'");
 				if ( DEBUG ) {
@@ -141,11 +142,11 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 						" - Value: " + results.toString());
 				}
 
-				result.put(name, new GamaList(results));
+				result.put(name, GamaListFactory.create(scope, Types.NO_TYPE, results));
 			}
 
 			if ( DEBUG ) {
-				GuiUtils.debug("Stats.R_compute_param.return:" + result.toGaml());
+				GuiUtils.debug("Stats.R_compute_param.return:" + result.serialize(false));
 			}
 
 			setBuffer(result);
@@ -162,7 +163,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
+			String RPath = GamaPreferences.LIB_R.value(scope).getPath();
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
@@ -171,7 +172,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			// }
 
 			RCode c = new RCode();
-			GamaList R_statements = new GamaList<String>();
+			List<String> R_statements = new ArrayList<String>();
 
 			// tmthai.begin----------------------------------------------------------------------------
 			String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
@@ -201,9 +202,9 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 			br.close();
 			caller.setRCode(c);
 
-			GamaMap<String, IList> result = new GamaMap();
+			GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
-			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			String var = computeVariable(R_statements.get(R_statements.size() - 1).toString());
 			caller.runAndReturnResult(var);
 			for ( String name : caller.getParser().getNames() ) {
 				Object[] results = null;
@@ -215,10 +216,10 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " + results.length +
 						" - Value: " + results.toString());
 				}
-				result.put(name, new GamaList(results));
+				result.put(name, GamaListFactory.createWithoutCasting(Types.NO_TYPE, results));
 			}
 			if ( DEBUG ) {
-				GuiUtils.debug("Stats.R_compute.return:" + result.toGaml());
+				GuiUtils.debug("Stats.R_compute.return:" + result.serialize(false));
 			}
 			// return result;
 			setBuffer(result);
@@ -248,6 +249,15 @@ public class RFile extends GamaFile<GamaMap<String, IList>, GamaPair<String, ILi
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		return null;
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.util.IContainer#getType()
+	 */
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 
 }

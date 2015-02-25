@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
 import java.io.*;
 import java.util.*;
@@ -67,9 +68,9 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
-		final Map<Long, GamaShape> nodesPt = new GamaMap<Long, GamaShape>();
-		final List<Node> nodes = new GamaList<Node>();
-		final List<Way> ways = new GamaList<Way>();
+		final TLongObjectHashMap<GamaShape> nodesPt = new TLongObjectHashMap<GamaShape>();
+		final List<Node> nodes = new ArrayList<Node>();
+		final List<Way> ways = new ArrayList<Way>();
 		final TLongHashSet intersectionNodes = new TLongHashSet();
 		final TLongHashSet usedNodes = new TLongHashSet();
 
@@ -136,13 +137,13 @@ public class GamaOsmFile extends GamaGisFile {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-		setBuffer(new GamaList());
+		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		getFeatureIterator(scope, true);
 	}
 
-	public GamaList<IShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
-		final TLongHashSet intersectionNodes, final Map<Long, GamaShape> nodesPt) {
-		GamaList<IShape> geometries = new GamaList();
+	public IList<IShape> buildGeometries(final List<Node> nodes, final List<Way> ways,
+		final TLongHashSet intersectionNodes, final TLongObjectHashMap<GamaShape> nodesPt) {
+		IList<IShape> geometries = GamaListFactory.create(Types.GEOMETRY);
 		for ( Node node : nodes ) {
 			GamaShape pt = nodesPt.get(node.getId());
 			boolean hasAttributes = !node.getTags().isEmpty();
@@ -161,7 +162,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 		}
 		for ( Way way : ways ) {
-			Map<String, Object> values = new GamaMap<String, Object>();
+			Map<String, Object> values = new TOrderedHashMap<String, Object>();
 			for ( Tag tg : way.getTags() ) {
 				String key = tg.getKey();
 				values.put(key, tg.getValue());
@@ -173,7 +174,7 @@ public class GamaOsmFile extends GamaGisFile {
 				((List) geometries).addAll(createSplitRoad(way, values, intersectionNodes, nodesPt));
 
 			} else {
-				List<IShape> points = new GamaList<IShape>();
+				List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
 				for ( WayNode node : way.getWayNodes() ) {
 					points.add(nodesPt.get(node.getNodeId()));
 				}
@@ -181,14 +182,8 @@ public class GamaOsmFile extends GamaGisFile {
 					continue;
 				}
 				IShape geom = GamaGeometryType.buildPolygon(points);
-				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() && /*
-																											 * geom.
-																											 * getInnerGeometry
-																											 * (
-																											 * ).isValid
-																											 * () &&
-																											 */
-				geom.getInnerGeometry().getArea() > 0 ) {
+				if ( geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty() &&
+					geom.getInnerGeometry().getArea() > 0 ) {
 					for ( String key : values.keySet() ) {
 						geom.setAttribute(key, values.get(key));
 					}
@@ -202,10 +197,10 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public List<IShape> createSplitRoad(final Way way, final Map<String, Object> values,
-		final TLongHashSet intersectionNodes, final Map<Long, GamaShape> nodesPt) {
-		List<List<IShape>> pointsList = new GamaList<List<IShape>>();
-		List<IShape> points = new GamaList<IShape>();
-		GamaList<IShape> geometries = new GamaList();
+		final TLongHashSet intersectionNodes, final TLongObjectHashMap<GamaShape> nodesPt) {
+		List<List<IShape>> pointsList = GamaListFactory.create(Types.LIST.of(Types.GEOMETRY));
+		List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
+		IList<IShape> geometries = GamaListFactory.create(Types.GEOMETRY);
 		WayNode endNode = way.getWayNodes().get(way.getWayNodes().size() - 1);
 		for ( WayNode node : way.getWayNodes() ) {
 			Long id = node.getNodeId();
@@ -215,7 +210,7 @@ public class GamaOsmFile extends GamaGisFile {
 				if ( points.size() > 1 ) {
 					pointsList.add(points);
 				}
-				points = new GamaList<IShape>();
+				points = GamaListFactory.create(Types.GEOMETRY);
 				points.add(pt);
 
 			}

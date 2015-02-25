@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SqliteConnection.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SqliteConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import org.sqlite.SQLiteConfig;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
@@ -38,8 +38,8 @@ import com.vividsolutions.jts.io.*;
  * - Add load Extention.
  * - Clean memory(garbage collection) after load.
  * 15-Jan-2014
- *   Fix null error of getInsertString method
- *   
+ * Fix null error of getInsertString method
+ * 
  * 
  * Last Modified: 15-Jan-2014
  */
@@ -123,11 +123,12 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
+	protected IList<IList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 
-		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+		IList<IList<Object>> repRequest =
+			GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		try {
 			List<Integer> geoColumn = getGeometryColumns(rsmd);
 			int nbCol = rsmd.getColumnCount();
@@ -144,7 +145,7 @@ public class SqliteConnection extends SqlConnection {
 					GuiUtils.debug("processing at row:" + i);
 				}
 
-				GamaList<Object> rowList = new GamaList<Object>();
+				IList<Object> rowList = GamaListFactory.create();
 				for ( int j = 1; j <= nbCol; j++ ) {
 					// check column is geometry column?
 					if ( DEBUG ) {
@@ -205,10 +206,10 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
+	protected IList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
-		GamaList<Object> columnType = new GamaList<Object>();
+		IList<Object> columnType = GamaListFactory.create();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 			if ( DEBUG ) {
 				GuiUtils.debug("SqliteConnection.getColumnTypeName at " + i + ":" +
@@ -235,7 +236,7 @@ public class SqliteConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> cols, final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -267,7 +268,7 @@ public class SqliteConnection extends SqlConnection {
 			// ResultSetMetaData rsmd = rs.getMetaData();
 			// GamaList<Object> col_Names = getColumnName(rsmd);
 			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(scope, conn, table_name, cols);
+			IList<Object> col_Types = getColumnTypeName(scope, conn, table_name, cols);
 
 			if ( DEBUG ) {
 				// GuiUtils.debug("list of column Name:" + col_Names);
@@ -279,10 +280,9 @@ public class SqliteConnection extends SqlConnection {
 			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();
@@ -342,7 +342,7 @@ public class SqliteConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -362,9 +362,9 @@ public class SqliteConnection extends SqlConnection {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
+			IList<Object> col_Names = getColumnName(rsmd);
 			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(scope, conn, table_name, col_Names);
+			IList<Object> col_Types = getColumnTypeName(scope, conn, table_name, col_Names);
 
 			int col_no = col_Names.size();
 			// Check size of parameters
@@ -381,10 +381,9 @@ public class SqliteConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();
@@ -447,12 +446,12 @@ public class SqliteConnection extends SqlConnection {
 	}
 
 	// 18/July/2013
-	private GamaList<Object> getColumnTypeName(final IScope scope, final Connection conn, final String tableName,
-		final GamaList<Object> columns) throws SQLException {
+	private IList<Object> getColumnTypeName(final IScope scope, final Connection conn, final String tableName,
+		final IList<Object> columns) throws SQLException {
 		int numberOfColumns = columns.size();
-		GamaList<Object> columnType = new GamaList<Object>();
+		IList<Object> columnType = GamaListFactory.create();
 		String sqlStr = "PRAGMA table_info(" + tableName + ");";
-		GamaList<? super GamaList<? super GamaList>> result = selectDB(scope, conn, sqlStr);
+		IList<? super IList<? super IList>> result = selectDB(scope, conn, sqlStr);
 		GamaList<? extends GamaList<Object>> data = (GamaList<? extends GamaList<Object>>) result.get(2);
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery(sqlStr);

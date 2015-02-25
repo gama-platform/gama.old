@@ -4,8 +4,7 @@
  */
 package msi.gaml.expressions;
 
-import java.util.List;
-import msi.gama.util.GamaList;
+import java.util.*;
 import msi.gaml.types.IType;
 
 /**
@@ -25,20 +24,23 @@ public class UnitConstantExpression extends ConstantExpression {
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 
-	String documentation;
-	List<String> alternateNames;
+	final String documentation;
+	final List<String> alternateNames;
 
 	public UnitConstantExpression(final Object val, final IType t, final String name, final String doc,
 		final String[] names) {
 		super(val, t);
 		this.name = name;
 		documentation = doc;
-		alternateNames = new GamaList(names);
-		alternateNames.add(0, name);
+		alternateNames = new ArrayList();
+		alternateNames.add(name);
+		if ( names != null ) {
+			alternateNames.addAll(Arrays.asList(names));
+		}
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "°" + name;
 	}
 
@@ -49,7 +51,7 @@ public class UnitConstantExpression extends ConstantExpression {
 
 	@Override
 	public String getTitle() {
-		String s = "Unit " + toGaml();
+		String s = "Unit " + serialize(false);
 		if ( alternateNames.size() > 1 ) {
 			s += " (" + alternateNames + ")";
 		}

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaXMLFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaXMLFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,15 +11,12 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
+import java.io.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-
+import msi.gama.util.*;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -41,6 +38,11 @@ public class GamaXMLFile extends GamaFile {
 		super(scope, pathName);
 	}
 
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.INT, Types.NO_TYPE);
+	}
+
 	/**
 	 * Method computeEnvelope()
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
@@ -59,7 +61,7 @@ public class GamaXMLFile extends GamaFile {
 		if ( getBuffer() != null ) { return; }
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
-			final GamaList<String> allLines = new GamaList();
+			final IList<String> allLines = GamaListFactory.create(Types.STRING);
 			String str;
 			str = in.readLine();
 			while (str != null) {

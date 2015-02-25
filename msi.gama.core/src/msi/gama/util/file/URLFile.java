@@ -12,33 +12,24 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.*;
+import java.net.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
-import rcaller.*;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-@file(name = "URL",
-	extensions = { "txt" },
-	buffer_type = IType.LIST, 
-	buffer_content = IType.STRING)
+@file(name = "URL", extensions = { "txt" }, buffer_type = IType.LIST, buffer_content = IType.STRING)
 public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	private final String URL;
 
 	public URLFile(final IScope scope, final String pathName) {
 		super(scope, pathName);
-		URL="";
+		URL = "";
 	}
+
 	public URLFile(final IScope scope, final String pathName, final String u) {
 		super(scope, pathName);
 		URL = u;
@@ -54,36 +45,35 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
 	}
-	
-	public  GamaList<String>  getURLContent(final String u_str) {
+
+	public IList<String> getURLContent(final String u_str) {
 		URL url;
 
-		final GamaList<String> allLines = new GamaList();
+		final IList<String> allLines = GamaListFactory.create(Types.STRING);
 		try {
 			// get URL content
 			url = new URL(u_str);
 			URLConnection conn = url.openConnection();
 
 			// open the stream and put it into BufferedReader
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
 			String inputLine;
 
 			// save to this filename
-//			String fileName = "/users/mkyong/test.html";
+			// String fileName = "/users/mkyong/test.html";
 			File file = new File(this.getPath());
 
-//			if (!file.exists()) {
-//				file.createNewFile();
-//			}
+			// if (!file.exists()) {
+			// file.createNewFile();
+			// }
 
 			// use FileWriter to write file
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 
 			while ((inputLine = br.readLine()) != null) {
-				bw.write(inputLine+"\n");
+				bw.write(inputLine + "\n");
 
 				allLines.add(inputLine);
 			}
@@ -91,16 +81,13 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 			bw.close();
 			br.close();
 
-
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return allLines; 
+		return allLines;
 	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -110,16 +97,11 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-	
-
-
 
 		setBuffer(getURLContent(this.URL));
-//		GuiUtils.informConsole(""+getURLContent(this.URL));
-
+		// GuiUtils.informConsole(""+getURLContent(this.URL));
 
 	}
-
 
 	private static String computeVariable(final String string) {
 		String[] tokens = string.split("<-");
@@ -140,6 +122,15 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		return null;
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.util.IContainer#getType()
+	 */
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 
 }

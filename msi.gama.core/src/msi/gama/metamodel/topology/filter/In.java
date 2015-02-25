@@ -18,14 +18,14 @@ import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 public abstract class In implements IAgentFilter {
 
 	public static IAgentFilter list(final IScope scope, final IContainer<?, ? extends IShape> targets) {
 		if ( targets.isEmpty(scope) ) { return null; }
 		if ( targets instanceof IPopulationSet ) { return (IPopulationSet) targets; }
-		return new InList(targets.listValue(scope, Types.NO_TYPE));
+		return new InList(targets.listValue(scope, Types.NO_TYPE, false));
 	}
 
 	public static IAgentFilter edgesOf(final ISpatialGraph graph) {
@@ -38,9 +38,11 @@ public abstract class In implements IAgentFilter {
 	private static class InList extends In {
 
 		final Set<IShape> agents;
+		final IType contentType;
 
 		InList(final IList<? extends IShape> list) {
 			agents = new LinkedHashSet<IShape>(list);
+			contentType = list.getType().getContentType();
 		}
 
 		@Override
@@ -50,7 +52,7 @@ public abstract class In implements IAgentFilter {
 
 		@Override
 		public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
-			return new GamaList(agents);
+			return GamaListFactory.createWithoutCasting(contentType, agents);
 		}
 
 		@Override

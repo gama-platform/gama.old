@@ -33,7 +33,8 @@ import msi.gaml.species.ISpecies;
 public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
-	public ISpecies cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public ISpecies cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
 		// TODO Add a more general cast with list of agents to find a common species.
 		ISpecies species =
 			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent
@@ -47,9 +48,9 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
 	public ISpecies cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) {
+		final IType contentType, final boolean copy) {
 
-		ISpecies result = cast(scope, obj, param);
+		ISpecies result = cast(scope, obj, param, copy);
 		if ( result == null ) {
 			if ( contentType.isAgentType() ) { return scope.getModel().getSpecies(contentType.getName()); }
 		}
@@ -70,7 +71,7 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
 	public IType getKeyType() {
-		return Types.get(IType.INT);
+		return Types.INT;
 	}
 
 	// @Override

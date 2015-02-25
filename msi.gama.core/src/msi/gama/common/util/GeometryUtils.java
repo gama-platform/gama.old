@@ -26,12 +26,11 @@ import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
+import com.vividsolutions.jts.triangulate.*;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 /**
@@ -143,8 +142,7 @@ public class GeometryUtils {
 
 		/**
 		 * Method getCoordinate()
-		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int,
-		 *      com.vividsolutions.jts.geom.Coordinate)
+		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int, com.vividsolutions.jts.geom.Coordinate)
 		 */
 		@Override
 		public void getCoordinate(final int index, final Coordinate coord) {
@@ -333,14 +331,14 @@ public class GeometryUtils {
 		return pts;
 	}
 
-	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
+	public static IList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
 		final double widthEnv = geom.getEnvelope().getWidth();
 		final double heightEnv = geom.getEnvelope().getHeight();
 		double xmin = geom.getEnvelope().getMinX();
 		double ymin = geom.getEnvelope().getMinY();
 		final double widthHex = widthEnv / (nbColumns * 0.75 + 0.25);
 		final double heightHex = heightEnv / nbRows;
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		xmin += widthHex / 2.0;
 		ymin += heightHex / 2.0;
 		for ( int l = 0; l < nbRows; l++ ) {
@@ -380,9 +378,9 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
+	public static IList<IShape> discretisation(final Geometry geom, final double size_x, final double size_y,
 		final boolean overlaps) {
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
@@ -420,10 +418,10 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> geometryDecomposition(final IShape geom, final double x_size, final double y_size) {
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+	public static IList<IShape> geometryDecomposition(final IShape geom, final double x_size, final double y_size) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		double zVal = geom.getLocation().getZ();
-		GamaList<IShape> rects = discretisation(geom.getInnerGeometry(), x_size, y_size, true);
+		IList<IShape> rects = discretisation(geom.getInnerGeometry(), x_size, y_size, true);
 		for ( IShape shape : rects ) {
 			IShape gg = Operators.inter(null, shape, geom);
 			if ( gg != null && !gg.getInnerGeometry().isEmpty() ) {
@@ -441,14 +439,14 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> geometryDecomposition(final IShape geom, final int nbCols, final int nbRows) {
+	public static IList<IShape> geometryDecomposition(final IShape geom, final int nbCols, final int nbRows) {
 		double x_size = geom.getEnvelope().getWidth() / nbCols;
 		double y_size = geom.getEnvelope().getHeight() / nbRows;
 		return geometryDecomposition(geom, x_size, y_size);
 	}
 
-	public static GamaList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+	public static IList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 
 		final Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
@@ -465,9 +463,9 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
-	public static GamaList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+
+	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
 		dtb.setSites(points);
 		final GeometryCollection g = (GeometryCollection) dtb.getDiagram(FACTORY);
@@ -479,8 +477,8 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> triangulation(final IScope scope, final Geometry geom) {
-		final GamaList<IShape> geoms = new GamaList<IShape>();
+	public static IList<IShape> triangulation(final IScope scope, final Geometry geom) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if ( geom instanceof GeometryCollection ) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
@@ -515,8 +513,8 @@ public class GeometryUtils {
 	}
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
-		final List<LineString> network = new GamaList<LineString>();
-		final IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
+		final List<LineString> network = new ArrayList<LineString>();
+		final IList polys = GeometryUtils.triangulation(scope, geom);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
 		final Collection<GamaShape> nodes = graph.vertexSet();
@@ -570,15 +568,15 @@ public class GeometryUtils {
 	private static Geometry buildPoint(final List<List<ILocation>> listPoints) {
 		return FACTORY.createPoint((Coordinate) listPoints.get(0).get(0));
 	}
-	
-	public static Geometry buildGeometryCollection (final List<IShape> geoms) {
+
+	public static Geometry buildGeometryCollection(final List<IShape> geoms) {
 		int nb = geoms.size();
 		Geometry[] geometries = new Geometry[nb];
-		for (int i = 0; i < nb; i++) {
+		for ( int i = 0; i < nb; i++ ) {
 			geometries[i] = geoms.get(i).getInnerGeometry();
 		}
 		Geometry geom = FACTORY.createGeometryCollection(geometries);
-		
+
 		return geom;
 	}
 
@@ -643,31 +641,33 @@ public class GeometryUtils {
 		return POLYGON;
 	}
 
-	public static GamaList<GamaPoint> locsOnGeometry(final Geometry geom, final Double distance) {
-		final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+	public static IList<GamaPoint> locsOnGeometry(final Geometry geom, final Double distance) {
+		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 		if ( geom instanceof Point ) {
 			locs.add(new GamaPoint(geom.getCoordinate()));
 		} else if ( geom instanceof LineString ) {
 			double distCur = 0;
 			final Coordinate[] coordsSimp = geom.getCoordinates();
-			if (coordsSimp.length > 0) locs.add(new GamaPoint(coordsSimp[0]));
-			final int nbSp =coordsSimp.length;
+			if ( coordsSimp.length > 0 ) {
+				locs.add(new GamaPoint(coordsSimp[0]));
+			}
+			final int nbSp = coordsSimp.length;
 			for ( int i = 0; i < nbSp - 1; i++ ) {
-				
+
 				Coordinate s = coordsSimp[i];
 				final Coordinate t = coordsSimp[i + 1];
 				while (true) {
 					final double dist = s.distance(t);
-					if ( (distance - distCur) < dist ) {
-						double distTravel = distance - distCur; 
+					if ( distance - distCur < dist ) {
+						double distTravel = distance - distCur;
 						final double ratio = distTravel / dist;
 						double x_s = s.x + ratio * (t.x - s.x);
 						double y_s = s.y + ratio * (t.y - s.y);
-						s =new Coordinate(x_s, y_s);
+						s = new Coordinate(x_s, y_s);
 						locs.add(new GamaPoint(s));
 						distCur = 0;
-						
-					} else if ( (distance - distCur) > dist ) {
+
+					} else if ( distance - distCur > dist ) {
 						distCur += dist;
 						break;
 					} else {
@@ -676,10 +676,10 @@ public class GeometryUtils {
 						break;
 					}
 				}
-				
+
 			}
-			if (locs.size() > 1) {
-				if (locs.get(0).distance(locs.get(locs.size() - 1)) < 0.1 * distance) {
+			if ( locs.size() > 1 ) {
+				if ( locs.get(0).distance(locs.get(locs.size() - 1)) < 0.1 * distance ) {
 					locs.remove(locs.size() - 1);
 				}
 			}
@@ -708,7 +708,7 @@ public class GeometryUtils {
 		// create connection
 		sqlConn = SqlUtils.createConnectionObject(scope, params);
 		// get data
-		final GamaList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
+		final IList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 		env = SqlConnection.getBounds(gamaList);
 
 		GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Before Projection:" + env);
@@ -757,9 +757,9 @@ public class GeometryUtils {
 		return result;
 	}
 
-	public static GamaList<IShape> split_at(final IShape geom, final ILocation pt) {
-		final GamaList<IShape> lines = new GamaList<IShape>();
-		GamaList<Geometry> geoms = null;
+	public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
+		final IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
+		List<Geometry> geoms = null;
 		if ( geom.getInnerGeometry() instanceof LineString ) {
 			final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
 			final Point pt1 = FACTORY.createPoint(new GamaPoint(pt.getLocation()));
@@ -792,7 +792,7 @@ public class GeometryUtils {
 				coords2[k] = coords[i];
 				k++;
 			}
-			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+			final List<Geometry> geoms1 = new ArrayList<Geometry>();
 			geoms1.add(FACTORY.createLineString(coords1));
 			geoms1.add(FACTORY.createLineString(coords2));
 			geoms = geoms1;
@@ -839,7 +839,7 @@ public class GeometryUtils {
 				coords2[k] = coords[i];
 				k++;
 			}
-			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+			final List<Geometry> geoms1 = new ArrayList<Geometry>();
 			geoms1.add(FACTORY.createLineString(coords1));
 			geoms1.add(FACTORY.createLineString(coords2));
 			geoms = geoms1;

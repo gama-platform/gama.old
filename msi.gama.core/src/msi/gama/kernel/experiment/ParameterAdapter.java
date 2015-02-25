@@ -113,8 +113,8 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	// }
 
 	@Override
-	public String toGaml() {
-		return StringUtils.toGaml(value());
+	public String serialize(final boolean includingBuiltIn) {
+		return StringUtils.toGaml(value(), includingBuiltIn);
 	}
 
 	@Override

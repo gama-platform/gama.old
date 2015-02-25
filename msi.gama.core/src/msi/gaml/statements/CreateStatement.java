@@ -35,14 +35,14 @@ import msi.gama.util.*;
 import msi.gama.util.file.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -147,14 +147,15 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	public static class CreateSerializer extends StatementSerializer {
 
 		@Override
-		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb) {
+		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
+			final boolean ncludingBuiltIn) {
 			Collection<IDescription> args = desc.getArgs();
 			if ( args == null || args.isEmpty() ) { return; }
 			sb.append("with: [");
 			for ( IDescription arg : args ) {
 				String name = arg.getFacets().getLabel(NAME);
 				IExpressionDescription def = arg.getFacets().get(VALUE);
-				sb.append(name).append("::").append(def.toGaml());
+				sb.append(name).append("::").append(def.serialize(false));
 				sb.append(", ");
 			}
 			sb.setLength(sb.length() - 2);
@@ -246,7 +247,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
-		if ( from == null && max != null && max <= 0 ) { return GamaList.EMPTY_LIST; }
+		if ( from == null && max != null && max <= 0 ) { return GamaListFactory.EMPTY_LIST; }
 
 		// Next, we compute the species to instantiate
 		IPopulation pop;
@@ -255,7 +256,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
 			final ISpecies s = Cast.asSpecies(scope, species.value(scope));
-			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.toGaml() +
+			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.serialize(false) +
 				" is accessible in the context of " + executor + ".", scope); }
 			pop = executor.getPopulationFor(s);
 			// hqnghi population of micro-model's experiment is not exist, we must create the new one
@@ -269,7 +270,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		}
 		// scope.addVarWithValue(IKeyword.MYSELF, executor);
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
-		final List<Map> inits = new GamaList(max == null ? 10 : max);
+		final List<Map> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
 		if ( source instanceof GamaCSVFile ) {
 			fillInits(scope, inits, max, (GamaCSVFile) source);
@@ -286,7 +287,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			fillInits(scope, inits, max, (IAddressableContainer) source);
 		} else if ( source instanceof GamaGridFile ) {
 			fillInits(scope, inits, max, (GamaGridFile) source);
-		} else if ( source instanceof GamaTextFile || source instanceof GamaCSVFile ) {
+		} else if ( source instanceof GamaTextFile ) {
 			fillInits(scope, inits, max, (GamaFile) source);
 		} else {
 			fillInits(scope, inits, max);
@@ -300,23 +301,30 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	}
 
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaCSVFile source) {
-		final boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
+		if ( header != null ) {
+			source.forceHeader(Cast.asBool(scope, header.value(scope)));
+		}
+		final boolean hasHeader = source.hasHeader();
 		IMatrix mat = source.getContents(scope);
 		if ( mat == null || mat.isEmpty(scope) ) { return; }
 		int rows = mat.getRows(scope);
-		final int num = max == null ? rows : Math.min(rows, max);
+		int cols = mat.getCols(scope);
+		rows = max == null ? rows : Math.min(rows, max);
 
-		IList<String> headers = new GamaList<String>();
+		List headers;
 		if ( hasHeader ) {
-			for ( Object obj : mat.getRow(scope, 0) ) {
-				headers.add(Cast.asString(scope, obj));
+			headers = source.getHeaders();
+		} else {
+			headers = new ArrayList();
+			for ( int j = 0; j < cols; j++ ) {
+				headers.add(j);
 			}
 		}
-		for ( int i = hasHeader ? 1 : 0; i < num; i++ ) {
-			final GamaMap map = new GamaMap();
+		for ( int i = 0; i < rows; i++ ) {
+			final GamaMap map = GamaMapFactory.create(hasHeader ? Types.STRING : Types.INT, Types.NO_TYPE);
 			final IList vals = mat.getRow(scope, i);
-			for ( int j = 0; j < vals.size(); j++ ) {
-				map.put(hasHeader ? headers.get(j) : j, vals.get(j));
+			for ( int j = 0; j < cols; j++ ) {
+				map.put(headers.get(j), vals.get(j));
 			}
 			// CSV attributes are mixed with the attributes of agents
 			fillWithUserInit(scope, map);
@@ -344,7 +352,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	// final int num = max == null ? rows.size() : Math.min(rows.size(), max);
 	// final String[] headers = rows.get(0);
 	// for ( int i = hasHeader ? 1 : 0; i < num; i++ ) {
-	// final GamaMap map = new GamaMap();
+	// final GamaMap map = GamaMapFactory.create();
 	// final String[] splitStr = rows.get(i);
 	// for ( int j = 0; j < splitStr.length; j++ ) {
 	// map.put(hasHeader ? headers[j] : j, splitStr[j]);
@@ -395,7 +403,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if ( init == null ) { return; }
 		final int num = max == null ? 1 : max;
 		for ( int i = 0; i < num; i++ ) {
-			final Map map = new GamaMap();
+			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 			fillWithUserInit(scope, map);
 			inits.add(map);
 		}
@@ -418,7 +426,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
 		for ( int i = 0; i < num; i++ ) {
 			final GamaList<Object> rowList = initValue.get(i);
-			final Map map = new GamaMap();
+			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 			computeInits(scope, map, rowList, colTypes, colNames);
 			initialValues.add(map);
 		}

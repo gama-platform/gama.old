@@ -36,7 +36,7 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	public ConstantExpression(final Object val) {
-		this(val, val == null ? Types.NO_TYPE : Types.get(val.getClass()));
+		this(val, GamaType.of(val));
 	}
 
 	@Override
@@ -60,8 +60,8 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String toGaml() {
-		return StringUtils.toGaml(value);
+	public String serialize(final boolean includingBuiltIn) {
+		return StringUtils.toGaml(value, includingBuiltIn);
 	}
 
 	/**

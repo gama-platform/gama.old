@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IExpressionCompiler<T> {
 
+	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
+
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
 		IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
 		IKeyword.USER_LOCATION);

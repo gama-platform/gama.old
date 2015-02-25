@@ -20,7 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -37,9 +37,10 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	static enum Type {
 		BOX, CIRCLE, CONE, CUBE, RGBCUBE, RGBTRIANGLE, CYLINDER, ENVIRONMENT, GRIDLINE, LINEARRING("LinearRing"),
-		LINESTRING("LineString"), MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"), MULTIPOLYGON(
-			"MultiPolygon"), NULL, PLAN, POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID, SPHERE,
-		TEAPOT, HEMISPHERE, PACMAN, ANTISLICE, SLICE, PIESPHERE,PIESPHEREWITHDYNAMICALCOLOR,LINECYLINDER, POLYLINECYLINDER;
+		LINESTRING("LineString"), MULTILINESTRING("MultiLineString"), MULTIPOINT("MultiPoint"),
+		MULTIPOLYGON("MultiPolygon"), NULL, PLAN, POINT("Point"), POLYGON("Polygon"), POLYHEDRON, POLYPLAN, PYRAMID,
+		SPHERE, TEAPOT, HEMISPHERE, PACMAN, ANTISLICE, SLICE, PIESPHERE, PIESPHEREWITHDYNAMICALCOLOR, LINECYLINDER,
+		POLYLINECYLINDER;
 
 		Type() {}
 
@@ -50,7 +51,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
 	public static final Map<String, Type> JTS_TYPES = new THashMap();
-	public static final GamaList<String> TEXTURE_ATTRIBUTE = new GamaList<String>();
+	public static final IList<String> TEXTURE_ATTRIBUTE = GamaListFactory.create(Types.STRING);
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
 	public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
 	public static final String COLOR_LIST_ATTRIBUTE = "_shape_internal_color_list";

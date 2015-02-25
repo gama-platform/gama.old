@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGraph.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IGraph.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -27,15 +27,13 @@ import org.jgrapht.*;
  * Written by drogoul
  * Modified on 24 nov. 2011
  * 
- * An interface for the different kinds of graphs encountered in GAML
+ * An interface for the different kinds of graphs encountered in GAML. Nodes are the keys (actually, pairs of nodes), while edges are the values
  * 
  */
 @vars({ @var(name = "spanning_tree", type = IType.LIST), @var(name = "circuit", type = IType.PATH),
 	@var(name = "connected", type = IType.BOOL), @var(name = "edges", type = IType.LIST),
 	@var(name = "vertices", type = IType.LIST) })
-public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>,
-	IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>,
-	DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
+public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>, IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>, DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
 
 	public abstract double getVertexWeight(final Object v);
 
@@ -108,5 +106,13 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 
 	public abstract IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target,
 		int k);
+
+	public GraphObjectToAdd buildValue(IScope scope, Object object);
+
+	public IContainer buildValues(IScope scope, IContainer objects);
+
+	public GamaPair<Node, Node> buildIndex(IScope scope, Object object);
+
+	public IContainer<?, GamaPair<Node, Node>> buildIndexes(IScope scope, IContainer value);
 
 }

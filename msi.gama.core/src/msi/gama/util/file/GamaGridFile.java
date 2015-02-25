@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.*;
@@ -38,6 +40,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
+	private GridCoverage2D coverage;
 
 	private GamaGridReader createReader(final IScope scope) {
 		if ( reader == null ) {
@@ -86,15 +89,19 @@ public class GamaGridFile extends GamaGisFile {
 		IShape geom;
 
 		GamaGridReader(final IScope scope, final InputStream fis) throws GamaRuntimeException {
-			setBuffer(new GamaList());
+			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			ArcGridReader store = null;
 			try {
 				GuiUtils.beginSubStatus("Reading file " + getName());
 				// Necessary to compute it here, because it needs to be passed to the Hints
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
-				store =
-					new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false,
-						Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+				if ( crs == null ) {
+					store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false));
+				} else {
+					store =
+						new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, false,
+							Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+				}
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				Envelope env =
 					new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
@@ -103,7 +110,7 @@ public class GamaGridFile extends GamaGisFile {
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
 				final double cellHeight = genv.getSpan(1) / numRows;
 				final double cellWidth = genv.getSpan(0) / numCols;
-				final GamaList<IShape> shapes = new GamaList<IShape>();
+				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
 				final double originX = genv.getMinimum(0);
 				final double maxY = genv.getMaximum(1);
 				shapes.add(new GamaPoint(originX, genv.getMinimum(1)));
@@ -113,8 +120,8 @@ public class GamaGridFile extends GamaGisFile {
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
 				final GamaPoint p = new GamaPoint(0, 0);
-				GridCoverage2D coverage;
 				coverage = store.read(null);
+
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
 				for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
@@ -127,8 +134,11 @@ public class GamaGridFile extends GamaGisFile {
 					final double[] vals =
 						(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
 							.getY()));
-
-					rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
+					if ( gis == null ) {
+						rect = new GamaShape(rect.getInnerGeometry());
+					} else {
+						rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
+					}
 					rect.getOrCreateAttributes();
 					rect.getAttributes().put("grid_value", vals[0]);
 					((IList) getBuffer()).add(rect);
@@ -252,10 +262,26 @@ public class GamaGridFile extends GamaGisFile {
 		return null;
 	}
 
+	public static RenderedImage getImage(final String pathName) {
+		return GAMA.run(new InScope<RenderedImage>() {
+
+			@Override
+			public RenderedImage run(final IScope scope) {
+				GamaGridFile file = new GamaGridFile(scope, pathName);
+				file.createReader(scope);
+				return file.coverage.getRenderedImage();
+			}
+		});
+	}
+
 	@Override
 	public void invalidateContents() {
 		super.invalidateContents();
 		reader = null;
+		if ( coverage != null ) {
+			coverage.dispose(true);
+		}
+		coverage = null;
 	}
 
 }

@@ -77,15 +77,15 @@ public class GraphsGraphstream {
 			// check parameter
 			if ( directed != gamaGraph.isDirected() ) { throw GamaRuntimeException.error("Attempted to read an " +
 				(directed ? "" : "un") + "directed edge for a " + (gamaGraph.isDirected() ? "" : "un") +
-				"directed graph"); }
+				"directed graph", scope); }
 
 			// retrieve the agents for this edge
 			IAgent agentFrom = nodeId2agent.get(fromNodeId);
 			if ( agentFrom == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " +
-				fromNodeId + " was not declared"); }
+				fromNodeId + " was not declared", scope); }
 			IAgent agentTo = nodeId2agent.get(toNodeId);
 			if ( agentTo == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " +
-				toNodeId + " was not declared");
+				toNodeId + " was not declared", scope);
 			// TODO : add support for nodes that were not declared ? (may be supported in some file
 			// formats)
 			}
@@ -147,7 +147,9 @@ public class GraphsGraphstream {
 		IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
 		// creates the graph to be filled
-		IGraph createdGraph = new GamaGraph(scope, false);
+		IGraph createdGraph =
+			new GamaGraph(scope, false, populationNodes.getType().getContentType(), populationEdges.getType()
+				.getContentType());
 
 		Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges);
 

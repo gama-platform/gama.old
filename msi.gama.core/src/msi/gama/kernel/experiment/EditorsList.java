@@ -19,7 +19,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.TOrderedHashMap;
 
 public abstract class EditorsList<T> implements ItemList<T> {
 
@@ -28,7 +28,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 
 	@Override
 	public List<T> getItems() {
-		return new GamaList(categories.keySet());
+		return new ArrayList(categories.keySet());
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 		for ( final IParameter vp : getChangedParameters().values() ) {
 			String s =
 				"<" + vp.getType().toString() + " name=\"" + vp.getName() + "\" init=\"" +
-					StringUtils.toGaml(vp.value(scope)) + "\" ";
+					StringUtils.toGaml(vp.value(scope), false) + "\" ";
 			s = s + "parameter = \"" + vp.getTitle() + "\" ";
 			s = s + (vp.getCategory() != null ? " category=\"" + vp.getCategory() + "\"" : "");
 			s = s + (vp.getMinValue() != null ? " min=\"" + vp.getMinValue() + "\" " : "");

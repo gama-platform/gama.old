@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaGraphParserListener.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaGraphParserListener.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -21,6 +21,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.*;
 
 /**
  * Listens for graph parsing events,
@@ -29,8 +30,7 @@ import msi.gaml.species.ISpecies;
  * <ul>
  * <li>as a general philosophy, warnings are emitted when data was available in the graph, but not used for agents</li>
  * <li>x,y,z attributes are processed as special attributes related to the location</li>
- * <li>TODO directionality of the resulting graph is automatically detected: if every edge is not directed, then the
- * graph is not directed.
+ * <li>TODO directionality of the resulting graph is automatically detected: if every edge is not directed, then the graph is not directed.
  * </ul>
  * 
  * @author Samuel Thiriot
@@ -76,8 +76,10 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 	@Override
 	public void startOfParsing() {
-
-		gamaGraph = isSpatial ? new GamaSpatialGraph(scope) : new GamaGraph(scope);
+		IType nodeType = populationNodes == null ? Types.NO_TYPE : populationNodes.getType().getContentType();
+		IType edgeType = populationEdges == null ? Types.NO_TYPE : populationEdges.getType().getContentType();
+		gamaGraph =
+			isSpatial ? new GamaSpatialGraph(scope, nodeType, edgeType) : new GamaGraph(scope, nodeType, edgeType);
 		nodeId2agent = new HashMap<String, IAgent>();
 		edgeId2agent = new HashMap<String, IAgent>();
 

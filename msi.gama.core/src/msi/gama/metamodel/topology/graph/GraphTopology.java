@@ -21,6 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
+import msi.gaml.types.Types;
 
 /**
  * The class GraphTopology.
@@ -109,7 +110,7 @@ public class GraphTopology extends AbstractTopology {
 	public GamaSpatialPath
 		pathBetweenCommon(final IScope scope, final GamaSpatialGraph graph, final IShape edgeS, final IShape edgeT,
 			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
-		IList<IShape> edges = new GamaList<IShape>();
+		IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 		if ( sourceNode && !targetNode ) {
 			IShape nodeT1 = (IShape) graph.getEdgeSource(edgeT);
 			IShape nodeT2 = (IShape) graph.getEdgeTarget(edgeT);
@@ -131,7 +132,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 			if ( computeOther ) {
 				double l2 = 0;
-				IList<IShape> edges2 = new GamaList<IShape>();
+				IList<IShape> edges2 = GamaListFactory.create(Types.GEOMETRY);
 				if ( nodeT2 == source ) {
 					l2 = lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
@@ -170,7 +171,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 			if ( computeOther ) {
 				double l2 = 0;
-				IList<IShape> edges2 = new GamaList<IShape>();
+				IList<IShape> edges2 = GamaListFactory.create(Types.GEOMETRY);
 				if ( nodeS2 == target ) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2);
 				} else {
@@ -246,7 +247,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 			if ( computeS2T1 ) {
 				double l2 = 0;
-				IList<IShape> edges2 = new GamaList<IShape>();
+				IList<IShape> edges2 = GamaListFactory.create(Types.GEOMETRY);
 				if ( nodeS2 == nodeT1 ) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 				} else {
@@ -295,7 +296,7 @@ public class GraphTopology extends AbstractTopology {
 			if ( computeS1T2 ) {
 
 				double l2 = 0;
-				IList<IShape> edges2 = new GamaList<IShape>();
+				IList<IShape> edges2 = GamaListFactory.create(Types.GEOMETRY);
 				if ( nodeS1 == nodeT2 ) {
 					l2 = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
@@ -324,7 +325,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 			if ( computeS2T2 ) {
 				double l2 = 0;
-				IList<IShape> edges2 = new GamaList<IShape>();
+				IList<IShape> edges2 = GamaListFactory.create(Types.GEOMETRY);
 				if ( nodeS2 == nodeT2 ) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
@@ -415,7 +416,7 @@ public class GraphTopology extends AbstractTopology {
 		if ( !sourceNode && !targetNode && edgeS.equals(edgeT) ) {
 			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if ( source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS) ) {
-				edges = new GamaList<IShape>();
+				edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edgeS);
 				return PathFactory.newInstance(this, source, target, edges);
 			}
@@ -424,7 +425,7 @@ public class GraphTopology extends AbstractTopology {
 		IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
 
 		if ( nodeS.equals(nodeT) ) {
-			edges = new GamaList<IShape>();
+			edges = GamaListFactory.create(Types.GEOMETRY);
 			if ( edgeS != null ) {
 				edges.add(edgeS);
 			}
@@ -464,7 +465,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_toGaml()
 	 */
 	@Override
-	protected String _toGaml() {
+	protected String _toGaml(final boolean includingBuiltIn) {
 		return "GraphTopology";
 	}
 
@@ -634,7 +635,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 		}
 		List<IList<IShape>> edgesList = getPlaces().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
-		List results = new GamaList();
+		List results = GamaListFactory.create(Types.PATH);
 		for ( IList<IShape> edges : edgesList ) {
 			GamaSpatialPath pp =
 				pathFromEdgesUndirected(scope, edges, edgeS, edgeT, source, target, sourceNode, targetNode, nodeS,
@@ -650,11 +651,11 @@ public class GraphTopology extends AbstractTopology {
 
 	public List KpathsBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
 		final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode, final int k) {
-		List results = new GamaList();
+		List results = GamaListFactory.create(Types.PATH);
 		if ( edgeS.equals(edgeT) ) {
 			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if ( source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS) ) {
-				IList<IShape> edges = new GamaList<IShape>();
+				IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edgeS);
 				results.add(PathFactory.newInstance(this, source, target, edges));
 				return results;
@@ -664,7 +665,7 @@ public class GraphTopology extends AbstractTopology {
 		IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
 
 		if ( nodeS.equals(nodeT) ) {
-			IList<IShape> edges = new GamaList<IShape>();
+			IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 			edges.add(edgeS);
 			edges.add(edgeT);
 			results.add(PathFactory.newInstance(this, source, target, edges));

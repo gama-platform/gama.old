@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaPoint.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaPoint.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -144,7 +144,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "{" + x + "," + y + "," + z + "}";
 	}
 
@@ -296,7 +296,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		return GamaMap.EMPTY_MAP;
+		return GamaMapFactory.EMPTY_MAP;
 	}
 
 	@Override
@@ -339,11 +339,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public int hashCode() {
-		int result = 17; 
-	    result = 37 * result + hashCode(x);
-	    result = 370 * result + hashCode(y);
-	    result = 3700 * result + hashCode(z);
-	    return result;
+		int result = 17;
+		result = 37 * result + hashCode(x);
+		result = 370 * result + hashCode(y);
+		result = 3700 * result + hashCode(z);
+		return result;
 	}
 
 	public GamaPoint normalized() {
@@ -370,7 +370,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		return GamaList.with(this);
+		IList result = GamaListFactory.create(Types.POINT);
+		result.add(this);
+		return result;
 	}
 
 	/**
@@ -381,8 +383,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public void setDepth(double depth) {
-		// TODO Auto-generated method stub		
+	public void setDepth(final double depth) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.common.interfaces.ITyped#getType()
+	 */
+	@Override
+	public IType getType() {
+		return Types.POINT;
 	}
 
 }

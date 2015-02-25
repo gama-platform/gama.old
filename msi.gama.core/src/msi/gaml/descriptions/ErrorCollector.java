@@ -14,6 +14,7 @@ package msi.gaml.descriptions;
 import static com.google.common.collect.Iterables.*;
 import gnu.trove.set.hash.TLinkedHashSet;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gaml.compilation.GamlCompilationError;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -44,6 +45,11 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	}
 
 	public void add(final GamlCompilationError error) {
+		if ( error.isWarning() ) {
+			if ( !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
+		} else if ( error.isInfo() ) {
+			if ( !GamaPreferences.INFO_ENABLED.getValue() ) { return; }
+		}
 		EObject object = error.getStatement();
 		boolean sameResource = object == null || object.eResource().getURI().equals(resourceURI);
 		if ( sameResource && error.isInfo() ) {

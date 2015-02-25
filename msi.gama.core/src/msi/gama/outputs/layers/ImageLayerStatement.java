@@ -121,7 +121,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				if ( tag.isConst() ) {
 					setName(Cast.asString(scope, tag.value(scope)));
 				} else {
-					setName(tag.toGaml());
+					setName(tag.serialize(false));
 				}
 				if ( imageFileExpression == null ) { throw GamaRuntimeException.error("Image file not defined", scope); }
 				if ( imageFileExpression.isConst() ) {
@@ -183,7 +183,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	 * @param newValue
 	 */
 	public void setGisLayerName(final IScope scope, final String newValue) throws GamaRuntimeException {
-		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.get(IType.STRING));
+		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
 		buildGisLayer(scope);
 	}
 

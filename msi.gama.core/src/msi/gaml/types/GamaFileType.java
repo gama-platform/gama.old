@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.*;
 @type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	static Map<String, IContainerType> extensionsToFullType = new THashMap();
+	public static Map<String, IContainerType> extensionsToFullType = new THashMap();
 	static Map<String, Set<String>> typesToExtensions = new THashMap();
 	static Map<Class, Set<String>> classToExtensions = new THashMap();
 	static Map<String, GamaHelper<IGamaFile>> extensionsToFileBuilder = new THashMap();
@@ -129,7 +129,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) {
+		final IType contentType, final boolean copy) {
 		if ( obj == null ) { return getDefault(); }
 		// 04/03/14 Problem of initialization of files. See if it works or not. No copy of the file is done.
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }

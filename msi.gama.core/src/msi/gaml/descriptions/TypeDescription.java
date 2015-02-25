@@ -73,9 +73,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		return variables;
 	}
 
-	public IList<String> getVarNames() {
-		if ( variables != null ) { return new GamaList(variables.keySet()); }
-		return GamaList.EMPTY_LIST;
+	public Collection<String> getVarNames() {
+		if ( variables != null ) { return variables.keySet(); }
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	public VariableDescription getVariable(final String name) {
@@ -236,7 +236,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void sortVars() {
 		if ( variables == null ) { return; }
 		// GuiUtils.debug("***** Sorting variables of " + getNameFacetValue());
-		final List<VariableDescription> result = new GamaList();
+		final List<VariableDescription> result = new ArrayList();
 		final Collection<VariableDescription> vars = getVariables().values();
 		for ( final VariableDescription var : vars ) {
 			if ( var != null ) {
@@ -245,7 +245,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 		for ( final VariableDescription var : vars ) {
 			if ( var != null ) {
-				var.expandDependencies(new GamaList());
+				var.expandDependencies(new ArrayList());
 			}
 		}
 		for ( final VariableDescription toBePlaced : vars ) {
@@ -276,7 +276,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public void resortVarName(final VariableDescription var) {
 		var.usedVariablesIn(getVariables());
-		var.expandDependencies(new GamaList());
+		var.expandDependencies(new ArrayList());
 		variables.remove(var.getName());
 		List<VariableDescription> vl = new ArrayList(variables.values());
 		ListIterator<VariableDescription> li = vl.listIterator(vl.size());

@@ -22,7 +22,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 
 // Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
-	GamaList<GamaShape> segments;
+	IList<IShape> segments;
 	IShape shape = null;
 	THashMap<IShape, IShape> realObjects; // cle = bout de geometrie
 
@@ -71,7 +71,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		source = start;
 		this.target = target;
 		this.graph = g;
-		this.segments = new GamaList<GamaShape>();
+		this.segments = GamaListFactory.create(Types.GEOMETRY);
 
 		realObjects = new THashMap<IShape, IShape>();
 		graphVersion = 0;
@@ -136,10 +136,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					} else {
 						realObjects.put(edge2.getGeometry(), edge);
 					}
-					segments.add((GamaShape) edge2.getGeometry());
+					segments.add(edge2.getGeometry());
 
 				} else {
-					segments.add((GamaShape) edge.getGeometry());
+					segments.add(edge.getGeometry());
 				}
 				cpt++;
 				// segmentsInGraph.put(agents, agents);
@@ -177,13 +177,12 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			source = nodes.get(0);
 			target = nodes.get(nodes.size() - 1);
 		}
-		segments = new GamaList<GamaShape>();
+		segments = GamaListFactory.<IShape> create(Types.GEOMETRY);
 		realObjects = new THashMap<IShape, IShape>();
 		graph = g;
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
-			segments.add((GamaShape) GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
-				.getLocation()));
+			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation()));
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
 				// MODIF: put?
@@ -215,14 +214,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	//
 	// @Override
 	// public IList<IShape> getAgentList() {
-	// GamaList<IShape> ags = new GamaList<IShape>();
+	// GamaList<IShape> ags = GamaListFactory.create(Types.GEOMETRY);
 	// ags.addAll(new HashSet<IShape>(realObjects.values()));
 	// return ags;
 	// }
 
 	@Override
 	public IList getEdgeGeometry() {
-		// GamaList<IShape> ags = new GamaList<IShape>();
+		// GamaList<IShape> ags = GamaListFactory.create(Types.GEOMETRY);
 		// ags.addAll(new HashSet<IShape>(realObjects.values()));
 		// return ags;
 		return segments;

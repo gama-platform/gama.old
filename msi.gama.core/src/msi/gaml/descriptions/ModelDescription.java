@@ -15,7 +15,7 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.util.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 public class ModelDescription extends SpeciesDescription {
 
 	// TODO Move elsewhere
+	public static final String MODEL_SUFFIX = "_model";
 	public static ModelDescription ROOT;
 	private final Map<String, ExperimentDescription> experiments = new TOrderedHashMap();
 	private final Map<String, ExperimentDescription> titledExperiments = new TOrderedHashMap();
@@ -39,18 +40,23 @@ public class ModelDescription extends SpeciesDescription {
 	private String modelFilePath;
 	private String modelFolderPath;
 	private final String modelProjectPath;
+	private final List<String> imports;
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
 	protected boolean document;
 	// hqnghi new attribute manipulate micro-models
-	private GamaMap<String, ModelDescription> MICRO_MODELS = new GamaMap<String, ModelDescription>();
+	private Map<String, ModelDescription> MICRO_MODELS = new TOrderedHashMap<String, ModelDescription>();
 	private String alias = "";
 
-	public void setMicroModels(final GamaMap<String, ModelDescription> mm) {
+	public void setMicroModels(final Map<String, ModelDescription> mm) {
 		MICRO_MODELS = mm;
 	}
 
-	public GamaMap<String, ModelDescription> getMicroModels() {
+	public List<String> getImports() {
+		return imports;
+	}
+
+	public Map<String, ModelDescription> getMicroModels() {
 		return MICRO_MODELS;
 	}
 
@@ -60,7 +66,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public void addMicroModel(final String mName, final ModelDescription md) {
-		MICRO_MODELS.addValue(null, new GamaPair<String, ModelDescription>(mName, md));
+		MICRO_MODELS.put(mName, md);
 	}
 
 	public void setAlias(final String as) {
@@ -75,12 +81,12 @@ public class ModelDescription extends SpeciesDescription {
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
 		final SpeciesDescription parent, final Facets facets) {
-		this(name, clazz, "", "", null, macro, parent, facets, ErrorCollector.BuiltIn);
+		this(name, clazz, "", "", null, macro, parent, facets, ErrorCollector.BuiltIn, Collections.EMPTY_LIST);
 	}
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
-		final ErrorCollector collector) {
+		final ErrorCollector collector, final List<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
 		types =
 			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
@@ -89,6 +95,7 @@ public class ModelDescription extends SpeciesDescription {
 		modelFolderPath = new File(modelPath).getParent();
 		modelProjectPath = projectPath;
 		collect = collector;
+		this.imports = imports;
 		// System.out.println("Model description created with file path " + modelFilePath + "; project path " +
 		// modelProjectPath);
 	}
@@ -100,6 +107,11 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void setTorus(final boolean b) {
 		isTorus = b;
+	}
+
+	@Override
+	public String getTitle() {
+		return getName().replace(MODEL_SUFFIX, "");
 	}
 
 	@Override
@@ -163,7 +175,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String toString() {
-		if ( modelFilePath.isEmpty() ) { return "abstract model"; }
+		if ( modelFilePath == null || modelFilePath.isEmpty() ) { return "abstract model"; }
 		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 

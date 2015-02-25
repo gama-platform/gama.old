@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -18,7 +18,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import org.opengis.referencing.FactoryException;
 import com.vividsolutions.jts.geom.*;
@@ -200,7 +200,7 @@ public abstract class SqlConnection {
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
-	protected abstract GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs);
+	protected abstract IList<IList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs);
 
 	/*
 	 * @Meththod: getGeometryColumns(ResultSetMetaData rsmd)
@@ -226,18 +226,18 @@ public abstract class SqlConnection {
 	 * 
 	 * @throws SQLException
 	 */
-	protected abstract GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException;
+	protected abstract IList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException;
 
 	/*
 	 * Make insert command string with columns and values
 	 */
-	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,
-		GamaList<Object> values) throws GamaRuntimeException;
+	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, IList<Object> cols,
+		IList<Object> values) throws GamaRuntimeException;
 
 	/*
 	 * Make insert command string for all columns with values
 	 */
-	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> values)
+	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, IList<Object> values)
 		throws GamaRuntimeException;
 
 	/*
@@ -245,8 +245,9 @@ public abstract class SqlConnection {
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
-	public GamaList<? super GamaList<? super GamaList>> selectDB(final IScope scope, final String selectComm) {
-		GamaList<? super GamaList<? super GamaList>> result = new GamaList();
+	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
+		IList<? super IList<? super IList>> result =
+			GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		Connection conn = null;
 		try {
 			conn = connectDB();
@@ -269,15 +270,16 @@ public abstract class SqlConnection {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	// public GamaList<GamaList<Object>> selectDB(String selectComm)
-	public GamaList<? super GamaList<? super GamaList>> selectDB(final IScope scope, final Connection conn,
+	public IList<? super IList<? super IList>> selectDB(final IScope scope, final Connection conn,
 		final String selectComm) {
 		;
 		ResultSet rs;
-		GamaList<? super GamaList<? super GamaList>> result = new GamaList();
+		IList<? super IList<? super IList>> result =
+			GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		// GamaList<? extends GamaList<? super GamaList>> result = new GamaList();
 
 		// GamaList<Object> rowList = new GamaList<Object>();
-		GamaList repRequest = new GamaList();
+		IList repRequest = GamaListFactory.create(msi.gaml.types.Types.NO_TYPE);
 		try {
 			Statement st = conn.createStatement();
 			rs = st.executeQuery(selectComm);
@@ -287,7 +289,7 @@ public abstract class SqlConnection {
 				GuiUtils.debug("MetaData:" + rsmd.toString());
 			}
 			result.add(getColumnName(rsmd));
-			GamaList<Object> columns = getColumnTypeName(rsmd);
+			IList<Object> columns = getColumnTypeName(rsmd);
 			result.add(columns);
 			repRequest = resultSet2GamaList(rs);
 			result.add(repRequest);
@@ -397,7 +399,7 @@ public abstract class SqlConnection {
 		return n;
 	}
 
-	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSet rs) throws SQLException {
+	protected IList<IList<Object>> resultSet2GamaList(final ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		return resultSet2GamaList(rsmd, rs);
 	}
@@ -413,9 +415,9 @@ public abstract class SqlConnection {
 	 * 
 	 * @throws SQLException
 	 */
-	protected GamaList<Object> getColumnName(final ResultSetMetaData rsmd) throws SQLException {
+	protected IList<Object> getColumnName(final ResultSetMetaData rsmd) throws SQLException {
 		int numberOfColumns = rsmd.getColumnCount();
-		GamaList<Object> columnType = new GamaList<Object>();
+		IList<Object> columnType = GamaListFactory.create();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 			columnType.add(rsmd.getColumnName(i).toUpperCase());
 		}
@@ -447,13 +449,13 @@ public abstract class SqlConnection {
 	 */
 
 	// public static Envelope getBounds(final GamaList<? extends GamaList<? super GamaList>> gamaList) {
-	public static Envelope getBounds(final GamaList<? super GamaList<? super GamaList>> gamaList) {
+	public static Envelope getBounds(final IList<? super IList<? super IList>> gamaList) {
 
 		Envelope envelope;
 		// get Column name
-		GamaList colNames = (GamaList) gamaList.get(0);
+		IList colNames = (IList) gamaList.get(0);
 		// get Column type
-		GamaList colTypes = (GamaList) gamaList.get(1);
+		IList colTypes = (IList) gamaList.get(1);
 		int index = colTypes.indexOf(GEOMETRYTYPE);
 		if ( index < 0 ) {
 			return null;
@@ -495,7 +497,7 @@ public abstract class SqlConnection {
 
 	/*-------------------------------------------------------------------------------------------------------------------------
 	 * Make Insert a reccord into table
-	 * 
+	 *
 	 */
 	public int insertDB(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
@@ -531,7 +533,7 @@ public abstract class SqlConnection {
 
 	/*-------------------------------------------------------------------------------------------------------------------------
 	 *  Insert a reccord into table
-	 * 
+	 *
 	 */
 	public int insertDB(final IScope scope, final Connection conn, final String table_name,
 		final GamaList<Object> cols, final GamaList<Object> values, final Boolean transformed)
@@ -545,7 +547,7 @@ public abstract class SqlConnection {
 
 	/*-------------------------------------------------------------------------------------------------------------------------
 	 *  Insert a reccord into table
-	 * 
+	 *
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
 		final GamaList<Object> values) throws GamaRuntimeException {
@@ -645,12 +647,12 @@ public abstract class SqlConnection {
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
-	public GamaList<Object> executeQueryDB(final IScope scope, final Connection conn, final String queryStr,
-		final GamaList<Object> condition_values) throws GamaRuntimeException {
+	public IList<Object> executeQueryDB(final IScope scope, final Connection conn, final String queryStr,
+		final IList<Object> condition_values) throws GamaRuntimeException {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
-		GamaList<Object> result = new GamaList<Object>();
-		GamaList repRequest = new GamaList();
+		IList<Object> result = GamaListFactory.create();
+		IList repRequest = GamaListFactory.create();
 		int condition_count = condition_values.size();
 		try {
 
@@ -667,7 +669,7 @@ public abstract class SqlConnection {
 				GuiUtils.debug("MetaData:" + rsmd.toString());
 			}
 			result.add(getColumnName(rsmd));
-			GamaList columns = getColumnTypeName(rsmd);
+			IList columns = getColumnTypeName(rsmd);
 			result.add(columns);
 
 			repRequest = resultSet2GamaList(rs);
@@ -740,9 +742,10 @@ public abstract class SqlConnection {
 	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
 	 * object
 	 */
-	public GamaList<Object> executeQueryDB(final IScope scope, final String queryStr,
-		final GamaList<Object> condition_values) throws GamaRuntimeException {
-		GamaList<Object> result = new GamaList<Object>();
+	public IList<Object>
+		executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
+			throws GamaRuntimeException {
+		IList<Object> result = GamaListFactory.create();
 		Connection conn;
 		try {
 			conn = connectDB();
@@ -783,7 +786,7 @@ public abstract class SqlConnection {
 			// set value for each condition
 			if ( DEBUG ) {
 				GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_count);
-				GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_values.toGaml());
+				GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:" + condition_values.serialize(false));
 			}
 
 			for ( int i = 0; i < condition_count; i++ ) {

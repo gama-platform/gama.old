@@ -25,15 +25,19 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(name = IKeyword.FLOAT, id = IType.FLOAT, wraps = { Double.class, double.class }, kind = ISymbolKind.Variable.NUMBER)
+@type(name = IKeyword.FLOAT,
+	id = IType.FLOAT,
+	wraps = { Double.class, double.class },
+	kind = ISymbolKind.Variable.NUMBER)
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override
-	public Double cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public Double cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, param, copy);
 	}
 
-	public static Double staticCast(final IScope scope, final Object obj, final Object param) {
+	public static Double staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if ( obj instanceof Double ) { return (Double) obj; }
 		if ( obj instanceof Number ) { return ((Number) obj).doubleValue(); }
 		if ( obj instanceof String ) {

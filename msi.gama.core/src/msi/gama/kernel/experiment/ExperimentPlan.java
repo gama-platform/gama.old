@@ -283,14 +283,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if ( data == null ) {
 			data = exploration.getFitnessExpression();
 		}
-		String dataString = data == null ? "time" : data.toGaml();
+		String dataString = data == null ? "time" : data.serialize(false);
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
 	@Override
 	public void open() {
 		createAgent();
-		GuiUtils.prepareForExperiment(this);
+		// GuiUtils.prepareForExperiment(this);
 		agent.schedule();
 		if ( isBatch() ) {
 			GuiUtils.informStatus(" Batch ready ");

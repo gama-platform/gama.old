@@ -14,12 +14,12 @@ package msi.gaml.statements;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
@@ -30,7 +30,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.MigrateStatement.MigrateValidator;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * This command permits agents to migrate from one population/species to another population/species
@@ -47,14 +47,23 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.SOURCE, type = IType.ID, optional = false, doc = @doc("can be an agent, a list of agents, a agent's population to be migrated")), // workaround
-	@facet(name = IKeyword.TARGET, type = IType.ID, optional = false, doc = @doc("target species/population that source agent(s) migrate to.")),
-	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("the list of returned agents in a new local variable")) }, omissible = IKeyword.SOURCE)
+	@facet(name = IKeyword.SOURCE,
+		type = IType.ID,
+		optional = false,
+		doc = @doc("can be an agent, a list of agents, a agent's population to be migrated")), // workaround
+	@facet(name = IKeyword.TARGET,
+		type = IType.ID,
+		optional = false,
+		doc = @doc("target species/population that source agent(s) migrate to.")),
+	@facet(name = IKeyword.RETURNS,
+		type = IType.NEW_TEMP_ID,
+		optional = true,
+		doc = @doc("the list of returned agents in a new local variable")) }, omissible = IKeyword.SOURCE)
 @validator(MigrateValidator.class)
-@doc(value="This command permits agents to migrate from one population/species to another population/species and stay in the same host after the migration. Species of source agents and target species respect the following constraints: (i) they are \"peer\" species (sharing the same direct macro-species), (ii) they have sub-species vs. parent-species relationship.", usages = {
-	@usage(value="It can be used in a 3-levels model, in case where individual agents can be captured into group meso agents and groups into clouds macro agents. migrate is used to allows agents captured by groups to migrate into clouds. See the model 'Balls, Groups and Clouds.gaml' in the library.", examples = {
-		@example(value="migrate ball_in_group target: ball_in_cloud;", isExecutable=false)})},
-	see={IKeyword.CAPTURE,IKeyword.RELEASE})
+@doc(value = "This command permits agents to migrate from one population/species to another population/species and stay in the same host after the migration. Species of source agents and target species respect the following constraints: (i) they are \"peer\" species (sharing the same direct macro-species), (ii) they have sub-species vs. parent-species relationship.",
+	usages = { @usage(value = "It can be used in a 3-levels model, in case where individual agents can be captured into group meso agents and groups into clouds macro agents. migrate is used to allows agents captured by groups to migrate into clouds. See the model 'Balls, Groups and Clouds.gaml' in the library.",
+		examples = { @example(value = "migrate ball_in_group target: ball_in_cloud;", isExecutable = false) }) },
+	see = { IKeyword.CAPTURE, IKeyword.RELEASE })
 public class MigrateStatement extends AbstractStatementSequence {
 
 	public static class MigrateValidator implements IDescriptionValidator {
@@ -114,7 +123,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
 		// TODO Verify it is a macro agent
 		final IMacroAgent executor = (IMacroAgent) stack.getAgentScope();
-		final IList<IAgent> immigrants = new GamaList<IAgent>();
+		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
 
 		final ISpecies targetMicroSpecies = executor.getSpecies().getMicroSpecies(target);
 		final ISpecies sourceMicroSpecies = executor.getSpecies().getMicroSpecies(source);
@@ -131,7 +140,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 		 * immigrants.addAll(executor.migrateMicroAgents((IList) immigrantCandidates,
 		 * targetMicroSpecies));
 		 * } else if (immigrantCandidates instanceof IAgent) {
-		 * IList<IAgent> m = new GamaList<IAgent>();
+		 * IList<IAgent> m = GamaListFactory.create(Types.AGENT);
 		 * m.add((IAgent) immigrantCandidates);
 		 * immigrants.addAll(executor.migrateMicroAgents(m, targetMicroSpecies));
 		 * }

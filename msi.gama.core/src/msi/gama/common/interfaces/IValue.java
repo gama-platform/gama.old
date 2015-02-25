@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IValue.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IValue.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -20,7 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-public interface IValue extends IGamlable {
+public interface IValue extends IGamlable, ITyped {
 
 	// public abstract IType type();
 

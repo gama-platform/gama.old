@@ -42,7 +42,8 @@ public class BreakStatement extends AbstractStatement {
 	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final StatementDescription desc, final StringBuilder sb) {
+		protected void
+			serialize(final StatementDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
 			sb.append(BREAK).append(";");
 		}
 	}

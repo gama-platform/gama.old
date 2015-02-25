@@ -34,7 +34,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
-import msi.gaml.types.GamaTopologyType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.google.common.collect.*;
 
@@ -90,7 +90,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		public Object run(final IScope scope) throws GamaRuntimeException {
 			final IPopulation pop = GamaPopulation.this;
 			final Set<IAgent> targets = new THashSet(Cast.asList(scope, listOfTargetAgents.value(scope)));
-			final List<IAgent> toKill = new GamaList();
+			final List<IAgent> toKill = new ArrayList();
 			for ( final IAgent agent : pop.iterable(scope) ) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
 				if ( targets.contains(target) ) {
@@ -114,6 +114,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	protected GamaPopulation(final IMacroAgent host, final ISpecies species) {
+		super(0, host == null ? Types.get(IKeyword.EXPERIMENT) : host.getScope().getModelContext()
+			.getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
@@ -178,7 +180,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
 		final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 		final int step = scope.getClock().getCycle();
-		if ( frequency == 0 || step % frequency != 0 ) { return GamaList.EMPTY_LIST; }
+		if ( frequency == 0 || step % frequency != 0 ) { return GamaListFactory.EMPTY_LIST; }
 		final IExpression ags = getSpecies().getSchedule();
 		final IList<IAgent> agents = ags == null ? this : Cast.asList(scope, ags.value(scope));
 		// if ( getSpecies().getName().equals("flock") ) {
@@ -222,7 +224,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public java.lang.Iterable<IAgent> iterable(final IScope scope) {
-		return GamaPopulation.allLivingAgents(this);
+		return (Iterable<IAgent>) getAgents(scope);
 	}
 
 	@Override
@@ -237,10 +239,10 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		}
 	}
 
-	// @Override
-	// public IAgent[] toArray() {
-	// return super.toArray(new IAgent[0]);
-	// }
+	@Override
+	public IAgent[] toArray() {
+		return super.toArray(new IAgent[0]);
+	}
 
 	/**
 	 * Special case for creating agents directly from geometries
@@ -253,8 +255,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
 		final int number = geometries.length(scope);
-		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
-		final IList<IAgent> list = new GamaList(number);
+		if ( number == 0 ) { return GamaListFactory.EMPTY_LIST; }
+		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
 		for ( final IShape geom : geometries.iterable(scope) ) {
 			// WARNING Should be redefined somehow
@@ -278,8 +280,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<? extends Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
-		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
-		final IList<IAgent> list = new GamaList(number);
+		if ( number == 0 ) { return GamaListFactory.EMPTY_LIST; }
+		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
 		for ( int i = 0; i < number; i++ ) {
 			final IAgent a = constr.createOneAgent(this);
@@ -293,7 +295,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 					if ( val instanceof GamaPoint ) {
 						a.setGeometry(new GamaShape((IShape) val));
 					} else {
-						a.setGeometry((GamaShape) val);
+						a.setGeometry((IShape) val);
 					}
 					init.remove(IKeyword.SHAPE);
 				} else if ( init.containsKey(IKeyword.LOCATION) ) {
@@ -361,7 +363,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public IList<String> getAspectNames() {
+	public Collection<String> getAspectNames() {
 		return species.getAspectNames();
 	}
 
@@ -401,11 +403,11 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final boolean fixed = species.isGraph() || species.isGrid();
 		if ( expr != null ) {
 			if ( !fixed ) {
-				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host));
+				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), false);
 				return;
 			}
 			throw GamaRuntimeException.warning("Impossible to assign a topology to " + species.getName() +
-				" as it already defines one.");
+				" as it already defines one.", scope);
 		}
 		if ( species.isGrid() ) {
 			topology = buildGridTopology(scope, species, getHost());
@@ -413,10 +415,12 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
 			final ISpecies edgeSpecies = scope.getSimulationScope().getModel().getSpecies(edgeName);
+			IType edgeType = scope.getModelContext().getTypeNamed(edgeName);
+			IType nodeType = getType().getContentType();
 			// TODO Specifier directed quelque part dans l'esp�ce
 			final GamaSpatialGraph g =
-				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false, new AbstractGraphNodeAgent.NodeRelation(),
-					edgeSpecies, scope);
+				new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
+					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
 			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
@@ -460,7 +464,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public Iterator<IAgent> iterator() {
-		return new GamaList<IAgent>(this).iterator();
+		return super.iterator();
+		// return GamaListFactory.create(this, getHost().getModel().getDescription().getTypeNamed(getName())).iterator();
 		// return Iterators.forArray(toArray(new IAgent[0]));
 	}
 
@@ -476,11 +481,17 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	@Override
 	public void killMembers() throws GamaRuntimeException {
-		final Iterator<IAgent> it = iterator();
-		while (it.hasNext()) {
-			final IAgent a = it.next();
-			a.dispose();
+		IAgent[] ag = toArray();
+		for ( IAgent a : ag ) {
+			if ( a != null ) {
+				a.dispose();
+			}
 		}
+		// final Iterator<IAgent> it = ag.iterator();
+		// while (it.hasNext()) {
+		// final IAgent a = it.next();
+		// a.dispose();
+		// }
 	}
 
 	@Override
@@ -493,11 +504,17 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		return "Population of " + species.getName();
 	}
 
+	//
+	// @Override
+	// public IAgent[] toArray() {
+	// return (IAgent[]) super.toArray();
+	// }
+
 	/**
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "list(" + species.getName() + ")";
 	}
 
@@ -518,7 +535,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public void addValueAtIndex(final IScope scope, final Integer index, final IAgent value) {
+	public void addValueAtIndex(final IScope scope, final Object index, final IAgent value) {
 		addValue(scope, value);
 	}
 
@@ -527,7 +544,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public void addVallues(final IScope scope, final IContainer values) {
+	public void addValues(final IScope scope, final IContainer values) {
 		for ( final IAgent o : (java.lang.Iterable<IAgent>) values.iterable(scope) ) {
 			addValue(scope, o);
 		}
@@ -703,7 +720,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	 */
 	@Override
 	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
-		return GamaList.from(GamaPopulation.allLivingAgents(this));
+		return GamaListFactory.create(scope, getType().getContentType(), GamaPopulation.allLivingAgents(this));
 	}
 
 	/**

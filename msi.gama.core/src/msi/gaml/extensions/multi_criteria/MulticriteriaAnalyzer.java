@@ -19,8 +19,9 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 
 @species(name = "multicriteria_analyzer")
 public class MulticriteriaAnalyzer extends GamlAgent {
@@ -134,8 +135,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		}
 		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return scope.getRandom().between(0, candidates.size() - 1); }
-		if ( candsFilter.size() == 1 ) { return ((Candidate) GamaList.from((Iterable) candsFilter).firstValue(scope))
-			.getIndex(); }
+		if ( candsFilter.size() == 1 ) { return ((Candidate) GamaListFactory.create(scope, Types.NO_TYPE,
+			(Iterable) candsFilter).firstValue(scope)).getIndex(); }
 		final Candidate decision = promethee.decision(candsFilter);
 		return decision.getIndex();
 
@@ -152,8 +153,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		}
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
-		final List<Candidate> candidates = new GamaList<Candidate>();
-		final List<String> criteriaStr = new GamaList<String>();
+		final List<Candidate> candidates = new ArrayList<Candidate>();
+		final List<String> criteriaStr = GamaListFactory.create(Types.STRING);
 		final Map<String, Double> weight = new HashMap<String, Double>();
 		final Map<String, Double> preference = new HashMap<String, Double>();
 		final Map<String, Double> indifference = new HashMap<String, Double>();

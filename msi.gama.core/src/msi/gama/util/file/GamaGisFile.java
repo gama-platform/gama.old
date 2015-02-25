@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaGisFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaGisFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -48,7 +48,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 				throw GamaRuntimeException.error("The code " + initialCRSCode +
 					" does not correspond to a known EPSG code. GAMA is unable to load " + getPath(), scope);
 			}
-		} 
+		}
 		if ( initialCRSCodeStr != null ) {
 			try {
 				return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCodeStr);
@@ -56,9 +56,9 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 				throw GamaRuntimeException.error("The code " + initialCRSCodeStr +
 					" does not correspond to a known CRS code. GAMA is unable to load " + getPath(), scope);
 			}
-		} 
+		}
 		CoordinateReferenceSystem crs = getOwnCRS();
-		if ( crs == null ) {
+		if ( crs == null && scope != null ) {
 			crs = scope.getSimulationScope().getProjectionFactory().getDefaultInitialCRS();
 		}
 		return crs;
@@ -70,6 +70,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected abstract CoordinateReferenceSystem getOwnCRS();
 
 	protected void computeProjection(final IScope scope, final Envelope env) {
+		if ( scope == null ) { return; }
 		CoordinateReferenceSystem crs = getExistingCRS(scope);
 		ProjectionFactory pf = scope.getSimulationScope().getProjectionFactory();
 		gis = pf.fromCRS(crs, env);
@@ -79,7 +80,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		super(scope, pathName);
 		initialCRSCode = code;
 	}
-	
+
 	public GamaGisFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName);
 		initialCRSCodeStr = code;

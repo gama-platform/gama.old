@@ -69,7 +69,7 @@ public class ProjectionFactory {
 		}
 	}
 
-	CoordinateReferenceSystem getTargetCRS() {
+	public CoordinateReferenceSystem getTargetCRS() {
 		if ( targetCRS == null ) {
 
 			try {
@@ -84,7 +84,7 @@ public class ProjectionFactory {
 		return targetCRS;
 	}
 
-	CoordinateReferenceSystem getSaveCRS() {
+	public CoordinateReferenceSystem getSaveCRS() {
 		if ( GamaPreferences.LIB_USE_DEFAULT.getValue() ) { return getWorld().getInitialCRS(); }
 		return computeDefaultCRS(GamaPreferences.LIB_OUTPUT_CRS.getValue(), false);
 	}

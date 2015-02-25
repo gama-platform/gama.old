@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaShape.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaShape.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
 
@@ -53,7 +53,11 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
+	}
 
+	@Override
+	public IType getType() {
+		return Types.GEOMETRY;
 	}
 
 	public GamaShape(final Geometry geom, final boolean computeLocation) {
@@ -80,7 +84,8 @@ public class GamaShape implements IShape /* , IContainer */{
 		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
 		GamaMap attr = source.getAttributes();
 		if ( attr != null ) {
-			attributes = new GamaMap(attr);
+			attributes =
+				GamaMapFactory.createWithoutCasting(attr.getType().getKeyType(), attr.getType().getContentType(), attr);
 		}
 	}
 
@@ -167,8 +172,8 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@getter("geometries")
-	public GamaList<GamaShape> getGeometries() {
-		final GamaList<GamaShape> result = new GamaList();
+	public IList<GamaShape> getGeometries() {
+		final IList<GamaShape> result = GamaListFactory.create(Types.GEOMETRY);
 		if ( isMultiple() ) {
 			for ( int i = 0, n = getInnerGeometry().getNumGeometries(); i < n; i++ ) {
 				result.add(new GamaShape(getInnerGeometry().getGeometryN(i)));
@@ -197,19 +202,23 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
-	public String toGaml() {
-		if ( isPoint() ) { return getLocation().toGaml() + " as geometry"; }
-		if ( isMultiple() ) { return getGeometries().toGaml() + " as geometry"; }
-		final GamaList<GamaShape> holes = getHoles();
+	public String serialize(final boolean includingBuiltIn) {
+		if ( isPoint() ) { return getLocation().serialize(includingBuiltIn) + " as geometry"; }
+		if ( isMultiple() ) { return getGeometries().serialize(includingBuiltIn) + " as geometry"; }
+		final IList<GamaShape> holes = getHoles();
 		String result = "";
 		if ( getInnerGeometry() instanceof LineString ) {
-			result = "polyline (" + new GamaList(getPoints()).toGaml() + ")";
+			result =
+				"polyline (" +
+					GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
 		} else {
-			result = "polygon (" + new GamaList(getPoints()).toGaml() + ")";
+			result =
+				"polygon (" +
+					GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
 		}
 		if ( holes.isEmpty() ) { return result; }
 		for ( final GamaShape g : holes ) {
-			result = "(" + result + ") - (" + g.toGaml() + ")";
+			result = "(" + result + ") - (" + g.serialize(includingBuiltIn) + ")";
 		}
 		return result;
 	}
@@ -323,8 +332,8 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@getter("holes")
-	public GamaList<GamaShape> getHoles() {
-		final GamaList<GamaShape> holes = new GamaList();
+	public IList<GamaShape> getHoles() {
+		final IList<GamaShape> holes = GamaListFactory.create(Types.GEOMETRY);
 		if ( getInnerGeometry() instanceof Polygon ) {
 			final Polygon p = (Polygon) getInnerGeometry();
 			final int n = p.getNumInteriorRing();
@@ -395,7 +404,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	@getter("points")
 	public IList<? extends ILocation> getPoints() {
-		final GamaList<GamaPoint> result = new GamaList();
+		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
 		final Coordinate[] points = getInnerGeometry().getCoordinates();
 		for ( final Coordinate c : points ) {
 			result.add(new GamaPoint(c));
@@ -541,7 +550,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		// g.envelope = new Envelope3D(envelope);
 		// }
 		// if ( attributes != null ) {
-		// g.attributes = new GamaMap(attributes);
+		// g.attributes = GamaMapFactory.create(attributes);
 		// }
 		// g.setLocation(location.copy(scope));
 		return g;
@@ -636,7 +645,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public GamaMap getOrCreateAttributes() {
 		if ( attributes == null ) {
-			attributes = new GamaMap();
+			attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		}
 		return attributes;
 	}

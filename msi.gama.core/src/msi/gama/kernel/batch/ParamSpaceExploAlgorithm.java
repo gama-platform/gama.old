@@ -18,7 +18,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -110,11 +109,11 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 			@Override
 			public Object value() {
-				List<Class> classes = new GamaList(CLASSES);
+				List<Class> classes = Arrays.asList(CLASSES);
 				String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
 				String fit =
 					fitnessExpression == null ? "" : "fitness = " + (isMaximize ? " maximize " : " minimize ") +
-						fitnessExpression.toGaml();
+						fitnessExpression.serialize(false);
 				String sim =
 					fitnessExpression == null ? "" : (combination == C_MAX ? " max " : combination == C_MIN ? " min "
 						: " average ") + "of " + agent.getSeeds().length + " simulations";

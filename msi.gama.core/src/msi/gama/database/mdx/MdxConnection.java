@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.operators.Strings;
 import org.olap4j.*;
 import org.olap4j.metadata.*;
@@ -260,7 +260,7 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(final String selectComm, final GamaList<Object> condition_values) {
+	public CellSet select(final String selectComm, final IList<Object> condition_values) {
 		CellSet resultCellSet = null;
 		OlapConnection oConn = null;
 		try {
@@ -297,40 +297,39 @@ public abstract class MdxConnection {
 	/*
 	 * Select data source with connection was established
 	 */
-	public GamaList<Object> selectMDB(final String selectComm, final GamaList<Object> condition_values) {
+	public IList<Object> selectMDB(final String selectComm, final IList<Object> condition_values) {
 		CellSet cellSet = select(selectComm, condition_values);
 		return cellSet2List(cellSet);
 	}
 
-	public GamaList<Object> selectMDB(final String selectComm) {
+	public IList<Object> selectMDB(final String selectComm) {
 		CellSet cellSet = select(selectComm);
 		return cellSet2List(cellSet);
 	}
 
-	public GamaList<Object> selectMDB(final OlapConnection connection, final String selectComm) {
+	public IList<Object> selectMDB(final OlapConnection connection, final String selectComm) {
 		CellSet cellSet = select(connection, selectComm);
 		return cellSet2List(cellSet);
 	}
 
-	public GamaList<Object> selectMDB(final String onColumns, final String onRows, final String from) {
+	public IList<Object> selectMDB(final String onColumns, final String onRows, final String from) {
 		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
 		return selectMDB(mdxStr);
 	}
 
-	public GamaList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
+	public IList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
 		final String from) {
 		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
 		return selectMDB(connection, mdxStr);
 	}
 
-	public GamaList<Object>
-		selectMDB(final String onColumns, final String onRows, final String from, final String where) {
+	public IList<Object> selectMDB(final String onColumns, final String onRows, final String from, final String where) {
 		String mdxStr =
 			"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
 		return selectMDB(mdxStr);
 	}
 
-	public GamaList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
+	public IList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
 		final String from, final String where) {
 		String mdxStr =
 			"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
@@ -349,15 +348,15 @@ public abstract class MdxConnection {
 	 * (0): rowMembers (GamaList<String>: this is a list of members in the row.
 	 * (1): cellValues (Gamalist<Object>): This is a list of values in cell column or (we can call measures)
 	 */
-	public GamaList<Object> cellSet2List(final CellSet cellSet) {
-		GamaList<Object> olapResult = new GamaList<Object>();
+	public IList<Object> cellSet2List(final CellSet cellSet) {
+		IList<Object> olapResult = GamaListFactory.create();
 		olapResult.add(this.getColumnsName(cellSet));
 		olapResult.add(this.getRowsData(cellSet));
 		return olapResult;
 	}
 
-	protected GamaList<Object> getColumnsName(final CellSet cellSet) {
-		GamaList<Object> columnsName = new GamaList<Object>();
+	protected IList<Object> getColumnsName(final CellSet cellSet) {
+		IList<Object> columnsName = GamaListFactory.create();
 		List<CellSetAxis> cellSetAxes = cellSet.getAxes();
 		// get headings.
 		CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
@@ -369,8 +368,8 @@ public abstract class MdxConnection {
 
 	}
 
-	protected GamaList<Object> getRowsData(final CellSet cellSet) {
-		GamaList<Object> rowsData = new GamaList<Object>();
+	protected IList<Object> getRowsData(final CellSet cellSet) {
+		IList<Object> rowsData = GamaListFactory.create();
 
 		List<CellSetAxis> cellSetAxes = cellSet.getAxes();
 		CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
@@ -386,14 +385,14 @@ public abstract class MdxConnection {
 		}
 
 		for ( Position rowPosition : rowsAxis.getPositions() ) {
-			GamaList<Object> row = new GamaList<Object>();
-			GamaList<Object> rowMembers = new GamaList<Object>();
+			IList<Object> row = GamaListFactory.create();
+			IList<Object> rowMembers = GamaListFactory.create();
 			// get member on each row
 			for ( Member member : rowPosition.getMembers() ) {
 				rowMembers.add(member.getName());
 			}
 			// get value of the cell in each column.
-			GamaList<Object> cellValues = new GamaList<Object>();
+			IList<Object> cellValues = GamaListFactory.create();
 			for ( Position columnPosition : columnsAxis.getPositions() ) {
 				// Access the cell via its ordinal. The ordinal is kept in step
 				// because we increment the ordinal once for each row and
@@ -421,56 +420,56 @@ public abstract class MdxConnection {
 	/*
 	 * Get all column names of OLAP query
 	 */
-	public GamaList<Object> getAllColummsName(final GamaList<Object> olapResult) {
+	public IList<Object> getAllColummsName(final IList<Object> olapResult) {
 		return (GamaList<Object>) olapResult.get(0);
 	}
 
 	/*
 	 * Get all column names of OLAP query
 	 */
-	public Object getColummNameAt(final GamaList<Object> olapResult, final int cIndex) {
+	public Object getColummNameAt(final IList<Object> olapResult, final int cIndex) {
 		return this.getAllColummsName(olapResult).get(cIndex);
 	}
 
 	/*
 	 * Get all rows data
 	 */
-	public GamaList<Object> getAllRowsData(final GamaList<Object> olapResult) {
+	public IList<Object> getAllRowsData(final IList<Object> olapResult) {
 		return (GamaList<Object>) olapResult.get(1);
 	}
 
 	/*
 	 * Get row data (row members + cell values) at row index(rIndex)
 	 */
-	public GamaList<Object> getRowDataAt(final GamaList<Object> olapResult, final int rIndex) {
+	public IList<Object> getRowDataAt(final IList<Object> olapResult, final int rIndex) {
 		return (GamaList<Object>) getAllRowsData(olapResult).get(rIndex);
 	}
 
 	/*
 	 * Get all row members at row(index)
 	 */
-	public GamaList<Object> getAllMembersAt(final GamaList<Object> olapResult, final int rIndex) {
+	public IList<Object> getAllMembersAt(final IList<Object> olapResult, final int rIndex) {
 		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(0);
 	}
 
 	/*
 	 * Get row member at row index:rIndex ,member index:mIndex)
 	 */
-	public Object getRowMemberAt(final GamaList<Object> olapResult, final int rIndex, final int mIndex) {
+	public Object getRowMemberAt(final IList<Object> olapResult, final int rIndex, final int mIndex) {
 		return getAllMembersAt(olapResult, rIndex).get(mIndex);
 	}
 
 	/*
 	 * Get all cell values at index row
 	 */
-	public GamaList<Object> getAllCellValuesAt(final GamaList<Object> olapResult, final int rIndex) {
+	public IList<Object> getAllCellValuesAt(final IList<Object> olapResult, final int rIndex) {
 		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(1);
 	}
 
 	/*
 	 * Get cell value at row index:rIndex ,cell index:cIndex)
 	 */
-	public Object getCellValueAt(final GamaList<Object> olapResult, final int rIndex, final int cIndex) {
+	public Object getCellValueAt(final IList<Object> olapResult, final int rIndex, final int cIndex) {
 		return getAllCellValuesAt(olapResult, rIndex).get(cIndex);
 	}
 
@@ -578,7 +577,7 @@ public abstract class MdxConnection {
 	 * print all column names
 	 */
 
-	public void prinColumnsName(final GamaList<Object> olapResult) {
+	public void prinColumnsName(final IList<Object> olapResult) {
 		int m = this.getAllColummsName(olapResult).size();
 		for ( int cIndex = 0; cIndex < m; ++cIndex ) {
 			System.out.print(this.getColummNameAt(olapResult, cIndex).toString() + Strings.TAB);
@@ -596,7 +595,7 @@ public abstract class MdxConnection {
 
 	}
 
-	public String parseMdx(String queryStr, final GamaList<Object> condition_values) throws GamaRuntimeException {
+	public String parseMdx(String queryStr, final IList<Object> condition_values) throws GamaRuntimeException {
 
 		int condition_count = condition_values.size();
 		// set value for each condition

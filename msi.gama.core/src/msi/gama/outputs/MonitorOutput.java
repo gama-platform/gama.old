@@ -62,7 +62,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
 		setValue(getFacet(IKeyword.VALUE));
-		expressionText = getValue() == null ? "" : getValue().toGaml();
+		expressionText = getValue() == null ? "" : getValue().serialize(false);
 	}
 
 	public MonitorOutput(final String name, final String expr) {
@@ -127,7 +127,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
-		expressionText = expr == null ? "" : expr.toGaml();
+		expressionText = expr == null ? "" : expr.serialize(false);
 		setValue(expr);
 		getScope().step(this);
 	}

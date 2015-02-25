@@ -544,30 +544,85 @@ public class CsvReader {
 
 	public static class Stats {
 
+		public Character delimiter;
+		public boolean header;
 		public int rows;
 		public int cols;
 		public IType type;
 		public long startTime = System.currentTimeMillis();
 
+		private IType firstLineType;
+		private boolean atLeastOneNumber;
+
 		Stats(final CsvReader reader) {
+			boolean firstLineHasNumber = false;
 			try {
-				reader.readRecord();
-				processRecord(reader.getValues());
-				while (reader.readRecord()) {}
+				// firstLine
+				String s = reader.skipLine();
+				processFirstLine(s);
+				firstLineHasNumber = atLeastOneNumber;
+				atLeastOneNumber = false;
+				reader.setDelimiter(delimiter);
+				// secondLine
+
+				if ( !reader.readRecord() ) {
+					// We only have one line
+					type = firstLineType;
+					rows = 1;
+				} else {
+					// We process the second line
+					type = processRecord(reader.getValues());
+				}
+				while (reader.readRecord()) {
+					if ( reader.columnsCount > cols ) {
+						cols = reader.columnsCount;
+					}
+				}
 			} catch (IOException e) {}
-			rows = (int) reader.currentRecord;
+			if ( !type.equals(firstLineType) ) {
+				header = true;
+			} else {
+				if ( !firstLineHasNumber && atLeastOneNumber ) {
+					header = true;
+				}
+			}
+			rows = (int) reader.currentRecord + 1;
 			reader.close();
 			log();
 		}
 
-		private void processRecord(final String[] values) {
+		private void processFirstLine(final String line) {
+			String[] s = line.split(",");
+			if ( s.length == 1 ) {
+				if ( s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1 ) {
+					// We are likely dealing with a unicolum file
+					delimiter = Letters.COMMA;
+				} else {
+					// there should be another delimiter
+					s = line.split(";");
+					if ( s.length == 1 ) {
+						// Try with tab
+						s = line.split("" + Letters.TAB);
+						delimiter = Letters.TAB;
+					} else {
+						delimiter = ';';
+					}
+				}
+			} else {
+				delimiter = Letters.COMMA;
+			}
+			firstLineType = processRecord(s);
+		}
+
+		private IType processRecord(final String[] values) {
 			cols = values.length;
 			IType temp = null;
-			IType integer = Types.get(IType.INT);
-			IType floating = Types.get(IType.FLOAT);
+			IType integer = Types.INT;
+			IType floating = Types.FLOAT;
 			for ( String s : values ) {
-				if ( Strings.isGamaNumber(s) ) {
-					if ( s.contains(".") ) {
+				if ( Strings.isGamaNumber(s) || delimiter != Letters.COMMA && Strings.isGamaNumber(s.replace(',', '.')) ) {
+					if ( s.contains(".") || s.contains(",") && delimiter != Letters.COMMA ) {
+						atLeastOneNumber = true;
 						if ( temp == null || temp == integer || temp == floating ) {
 							temp = floating;
 						}
@@ -580,7 +635,7 @@ public class CsvReader {
 					temp = Types.NO_TYPE;
 				}
 			}
-			type = temp;
+			return temp;
 		}
 
 		private void log() {
@@ -589,14 +644,20 @@ public class CsvReader {
 		}
 	}
 
-	public static Stats getStats(final CsvReader initial) {
+	public static Stats getStats(final String initial) {
 		try {
-			Stats stats = new Stats(new CsvReader(initial.fileName, initial.userSettings.Delimiter));
+			Stats stats = new Stats(new CsvReader(initial));
 			return stats;
 		} catch (FileNotFoundException e1) {
 			return null;
 		}
 
+	}
+
+	public static Stats getStats(final InputStream initial) {
+		if ( initial == null ) { return null; }
+		Stats stats = new Stats(new CsvReader(initial, Charset.forName("ISO-8859-1")));
+		return stats;
 	}
 
 	/**
@@ -613,7 +674,7 @@ public class CsvReader {
 		columnsCount = 0;
 		// rawBuffer.Position = 0;
 
-		dataBuffer.LineStart = dataBuffer.Position;
+		// dataBuffer.LineStart = dataBuffer.Position;
 
 		hasReadNextLine = false;
 
@@ -885,7 +946,7 @@ public class CsvReader {
 
 							endRecord();
 						} else {
-							dataBuffer.LineStart = dataBuffer.Position + 1;
+							// dataBuffer.LineStart = dataBuffer.Position + 1;
 						}
 
 						lastLetter = currentLetter;
@@ -898,7 +959,7 @@ public class CsvReader {
 
 							endRecord();
 						} else {
-							dataBuffer.LineStart = dataBuffer.Position + 1;
+							// dataBuffer.LineStart = dataBuffer.Position + 1;
 						}
 
 						lastLetter = currentLetter;
@@ -1205,7 +1266,7 @@ public class CsvReader {
 		}
 
 		dataBuffer.Position = 0;
-		dataBuffer.LineStart = 0;
+		// dataBuffer.LineStart = 0;
 		dataBuffer.ColumnStart = 0;
 	}
 
@@ -1470,14 +1531,14 @@ public class CsvReader {
 	 *                Thrown if an error occurs while reading data from the
 	 *                source stream.
 	 */
-	public boolean skipLine() throws IOException {
+	public String skipLine() throws IOException {
 		checkClosed();
 
 		// clear public column values for current line
 
 		columnsCount = 0;
 
-		boolean skippedLine = false;
+		String skippedLine = "";
 
 		if ( hasMoreData ) {
 			boolean foundEol = false;
@@ -1486,7 +1547,7 @@ public class CsvReader {
 				if ( dataBuffer.Position == dataBuffer.Count ) {
 					checkDataLength();
 				} else {
-					skippedLine = true;
+					// skippedLine = true;
 
 					// grab the current letter as a char
 
@@ -1502,6 +1563,7 @@ public class CsvReader {
 					lastLetter = currentLetter;
 
 					if ( !foundEol ) {
+						skippedLine += lastLetter;
 						dataBuffer.Position++;
 					}
 
@@ -1510,7 +1572,7 @@ public class CsvReader {
 
 			columnBuffer.Position = 0;
 
-			dataBuffer.LineStart = dataBuffer.Position + 1;
+			// dataBuffer.LineStart = dataBuffer.Position + 1;
 		}
 
 		// rawBuffer.Position = 0;
@@ -1618,14 +1680,14 @@ public class CsvReader {
 		// / </summary>
 		public int ColumnStart;
 
-		public int LineStart;
+		// public int LineStart;
 
 		public DataBuffer() {
 			Buffer = new char[StaticSettings.MAX_BUFFER_SIZE];
 			Position = 0;
 			Count = 0;
 			ColumnStart = 0;
-			LineStart = 0;
+			// LineStart = 0;
 		}
 	}
 
@@ -1637,18 +1699,6 @@ public class CsvReader {
 
 		public ColumnBuffer() {
 			Buffer = new char[StaticSettings.INITIAL_COLUMN_BUFFER_SIZE];
-			Position = 0;
-		}
-	}
-
-	private class RawRecordBuffer {
-
-		public char[] Buffer;
-
-		public int Position;
-
-		public RawRecordBuffer() {
-			Buffer = new char[StaticSettings.INITIAL_COLUMN_BUFFER_SIZE * StaticSettings.INITIAL_COLUMN_COUNT];
 			Position = 0;
 		}
 	}
@@ -1688,7 +1738,7 @@ public class CsvReader {
 
 		// having these as publicly accessible members will prevent
 		// the overhead of the method call that exists on properties
-		public boolean CaseSensitive;
+		// public boolean CaseSensitive;
 
 		public char TextQualifier;
 
@@ -1713,7 +1763,7 @@ public class CsvReader {
 		// public boolean CaptureRawRecord;
 
 		public UserSettings() {
-			CaseSensitive = true;
+			// CaseSensitive = true;
 			TextQualifier = Letters.QUOTE;
 			TrimWhitespace = true;
 			UseTextQualifier = true;

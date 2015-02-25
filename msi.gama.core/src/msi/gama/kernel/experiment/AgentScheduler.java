@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AgentScheduler.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AgentScheduler.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,7 +16,6 @@ import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamaHelper;
 
 public class AgentScheduler implements IStepable {
@@ -31,7 +30,7 @@ public class AgentScheduler implements IStepable {
 
 	List<GamaHelper>[] actions = null;
 	/* The agents that need to be initialized */
-	private final List<IStepable> stepablesToInit;
+	private final ArrayList<IStepable> stepablesToInit = new ArrayList();
 	/* Whether or not the scheduler is in its initialization sequence */
 	private boolean inInitSequence = true;
 	/* The stepable scheduled by this scheduler */
@@ -42,7 +41,7 @@ public class AgentScheduler implements IStepable {
 	public AgentScheduler(final IScope scope, final IStepable owner) {
 		this.owner = owner;
 		this.scope = scope;
-		stepablesToInit = GamaList.with(owner);
+		stepablesToInit.add(owner);
 		// GuiUtils.debug("AgentScheduler.AgentScheduler: creating scheduler for " + owner);
 	}
 
@@ -185,16 +184,16 @@ public class AgentScheduler implements IStepable {
 	}
 
 	public synchronized void executeOneAction(final GamaHelper action) {
-		//hqnghi: check if it belong other controller beside default controller
-		String ctrlName = ((ExperimentPlan) scope.getSimulationScope()
-				.getExperiment().getSpecies()).getControllerName();
-		FrontEndScheduler sche=GAMA.controller.getScheduler();
-		if(!ctrlName.equals("")){
-			sche=GAMA.getController(ctrlName).getScheduler();
+		// hqnghi: check if it belong other controller beside default controller
+		String ctrlName =
+			((ExperimentPlan) scope.getSimulationScope().getExperiment().getSpecies()).getControllerName();
+		FrontEndScheduler sche = GAMA.controller.getScheduler();
+		if ( !ctrlName.equals("") ) {
+			sche = GAMA.getController(ctrlName).getScheduler();
 		}
-		//end-hqnghi
-		
-//		if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {			
+		// end-hqnghi
+
+		// if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {
 		if ( sche.paused || sche.on_user_hold ) {
 			action.run(scope);
 		} else {

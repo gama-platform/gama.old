@@ -26,15 +26,19 @@ import msi.gama.util.IContainer;
  * @todo Description
  * 
  */
-@type(name = IKeyword.BOOL, id = IType.BOOL, wraps = { Boolean.class, boolean.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.BOOL,
+	id = IType.BOOL,
+	wraps = { Boolean.class, boolean.class },
+	kind = ISymbolKind.Variable.REGULAR)
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override
-	public Boolean cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public Boolean cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, param, copy);
 	}
 
-	public static Boolean staticCast(final IScope scope, final Object obj, final Object param) {
+	public static Boolean staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if ( obj == null ) { return false; }
 		if ( obj instanceof Boolean ) { return (Boolean) obj; }
 		if ( obj instanceof IAgent ) { return !((IAgent) obj).dead(); }

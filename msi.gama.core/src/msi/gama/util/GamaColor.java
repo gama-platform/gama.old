@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * The Class GamaColor. A simple wrapper on an AWT Color.
@@ -33,9 +33,11 @@ import msi.gaml.types.IType;
 @vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT), @var(name = IKeyword.COLOR_GREEN, type = IType.INT),
 	@var(name = IKeyword.COLOR_BLUE, type = IType.INT), @var(name = IKeyword.ALPHA, type = IType.INT),
 	@var(name = IKeyword.BRIGHTER, type = IType.COLOR), @var(name = IKeyword.DARKER, type = IType.COLOR) })
-public class GamaColor extends Color implements IValue/* implements IContainer<Integer, Integer> */{
+public class GamaColor extends Color implements IValue, Comparable<Color>/* implements IContainer<Integer, Integer> */{
 
-	@constant(value = "the set of CSS colors", category = IConstantCategory.COLOR_CSS, doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
+	@constant(value = "the set of CSS colors",
+		category = IConstantCategory.COLOR_CSS,
+		doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
 	public final static Object[] array = ColorCSS.array;
 
 	public final static Map<String, GamaColor> colors = new THashMap();
@@ -74,7 +76,7 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 		}
 
 		@Override
-		public String toGaml() {
+		public String serialize(final boolean includingBuiltIn) {
 			return "°" + name;
 		}
 
@@ -143,7 +145,7 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "rgb (" + red() + ", " + green() + ", " + blue() + "," + getAlpha() + ")";
 	}
 
@@ -185,6 +187,40 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 	@Override
 	public GamaColor copy(final IScope scope) {
 		return new GamaColor(this);
+	}
+
+	public int compareRgbTo(final Color c2) {
+		return Integer.signum(getRGB() - c2.getRGB());
+	}
+
+	public int compareLuminescenceTo(final Color c2) {
+		return Float.compare(this.getRed() * 0.299f + this.getGreen() * 0.587f + this.getBlue() * 0.114f, c2.getRed() *
+			0.299f + c2.getGreen() * 0.587f + c2.getBlue() * 0.114f);
+	}
+
+	public int compareBrightnessTo(final Color c2) {
+		float[] hsb = RGBtoHSB(getRed(), getGreen(), getBlue(), null);
+		float[] hsb2 = RGBtoHSB(c2.getRed(), c2.getGreen(), c2.getBlue(), null);
+		return Float.compare(hsb[2], hsb2[2]);
+	}
+
+	public int compareLumaTo(final Color c2) {
+		return Float.compare(this.getRed() * 0.21f + this.getGreen() * 0.72f + this.getBlue() * 0.07f, c2.getRed() *
+			0.21f + c2.getGreen() * 0.72f + c2.getBlue() * 0.07f);
+	}
+
+	@Override
+	public int compareTo(final Color c2) {
+		return compareRgbTo(c2);
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.common.interfaces.ITyped#getType()
+	 */
+	@Override
+	public IType getType() {
+		return Types.COLOR;
 	}
 
 }

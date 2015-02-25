@@ -50,7 +50,7 @@ public class Random {
 			test = false) }, see = { "gauss" })
 	public static
 		Double opTGauss(final IScope scope, final GamaPoint p) {
-		return opTGauss(scope, GamaList.with(p.x, p.y));
+		return opTGauss(scope, GamaListFactory.createWithoutCasting(Types.FLOAT, p.x, p.y));
 	}
 
 	@operator(value = { "truncated_gauss", "TGauss" }, category = { IOperatorCategory.RANDOM })
@@ -138,8 +138,9 @@ public class Random {
 		examples = { @example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) },
 		see = { "reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
-		if ( target == null || target.isEmpty(scope) ) { return new GamaList(); }
-		final IList list = (IList) target.listValue(scope, Types.NO_TYPE).copy(scope);
+		if ( target == null || target.isEmpty(scope) ) { return GamaListFactory.create(target == null ? Types.NO_TYPE
+			: target.getType().getContentType()); }
+		final IList list = (IList) target.listValue(scope, target.getType().getContentType(), false).copy(scope);
 		RANDOM(scope).shuffle(list);
 		return list;
 	}
@@ -295,7 +296,7 @@ public class Random {
 			test = false) }, see = { "rnd" })
 	public static
 		Integer opRndChoice(final IScope scope, final IList distribution) {
-		final IList<Double> normalizedDistribution = new GamaList<Double>();
+		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
 		Double sumElt = 0.0;
 
 		for ( Object eltDistrib : distribution ) {

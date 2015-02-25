@@ -14,7 +14,7 @@ package msi.gaml.descriptions;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.set.hash.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
@@ -27,30 +27,31 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public class SymbolProto implements IGamlDescription, INamed {
+public class SymbolProto extends AbstractProto {
 
 	private final ISymbolConstructor constructor;
 	private final IDescriptionValidator validator;
 	private SymbolSerializer serializer;
 	private final SymbolFactory factory;
 
-	private final int kind, doc;
+	private final int kind;
 	private final boolean hasSequence, hasArgs, hasScope, isRemoteContext, isUniqueInContext;
 	private final Set<String> contextKeywords;
 	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
 	private final Map<String, FacetProto> possibleFacets;
 	private final Set<String> mandatoryFacets = new THashSet<String>();
-	private final String omissibleFacet, name;
+	private final String omissibleFacet;
 
 	static final TIntHashSet ids = new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID });
 
-	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
+	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
 		/* final String[][] possibleCombinations, */final Set<String> contextKeywords, final TIntHashSet contextKinds,
 		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
 		final ISymbolConstructor constr, final IDescriptionValidator validator, final SymbolSerializer serializer,
-		final int doc, final String name) {
+		final String name) {
+		super(name, clazz);
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
 		this.serializer = serializer;
@@ -61,13 +62,8 @@ public class SymbolProto implements IGamlDescription, INamed {
 		this.omissibleFacet = omissible;
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
-		this.doc = doc;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
-		this.name = name;
-		// for ( FacetProto f : possibleFacets.values() ) {
-		// f.setOwner(this);
-		// }
 		this.possibleFacets.put(IKeyword.KEYWORD, FacetProto.KEYWORD);
 		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetProto.DEPENDS_ON);
 		if ( !possibleFacets.containsKey(IKeyword.NAME) ) {
@@ -78,7 +74,6 @@ public class SymbolProto implements IGamlDescription, INamed {
 				mandatoryFacets.add(f.name);
 			}
 		}
-		// this.possibleCombinations = possibleCombinations;
 		this.contextKeywords = contextKeywords;
 		Arrays.fill(this.contextKinds, false);
 		contextKinds.forEach(new TIntProcedure() {
@@ -132,6 +127,7 @@ public class SymbolProto implements IGamlDescription, INamed {
 		return kind == ISymbolKind.BEHAVIOR;
 	}
 
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -153,19 +149,7 @@ public class SymbolProto implements IGamlDescription, INamed {
 	@Override
 	public String getDocumentation() {
 		StringBuilder sb = new StringBuilder(200);
-		String s = AbstractGamlDocumentation.getMain(doc);
-		if ( s != null && !s.isEmpty() ) {
-			sb.append(s);
-			sb.append("<br/>");
-		}
-		s = AbstractGamlDocumentation.getDeprecated(doc);
-		if ( s != null && !s.isEmpty() ) {
-			sb.append("<b>Deprecated</b>: ");
-			sb.append("<i>");
-			sb.append(s);
-			sb.append("</i><br/>");
-		}
-
+		sb.append(super.getDocumentation());
 		sb.append("<b><br/>Facets :</b><ul>");
 		List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
 		Collections.sort(protos);
@@ -179,34 +163,10 @@ public class SymbolProto implements IGamlDescription, INamed {
 	}
 
 	/**
-	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
-	 */
-	@Override
-	public String getTitle() {
-		return "";
-	}
-
-	/**
-	 * Method getName()
-	 * @see msi.gaml.descriptions.IGamlDescription#getName()
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Method setName()
-	 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(final String newName) {}
-
-	/**
 	 * @return
 	 */
 	public boolean isBreakable() {
+		String name = getName();
 		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
 	}
 
@@ -236,6 +196,10 @@ public class SymbolProto implements IGamlDescription, INamed {
 	 */
 	public boolean canBeDefinedIn(final IDescription sd) {
 		return contextKinds[sd.getKind()] || contextKeywords.contains(sd.getKeyword());
+	}
+
+	public boolean shouldBeDefinedIn(final String context) {
+		return contextKeywords.contains(context);
 	}
 
 	public boolean isUniqueInContext() {
@@ -269,5 +233,21 @@ public class SymbolProto implements IGamlDescription, INamed {
 			}
 		}
 		return missing;
+	}
+
+	/**
+	 * Method serialize()
+	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+	 */
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		StringBuilder sb = new StringBuilder();
+		for ( FacetProto f : possibleFacets.values() ) {
+			String s = f.serialize(includingBuiltIn);
+			if ( !s.isEmpty() ) {
+				sb.append(s).append(" ");
+			}
+		}
+		return getName() + " " + sb.toString();
 	}
 }

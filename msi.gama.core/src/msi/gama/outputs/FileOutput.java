@@ -95,7 +95,7 @@ public class FileOutput extends AbstractOutput {
 
 	private void createExpression() {
 		data = getFacet(IKeyword.DATA);
-		expressionText = data.toGaml();
+		expressionText = data.serialize(false);
 		if ( expressionText == null ) { return; }
 		refreshExpression();
 	}

@@ -18,7 +18,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 7 août 2010
@@ -28,33 +28,6 @@ import msi.gaml.types.*;
  */
 
 public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V> implements IGamaFile<C, ValueToAdd, K, V> {
-
-	@Override
-	public IContainer<?, K>
-		buildIndexes(final IScope scope, final IContainer value, final IContainerType containerType) {
-		fillBuffer(scope);
-		return getBuffer().buildIndexes(scope, value, containerType);
-	}
-
-	@Override
-	public ValueToAdd buildValue(final IScope scope, final Object object, final IContainerType containerType) {
-		fillBuffer(scope);
-		return getBuffer().buildValue(scope, object, containerType);
-	}
-
-	@Override
-	public IContainer<?, ValueToAdd> buildValues(final IScope scope, final IContainer objects,
-		final IContainerType containerType) {
-		fillBuffer(scope);
-		return getBuffer().buildValues(scope, objects, containerType);
-
-	}
-
-	@Override
-	public K buildIndex(final IScope scope, final Object object, final IContainerType containerType) {
-		fillBuffer(scope);
-		return getBuffer().buildIndex(scope, object, containerType);
-	}
 
 	private File file;
 
@@ -139,14 +112,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	// The same but with an index (this index represents the old notion of parameter where it is needed.
 	@Override
-	public void addValueAtIndex(final IScope scope, final K index, final ValueToAdd value) {
+	public void addValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
 		fillBuffer(scope);
 		getBuffer().addValueAtIndex(scope, index, value);
 	}
 
 	// Put, that takes a mandatory index (also replaces the parameter)
 	@Override
-	public void setValueAtIndex(final IScope scope, final K index, final ValueToAdd value) {
+	public void setValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
 		fillBuffer(scope);
 		getBuffer().setValueAtIndex(scope, index, value);
 	}
@@ -154,9 +127,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// Then, methods for "all" operations
 	// Adds the values if possible, without replacing existing ones
 	@Override
-	public void addVallues(final IScope scope, final IContainer values) {
+	public void addValues(final IScope scope, final IContainer values) {
 		fillBuffer(scope);
-		getBuffer().addVallues(scope, values);
+		getBuffer().addValues(scope, values);
 	}
 
 	// Adds this value to all slots (if this operation is available), otherwise replaces the values with this one
@@ -325,33 +298,35 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public IList listValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
+	public IList listValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().listValue(scope, contentsType);
+		return getBuffer().listValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType)
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 		throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().mapValue(scope, keyType, contentsType);
+		return getBuffer().mapValue(scope, keyType, contentsType, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType) throws GamaRuntimeException {
-		return matrixValue(scope, contentsType, null);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+		throws GamaRuntimeException {
+		return matrixValue(scope, contentsType, null, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
-		throws GamaRuntimeException {
-		return _matrixValue(scope, contentsType, preferredSize);
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+		final boolean copy) throws GamaRuntimeException {
+		return _matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
-	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+		final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().matrixValue(scope, contentsType, preferredSize);
+		return getBuffer().matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
 	//
@@ -375,7 +350,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath() + "')";
 	}
 

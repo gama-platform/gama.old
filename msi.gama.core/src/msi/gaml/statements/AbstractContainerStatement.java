@@ -20,6 +20,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -120,7 +121,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			if ( keyword.equals(ADD) || keyword.equals(REMOVE) ) {
 				final IType containerType = list.getType();
 				if ( containerType.isFixedLength() ) {
-					cd.error("Impossible to add/remove to/from " + list.toGaml(), IGamlIssue.WRONG_TYPE);
+					cd.error("Impossible to add/remove to/from " + list.serialize(false), IGamlIssue.WRONG_TYPE);
 					return;
 				}
 			}
@@ -153,7 +154,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				final IType contentType = list.getType().getContentType();
 				boolean isAll = false;
 				IType valueType = Types.NO_TYPE;
-				if ( !keyword.equals(PUT) && all && item.getType().isTranslatableInto(Types.get(IType.CONTAINER)) ) {
+				if ( !keyword.equals(PUT) && all && item.getType().isTranslatableInto(Types.CONTAINER) ) {
 					isAll = true;
 					valueType = item.getType().getContentType();
 				} else {
@@ -162,7 +163,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 				if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
 					String message =
-						"The type of the elements of " + list.toGaml() + " (" + contentType +
+						"The type of the elements of " + list.serialize(false) + " (" + contentType +
 							") does not match with the type of the ";
 					if ( isAll ) {
 						message += "elements of the argument";
@@ -180,8 +181,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 				final IType keyType = list.getType().getKeyType();
 				if ( index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType()) ) {
-					cd.warning("The type of the index of " + list.toGaml() + " (" + keyType +
-						") does not match with the type of " + index.toGaml() + " (" + index.getType() +
+					cd.warning("The type of the index of " + list.serialize(false) + " (" + keyType +
+						") does not match with the type of " + index.serialize(false) + " (" + index.getType() +
 						"). The latter will be casted to " + keyType, IGamlIssue.SHOULD_CAST, IKeyword.AT,
 						keyType.toString());
 				}
@@ -192,9 +193,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	protected IExpression item, index, list, all;
 	final boolean asAll, asAllValues, asAllIndexes;
 	// Identifies whether or not the container is directly modified by the statement or if it is a shape or an agent
-	final boolean isDirect;
+	final boolean isDirect, isGraph;
+
 	// The "real" container type
-	final IContainerType containerType;
+	// final IContainerType containerType;
+
+	// private static final IType attributesType = Types.MAP.of(Types.STRING, Types.NO_TYPE);
 
 	public AbstractContainerStatement(final IDescription desc) {
 		super(desc);
@@ -205,13 +209,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		list = getFacet(IKeyword.TO);
 
 		asAll = all != null && all.literalValue().equals(IKeyword.TRUE);
-		asAllValues = asAll && item != null && item.getType().isTranslatableInto(Types.get(IType.CONTAINER));
-		asAllIndexes = asAll && index != null && index.getType().isTranslatableInto(Types.get(IType.CONTAINER));
+		asAllValues = asAll && item != null && item.getType().isTranslatableInto(Types.CONTAINER);
+		asAllIndexes = asAll && index != null && index.getType().isTranslatableInto(Types.CONTAINER);
 		IType t = list.getType();
 		isDirect = t.isContainer();
-		containerType =
-			(IContainerType) (isDirect ? t : GamaType
-				.from(Types.get(IType.MAP), Types.get(IType.STRING), Types.NO_TYPE));
+		isGraph = t.isTranslatableInto(Types.GRAPH);
+		// containerType = (IContainerType) (isDirect ? t : attributesType);
 	}
 
 	@Override
@@ -219,9 +222,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		// We then identify the container
 		final IContainer.Modifiable container = identifyContainer(scope);
 
-		// TODO Create a buildIndexes method ?
-		Object position = index != null ? buildIndex(scope, container) : null;
-		Object object = item != null ? buildValue(scope, container) : null;
+		Object position = identifyIndex(scope, container);
+		Object object = identifyValue(scope, container);
 		// And apply the operation (add, put or remove)
 		apply(scope, object, position, container);
 		// Added fix for Issue 1048 (dont change the value of temp variables
@@ -234,14 +236,27 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	}
 
-	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
-		if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType); }
-		return container.buildValue(scope, this.item.value(scope), containerType);
+	protected Object identifyValue(final IScope scope, final IContainer.Modifiable container) {
+		if ( item == null ) { return null; }
+		// For the moment, only graphs need to recompute their objects
+		if ( isGraph ) { return buildValue(scope, (IGraph) container); }
+		return item.value(scope);
 	}
 
-	protected Object buildIndex(final IScope scope, final IContainer.Modifiable container) {
-		if ( asAllIndexes ) { return container.buildIndexes(scope, (IContainer) this.index.value(scope), containerType); }
-		return container.buildIndex(scope, this.index.value(scope), containerType);
+	protected Object identifyIndex(final IScope scope, final IContainer.Modifiable container) {
+		if ( index == null ) { return null; }
+		if ( isGraph ) { return buildIndex(scope, (IGraph) container); }
+		return index.value(scope);
+	}
+
+	protected Object buildValue(final IScope scope, final IGraph container) {
+		if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope)); }
+		return container.buildValue(scope, this.item.value(scope));
+	}
+
+	protected Object buildIndex(final IScope scope, final IGraph container) {
+		if ( asAllIndexes ) { return container.buildIndexes(scope, (IContainer) this.index.value(scope)); }
+		return container.buildIndex(scope, this.index.value(scope));
 	}
 
 	/**
@@ -252,8 +267,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		final Object cont = list.value(scope);
 		if ( isDirect ) { return (IContainer.Modifiable) cont; }
 		if ( cont instanceof IShape ) { return ((IShape) cont).getOrCreateAttributes(); }
-		throw GamaRuntimeException.warning("Cannot use " + list.toGaml() + ", of type " + list.getType().toString() +
-			", as a container");
+		throw GamaRuntimeException.warning("Cannot use " + list.serialize(false) + ", of type " +
+			list.getType().toString() + ", as a container", scope);
 	}
 
 	/**
@@ -329,6 +344,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	public static class NodesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
 
+		public NodesToAdd() {
+			super(0, Types.NO_TYPE);
+		}
+
 		public static NodesToAdd from(final IScope scope, final IContainer object) {
 			NodesToAdd n = new NodesToAdd();
 			for ( Object o : object.iterable(scope) ) {
@@ -345,6 +364,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	public static class EdgesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
+
+		public EdgesToAdd() {
+			super(0, Types.NO_TYPE);
+		}
 
 		public static EdgesToAdd from(final IScope scope, final IContainer object) {
 			EdgesToAdd n = new EdgesToAdd();

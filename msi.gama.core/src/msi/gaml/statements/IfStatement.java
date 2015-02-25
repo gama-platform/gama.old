@@ -25,8 +25,8 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.IfStatement.IfSerializer;
@@ -72,14 +72,15 @@ public class IfStatement extends AbstractStatementSequence {
 	public static class IfSerializer extends StatementSerializer {
 
 		@Override
-		protected void serializeChildren(final StatementDescription desc, final StringBuilder sb) {
+		protected void serializeChildren(final StatementDescription desc, final StringBuilder sb,
+			final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
 			String elseString = null;
 			for ( IDescription s : desc.getChildren() ) {
 				if ( s.getKeyword().equals(IKeyword.ELSE) ) {
-					elseString = s.toGaml() + Strings.LN;
+					elseString = s.serialize(false) + Strings.LN;
 				} else {
-					serializeChild(s, sb);
+					serializeChild(s, sb, includingBuiltIn);
 				}
 			}
 			sb.append('}');
@@ -105,7 +106,7 @@ public class IfStatement extends AbstractStatementSequence {
 		super(desc);
 		cond = getFacet(IKeyword.CONDITION);
 		if ( cond != null ) {
-			setName("if " + cond.toGaml());
+			setName("if " + cond.serialize(false));
 		}
 
 	}

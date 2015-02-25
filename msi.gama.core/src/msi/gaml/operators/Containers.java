@@ -91,7 +91,8 @@ public class Containers {
 	// TODO finish doc for other kinds of Container
 		public static
 		IList remove_duplicates(final IScope scope, final IContainer l) {
-		return new GamaList(Sets.newLinkedHashSet(nullCheck(scope, l).iterable(scope)));
+		return GamaListFactory.createWithoutCasting(l.getType().getContentType(),
+			Sets.newLinkedHashSet(nullCheck(scope, l).iterable(scope)));
 	}
 
 	@operator(value = "contains_all", can_be_const = true, category = { IOperatorCategory.CONTAINER })
@@ -144,8 +145,8 @@ public class Containers {
 		final int beginIndex = begin < 0 ? 0 : begin;
 		final int size = nullCheck(scope, l1).size();
 		final int endIndex = end > size ? size : end;
-		if ( beginIndex >= endIndex ) { return new GamaList(); }
-		return new GamaList(l1.subList(beginIndex, endIndex));
+		if ( beginIndex >= endIndex ) { return GamaListFactory.create(l1.getType().getContentType()); }
+		return GamaListFactory.createWithoutCasting(l1.getType().getContentType(), l1.subList(beginIndex, endIndex));
 	}
 
 	@operator(value = { "first" },
@@ -155,7 +156,8 @@ public class Containers {
 	@doc(value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
 	public static
 		IList first(final IScope scope, final Integer number, final IContainer l1) {
-		return GamaList.from(Iterables.limit(l1.iterable(scope), number < 0 ? 0 : number));
+		return GamaListFactory.create(scope, l1.getType().getContentType(),
+			Iterables.limit(l1.iterable(scope), number < 0 ? 0 : number));
 	}
 
 	@operator(value = { "last" },
@@ -166,8 +168,9 @@ public class Containers {
 	public static
 		IList last(final IScope scope, final Integer number, final IContainer l1) {
 		IList result =
-			GamaList.from(Iterables.limit(Lists.reverse(nullCheck(scope, l1).listValue(scope, Types.NO_TYPE)),
-				number < 0 ? 0 : number));
+			GamaListFactory.create(scope, l1.getType().getContentType(), Iterables.limit(
+				Lists.reverse(nullCheck(scope, l1).listValue(scope, Types.NO_TYPE, false)), number < 0 ? 0 : number));
+		Collections.reverse(result);
 		return result;
 	}
 
@@ -299,8 +302,11 @@ public class Containers {
 		see = { "remove_duplicates" })
 	public static
 		IList inter(final IScope scope, final IContainer l1, final IContainer l) {
-		return new GamaList(Sets.intersection(Sets.newHashSet(nullCheck(scope, l1).iterable(scope)),
-			Sets.newHashSet(nullCheck(scope, l).iterable(scope))));
+		return GamaListFactory.create(
+			scope,
+			l1.getType().getContentType().findCommonSupertypeWith(l.getType().getContentType()),
+			Sets.intersection(Sets.newHashSet(nullCheck(scope, l1).iterable(scope)),
+				Sets.newHashSet(nullCheck(scope, l).iterable(scope))));
 	}
 
 	@operator(value = IKeyword.MINUS,
@@ -317,8 +323,8 @@ public class Containers {
 		see = { "" + IKeyword.PLUS })
 	public static
 		IList minus(final IScope scope, final IContainer source, final IContainer l) {
-		final IList result = (IList) nullCheck(scope, source).listValue(scope, Types.NO_TYPE).copy(scope);
-		result.removeAll(nullCheck(scope, l).listValue(scope, Types.NO_TYPE));
+		final IList result = (IList) nullCheck(scope, source).listValue(scope, Types.NO_TYPE, false).copy(scope);
+		result.removeAll(nullCheck(scope, l).listValue(scope, Types.NO_TYPE, false));
 		return result;
 	}
 
@@ -343,7 +349,7 @@ public class Containers {
 	@doc(usages = { @usage(value = "if the left operand is a species and the right operand is an agent of the species, " + IKeyword.MINUS +
 		" returns a list containining all the agents of the species minus this agent") })
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
-		return minus(scope, l1.listValue(scope, Types.NO_TYPE), object);
+		return minus(scope, l1.listValue(scope, Types.NO_TYPE, false), object);
 	}
 
 	// PRENDRE EN COMPTE:
@@ -400,8 +406,8 @@ public class Containers {
 	private static IList
 		of_species(final IScope scope, final IContainer agents, final ISpecies s, final boolean generic) {
 
-		return GamaList.from(Iterables.filter(agents.iterable(scope),
-			and(instanceOf(IAgent.class), new Predicate<IAgent>() {
+		return GamaListFactory.create(scope, scope.getModelContext().getTypeNamed(s.getName()),
+			Iterables.filter(agents.iterable(scope), and(instanceOf(IAgent.class), new Predicate<IAgent>() {
 
 				@Override
 				public boolean apply(final IAgent be) {
@@ -418,8 +424,10 @@ public class Containers {
 	@doc(value = "produces a new pair combining the left and the right operands",
 		special_cases = "nil is not acceptable as a key (although it is as a value). If such a case happens, :: will throw an appropriate error")
 	public static
-		GamaPair pair(final IScope scope, final Object a, final Object b) {
-		return new GamaPair(nullCheck(scope, a), b);
+		GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
+		Object v1 = a.value(scope);
+		Object v2 = b.value(scope);
+		return new GamaPair(nullCheck(scope, v1), v2, a.getType(), b.getType());
 	}
 
 	@operator(value = IKeyword.PLUS,
@@ -439,8 +447,9 @@ public class Containers {
 		// special case for the addition of two populations or meta-populations
 		if ( c1 instanceof IPopulationSet && c2 instanceof IPopulationSet ) { return new MetaPopulation(
 			(IPopulationSet) c1, (IPopulationSet) c2); }
-		return GamaList.from(Iterables.concat(nullCheck(scope, c1).iterable(scope), nullCheck(scope, c2)
-			.iterable(scope)));
+		return GamaListFactory.create(scope,
+			c1.getType().getContentType().findCommonSupertypeWith(c2.getType().getContentType()),
+			Iterables.concat(nullCheck(scope, c1).iterable(scope), nullCheck(scope, c2).iterable(scope)));
 	}
 
 	// TODO plus / union / inter / minus on maps and graphs and maybe on lists
@@ -454,7 +463,7 @@ public class Containers {
 		examples = { @example(value = "[1,2,3,4,5,6] + 2", returnType="list<int>", equals = "[1,2,3,4,5,6,2]"),
 			@example(value = "[1,2,3,4,5,6] + 0", returnType="list<int>", equals = "[1,2,3,4,5,6,0]") }))
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
-		final IList result = (IList) nullCheck(scope, l1).listValue(scope, Types.NO_TYPE).copy(scope);
+		final IList result = (IList) nullCheck(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
 		result.add(l);
 		return result;
 	}
@@ -476,7 +485,9 @@ public class Containers {
 		 * Sets.newHashSet(nullCheck(scope, l).iterable(scope))));
 		 */
 		// New solution less optimized but that keep the order of the first list
-		GamaList r = new GamaList();
+		IList r =
+			GamaListFactory.create(source.getType().getContentType()
+				.findCommonSupertypeWith(l.getType().getContentType()));
 		LinkedHashSet s = new LinkedHashSet((Collection) plus(scope, source, l));
 		r.addAll(s);
 		return r;
@@ -509,9 +520,12 @@ public class Containers {
 		// AD: 16/9/13 Bugfix where the lists created could not be used in further computations
 		ImmutableListMultimap m =
 			Multimaps.index(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter));
-		GamaMap result = new GamaMap();
+		GamaMap result =
+			GamaMapFactory.create(filter.getType(),
+				GamaType.from(Types.LIST, Types.INT, original.getType().getContentType()));
 		for ( Map.Entry<Object, List> entry : (Collection<Map.Entry<Object, List>>) m.asMap().entrySet() ) {
-			result.put(entry.getKey(), new GamaList(entry.getValue()));
+			result.put(entry.getKey(),
+				GamaListFactory.create(scope, original.getType().getContentType(), entry.getValue()));
 		}
 		return result;
 	}
@@ -523,14 +537,14 @@ public class Containers {
 	// + "of the left-hand operand associated to the key value")
 	// public static GamaMap group_by(final IScope scope, final GamaMap original, final IExpression filter)
 	// throws GamaRuntimeException {
-	// if ( original == null ) { return new GamaMap(); }
+	// if ( original == null ) { return GamaMapFactory.create(); }
 	//
-	// final GamaMap result = new GamaMap();
+	// final GamaMap result = GamaMapFactory.create();
 	// for ( final Object each : original.iterable(scope) ) {
 	// scope.setEach(each);
 	// final Object key = filter.value(scope);
 	// if ( !result.containsKey(key) ) {
-	// result.put(key, new GamaMap());
+	// result.put(key, GamaMapFactory.create());
 	// }
 	// ((GamaMap) result.get(key)).add(Cast.asPair(scope, each));
 	// }
@@ -642,7 +656,7 @@ public class Containers {
 	// }, examples = { "2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]" })
 	// public static GamaMap among(final IScope scope, final Integer number, final GamaMap l)
 	// throws GamaRuntimeException {
-	// final GamaMap result = new GamaMap();
+	// final GamaMap result = GamaMapFactory.create();
 	// if ( l == null ) { return result; }
 	// int size = l.size();
 	// if ( number == 0 ) { return result; }
@@ -666,8 +680,9 @@ public class Containers {
 			@example(value = "1 among [1::2,3::4]", returnType = "list<int>", equals="2 or 4", test = false )})
 	public static
 		IList among(final IScope scope, final Integer number, final IContainer c) throws GamaRuntimeException {
-		final List l = new GamaList(nullCheck(scope, c).listValue(scope, Types.NO_TYPE));
-		return GamaList.from(Iterables.limit(scope.getRandom().shuffle(l), number < 0 ? 0 : number));
+		final IList l = nullCheck(scope, c).listValue(scope, c.getType().getContentType(), false);
+		return GamaListFactory.create(scope, c.getType().getContentType(),
+			Iterables.limit(scope.getRandom().shuffle(l), number < 0 ? 0 : number));
 		// TODO: reorder with .toSortedList(Ordering.explicit(l)));
 	}
 
@@ -692,9 +707,11 @@ public class Containers {
 		IList sort(final IScope scope, final IContainer original, final IExpression filter) {
 		final Iterable it = nullCheck(scope, original).iterable(scope);
 		final int size = size(it);
-		if ( size == 0 ) { return GamaList.EMPTY_LIST; }
-		if ( size == 1 ) { return GamaList.with(getFirst(it, null)); }
-		return new GamaList(Guava.orderOn(Guava.function(scope, filter)).sortedCopy(it));
+		if ( size == 0 ) { return GamaListFactory.EMPTY_LIST; }
+		if ( size == 1 ) { return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
+			getFirst(it, null)); }
+		return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
+			Guava.orderOn(Guava.function(scope, filter)).sortedCopy(it));
 	}
 
 	/**
@@ -709,7 +726,7 @@ public class Containers {
 	// @operator(value = { "sort_by", "sort" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	// public static GamaMap sort(final IScope scope, final GamaMap original, final IExpression filter)
 	// throws GamaRuntimeException {
-	// final GamaMap resultMap = new GamaMap(nullCheck(scope, original));
+	// final GamaMap resultMap = GamaMapFactory.create(nullCheck(scope, original));
 	// // copy in order to prevent any side effect on the left member
 	// if ( resultMap.isEmpty() ) { return resultMap; }
 	// final IList<GamaPair> sortedPairs = sort(scope, resultMap.getPairs(), filter);
@@ -723,8 +740,8 @@ public class Containers {
 	// public static GamaMap where(final IScope scope, final GamaMap original, final IExpression
 	// filter)
 	// throws GamaRuntimeException {
-	// if ( original == null ) { return new GamaMap(); }
-	// final GamaMap result = new GamaMap();
+	// if ( original == null ) { return GamaMapFactory.create(); }
+	// final GamaMap result = GamaMapFactory.create();
 	// for ( GamaPair p : original.iterable(scope) ) {
 	// scope.setEach(p);
 	// if ( Cast.asBool(scope, filter.value(scope)) ) {
@@ -756,7 +773,8 @@ public class Containers {
 				isExecutable = false) }, see = { "first_with", "last_with", "where" })
 	public static
 		IList where(final IScope scope, final IContainer original, final IExpression filter) {
-		return GamaList.from(filter(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter)));
+		return GamaListFactory.create(scope, original.getType().getContentType(),
+			filter(nullCheck(scope, original).iterable(scope), Guava.withPredicate(scope, filter)));
 	}
 
 	@operator(value = { "with_max_of" },
@@ -815,8 +833,16 @@ public class Containers {
 		see = { "collect" })
 	public static
 		IList accumulate(final IScope scope, final IContainer original, final IExpression filter) {
-		return GamaList.from(Iterables.concat(Iterables.transform(nullCheck(scope, original).iterable(scope),
-			Guava.iterableFunction(scope, filter))));
+		// WARNING TODO The resulting type is not computed
+		IType type = filter.getType();
+		if ( type.isContainer() ) {
+			type = type.getContentType();
+		}
+		return GamaListFactory.create(
+			scope,
+			type,
+			Iterables.concat(Iterables.transform(nullCheck(scope, original).iterable(scope),
+				Guava.iterableFunction(scope, filter))));
 	}
 
 	@operator(value = { "interleave" },
@@ -829,8 +855,13 @@ public class Containers {
 			@example(value = "interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])",
 				equals = "['e11','e21','e31','e12','e22','e32','e13','e23','e33']") })
 	public static IList interleave(final IScope scope, final IContainer cc) {
-		final Iterator it = new Guava.InterleavingIterator(toArray(nullCheck(scope, cc).iterable(scope), Object.class));
-		return new GamaList(Iterators.toArray(it, Object.class));
+		Iterable iterable = nullCheck(scope, cc).iterable(scope);
+		IType type = cc.getType().getContentType();
+		if ( type.isContainer() ) {
+			type = type.getContentType();
+		}
+		final Iterator it = new Guava.InterleavingIterator(toArray(iterable, Object.class));
+		return GamaListFactory.create(scope, type, it);
 	}
 
 	@operator(value = { "count" },
@@ -866,8 +897,10 @@ public class Containers {
 	public static
 		GamaMap index_by(final IScope scope, final IContainer original, final IExpression keyProvider) {
 		try {
-			return new GamaMap(Maps.uniqueIndex(nullCheck(scope, original).iterable(scope),
-				Guava.function(scope, keyProvider)));
+			Map result =
+				Maps.uniqueIndex(nullCheck(scope, original).iterable(scope), Guava.function(scope, keyProvider));
+			return GamaMapFactory.createWithoutCasting(keyProvider.getType(), original.getType().getContentType(),
+				result);
 		} catch (IllegalArgumentException e) {
 			GAMA.reportError(scope, GamaRuntimeException.warning("The key computed by " + Cast.toGaml(keyProvider) +
 				" is not unique.", scope), false);
@@ -897,8 +930,10 @@ public class Containers {
 			"'as_map' expects a pair as second argument", scope); }
 		final Function keyFunction = Guava.function(scope, pair.arg(0));
 		final Function valueFunction = Guava.function(scope, pair.arg(1));
-		return new GamaMap(Maps.transformValues(
-			Maps.uniqueIndex(nullCheck(scope, original).iterable(scope), keyFunction), valueFunction));
+		Map result =
+			Maps.transformValues(Maps.uniqueIndex(nullCheck(scope, original).iterable(scope), keyFunction),
+				valueFunction);
+		return GamaMapFactory.createWithoutCasting(pair.arg(0).getType(), pair.arg(1).getType(), result);
 	}
 
 	@operator(value = { "collect" },
@@ -906,9 +941,8 @@ public class Containers {
 		iterator = true,
 		category = IOperatorCategory.CONTAINER)
 	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.",
-		comment = "collect is very similar to accumulate except. Nevertheless if the evaluation of the right-hand operand produces a list,"
-			+ "the returned list is a list of list of elements. In contrarily, the list produces by accumulate is only a list of elements "
-			+ "(all the lists) produced are concaneted. In addition, collect can be applied to any container.",
+		comment = "collect is similar to accumulate except that accumulate always produces flat lists if the right-hand operand returns a list."
+			+ "In addition, collect can be applied to any container.",
 		usages = { @usage("if the left-hand operand is nil, collect throws an error") },
 		examples = {
 			@example(value = "[1,2,4] collect (each *2)", equals = "[2,4,8]"),
@@ -920,11 +954,78 @@ public class Containers {
 		see = { "accumulate" })
 	public static
 		IList collect(final IScope scope, final IContainer original, final IExpression filter) {
-		// GuiUtils.debug("Containers.collect begin for " + scope.getAgentScope());
 		IList list =
-			GamaList
-				.from(Iterables.transform(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter)));
-		// GuiUtils.debug("Containers.collect end");
+			GamaListFactory.create(scope, filter.getType(),
+				Iterables.transform(nullCheck(scope, original).iterable(scope), Guava.function(scope, filter)));
 		return list;
 	}
+
+	@operator(value = IKeyword.PLUS,
+		can_be_const = true,
+		type = ITypeProvider.BOTH,
+		content_type = ITypeProvider.BOTH,
+		category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of both operands", examples = {
+		@example(value = "['a'::1,'b'::2] + ['c'::3]", equals = "['a'::1,'b'::2,'c'::3]"),
+		@example(value = "['a'::1,'b'::2] + [5::3.0]", equals = "['a'::1.0,'b'::2.0,5::3.0]") }, see = { "" +
+		IKeyword.MINUS })
+	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
+		IType type = GamaType.findCommonType(m1.getType(), m2.getType());
+		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
+		res.putAll(m2);
+		return res;
+	}
+
+	@operator(value = IKeyword.PLUS,
+		can_be_const = true,
+		type = ITypeProvider.FIRST_TYPE,
+		content_type = ITypeProvider.BOTH,
+		category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of both operands", examples = {
+		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]"),
+		@example(value = "['a'::1,'b'::2] + ('c'::3)", equals = "['a'::1,'b'::2,'c'::3]") }, see = { "" +
+		IKeyword.MINUS })
+	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
+		IType type = GamaType.findCommonType(m1.getType(), m2.getType());
+		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
+		res.put(m2.key, m2.value);
+		return res;
+	}
+
+	@operator(value = IKeyword.MINUS,
+		can_be_const = true,
+		type = ITypeProvider.BOTH,
+		content_type = ITypeProvider.BOTH,
+		category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of the first operand not present in the second operand",
+		examples = { @example(value = "['a'::1,'b'::2] - ['b'::2]", equals = "['a'::1]"),
+			@example(value = "['a'::1,'b'::2] - ['b'::2,'c'::3]", equals = "['a'::1]") },
+		see = { "" + IKeyword.MINUS })
+	public static
+		GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
+		// special case for the addition of two populations or meta-populations
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
+		res.removeValues(scope, m2);
+		return res;
+	}
+
+	@operator(value = IKeyword.MINUS,
+		can_be_const = true,
+		type = ITypeProvider.FIRST_TYPE,
+		content_type = ITypeProvider.BOTH,
+		category = IOperatorCategory.CONTAINER)
+	@doc(value = "returns a new map containing all the elements of the first operand without the one of the second operand",
+		examples = { @example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
+			@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") },
+		see = { "" + IKeyword.MINUS })
+	public static
+		GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
+		// special case for the addition of two populations or meta-populations
+		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope, Types.NO_TYPE).copy(scope);
+		final GamaMap res = nullCheck(scope, m1).copy(scope);
+		res.remove(m2.getKey());
+		return res;
+	}
+
 }

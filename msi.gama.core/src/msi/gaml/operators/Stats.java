@@ -23,7 +23,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.file.*;
+import msi.gama.util.file.RFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -116,23 +116,23 @@ public class Stats {
 			return dataSetSize;
 		}
 
-		/**
-		 * @return The smallest value in the data set.
-		 * @throws EmptyDataSetException If the data set is empty.
-		 * @since 1.0.1
-		 */
-		public final double getMinimum() {
-			return minimum;
-		}
-
-		/**
-		 * @return The biggest value in the data set.
-		 * @throws EmptyDataSetException If the data set is empty.
-		 * @since 1.0.1
-		 */
-		public final double getMaximum() {
-			return maximum;
-		}
+		// /**
+		// * @return The smallest value in the data set.
+		// * @throws EmptyDataSetException If the data set is empty.
+		// * @since 1.0.1
+		// */
+		// public final double getMinimum() {
+		// return minimum;
+		// }
+		//
+		// /**
+		// * @return The biggest value in the data set.
+		// * @throws EmptyDataSetException If the data set is empty.
+		// * @since 1.0.1
+		// */
+		// public final double getMaximum() {
+		// return maximum;
+		// }
 
 		/**
 		 * Determines the median value of the data set.
@@ -439,11 +439,9 @@ public class Stats {
 		return new GamaPoint(x.getProduct(), y.getProduct(), z.getProduct());
 	}
 
-	@operator(value = "sum",
-		can_be_const = true,
-		type = ITypeProvider.FIRST_CONTENT_TYPE,
-		expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
-		category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER })
+	@operator(value = "sum", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+		IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
+		IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
 	@doc(value = "the sum of all the elements of the operand",
 		masterDoc = true,
 		comment = "the sum operator behavior depends on the nature of the operand",
@@ -452,39 +450,74 @@ public class Stats {
 				examples = { @example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
 			@usage(value = "if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
 				examples = { @example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
-			@usage(value = "if it is a population or a list of other types: sum transforms all elements into integer and sums them"),
+			@usage(value = "if it is a population or a list of other types: sum transforms all elements into float and sums them"),
 			@usage(value = "if it is a map, sum returns the sum of the value of all elements"),
 			@usage(value = "if it is a file, sum returns the sum of the content of the file (that is also a container)"),
 			@usage(value = "if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
 			@usage(value = "if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)"),
 			@usage(value = "if it is a matrix of geometry, sum returns the sum of the list of the geometries"),
-			@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them") },
+			@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them"),
+			@usage(value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
 		see = { "mul" })
 	public static
-		Object sum(final IScope scope, final IContainer l) {
-		DataSet x = new DataSet();
-		DataSet y = null, z = null;
-		for ( Object o : l.iterable(scope) ) {
-			if ( o instanceof ILocation ) {
-				if ( y == null ) {
-					y = new DataSet();
-					z = new DataSet();
+		Object sum(final IScope scope, final IExpression expr) {
+		IType type = expr.getType();
+		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'sum' can only operate on containers.", scope); }
+		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
+		IType contentType = type.getContentType();
+		return getSum(scope, l, contentType);
+	}
+
+	/**
+	 * @param scope
+	 * @param l
+	 * @param contentType
+	 * @return
+	 */
+	private static Object getSum(final IScope scope, final IContainer l, final IType contentType) {
+		switch (contentType.id()) {
+			case IType.INT:
+			case IType.FLOAT:
+				DataSet d2 = new DataSet();
+				for ( Object o : l.iterable(scope) ) {
+					d2.addValue(Cast.asFloat(scope, o));
 				}
-				ILocation p = (ILocation) o;
-				x.addValue(p.getX());
-				y.addValue(p.getY());
-				z.addValue(p.getZ());
-			} else {
-				x.addValue(Cast.asFloat(scope, o));
-			}
+				Number result = d2.getSize() == 0 ? 0.0 : d2.getAggregate();
+				return contentType.cast(scope, result, null, false);
+			case IType.POINT:
+				DataSet x = new DataSet();
+				DataSet y = new DataSet();
+				DataSet z = new DataSet();
+				for ( Object o : l.iterable(scope) ) {
+					ILocation p = (ILocation) o;
+					x.addValue(p.getX());
+					y.addValue(p.getY());
+					z.addValue(p.getZ());
+				}
+				if ( x.getSize() == 0 ) { return new GamaPoint(0, 0, 0); }
+				return new GamaPoint(x.getAggregate(), y.getAggregate(), z.getAggregate());
+			case IType.COLOR:
+				DataSet r = new DataSet();
+				DataSet g = new DataSet();
+				DataSet b = new DataSet();
+				for ( Object o : l.iterable(scope) ) {
+					GamaColor p = (GamaColor) o;
+					r.addValue(p.getRed());
+					g.addValue(p.getGreen());
+					b.addValue(p.getBlue());
+				}
+				if ( r.getSize() == 0 ) { return new GamaColor(0, 0, 0, 0); }
+				return new GamaColor(r.getAggregate(), g.getAggregate(), b.getAggregate(), 0);
+			default:
+				DataSet d = new DataSet();
+				for ( Object o : l.iterable(scope) ) {
+					d.addValue(Cast.asFloat(scope, o));
+				}
+				Number n = d.getSize() == 0 ? 0.0 : d.getAggregate();
+				return Cast.asFloat(scope, n);
+
 		}
-		if ( x.getSize() == 0 ) {
-			// y should ALWAYS be null in that case...
-			if ( y == null ) { return 0.0; }
-			return new GamaPoint(0, 0, 0);
-		}
-		if ( y == null ) { return x.getAggregate(); }
-		return new GamaPoint(x.getAggregate(), y.getAggregate(), z.getAggregate());
+
 	}
 
 	@operator(value = "sum", can_be_const = true, type = IType.GRAPH, category = { IOperatorCategory.GRAPH })
@@ -494,28 +527,45 @@ public class Stats {
 	}
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
-		IType.INT, IType.FLOAT, IType.POINT }, category = { IOperatorCategory.STATISTICAL })
+		IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
+		IOperatorCategory.CONTAINER, IOperatorCategory.COLOR })
 	@doc(value = "the mean of all the elements of the operand",
 		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
-		special_cases = { "if the container contains points, the result will be a point" },
+		special_cases = { "if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
 		examples = { @example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") },
 		see = { "sum" })
 	public static
 		Object getMean(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		IType type = expr.getType();
-		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'mean' can only operate on containers."); }
-		IContainer l = (IContainer) Types.get(IType.CONTAINER).cast(scope, expr.value(scope), null);
-		if ( l.length(scope) == 0 ) { return type.getContentType().id() == IType.POINT ? new GamaPoint(0, 0, 0)
-			: Double.valueOf(0d); }
-		return getMean(scope, l);
+		if ( !type.isContainer() ) { throw GamaRuntimeException.error("'mean' can only operate on containers.", scope); }
+		IContainer l = Types.CONTAINER.cast(scope, expr.value(scope), null, false);
+		if ( l.length(scope) == 0 ) { return type.getContentType().cast(scope, 0, null, false); }
+		return getMean(scope, l, type.getContentType());
 	}
 
+	@Deprecated
+	/**
+	 * Only kept for backward compatibliity with the map comparison plugin and the Stats2 operations.
+	 * @param scope
+	 * @param l
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
 	public static Object getMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
-		// FIXME Problem wiith this line if the container is intended to contain points...
-		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
-		Object s = sum(scope, l);
+		if ( l.length(scope) == 0 ) { return 0.0; // False for points and colors !
+		}
+		Object o = l.firstValue(scope);
+		IType contentType = GamaType.of(o);
+		return getMean(scope, l, contentType);
+	}
+
+	public static Object getMean(final IScope scope, final IContainer l, final IType contentType)
+		throws GamaRuntimeException {
+		if ( l.length(scope) == 0 ) { return contentType.cast(scope, 0d, null, false); }
+		Object s = getSum(scope, l, contentType);
 		if ( s instanceof Number ) { return ((Number) s).doubleValue() / l.length(scope); }
 		if ( s instanceof ILocation ) { return Points.divide((GamaPoint) s, l.length(scope)); }
+		if ( s instanceof GamaColor ) { return Colors.divide((GamaColor) s, l.length(scope)); }
 		return Cast.asFloat(scope, s) / l.length(scope);
 	}
 
@@ -623,8 +673,8 @@ public class Stats {
 	public static
 		GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
-		if ( original == null ) { return new GamaMap(); }
-		final GamaMap<Object, Integer> result = new GamaMap();
+		if ( original == null ) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
+		final GamaMap<Object, Integer> result = GamaMapFactory.create(original.getType().getContentType(), Types.INT);
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			Object key = filter.value(scope);
@@ -651,7 +701,7 @@ public class Stats {
 
 		RCaller caller = new RCaller();
 
-		String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
+		String RPath = GamaPreferences.LIB_R.value(scope).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -702,7 +752,7 @@ public class Stats {
 		double[] results;
 		RCaller caller = new RCaller();
 
-		String RPath = ((IGamaFile) GamaPreferences.LIB_R.value(scope)).getPath();
+		String RPath = GamaPreferences.LIB_R.value(scope).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {

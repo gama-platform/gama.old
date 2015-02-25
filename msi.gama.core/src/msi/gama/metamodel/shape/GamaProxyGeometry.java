@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaProxyGeometry.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaProxyGeometry.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,6 +15,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -46,6 +47,11 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	public GamaProxyGeometry(final ILocation loc) {
 		setLocation(loc);
+	}
+
+	@Override
+	public IType getType() {
+		return Types.GEOMETRY;
 	}
 
 	/**
@@ -96,8 +102,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
 	@Override
-	public String toGaml() {
-		return getReferenceGeometry().toGaml() + " at_location " + absoluteLocation.toGaml();
+	public String serialize(final boolean includingBuiltIn) {
+		return getReferenceGeometry().serialize(includingBuiltIn) + " at_location " +
+			absoluteLocation.serialize(includingBuiltIn);
 	}
 
 	/**
@@ -312,7 +319,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		final GamaList<GamaPoint> result = new GamaList();
+		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
 		final Coordinate[] points = getInnerGeometry().getCoordinates();
 		for ( final Coordinate c : points ) {
 			result.add(new GamaPoint(c));
@@ -322,8 +329,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method asShapeWithGeometry()
-	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope,
-	 *      com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.metamodel.shape.IShape#asShapeWithGeometry(msi.gama.runtime.IScope, com.vividsolutions.jts.geom.Geometry)
 	 */
 	// @Override
 	// public GamaShape asShapeWithGeometry(final IScope scope, final Geometry g) {

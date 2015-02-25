@@ -14,11 +14,11 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
-import msi.gama.util.IList;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
@@ -79,6 +79,18 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		 * @return the position of the camera
 		 */
 		GamaPoint getCameraPosition();
+
+		public boolean isLayerSplitted();
+
+		public boolean isRotationOn();
+
+		public boolean isCameraSwitched();
+
+		public boolean isArcBallDragOn();
+
+		public boolean isTriangulationOn();
+
+		public boolean isInertiaOn();
 
 	}
 
@@ -229,7 +241,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 		final Point positionInPixels);
 
-	public IList<IAgent> selectAgent(final int x, final int y);
+	public Collection<IAgent> selectAgent(final int x, final int y);
 
 	public boolean isSynchronized();
 

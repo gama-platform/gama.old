@@ -124,7 +124,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 		super(desc);
 		if ( getValue() == null ) {
 			value = getFacet(IKeyword.NAME);
-			expressionText = getValue() == null ? "" : getValue().toGaml();
+			expressionText = getValue() == null ? "" : getValue().serialize(false);
 		}
 		type = getLiteral(IKeyword.TYPE);
 		if ( type == null ) {
@@ -247,10 +247,11 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return Collections.EMPTY_LIST; }
 		}
-		if ( lastValue instanceof IAgent ) { return GamaList.with((IAgent) lastValue); }
+		if ( lastValue instanceof IAgent ) { return GamaListFactory.createWithoutCasting(Types.AGENT, (IAgent) lastValue); }
 		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
 			.getMicroPopulation((ISpecies) lastValue); }
-		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope(), Types.NO_TYPE); }
+		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope(), Types.NO_TYPE,
+			false); }
 		return null;
 	}
 

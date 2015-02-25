@@ -23,7 +23,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.joda.time.*;
 import org.joda.time.chrono.*;
 import org.joda.time.field.PreciseDurationField;
@@ -171,9 +171,9 @@ public class Strings {
 		examples = @example(value = "'to be or not to be,that is the question' split_with ' ,'",
 			equals = "['to','be','or','not','to','be','that','is','the','question']"))
 	public static
-		IList opTokenize(final String target, final String pattern) {
+		IList opTokenize(final IScope scope, final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
-		return new GamaList(Collections.list(st));
+		return GamaListFactory.create(scope, Types.STRING, st);
 	}
 
 	@operator(value = { "replace" }, can_be_const = true, category = { IOperatorCategory.STRING })

@@ -40,7 +40,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 		StringConstantExpression(final String constant) {
 			setName(constant);
-			type = Types.get(IType.STRING);
+			type = Types.STRING;
 		}
 
 		@Override
@@ -54,7 +54,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		}
 
 		@Override
-		public String toGaml() {
+		public String serialize(boolean includingBuiltIn) {
 			return StringUtils.toGamlString(getName());
 		}
 
@@ -94,7 +94,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(boolean includingBuiltIn) {
 		return value;
 		// return StringUtils.toGamlString(value);
 	}

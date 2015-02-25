@@ -52,9 +52,9 @@ public class LetStatement extends SetStatement {
 	public static class LetSerializer extends AssignmentSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
-			sb.append(desc.getType().toGaml()).append(" ");
-			super.serialize(desc, sb);
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
+			sb.append(desc.getType().serialize(includingBuiltIn)).append(" ");
+			super.serialize(desc, sb, includingBuiltIn);
 
 		}
 

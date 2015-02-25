@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ISpecies.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ISpecies.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -134,7 +134,7 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	public abstract IStatement.WithArgs getAction(final String name);
 
-	public IList<ActionStatement> getActions();
+	public Collection<ActionStatement> getActions();
 
 	// public abstract IAgentConstructor getAgentConstructor();
 
@@ -142,11 +142,11 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	public abstract IExecutable getAspect(final String n);
 
-	public IList<IExecutable> getAspects();
+	public Collection<? extends IExecutable> getAspects();
 
-	public abstract IList<String> getAspectNames();
+	public abstract List<String> getAspectNames();
 
-	public abstract IList<IStatement> getBehaviors();
+	public abstract Collection<IStatement> getBehaviors();
 
 	public abstract IArchitecture getArchitecture();
 
@@ -158,7 +158,7 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	public abstract IVariable getVar(final String n);
 
-	public abstract IList<String> getVarNames();
+	public abstract Collection<String> getVarNames();
 
 	public abstract Collection<IVariable> getVars();
 

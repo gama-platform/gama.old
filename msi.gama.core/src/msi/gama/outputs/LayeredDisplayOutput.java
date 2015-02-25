@@ -13,7 +13,7 @@ package msi.gama.outputs;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -33,7 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -255,7 +255,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
-		layers = new GamaList<AbstractLayerStatement>();
+		layers = new ArrayList<AbstractLayerStatement>();
 	}
 
 	public IOverlayProvider getOverlayProvider() {
@@ -279,7 +279,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
-			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
+			if ( auto.getType().equals(Types.POINT) ) {
 				autosave = true;
 				imageDimension = Cast.asPoint(getScope(), auto.value(getScope()));
 			} else {
@@ -309,7 +309,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression scale = getFacet(IKeyword.SCALE);
 		if ( scale != null ) {
-			if ( scale.getType().equals(Types.get(IType.BOOL)) ) {
+			if ( scale.getType().equals(Types.BOOL) ) {
 				displayScale = Cast.asBool(getScope(), scale.value(getScope()));
 			} else {
 				displayScale = true;
@@ -346,7 +346,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
 
-			if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+			if ( light.getType().equals(Types.COLOR) ) {
 				setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
@@ -364,7 +364,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 		if ( light2 != null ) {
 
-			if ( light2.getType().equals(Types.get(IType.COLOR)) ) {
+			if ( light2.getType().equals(Types.COLOR) ) {
 				setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
@@ -426,7 +426,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
-			if ( out3D.getType().equals(Types.get(IType.POINT)) ) {
+			if ( out3D.getType().equals(Types.POINT) ) {
 				setOutput3D(true);
 				setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
 			} else {
@@ -482,7 +482,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantAmbientLight ) {
 			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
-				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+				if ( light.getType().equals(Types.COLOR) ) {
 					setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
@@ -494,7 +494,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantDiffuseLight ) {
 			final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 			if ( light2 != null ) {
-				if ( light2.getType().equals(Types.get(IType.COLOR)) ) {
+				if ( light2.getType().equals(Types.COLOR) ) {
 					setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
@@ -552,19 +552,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void forceUpdate() throws GamaRuntimeException {
-		// GUI.debug("Updating output " + getName());
 		if ( surface != null /* && surface.canBeUpdated() */) {
-			// GUI.debug("Updating the surface of output " + getName());
 			surface.forceUpdateDisplay();
 		}
 	}
-
-	//
-	// @Override
-	// public void schedule() throws GamaRuntimeException {
-	// super.schedule();
-	// getScope().step(this);
-	// }
 
 	public void setImageFileName(final String fileName) {
 		snapshotFileName = fileName;
@@ -572,6 +563,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public boolean shouldDisplayScale() {
 		return displayScale;
+	}
+
+	public void toogleScaleDisplay() {
+		displayScale = !displayScale;
 	}
 
 	@Override
@@ -634,7 +629,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		GamaList<AbstractLayerStatement> list = new GamaList();
+		List<AbstractLayerStatement> list = new ArrayList();
 		for ( ISymbol s : commands ) {
 			if ( s instanceof OverlayStatement ) {
 				overlayInfo = (OverlayStatement) s;

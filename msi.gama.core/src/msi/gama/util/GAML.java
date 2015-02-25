@@ -67,6 +67,8 @@ public class GAML {
 
 	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if ( a == null ) { return null; }
+		if ( expression == null || expression.isEmpty() ) { throw GamaRuntimeException.error(
+			"Enter a valid expression", a.getScope()); }
 		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
 		IScope scope = a.getScope().copy();

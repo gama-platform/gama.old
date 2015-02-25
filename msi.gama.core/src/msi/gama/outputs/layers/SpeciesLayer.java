@@ -68,20 +68,14 @@ public class SpeciesLayer extends AgentLayer {
 		// IAgent[] _agents = null;
 		// _agents = Iterators.toArray(population.iterator(), IAgent.class);
 
-		// draw the population
-		for ( final IAgent a : population.iterable(scope) ) {
+		// draw the population. A copy of the population is made to avoid concurrent modification exceptions
+		for ( final IAgent a : /* population.iterable(scope) */population.toArray() ) {
 			if ( a.dead() ) {
 				continue;
 			}
-			// if ( a.dead() ) {
-			// GuiUtils.debug("SpeciesLayer.drawPopulation dead agent :" + a);
-			// }
 			Object[] result = new Object[1];
 			scope.execute(aspect, a, null, result);
 			final Rectangle2D r = (Rectangle2D) result[0];
-			// ((AWTDisplayGraphics) g).getRenderer().drawRect((int) r.getMinX(), (int) r.getMinY(), (int) r.getWidth(),
-			// (int) r.getHeight());
-			// aspect.draw(scope, a);
 			if ( r != null ) {
 				shapes.put(a, r);
 			}

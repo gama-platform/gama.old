@@ -27,7 +27,7 @@ public class MapExpression extends AbstractExpression {
 	public static IExpression create(final List<? extends IExpression> elements) {
 		MapExpression u = new MapExpression(elements);
 		if ( u.isConst() ) {
-			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
@@ -39,7 +39,21 @@ public class MapExpression extends AbstractExpression {
 	private boolean isConst, computed;
 
 	MapExpression(final List<? extends IExpression> pairs) {
-		this(fromBinaryPairs((List<BinaryOperator>) pairs));
+		keys = new IExpression[pairs.size()];
+		vals = new IExpression[pairs.size()];
+		for ( int i = 0, n = pairs.size(); i < n; i++ ) {
+			IExpression e = pairs.get(i);
+			if ( e instanceof BinaryOperator ) {
+				BinaryOperator pair = (BinaryOperator) e;
+				keys[i] = pair.exprs[0];
+				vals[i] = pair.exprs[1];
+			}
+		}
+		IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
+		IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
+		values = GamaMapFactory.create(keyType, contentsType, keys.length);
+		setName(pairs.toString());
+		type = Types.MAP.of(keyType, contentsType);
 	}
 
 	MapExpression(final GamaMap<IExpression, IExpression> pairs) {
@@ -51,14 +65,16 @@ public class MapExpression extends AbstractExpression {
 			vals[i] = entry.getValue();
 			i++;
 		}
-		values = new GamaMap(keys.length);
+		IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
+		IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
+		values = GamaMapFactory.create(keyType, contentsType, keys.length);
 		setName(pairs.toString());
-		type = GamaType.from(Types.get(IType.MAP), findCommonType(keys, _type), findCommonType(vals, _type));
+		type = Types.MAP.of(keyType, contentsType);
 	}
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		GamaMap result = new GamaMap(keys.length);
+		GamaMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {
 			if ( keys[i] == null || vals[i] == null ) {
 				continue;
@@ -75,7 +91,7 @@ public class MapExpression extends AbstractExpression {
 		for ( int i = 0; i < keys.length; i++ ) {
 			if ( keys[i] == null || vals[i] == null ) {
 				computed = false;
-				return GamaMap.EMPTY_MAP;
+				return GamaMapFactory.EMPTY_MAP;
 			}
 			values.put(keys[i].value(scope), vals[i].value(scope));
 		}
@@ -92,15 +108,17 @@ public class MapExpression extends AbstractExpression {
 	public boolean isConst() {
 		for ( int i = 0; i < keys.length; i++ ) {
 			// indicates an error in the compilation process of a former expression
-			if ( keys[i] == null || vals[i] == null ) { return false; }
-			if ( !keys[i].isConst() || !vals[i].isConst() ) { return false; }
+			if ( keys[i] == null || vals[i] == null ) {
+				continue;
+			}
+			if ( vals[i] != null || !keys[i].isConst() || vals[i] != null && !vals[i].isConst() ) { return false; }
 		}
 		isConst = true;
 		return true;
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(' ').append('[');
 		for ( int i = 0; i < keys.length; i++ ) {
@@ -110,9 +128,9 @@ public class MapExpression extends AbstractExpression {
 			if ( keys[i] == null || vals[i] == null ) {
 				sb.append("nill::nil");
 			} else {
-				sb.append(keys[i].toGaml());
+				sb.append(keys[i].serialize(includingBuiltIn));
 				sb.append("::");
-				sb.append(vals[i].toGaml());
+				sb.append(vals[i].serialize(includingBuiltIn));
 			}
 		}
 		sb.append(']').append(' ');
@@ -128,20 +146,12 @@ public class MapExpression extends AbstractExpression {
 	}
 
 	public GamaMap<IExpression, IExpression> getElements() {
-		GamaMap result = new GamaMap(keys.length);
+		GamaMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {
-			result.put(keys[i], vals[i]);
-		}
-		return result;
-	}
-
-	public static GamaMap fromBinaryPairs(final List<BinaryOperator> pairs) {
-		final GamaMap result = new GamaMap();
-		for ( int i = 0, n = pairs.size(); i < n; i++ ) {
-			BinaryOperator pair = pairs.get(i);
-			if ( pair != null ) {
-				result.put(pair.exprs[0], pair.exprs[1]);
+			if ( keys[i] == null ) {
+				continue;
 			}
+			result.put(keys[i], vals[i]);
 		}
 		return result;
 	}

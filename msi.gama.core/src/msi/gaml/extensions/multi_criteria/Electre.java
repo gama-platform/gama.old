@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Electre.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Electre.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,6 @@
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
-import msi.gama.util.GamaList;
 
 public class Electre {
 
@@ -21,7 +20,7 @@ public class Electre {
 	private Map<String, Double> preference = new HashMap<String, Double>();
 	private Map<String, Double> indifference = new HashMap<String, Double>();
 	private Map<String, Double> veto = new HashMap<String, Double>();
-	private List<String> critereOrdonnes = new GamaList<String>();
+	private final List<String> critereOrdonnes;
 
 	public Electre(final List<String> critereOrdonnes) {
 		super();
@@ -54,7 +53,7 @@ public class Electre {
 
 	public void setPoids(final Map<String, Double> poids) {
 		this.poids = poids;
-		critereOrdonnes = new GamaList<String>();
+		critereOrdonnes.clear();
 		critereOrdonnes.addAll(poids.keySet());
 		Collections.sort(critereOrdonnes);
 	}
@@ -175,8 +174,8 @@ public class Electre {
 		String str = this.seuilCoupe + ",";
 		for ( String crit : critereOrdonnes ) {
 			str +=
-				crit + ":" + poids.get(crit) + "," + preference.get(crit) + "," +
-					indifference.get(crit) + "," + veto.get(crit);
+				crit + ":" + poids.get(crit) + "," + preference.get(crit) + "," + indifference.get(crit) + "," +
+					veto.get(crit);
 		}
 		return str;
 	}
@@ -211,10 +210,6 @@ public class Electre {
 
 	public void setVeto(final Map<String, Double> veto) {
 		this.veto = veto;
-	}
-
-	public void setCritereOrdonnes(final List<String> critereOrdonnes) {
-		this.critereOrdonnes = critereOrdonnes;
 	}
 
 	public List<String> getCritereOrdonnes() {

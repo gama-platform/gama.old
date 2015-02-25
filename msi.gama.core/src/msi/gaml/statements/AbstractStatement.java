@@ -81,7 +81,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 			if ( ed != null ) {
 				expr = ed.getExpression();
 			}
-			String exprString = expr == null ? "N/A" : expr.toGaml();
+			String exprString = expr == null ? "N/A" : expr.serialize(false);
 			String exprValue = expr == null ? "nil" : Cast.toGaml(expr.value(scope));
 			sb.append(e.getKey()).append(": [ ").append(exprString).append(" ] ").append(exprValue).append(" ");
 		}

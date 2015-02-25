@@ -11,9 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.io.*;
-import java.util.List;
-import java.util.regex.Pattern;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -29,129 +26,40 @@ import msi.gaml.operators.Cast;
 	GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
-	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType) {
-
+	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
+		final boolean copy) {
 		if ( obj == null && param == null ) { return null; }
-		if ( param == null || !(param instanceof ILocation) ) {
-			if ( obj instanceof IList ) { return GamaMatrixType.from(scope, (IList) obj); }
-			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType); }
-			if ( obj instanceof String ) { return from(scope, (String) obj, null); }
-			return with(scope, obj, new GamaPoint(1, 1));
-		}
+		GamaPoint size = param instanceof GamaPoint ? (GamaPoint) param : null;
 
-		if ( ((GamaPoint) param).x <= 0 || ((GamaPoint) param).y < 0 ) { throw GamaRuntimeException.error(
+		if ( size == null ) {
+			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, copy); }
+			return with(scope, obj, new GamaPoint(1, 1), contentType);
+		} else if ( size.x <= 0 || size.y < 0 ) { throw GamaRuntimeException.error(
 			"Dimensions of a matrix should be positive.", scope); }
 
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, (GamaPoint) param); }
-		if ( obj instanceof String ) { return from(scope, (String) obj, (GamaPoint) param); }
-		if ( obj instanceof Double ) { return with(scope, ((Double) obj).doubleValue(), (GamaPoint) param); }
-		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(), (GamaPoint) param); }
-		return with(scope, obj, (GamaPoint) param);
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, contentType, size, copy); }
+		return with(scope, obj, size, contentType);
 
 	}
 
 	@Override
 	public IMatrix cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType) throws GamaRuntimeException {
-		IMatrix m = staticCast(scope, obj, param, contentsType);
+		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+		IMatrix m = staticCast(scope, obj, param, contentsType, copy);
 		return m;
 	}
 
-	// Simplified pattern : only ';', ',', tab and white space are accepted
-	public static Pattern csvPattern = Pattern.compile(";|,|\t|\\s");
-
-	public static IMatrix from(final IScope scope, final String string, final ILocation preferredSize)
-		throws GamaRuntimeException {
-
-		try {
-			StringReader sr = new StringReader(string);
-			final BufferedReader in = new BufferedReader(sr);
-			final GamaList<String[]> allLines = new GamaList();
-			String[] splitStr;
-			String str;
-			int columns = 0;
-			str = in.readLine();
-			while (str != null) {
-				splitStr = csvPattern.split(str, -1);
-				allLines.add(splitStr);
-				if ( splitStr.length > columns ) {
-					columns = splitStr.length;
-				}
-				str = in.readLine();
-			}
-			sr.close();
-			in.close();
-			int columnSize, lineSize;
-			if ( preferredSize == null ) {
-				lineSize = allLines.size();
-				columnSize = columns;
-			} else {
-				lineSize = Math.min((int) preferredSize.getY(), allLines.size());
-				columnSize = Math.min((int) preferredSize.getX(), columns);
-			}
-			final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize);
-			for ( int i = 0; i < lineSize; i++ ) {
-				splitStr = allLines.get(i);
-				for ( int j = 0; j < splitStr.length; j++ ) {
-					matrix.set(scope, j, i, splitStr[j]);
-				}
-			}
-			return matrix;
-		} catch (final IOException ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	public static IMatrix from(final IScope scope, final IList list, final IType type, final ILocation preferredSize) {
-		if ( list == null || list.isEmpty() ) { return new GamaObjectMatrix(0, 0); }
-		// 3 cases to consider: whether the list is flat or not,
-		boolean flat = GamaMatrix.isFlat(list);
-		// Which type: Object, Int or Float ?
-		// TODO Add IShape to create GamaSpatialMatrix
-		IList castedList;
-		if ( flat ) {
-			castedList = list.listValue(scope, type);
+	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
+		final ILocation preferredSize) {
+		if ( list == null || list.isEmpty() ) { return new GamaObjectMatrix(0, 0, desiredType); }
+		if ( desiredType.id() == IType.INT ) {
+			return new GamaIntMatrix(scope, list, preferredSize);
+		} else if ( desiredType.id() == IType.FLOAT ) {
+			return new GamaFloatMatrix(scope, list, preferredSize);
 		} else {
-			castedList = new GamaList();
-			for ( Object o : list.iterable(scope) ) {
-				castedList.add(((IList) o).listValue(scope, type));
-			}
-		}
-		if ( type.id() == IType.INT ) {
-			return new GamaIntMatrix(scope, castedList, flat, preferredSize);
-		} else if ( type.id() == IType.FLOAT ) {
-			return new GamaFloatMatrix(scope, castedList, flat, preferredSize);
-		} else {
-			return new GamaObjectMatrix(scope, castedList, flat, preferredSize);
+			return new GamaObjectMatrix(scope, list, preferredSize, desiredType);
 		}
 
-	}
-
-	public static IMatrix from(final IScope scope, final IList list) {
-		if ( list == null || list.isEmpty() ) { return new GamaObjectMatrix(0, 0); }
-		// 3 cases to consider: whether the list is flat or not, whether it is int/float or other objects.
-		// Is the list flat ? True if one of the contained objects is not a list / they are not the same size
-		boolean flat = GamaMatrix.isFlat(list);
-		// Which type: Object, Int or Float ?
-		// TODO Add IShape to create GamaSpatialMatrix
-
-		List first = (List) (flat ? list : list.get(0));
-		boolean allInt = true;
-		boolean allFloat = true;
-		for ( Object o : first ) {
-			allInt = allInt && o instanceof Integer;
-			if ( !allInt ) {
-				allFloat = allFloat && o instanceof Double;
-			}
-		}
-		if ( allInt ) {
-			return new GamaIntMatrix(scope, list, flat, null);
-		} else if ( allFloat ) {
-			return new GamaFloatMatrix(scope, list, flat, null);
-		} else {
-			return new GamaObjectMatrix(scope, list, flat, null);
-		}
 	}
 
 	/**
@@ -163,9 +71,9 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 * @return
 	 */
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
-		final IType contentsType, final ILocation preferredSize) {
-		if ( desiredType == null || desiredType.id() == IType.NONE || desiredType.isAssignableFrom(contentsType) ) { return matrix
-			.copy(scope, preferredSize); }
+		final ILocation preferredSize, final boolean copy) {
+		IType contentsType = matrix.getType().getContentType();
+		if ( !GamaType.requiresCasting(desiredType, contentsType) ) { return matrix.copy(scope, preferredSize, copy); }
 		int cols, rows;
 		if ( preferredSize == null ) {
 			cols = matrix.getCols(scope);
@@ -183,7 +91,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				GamaObjectMatrix m = GamaObjectMatrix.from(cols, rows, matrix);
 				Object[] array = m.getMatrix();
 				for ( int i = 0; i < array.length; i++ ) {
-					array[i] = desiredType.cast(scope, array[i], null);
+					array[i] = desiredType.cast(scope, array[i], null, false);
 				}
 				return m;
 		}
@@ -197,7 +105,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
 		IMatrix result;
-		if ( fillExpr == null ) { return new GamaObjectMatrix(cols, rows); }
+		if ( fillExpr == null ) { return new GamaObjectMatrix(cols, rows, Types.NO_TYPE); }
 		switch (fillExpr.getType().id()) {
 			case IType.FLOAT:
 				result = new GamaFloatMatrix(cols, rows);
@@ -214,7 +122,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				}
 				break;
 			default:
-				result = new GamaObjectMatrix(cols, rows);
+				result = new GamaObjectMatrix(cols, rows, fillExpr.getType());
 				Object[] contents = ((GamaObjectMatrix) result).getMatrix();
 				for ( int i = 0; i < contents.length; i++ ) {
 					contents[i] = fillExpr.value(scope);
@@ -223,42 +131,30 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		return result;
 	}
 
-	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p) throws GamaRuntimeException {
-		return withObject(scope, val, (int) p.x, (int) p.y);
-	}
-
-	public static IMatrix withObject(final IScope scope, final Object val, final int cols, final int rows)
+	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p, final IType contentsType)
 		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaObjectMatrix(cols, rows);
-		((GamaObjectMatrix) matrix).fillWith(scope, val);
-		return matrix;
+		return withObject(scope, val, (int) p.x, (int) p.y, contentsType);
 	}
 
-	public static IMatrix with(final IScope scope, final int val, final GamaPoint p) throws GamaRuntimeException {
-		return withInt(scope, val, (int) p.x, (int) p.y);
-	}
-
-	public static IMatrix withInt(final IScope scope, final int val, final int cols, final int rows)
-		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaIntMatrix(cols, rows);
-		((GamaIntMatrix) matrix).fillWith(val);
-		return matrix;
-	}
-
-	public static IMatrix with(final IScope scope, final double val, final GamaPoint p) throws GamaRuntimeException {
-		return withDouble(scope, val, (int) p.x, (int) p.y);
-	}
-
-	public static IMatrix withDouble(final IScope scope, final double val, final int cols, final int rows)
-		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaFloatMatrix(cols, rows);
-		((GamaFloatMatrix) matrix)._putAll(scope, val, null);
+	public static IMatrix withObject(final IScope scope, final Object val, final int cols, final int rows,
+		final IType contentsType) throws GamaRuntimeException {
+		if ( contentsType == Types.INT || val instanceof Integer ) {
+			final GamaIntMatrix matrix = new GamaIntMatrix(cols, rows);
+			matrix.setAllValues(scope, (Integer) Types.INT.cast(scope, val, null, false));
+			return matrix;
+		} else if ( contentsType == Types.FLOAT || val instanceof Double ) {
+			final GamaFloatMatrix matrix = new GamaFloatMatrix(cols, rows);
+			matrix.setAllValues(scope, (Double) Types.FLOAT.cast(scope, val, null, false));
+			return matrix;
+		}
+		final IMatrix matrix = new GamaObjectMatrix(cols, rows, contentsType);
+		((GamaObjectMatrix) matrix).setAllValues(scope, contentsType.cast(scope, val, null, false));
 		return matrix;
 	}
 
 	@Override
 	public IType getKeyType() {
-		return Types.get(IType.POINT);
+		return Types.POINT;
 	}
 
 	@Override
@@ -281,8 +177,13 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				return array[0].getType().getContentType();
 			}
 		}
-		if ( Types.get(IKeyword.CONTAINER).isAssignableFrom(itemType) ) { return itemType.getContentType(); }
+		if ( Types.CONTAINER.isAssignableFrom(itemType) ) { return itemType.getContentType(); }
 		return itemType;
+	}
+
+	@Override
+	public boolean canCastToConst() {
+		return true;
 	}
 
 	// @Override

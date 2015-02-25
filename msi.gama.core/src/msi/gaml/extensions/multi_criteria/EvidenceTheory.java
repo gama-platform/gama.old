@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'EvidenceTheory.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'EvidenceTheory.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,8 +12,6 @@
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
-
-import msi.gama.util.GamaList;
 
 /**
  * Classe impl�mentant la prise de d�cision � l'aide des fonctions de croyance
@@ -28,18 +26,15 @@ public class EvidenceTheory {
 	 * @param m2 : deuxi�me source
 	 * @return les masses de croyance m12
 	 */
-	private MassesCroyances fusionLesMassesLocalesDeuxSources(final MassesCroyances m1,
-		final MassesCroyances m2) {
+	private MassesCroyances fusionLesMassesLocalesDeuxSources(final MassesCroyances m1, final MassesCroyances m2) {
 		// on instancie de nouvelles masses de croyance correspondant � la fusion de m1 et m2
 		MassesCroyances fusion = new MassesCroyances();
 		// on met � jour les valeurs de ces masses de croyances
 		fusion.setPour(m1.pour * m2.pour + m1.pour * m2.ignorance + m1.ignorance * m2.pour);
-		fusion.setContre(m1.contre * m2.contre + m1.contre * m2.ignorance + m1.ignorance *
-			m2.contre);
+		fusion.setContre(m1.contre * m2.contre + m1.contre * m2.ignorance + m1.ignorance * m2.contre);
 		fusion.setIgnorance(m1.ignorance * m2.ignorance);
 		fusion.setConflit(m1.pour * m2.contre + m1.contre * m2.pour + m1.conflit *
-			(m2.pour + m2.contre + m2.ignorance + m2.conflit) + m2.conflit *
-			(m1.pour + m1.contre + m1.ignorance));
+			(m2.pour + m2.contre + m2.ignorance + m2.conflit) + m2.conflit * (m1.pour + m1.contre + m1.ignorance));
 		return fusion;
 	}
 
@@ -74,12 +69,10 @@ public class EvidenceTheory {
 		Propositions fusion = new Propositions(candidats);
 		return fusion;
 	}
-	
+
 	private Propositions buildPropositions(final Map<Candidate, MassesCroyances> candidats) {
 		return new Propositions(candidats, true);
 	}
-	
-	
 
 	/**
 	 * M�thode assurant la fusion de l'ensemble des crit�res
@@ -94,7 +87,7 @@ public class EvidenceTheory {
 		// Parcours des crit�res
 		for ( CritereFonctionsCroyances cfc : criteres ) {
 			double valC = valeursCourantes.get(cfc.getNom()).doubleValue();
-			
+
 			// Pour chaque crit�re, on instancie � un objet MassesCroyances. Initialisation des
 			// masses de croyances
 			MassesCroyances mc =
@@ -111,8 +104,8 @@ public class EvidenceTheory {
 	 * @param criteres : Ensemble de CritereFonctionsCroyances (les crit�res pour cette m�thode)
 	 * @return le meilleur candidat
 	 */
-	public Candidate decision(final LinkedList<CritereFonctionsCroyances> criteres,
-		final LinkedList<Candidate> cands, boolean simple) {
+	public Candidate decision(final LinkedList<CritereFonctionsCroyances> criteres, final LinkedList<Candidate> cands,
+		final boolean simple) {
 		// Parcours de l'ensemble des candidats possibles
 		Map<Candidate, MassesCroyances> candidats = new HashMap<Candidate, MassesCroyances>();
 		for ( Candidate cand : cands ) {
@@ -123,16 +116,16 @@ public class EvidenceTheory {
 
 		// on fusionne entre elles les hypoth�ses
 		Propositions propositions = null;
-		if (simple)
+		if ( simple ) {
 			propositions = buildPropositions(candidats);
-		else 
+		} else {
 			propositions = fusionHypotheses(candidats);
+		}
 
 		// on choisit le meilleur candidat (le meilleur intervalle) : celui qui maximise la
 		// probabilit� pignistique
 		return choixCandidat(propositions, cands);
 	}
-	
 
 	/**
 	 * Fonction de choix d'un candidat
@@ -208,8 +201,7 @@ public class EvidenceTheory {
 		 * @param ignorance
 		 * @param conflit
 		 */
-		public MassesCroyances(final double pour, final double contre, final double ignorance,
-			final double conflit) {
+		public MassesCroyances(final double pour, final double contre, final double ignorance, final double conflit) {
 			super();
 			this.pour = pour;
 			this.contre = contre;
@@ -224,8 +216,8 @@ public class EvidenceTheory {
 
 		@Override
 		public String toString() {
-			return "pour : " + pour + " - contre : " + contre + " - ignorance : " + ignorance +
-				" - conflit : " + conflit;
+			return "pour : " + pour + " - contre : " + contre + " - ignorance : " + ignorance + " - conflit : " +
+				conflit;
 		}
 
 		public void setContre(final double contre) {
@@ -259,8 +251,8 @@ public class EvidenceTheory {
 		private final LinkedList<Candidate> hypothese;
 		// valeur de la masse de croyance associ�e � cette proposition
 		private double masseCroyance;
-		
-		private int id;
+
+		private final int id;
 
 		/**
 		 * @param hypothese : ensemble de String
@@ -270,8 +262,8 @@ public class EvidenceTheory {
 			super();
 			this.hypothese = hypothese;
 			this.masseCroyance = masseCroyance;
-			GamaList<Integer> cands = new GamaList<Integer>();
-			for (Candidate cand: hypothese) {
+			List<Integer> cands = new ArrayList<Integer>();
+			for ( Candidate cand : hypothese ) {
 				cands.add(cand.getIndex());
 			}
 			Collections.sort(cands);
@@ -301,27 +293,19 @@ public class EvidenceTheory {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
+		public boolean equals(final Object obj) {
+			if ( this == obj ) { return true; }
+			if ( obj == null ) { return false; }
+			if ( getClass() != obj.getClass() ) { return false; }
 			Proposition other = (Proposition) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (id != other.id)
-				return false;
+			if ( !getOuterType().equals(other.getOuterType()) ) { return false; }
+			if ( id != other.id ) { return false; }
 			return true;
 		}
 
 		private EvidenceTheory getOuterType() {
 			return EvidenceTheory.this;
 		}
-
-		
-		
 
 	}
 
@@ -347,17 +331,17 @@ public class EvidenceTheory {
 			coeffNorm = 1;
 			init(candidats, false);
 		}
-		
-		public Propositions(final Map<Candidate, MassesCroyances> candidats, boolean simple) {
+
+		public Propositions(final Map<Candidate, MassesCroyances> candidats, final boolean simple) {
 			this.propositions = new LinkedList<Proposition>();
 			coeffNorm = 1;
 			init(candidats, simple);
 		}
-		
-		private void init(final Map<Candidate, MassesCroyances> candidats, boolean simple) {
+
+		private void init(final Map<Candidate, MassesCroyances> candidats, final boolean simple) {
 			for ( Candidate cand : candidats.keySet() ) {
 				MassesCroyances mc1 = candidats.get(cand);
-				if (simple) {
+				if ( simple ) {
 					initPropositions(cand, mc1, candidats);
 				} else {
 					// si c'est le premier candidat que l'on traite, on initialise les propositions avec
@@ -368,13 +352,13 @@ public class EvidenceTheory {
 						// cas o� des candidats ont d�j� �t� trait�s -> dans ce cas fusion
 						// des
 						// propositions pr�c�dement obtenues avec ces nouvelles propositions
-	
+
 						// initialisation proposition pour : il faut apparier le vecteur de valeurs
 						// courant avec cet intervalle
 						LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
 						pourSet.add(cand);
 						Proposition propp = new Proposition(pourSet, mc1.pour);
-	
+
 						// initialisation proposition contre : il ne faut pas apparier le vecteur de
 						// valeurs courant avec cet intervalle
 						// �quivalent � propotion : il faut apparier le vecteur de valeurs courant
@@ -393,14 +377,12 @@ public class EvidenceTheory {
 						}
 						Proposition propc = new Proposition(contreSet, mc1.contre);
 						Proposition propi = new Proposition(ignoSet, mc1.ignorance);
-	
+
 						// initialisation proposition conflit (deux crit�res qui donne des indications
 						// contradictoires)
-						Proposition propConflit =
-							new Proposition(new LinkedList<Candidate>(), mc1.conflit);
-	
-						Map<Integer, Proposition> propositionsTmp =
-							new HashMap<Integer, Proposition>();
+						Proposition propConflit = new Proposition(new LinkedList<Candidate>(), mc1.conflit);
+
+						Map<Integer, Proposition> propositionsTmp = new HashMap<Integer, Proposition>();
 						// on fusionne ces nouvelles propositions avec les propositions d�j�
 						// pr�sentes
 						// dans l'ensemble propositions
@@ -421,8 +403,6 @@ public class EvidenceTheory {
 				computeCoeffNorm();
 			}
 		}
-		
-		
 
 		/**
 		 * M�thode qui permet d'ajouter une proposition � un dictionnaire de propositions
@@ -430,8 +410,7 @@ public class EvidenceTheory {
 		 *            proposition -> Valeur : Proposition : proposition correspondante
 		 * @param propFus : la nouvelle proposition
 		 */
-		public void ajouteProposition(final Map<Integer, Proposition> propositionsTmp,
-			final Proposition propFus) {
+		public void ajouteProposition(final Map<Integer, Proposition> propositionsTmp, final Proposition propFus) {
 			// s'il y a d�j� une proposition similaire (avec le m�me nom) dans le dictionnaire
 			// propositionsTmp, on la r�cup�re
 			Proposition propExiste = propositionsTmp.get(propFus.id);
@@ -507,13 +486,12 @@ public class EvidenceTheory {
 
 		public void computeCoeffNorm() {
 			for ( Proposition prop : propositions ) {
-				if ( prop.hypothese.isEmpty() ) { 
+				if ( prop.hypothese.isEmpty() ) {
 					coeffNorm = 1.0 / (1.0 - prop.masseCroyance);
 					return;
 				}
 			}
 		}
-		
 
 		public double getCoeffNorm() {
 			return coeffNorm;

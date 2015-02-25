@@ -70,7 +70,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public synchronized void dispose() {
 		super.dispose();
 		try {
-			for ( final IOutput output : outputs.values() ) {
+			// AD: explicit addition of an ArrayList to prevent dispose errors (when outputs remove themselves from the list)
+			for ( final IOutput output : new ArrayList<IOutput>(outputs.values()) ) {
 				output.dispose();
 			}
 			outputs.clear();

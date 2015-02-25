@@ -39,18 +39,18 @@ import msi.gaml.types.*;
  */
 public class Cast {
 
-	public static <T> T as(final Object value, final Class<T> clazz) {
+	public static <T> T as(final Object value, final Class<T> clazz, final boolean copy) {
 		final IScope scope = GAMA.obtainNewScope();
 		final IType<T> t = Types.get(clazz);
-		final T result = t.cast(scope, value, null);
+		final T result = t.cast(scope, value, null, copy);
 		GAMA.releaseScope(scope);
 		return result;
 	}
 
-	public static <T> T as(final IExpression value, final Class<T> clazz) {
+	public static <T> T as(final IExpression value, final Class<T> clazz, final boolean copy) {
 		final IScope scope = GAMA.obtainNewScope();
 		final IType<T> t = Types.get(clazz);
-		final T result = t.cast(scope, value.value(scope), null);
+		final T result = t.cast(scope, value.value(scope), null, copy);
 		GAMA.releaseScope(scope);
 		return result;
 	}
@@ -68,15 +68,12 @@ public class Cast {
 		@example(value = "1 is float", equals = "false") })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
 		final IType type = asType(scope, b);
-		if ( a == null ) { return type == Types.NO_TYPE; }
-		if ( a instanceof Integer ) { return type == Types.get(IType.INT); }
-		if ( a instanceof Double ) { return type == Types.get(IType.FLOAT); }
 		if ( type.isAgentType() ) {
 			final ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
 			if ( a instanceof IAgent ) { return ((IAgent) a).isInstanceOf(s, false); }
 			return false;
 		}
-		return type.isAssignableFrom(Types.get(a.getClass()));
+		return type.isAssignableFrom(GamaType.of(a));
 	}
 
 	@operator(value = IKeyword.IS_SKILL, category = { IOperatorCategory.CASTING })
@@ -100,37 +97,8 @@ public class Cast {
 		}
 	}
 
-	// @operator(value = IKeyword.CONTAINER, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, index_type =
-	// ITypeProvider.FIRST_KEY_TYPE)
-	// @doc(value = "casting of the operand to a container", special_cases = {
-	// "if the operand is a container, returns itself", "otherwise, returns the operand casted to a list" }, see =
-	// "list")
-	// public static IContainer asContainer(final IScope scope, final Object val) throws GamaRuntimeException {
-	// return (IContainer) Types.get(IType.CONTAINER).cast(scope, val, null);
-	// }
-
-	// @operator(value = IKeyword.PATH)
-	// @doc(value = "casting of the operand to a path", special_cases = {
-	// "if the operand is a path, returns itself",
-	// "if the operand is a list, casts the list into a list of point and returns the path (in the current topology) through these points.",
-	// "otherwise, returns nil" }, examples =
-	// "path([{2,5}, {4,7}, {2,1}])   --:  [polyline ([{2.0,5.0},{4.0,7.0}]),polyline ([{4.0,7.0},{2.0,1.0}])]", see =
-	// "graph")
-	// public static IPath toPath(final IScope scope, final Object object) {
-	// return GamaPathType.staticCast(scope, object, null);
-	// }
-
-	// @operator(value = IKeyword.GRAPH, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE)
-	// @doc(value = "casting of the operand to a graph.", special_cases = {
-	// "if the operand is a graph, returns the graph itself",
-	// "if the operand is a list, returns a new graph with the elements of the left-hand operand as vertices and no edge. "
-	// + "The graph will be spatial is the right-hand operand is true;", "if the operand is a map, ",
-	// "otherwise, returns nil" }, examples = {
-	// "graph([1,5,9,3]) 	--: ([1: in[] + out[], 3: in[] + out[], 5: in[] + out[], 9: in[] + out[]], [])",
-	// "graph(['a'::345, 'b'::13])  --:  ([b: in[] + out[b::13], a: in[] + out[a::345], 13: in[b::13] + out[], 345: in[a::345] + out[]], [a::345=(a,345), b::13=(b,13)])",
-	// "graph(a_graph)	--: a_graph", "graph(node1)	--: null" })
 	public static IGraph asGraph(final IScope scope, final Object val) {
-		return GamaGraphType.staticCast(scope, val, null);
+		return GamaGraphType.staticCast(scope, val, null, false);
 	}
 
 	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY, category = { IOperatorCategory.CASTING })
@@ -151,7 +119,7 @@ public class Cast {
 		see = { "geometry" })
 	public static
 		ITopology asTopology(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaTopologyType.staticCast(scope, val);
+		return GamaTopologyType.staticCast(scope, val, false);
 	}
 
 	// @operator(value = IKeyword.AGENT)
@@ -166,7 +134,7 @@ public class Cast {
 	// "node({23, 4.0} 		--: node2", "node(5::34) 		--: null", "node(green) 		--: null", "node([1,5,9,3]) 	--: null",
 	// "node(node1)		--: node1", "node('4')		--: null" }, see = { "of_species", "species" })
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
+		return (IAgent) Types.AGENT.cast(scope, val, null, false);
 	}
 
 	@operator(value = IKeyword.AS,
@@ -178,7 +146,8 @@ public class Cast {
 	@doc(value = "casting of the first argument into a given type", comment = "It is equivalent to the application of the type operator on the left operand.",
 		examples = @example(value="3.5 as int", returnType="int", equals="int(3.5)"))
 	public static Object as(final IScope scope, final Object val, final IExpression expr) {
-		return expr.getType().cast(scope, val, null);
+		// WARNING copy is set explicity to false
+		return expr.getType().cast(scope, val, null, false);
 	}
 
 	// @operator(value = IKeyword.AS, type = ITypeProvider.SECOND_CONTENT_TYPE, content_type =
@@ -206,8 +175,14 @@ public class Cast {
 	// "bool(3.78) 		--: true", "bool(true) 		--: true", "bool({23, 4.0} 	--: false", "bool(5::34) 		--: false",
 	// "bool(green) 		--: false", "bool([1,5,9,3]) 	--: true", "bool(node1)		--: true", "bool('4')			--: false",
 	// "bool('4.7')		--: false " })
+	public static Boolean asBool(final IScope scope, final Object val, final boolean copy) {
+		// copy not passed
+		return GamaBoolType.staticCast(scope, val, null, false);
+	}
+
 	public static Boolean asBool(final IScope scope, final Object val) {
-		return GamaBoolType.staticCast(scope, val, null);
+		// copy not passed
+		return asBool(scope, val, false);
 	}
 
 	// @operator(value = IKeyword.RGB, can_be_const = true)
@@ -229,8 +204,14 @@ public class Cast {
 	// "rgb({23, 4.0} 		--: rgb([0,0,0]) //black ", "rgb(5::34) 		--: rgb([0,0,0]) //black ",
 	// "rgb(green) 		--: rgb([0,255,0]) //green ", "rgb([1,5,9,3]) 			--: rgb([1,5,9])",
 	// "rgb(node1)		--: rgb([0,0,1])", "rgb('4')		--: rgb([0,0,4])", "rgb('4.7')		--:  // Exception " })
-	public static GamaColor asColor(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaColorType.staticCast(scope, val, null);
+	public static GamaColor asColor(final IScope scope, final Object val, final boolean copy)
+		throws GamaRuntimeException {
+		// copy not passed
+		return GamaColorType.staticCast(scope, val, null, false);
+	}
+
+	public static GamaColor asColor(final IScope scope, final Object val) {
+		return asColor(scope, val, false);
 	}
 
 	// @operator(value = IKeyword.FLOAT, can_be_const = true)
@@ -242,7 +223,7 @@ public class Cast {
 	// "float(green) 			--: 0.0", "float([1,5,9,3]) 		--: 0.0", "float(node1)			--: 0.0", "int('4')				--: 4.0",
 	// "int('4.7')				--: 4.7 " }, see = { "int" })
 	public static Double asFloat(final IScope scope, final Object val) {
-		return GamaFloatType.staticCast(scope, val, null);
+		return GamaFloatType.staticCast(scope, val, null, false);
 	}
 
 	// @operator(IKeyword.GEOMETRY)
@@ -257,8 +238,12 @@ public class Cast {
 	// examples = {
 	// "geometry({23, 4.0}) 					--: Point", "geometry(a_graph)						--: MultiPoint",
 	// "geometry(node1)						--: Point", "geometry([{0,0},{1,4},{4,8},{0,0}])	--: Polygon	" })
+	public static IShape asGeometry(final IScope scope, final Object s, final boolean copy) throws GamaRuntimeException {
+		return GamaGeometryType.staticCast(scope, s, null, copy);
+	}
+
 	public static IShape asGeometry(final IScope scope, final Object s) throws GamaRuntimeException {
-		return GamaGeometryType.staticCast(scope, s, null);
+		return asGeometry(scope, s, false);
 	}
 
 	// @operator(value = IKeyword.INT, can_be_const = true)
@@ -272,7 +257,7 @@ public class Cast {
 	// "int(green) 		--: -16711936", "int([1,5,9,3]) 	--: 0", "int(node1)			--: 1", "int('4')			--: 4",
 	// "int('4.7')			--:  // Exception " }, see = { "round", "float" })
 	public static Integer asInt(final IScope scope, final Object val) {
-		return GamaIntegerType.staticCast(scope, val, null);
+		return GamaIntegerType.staticCast(scope, val, null, false);
 	}
 
 	// @operator(value = IKeyword.PAIR, can_be_const = true)
@@ -287,8 +272,8 @@ public class Cast {
 	// "pair({23, 4.0} 			--: 23.0::4.0", "pair([1,5,9,3]) 		--: 1::5", "pair([[3,7],[2,6,9],0]) 	--: [3,7]::[2,6,9]",
 	// "pair(['a'::345, 'b'::13, 'c'::12])  	--: [b,c,a]::[13,12,345]" })
 	// @Deprecated
-	public static GamaPair asPair(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaPairType.staticCast(scope, val, Types.NO_TYPE, Types.NO_TYPE);
+	public static GamaPair asPair(final IScope scope, final Object val, final boolean copy) throws GamaRuntimeException {
+		return GamaPairType.staticCast(scope, val, Types.NO_TYPE, Types.NO_TYPE, copy);
 	}
 
 	// @operator(value = IKeyword.STRING, can_be_const = true)
@@ -305,7 +290,7 @@ public class Cast {
 	// "string(['a'::345, 'b'::13, 'c'::12])  --:  b,13; c,12; a,345;" })
 	// @Deprecated
 	public static String asString(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaStringType.staticCast(scope, val);
+		return GamaStringType.staticCast(scope, val, false);
 	}
 
 	// @operator(value = IKeyword.POINT, can_be_const = true)
@@ -323,8 +308,12 @@ public class Cast {
 	// "point(['a'::345, 'y'::13, 'c'::12]) 	--:  {0.0;13.0}",
 	// "point(node1)				--: {64.06165572529225;18.401233796267537}   // centroid of node1 shape" })
 	// @Deprecated
+	public static ILocation asPoint(final IScope scope, final Object val, final boolean copy) {
+		return GamaPointType.staticCast(scope, val, copy);
+	}
+
 	public static ILocation asPoint(final IScope scope, final Object val) {
-		return GamaPointType.staticCast(scope, val);
+		return asPoint(scope, val, false);
 	}
 
 	// @operator(value = IKeyword.MAP, can_be_const = true)
@@ -336,8 +325,8 @@ public class Cast {
 	// "if the operand is a graph, returns the a map with pairs node_source::node_target;",
 	// "otherwise returns a map containing only the pair operand::operand." }, examples = {})
 	// @Deprecated
-	public static GamaMap asMap(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null);
+	public static GamaMap asMap(final IScope scope, final Object val, final boolean copy) throws GamaRuntimeException {
+		return (GamaMap) Types.MAP.cast(scope, val, null, copy);
 	}
 
 	@operator(value = "as_int", can_be_const = true, category = { IOperatorCategory.CASTING })
@@ -353,7 +342,7 @@ public class Cast {
 	public static
 		Integer asInt(final IScope scope, final String string, final Integer radix) throws GamaRuntimeException {
 		if ( string == null || string.isEmpty() ) { return 0; }
-		return GamaIntegerType.staticCast(scope, string, radix);
+		return GamaIntegerType.staticCast(scope, string, radix, false);
 	}
 
 	// @operator(value = IKeyword.LIST, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE)
@@ -371,7 +360,7 @@ public class Cast {
 	// "if the operand is a string, returns a list of strings, each containing one character;",
 	// "otherwise returns a list containing the operand." }, examples = { "" })
 	public static IList asList(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaListType.staticCast(scope, val, null);
+		return GamaListType.staticCast(scope, val, null, false);
 	}
 
 	@operator(value = "list_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = false)
@@ -380,7 +369,7 @@ public class Cast {
 		see = { "list" })
 	public static
 		IList list_with(final IScope scope, final Integer size, final IExpression init) {
-		return GamaListType.with(scope, init, size);
+		return GamaListFactory.create(scope, init, size);
 	}
 
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -394,30 +383,33 @@ public class Cast {
 		return asMatrix(scope, val, null);
 	}
 
-	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = false, // AD: was true -- see Issue 1127
+	@operator(value = "matrix_with", content_type = ITypeProvider.SECOND_TYPE, can_be_const = true, // AD: was true -- see Issue 1127
 		category = { IOperatorCategory.CASTING })
 	@doc(value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
 		comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 		see = { "matrix", "as_matrix" })
 	public static
-		IMatrix matrix_with(final IScope scope, final ILocation size, final Object init) {
+		IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if ( size == null ) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
-		if ( init instanceof Integer ) { return GamaMatrixType.with(scope, ((Integer) init).intValue(),
-			(GamaPoint) size); }
-		if ( init instanceof Double ) { return GamaMatrixType.with(scope, ((Double) init).doubleValue(),
-			(GamaPoint) size); }
-		return GamaMatrixType.with(scope, init, (GamaPoint) size);
+		IType type = init.getType();
+		if ( init.isConst() ) {
+			Object val = init.value(scope);
+			return GamaMatrixType.with(scope, val, (GamaPoint) size, type);
+
+		} else {
+			return GamaMatrixType.with(scope, init, (GamaPoint) size);
+		}
 	}
 
 	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
 	// @doc(value = "casts the list (left operand) into a one-row matrix", examples = {
 	// " as_matrix [1, 2, 3] --: [ [1, 2, 3] ] " })
-	public static IMatrix asMatrix(final IScope scope, final IList val) throws GamaRuntimeException {
-		return GamaMatrixType.from(scope, val);
+	// public static IMatrix asMatrix(final IScope scope, final IList val) throws GamaRuntimeException {
+	// return GamaMatrixType.from(scope, val, val.getType().getContentType(), null);
+	//
+	// }
 
-	}
-
-	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, can_be_const = false, // AD: was previously true -- see Issue 1127
+	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, can_be_const = true, // AD: was previously true -- see Issue 1127
 		category = { IOperatorCategory.CASTING })
 	@doc(value = "casts the left operand into a matrix with right operand as preferrenced size",
 		comment = "This operator is very useful to cast a file containing raster data into a matrix."
@@ -428,7 +420,7 @@ public class Cast {
 		see = { "matrix" })
 	public static
 		IMatrix asMatrix(final IScope scope, final Object val, final ILocation size) throws GamaRuntimeException {
-		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE);
+		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE, false);
 	}
 
 	@operator(value = { IKeyword.SPECIES, "species_of" },
@@ -443,7 +435,7 @@ public class Cast {
 		@example(value = "species([1,5,9,3])", equals = "nil", isExecutable = false),
 		@example(value = "species(node1)", equals = "node", isExecutable = false) })
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
+		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
 	}
 
 	@operator(value = "to_gaml", category = { IOperatorCategory.CASTING })
@@ -466,7 +458,7 @@ public class Cast {
 		see = { "to_java" })
 	public static
 		String toGaml(final Object val) {
-		return StringUtils.toGaml(val);
+		return StringUtils.toGaml(val, false);
 	}
 
 }

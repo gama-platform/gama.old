@@ -27,7 +27,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		if ( exp != null ) {
 			boolean isConst = notModifiable && exp.isConst();
 			if ( isConst ) {
-				IExpression e = GAML.getExpressionFactory().createConst(exp.value(null), type);
+				IExpression e = GAML.getExpressionFactory().createConst(exp.value(null), type, n);
 				// System.out.println("				==== Simplification of global " + n + " into " + e.toGaml());
 				return e;
 			}

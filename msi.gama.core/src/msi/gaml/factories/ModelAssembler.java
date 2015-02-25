@@ -14,6 +14,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -31,7 +32,8 @@ public class ModelAssembler {
 	public ModelAssembler() {}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document, final GamaMap<String, ModelDescription> mm) {
+		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
+		final Map<String, ModelDescription> mm, final Collection<URI> imports) {
 		final Map<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final Map<String, Map<String, ISyntacticElement>> experimentNodes = new TOrderedHashMap();
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
@@ -84,21 +86,26 @@ public class ModelAssembler {
 				speciesNodes.put(speciesNode.getName(), speciesNode);
 			}
 		}
-
-		final ModelDescription model =
-			new ModelDescription(modelName, null, projectPath, modelPath, /* lastGlobalNode.getElement() */
-				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector);
+		List<String> importStrings = Collections.EMPTY_LIST;
+		if ( !imports.isEmpty() ) {
+			importStrings = new ArrayList();
+			for ( URI uri : imports ) {
+				importStrings.add(uri.toFileString());
+			}
+		}
+		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath, /* lastGlobalNode.getElement() */
+		source.getElement(), null, ModelDescription.ROOT, globalFacets, collector, importStrings);
 
 		// model.setGlobal(true);
 		model.addSpeciesType(model);
 		model.isDocumenting(document);
 
-		//hqnghi add micro-models
-		if(mm != null ){
+		// hqnghi add micro-models
+		if ( mm != null ) {
 			model.setMicroModels(mm);
 			model.addChildren(new ArrayList(mm.values()));
 		}
-		//end-hqnghi		
+		// end-hqnghi
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			addMicroSpecies(model, speciesNode);
@@ -120,11 +127,11 @@ public class ModelAssembler {
 		}
 		// Initialize the hierarchy of types
 		model.buildTypes();
-		//hqnghi build micro-models as types
-		for(  Entry<String, ModelDescription> entry:mm.entrySet()) {
+		// hqnghi build micro-models as types
+		for ( Entry<String, ModelDescription> entry : mm.entrySet() ) {
 			model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
 		}
-		//end-hqnghi
+		// end-hqnghi
 
 		// Make species and experiments recursively create their attributes, actions....
 		complementSpecies(model, globalNodes);
@@ -356,7 +363,7 @@ public class ModelAssembler {
 	}
 
 	protected String buildModelName(final String source) {
-		final String modelName = source.replace(' ', '_') + "_model";
+		final String modelName = source.replace(' ', '_') + ModelDescription.MODEL_SUFFIX;
 		return modelName;
 	}
 

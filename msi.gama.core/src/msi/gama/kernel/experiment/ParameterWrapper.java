@@ -84,8 +84,8 @@ public abstract class ParameterWrapper implements IParameter {
 	// }
 
 	@Override
-	public String toGaml() {
-		return wrapped.toGaml();
+	public String serialize(final boolean includingBuiltIn) {
+		return wrapped.serialize(includingBuiltIn);
 	}
 
 	@Override

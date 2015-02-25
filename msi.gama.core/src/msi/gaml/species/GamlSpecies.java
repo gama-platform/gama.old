@@ -29,7 +29,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * The Class GamlSpecies. A species specified by GAML attributes
@@ -201,6 +201,15 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		getPopulation(scope).filter(scope, source, results);
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.util.IContainer#getType()
+	 */
+	@Override
+	public IContainerType getType() {
+		return Types.SPECIES;
 	}
 
 }

@@ -281,7 +281,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * @return
 	 */
 	public List<SpeciesDescription> getAllMicroSpecies() {
-		final List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
+		final List<SpeciesDescription> retVal = new ArrayList<SpeciesDescription>();
 		if ( hasMicroSpecies() ) {
 			retVal.addAll(getMicroSpecies().values());
 
@@ -305,7 +305,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public List<SpeciesDescription> getSelfAndParentMicroSpecies() {
-		final GamaList<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
+		final ArrayList<SpeciesDescription> retVal = new ArrayList<SpeciesDescription>();
 		if ( hasMicroSpecies() ) {
 			retVal.addAll(getMicroSpecies().values());
 		}
@@ -427,7 +427,7 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public List<SpeciesDescription> getSelfWithParents() {
 		// returns a reversed list of parents + self
-		final List<SpeciesDescription> result = new GamaList<SpeciesDescription>();
+		final List<SpeciesDescription> result = new ArrayList<SpeciesDescription>();
 		SpeciesDescription currentSpeciesDesc = this;
 		while (currentSpeciesDesc != null) {
 			result.add(0, currentSpeciesDesc);
@@ -511,7 +511,7 @@ public class SpeciesDescription extends TypeDescription {
 			microSpec.verifyParent();
 		}
 
-		final List<SpeciesDescription> sortedMicroSpecs = new GamaList<SpeciesDescription>();
+		final List<SpeciesDescription> sortedMicroSpecs = new ArrayList<SpeciesDescription>();
 		for ( final SpeciesDescription microSpec : allMicroSpecies ) {
 			final List<SpeciesDescription> parents = microSpec.getSelfWithParents();
 
@@ -536,7 +536,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * @return
 	 */
 	public List<SpeciesDescription> getVisibleSpecies() {
-		final List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
+		final List<SpeciesDescription> retVal = new ArrayList<SpeciesDescription>();
 
 		SpeciesDescription currentSpec = this;
 		while (currentSpec != null) {
@@ -597,7 +597,7 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		if ( potentialParent == null ) {
 
-			// List<String> availableSpecies = new GamaList<String>();
+			// List<String> availableSpecies =new GamaList<String>(Types.STRING);
 			// for ( TypeDescription p : candidates ) {
 			// availableSpecies.add(p.getName());
 			// }
@@ -652,6 +652,7 @@ public class SpeciesDescription extends TypeDescription {
 			if ( !microSpec.isExperiment() ) {
 				final VariableDescription var =
 					(VariableDescription) DescriptionFactory.create(CONTAINER, this, NAME, microSpec.getName());
+				var.setSyntheticSpeciesContainer();
 				var.getFacets().put(
 					OF,
 					GAML.getExpressionFactory().createTypeExpression(

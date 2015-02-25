@@ -11,9 +11,15 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import gnu.trove.set.hash.THashSet;
+import java.lang.reflect.*;
+import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
@@ -24,23 +30,26 @@ import msi.gaml.types.*;
  * @since 7 avr. 2014
  * 
  */
-public class OperatorProto implements IGamlDescription {
+public class OperatorProto extends AbstractProto {
 
-	public final boolean isVarOrField;
-	public final boolean canBeConst;
+	public static Set<String> noMandatoryParenthesis = new THashSet(Arrays.asList("-", "!"));
+	public static Set<String> binaries = new THashSet(Arrays.asList("=", "+", "-", "/", "*", "^", "<", ">", "<=", ">=",
+		"?", "!=", ":", ".", "where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance",
+		"in", "inside", "among", "contains", "contains_any", "contains_all", "min_of", "max_of", "with_max_of",
+		"with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or", "and", "at", "is",
+		"group_by", "index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
+
+	public final boolean isVarOrField, canBeConst;
 	public final IType returnType;
 	public final GamaHelper helper;
-	public final String name;
-	public final int doc;
 	public Signature signature;
-	public final boolean lazy;
-	public final int typeProvider;
-	public final int contentTypeProvider;
-	public final int keyTypeProvider;
+	public final boolean[] lazy;
+	public final int typeProvider, contentTypeProvider, keyTypeProvider;
 	public final int[] expectedContentType;
 
 	public IExpression create(final IDescription context, final IExpression ... exprs) {
 		try {
+
 			switch (signature.size()) {
 				case 1:
 					if ( isVarOrField ) { return new TypeFieldExpression(this, context, exprs); }
@@ -61,56 +70,53 @@ public class OperatorProto implements IGamlDescription {
 		} catch (GamaRuntimeException e) {
 			// this can happen when optimizing the code
 			// in that case, report an error and return null as it means that the code is not functional
-			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, name);
+			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, getName());
 			return null;
 		}
 	}
 
-	public OperatorProto(final String name, final GamaHelper helper, final boolean canBeConst,
-		final boolean isVarOrField, final int doc, final IType returnType, final Signature signature,
-		final boolean lazy, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
-		final int[] expectedContentType) {
-		super();
+	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
+		final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
+		final int keyTypeProvider, final int[] expectedContentType) {
+		super(name, method);
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
 		this.isVarOrField = isVarOrField;
 		this.helper = helper;
-		this.name = name;
-		this.doc = doc;
 		this.signature = signature;
-		this.lazy = lazy;
+		this.lazy = computeLazyness(method);
 		this.typeProvider = typeProvider;
 		this.contentTypeProvider = contentTypeProvider;
 		this.keyTypeProvider = keyTypeProvider;
 		this.expectedContentType = expectedContentType;
 	}
 
-	public OperatorProto(final String name, final GamaHelper helper, final boolean canBeConst,
-		final boolean isVarOrField, final int doc, final int returnType, final Class signature, final boolean lazy,
-		final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
-		final int[] expectedContentType) {
-		this(name, helper, canBeConst, isVarOrField, doc, Types.get(returnType), new Signature(signature), lazy,
-			typeProvider, contentTypeProvider, keyTypeProvider, expectedContentType);
+	private boolean[] computeLazyness(final AnnotatedElement method) {
+		boolean[] result = new boolean[signature.size()];
+		if ( result.length == 0 ) { return result; }
+		if ( method instanceof Method ) {
+			Method m = (Method) method;
+			Class[] classes = m.getParameterTypes();
+			int begin = 0;
+			if ( classes[0] == IScope.class ) {
+				begin = 1;
+			}
+			for ( int i = begin; i < classes.length; i++ ) {
+				if ( IExpression.class.isAssignableFrom(classes[i]) ) {
+					result[i - begin] = true;
+				}
+			}
+		}
+		return result;
 	}
 
-	@Override
-	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(200);
-		// TODO insert here a @documentation if possible
-
-		String s = AbstractGamlDocumentation.getMain(doc);
-		if ( s != null ) {
-			sb.append(s);
-		}
-		s = AbstractGamlDocumentation.getDeprecated(doc);
-		if ( s != null ) {
-			sb.append("\n\n<b>Deprecated</b>: ");
-			sb.append("<i>");
-			sb.append(s);
-			sb.append("</i>");
-		}
-
-		return sb.toString();
+	public OperatorProto(final String name, final AccessibleObject method, final GamaHelper helper,
+		final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
+		final Class signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
+		final int keyTypeProvider, final int[] expectedContentType) {
+		this(name, method, helper, canBeConst, isVarOrField, /* doc, */Types.get(returnType), new Signature(signature),
+			lazy, typeProvider, contentTypeProvider, keyTypeProvider, expectedContentType);
 	}
 
 	public void setSignature(final IType ... t) {
@@ -120,38 +126,70 @@ public class OperatorProto implements IGamlDescription {
 	public void verifyExpectedTypes(final IDescription context, final IType rightType) {
 		if ( expectedContentType == null || expectedContentType.length == 0 ) { return; }
 		if ( context == null ) { return; }
-		if ( expectedContentType.length == 1 && IExpressionCompiler.ITERATORS.contains(name) ) {
+		if ( expectedContentType.length == 1 && IExpressionCompiler.ITERATORS.contains(getName()) ) {
 			IType expected = Types.get(expectedContentType[0]);
 			if ( !rightType.isTranslatableInto(expected) ) {
-				context
-					.warning("Operator " + name + " expects an argument of type " + expected, IGamlIssue.SHOULD_CAST);
+				context.warning("Operator " + getName() + " expects an argument of type " + expected,
+					IGamlIssue.SHOULD_CAST);
 				return;
 			}
 		} else if ( signature.isUnary() ) {
 			for ( int i = 0; i < expectedContentType.length; i++ ) {
 				if ( rightType.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
 			}
-			context.error("Operator " + name + " expects arguments of type " + rightType, IGamlIssue.WRONG_TYPE);
+			context.error("Operator " + getName() + " expects arguments of type " + rightType, IGamlIssue.WRONG_TYPE);
+		}
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return getName() + "(" + signature.toString() + ")";
+	}
+
+	public String getCategory() {
+		if ( support == null ) { return "Other"; }
+		operator op = support.getAnnotation(operator.class);
+		if ( op == null ) // Happens sometimes for synthetic operators
+		{
+			return "Other";
+		} else {
+			String[] strings = op.category();
+			if ( strings.length > 0 ) {
+				return op.category()[0];
+			} else {
+				return "Other";
+			}
 		}
 	}
 
 	/**
-	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * Method getKind()
+	 * @see msi.gaml.descriptions.AbstractProto#getKind()
 	 */
 	@Override
-	public String getTitle() {
-		// TODO what to return ???
-		return "";
+	public int getKind() {
+		return ISymbolKind.OPERATOR;
 	}
 
 	/**
-	 * Method getName()
-	 * @see msi.gaml.descriptions.IGamlDescription#getName()
+	 * @return
 	 */
-	@Override
-	public String getName() {
-		return name;
+	public String getPattern(final boolean withVariables) {
+		int size = signature.size();
+		String name = getName();
+		if ( size == 1 || size > 2 ) {
+			if ( noMandatoryParenthesis.contains(name) ) {
+				return name + signature.asPattern(withVariables);
+			} else {
+				return name + "(" + signature.asPattern(withVariables) + ")";
+			}
+		} else { // size == 2
+			if ( binaries.contains(name) ) {
+				return signature.get(0).asPattern() + " " + name + " " + signature.get(1).asPattern();
+			} else {
+				return name + "(" + signature.asPattern(withVariables) + ")";
+			}
+		}
 	}
 
 }

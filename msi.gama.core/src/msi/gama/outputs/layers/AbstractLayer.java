@@ -279,4 +279,9 @@ public abstract class AbstractLayer implements ILayer {
 		}
 	}
 
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return definition.serialize(includingBuiltIn);
+	}
+
 }

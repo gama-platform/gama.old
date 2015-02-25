@@ -31,14 +31,29 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.HILL_CLIMBING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal= true),
-	@facet(name = HillClimbing.ITER_MAX, type = IType.INT, optional = true, doc=@doc("number of iterations")),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
-@doc(value="This algorithm is an implementation of the Hill Climbing algorithm. See the wikipedia article and [batch161 the batch dedicated page].", usages = {
-		@usage(value="As other batch methods, the basic syntax of the `hill_climbing` statement uses `method hill_climbing` instead of the expected `hill_climbing name: id` : ", examples = {@example(value="method hill_climbing [facet: value];", isExecutable=false)}), 
-		@usage(value="For example: ", examples = {@example(value="method hill_climbing iter_max: 50 maximize : food_gathered; ", isExecutable=false)})})
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
+	@facet(name = HillClimbing.ITER_MAX, type = IType.INT, optional = true, doc = @doc("number of iterations")),
+	@facet(name = IKeyword.MAXIMIZE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the value the algorithm tries to maximize")),
+	@facet(name = IKeyword.MINIMIZE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the value the algorithm tries to minimize")),
+	@facet(name = IKeyword.AGGREGATION,
+		type = IType.LABEL,
+		optional = true,
+		values = { IKeyword.MIN, IKeyword.MAX },
+		doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
+@doc(value = "This algorithm is an implementation of the Hill Climbing algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
+	usages = {
+		@usage(value = "As other batch methods, the basic syntax of the `hill_climbing` statement uses `method hill_climbing` instead of the expected `hill_climbing name: id` : ",
+			examples = { @example(value = "method hill_climbing [facet: value];", isExecutable = false) }),
+		@usage(value = "For example: ",
+			examples = { @example(value = "method hill_climbing iter_max: 50 maximize : food_gathered; ",
+				isExecutable = false) }) })
 public class HillClimbing extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
@@ -102,11 +117,11 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
 	}
-	
-	public void initParams(){
+
+	public void initParams() {
 		final IExpression maxItExp = getFacet(ITER_MAX);
 		if ( maxItExp != null ) {
-			maxIt = Cast.as(maxItExp, Integer.class);
+			maxIt = Cast.as(maxItExp, Integer.class, false);
 			stoppingCriterion = new StoppingCriterionMaxIt(maxIt);
 		}
 	}
@@ -114,15 +129,15 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME,
-			IType.INT) {
+		params
+			.add(new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
 
-			@Override
-			public Object value() {
-				return maxIt;
-			}
+				@Override
+				public Object value() {
+					return maxIt;
+				}
 
-		});
+			});
 	}
 
 }

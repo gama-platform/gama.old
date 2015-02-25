@@ -84,7 +84,7 @@ public class SimulationPopulation extends GamaPopulation {
 
 	public void setTopology(final IScope scope, final IShape shape) {
 		IExpression expr = species.getFacet(IKeyword.TORUS);
-		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class);
+		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class, false);
 		topology = new RootTopology(scope, shape, torus);
 	}
 
@@ -98,7 +98,7 @@ public class SimulationPopulation extends GamaPopulation {
 	// public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
 	// final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 	// final int step = scope.getClock().getCycle();
-	// if ( frequency == 0 || step % frequency != 0 ) { return GamaList.EMPTY_LIST; }
+	// if ( frequency == 0 || step % frequency != 0 ) { return GamaListFactory.EMPTY_LIST; }
 	//
 	// }
 

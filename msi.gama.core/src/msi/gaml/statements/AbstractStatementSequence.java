@@ -28,7 +28,7 @@ public class AbstractStatementSequence extends AbstractStatement {
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 		this.commands = commands.toArray(new IStatement[0]);
-		this.toGaml();
+		// this.toGaml();
 	}
 
 	public boolean isEmpty() {

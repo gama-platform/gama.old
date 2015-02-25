@@ -12,8 +12,6 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
-import gnu.trove.set.hash.THashSet;
-import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -28,13 +26,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	final protected IExpression child;
 	final OperatorProto prototype;
 
-	static Set<String> noMandatoryParenthesis = new THashSet(Arrays.asList("-", "!"));
-
 	public static IExpression
 		create(final OperatorProto proto, final IDescription context, final IExpression ... child) {
 		UnaryOperator u = new UnaryOperator(proto, context, child);
 		if ( u.isConst() ) {
-			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
@@ -46,7 +42,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final OperatorProto proto, final IDescription context, final IExpression ... child) {
-		setName(proto.name);
+		setName(proto.getName());
 		this.child = child[0];
 		this.prototype = proto;
 		type = proto.returnType;
@@ -56,7 +52,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		final Object childValue = prototype.lazy ? child : child.value(scope);
+		final Object childValue = prototype.lazy[0] ? child : child.value(scope);
 		try {
 			return prototype.helper.run(scope, childValue);
 		} catch (final GamaRuntimeException e1) {
@@ -71,13 +67,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		String s = literalValue();
 		StringBuilder sb = new StringBuilder(s);
-		if ( noMandatoryParenthesis.contains(s) ) {
+		if ( OperatorProto.noMandatoryParenthesis.contains(s) ) {
 			parenthesize(sb, child);
 		} else {
-			sb.append("(").append(child.toGaml()).append(")");
+			sb.append("(").append(child.serialize(includingBuiltIn)).append(")");
 		}
 		return sb.toString();
 	}

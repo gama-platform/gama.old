@@ -27,15 +27,19 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(name = IKeyword.RGB, id = IType.COLOR, wraps = { GamaColor.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.RGB,
+	id = IType.COLOR,
+	wraps = { GamaColor.class, Color.class },
+	kind = ISymbolKind.Variable.REGULAR)
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
-	public GamaColor cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+	public GamaColor cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, param, copy);
 	}
 
-	public static GamaColor staticCast(final IScope scope, final Object obj, final Object param)
+	public static GamaColor staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 		throws GamaRuntimeException {
 		// param can contain the alpha value
 		if ( obj instanceof GamaColor ) {
@@ -58,8 +62,8 @@ public class GamaColorType extends GamaType<GamaColor> {
 				Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3))); }
 			/* To allow constructions like rgb [255,255,255] */
 		}
-		if ( obj instanceof IContainer ) { return staticCast(scope, ((IContainer) obj).listValue(scope, Types.NO_TYPE),
-			param); }
+		if ( obj instanceof IContainer ) { return staticCast(scope,
+			((IContainer) obj).listValue(scope, Types.NO_TYPE, false), param, copy); }
 		if ( obj instanceof String ) {
 			String s = ((String) obj).toLowerCase();
 			GamaColor c = GamaColor.colors.get(s);

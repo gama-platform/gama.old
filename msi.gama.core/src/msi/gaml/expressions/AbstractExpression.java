@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import gnu.trove.set.hash.TLinkedHashSet;
-import java.util.Set;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -27,15 +25,12 @@ public abstract class AbstractExpression implements IExpression {
 	protected IType type = null;
 	protected String name = null;
 
-	protected static final int _type = 0;
-	protected static final int _content = 1;
-	protected static final int _key = 2;
-
 	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(final String s) {
 		name = s;
 	}
@@ -58,39 +53,9 @@ public abstract class AbstractExpression implements IExpression {
 		return this;
 	}
 
-	protected IType findCommonType(final IExpression[] elements, final int kind) {
-		IType result = Types.NO_TYPE;
-		if ( elements.length == 0 ) { return result; }
-		final Set<IType> types = new TLinkedHashSet();
-		for ( final IExpression e : elements ) {
-			// TODO Indicates a previous error in compiling expressions. Maybe we should cut this
-			// part
-			if ( e == null ) {
-				continue;
-			}
-			IType eType = e.getType();
-			types.add(kind == _type ? eType : kind == _content ? eType.getContentType() : eType.getKeyType());
-		}
-		final IType[] array = types.toArray(new IType[types.size()]);
-		if ( array.length == 0 ) { return result; }
-		result = array[0];
-		if ( array.length == 1 ) { return result; }
-		for ( int i = 1; i < array.length; i++ ) {
-			IType currentType = array[i];
-			if ( currentType == Types.NO_TYPE ) {
-				if ( result.getDefault() != null ) {
-					result = Types.NO_TYPE;
-				}
-			} else {
-				result = result.findCommonSupertypeWith(array[i]);
-			}
-		}
-		return result;
-	}
-
 	protected final void parenthesize(final StringBuilder sb, final IExpression ... exp) {
 		if ( exp.length == 1 && !exp[0].shouldBeParenthesized() ) {
-			sb.append(exp[0].toGaml());
+			sb.append(exp[0].serialize(false));
 		} else {
 			surround(sb, '(', ')', exp);
 		}
@@ -103,7 +68,7 @@ public abstract class AbstractExpression implements IExpression {
 			if ( i > 0 ) {
 				sb.append(',');
 			}
-			sb.append(exp[i] == null ? "nil" : exp[i].toGaml());
+			sb.append(exp[i] == null ? "nil" : exp[i].serialize(false));
 		}
 		int length = sb.length();
 		if ( length > 2 && sb.charAt(length - 1) == ' ' ) {

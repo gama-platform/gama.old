@@ -23,7 +23,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
 import msi.gaml.operators.*;
-import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -43,7 +43,7 @@ public class AmorphousTopology implements ITopology {
 	 */
 	// @Override
 	// public IType type() {
-	// return Types.get(IType.TOPOLOGY);
+	// return Types.TOPOLOGY;
 	// }
 
 	/**
@@ -54,11 +54,16 @@ public class AmorphousTopology implements ITopology {
 		return "Expandable topology";
 	}
 
+	@Override
+	public IType getType() {
+		return Types.TOPOLOGY;
+	}
+
 	/**
 	 * @see msi.gama.interfaces.IValue#toGaml()
 	 */
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "topology({0,0})";
 	}
 
@@ -77,8 +82,7 @@ public class AmorphousTopology implements ITopology {
 	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {}
 
 	/**
-	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean, msi.gama.util.GamaPoint,
-	 *      com.vividsolutions.jts.geom.Envelope)
+	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean, msi.gama.util.GamaPoint, com.vividsolutions.jts.geom.Envelope)
 	 */
 	// @Override
 	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
@@ -102,8 +106,7 @@ public class AmorphousTopology implements ITopology {
 	public void removeAgent(final IAgent agent) {}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentClosestTo(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.environment.IAgentFilter)
+	 * @see msi.gama.environment.ITopology#getAgentClosestTo(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter)
 	 */
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
@@ -111,8 +114,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getNeighboursOf(msi.gama.interfaces.IGeometry, java.lang.Double,
-	 *      msi.gama.environment.IAgentFilter)
+	 * @see msi.gama.environment.ITopology#getNeighboursOf(msi.gama.interfaces.IGeometry, java.lang.Double, msi.gama.environment.IAgentFilter)
 	 */
 	@Override
 	public Set<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
@@ -121,11 +123,11 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
-	 *      boolean)
+	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter, boolean)
 	 */
 	@Override
-	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
+	public Set<IAgent>
+		getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f, final boolean covered) {
 		return Collections.EMPTY_SET;
 	}
 
@@ -149,7 +151,7 @@ public class AmorphousTopology implements ITopology {
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this, GamaListFactory.createWithoutCasting(Types.GEOMETRY, new IShape[] { source, target }));
 	}
 
 	/**
@@ -168,12 +170,12 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */
 	@Override
-	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch, final double distance,
-		final boolean nullIfOutside) {
+	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch,
+		final double distance, final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
 		final double z = distance * Maths.sin(pitch);
-		return new GamaPoint(source.getX() + x, source.getY() + y,  source.getZ() + z);
+		return new GamaPoint(source.getX() + x, source.getY() + y, source.getZ() + z);
 	}
 
 	/**
@@ -189,7 +191,9 @@ public class AmorphousTopology implements ITopology {
 	 */
 	@Override
 	public IContainer<?, IShape> getPlaces() {
-		return GamaList.with(expandableEnvironment);
+		IList result = GamaListFactory.create(Types.GEOMETRY);
+		result.add(expandableEnvironment);
+		return result;
 	}
 
 	/**
@@ -253,8 +257,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public Integer directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
@@ -269,8 +272,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.metamodel.topology.ITopology#getAgentClosestTo(msi.gama.metamodel.shape.ILocation,
-	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
+	 * @see msi.gama.metamodel.topology.ITopology#getAgentClosestTo(msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
 	// @Override
 	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
@@ -278,8 +280,7 @@ public class AmorphousTopology implements ITopology {
 	// }
 
 	/**
-	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation, java.lang.Double,
-	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
+	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation, java.lang.Double, msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
 	// @Override
 	// protected Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter
@@ -289,14 +290,14 @@ public class AmorphousTopology implements ITopology {
 	// }
 
 	/**
-	 * @see msi.gama.metamodel.topology.ITopology#pathBetween(msi.gama.metamodel.shape.ILocation,
-	 *      msi.gama.metamodel.shape.ILocation)
+	 * @see msi.gama.metamodel.topology.ITopology#pathBetween(msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this,
+			GamaListFactory.create(scope, Types.POINT, new IShape[] { source, target }));
 	}
 
 	@Override
@@ -324,8 +325,9 @@ public class AmorphousTopology implements ITopology {
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
-		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+	public List<GamaSpatialPath>
+		KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
+		List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
@@ -333,7 +335,7 @@ public class AmorphousTopology implements ITopology {
 	@Override
 	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 		final int k) {
-		List<GamaSpatialPath> paths = new GamaList<GamaSpatialPath>();
+		List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}

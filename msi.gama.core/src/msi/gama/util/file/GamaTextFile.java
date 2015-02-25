@@ -16,7 +16,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 @file(name = "text",
@@ -28,6 +28,11 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 
 	public GamaTextFile(final IScope scope, final String pathName, final IList<String> text) {
@@ -55,7 +60,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 		if ( getBuffer() != null ) { return; }
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
-			final GamaList<String> allLines = new GamaList();
+			final IList<String> allLines = GamaListFactory.create(Types.STRING);
 			String str;
 			str = in.readLine();
 			while (str != null) {
@@ -65,7 +70,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 			in.close();
 			setBuffer(allLines);
 		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e);
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 

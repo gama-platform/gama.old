@@ -68,7 +68,7 @@ public class System {
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) {
-			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
+			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.serialize(false) +
 				" as the target agent is null"); }
 			return null;
 		}
@@ -76,7 +76,8 @@ public class System {
 			// GuiUtils.debug("System.opGetValue");
 			if ( !scope.interrupted() ) {
 				// GuiUtils.debug("System.opGetValue error");
-				throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() + " as the target agent is dead");
+				throw GamaRuntimeException.warning("Cannot evaluate " + s.serialize(false) +
+					" as the target agent is dead");
 			}
 			return null;
 		}
@@ -118,8 +119,8 @@ public class System {
 				isExecutable = false) })
 	public static
 		GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
-		GamaMap<String, Object> initialValues = new GamaMap();
-		final GamaMap<String, IType> initialTypes = new GamaMap();
+		Map<String, Object> initialValues = new TOrderedHashMap();
+		final Map<String, IType> initialTypes = new TOrderedHashMap();
 		if ( expr instanceof MapExpression ) {
 			final MapExpression map = (MapExpression) expr;
 			for ( final Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet() ) {
@@ -129,13 +130,14 @@ public class System {
 				initialTypes.put(key, val.getType());
 			}
 		} else {
-			initialValues = Cast.asMap(scope, expr.value(scope));
+			initialValues = Cast.asMap(scope, expr.value(scope), false);
 			for ( final Map.Entry<String, Object> entry : initialValues.entrySet() ) {
-				initialTypes.put(entry.getKey(), Types.get(entry.getValue().getClass()));
+				initialTypes.put(entry.getKey(), GamaType.of(entry.getValue()));
 			}
 		}
-		if ( initialValues.isEmpty() ) { return initialValues; }
-		return new GamaMap(GuiUtils.openUserInputDialog(title, initialValues, initialTypes));
+		if ( initialValues.isEmpty() ) { return GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
+		return GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE,
+			GuiUtils.openUserInputDialog(title, initialValues, initialTypes));
 	}
 
 	@operator(value = "eval_gaml", can_be_const = false, category = { IOperatorCategory.SYSTEM })

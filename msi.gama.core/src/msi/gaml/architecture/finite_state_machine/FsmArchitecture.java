@@ -27,7 +27,7 @@ import msi.gama.util.*;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 12 sept. 2010
@@ -64,7 +64,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	@getter(value = IKeyword.STATES, initializer = true)
 	public IList getStateNames(final IAgent agent) {
-		return new GamaList(states.keySet());
+		return GamaListFactory.createWithoutCasting(Types.STRING, states.keySet());
 	}
 
 	@setter(IKeyword.STATES)

@@ -13,11 +13,11 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.io.InputStream;
-import java.util.List;
+import java.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gama.util.GamaMap;
+import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
@@ -32,17 +32,23 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 @factory(handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory implements IModelBuilder {
-	
+
+	public static interface IModelBuilderProvider {
+
+		IModelBuilder get();
+	}
+
 	ModelAssembler assembler = new ModelAssembler();
-	IModelBuilder delegate;
+	static IModelBuilderProvider delegate;
 
 	public ModelFactory(final List<Integer> handles) {
 		super(handles);
 	}
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document, final GamaMap<String, ModelDescription> mm) {
-		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
+		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
+		final Map<String, ModelDescription> mm, final Collection<URI> set) {
+		return assembler.assemble(projectPath, modelPath, models, collector, document, mm, set);
 	}
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
@@ -60,7 +66,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	}
 
 	// Callback method from XText
-	public void registerModelBuilder(final IModelBuilder instance) {
+	public static void registerModelBuilderProvider(final IModelBuilderProvider instance) {
 		delegate = instance;
 	}
 
@@ -70,7 +76,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public ErrorCollector validate(final Resource resource) {
-		return delegate == null ? new ErrorCollector() : delegate.validate(resource);
+		return delegate == null ? new ErrorCollector() : delegate.get().validate(resource);
 	}
 
 	/**
@@ -79,7 +85,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public ErrorCollector validate(final URI uri) {
-		return delegate == null ? new ErrorCollector() : delegate.validate(uri);
+		return delegate == null ? new ErrorCollector() : delegate.get().validate(uri);
 	}
 
 	/**
@@ -88,7 +94,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final Resource resource) {
-		return delegate == null ? null : delegate.compile(resource);
+		return delegate == null ? null : delegate.get().compile(resource);
 	}
 
 	/**
@@ -97,7 +103,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final URI uri) {
-		return delegate == null ? null : delegate.compile(uri);
+		return delegate == null ? null : delegate.get().compile(uri);
 	}
 
 	/**
@@ -106,7 +112,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.compile(resource, errors);
+		return delegate == null ? null : delegate.get().compile(resource, errors);
 	}
 
 	/**
@@ -115,7 +121,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.compile(uri, errors);
+		return delegate == null ? null : delegate.get().compile(uri, errors);
 	}
 
 	/**
@@ -124,13 +130,17 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final InputStream contents, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.compile(contents, errors);
+		return delegate == null ? null : delegate.get().compile(contents, errors);
 	}
 
 	@Override
-	public ModelDescription buildModelDescription(URI uri,
-			List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.buildModelDescription(uri, errors);
+	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
+		return delegate == null ? null : delegate.get().buildModelDescription(uri, errors);
+	}
+
+	@Override
+	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
+		return delegate == null ? null : delegate.get().getInfo(uri, stamp);
 	}
 
 }

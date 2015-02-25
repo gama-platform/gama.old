@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -32,7 +32,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CaptureStatement.CaptureValidator;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.CAPTURE },
 	kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -104,7 +104,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		microSpeciesName = getLiteral(IKeyword.AS);
 		returnString = getLiteral(IKeyword.RETURNS);
 		if ( hasFacet(IKeyword.TARGET) ) {
-			setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).toGaml());
+			setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).serialize(false));
 		}
 	}
 
@@ -125,7 +125,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IList<IAgent> microAgents = new GamaList<IAgent>();
+		final IList<IAgent> microAgents = GamaListFactory.create(Types.AGENT);
 		final IMacroAgent macroAgent = (IMacroAgent) scope.getAgentScope();
 		final ISpecies macroSpecies = macroAgent.getSpecies();
 
@@ -145,8 +145,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 			}
 		}
 
-		final List<IAgent> removedComponents = new GamaList<IAgent>();
-		List<IAgent> capturedAgents = GamaList.EMPTY_LIST;
+		final List<IAgent> removedComponents = GamaListFactory.create(Types.AGENT);
+		List<IAgent> capturedAgents = GamaListFactory.EMPTY_LIST;
 
 		if ( !microAgents.isEmpty() ) {
 			if ( microSpeciesName != null ) { // micro-species name is specified in the "as" facet.
@@ -216,7 +216,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 		// throw GamaRuntimeException if necessary
 		if ( !removedComponents.isEmpty() ) {
-			final List<String> raStr = new GamaList<String>();
+			final List<String> raStr = new ArrayList<String>();
 			for ( final IAgent ra : removedComponents ) {
 				raStr.add(ra.getName());
 				raStr.add(", ");

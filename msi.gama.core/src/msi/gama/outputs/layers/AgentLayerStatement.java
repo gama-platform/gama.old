@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -117,11 +116,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 						description.error(target + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
 						return;
 					}
-					// else {
-					// IExpression expr =
-					// msi.gama.util.GAML.getExpressionFactory().createConst(val, type)(s, Types.get(IType.SPECIES));
-					// description.getFacets().put(SPECIES, expr);
-					// }
+
 				}
 			}
 			ed = description.getFacets().get(ASPECT);
@@ -226,7 +221,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		final List<IStatement> aspectStatements = new GamaList();
+		final List<IStatement> aspectStatements = new ArrayList();
 		for ( final ISymbol c : commands ) {
 			if ( c instanceof IStatement ) {
 				aspectStatements.add((IStatement) c);

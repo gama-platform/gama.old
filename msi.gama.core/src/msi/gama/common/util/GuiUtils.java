@@ -72,9 +72,8 @@ public class GuiUtils {
 	 * @param gui an instance of IGui
 	 */
 	public static void setSwtGui(final IGui gui) {
-		if ( GuiUtils.gui == null ) {
-			GuiUtils.gui = gui;
-		}
+		System.out.println("Configuring GAMA User Interface using " + gui.getName());
+		GuiUtils.gui = gui;
 	}
 
 	public static void waitStatus(final String string) {

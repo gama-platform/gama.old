@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AddStatement.AddSerializer;
@@ -156,19 +156,19 @@ public class AddStatement extends AbstractContainerStatement {
 	public static class AddSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = cd.getFacets();
 			IExpression item = f.getExpr(ITEM);
 			IExpression list = f.getExpr(TO);
 			IExpression allFacet = f.getExpr(ALL);
 			IExpression at = f.getExpr(AT);
 			boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
-			sb.append(list.toGaml());
+			sb.append(list.serialize(false));
 			if ( at != null ) {
-				sb.append('[').append(at.toGaml()).append(']');
+				sb.append('[').append(at.serialize(includingBuiltIn)).append(']');
 			}
 			sb.append(isAll ? " <<+ " : " <+ ");
-			sb.append(item.toGaml()).append(';');
+			sb.append(item.serialize(includingBuiltIn)).append(';');
 		}
 	}
 
@@ -181,8 +181,8 @@ public class AddStatement extends AbstractContainerStatement {
 			IExpression allFacet = cd.getFacets().getExpr(ALL);
 			if ( allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue()) ) {
 				if ( !item.getType().isContainer() ) {
-					cd.warning("The use of 'all' will have no effect here, as " + item.toGaml() +
-						" is not a container. Only this value will be added to " + list.toGaml(),
+					cd.warning("The use of 'all' will have no effect here, as " + item.serialize(false) +
+						" is not a container. Only this value will be added to " + list.serialize(false),
 						IGamlIssue.WRONG_CONTEXT, ALL);
 					cd.getFacets().remove(ALL);
 				}
@@ -193,13 +193,13 @@ public class AddStatement extends AbstractContainerStatement {
 				final IType mapKeyType = list.getType().getKeyType();
 				final IType pairKeyType = item.getType().getKeyType();
 				if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
-					cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
-						") does not match with the type of the value of " + item.toGaml(), IGamlIssue.SHOULD_CAST,
-						IKeyword.ITEM, contentType.toString());
+					cd.warning("The type of the contents of " + list.serialize(false) + " (" + contentType +
+						") does not match with the type of the value of " + item.serialize(false),
+						IGamlIssue.SHOULD_CAST, IKeyword.ITEM, contentType.toString());
 				}
 				if ( mapKeyType != Types.NO_TYPE && !mapKeyType.isTranslatableInto(pairKeyType) ) {
-					cd.warning("The type of the index of " + list.toGaml() + " (" + mapKeyType +
-						") does not match with that of the key of " + item.toGaml() + " (" + pairKeyType + ")",
+					cd.warning("The type of the index of " + list.serialize(false) + " (" + mapKeyType +
+						") does not match with that of the key of " + item.serialize(false) + " (" + pairKeyType + ")",
 						IGamlIssue.SHOULD_CAST, IKeyword.ITEM, mapKeyType.toString());
 				}
 			} else {
@@ -210,25 +210,24 @@ public class AddStatement extends AbstractContainerStatement {
 
 	public AddStatement(final IDescription desc) {
 		super(desc);
-		setName("add to " + list.toGaml());
+		setName("add to " + list.serialize(false));
 	}
 
-	@Override
-	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
-		// if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType);
-		// }
-		// AD: Added to fix issue 1043: a "add" + an index on a map is equivalent to a "put", so the same operation
-		// is applied when building the value (see PutStatement#buildValue()).
-		if ( this.list.getType().id() == IType.MAP && index != null ) { return container.buildValue(scope,
-			new GamaPair(null, this.item.value(scope)), containerType); }
-		return super.buildValue(scope, container);
-	}
+	// @Override
+	// protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+	// // AD: Added to fix issue 1043: a "add" + an index on a map is equivalent to a "put", so the same operation
+	// // is applied when building the value (see PutStatement#buildValue()).
+	// // 01/02/14: Not useful anymore
+	// // if ( this.list.getType().id() == IType.MAP && index != null ) { return container.buildValue(scope,
+	// // new GamaPair(null, this.item.value(scope), Types.NO_TYPE, Types.NO_TYPE)); }
+	// return super.buildValue(scope, container);
+	// }
 
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final IContainer.Modifiable container) throws GamaRuntimeException {
 		if ( position != null && !container.checkBounds(scope, position, true) ) { throw GamaRuntimeException.warning(
-			"Index " + position + " out of bounds of " + list.toGaml(), scope); }
+			"Index " + position + " out of bounds of " + list.serialize(false), scope); }
 		if ( !asAll ) {
 			if ( position == null ) {
 				container.addValue(scope, object);
@@ -237,11 +236,8 @@ public class AddStatement extends AbstractContainerStatement {
 			}
 		} else {
 			if ( object instanceof IContainer ) {
-				container.addVallues(scope, (IContainer) object);
+				container.addValues(scope, (IContainer) object);
 			}
-			// else {
-			// container.setAllValues(scope, object);
-			// }
 		}
 	}
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'WeightedTaskStatement.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'WeightedTaskStatement.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,13 +13,11 @@ package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -42,9 +40,15 @@ import msi.gaml.types.IType;
  */
 
 @symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
-@inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@facets(value = { @facet(name = WeightedTaskStatement.WEIGHT, type = IType.FLOAT, optional = false, doc = @doc("the priority level of the task")),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the task")) }, omissible = IKeyword.NAME)
+@inside(symbols = { WeightedTasksArchitecture.WT, SortedTasksArchitecture.ST, ProbabilisticTasksArchitecture.PT },
+	kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@facets(value = {
+	@facet(name = WeightedTaskStatement.WEIGHT,
+		type = IType.FLOAT,
+		optional = false,
+		doc = @doc("the priority level of the task")),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the task")) },
+	omissible = IKeyword.NAME)
 @validator(TaskValidator.class)
 @doc("As reflex, a task is a sequence of statements that can be executed, at each time step, by the agent. If an agent owns several tasks, the scheduler chooses a task to execute based on its current priority weight value.")
 public class WeightedTaskStatement extends AbstractStatementSequence {

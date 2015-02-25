@@ -115,7 +115,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	public static class GridLayerSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb) {
+		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
+			final boolean includingBuiltIn) {
 			sb.append("grid ");
 		}
 

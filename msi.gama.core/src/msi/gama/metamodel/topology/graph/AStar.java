@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AStar.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'AStar.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,13 +17,13 @@ import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.operators.Maths;
 
-
 public class AStar<V, E> {
+
 	protected GamaGraph<V, E> graph;
 	protected V source;
 	protected V target;
-	protected GamaMap<V, ASNode> openMap = new GamaMap<V, ASNode>();
-	protected GamaMap<V, ASNode> closedMap = new GamaMap<V, ASNode>();
+	protected Map<V, ASNode> openMap = new TOrderedHashMap<V, ASNode>();
+	protected Map<V, ASNode> closedMap = new TOrderedHashMap<V, ASNode>();
 	protected List<E> result;
 	protected boolean isSpatialGraph;
 	protected boolean isPathFound = false;
@@ -70,10 +70,10 @@ public class AStar<V, E> {
 		return !isPathFound;
 	}
 
-	public List<E> buildPath(final ASNode target) {
-		List<E> path = new GamaList<E>();
+	public IList<E> buildPath(final ASNode target) {
+		IList<E> path = GamaListFactory.create();
 
-		GamaList<ASNode> thePath = new GamaList<ASNode>();
+		IList<ASNode> thePath = GamaListFactory.create();
 		ASNode node = target;
 
 		while (node != null) {
@@ -94,7 +94,6 @@ public class AStar<V, E> {
 
 		return path;
 	}
-
 
 	protected void cleanAll() {
 		openMap.clear();
@@ -178,7 +177,6 @@ public class AStar<V, E> {
 
 		return theChosenOne;
 	}
-	
 
 	public void compute(final V source, final V target) {
 		setSource(source);
@@ -195,6 +193,7 @@ public class AStar<V, E> {
 		public double h;
 
 		public double rank;
+
 		public ASNode(final V node, final E edge, final ASNode parent, final double g, final double h) {
 			this.node = node;
 			this.edge = edge;

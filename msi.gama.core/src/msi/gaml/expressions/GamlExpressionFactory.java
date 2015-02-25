@@ -14,7 +14,6 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gaml.compilation.AbstractGamlDocumentation;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
@@ -28,15 +27,14 @@ import org.eclipse.emf.ecore.EObject;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
-	IExpressionCompilerProvider parserProvider;
+	static IExpressionCompilerProvider parserProvider;
 	ThreadLocal<IExpressionCompiler> parser;
 
 	public GamlExpressionFactory() {
 		parser = new ThreadLocal();
 	}
 
-	@Override
-	public void registerParserProvider(final IExpressionCompilerProvider f) {
+	public static void registerParserProvider(final IExpressionCompilerProvider f) {
 		parserProvider = f;
 	}
 
@@ -78,26 +76,17 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return new ConstantExpression(val, type);
 	}
 
-	// public ConstantExpression createConst(final Object val, final IType type, final String name) {
-	// if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
-	// if ( val == null ) { return NIL_EXPR; }
-	// if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
-	// return new ConstantExpression(val, type, name);
-	// }
+	@Override
+	public ConstantExpression createConst(final Object val, final IType type, final String name) {
+		if ( type.id() == IType.SPECIES ) { return new SpeciesConstantExpression((String) val, type); }
+		if ( val == null ) { return NIL_EXPR; }
+		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
+		return new ConstantExpression(val, type, name);
+	}
 
 	@Override
 	public ConstantExpression getUnitExpr(final String unit) {
-		// FIXME Special cases (to be automated later)
-		// if ( unit.equals("pixels") || unit.equals("px") ) {
-		// // AD: See in the callers to this method the hack to address Issue 387.
-		// return new PixelUnitExpression();
-		// }
-		// if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
-		// if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
 		return UNITS_EXPR.get(unit);
-		// Object result = IUnits.UNITS.get(unit);
-		// IType t = result instanceof Double ? Types.get(IType.FLOAT) : Types.get(IType.COLOR);
-		// return createConst(result, t);
 	}
 
 	@Override
@@ -202,7 +191,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						// Emits a warning when a float is truncated. See Issue 735.
 						if ( t.id() == IType.INT ) {
 							// 20/1/14 Changed to info to avoid having too many harmless warnings
-							context.info(t.toString() + " expected. '" + args[i].toGaml() +
+							context.info(t.toString() + " expected. '" + args[i].serialize(false) +
 								"' will be  truncated to int.", IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 						}
 						args[i] =
@@ -216,9 +205,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We finally make an instance of the operator and init it with the arguments
 			IExpression copy = proto.create(context, args);
 			if ( copy != null ) {
-				String ged = AbstractGamlDocumentation.getDeprecated(proto.doc);
+				String ged = proto.getDeprecated();
 				if ( ged != null ) {
-					context.warning(proto.name + " is deprecated: " + ged, IGamlIssue.DEPRECATED, currentEObject);
+					context.warning(proto.getName() + " is deprecated: " + ged, IGamlIssue.DEPRECATED, currentEObject);
 				}
 			}
 			return copy;

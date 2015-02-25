@@ -18,7 +18,7 @@ import msi.gaml.types.*;
 public class PixelUnitExpression extends UnitConstantExpression {
 
 	public PixelUnitExpression(final String name, final String doc) {
-		super(1.0, Types.get(IType.FLOAT), name, doc, null);
+		super(1.0, Types.FLOAT, name, doc, null);
 	}
 
 	@Override

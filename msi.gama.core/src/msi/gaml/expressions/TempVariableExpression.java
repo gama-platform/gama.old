@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'TempVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'TempVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -30,7 +30,7 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		Object val = type.cast(scope, v, null);
+		Object val = type.cast(scope, v, null, false);
 		if ( create ) {
 			scope.addVarWithValue(getName(), val);
 		} else {
@@ -55,6 +55,6 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return GAML.getExpressionFactory().createConst(value(scope), type);
+		return GAML.getExpressionFactory().createConst(value(scope), type, name);
 	}
 }

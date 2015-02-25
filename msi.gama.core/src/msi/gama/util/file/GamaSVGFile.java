@@ -19,9 +19,9 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Spatial;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.kitfox.svg.*;
 import com.vividsolutions.jts.awt.ShapeReader;
 import com.vividsolutions.jts.geom.Geometry;
@@ -70,7 +70,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			if ( size != null ) {
 				gs = Spatial.Transformations.scaled_to(scope, gs, size);
 			}
-			setBuffer(GamaList.with(gs));
+			setBuffer(GamaListFactory.createWithoutCasting(Types.GEOMETRY, gs));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

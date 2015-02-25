@@ -14,7 +14,7 @@ package msi.gama.kernel.experiment;
 import java.net.URL;
 import java.util.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
@@ -209,7 +209,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// 'simulation' is set by a callback call to setSimulation()
 		ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
-		pop.createAgents(scope, 1, GamaList.with(ps), scheduleIt);
+		IList<Map> list = GamaListFactory.create(Types.MAP);
+		list.add(ps);
+		pop.createAgents(scope, 1, list, scheduleIt);
 	}
 
 	public ParametersSet getParameterValues() {
@@ -332,8 +334,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected String getExperimentParametersCategory() {
-		return "Model " + getModel().getName() + ItemList.SEPARATION_CODE + ItemList.INFO_CODE +
-			IExperimentPlan.SYSTEM_CATEGORY_PREFIX + " '" + getSpecies().getName() + "'";
+		return IExperimentPlan.SYSTEM_CATEGORY_PREFIX;
 	}
 
 	@getter(value = ExperimentAgent.MINIMUM_CYCLE_DURATION, initializer = true)

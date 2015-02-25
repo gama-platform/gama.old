@@ -107,22 +107,23 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 		@Override
 		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
-			final StringBuilder sb) {
+			final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = arg.getFacets();
 			String name = f.getLabel(NAME);
 			IExpressionDescription value = f.get(VALUE);
 			if ( Strings.isGamaNumber(name) ) {
-				sb.append(value.toGaml());
+				sb.append(value.serialize(includingBuiltIn));
 			} else {
-				sb.append(name).append(":").append(value.toGaml());
+				sb.append(name).append(":").append(value.serialize(includingBuiltIn));
 			}
 
 		}
 
 		@Override
-		protected String serializeFacetValue(final StatementDescription s, final String key) {
+		protected String serializeFacetValue(final StatementDescription s, final String key,
+			final boolean includingBuiltIn) {
 			if ( !DO_FACETS.contains(key) ) { return null; }
-			return super.serializeFacetValue(s, key);
+			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
 	}

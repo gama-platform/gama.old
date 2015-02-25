@@ -42,8 +42,8 @@ public class GraphAlgorithmsHandmade {
 	 */
 	public static Object getAnotherRandomNode(final IScope scope, final IGraph graph, final Object excludedNode) {
 
-		if ( graph.getVertices().size() < 2 ) { throw GamaRuntimeException
-			.error("unable to find another node in this very small network"); }
+		if ( graph.getVertices().size() < 2 ) { throw GamaRuntimeException.error(
+			"unable to find another node in this very small network", scope); }
 
 		Object proposedNode = null;
 		do {

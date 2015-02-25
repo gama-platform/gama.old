@@ -47,7 +47,7 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(boolean includingBuiltIn) {
 		return getName();
 	}
 

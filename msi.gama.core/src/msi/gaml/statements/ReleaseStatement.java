@@ -29,7 +29,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
@@ -101,7 +101,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IList<IAgent> microAgents = new GamaList<IAgent>();
+		final IList<IAgent> microAgents = GamaListFactory.create(Types.AGENT);
 		final Object t = target.value(scope);
 		if ( t == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
@@ -128,7 +128,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		IMacroAgent targetAgent;
 		ISpecies microSpecies = null;
 
-		List<IAgent> releasedMicroAgents = GamaList.EMPTY_LIST;
+		List<IAgent> releasedMicroAgents = GamaListFactory.EMPTY_LIST;
 		if ( asExpr != null && inExpr != null ) {
 			targetAgent = (IMacroAgent) inExpr.value(scope);
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
@@ -154,7 +154,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		} else if ( asExpr == null && inExpr != null ) {
 			targetAgent = (IMacroAgent) inExpr.value(scope);
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
-				releasedMicroAgents = new GamaList<IAgent>();
+				releasedMicroAgents = GamaListFactory.create(Types.AGENT);
 				for ( final IAgent m : microAgents ) {
 					microSpecies = targetAgent.getSpecies().getMicroSpecies(m.getSpeciesName());
 					if ( microSpecies != null ) {
@@ -165,7 +165,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		} else if ( asExpr == null && inExpr == null ) {
 			ISpecies microAgentSpec;
 			IMacroAgent macroOfMacro;
-			releasedMicroAgents = new GamaList<IAgent>();
+			releasedMicroAgents = GamaListFactory.create(Types.AGENT);
 
 			for ( final IAgent m : microAgents ) {
 				microAgentSpec = m.getSpecies();

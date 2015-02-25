@@ -27,15 +27,19 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(name = IKeyword.POINT, id = IType.POINT, wraps = { ILocation.class, GamaPoint.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.POINT,
+	id = IType.POINT,
+	wraps = { ILocation.class, GamaPoint.class },
+	kind = ISymbolKind.Variable.REGULAR)
 public class GamaPointType extends GamaType<ILocation> {
 
 	@Override
-	public ILocation cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj);
+	public ILocation cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, copy);
 	}
 
-	public static ILocation staticCast(final IScope scope, final Object obj) {
+	public static ILocation staticCast(final IScope scope, final Object obj, final boolean copy) {
 		if ( obj instanceof ILocation ) { return (ILocation) obj; }
 		if ( obj instanceof IShape ) { return ((IShape) obj).getLocation(); }
 		if ( obj instanceof List ) {
@@ -43,7 +47,7 @@ public class GamaPointType extends GamaType<ILocation> {
 			if ( l.size() > 2 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
 				Cast.asFloat(scope, l.get(2))); }
 			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1))); }
-			if ( l.size() > 0 ) { return staticCast(scope, l.get(0)); }
+			if ( l.size() > 0 ) { return staticCast(scope, l.get(0), copy); }
 			return new GamaPoint(0, 0, 0);
 		}
 		if ( obj instanceof Map ) {

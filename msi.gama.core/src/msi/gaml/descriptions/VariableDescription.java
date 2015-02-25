@@ -39,6 +39,8 @@ public class VariableDescription extends SymbolDescription {
 	private IType type = null;
 	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter;
 	private boolean _isUpdatable;
+	// for variables automatically added to species for containing micro-agents
+	private boolean _isSyntheticSpeciesContainer;
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
@@ -57,6 +59,14 @@ public class VariableDescription extends SymbolDescription {
 
 	public boolean isExperimentParameter() {
 		return facets.equals(KEYWORD, PARAMETER);
+	}
+
+	public void setSyntheticSpeciesContainer() {
+		_isSyntheticSpeciesContainer = true;
+	}
+
+	public boolean isSyntheticSpeciesContainer() {
+		return _isSyntheticSpeciesContainer;
 	}
 
 	@Override

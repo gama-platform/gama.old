@@ -45,8 +45,8 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String toGaml() {
-		return type.toGaml();
+	public String serialize(final boolean includingBuiltIn) {
+		return type.serialize(includingBuiltIn);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public String literalValue() {
-		return type.toGaml();
+		return type.serialize(false);
 	}
 
 }

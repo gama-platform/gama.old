@@ -29,8 +29,7 @@ import msi.gaml.types.*;
  */
 @vars({ @var(name = GamaPair.KEY, type = ITypeProvider.FIRST_KEY_TYPE),
 	@var(name = GamaPair.VALUE, type = ITypeProvider.FIRST_CONTENT_TYPE) })
-public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>,
-	Map.Entry<K, V> {
+public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 
 	// TODO Makes it inherit from Map.Entry<K,V> in order to tighten the link between it and GamaMap
 	// (have the entrySet() of GamaMap built from GamaPairs)
@@ -39,16 +38,18 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	public static final String KEY = "key";
 	public static final String VALUE = "value";
 
+	private final IContainerType type;
 	public K key;
 	public V value;
 
-	public GamaPair(final K k, final V v) {
+	public GamaPair(final K k, final V v, final IType keyType, final IType contentsType) {
 		key = k;
 		value = v;
+		type = Types.PAIR.of(keyType, contentsType);
 	}
 
-	public GamaPair(final Map.Entry<K, V> entry) {
-		this(entry.getKey(), entry.getValue());
+	public GamaPair(final Map.Entry<K, V> entry, final IType keyType, final IType contentsType) {
+		this(entry.getKey(), entry.getValue(), keyType, contentsType);
 	}
 
 	public boolean equals(final GamaPair p) {
@@ -60,6 +61,11 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 		if ( a == null ) { return false; }
 		if ( a instanceof GamaPair ) { return equals((GamaPair) a); }
 		return false;
+	}
+
+	@Override
+	public IContainerType getType() {
+		return type;
 	}
 
 	@Override
@@ -90,8 +96,8 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	}
 
 	@Override
-	public String toGaml() {
-		return StringUtils.toGaml(key) + "::" + StringUtils.toGaml(value);
+	public String serialize(final boolean includingBuiltIn) {
+		return StringUtils.toGaml(key, includingBuiltIn) + "::" + StringUtils.toGaml(value, includingBuiltIn);
 	}
 
 	@Override
@@ -101,7 +107,7 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 
 	@Override
 	public GamaPair<K, V> copy(final IScope scope) {
-		return new GamaPair(key, value);
+		return new GamaPair(key, value, type.getKeyType(), type.getContentType());
 	}
 
 	@Override
@@ -179,7 +185,7 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	 */
 	@Override
 	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
-		return new GamaPair(value, key);
+		return new GamaPair(value, key, type.getContentType(), type.getKeyType());
 	}
 
 	/**
@@ -197,8 +203,9 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope, msi.gaml.types.IType)
 	 */
 	@Override
-	public IList listValue(final IScope scope, final IType contentType) {
-		return GamaList.with(key, value);
+	public IList listValue(final IScope scope, final IType contentType, final boolean copy) {
+		return GamaListFactory.createWithoutCasting(contentType, contentType.cast(scope, key, null, copy),
+			contentType.cast(scope, value, null, copy));
 	}
 
 	/**
@@ -206,18 +213,17 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentType) {
-		return GamaMatrixType.from(scope, listValue(scope, Types.NO_TYPE));
+	public IMatrix matrixValue(final IScope scope, final IType contentType, final boolean copy) {
+		return GamaMatrixType.from(scope, listValue(scope, contentType, copy), contentType, null);
 	}
 
 	/**
 	 * Method matrixValue()
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType,
-	 *      msi.gama.metamodel.shape.ILocation)
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentType, final ILocation size) {
-		return GamaMatrixType.from(scope, listValue(scope, Types.NO_TYPE));
+	public IMatrix matrixValue(final IScope scope, final IType contentType, final ILocation size, final boolean copy) {
+		return GamaMatrixType.from(scope, listValue(scope, contentType, copy), contentType, size);
 	}
 
 	/**
@@ -225,8 +231,10 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope, msi.gaml.types.IType, msi.gaml.types.IType)
 	 */
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentType) {
-		return new GamaMap(new GamaPair(keyType.cast(scope, key, null), contentType.cast(scope, value, null)));
+	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentType, final boolean copy) {
+		GamaMap result = GamaMapFactory.create(keyType, contentType);
+		result.setValueAtIndex(scope, key, value);
+		return result;
 	}
 
 	/**
@@ -235,7 +243,7 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 	 */
 	@Override
 	public java.lang.Iterable iterable(final IScope scope) {
-		return listValue(scope, Types.NO_TYPE);
+		return listValue(scope, Types.NO_TYPE, false);
 	}
 
 }

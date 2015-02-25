@@ -17,14 +17,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.OperatorProto;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 public class NAryOperator extends AbstractNAryOperator {
 
 	public static IExpression create(final OperatorProto proto, final IExpression ... child) {
 		NAryOperator u = new NAryOperator(proto, child);
 		if ( u.isConst() ) {
-			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType());
+			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println("				==== Simplification of " + u.toGaml() + " into " + e.toGaml());
 		}
 		return u;
@@ -41,22 +41,22 @@ public class NAryOperator extends AbstractNAryOperator {
 		if ( t < INDEXED_TYPES ) {
 			if ( t >= TYPE_AT_INDEX ) {
 				index = t - TYPE_AT_INDEX;
-				kind_of_index = _type;
+				kind_of_index = GamaType.TYPE;
 			} else if ( t >= CONTENT_TYPE_AT_INDEX ) {
 				index = t - CONTENT_TYPE_AT_INDEX;
-				kind_of_index = _content;
+				kind_of_index = GamaType.CONTENT;
 			} else if ( t >= KEY_TYPE_AT_INDEX ) {
 				index = t - KEY_TYPE_AT_INDEX;
-				kind_of_index = _key;
+				kind_of_index = GamaType.KEY;
 			}
 			if ( index != -1 && index < exprs.length ) {
 				IExpression expr = exprs[index];
 				switch (kind_of_index) {
-					case _type:
+					case GamaType.TYPE:
 						return expr.getType();
-					case _content:
+					case GamaType.CONTENT:
 						return expr.getType().getContentType();
-					case _key:
+					case GamaType.KEY:
 						return expr.getType().getKeyType();
 				}
 			}
@@ -68,15 +68,8 @@ public class NAryOperator extends AbstractNAryOperator {
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		Object[] values = new Object[exprs.length];
 		try {
-			if ( prototype.lazy ) {
-				for ( int i = 0; i < values.length - 1; i++ ) {
-					values[i] = exprs[i].value(scope);
-				}
-				values[values.length - 1] = exprs[exprs.length - 1];
-			} else {
-				for ( int i = 0; i < values.length; i++ ) {
-					values[i] = exprs[i].value(scope);
-				}
+			for ( int i = 0; i < values.length; i++ ) {
+				values[i] = prototype.lazy[i] ? exprs[i] : exprs[i].value(scope);
 			}
 			Object result = prototype.helper.run(scope, values);
 			return result;
@@ -91,7 +84,7 @@ public class NAryOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(literalValue());
 		parenthesize(sb, exprs);

@@ -26,8 +26,8 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.ActionStatement.ActionSerializer;
 import msi.gaml.statements.ActionStatement.ActionValidator;
@@ -92,27 +92,30 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 	public static class ActionSerializer extends StatementSerializer {
 
 		@Override
-		protected String serializeFacetValue(final StatementDescription s, final String key) {
+		protected String serializeFacetValue(final StatementDescription s, final String key,
+			final boolean includingBuiltIn) {
 			if ( key.equals(TYPE) ) { return null; }
-			return super.serializeFacetValue(s, key);
+			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
 		@Override
 		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
-			final StringBuilder sb) {
+			final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = arg.getFacets();
 			String name = f.getLabel(NAME);
 			IExpressionDescription type = f.get(TYPE);
 			IExpressionDescription def = f.get(DEFAULT);
-			sb.append(type.toGaml()).append(" ").append(name);
+
+			sb.append(type == null ? "unknown" : type.serialize(includingBuiltIn)).append(" ").append(name);
 			if ( def != null ) {
-				sb.append(" <- ").append(def.toGaml());
+				sb.append(" <- ").append(def.serialize(includingBuiltIn));
 			}
 		}
 
 		@Override
-		protected void serializeKeyword(final StatementDescription desc, final StringBuilder sb) {
-			String type = desc.getType().toGaml();
+		protected void serializeKeyword(final StatementDescription desc, final StringBuilder sb,
+			final boolean includingBuiltIn) {
+			String type = desc.getType().serialize(includingBuiltIn);
 			if ( type.equals(UNKNOWN) ) {
 				type = ACTION;
 			}

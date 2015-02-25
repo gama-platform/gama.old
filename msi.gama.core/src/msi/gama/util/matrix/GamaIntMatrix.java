@@ -52,8 +52,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		this((int) p.x, (int) p.y);
 	}
 
+	@Override
+	public IContainerType getType() {
+		return Types.MATRIX.of(Types.INT);
+	}
+
 	public GamaIntMatrix(final int cols, final int rows) {
-		super(cols, rows);
+		super(cols, rows, Types.INT);
 		matrix = new int[cols * rows];
 	}
 
@@ -81,18 +86,18 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	public GamaIntMatrix(final IScope scope, final int[] mat) {
-		super(1, mat.length);
+		super(1, mat.length, Types.INT);
 		matrix = mat;
 	}
 
-	public GamaIntMatrix(final IScope scope, final List objects, final boolean flat, final ILocation preferredSize) {
-		super(scope, objects, flat, preferredSize);
+	public GamaIntMatrix(final IScope scope, final List objects, final ILocation preferredSize) {
+		super(scope, objects, preferredSize, Types.INT);
 		matrix = new int[numRows * numCols];
 		if ( preferredSize != null ) {
 			for ( int i = 0, stop = Math.min(matrix.length, objects.size()); i < stop; i++ ) {
 				matrix[i] = Cast.asInt(scope, objects.get(i));
 			}
-		} else if ( flat || GamaMatrix.isFlat(objects) ) {
+		} else if ( GamaMatrix.isFlat(objects) ) {
 			for ( int i = 0, stop = objects.size(); i < stop; i++ ) {
 				matrix[i] = Cast.asInt(scope, objects.get(i));
 			}
@@ -113,7 +118,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	public GamaIntMatrix(final RealMatrix rm) {
-		super(rm.getColumnDimension(), rm.getRowDimension());
+		super(rm.getColumnDimension(), rm.getRowDimension(), Types.INT);
 		matrix = new int[rm.getColumnDimension() * rm.getRowDimension()];
 		updateMatrix(rm);
 	}
@@ -130,9 +135,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected void _putAll(final IScope scope, final Object o, final Object param) throws GamaRuntimeException {
-		// TODO Verify type
-		fillWith((Integer) o);
+	protected void _putAll(final IScope scope, final Object o) throws GamaRuntimeException {
+		fillWith((Integer) Types.INT.cast(scope, o, null, false));
 	}
 
 	@Override
@@ -251,19 +255,21 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	@Override
 	public boolean _isEmpty(final IScope scope) {
 		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] != 0d ) { return false; }
+			if ( matrix[i] != 0 ) { return false; }
 		}
 		return true;
 	}
 
 	@Override
-	protected GamaList _listValue(final IScope scope) {
-		return new GamaList(matrix);
+	protected IList _listValue(final IScope scope, final IType contentsType, final boolean cast) {
+		return cast ? GamaListFactory.create(scope, contentsType, matrix) : GamaListFactory.createWithoutCasting(
+			contentsType, matrix);
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type) {
-		return GamaMatrixType.from(scope, this, type, Types.get(IType.INT), preferredSize);
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
+		final boolean copy) {
+		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}
 
 	@Override
@@ -280,9 +286,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public GamaIntMatrix copy(final IScope scope, final ILocation preferredSize) {
+	public GamaIntMatrix copy(final IScope scope, final ILocation preferredSize, final boolean copy) {
 		if ( preferredSize == null ) {
-			return new GamaIntMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length));
+			if ( copy ) {
+				return new GamaIntMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length));
+			} else {
+				return this;
+			}
 		} else {
 			return new GamaIntMatrix((int) preferredSize.getX(), (int) preferredSize.getX(), Arrays.copyOf(matrix,
 				matrix.length));
@@ -326,7 +336,6 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	public void set(final IScope scope, final int col, final int row, final Object obj) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
 		matrix[row * numCols + col] = Cast.asInt(scope, obj);
-		// put(col, row, Cast.asInt(GAMA.getDefaultScope(), obj).intValue());
 	}
 
 	public boolean remove(final int o) {
@@ -587,5 +596,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		if ( index == null ) { return 0; }
 		if ( index > getMatrix().length ) { return 0; }
 		return getMatrix()[index];
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return "matrix<int>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
 	}
 }

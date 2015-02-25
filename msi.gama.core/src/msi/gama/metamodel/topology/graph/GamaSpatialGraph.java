@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -27,6 +28,7 @@ import msi.gama.util.path.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.*;
 import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -37,7 +39,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * graph.
 	 */
 	private ITopology topology;
-	private final GamaMap<Integer, IShape> verticesBuilt; // only used for optimization purpose of spatial graph
+	private final TIntObjectHashMap<IShape> verticesBuilt; // only used for optimization purpose of spatial graph
 
 	// building.
 
@@ -61,25 +63,27 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
-		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
-		this(scope);
+		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
+		final IType edgeType) {
+		this(scope, nodeType, edgeType);
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
 
 	public GamaSpatialGraph(final IContainer edges, final IContainer vertices, final IScope scope) {
-		this(scope);
+		this(scope, vertices.getType().getContentType(), edges.getType().getContentType());
 		init(scope, edges, vertices);
 	}
 
-	public GamaSpatialGraph(final IScope scope) {
-		super(scope);
-		verticesBuilt = new GamaMap<Integer, IShape>();
+	public GamaSpatialGraph(final IScope scope, final IType nodeType, final IType edgeType) {
+		super(scope, nodeType, edgeType);
+		verticesBuilt = new TIntObjectHashMap();
 	}
 
 	@Override
 	public GamaSpatialGraph copy(final IScope scope) {
 		GamaSpatialGraph g =
-			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope);
+			new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope,
+				type.getKeyType(), type.getContentType());
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
@@ -242,7 +246,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
-		final Map<ILocation, IAgent> nodes = new GamaMap<ILocation, IAgent>();
+		final Map<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getType().getKeyType());
 		for ( Object ag : vertices.iterable(scope) ) {
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
@@ -279,7 +283,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		try {
 			edge = newEdge(e, v1, v2);
 		} catch (final GamaRuntimeException e1) {
-			e1.addContext("Impossible to create edge from " + StringUtils.toGaml(e) + " in graph " + this);
+			e1.addContext("Impossible to create edge from " + StringUtils.toGaml(e, false) + " in graph " + this);
 			throw e1;
 		}
 		// if ( edge == null ) { return false; }

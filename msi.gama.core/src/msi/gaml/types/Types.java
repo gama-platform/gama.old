@@ -30,8 +30,108 @@ public class Types {
 	public final static TypesManager builtInTypes = new TypesManager(null);
 
 	public final static IType NO_TYPE = new GamaNoType();
+	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH;
+	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
+
+	public static void cache(final int id, final IType instance) {
+		switch (id) {
+			case IType.INT:
+				INT = instance;
+				break;
+			case IType.FLOAT:
+				FLOAT = instance;
+				break;
+			case IType.BOOL:
+				BOOL = instance;
+				break;
+			case IType.COLOR:
+				COLOR = instance;
+				break;
+			case IType.STRING:
+				STRING = instance;
+				break;
+			case IType.POINT:
+				POINT = instance;
+				break;
+			case IType.GEOMETRY:
+				GEOMETRY = instance;
+				break;
+			case IType.TOPOLOGY:
+				TOPOLOGY = instance;
+				break;
+			case IType.LIST:
+				LIST = (IContainerType) instance;
+				break;
+			case IType.MAP:
+				MAP = (IContainerType) instance;
+				break;
+			case IType.GRAPH:
+				GRAPH = (IContainerType) instance;
+				break;
+			case IType.FILE:
+				FILE = (IContainerType) instance;
+				break;
+			case IType.PAIR:
+				PAIR = (IContainerType) instance;
+				break;
+			case IType.AGENT:
+				AGENT = instance;
+				break;
+			case IType.PATH:
+				PATH = instance;
+				break;
+			case IType.MATRIX:
+				MATRIX = (IContainerType) instance;
+				break;
+			case IType.CONTAINER:
+				CONTAINER = (IContainerType) instance;
+				break;
+			case IType.SPECIES:
+				SPECIES = (IContainerType) instance;
+				break;
+		}
+	}
 
 	public static IType get(final int type) {
+		// use cache first
+		switch (type) {
+			case IType.INT:
+				return INT;
+			case IType.FLOAT:
+				return FLOAT;
+			case IType.BOOL:
+				return BOOL;
+			case IType.COLOR:
+				return COLOR;
+			case IType.STRING:
+				return STRING;
+			case IType.POINT:
+				return POINT;
+			case IType.GEOMETRY:
+				return GEOMETRY;
+			case IType.TOPOLOGY:
+				return TOPOLOGY;
+			case IType.LIST:
+				return LIST;
+			case IType.MAP:
+				return MAP;
+			case IType.GRAPH:
+				return GRAPH;
+			case IType.FILE:
+				return FILE;
+			case IType.PAIR:
+				return PAIR;
+			case IType.AGENT:
+				return AGENT;
+			case IType.PATH:
+				return PATH;
+			case IType.MATRIX:
+				return MATRIX;
+			case IType.CONTAINER:
+				return CONTAINER;
+			case IType.SPECIES:
+				return SPECIES;
+		}
 		return builtInTypes.get(String.valueOf(type));
 	}
 
@@ -51,9 +151,6 @@ public class Types {
 		TypeTree<IType> hierarchy = buildHierarchy();
 		for ( TypeNode<IType> node : hierarchy.build(Order.PRE_ORDER) ) {
 			IType type = node.getData();
-			// if ( type.toString().equals("species") ) {
-			// GuiUtils.debug("Types.init;");
-			// }
 			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
 			Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
 			type.setFieldGetters(vars);

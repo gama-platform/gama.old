@@ -15,6 +15,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Files;
+import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, String> {
@@ -35,8 +36,13 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return Files.FOLDER + "('" + /* StringUtils.toGamlString(getPath()) */getPath() + "')";
+	}
+
+	@Override
+	public IContainerType getType() {
+		return Types.FILE.of(Types.STRING);
 	}
 
 	/*
@@ -47,7 +53,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( getBuffer() != null ) { return; }
-		setBuffer(new GamaList(getFile().list()));
+		setBuffer(GamaListFactory.createWithoutCasting(Types.STRING, getFile().list()));
 	}
 
 	/*

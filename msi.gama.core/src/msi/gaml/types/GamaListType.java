@@ -28,33 +28,29 @@ public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
 	public IList cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType) throws GamaRuntimeException {
-		IList list = staticCast(scope, obj, contentsType);
-		if ( contentsType != null && contentsType != Types.NO_TYPE ) {
-			for ( int i = 0; i < list.size(); i++ ) {
-				list.set(i, toType(scope, list.get(i), contentsType));
-			}
-		}
+		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+		IList list = staticCast(scope, obj, contentsType, copy);
 		return list;
 	}
 
-	public static IList staticCast(final IScope scope, final Object obj, final IType contentsType)
+	public static IList staticCast(final IScope scope, final Object obj, final IType contentsType, final boolean copy)
 		throws GamaRuntimeException {
-		if ( obj == null ) { return new GamaList(); }
+		if ( obj == null ) { return GamaListFactory.create(Types.NO_TYPE, 0); }
 		// if ( obj instanceof IList ) { return (IList) obj; }
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope, contentsType); }
-		if ( obj instanceof Collection ) { return new GamaList((Collection) obj).listValue(scope, contentsType); }
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope, contentsType, copy); }
+		// Dont copy twice the collection
+		if ( obj instanceof Collection ) { return GamaListFactory.create(scope, contentsType, (Collection) obj); }
 		if ( obj instanceof Color ) {
 			final Color c = (Color) obj;
-			return GamaList.with(c.getRed(), c.getGreen(), c.getBlue()).listValue(scope, contentsType);
+			return GamaListFactory.create(scope, contentsType, new int[] { c.getRed(), c.getGreen(), c.getBlue() });
 		}
 		if ( obj instanceof GamaPoint ) {
 			GamaPoint point = (GamaPoint) obj;
-			return GamaList.with(point.x, point.y, point.z).listValue(scope, contentsType);
+			return GamaListFactory.create(scope, contentsType, new double[] { point.x, point.y, point.z });
 		}
-		if ( obj instanceof String ) { return new GamaList(StringUtils.tokenize((String) obj)).listValue(scope,
-			contentsType); }
-		return GamaList.with(obj).listValue(scope, contentsType);
+		if ( obj instanceof String ) { return GamaListFactory.create(scope, contentsType,
+			StringUtils.tokenize((String) obj)); }
+		return GamaListFactory.create(scope, contentsType, new Object[] { obj });
 	}
 
 	@Override
@@ -71,17 +67,6 @@ public class GamaListType extends GamaContainerType<IList> {
 				return Types.get(FLOAT);
 		}
 		return super.contentsTypeIfCasting(expr);
-	}
-
-	public static GamaList with(final IScope scope, final IExpression fillExpr, final Integer size) {
-		final Object[] contents = new Object[size];
-		if ( fillExpr != null ) {
-			// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
-			for ( int i = 0; i < contents.length; i++ ) {
-				contents[i] = fillExpr.value(scope);
-			}
-		}
-		return new GamaList(contents);
 	}
 
 	@Override

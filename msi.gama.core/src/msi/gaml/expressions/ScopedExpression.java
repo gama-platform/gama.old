@@ -73,6 +73,11 @@ public class ScopedExpression implements IExpression {
 		return wrapped.getName();
 	}
 
+	@Override
+	public void setName(final String name) {
+		// Nothing
+	}
+
 	/**
 	 * Method getType()
 	 * @see msi.gama.common.interfaces.ITyped#getType()
@@ -123,8 +128,8 @@ public class ScopedExpression implements IExpression {
 	 * @see msi.gaml.expressions.IExpression#toGaml()
 	 */
 	@Override
-	public String toGaml() {
-		return wrapped.toGaml();
+	public String serialize(final boolean includingBuiltIn) {
+		return wrapped.serialize(includingBuiltIn);
 	}
 
 	/**

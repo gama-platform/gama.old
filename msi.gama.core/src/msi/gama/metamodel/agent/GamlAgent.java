@@ -1,13 +1,13 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'GamlAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -41,22 +41,26 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
-	// hqnghi manipulate micro-models
-	protected GamaMap<String, IPopulation> externMicroPopulations = new GamaMap<String, IPopulation>();
+	// hqnghi manipulate micro-models AD put it to null to have lazy initialization (saves some bytes in each agent)
+	protected GamaMap<String, IPopulation> externMicroPopulations;
 
 	@Override
 	public void addExternMicroPopulation(final String expName, final IPopulation pop) {
+		if ( externMicroPopulations == null ) {
+			externMicroPopulations = GamaMapFactory.create(Types.STRING, Types.LIST.of(Types.AGENT));
+		}
 		externMicroPopulations.put(expName, pop);
 	}
 
 	@Override
 	public IPopulation getExternMicroPopulationFor(final String expName) {
-		if ( externMicroPopulations.size() > 0 ) { return externMicroPopulations.get(expName); }
+		if ( externMicroPopulations != null ) { return externMicroPopulations.get(expName); }
 		return null;
 	}
 
 	@Override
 	public GamaMap<String, IPopulation> getExternMicroPopulations() {
+		if ( externMicroPopulations == null ) { return GamaMapFactory.EMPTY_MAP; }
 		return externMicroPopulations;
 	}
 
@@ -158,7 +162,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Callback Actions
-	 * 
+	 *
 	 */
 	static Object[] callbackResult = new Object[1];
 
@@ -204,15 +208,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> captureMicroAgents(final IScope scope, final ISpecies microSpecies,
 		final IList<IAgent> microAgents) throws GamaRuntimeException {
 		if ( microAgents == null || microAgents.isEmpty() || microSpecies == null ||
-			!this.getSpecies().getMicroSpecies().contains(microSpecies) ) { return GamaList.EMPTY_LIST; }
+			!this.getSpecies().getMicroSpecies().contains(microSpecies) ) { return GamaListFactory.EMPTY_LIST; }
 
-		final List<IAgent> candidates = new GamaList<IAgent>();
+		final List<IAgent> candidates = GamaListFactory.create(Types.AGENT);
 		for ( final IAgent a : microAgents.iterable(scope) ) {
 			if ( this.canCapture(a, microSpecies) ) {
 				candidates.add(a);
 			}
 		}
-		final IList<IAgent> capturedAgents = new GamaList<IAgent>();
+		final IList<IAgent> capturedAgents = GamaListFactory.create(Types.AGENT);
 		final IPopulation microSpeciesPopulation = this.getPopulationFor(microSpecies);
 		for ( final IAgent micro : candidates ) {
 			final SavedAgent savedMicro = new SavedAgent(scope, micro);
@@ -239,7 +243,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> releaseMicroAgents(final IScope scope, final IList<IAgent> microAgents)
 		throws GamaRuntimeException {
 		IPopulation originalSpeciesPopulation;
-		final IList<IAgent> releasedAgents = new GamaList<IAgent>();
+		final IList<IAgent> releasedAgents = GamaListFactory.create(Types.AGENT);
 
 		for ( final IAgent micro : microAgents.iterable(scope) ) {
 			final SavedAgent savedMicro = new SavedAgent(scope, micro);
@@ -253,7 +257,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 * 
+	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -261,7 +265,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IList<IAgent> migrateMicroAgents(final IScope scope, final IList<IAgent> microAgents,
 		final ISpecies newMicroSpecies) {
-		final List<IAgent> immigrantCandidates = new GamaList<IAgent>();
+		final List<IAgent> immigrantCandidates = GamaListFactory.create(Types.AGENT);
 
 		for ( final IAgent m : microAgents.iterable(scope) ) {
 			if ( m.getSpecies().isPeer(newMicroSpecies) ) {
@@ -269,7 +273,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			}
 		}
 
-		final IList<IAgent> immigrants = new GamaList<IAgent>();
+		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
 		if ( !immigrantCandidates.isEmpty() ) {
 			final IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
 			for ( final IAgent micro : immigrantCandidates ) {
@@ -285,7 +289,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 * 
+	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -296,7 +300,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
 
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
-		final IList<IAgent> immigrants = new GamaList<IAgent>();
+		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
 		final Iterator<IAgent> it = oldMicroPop.iterator();
 		while (it.hasNext()) {
 			final IAgent m = it.next();
@@ -329,7 +333,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Saves agent's attributes to a map.
-		 * 
+		 *
 		 * @param agent
 		 * @throws GamaRuntimeException
 		 */
@@ -358,7 +362,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Recursively save micro-agents of an agent.
-		 * 
+		 *
 		 * @param agent The agent having micro-agents to be saved.
 		 * @throws GamaRuntimeException
 		 */
@@ -366,7 +370,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			innerPopulations = new THashMap<String, List<SavedAgent>>();
 
 			for ( final IPopulation microPop : agent.getMicroPopulations() ) {
-				final List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
+				final List<SavedAgent> savedAgents = new ArrayList<SavedAgent>();
 				final Iterator<IAgent> it = microPop.iterator();
 				while (it.hasNext()) {
 					savedAgents.add(new SavedAgent(scope, it.next()));
@@ -379,13 +383,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		/**
 		 * @param scope
 		 *            Restores the saved agent as a member of the target population.
-		 * 
+		 *
 		 * @param targetPopulation The population that the saved agent will be restored to.
 		 * @return
 		 * @throws GamaRuntimeException
 		 */
 		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
-			final List<Map> agentAttrs = new GamaList<Map>();
+			final List<Map> agentAttrs = new ArrayList<Map>();
 			agentAttrs.add(variables);
 			final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
 			restoreMicroAgents(scope, restoredAgents.get(0));
@@ -394,8 +398,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 
 		/**
-		 * 
-		 * 
+		 *
+		 *
 		 * @param host
 		 * @throws GamaRuntimeException
 		 */
@@ -406,7 +410,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 				if ( microPop != null ) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
-					final List<Map> microAttrs = new GamaList<Map>();
+					final List<Map> microAttrs = new ArrayList<Map>();
 					for ( final SavedAgent sa : savedMicros ) {
 						microAttrs.add(sa.variables);
 					}
@@ -499,7 +503,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		final IAgent other = newGeometry.getAgent();
-		final GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
+		final IShape newLocalGeom = other == null ? newGeometry : newGeometry.copy(getScope());
 		topology.normalizeLocation(newGeomLocation, false);
 
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
@@ -615,7 +619,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
-		if ( dead() ) { return GamaList.EMPTY_LIST; }
+		if ( dead() ) { return GamaListFactory.EMPTY_LIST; }
 		return new MetaPopulation(getMicroPopulations());
 	}
 
@@ -631,11 +635,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IList<IAgent> getAgents(final IScope scope) {
-		if ( !hasMembers() ) { return GamaList.EMPTY_LIST; }
+		if ( !hasMembers() ) { return GamaListFactory.EMPTY_LIST; }
 
 		final IContainer<?, IAgent> members = getMembers(scope);
-		final IList<IAgent> agents = new GamaList<IAgent>();
-		agents.addAll(members.listValue(scope, Types.NO_TYPE));
+		final IList<IAgent> agents = GamaListFactory.create(Types.AGENT);
+		agents.addAll(members.listValue(scope, Types.NO_TYPE, false));
 		for ( final IAgent m : members.iterable(scope) ) {
 			if ( m != null && m instanceof IMacroAgent ) {
 				agents.addAll(((IMacroAgent) m).getAgents(scope));
@@ -672,7 +676,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
-	 * 
+	 *
 	 * @return true if the following conditions are correct:
 	 *         1. newSpecies is one micro-species of this agent's species;
 	 *         2. newSpecies is a sub-species of this agent's species or other species is a
@@ -746,7 +750,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		if ( geometry == null ) { return GamaList.EMPTY_LIST; }
+		if ( geometry == null ) { return GamaListFactory.EMPTY_LIST; }
 		return geometry.getPoints();
 	}
 

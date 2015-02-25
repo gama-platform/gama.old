@@ -249,7 +249,7 @@ public class IUnits {
 
 	static Object add(final String name, final Object value, final String doc, final String[] names) {
 		if ( UNITS_EXPR.containsKey(name) ) { return null; }
-		IType t = value instanceof Double ? Types.get(IType.FLOAT) : Types.get(IType.COLOR);
+		IType t = value instanceof Double ? Types.FLOAT : Types.COLOR;
 		UnitConstantExpression exp = GAML.getExpressionFactory().createUnit(value, t, name, doc, names);
 		UNITS_EXPR.put(name, exp);
 		if ( names != null ) {

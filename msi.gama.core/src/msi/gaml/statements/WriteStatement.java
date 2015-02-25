@@ -45,7 +45,8 @@ import msi.gaml.types.IType;
 	doc = @doc("the message to display. Modelers can add some formatting characters to the message (carriage returns, tabs, or Unicode characters), which will be used accordingly in the console.")) },
 	omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an arbitrary message in the console.",
-	usages = { @usage(examples = { @example("write 'This is a message from ' + self;") }) })
+	usages = { @usage(value = "Outputting a message",
+		examples = { @example("write 'This is a message from ' + self;") }) })
 public class WriteStatement extends AbstractStatement {
 
 	@Override
@@ -80,7 +81,7 @@ public class WriteStatement extends AbstractStatement {
 		category = { IOperatorCategory.STRING })
 	public static
 		String sample(final IScope scope, final IExpression expr) {
-		return sample(scope, expr == null ? "nil" : expr.toGaml(), expr);
+		return sample(scope, expr == null ? "nil" : expr.serialize(false), expr);
 	}
 
 	@operator(value = "sample",

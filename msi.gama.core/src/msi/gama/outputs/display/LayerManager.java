@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 
 /**
  * Written by drogoul Modified on 23 janv. 2011
@@ -27,8 +26,8 @@ import msi.gama.util.GamaList;
  */
 public class LayerManager implements ILayerManager {
 
-	private final List<ILayer> enabledLayers = new GamaList();
-	private final List<ILayer> disabledLayers = new GamaList();
+	private final List<ILayer> enabledLayers = new ArrayList();
+	private final List<ILayer> disabledLayers = new ArrayList();
 	private final IDisplaySurface surface;
 	private int count = 0;
 

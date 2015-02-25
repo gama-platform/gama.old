@@ -18,12 +18,14 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.TransitionSerializer;
 import msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.TransitionValidator;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
@@ -44,6 +46,7 @@ import msi.gaml.types.IType;
 		optional = false,
 		doc = @doc("the identifier of the next state")) }, omissible = IKeyword.WHEN)
 @validator(TransitionValidator.class)
+@serializer(TransitionSerializer.class)
 @doc(value = "In an FSM architecture, `" +
 	FsmTransitionStatement.TRANSITION +
 	"` specifies the next state of the life cycle. The transition occurs when the condition is fulfilled. The embedded statements are executed when the transition is triggered.",
@@ -57,6 +60,24 @@ import msi.gaml.types.IType;
 public class FsmTransitionStatement extends AbstractStatementSequence {
 
 	private static final List<String> states = Arrays.asList(FsmStateStatement.STATE, IKeyword.USER_PANEL);
+
+	public static class TransitionSerializer extends SymbolSerializer {
+
+		static String[] MY_FACETS = new String[] { TO, WHEN };
+
+		@Override
+		protected void
+			serializeFacets(final SymbolDescription s, final StringBuilder sb, final boolean includingBuiltIn) {
+			for ( final String key : MY_FACETS ) {
+
+				String expr = serializeFacetValue(s, key, includingBuiltIn);
+				if ( expr != null ) {
+					sb.append(serializeFacetKey(s, key, includingBuiltIn)).append(expr).append(" ");
+				}
+			}
+
+		}
+	}
 
 	public static class TransitionValidator implements IDescriptionValidator {
 

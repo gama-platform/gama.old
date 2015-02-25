@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'MSSQLConnection.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'MSSQLConnection.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
 
@@ -36,8 +36,8 @@ import com.vividsolutions.jts.io.*;
  * Edit ConnectDB for new driver
  * Add new condition for geometry type 2004 (it look like postgres)
  * 15-Jan-2014
- *   Fix null error of getInsertString methods
- *   Fix date/time error of getInsertString methods
+ * Fix null error of getInsertString methods
+ * Fix date/time error of getInsertString methods
  * 
  * Last Modified: 15-Jan-2014
  */
@@ -46,10 +46,9 @@ public class MSSQLConnection extends SqlConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
 	private static final String SRID = "0"; // must solve later
-	private static final String PREFIX_TIMESTAMP= "cast('";
-	private static final String MID_TIMESTAMP= "' as ";
-	private static final String SUPFIX_TIMESTAMP= ")";
-
+	private static final String PREFIX_TIMESTAMP = "cast('";
+	private static final String MID_TIMESTAMP = "' as ";
+	private static final String SUPFIX_TIMESTAMP = ")";
 
 	public MSSQLConnection(final String venderName, final String url, final String port, final String dbName,
 		final String userName, final String password) {
@@ -100,10 +99,10 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<GamaList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
+	protected IList<IList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
-		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+		IList<IList<Object>> repRequest = GamaListFactory.create(msi.gaml.types.Types.LIST);
 		try {
 			List<Integer> geoColumn = getGeometryColumns(rsmd);
 			int nbCol = rsmd.getColumnCount();
@@ -120,7 +119,7 @@ public class MSSQLConnection extends SqlConnection {
 					GuiUtils.debug("processing at row:" + i);
 				}
 
-				GamaList<Object> rowList = new GamaList<Object>();
+				IList<Object> rowList = GamaListFactory.create();
 				for ( int j = 1; j <= nbCol; j++ ) {
 					// check column is geometry column?
 					if ( DEBUG ) {
@@ -183,10 +182,10 @@ public class MSSQLConnection extends SqlConnection {
 	}
 
 	@Override
-	protected GamaList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
+	protected IList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		int numberOfColumns = rsmd.getColumnCount();
-		GamaList<Object> columnType = new GamaList<Object>();
+		IList<Object> columnType = GamaListFactory.create();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
 			/*
 			 * for Geometry
@@ -210,7 +209,7 @@ public class MSSQLConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> cols, final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> cols, final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
@@ -240,8 +239,8 @@ public class MSSQLConnection extends SqlConnection {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			IList<Object> col_Names = getColumnName(rsmd);
+			IList<Object> col_Types = getColumnTypeName(rsmd);
 
 			if ( DEBUG ) {
 				GuiUtils.debug("list of column Name:" + col_Names);
@@ -253,10 +252,9 @@ public class MSSQLConnection extends SqlConnection {
 			IProjection saveGis = getSavingGisProjection(scope);
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();
@@ -287,12 +285,18 @@ public class MSSQLConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ // For timestamp
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIMESTAMP+SUPFIX_TIMESTAMP;
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ // For datetime
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ // For datetime
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(TIMESTAMP) ) { // For timestamp
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + TIMESTAMP +
+							SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(DATETIME) ) { // For datetime
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + DATETIME +
+							SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(DATE) ) { // For datetime
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + DATE +
+							SUPFIX_TIMESTAMP;
 				} else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}
@@ -323,7 +327,7 @@ public class MSSQLConnection extends SqlConnection {
 
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
-		final GamaList<Object> values) throws GamaRuntimeException {
+		final IList<Object> values) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -338,8 +342,8 @@ public class MSSQLConnection extends SqlConnection {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			IList<Object> col_Names = getColumnName(rsmd);
+			IList<Object> col_Types = getColumnTypeName(rsmd);
 			int col_no = col_Names.size();
 			// Check size of parameters
 			if ( values.size() != col_Names.size() ) { throw new IndexOutOfBoundsException(
@@ -351,10 +355,9 @@ public class MSSQLConnection extends SqlConnection {
 			valueStr = "";
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
-				if (values.get(i)==null){
-					valueStr=valueStr+NULLVALUE;
-				}else 
-				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+				if ( values.get(i) == null ) {
+					valueStr = valueStr + NULLVALUE;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
 					// // Transform GAMA GIS TO NORMAL
 					// if ( transformed ) {
 					// WKTReader wkt = new WKTReader();
@@ -386,12 +389,18 @@ public class MSSQLConnection extends SqlConnection {
 					temp = temp.replaceAll("'", "''");
 					// Add to value:
 					valueStr = valueStr + "'" + temp + "'";
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(TIMESTAMP)){ // For timestamp
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+TIMESTAMP+SUPFIX_TIMESTAMP;
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATETIME)){ // For datetime
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATETIME+SUPFIX_TIMESTAMP;
-				}else if (((String)col_Types.get(i)).equalsIgnoreCase(DATE)){ // For datetime
-					valueStr=valueStr+PREFIX_TIMESTAMP+values.get(i).toString()+MID_TIMESTAMP+DATE+SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(TIMESTAMP) ) { // For timestamp
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + TIMESTAMP +
+							SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(DATETIME) ) { // For datetime
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + DATETIME +
+							SUPFIX_TIMESTAMP;
+				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(DATE) ) { // For datetime
+					valueStr =
+						valueStr + PREFIX_TIMESTAMP + values.get(i).toString() + MID_TIMESTAMP + DATE +
+							SUPFIX_TIMESTAMP;
 				} else { // For other type
 					valueStr = valueStr + values.get(i).toString();
 				}

@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 	optional = false,
 	doc = @doc("the message to display as a warning.")) }, omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an arbitrary message in the error view as a warning.",
-	usages = { @usage(examples = { @example("warn 'This is a warning from ' + self;") }) })
+	usages = { @usage(value = "Emmitting a warning", examples = { @example("warn 'This is a warning from ' + self;") }) })
 public class WarnStatement extends AbstractStatement {
 
 	final IExpression message;
@@ -65,7 +65,7 @@ public class WarnStatement extends AbstractStatement {
 
 	// @Override
 	// public IType getType() {
-	// return Types.get(IType.STRING);
+	// return Types.STRING;
 	// }
 
 }

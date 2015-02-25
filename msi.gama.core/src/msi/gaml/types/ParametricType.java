@@ -18,6 +18,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Class ParametrizedType. A class that allows to build composed types with a content type and a key type
@@ -65,9 +66,9 @@ public class ParametricType implements IContainerType {
 	 * @see msi.gaml.types.IType#cast(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, msi.gaml.types.IType, msi.gaml.types.IType)
 	 */
 	@Override
-	public IContainer cast(final IScope scope, final Object obj, final Object param, final IType kt, final IType ct)
-		throws GamaRuntimeException {
-		return type.cast(scope, obj, param, keyType, contentsType);
+	public IContainer cast(final IScope scope, final Object obj, final Object param, final IType kt, final IType ct,
+		final boolean copy) throws GamaRuntimeException {
+		return type.cast(scope, obj, param, keyType, contentsType, copy);
 	}
 
 	/**
@@ -331,24 +332,32 @@ public class ParametricType implements IContainerType {
 	public void setSupport(final Class clazz) {}
 
 	@Override
-	public IContainer cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return type.cast(scope, obj, param, keyType, contentsType);
+	public IContainer cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return type.cast(scope, obj, param, keyType, contentsType, copy);
 	}
 
 	@Override
 	public String toString() {
 		if ( type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER &&
 			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
-		if ( type.id() == IType.SPECIES ) { return type.toString() + "<subspecies of " + contentsType.toString() + ">"; }
+		if ( type.id() == IType.SPECIES ) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
 	}
 
 	@Override
-	public String toGaml() {
-		if ( type.id() == IType.SPECIES || type.id() == IType.LIST || type.id() == IType.MATRIX ||
-			type.id() == IType.CONTAINER && keyType == Types.NO_TYPE ) { return type.toString() + "<" +
-			contentsType.toString() + ">"; }
-		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
+	public String asPattern() {
+		boolean vowel = StringUtils.startsWithAny(type.getName(), vowels);
+		return "${" + (vowel ? "an_" : "a_") + serialize(true) + "}";
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		if ( type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER &&
+			keyType == Types.NO_TYPE ) { return type.toString() + "<" + contentsType.toString() + ">"; }
+		if ( type.id() == IType.SPECIES ) { return type.toString() + "<" + contentsType.toString() + ">"; }
+		return type.toString() + "<" + keyType.serialize(includingBuiltIn) + ", " +
+			contentsType.serialize(includingBuiltIn) + ">";
 	}
 
 	@Override
@@ -390,8 +399,29 @@ public class ParametricType implements IContainerType {
 	}
 
 	@Override
+	public void setName(final String name) {
+		// Nothing
+	}
+
+	@Override
 	public boolean canCastToConst() {
 		return type.canCastToConst() && contentsType.canCastToConst() && keyType.canCastToConst();
+	}
+
+	@Override
+	public IContainerType of(final IType ... subs) {
+		if ( subs.length == 0 ) { return this; }
+		IType kt = subs.length == 1 ? getKeyType() : subs[0];
+		IType ct = subs.length == 1 ? subs[0] : subs[1];
+		if ( ct == Types.NO_TYPE ) {
+			if ( kt == Types.NO_TYPE ) { return this; }
+			ct = getContentType();
+		}
+		if ( kt == Types.NO_TYPE ) {
+			kt = getKeyType();
+		}
+		return new ParametricType(this, kt, ct);
+
 	}
 
 }

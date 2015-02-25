@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaGenericAgentType.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaGenericAgentType.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -41,12 +41,13 @@ public class GamaGenericAgentType extends GamaAgentType {
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType) throws GamaRuntimeException {
-		return cast(scope, obj, param);
+		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+		return cast(scope, obj, param, copy);
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
 		if ( obj == null ) { return getDefault(); }
 		if ( obj instanceof IAgent ) { return (IAgent) obj; }
 		return getDefault();

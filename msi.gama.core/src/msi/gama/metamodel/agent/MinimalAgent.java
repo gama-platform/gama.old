@@ -29,7 +29,7 @@ import msi.gaml.compilation.ISkillConstructor;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
@@ -67,7 +67,7 @@ public abstract class MinimalAgent implements IAgent {
 	private volatile int index;
 	protected volatile boolean dead = false;
 	private volatile boolean lockAcquired = false;
-	protected final GamaMap<Object, Object> attributes = new GamaMap();
+	protected final GamaMap<Object, Object> attributes = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 
 	@Override
 	public abstract IPopulation getPopulation();
@@ -226,7 +226,7 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		if ( dead() ) { return "nil"; }
 		final StringBuilder sb = new StringBuilder(30);
 		sb.append(getIndex());
@@ -304,11 +304,13 @@ public abstract class MinimalAgent implements IAgent {
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
 		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
 		if ( pop != null ) {
-			final IList<IAgent> retVal = new GamaList(pop.toArray());
+			IScope scope = getScope();
+			final IList<IAgent> retVal =
+				GamaListFactory.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
-		return GamaList.EMPTY_LIST;
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -416,7 +418,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public List<IAgent> getMacroAgents() {
-		final List<IAgent> retVal = new GamaList<IAgent>();
+		final List<IAgent> retVal = GamaListFactory.create(Types.AGENT);
 		IAgent currentMacro = this.getHost();
 		while (currentMacro != null) {
 			retVal.add(currentMacro);
@@ -525,7 +527,7 @@ public abstract class MinimalAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this));
+		GuiUtils.debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false));
 		return m;
 	}
 
@@ -563,6 +565,11 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public Type getGeometricalType() {
 		return getGeometry().getGeometricalType();
+	}
+
+	@Override
+	public IType getType() {
+		return getScope().getModelContext().getTypeNamed(getSpeciesName());
 	}
 
 	/**

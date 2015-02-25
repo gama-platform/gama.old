@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaGisGeometry.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaGisGeometry.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,8 +12,7 @@
 package msi.gama.metamodel.shape;
 
 import msi.gama.metamodel.agent.IAgent;
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.*;
 import org.opengis.feature.type.GeometryType;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -28,7 +27,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GamaGisGeometry extends GamaShape {
 
-	public GamaGisGeometry(final Geometry g, final SimpleFeature feature) {
+	public GamaGisGeometry(final Geometry g, final Feature feature) {
 		super(g);
 		if ( feature != null ) {
 			// We filter out the geometries (already loaded before)

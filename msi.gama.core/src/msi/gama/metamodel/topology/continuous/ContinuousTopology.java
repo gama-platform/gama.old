@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ContinuousTopology.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'ContinuousTopology.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,8 +16,9 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Maths;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 4 juil. 2011
@@ -35,7 +36,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 */
 	public ContinuousTopology(final IScope scope, final IShape environment) {
 		super(scope, environment, null);
-		places = GamaList.with(environment);
+		places = GamaListFactory.createWithoutCasting(Types.GEOMETRY, environment);
 	}
 
 	/**
@@ -50,8 +51,8 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_toGaml()
 	 */
 	@Override
-	protected String _toGaml() {
-		return IKeyword.TOPOLOGY + "(" + environment.toGaml() + ")";
+	protected String _toGaml(final boolean includingBuiltIn) {
+		return IKeyword.TOPOLOGY + "(" + environment.serialize(includingBuiltIn) + ")";
 	}
 
 	/**

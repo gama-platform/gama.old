@@ -36,25 +36,27 @@ import msi.gaml.species.ISpecies;
 @type(name = IKeyword.TOPOLOGY, id = IType.TOPOLOGY, wraps = { ITopology.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaTopologyType extends GamaType<ITopology> {
 
-	public static ITopology staticCast(final IScope scope, final Object obj) throws GamaRuntimeException {
+	public static ITopology staticCast(final IScope scope, final Object obj, final boolean copy)
+		throws GamaRuntimeException {
 		// Many cases.
 		if ( obj == null ) { return null; }
 		if ( obj instanceof ISpatialGraph ) { return ((ISpatialGraph) obj).getTopology(scope); }
 		if ( obj instanceof ITopology ) { return (ITopology) obj; }
 		if ( obj instanceof IPopulation ) { return ((IPopulation) obj).getTopology(); }
 		if ( obj instanceof ISpecies ) { return staticCast(scope, scope.getAgentScope()
-			.getPopulationFor((ISpecies) obj)); }
+			.getPopulationFor((ISpecies) obj), copy); }
 		if ( obj instanceof IShape ) { return from(scope, (IShape) obj); }
 		if ( obj instanceof IContainer ) { return from(scope, (IContainer) obj); }
-		return staticCast(scope, Cast.asGeometry(scope, obj));
+		return staticCast(scope, Cast.asGeometry(scope, obj, copy), copy);
 	}
 
 	/**
 	 * @see msi.gama.internal.types.GamaType#cast(msi.gama.interfaces.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public ITopology cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
-		return staticCast(scope, obj);
+	public ITopology cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, copy);
 	}
 
 	public static ITopology from(final IScope scope, final IShape obj) {
@@ -87,7 +89,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 
 	@Override
 	public IType getContentType() {
-		return Types.get(IType.GEOMETRY);
+		return Types.GEOMETRY;
 	}
 
 	@Override

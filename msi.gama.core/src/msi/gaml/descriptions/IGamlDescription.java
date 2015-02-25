@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import msi.gama.common.interfaces.INamed;
+
 /**
  * The class IGamlDescription.
  * 
@@ -18,12 +20,10 @@ package msi.gaml.descriptions;
  * @since 27 avr. 2012
  * 
  */
-public interface IGamlDescription {
+public interface IGamlDescription extends INamed {
 
 	public String getTitle();
 
 	public String getDocumentation();
-
-	public String getName();
 
 }

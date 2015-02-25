@@ -30,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
+import msi.gaml.types.Types;
 
 @display("image")
 public class ImageDisplaySurface implements IDisplaySurface {
@@ -511,7 +512,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IList<IAgent> selectAgent(final int x, final int y) {
 		int xc = x - getOriginX();
 		int yc = y - getOriginY();
-		IList<IAgent> result = new GamaList<IAgent>();
+		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
 		for ( ILayer layer : layers ) {
 			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);

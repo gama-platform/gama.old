@@ -24,7 +24,8 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.PutStatement.PutSerializer;
@@ -100,20 +101,20 @@ public class PutStatement extends AddStatement {
 	public static class PutSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription cd, final StringBuilder sb) {
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
 			Facets f = cd.getFacets();
 			IExpression item = f.getExpr(ITEM);
 			IExpression list = f.getExpr(TO);
 			IExpression allFacet = f.getExpr(ALL);
 			IExpression at = f.getExpr(AT);
-			sb.append(list.toGaml());
+			sb.append(list.serialize(includingBuiltIn));
 			sb.append('[');
 			if ( at != null ) {
-				sb.append(at.toGaml());
+				sb.append(at.serialize(includingBuiltIn));
 			}
 			sb.append(']');
 			sb.append(" <- ");
-			sb.append(item.toGaml()).append(';');
+			sb.append(item.serialize(includingBuiltIn)).append(';');
 		}
 	}
 
@@ -140,28 +141,28 @@ public class PutStatement extends AddStatement {
 
 	public PutStatement(final IDescription desc) {
 		super(desc);
-		setName("put in " + list.toGaml());
+		setName("put in " + list.serialize(false));
 	}
 
 	@Override
-	protected Object buildValue(final IScope scope, final IContainer.Modifiable container) {
+	protected Object buildValue(final IScope scope, final IGraph container) {
 		// if ( asAllValues ) { return container.buildValues(scope, (IContainer) this.item.value(scope), containerType);
 		// }
 		// AD: Added to fix issue 1043: the value computed by maps is a pair (whose key is never used afterwards). However,
 		// when casting an existing pair to the key type/content type of the map, this would produce wrong values for the
 		// contents of the pair (or the list with 2 elements).
-		if ( this.list.getType().id() == IType.MAP ) { return container.buildValue(scope,
-			new GamaPair(null, this.item.value(scope)), containerType); }
-		return container.buildValue(scope, this.item.value(scope), containerType);
+		// O1/02/14: Not useful anymore
+		// if ( this.list.getType().id() == IType.MAP ) { return container.buildValue(scope,
+		// new GamaPair(null, this.item.value(scope))); }
+		return container.buildValue(scope, this.item.value(scope));
 	}
 
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final IContainer.Modifiable container) throws GamaRuntimeException {
-		// Object toPut = container.buildValue(scope, object, containerType);
 		if ( !asAll ) {
 			if ( !container.checkBounds(scope, position, false) ) { throw GamaRuntimeException.error("Index " +
-				position + " out of bounds of " + list.toGaml(), scope); }
+				position + " out of bounds of " + list.serialize(false), scope); }
 			container.setValueAtIndex(scope, position, object);
 		} else {
 			container.setAllValues(scope, object);
