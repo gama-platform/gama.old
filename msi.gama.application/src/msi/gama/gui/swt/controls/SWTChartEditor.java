@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SWTChartEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'SWTChartEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -577,13 +577,10 @@ public class SWTChartEditor implements ChartEditor {
 		 * the essential data to create a swt font. The data is taken
 		 * from the provided awt Font.
 		 * <p>
-		 * Generally speaking, given a font size, the returned swt font will display differently on the screen than the
-		 * awt one. Because the SWT toolkit use native graphical resources whenever it is possible, this fact is
-		 * platform dependent. To address this issue, it is possible to enforce the method to return a font with the
-		 * same size (or at least as close as possible) as the awt one.
+		 * Generally speaking, given a font size, the returned swt font will display differently on the screen than the awt one. Because the SWT toolkit use native graphical resources whenever it is
+		 * possible, this fact is platform dependent. To address this issue, it is possible to enforce the method to return a font with the same size (or at least as close as possible) as the awt one.
 		 * <p>
-		 * When the object is no more used, the user must explicitly call the dispose method on the returned font to
-		 * free the operating system resources (the garbage collector won't do it).
+		 * When the object is no more used, the user must explicitly call the dispose method on the returned font to free the operating system resources (the garbage collector won't do it).
 		 * 
 		 * @param device The swt device to draw on (display or gc device).
 		 * @param font The awt font from which to get the data.
@@ -591,7 +588,8 @@ public class SWTChartEditor implements ChartEditor {
 		 *            (in pixels) between the awt font and the newly created swt font.
 		 * @return a <code>FontData</code> object.
 		 */
-		public static FontData toSwtFontData(final Device device, final java.awt.Font font, final boolean ensureSameSize) {
+		public static FontData
+			toSwtFontData(final Device device, final java.awt.Font font, final boolean ensureSameSize) {
 			FontData fontData = new FontData();
 			fontData.setName(font.getFamily());
 			int style = SWT.NORMAL;
@@ -646,10 +644,8 @@ public class SWTChartEditor implements ChartEditor {
 		 * Create an awt font by converting as much information
 		 * as possible from the provided swt <code>FontData</code>.
 		 * <p>
-		 * Generally speaking, given a font size, an swt font will display differently on the screen than the
-		 * corresponding awt one. Because the SWT toolkit use native graphical ressources whenever it is possible, this
-		 * fact is platform dependent. To address this issue, it is possible to enforce the method to return an awt font
-		 * with the same height as the swt one.
+		 * Generally speaking, given a font size, an swt font will display differently on the screen than the corresponding awt one. Because the SWT toolkit use native graphical ressources whenever it
+		 * is possible, this fact is platform dependent. To address this issue, it is possible to enforce the method to return an awt font with the same height as the swt one.
 		 * 
 		 * @param device The swt device being drawn on (display or gc device).
 		 * @param fontData The swt font to convert.
@@ -657,7 +653,8 @@ public class SWTChartEditor implements ChartEditor {
 		 *            (in pixels) between the swt font and the newly created awt font.
 		 * @return An awt font converted from the provided swt font.
 		 */
-		public static java.awt.Font toAwtFont(final Device device, final FontData fontData, final boolean ensureSameSize) {
+		public static java.awt.Font
+			toAwtFont(final Device device, final FontData fontData, final boolean ensureSameSize) {
 			int style;
 			switch (fontData.getStyle()) {
 				case SWT.NORMAL:
@@ -1726,5 +1723,6 @@ public class SWTChartEditor implements ChartEditor {
 		public BasicStroke getStroke() {
 			return (BasicStroke) this.getData();
 		}
+
 	}
 }

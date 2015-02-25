@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaPreferencesView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GamaPreferencesView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,13 +15,12 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.kernel.experiment.*;
-import msi.gama.runtime.IScope;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -50,6 +49,15 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	public static void show() {
 		if ( instance == null || instance.shell == null || instance.shell.isDisposed() ) {
 			instance = new GamaPreferencesView(SwtGui.getShell());
+		}
+		for ( IParameterEditor ed : instance.editors.values() ) {
+			if ( ed.getParam() instanceof GamaPreferences.Entry ) {
+				if ( ((GamaPreferences.Entry) ed.getParam()).getKey().equals("editor.info.enabled") ) {
+					System.out.println("editor.info.enabled");
+				}
+			}
+			ed.updateValue();
+
 		}
 		instance.open();
 	}
@@ -101,7 +109,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	private void buildContents() {
-		tabFolder = new CTabFolder(shell, SWT.TOP);
+		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.setBorderVisible(false);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setSimple(true); // rounded tabs
@@ -110,7 +118,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
 		for ( String tabName : prefs.keySet() ) {
-			CTabItem item = new CTabItem(tabFolder, SWT.None);
+			CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);
@@ -151,13 +159,14 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
 		//
-		viewer.setSpacing(1);
+		viewer.setSpacing(10);
 		tab.setControl(viewer);
 		for ( String groupName : entries.keySet() ) {
 			ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE);
 			item.setText(groupName);
 			Composite compo = new Composite(viewer, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
+			layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			compo.setLayout(layout);
 			buildGroupContents(compo, entries.get(groupName));
@@ -169,56 +178,66 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		}
 	}
 
+	final Map<String, Boolean> activations = new HashMap();
+
+	private void checkActivables(final Entry e, final Object value) {
+		if ( e.getActivable() != null ) {
+			for ( String activable : e.getActivable() ) {
+				IParameterEditor ed = editors.get(activable);
+				if ( ed == null ) {
+					if ( value instanceof Boolean ) {
+						activations.put(activable, (Boolean) value);
+					} else {
+						activations.put(activable, true);
+					}
+				} else {
+					if ( value instanceof Boolean ) {
+						ed.setActive((Boolean) value);
+					} else {
+						ed.setActive(true);
+					}
+				}
+			}
+		}
+		if ( e.getDeactivable() != null && value instanceof Boolean ) {
+			for ( String deactivable : e.getDeactivable() ) {
+				IParameterEditor ed = editors.get(deactivable);
+				if ( ed == null ) {
+					activations.put(deactivable, !(Boolean) value);
+				} else {
+					ed.setActive(!(Boolean) value);
+				}
+			}
+		}
+	}
+
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
-		final Map<String, Boolean> activations = new HashMap();
+
 		for ( final Entry e : list ) {
 			modelValues.put(e.getKey(), e.getValue());
-			IParameter p = new ParameterWrapper(e) {
+			// Initial activations of editors
+			checkActivables(e, e.getValue());
+			e.addChangeListener(new IPreferenceChangeListener() {
 
 				@Override
-				public void setValue(final IScope scope, final Object value) {
+				public boolean beforeValueChange(final Object newValue) {
+					return true;
+				}
+
+				@Override
+				public void afterValueChange(final Object value) {
 					if ( e.acceptChange(value) ) {
 						modelValues.put(e.getKey(), value);
-						checkActivables(value);
+						checkActivables(e, value);
 					} else {
 						GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 					}
+
 				}
-
-				@Override
-				public Object value(final IScope scope) {
-					Object value = modelValues.get(e.getKey());
-					checkActivables(value);
-					return value;
-				}
-
-				private void checkActivables(final Object value) {
-					if ( e.getActivable() != null && value instanceof Boolean ) {
-						for ( String activable : e.getActivable() ) {
-							IParameterEditor ed = editors.get(activable);
-							if ( ed == null ) {
-								activations.put(activable, (Boolean) value);
-							} else {
-								ed.setActive((Boolean) value);
-							}
-						}
-					}
-					if ( e.getDeactivable() != null && value instanceof Boolean ) {
-						for ( String deactivable : e.getDeactivable() ) {
-							IParameterEditor ed = editors.get(deactivable);
-							if ( ed == null ) {
-								activations.put(deactivable, !(Boolean) value);
-							} else {
-								ed.setActive(!(Boolean) value);
-							}
-						}
-					}
-				}
-
-			};
-
-			AbstractEditor ed = EditorFactory.create(compo, p);
-			ed.acceptPopup(false);
+			});
+			boolean isSubParameter = activations.containsKey(e.getKey());
+			AbstractEditor ed = EditorFactory.create(compo, e, isSubParameter);
+			// ed.acceptPopup(false);
 			editors.put(e.getKey(), ed);
 		}
 
@@ -243,7 +262,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	}
 
 	private void buildButtons() {
-		Composite group1 = new Composite(shell, SWT.BORDER);
+		Composite group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
 		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
 		gridDataGroup1.widthHint = 300;

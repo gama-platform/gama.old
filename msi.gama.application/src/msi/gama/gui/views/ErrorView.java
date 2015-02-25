@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ErrorView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ErrorView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.IGamaColors;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
@@ -27,7 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
+public class ErrorView extends ExpandableItemsView<GamaRuntimeException> implements IToolbarDecoratedView.Pausable {
 
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
 	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
@@ -47,7 +47,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
-		createItem(e, false);
+		createItem(parent, e, false);
 		return true;
 	}
 
@@ -86,12 +86,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	@Override
 	public Integer[] getToolbarActionsId() {
 		// TODO Need to be defined and usable (not the case now)
-		return new Integer[] { PAUSE /* , CLEAR */};
+		return new Integer[] {};
 	}
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
-		super.ownCreatePartControl(view);
+		// super.ownCreatePartControl(view);
 		final Composite intermediate = new Composite(view, SWT.VERTICAL);
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
@@ -172,7 +172,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
 		t.setLinesVisible(true);
-		t.setForeground(exception.isWarning() ? SwtGui.getWarningColor() : SwtGui.getErrorColor());
+		t.setForeground(exception.isWarning() ? IGamaColors.WARNING.inactive() : IGamaColors.ERROR.inactive());
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);
 		final TableColumn column2 = new TableColumn(t, SWT.NONE);

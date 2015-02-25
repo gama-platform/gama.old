@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IPopupProvider.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'IPopupProvider.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,7 +11,8 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
-import org.eclipse.swt.graphics.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -27,7 +28,7 @@ public interface IPopupProvider {
 
 	public Shell getControllingShell();
 
-	public Color getPopupBackground();
+	public GamaUIColor getPopupBackground();
 
 	public Point getAbsoluteOrigin();
 

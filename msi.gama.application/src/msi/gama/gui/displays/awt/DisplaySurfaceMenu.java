@@ -28,11 +28,13 @@ public class DisplaySurfaceMenu {
 	private final IDisplaySurface surface;
 	private final Control swtControl;
 	private final DisplayedAgentsMenu menuBuilder;
+	private final LayeredDisplayView view;
 
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
 		surface = s;
+		this.view = view;
 		swtControl = c;
-		menuBuilder = new DisplayedAgentsMenu(view);
+		menuBuilder = new DisplayedAgentsMenu();
 		((AbstractAWTDisplaySurface) s).setSWTMenuManager(this);
 
 	}
@@ -73,7 +75,7 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(swtControl, true, byLayer, agents, modelCoordinates);
+				menu = menuBuilder.getMenu(view, swtControl, true, byLayer, agents, modelCoordinates);
 				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);

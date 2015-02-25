@@ -11,34 +11,32 @@
  **********************************************************************************************/
 package msi.gama.gui.views;
 
-import java.awt.Color;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
+import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.layers.LayerSideControls;
-import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.actions.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.AbstractLayer;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
+public abstract class LayeredDisplayView extends GamaViewPart implements IZoomListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 
 	protected Composite surfaceComposite;
-	// private Composite leftComposite;
 	protected IPerspectiveListener perspectiveListener;
-	// protected GridData data;
 	protected DisplayOverlay overlay;
-	protected LayersOverlay layersOverlay;
 	protected Integer zoomLevel = null;
+	private final static int PRESENTATION = 0;
+	private final static int FOCUS = 1;
+	private final static int SNAP = 2;
+	private final static int SYNC = 3;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -49,100 +47,83 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 
 	@Override
 	public Integer[] getToolbarActionsId() {
-		if ( output == null ) { return new Integer[0]; }
+		return new Integer[] { SYNC, SEP, FOCUS, PRESENTATION, SEP, SNAP };
+	}
+
+	public boolean isOpenGL() {
+		if ( output == null ) { return false; }
 		IDescription description = output.getDescription();
-		if ( description.getFacets().equals(IKeyword.TYPE, "opengl") ||
-			description.getFacets().equals(IKeyword.TYPE, "3D") ) { return new Integer[] { REFRESH, PAUSE, SEP, SYNC,
-			SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
-		return new Integer[] { REFRESH, PAUSE, SEP, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP,
-			SIDEBAR, OVERLAY };
+		return description.getFacets().equals(IKeyword.TYPE, "opengl") ||
+			description.getFacets().equals(IKeyword.TYPE, "3D");
 	}
 
 	public ILayerManager getDisplayManager() {
 		return getOutput().getSurface().getManager();
 	}
 
+	protected LayersOverlay2 createSidebar() {
+		// We cache the parent just the time to create the various layer controls (sidebar)
+		// Composite trueParent = parent;
+		LayersOverlay2 layersOverlay = new LayersOverlay2(this, SWT.RESIZE);
+		// parent = layersOverlay.getContent();
+		// createViewer(layersOverlay.getContent());
+		// getViewer().setLayoutData(null);
+		// getViewer().setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		// getViewer().setBackgroundMode(SWT.INHERIT_NONE);
+		// parent = trueParent;
+
+		// getViewer().addListener(SWT.Collapse, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event e) {
+		// layersOverlay.resize();
+		// }
+		//
+		// });
+		// getViewer().addListener(SWT.Expand, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event e) {
+		// layersOverlay.resize();
+		// }
+		//
+		// });
+		return layersOverlay;
+	}
+
+	public DisplayOverlay getOverlay() {
+		return overlay;
+	}
+
+	// public LayersOverlay2 getSidebar() {
+	// return layersOverlay;
+	// }
+
+	public Composite getSurfaceComposite() {
+		return surfaceComposite;
+	}
+
 	@Override
 	public void ownCreatePartControl(final Composite c) {
-		super.ownCreatePartControl(c);
-		// c.setLayout(new GridLayout(1, true));
-		// parent = c;
-
-		parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL | SWT.BORDER);
-		/* Composite leftComposite = */new Composite(parent, SWT.NONE);
+		parent = new Composite(c, SWT.NONE);
+		GridLayout gl = new GridLayout(1, false);
+		gl.horizontalSpacing = 0;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		parent.setLayout(gl);
 		createSurfaceComposite();
-		Composite trueParent = parent;
-		layersOverlay = new LayersOverlay(this);
-		parent = layersOverlay.getPopup();
-		createViewer();
-		getViewer().setLayoutData(null);
-		getViewer().setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		getViewer().setBackgroundMode(SWT.INHERIT_NONE);
-		parent = trueParent;
-		Composite general = new Composite(getViewer(), SWT.None);
-		GridLayout layout = new GridLayout(2, false);
-
-		general.setLayout(layout);
-
-		EditorFactory.create(general, "Background", getOutput().getBackgroundColor(), new EditorListener<Color>() {
-
-			@Override
-			public void valueModified(final Color newValue) {
-				getOutput().setBackgroundColor(newValue);
-			}
-		});
-
-		EditorFactory.create(general, "Highlight", GamaPreferences.CORE_HIGHLIGHT.getValue(),
-			new EditorListener<Color>() {
-
-				@Override
-				public void valueModified(final Color c) {
-					getOutput().getSurface().setHighlightColor(new int[] { c.getRed(), c.getGreen(), c.getBlue() });
-				}
-			});
-
-		EditorFactory.create(general, "Antialiasing", GamaPreferences.CORE_ANTIALIAS.getValue(),
-			new EditorListener<Boolean>() {
-
-				@Override
-				public void valueModified(final Boolean newValue) {
-					getOutput().getSurface().setQualityRendering(newValue);
-				}
-			});
-		EditorFactory.create(general, "Scale bar", GamaPreferences.CORE_SCALE.getValue(),
-			new EditorListener<Boolean>() {
-
-				@Override
-				public void valueModified(final Boolean newValue) {
-					overlay.displayScale(newValue);
-
-				}
-			});
-		createItem("Properties", null, general, true);
-		displayItems();
-		overlay = new DisplayOverlay(this, getOutput().getOverlayProvider());
-		getOutput().getSurface().setZoomListener(this);
-		((SashForm) parent).setWeights(new int[] { 1, 2 });
-		((SashForm) parent).setMaximizedControl(surfaceComposite);
-		getViewer().addListener(SWT.Collapse, new Listener() {
-
-			@Override
-			public void handleEvent(final Event e) {
-				layersOverlay.resize();
-			}
-
-		});
-		getViewer().addListener(SWT.Expand, new Listener() {
-
-			@Override
-			public void handleEvent(final Event e) {
-				layersOverlay.resize();
-			}
-
-		});
-
-		setSynchronized(GamaPreferences.CORE_SYNC.getValue());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalIndent = 0;
+		gd.verticalIndent = 0;
+		surfaceComposite.setLayoutData(gd);
+		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
+		getDisplaySurface().setZoomListener(this);
+		getDisplaySurface().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_ANTIALIAS.getValue());
+		overlay.update();
+		parent.layout();
+
 	}
 
 	@Override
@@ -152,286 +133,13 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 
 	protected abstract Composite createSurfaceComposite();
 
-	// protected void monitorMouseMove(final int x, final int y) {
-	//
-	// if ( surfaceComposite.getBounds().height - y < 10 ) {
-	// if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
-	// overlay.appear();
-	// }
-	// } else if ( x < 10 ) {
-	// if ( !layersOverlay.getPopup().isVisible() ) {
-	// layersOverlay.appear();
-	// }
-	// }
-	//
-	// }
-
 	@Override
 	public LayeredDisplayOutput getOutput() {
 		return (LayeredDisplayOutput) super.getOutput();
 	}
 
-	@Override
-	public boolean addItem(final ILayer d) {
-		createItem(d, false);
-		return true;
-	}
-
-	@Override
-	protected Composite createItemContentsFor(final ILayer d) {
-		final Composite compo = new Composite(getViewer(), SWT.NONE);
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 5;
-		compo.setLayout(layout);
-		if ( d instanceof AbstractLayer ) {
-			LayerSideControls.fill(compo, d, getOutput().getSurface());
-		}
-		return compo;
-	}
-
 	public IDisplaySurface getDisplaySurface() {
 		return getOutput().getSurface();
-	}
-
-	@Override
-	public String getItemDisplayName(final ILayer obj, final String previousName) {
-		return getDisplayManager().getItemDisplayName(obj, previousName);
-	}
-
-	@Override
-	public java.util.List<ILayer> getItems() {
-		return getDisplayManager().getItems();
-	}
-
-	@Override
-	public void updateItemValues() {}
-
-	@Override
-	public void zoomToFit() {
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-
-					}
-				}
-				surface.zoomFit();
-
-			}
-		}).start();
-	}
-
-	@Override
-	public void zoomIn() {
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-
-					}
-				}
-				surface.zoomIn();
-
-			}
-		}).start();
-	}
-
-	@Override
-	public void zoomOut() {
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-
-					}
-				}
-				surface.zoomOut();
-
-			}
-		}).start();
-	}
-
-	@Override
-	public void toggleView() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleView();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleArcball() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleArcball();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleInertia() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleInertia();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleSelectRectangle() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleSelectRectangle();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleTriangulation() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleTriangulation();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleSplitLayer() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleSplitLayer();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void toggleRotation() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.toggleRotation();
-
-				}
-			}).start();
-		}
-	}
-
-	@Override
-	public void snapshot() {
-		getDisplaySurface().snapshot();
-	}
-
-	@Override
-	public void setSynchronized(final boolean synchro) {
-		getDisplaySurface().setSynchronized(synchro);
-		overlay.update();
 	}
 
 	@Override
@@ -440,8 +148,12 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
 		// FIXME Remove the listeners
 		surfaceComposite.dispose();
-		overlay.close();
-		layersOverlay.close();
+		if ( overlay != null ) {
+			overlay.close();
+		}
+		// if ( layersOverlay != null ) {
+		// layersOverlay.close();
+		// }
 		super.dispose();
 	}
 
@@ -466,29 +178,6 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 			zoomLevel = (int) getOutput().getSurface().getZoomLevel() * 100;
 		}
 		return zoomLevel;
-	}
-
-	@Override
-	public void toggleCamera() {
-		// TODO Auto-generated method stub
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-
-						}
-					}
-					surface.toggleCamera();
-
-				}
-			}).start();
-		}
 	}
 
 	public String getOverlayText() {
@@ -519,9 +208,10 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 	};
 
-	public Composite getComponent() {
-		return surfaceComposite;
-	}
+	//
+	// public Composite getComponent() {
+	// return parent;
+	// }
 
 	@Override
 	public void pauseChanged() {
@@ -538,7 +228,9 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 	 *
 	 */
 	public void toggleSideBar() {
-		this.layersOverlay.toggle();
+		LayersOverlay2 l = createSidebar();
+		l.open();
+		// this.layersOverlay.toggle();
 	}
 
 	/**
@@ -580,6 +272,92 @@ public abstract class LayeredDisplayView extends ExpandableItemsView<ILayer> imp
 		}
 		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar tb) {
+		switch (code) {
+			case SNAP:
+				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							getDisplaySurface().snapshot();
+						}
+
+					});
+				break;
+
+			case FOCUS:
+				new DisplayedAgentsMenu().createItem(tb, this);
+				break;
+
+			case SYNC:
+				tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							getDisplaySurface().setSynchronized(((ToolItem) e.widget).getSelection());
+							overlay.update();
+						}
+
+					});
+				break;
+			case PRESENTATION:
+				new PresentationMenu().createItem(tb, this);
+				break;
+
+		}
+	}
+
+	public void zoom(final int type) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				final IDisplaySurface surface = getDisplaySurface();
+				while (!surface.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (final InterruptedException e) {
+
+					}
+				}
+				switch (type) {
+					case -1:
+						surface.zoomOut();
+						break;
+					case 0:
+						surface.zoomFit();
+						break;
+					case 1:
+						surface.zoomIn();
+						break;
+				}
+			}
+		}).start();
+	}
+
+	@Override
+	public void zoomIn() {
+		zoom(1);
+	}
+
+	@Override
+	public void zoomOut() {
+		zoom(-1);
+	}
+
+	@Override
+	public void zoomFit() {
+		zoom(0);
+	}
+
+	@Override
+	public Control getZoomableControl() {
+		return surfaceComposite;
 	}
 
 }

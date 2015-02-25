@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'EditorFactory.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'EditorFactory.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -39,12 +39,12 @@ public class EditorFactory implements IEditorFactory {
 		return new ColorEditor(parent, title, value, whenModified);
 	}
 
-	public static ExpressionEditor createExpression(final Composite parent, final String title, final Object value,
-		final EditorListener<IExpression> whenModified, final IType expectedType) {
+	public static ExpressionEditor createExpression(final Composite parent, final String title,
+		final IExpression value, final EditorListener<IExpression> whenModified, final IType expectedType) {
 		return new ExpressionEditor(parent, title, value, whenModified, expectedType);
 	}
 
-	public static FileEditor createFile(final Composite parent, final String title, final Object value,
+	public static FileEditor createFile(final Composite parent, final String title, final String value,
 		final EditorListener<String> whenModified) {
 		return new FileEditor(parent, title, value, whenModified);
 	}
@@ -85,9 +85,10 @@ public class EditorFactory implements IEditorFactory {
 		return new PointEditor(parent, title, value, whenModified);
 	}
 
-	public static StringEditor create(final Composite parent, final String title, final String value,
+	public static AbstractEditor create(final Composite parent, final String title, final String value,
 		final boolean asLabel, final EditorListener<String> whenModified) {
-		return new StringEditor(parent, title, value, whenModified, asLabel);
+		if ( asLabel ) { return new LabelEditor(parent, title, value, whenModified); }
+		return new StringEditor(parent, title, value, whenModified);
 	}
 
 	public static StringEditor choose(final Composite parent, final String title, final String value,
@@ -96,31 +97,51 @@ public class EditorFactory implements IEditorFactory {
 	}
 
 	public static AbstractEditor create(final Composite parent, final IParameter var) {
-		return create(parent, var, null);
+		return create(parent, var, false);
 	}
 
-	public static AbstractEditor create(final Composite parent, final IParameter var, final EditorListener l) {
+	public static AbstractEditor create(final Composite parent, final IParameter var, final boolean isSubParameter) {
+		return create(parent, var, null, isSubParameter);
+	}
+
+	public static AbstractEditor create(final Composite parent, final IParameter var, final EditorListener l,
+		final boolean isSubParameter) {
 		AbstractEditor ed = instance.create((IAgent) null, var, l);
+		ed.isSubParameter(isSubParameter);
 		ed.createComposite(parent);
 		return ed;
 	}
 
 	@Override
 	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
-		final boolean canBeNull = var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
-		final int type = var.getType().id();
-		// final int contentType = var.getContentType().id();
-		boolean isPopulation = var.getType().isContainer() && var.getType().getContentType().isAgentType();
-		AbstractEditor gp =
-			isPopulation ? new PopulationEditor(agent, var, l) : var.getType().isAgentType() | type == IType.AGENT
-				? new AgentEditor(agent, var, l) : type == IType.BOOL ? new BooleanEditor(agent, var, l)
-					: type == IType.COLOR ? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(
-						agent, var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var, canBeNull, l)
-						: type == IType.LIST ? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(
-							agent, var, l) : type == IType.MAP ? new MapEditor(agent, var, l) : type == IType.MATRIX
-							? new MatrixEditor(agent, var, l) : type == IType.FILE ? new FileEditor(agent, var, l)
-								: type == IType.STRING ? new StringEditor(agent, var, l) : new GenericEditor(agent,
-									var, l);
-		return gp;
+		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
+		final IType t = var.getType();
+		final int type = t.id();
+		if ( t.isContainer() && t.getContentType().isAgentType() ) { return new PopulationEditor(agent, var, l); }
+		if ( t.isAgentType() || type == IType.AGENT ) { return new AgentEditor(agent, var, l); }
+		switch (type) {
+			case IType.BOOL:
+				return new BooleanEditor(agent, var, l);
+			case IType.COLOR:
+				return new ColorEditor(agent, var, l);
+			case IType.FLOAT:
+				return new FloatEditor(agent, var, canBeNull, l);
+			case IType.INT:
+				return new IntEditor(agent, var, canBeNull, l);
+			case IType.LIST:
+				return new ListEditor(agent, var, l);
+			case IType.POINT:
+				return new PointEditor(agent, var, l);
+			case IType.MAP:
+				return new MapEditor(agent, var, l);
+			case IType.MATRIX:
+				return new MatrixEditor(agent, var, l);
+			case IType.FILE:
+				return new FileEditor(agent, var, l);
+			case IType.STRING:
+				return new StringEditor(agent, var, l);
+			default:
+				return new GenericEditor(agent, var, l);
+		}
 	}
 }

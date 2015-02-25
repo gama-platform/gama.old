@@ -31,7 +31,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class AgentInspectView extends AttributesEditorsView<IAgent> /* implements GamaSelectionListener */{
+public class AgentInspectView extends AttributesEditorsView<IAgent> implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */{
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
 
@@ -46,7 +46,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		super.ownCreatePartControl(parent);
+		// super.ownCreatePartControl(parent);
 		List<IAgent> init = ((InspectDisplayOutput) output).getLastValue();
 		if ( init != null ) {
 			for ( IAgent a : init ) {
@@ -143,14 +143,14 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 		}
 		if ( !editors.getCategories().containsKey(agent) ) {
 			editors.add(getParametersToInspect(agent), agent);
-			createItem(agent, true);
+			createItem(parent, agent, true);
 			return true;
 		}
 		return false;
 	}
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {
-		List<String> names = ((InspectDisplayOutput) getOutput()).getAttributes();
+		Collection<String> names = ((InspectDisplayOutput) getOutput()).getAttributes();
 		if ( names == null ) {
 			names = agent.getSpecies().getVarNames();
 		}
@@ -168,7 +168,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { REFRESH, PAUSE };
+		return new Integer[] {};
 	}
 
 }

@@ -209,7 +209,7 @@ public class AgentsMenu extends ContributionItem {
 						Arguments args = new Arguments();
 						if ( p != null ) {
 							args.put(IKeyword.USER_LOCATION,
-								GAML.getExpressionFactory().createConst(p, Types.get(IType.POINT)));
+								GAML.getExpressionFactory().createConst(p, Types.POINT));
 						}
 						scope.execute(c, a, args, result);
 						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
@@ -244,6 +244,7 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void createMenuForAgent(final Menu menu, final IAgent agent, final GamaPoint userLocation,
 		final boolean topLevel, final MenuAction ... actions) {
+		if ( agent == null ) { return; }
 		separate(menu, "Actions");
 		if ( topLevel ) {
 			browsePopulationMenuItem(menu, agent.getPopulation(), IGamaIcons.MENU_BROWSE.image());

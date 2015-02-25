@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ListEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ListEditorDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -39,7 +39,7 @@ public class ListEditorDialog extends Dialog {
 		super(parentShell);
 		this.listname = listname;
 		for ( Object o : list ) {
-			data.add(StringUtils.toGaml(o));
+			data.add(StringUtils.toGaml(o, false));
 		}
 		// final String tmpGamlList = list.substring(1, list.length() - 1);
 		// final StringTokenizer elementTokenizer = new StringTokenizer(tmpGamlList, ",");
@@ -273,7 +273,7 @@ public class ListEditorDialog extends Dialog {
 		return container;
 	}
 
-	public GamaList getList(final ListEditor editor) {
+	public IList getList(final ListEditor editor) {
 		// GamaList result = new GamaList();
 
 		boolean isFirstElement = true;
@@ -291,7 +291,7 @@ public class ListEditorDialog extends Dialog {
 		try {
 			return (GamaList) GAML.evaluateExpression(tmp.toString(), editor.getAgent());
 		} catch (GamaRuntimeException e) {
-			return new GamaList();
+			return GamaListFactory.create();
 		}
 	}
 

@@ -97,7 +97,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
-			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
+			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
 			if ( geometry != null ) {
 				Rectangle2D r = this.getManager().focusOn(geometry, this);
 				System.out.println("Rectangle = " + r);
@@ -120,33 +120,32 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		// EXPERIMENTAL
 	}
 
+	private boolean alreadyZooming = false;
+
 	@Override
 	public void zoomIn() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 + zoomIncrement);
 		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay();
+		alreadyZooming = false;
 	}
 
 	@Override
 	public void zoomOut() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-		double oldx = Math.round(getWidth() / 2d - origin.x);
-		double oldy = Math.round(getHeight() / 2d - origin.y);
 		double zoomFactor = applyZoom(1.0 - zoomIncrement);
-
-		// setOrigin((int) (origin.x + origin.x * (1 - zoomFactor) / 2),
-		// (int) (origin.y + origin.y * (1 - zoomFactor) / 2));
 		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
-		// jd
-		// Point center = new Point((int) newx, (int) newy);
-		// center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
-
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay();
+		alreadyZooming = false;
 	}
 
 	public AWTDisplaySurface(final Object ... args) {

@@ -12,32 +12,29 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ISpeedDisplayer;
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gaml.operators.Comparison;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 public class SpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer {
 
-	private final static int size = 100;
+	public final static int size = 100;
 	private final Image thumb_image;
-	private final Image thumb_image_hover;
-	private final String tooltipText;
 	private final double init;
-	private final Color popupColor;
+	private final GamaUIColor popupColor, sliderColor;
 	private final IPositionChangeListener listener;
 	private final IToolTipProvider tip;
-	private CoolSlider2 slider;
+	private SimpleSlider slider;
 
-	public SpeedContributionItem(final String toolTip, final double init, final IPositionChangeListener listener,
-		final IToolTipProvider tip, final Image thumb, final Image over, final Color popupColor) {
+	public SpeedContributionItem(final double init, final IPositionChangeListener listener, final IToolTipProvider tip,
+		final Image thumb, final GamaUIColor color, final GamaUIColor popupColor) {
 		thumb_image = thumb;
-		thumb_image_hover = over;
+		sliderColor = color;
 		this.popupColor = popupColor;
-		tooltipText = toolTip;
 		this.tip = tip;
 		this.init = init;
 		this.listener = listener;
@@ -50,25 +47,26 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution im
 	}
 
 	@Override
-	protected Control createControl(final Composite parent) {
-		final Composite composite = new Composite(parent, SWT.NONE);
+	public Control createControl(final Composite parent) {
+		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED);
 		GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 4;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
+		composite.setBackground(parent.getBackground());
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = size;
 		data.minimumWidth = size;
-		slider = new CoolSlider2(composite, IGamaIcons.TOOLBAR_SLIDER.image(), thumb_image, thumb_image_hover);
+		slider = new SimpleSlider(composite, sliderColor.color(), thumb_image);
 		slider.setTooltipInterperter(tip);
 		slider.setLayoutData(data);
 		slider.setSize(size, 16);
 		slider.addPositionChangeListener(listener);
-		slider.setToolTipText(tooltipText);
 		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
+		slider.setBackground(parent.getBackground());
 		return composite;
 	}
 

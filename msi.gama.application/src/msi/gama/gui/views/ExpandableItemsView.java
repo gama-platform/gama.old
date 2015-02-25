@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExpandableItemsView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ExpandableItemsView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -29,25 +29,21 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	Thread runThread;
 	private final Semaphore semaphore = new Semaphore(1);
 
-	protected ParameterExpandBar getViewer() {
+	public ParameterExpandBar getViewer() {
 		return viewer;
 	}
 
-	@Override
-	public void ownCreatePartControl(final Composite parent) {
-		FillLayout fl = new FillLayout();
-		// fl.marginHeight = 10;
-		parent.setLayout(fl);
-	}
-
-	protected void createViewer() {
+	public void createViewer(final Composite parent) {
 		if ( parent == null ) { return; }
 		if ( viewer == null ) {
 			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), this);
-			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-			viewer.setLayoutData(data);
+			Object layout = parent.getLayout();
+			if ( layout instanceof GridLayout ) {
+				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+				viewer.setLayoutData(data);
+			}
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
-			viewer.setSpacing(1);
+			viewer.setSpacing(5);
 		}
 	}
 
@@ -59,12 +55,13 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return false;
 	}
 
-	protected ParameterExpandItem createItem(final T data, final Composite control, final boolean expanded) {
-		return createItem(getItemDisplayName(data, null), data, control, expanded);
+	protected ParameterExpandItem createItem(final Composite parent, final T data, final Composite control,
+		final boolean expanded) {
+		return createItem(parent, getItemDisplayName(data, null), data, control, expanded);
 	}
 
-	protected ParameterExpandItem createItem(final String name, final T data, final Composite control,
-		final ParameterExpandBar bar, final boolean expanded) {
+	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
+		final Composite control, final ParameterExpandBar bar, final boolean expanded) {
 		ParameterExpandItem i = new ParameterExpandItem(bar, data, SWT.None);
 		if ( name != null ) {
 			i.setText(name);
@@ -78,19 +75,19 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return i;
 	}
 
-	protected ParameterExpandItem createItem(final String name, final T data, final Composite control,
-		final boolean expanded) {
-		createViewer();
+	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
+		final Composite control, final boolean expanded) {
+		createViewer(parent);
 		if ( viewer == null ) { return null; }
-		return createItem(name, data, control, viewer, expanded);
+		return createItem(parent, name, data, control, viewer, expanded);
 	}
 
-	protected ParameterExpandItem createItem(final T data, final boolean expanded) {
-		createViewer();
+	protected ParameterExpandItem createItem(final Composite parent, final T data, final boolean expanded) {
+		createViewer(parent);
 		if ( viewer == null ) { return null; }
 		Composite control = createItemContentsFor(data);
 		if ( control == null ) { return null; }
-		return createItem(data, control, expanded);
+		return createItem(parent, data, control, expanded);
 	}
 
 	protected abstract Composite createItemContentsFor(T data);
@@ -141,7 +138,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return null;
 	}
 
-	protected void displayItems() {
+	public void displayItems() {
 		List<T> items = getItems();
 		for ( T obj : items ) {
 			addItem(obj);

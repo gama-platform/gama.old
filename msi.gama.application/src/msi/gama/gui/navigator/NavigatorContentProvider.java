@@ -11,19 +11,16 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
+import java.util.*;
+import msi.gama.gui.navigator.shapefiles.LightweightShapefileSupportDecorator;
+import msi.gama.util.file.GAMLFile;
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 
-public class NavigatorContentProvider implements ITreeContentProvider, IResourceChangeListener {
+public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 
-	Viewer viewer;
-
-	private static final Object[] EMPTY_ARRAY = new Object[0];
-
-	public NavigatorContentProvider() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-	}
+	private VirtualContent[] virtualFolders;
 
 	@Override
 	public Object[] getElements(final Object inputElement) {
@@ -31,58 +28,88 @@ public class NavigatorContentProvider implements ITreeContentProvider, IResource
 	}
 
 	@Override
-	public Object[] getChildren(final Object parentElement) {
-		if ( parentElement instanceof ModelsLibraryFolder ) {
-			ModelsLibraryFolder parent = (ModelsLibraryFolder) parentElement;
-			return parent.getChildren();
-		} else if ( parentElement instanceof VirtualSharedModelsFolder ) {
-			VirtualSharedModelsFolder parent = (VirtualSharedModelsFolder) parentElement;
-			return parent.getChildren();
-		} else if ( parentElement instanceof UserProjectsFolder ) {
-			UserProjectsFolder parent = (UserProjectsFolder) parentElement;
-			return parent.getChildren();
-		} else if ( parentElement instanceof FileBean ) {
-			FileBean parent = (FileBean) parentElement;
-			return parent.getChildren();
-		} else {
-			return EMPTY_ARRAY;
+	public Object getParent(final Object element) {
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getParent(); }
+		if ( element instanceof IProject ) {
+			for ( VirtualContent folder : virtualFolders ) {
+				if ( folder.isParentOf(element) ) { return folder; }
+			}
 		}
+		if ( element instanceof IFile ) {
+			IResource r = LightweightShapefileSupportDecorator.shapeFileSupportedBy((IFile) element);
+			if ( r != null ) { return r; }
+		}
+		return super.getParent(element);
 	}
 
 	@Override
-	public Object getParent(final Object element) {
-		return null;
+	public Object[] getChildren(final Object p) {
+		if ( p instanceof NavigatorRoot ) {
+			if ( virtualFolders == null ) {
+				initializeVirtualFolders(p);
+			}
+			return virtualFolders;
+		}
+		if ( p instanceof VirtualContent ) { return ((VirtualContent) p).getNavigatorChildren(); }
+		if ( p instanceof IFile ) {
+			String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
+			if ( ctid.equals(FileMetaDataProvider.GAML_CT_ID) ) {
+				GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) FileMetaDataProvider.getInstance().getMetaData(p);
+				if ( info == null ) { return VirtualContent.EMPTY; }
+				List l = new ArrayList();
+				for ( String s : info.experiments ) {
+					l.add(new WrappedExperiment((IFile) p, s));
+				}
+				if ( !info.imports.isEmpty() ) {
+					l.add(new WrappedFolder((IFile) p, info.imports, "Imports"));
+				}
+				if ( !info.uses.isEmpty() ) {
+					l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
+				}
+				return l.toArray();
+
+			} else if ( ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID) ) {
+				try {
+					IContainer folder = ((IFile) p).getParent();
+					List<IResource> sub = new ArrayList();
+					for ( IResource r : folder.members() ) {
+						if ( r instanceof IFile && LightweightShapefileSupportDecorator.isSupport((IFile) p, (IFile) r) ) {
+							sub.add(r);
+						}
+					}
+					return sub.toArray();
+				} catch (CoreException e) {
+					e.printStackTrace();
+					return super.getChildren(p);
+				}
+			}
+
+		}
+		return super.getChildren(p);
 	}
 
 	@Override
 	public boolean hasChildren(final Object element) {
-		if ( element instanceof FileBean ) {
-			FileBean file = (FileBean) element;
-			return file.hasChildren();
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).hasChildren(); }
+		if ( element instanceof NavigatorRoot ) { return true; }
+		if ( element instanceof IFile ) {
+			String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
+			if ( FileMetaDataProvider.GAML_CT_ID.equals(ext) ) { return true; }
+			if ( FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext) ) { return true; }
 		}
-		return false;
-	}
-
-	@Override
-	public void resourceChanged(final IResourceChangeEvent event) {
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				TreePath[] treePaths = ((TreeViewer) viewer).getExpandedTreePaths();
-				viewer.refresh();
-				((TreeViewer) viewer).setExpandedTreePaths(treePaths);
-			}
-		});
+		return super.hasChildren(element);
 	}
 
 	@Override
 	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
+		this.virtualFolders = null;
 	}
 
-	@Override
-	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-		this.viewer = viewer;
+	private void initializeVirtualFolders(final Object parentElement) {
+		virtualFolders =
+			new VirtualContent[] { new UserProjectsFolder(parentElement, "User models"),
+				new ModelsLibraryFolder(parentElement, "Models library"),
+				new VirtualSharedModelsFolder(parentElement, "Shared models") };
 	}
 }

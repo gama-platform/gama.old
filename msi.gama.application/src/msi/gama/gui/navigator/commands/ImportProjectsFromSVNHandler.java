@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ImportProjectsFromSVNHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ImportProjectsFromSVNHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,7 +17,7 @@ import java.util.List;
 import msi.gama.gui.svn.SVNAccess;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -30,7 +30,7 @@ public class ImportProjectsFromSVNHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		Job job = new Job("Updating the Models Library") {
+		Job job = new Job("Updating Shared Models") {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -134,14 +134,14 @@ public class ImportProjectsFromSVNHandler extends AbstractHandler {
 		job.setUser(true);
 		job.schedule();
 
-		job.addJobChangeListener(new JobChangeAdapter() {
-
-			@Override
-			public void done(final IJobChangeEvent event) {
-				RefreshHandler.run();
-			}
-
-		});
+		// job.addJobChangeListener(new JobChangeAdapter() {
+		//
+		// @Override
+		// public void done(final IJobChangeEvent event) {
+		// RefreshHandler.run();
+		// }
+		//
+		// });
 
 		return null;
 	}

@@ -13,7 +13,7 @@ package msi.gama.gui.parameters;
 
 import java.util.Map;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.StringUtils;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
@@ -21,12 +21,9 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.GamaMap;
 import msi.gaml.types.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 
-public class MapEditor extends AbstractEditor {
+public class MapEditor extends ExpressionBasedEditor<Map> {
 
 	MapEditor(final IParameter param) {
 		super(param);
@@ -40,68 +37,36 @@ public class MapEditor extends AbstractEditor {
 		super(agent, param, l);
 	}
 
-	MapEditor(final Composite parent, final String title, final Object value, final EditorListener<Map> whenModified) {
+	MapEditor(final Composite parent, final String title, final Map value, final EditorListener<Map> whenModified) {
 		// Convenience method
 		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
-	// private Button mapAdd = null;
-	private ExpressionControl expression;
-
 	@Override
-	public Control createCustomParameterControl(final Composite compo) {
-		Composite comp = new Composite(compo, SWT.None);
-		comp.setLayoutData(getParameterGridData());
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
-		comp.setLayout(layout);
-		expression = new ExpressionControl(comp, this);
-		// mapAdd = new Button(comp, SWT.NONE);
-		// mapAdd.setImage(IGamaIcons.BUTTON_EDIT.image());
-		// mapAdd.setText("Edit");
-		// mapAdd.setAlignment(SWT.LEFT);
-		// mapAdd.addSelectionListener(this);
-		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		// mapAdd.setLayoutData(d);
-		return expression.getControl();
-	}
-
-	@Override
-	public void widgetSelected(final SelectionEvent event) {
+	public void applyEdit() {
 		GAMA.run(new InScope.Void() {
 
 			@Override
 			public void process(final IScope scope) {
 				MapEditorDialog mapParameterDialog =
-					new MapEditorDialog(scope, Display.getCurrent().getActiveShell(), (GamaMap) currentValue);
+					new MapEditorDialog(scope, SwtGui.getShell(), (GamaMap) currentValue);
 				if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {
 					modifyValue(mapParameterDialog.getMap());
 				}
 			}
 
 		});
-
-	}
-
-	@Override
-	protected void displayParameterValue() {
-		internalModification = true;
-		expression.getControl().setText(StringUtils.toGaml(currentValue));
-		internalModification = false;
-		// mapAdd.setEnabled(currentValue instanceof GamaMap);
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return expression.getControl();
 	}
 
 	@Override
 	public IType getExpectedType() {
-		return Types.get(IType.MAP);
+		return Types.MAP;
+	}
+
+	@Override
+	protected int[] getToolItems() {
+		return new int[] { EDIT, REVERT };
 	}
 
 }

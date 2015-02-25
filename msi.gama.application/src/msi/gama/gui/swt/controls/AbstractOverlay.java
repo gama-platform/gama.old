@@ -39,6 +39,7 @@ public abstract class AbstractOverlay {
 	private final Shell popup;
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
+	protected final Composite referenceComposite;
 	private final Shell parentShell;
 	// protected final Shell slidingShell;
 	final boolean createExtraInfo;
@@ -107,7 +108,7 @@ public abstract class AbstractOverlay {
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
-			if ( view.equals(part) && !view.getComponent().isVisible() ) {
+			if ( view.equals(part) && !referenceComposite.isVisible() ) {
 				// GuiUtils.debug(view.getPartName() +
 				// " disactivated && component is not visible -> should hide overlay");
 				run(doHide);
@@ -212,12 +213,12 @@ public abstract class AbstractOverlay {
 		public void shellIconified(final ShellEvent e) {}
 	}
 
-	public AbstractOverlay(final LayeredDisplayView view, final boolean createExtraInfo) {
+	public AbstractOverlay(final LayeredDisplayView view, final Composite c, final boolean createExtraInfo) {
 		this.createExtraInfo = createExtraInfo;
 		this.view = view;
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
-		final Composite c = view.getComponent();
+		referenceComposite = c;
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
 		// slidingShell = new Shell(parentShell, SWT.NO_TRIM);
@@ -350,9 +351,9 @@ public abstract class AbstractOverlay {
 
 	public void close() {
 		if ( !popup.isDisposed() ) {
-			Composite c = view.getComponent();
-			if ( c != null && !c.isDisposed() ) {
-				c.removeControlListener(listener);
+			// Composite c = view.getComponent();
+			if ( referenceComposite != null && !referenceComposite.isDisposed() ) {
+				referenceComposite.removeControlListener(listener);
 			}
 			IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 			if ( ps != null ) {

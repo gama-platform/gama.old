@@ -13,6 +13,7 @@ package msi.gama.gui.swt;
 
 import gnu.trove.map.hash.THashMap;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.*;
@@ -22,6 +23,7 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
+import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -56,39 +58,44 @@ import org.eclipse.ui.part.FileEditorInput;
 public class SwtGui implements IGui {
 
 	private IAgent highlightedAgent;
+	public static boolean MOUSE_DOWN;
 
 	static {
 		if ( !GuiUtils.isInHeadLessMode() ) {
-			System.out.println("Configuring user interface access through SWT");
 			GuiUtils.setSwtGui(new SwtGui());
 		} else {
 			System.out.println("Configuring HEADLESS MODE");
 		}
 	}
 
-	protected SwtGui() {}
+	// protected SwtGui() {
+	// getDisplay().addFilter(SWT.MouseDown, new Listener() {
+	//
+	// @Override
+	// public void handleEvent(final Event event) {
+	// MOUSE_DOWN = true;
+	// }
+	// });
+	// getDisplay().addFilter(SWT.MouseUp, new Listener() {
+	//
+	// @Override
+	// public void handleEvent(final Event event) {
+	// MOUSE_DOWN = false;
+	// }
+	// });
+	// }
 
-	static void initColors() {
-		COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
-		COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
-		COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
-		COLOR_IMPORTED = new Color(Display.getDefault(), 0xFF, 0xD9, 0x00);
-		COLOR_NEUTRAL = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-	}
-
-	public static Color getColor(final int[] c) {
-		return new Color(Display.getDefault(), new RGB(c[0], c[1], c[2]));
-	};
-
-	private static Color COLOR_ERROR;
-	private static Color COLOR_OK;
-	private static Color COLOR_IMPORTED;
-	private static Color COLOR_WARNING;
-	private static Color COLOR_NEUTRAL;
 	private static Font expandFont;
 	private static Font bigFont;
 	private static Font smallFont;
+	private static Font smallNavigFont;
+	private static Font smallNavigLinkFont;
 	private static Font labelFont;
+	private static Font navigRegularFont;
+	private static Font navigFileFont;
+	private static Font parameterEditorsFont;
+	private static Font navigResourceFont;
+	private static Font navigHeaderFont;
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
 	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
@@ -107,8 +114,9 @@ public class SwtGui implements IGui {
 	private static IPartListener2 partListener;
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
-		final Label label = new Label(parent, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
+		GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		label.setLayoutData(d);
 		label.setFont(getLabelfont());
 		label.setText(title);
 		return label;
@@ -158,7 +166,9 @@ public class SwtGui implements IGui {
 					case none:
 						break;
 					default:
-						view.setRefreshRate(actionId);
+						// if ( view instanceof IToolbarDecoratedView.Pausable ) {
+						// ((IToolbarDecoratedView.Pausable) view).setRefreshRate(actionId);
+						// }
 				}
 
 			}
@@ -456,8 +466,36 @@ public class SwtGui implements IGui {
 		}
 	};
 
+	public static boolean isInternetReachable() {
+
+		// AD 11/10/13 : see Issue 679
+		// Too many problems with Linux for the moment. Reverse this if a definitive solution is found.
+		if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }
+
+		try {
+			URL url = new URL("http://gama-platform.org");
+			// open a connection to that source
+			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+			// trying to retrieve data from the source. If there
+			// is no connection, this line will fail
+			urlConnect.setConnectTimeout(2000);
+			Object objData = urlConnect.getContent();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public Object showWebEditor(final String url, final String html) {
+		if ( url != null && url.contains("http") ) {
+			if ( !isInternetReachable() ) { return null; }
+		}
+
 		final Object[] result = new Object[1];
 		run(new Runnable() {
 
@@ -476,8 +514,8 @@ public class SwtGui implements IGui {
 				}
 			}
 		});
-		if ( result[0] instanceof BrowserEditor ) {
-			BrowserEditor be = (BrowserEditor) result[0];
+		if ( result[0] instanceof HtmlViewer ) {
+			HtmlViewer be = (HtmlViewer) result[0];
 			if ( url != null ) {
 				be.setUrl(url);
 			} else if ( html != null ) {
@@ -545,7 +583,12 @@ public class SwtGui implements IGui {
 	public static class GamaPartListener implements IPartListener2 {
 
 		@Override
-		public void partActivated(final IWorkbenchPartReference partRef) {}
+		public void partActivated(final IWorkbenchPartReference partRef) {
+			// IWorkbenchPart part = partRef.getPart(false);
+			// if ( part instanceof IGamaView ) {
+			// ((IGamaView) part).showToolbars(true);
+			// }
+		}
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
@@ -560,7 +603,13 @@ public class SwtGui implements IGui {
 		}
 
 		@Override
-		public void partDeactivated(final IWorkbenchPartReference partRef) {}
+		public void partDeactivated(final IWorkbenchPartReference partRef) {
+			// IWorkbenchPart part = partRef.getPart(false);
+			// if ( part instanceof IGamaView ) {
+			// ((IGamaView) part).showToolbars(false);
+			// }
+
+		}
 
 		@Override
 		public void partOpened(final IWorkbenchPartReference partRef) {
@@ -568,6 +617,10 @@ public class SwtGui implements IGui {
 				LayeredDisplayView view = (LayeredDisplayView) partRef.getPart(false);
 				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
+			}
+			if ( partRef.getId().equals("org.eclipse.ui.views.ContentOutline") ) {
+				IWorkbenchPart part = partRef.getPart(false);
+				part.setFocus();
 			}
 
 		}
@@ -598,20 +651,25 @@ public class SwtGui implements IGui {
 	}
 
 	static void initFonts() {
-		final FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
-		fd.setStyle(1 << 0 /* SWT.BOLD */);
+		FontData fd = new FontData("Helvetica", 12, SWT.BOLD);
 		labelFont = new Font(Display.getDefault(), fd);
 		expandFont = new Font(Display.getDefault(), fd);
-		fd.setStyle(1 << 1 /* SWT.ITALIC */);
+		fd = new FontData("Helvetica", 10, SWT.ITALIC);
 		unitFont = new Font(Display.getDefault(), fd);
-		fd.setStyle(1 << 0 /* SWT.BOLD */);
-		fd.setHeight(14);
-		fd.setName("Helvetica");
+		smallNavigLinkFont = new Font(Display.getDefault(), fd);
+		fd = new FontData("Helvetica", 12, SWT.BOLD);
 		bigFont = new Font(Display.getDefault(), fd);
-		fd.setStyle(SWT.NORMAL);
-		fd.setHeight(10);
-		fd.setName("Geneva");
+		navigHeaderFont = new Font(Display.getDefault(), fd);
+		fd = new FontData("Helvetica", 10, SWT.NORMAL);
 		smallFont = new Font(Display.getDefault(), fd);
+		smallNavigFont = new Font(Display.getDefault(), fd);
+		fd = new FontData("Helvetica", 11, SWT.NORMAL);
+		parameterEditorsFont = new Font(Display.getDefault(), fd);
+		navigFileFont = new Font(Display.getDefault(), fd);
+		fd = new FontData("Helvetica", 12, SWT.NORMAL);
+		navigRegularFont = new Font(Display.getDefault(), fd);
+		fd = new FontData("Helvetica", 12, SWT.ITALIC);
+		navigResourceFont = new Font(Display.getDefault(), fd);
 	}
 
 	@Override
@@ -927,7 +985,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				if ( exp.getParametersEditors() == null ) { return; }
+				if ( exp.getParametersEditors() == null && exp.getUserCommands().isEmpty() ) { return; }
 				try {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
@@ -951,7 +1009,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				if ( exp.getParametersEditors() == null ) { return; }
+				if ( exp.getParametersEditors() == null && exp.getUserCommands().isEmpty() ) { return; }
 				try {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
@@ -993,6 +1051,55 @@ public class SwtGui implements IGui {
 		return expandFont;
 	}
 
+	public static Font getParameterEditorsFont() {
+		if ( parameterEditorsFont == null ) {
+			initFonts();
+		}
+		return parameterEditorsFont;
+	}
+
+	public static Font getNavigFolderFont() {
+		if ( navigRegularFont == null ) {
+			initFonts();
+		}
+		return navigRegularFont;
+	}
+
+	public static Font getNavigLinkFont() {
+		if ( smallNavigLinkFont == null ) {
+			initFonts();
+		}
+		return smallNavigLinkFont;
+	}
+
+	public static Font getNavigFileFont() {
+		if ( navigFileFont == null ) {
+			initFonts();
+		}
+		return navigFileFont;
+	}
+
+	public static Font getNavigSmallFont() {
+		if ( smallNavigFont == null ) {
+			initFonts();
+		}
+		return smallNavigFont;
+	}
+
+	public static Font getNavigHeaderFont() {
+		if ( navigHeaderFont == null ) {
+			initFonts();
+		}
+		return navigHeaderFont;
+	}
+
+	public static Font getResourceFont() {
+		if ( navigResourceFont == null ) {
+			initFonts();
+		}
+		return navigResourceFont;
+	}
+
 	public static Font getUnitFont() {
 		if ( unitFont == null ) {
 			initFonts();
@@ -1000,40 +1107,62 @@ public class SwtGui implements IGui {
 		return unitFont;
 	}
 
-	public static Color getOkColor() {
-		if ( COLOR_OK == null ) {
-			initColors();
-		}
-		return COLOR_OK;
-	}
-
-	public static Color getImportedErrorColor() {
-		if ( COLOR_IMPORTED == null ) {
-			initColors();
-		}
-		return COLOR_IMPORTED;
-	}
-
-	public static Color getErrorColor() {
-		if ( COLOR_ERROR == null ) {
-			initColors();
-		}
-		return COLOR_ERROR;
-	}
-
-	public static Color getWarningColor() {
-		if ( COLOR_WARNING == null ) {
-			initColors();
-		}
-		return COLOR_WARNING;
-	}
-
-	public static Color getNeutralColor() {
-		if ( COLOR_NEUTRAL == null ) {
-			initColors();
-		}
-		return COLOR_NEUTRAL;
-	}
+	// public static Color getOkColor() {
+	// if ( COLOR_OK == null ) {
+	// initColors();
+	// }
+	// return COLOR_OK;
+	//
+	// }
+	//
+	// public static Color getOkColorInactive() {
+	// if ( COLOR_OK_INACTIVE == null ) {
+	// initColors();
+	// }
+	// return COLOR_OK_INACTIVE;
+	// }
+	//
+	// public static Color getImportedErrorColor() {
+	// if ( COLOR_IMPORTED == null ) {
+	// initColors();
+	// }
+	// return COLOR_IMPORTED;
+	// }
+	//
+	// public static Color getErrorColor() {
+	// if ( COLOR_ERROR == null ) {
+	// initColors();
+	// }
+	// return COLOR_ERROR;
+	// }
+	//
+	// public static Color getWarningColor() {
+	// if ( COLOR_WARNING == null ) {
+	// initColors();
+	// }
+	// return COLOR_WARNING;
+	// }
+	//
+	// public static Color getNeutralColor() {
+	// if ( COLOR_NEUTRAL == null ) {
+	// initColors();
+	// }
+	// return COLOR_NEUTRAL;
+	// }
+	//
+	// public static Color getNeutralColorInactive() {
+	// if ( COLOR_NEUTRAL_INACTIVE == null ) {
+	// initColors();
+	// }
+	// return COLOR_NEUTRAL_INACTIVE;
+	// }
+	//
+	// public static Color getDarkGrayColor() {
+	// if ( COLOR_GRAY_LABEL == null ) {
+	// initColors();
+	// }
+	// return COLOR_GRAY_LABEL;
+	// }
 
 	// @Override
 	// public void cycleDisplayViews(final Set<String> names) {
@@ -1217,6 +1346,56 @@ public class SwtGui implements IGui {
 	@Override
 	public void endSubStatus(final String name) {
 		status.updateWith(new SubTaskMessage(name, false));
+	}
+
+	/**
+	 * Method getName()
+	 * @see msi.gama.common.interfaces.IGui#getName()
+	 */
+	@Override
+	public String getName() {
+		return "SWT-based UI";
+	}
+
+	public static IEditorPart getActiveEditor() {
+		IWorkbenchPage page = getPage();
+		if ( page != null ) { return page.getActiveEditor(); }
+		return null;
+	}
+
+	public static IWorkbenchPart getActivePart() {
+		IWorkbenchPage page = getPage();
+		if ( page != null ) { return page.getActivePart(); }
+		return null;
+	}
+
+	/**
+	 * Adapt the specific object to the specified class, supporting the
+	 * IAdaptable interface as well.
+	 */
+	public static <T> T adaptTo(final Object o, final Class<T> cl) {
+		return adaptTo(o, cl, cl);
+	}
+
+	/**
+	 * Adapt the specific object to the specified classes, supporting the
+	 * IAdaptable interface as well.
+	 * 
+	 * @param o
+	 *            the object.
+	 * @param actualType
+	 *            the actual type that must be returned.
+	 * @param adapterType
+	 *            the adapter type to check for.
+	 */
+	public static <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
+		if ( actualType.isInstance(o) ) {
+			return actualType.cast(o);
+		} else if ( o instanceof IAdaptable ) {
+			o = ((IAdaptable) o).getAdapter(adapterType);
+			if ( actualType.isInstance(o) ) { return actualType.cast(o); }
+		}
+		return null;
 	}
 
 }

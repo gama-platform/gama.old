@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'SimulationPerspective.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'SimulationPerspective.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,24 +25,24 @@ public class SimulationPerspective implements IPerspectiveFactory {
 		String editorId = layout.getEditorArea();
 		layout.addView("msi.gama.gui.view.GamaNavigator", IPageLayout.LEFT, 0.23f, editorId);
 		IViewLayout nav = layout.getViewLayout("msi.gama.gui.view.GamaNavigator");
-		nav.setMoveable(false);
+		// nav.setMoveable(false);
+		//
+		IPlaceholderFolderLayout displays =
+			layout.createPlaceholderFolder("layersFolder", IPageLayout.TOP, 0.7f, editorId);
 
-		IPlaceholderFolderLayout layersFolder =
-			layout.createPlaceholderFolder("layersFolder", IPageLayout.TOP, 0.62f, editorId);
-
-		layersFolder.addPlaceholder("msi.gama.application.view.LayeredDisplayView:*");
+		displays.addPlaceholder("msi.gama.application.view.LayeredDisplayView:*");
 
 		IPlaceholderFolderLayout inspectorsFolder =
 			layout.createPlaceholderFolder("inspectorsFolder", IPageLayout.RIGHT, 0.52f, "layersFolder");
 
-		// inspectorsFolder.addPlaceholder("msi.gama.application.view.SpeciesInspectView");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.MonitorView");
+		inspectorsFolder.addPlaceholder("msi.gama.application.view.ParameterView");
+		inspectorsFolder.addPlaceholder("msi.gama.application.view.TableAgentInspectView");
+		inspectorsFolder.addPlaceholder("msi.gama.application.view.AgentInspectView");
 
 		IPlaceholderFolderLayout inspectorsFolder2 =
 			layout.createPlaceholderFolder("inspectorsFolder2", IPageLayout.BOTTOM, 0.50f, "inspectorsFolder");
 
-		inspectorsFolder2.addPlaceholder("msi.gama.application.view.AgentInspectView");
-		inspectorsFolder.addPlaceholder("msi.gama.application.view.ParameterView");
+		inspectorsFolder2.addPlaceholder("msi.gama.application.view.MonitorView");
 		inspectorsFolder.addPlaceholder("msi.gama.application.view.ErrorView");
 		layout.addView("msi.gama.application.view.ConsoleView", IPageLayout.BOTTOM, 0.70f,
 			"msi.gama.gui.view.GamaNavigator");

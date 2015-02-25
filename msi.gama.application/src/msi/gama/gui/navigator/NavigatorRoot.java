@@ -11,6 +11,16 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class NavigatorRoot extends PlatformObject {}
+public class NavigatorRoot extends PlatformObject {
+
+	@Override
+	public Object getAdapter(final Class adapter) {
+		if ( adapter == IResource.class || adapter == IContainer.class ) { return ResourcesPlugin.getWorkspace()
+			.getRoot(); }
+		return null;
+	}
+
+}

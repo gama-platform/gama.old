@@ -13,19 +13,21 @@ package msi.gama.gui.views;
 
 import java.io.*;
 import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChange;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Composite;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.GamaToolbar;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.console.*;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
-public class ConsoleView extends GamaViewPart {
+public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
+	private final static int CLEAR = 0;
 	private BufferedWriter bw;
 	private MessageConsole msgConsole;
-	// private final boolean wrap = true;
-	// private final static boolean follow = true;
+	IOConsoleViewer viewer;
 	boolean paused = false;
 	private final StringBuilder pauseBuffer = new StringBuilder(GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
 
@@ -34,8 +36,7 @@ public class ConsoleView extends GamaViewPart {
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		// TODO Need to be usable (not the case now)
-		return new Integer[] { REFRESH, PAUSE, SEP, CLEAR };
+		return new Integer[] { SEP, CLEAR };
 	}
 
 	public void setCharacterLimit(final int limit) {
@@ -46,31 +47,22 @@ public class ConsoleView extends GamaViewPart {
 	public void ownCreatePartControl(final Composite parent) {
 		msgConsole = new MessageConsole("GAMA Console", null);
 		setCharacterLimit(GamaPreferences.CORE_CONSOLE_SIZE.getValue());
-		GamaPreferences.CORE_CONSOLE_SIZE.onChange(new IPreferenceChange<Integer>() {
+		GamaPreferences.CORE_CONSOLE_SIZE.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
-			public boolean valueChange(final Integer newValue) {
-				setCharacterLimit(newValue);
+			public boolean beforeValueChange(final Integer newValue) {
 				return true;
 			}
+
+			@Override
+			public void afterValueChange(final Integer newValue) {
+				setCharacterLimit(newValue);
+			}
 		});
-		IOConsoleViewer viewer = new IOConsoleViewer(parent, msgConsole);
-		final StyledText textWidget = viewer.getTextWidget();
-		// textWidget.setTextLimit(GamaPreferences.CORE_CONSOLE_SIZE.getValue());
-		// viewer.addTextListener(new ITextListener() {
-		//
-		// @Override
-		// public void textChanged(final TextEvent event) {
-		// if ( textWidget != null && !textWidget.isDisposed() && follow ) {
-		// textWidget.setTopIndex(textWidget.getLineCount() - 1);
-		// }
-		// }
-		//
-		// });
+		viewer = new IOConsoleViewer(parent, msgConsole);
+
 		IOConsoleOutputStream stream = msgConsole.newOutputStream();
-
 		stream.setActivateOnWrite(false);
-
 		bw = new BufferedWriter(new OutputStreamWriter(stream));
 	}
 
@@ -125,12 +117,34 @@ public class ConsoleView extends GamaViewPart {
 	}
 
 	@Override
+	public Control getSizableFontControl() {
+		if ( viewer == null ) { return null; }
+		return viewer.getTextWidget();
+	}
+
+	@Override
 	public void pauseChanged() {
 		paused = !paused;
 		if ( paused ) {
 			pauseBuffer.setLength(0);
 		} else {
 			append(pauseBuffer.toString());
+		}
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar tb) {
+		switch (code) {
+			case CLEAR:
+				tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent arg0) {
+						setText("");
+					}
+				});
+				break;
+
 		}
 	}
 

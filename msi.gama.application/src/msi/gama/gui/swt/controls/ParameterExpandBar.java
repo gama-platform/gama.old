@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ParameterExpandBar.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ParameterExpandBar.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -21,41 +21,12 @@ import org.eclipse.swt.widgets.*;
  * Instances of this class support the layout of selectable expand bar items.
  * <p>
  * The item children that may be added to instances of this class must be of type <code>ExpandItem</code>.
- * </p>
- * <p>
- * <dl>
- * <dt><b>Styles:</b></dt>
- * <dd>V_SCROLL</dd>
- * <dt><b>Events:</b></dt>
- * <dd>Expand, Collapse</dd>
- * </dl>
- * </p>
- * <p>
- * IMPORTANT: This class is <em>not</em> intended to be subclassed.
- * </p>
- * 
- * @see ExpandItem
- * @see ExpandEvent
- * @see ExpandListener
- * @see ExpandAdapter
- * @see <a href="http://www.eclipse.org/swt/snippets/#expandbar">ExpandBar snippets</a>
- * @see <a href="http://www.eclipse.org/swt/examples.php">SWT Example: ControlExample</a>
- * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
- * 
- * @since 3.2
- * @noextend This class is not intended to be subclassed by clients.
  */
-public class ParameterExpandBar extends Composite implements IPopupProvider {
-
-	private static Color popupColor = new Color(SwtGui.getDisplay(), new RGB(125, 125, 125));
+public class ParameterExpandBar extends Composite/* implements IPopupProvider */{
 
 	private ParameterExpandItem[] items;
 	private ParameterExpandItem focusItem;
-	private ParameterExpandItem hoverItem;
-	Popup popup;
 	private int spacing, yCurrentScroll, itemCount;
-	// Font font;
-	private Color foreground;
 	private final Listener listener;
 	private boolean inDispose;
 	final boolean isClosable;
@@ -67,11 +38,9 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	 * @param underlyingObjects Constructs a new instance of this class given its parent and a style
 	 *            value describing its behavior and appearance.
 	 *            <p>
-	 *            The style value is either one of the style constants defined in class <code>SWT</code> which is
-	 *            applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is,
-	 *            using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The
-	 *            class description lists the style constants that are applicable to the class. Style bits are also
-	 *            inherited from superclasses.
+	 *            The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing
+	 *            together (that is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable
+	 *            to the class. Style bits are also inherited from superclasses.
 	 *            </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -92,7 +61,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	 */
 
 	public ParameterExpandBar(final Composite parent, final int style) {
-		this(parent, style, false, false, null);
+		this(parent, style | SWT.DOUBLE_BUFFERED, false, false, null);
 	}
 
 	public ParameterExpandBar(final Composite parent, final int style, final boolean isClosable,
@@ -122,20 +91,9 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 					case SWT.Resize:
 						onResize();
 						break;
-					case SWT.KeyDown:
-						onKeyDown(event);
-						break;
 					case SWT.FocusIn:
 					case SWT.FocusOut:
 						onFocus();
-						break;
-					case SWT.Traverse:
-						onTraverse(event);
-						break;
-					case SWT.MouseHover:
-					case SWT.MouseMove:
-					case SWT.MouseEnter:
-						onMouseHover(event);
 						break;
 				}
 			}
@@ -145,13 +103,9 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 		addListener(SWT.MouseUp, listener);
 		addListener(SWT.Paint, listener);
 		addListener(SWT.Resize, listener);
-		addListener(SWT.KeyDown, listener);
+		// addListener(SWT.KeyDown, listener);
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
-		addListener(SWT.Traverse, listener);
-		addListener(SWT.MouseHover, listener);
-		addListener(SWT.MouseMove, listener);
-		addListener(SWT.MouseEnter, listener);
 		ScrollBar verticalBar = getVerticalBar();
 		if ( verticalBar != null ) {
 			verticalBar.addListener(SWT.Selection, new Listener() {
@@ -162,18 +116,16 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 				}
 			});
 		}
-		// popup = new Popup(this, this);
-		// this.setBackground(getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
+		// By default
+		setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 	}
 
 	static int checkStyle(final int style) {
-		return style & ~SWT.H_SCROLL;
+		return style & ~SWT.H_SCROLL | SWT.NO_BACKGROUND;
 	}
 
 	@Override
-	protected void checkSubclass() {
-
-	}
+	protected void checkSubclass() {}
 
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
@@ -187,7 +139,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 					ParameterExpandItem item = items[i];
 					height += item.getHeaderHeight();
 					if ( item.expanded ) {
-						height += item.height;
+						height += item.height + 2;
 					}
 					height += spacing;
 					width = Math.max(width, item.getPreferredWidth(gc));
@@ -270,16 +222,6 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 		bandHeight = Math.max(ParameterExpandItem.CHEVRON_SIZE, metrics.getHeight());
 	}
 
-	@Override
-	public Color getForeground() {
-		checkWidget();
-		if ( foreground == null ) {
-			Display display = getDisplay();
-			return display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-		}
-		return foreground;
-	}
-
 	/**
 	 * Returns the item at the given, zero-relative index in the receiver. Throws an exception if
 	 * the index is out of range.
@@ -288,8 +230,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	 * @return the item at the given index
 	 * 
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list
-	 *                minus 1 (inclusive)</li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list minus 1 (inclusive)</li>
 	 *                </ul>
 	 */
 	public ParameterExpandItem getItem(final int index) {
@@ -313,8 +254,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	/**
 	 * Returns an array of <code>ExpandItem</code>s which are the items in the receiver.
 	 * <p>
-	 * Note: This is not the actual structure used by the receiver to maintain its list of items, so modifying the array
-	 * will not affect the receiver.
+	 * Note: This is not the actual structure used by the receiver to maintain its list of items, so modifying the array will not affect the receiver.
 	 * </p>
 	 * 
 	 * @return the items in the receiver
@@ -377,7 +317,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 			for ( int i = 0; i < index; i++ ) {
 				ParameterExpandItem item = items[i];
 				if ( item.expanded ) {
-					y += item.height;
+					y += item.height + 2;
 				}
 				y += item.getHeaderHeight() + spacing;
 			}
@@ -385,7 +325,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 				ParameterExpandItem item = items[i];
 				item.setBounds(spacing, y, 0, 0, true, false);
 				if ( item.expanded ) {
-					y += item.height;
+					y += item.height + 2;
 				}
 				y += item.getHeaderHeight() + spacing;
 			}
@@ -407,12 +347,6 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 		super.setFont(font);
 		computeBandHeight();
 		layoutItems(0, true);
-	}
-
-	@Override
-	public void setForeground(final Color color) {
-		super.setForeground(color);
-		foreground = color;
 	}
 
 	void setScrollbar() {
@@ -492,62 +426,16 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 			items[i].dispose();
 		}
 		items = null;
-		foreground = null;
+		// foreground = null;
 		setFocusItem(null);
-		hoverItem = null;
-		popup = null;
+		// hoverItem = null;
+		// popup = null;
 	}
 
 	void onFocus() {
 		if ( getFocusItem() != null ) {
 			getFocusItem().redraw();
 		}
-	}
-
-	void onKeyDown(final Event event) {
-		if ( getFocusItem() == null ) { return; }
-		switch (event.keyCode) {
-			case 13: /* Return */
-			case 32: /* Space */
-				Event ev = new Event();
-				ev.item = getFocusItem();
-				// sendEvent(focusItem.expanded ? SWT.Collapse : SWT.Expand, ev);
-				getFocusItem().expanded = !getFocusItem().expanded;
-				showItem(getFocusItem());
-				break;
-			case SWT.ARROW_UP: {
-				int focusIndex = indexOf(getFocusItem());
-				if ( focusIndex > 0 ) {
-					getFocusItem().redraw();
-					setFocusItem(items[focusIndex - 1]);
-					getFocusItem().redraw();
-				}
-				break;
-			}
-			case SWT.ARROW_DOWN: {
-				int focusIndex = indexOf(getFocusItem());
-				if ( focusIndex < itemCount - 1 ) {
-					getFocusItem().redraw();
-					setFocusItem(items[focusIndex + 1]);
-					getFocusItem().redraw();
-				}
-				break;
-			}
-		}
-	}
-
-	void onMouseHover(final Event event) {
-		int x = event.x;
-		int y = event.y;
-		for ( int i = 0; i < itemCount; i++ ) {
-			ParameterExpandItem item = items[i];
-			boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
-			if ( hover ) {
-				hoverItem = item;
-				return;
-			}
-		}
-		hoverItem = null;
 	}
 
 	void onMouseDown(final Event event) {
@@ -638,15 +526,6 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 		}
 	}
 
-	void onTraverse(final Event event) {
-		switch (event.detail) {
-			case SWT.TRAVERSE_TAB_NEXT:
-			case SWT.TRAVERSE_TAB_PREVIOUS:
-				event.doit = true;
-				break;
-		}
-	}
-
 	void setFocusItem(final ParameterExpandItem focusItem) {
 		this.focusItem = focusItem;
 		if ( focusItem != null && underlyingObjects != null ) {
@@ -667,33 +546,6 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 				return;
 			}
 		}
-	}
-
-	@Override
-	public String getPopupText() {
-		if ( hoverItem == null ) { return null; }
-		String s = hoverItem.getText();
-		s = s.replace(ItemList.ERROR_CODE, ' ');
-		s = s.replace(ItemList.INFO_CODE, ' ');
-		s = s.replace(ItemList.SEPARATION_CODE, ' ');
-		s = s.replace(ItemList.WARNING_CODE, ' ');
-		return s;
-	}
-
-	@Override
-	public Color getPopupBackground() {
-		return popupColor;
-	}
-
-	@Override
-	public Shell getControllingShell() {
-		return getShell();
-	}
-
-	@Override
-	public Point getAbsoluteOrigin() {
-		if ( hoverItem == null ) { return toDisplay(getLocation()); }
-		return toDisplay(hoverItem.x, hoverItem.y + bandHeight);
 	}
 
 }

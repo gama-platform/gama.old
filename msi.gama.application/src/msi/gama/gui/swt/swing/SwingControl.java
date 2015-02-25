@@ -72,14 +72,12 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * This method must be called from the SWT event thread.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
-	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
-	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
-	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that
+	 * is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable to the class. Style bits
+	 * are also inherited from superclasses.
 	 * </p>
 	 * <p>
-	 * The styles SWT.EMBEDDED and SWT.NO_BACKGROUND will be added to the specified style. Usually, no other style bits
-	 * are needed.
+	 * The styles SWT.EMBEDDED and SWT.NO_BACKGROUND will be added to the specified style. Usually, no other style bits are needed.
 	 * 
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @param style the style of widget to construct
@@ -94,7 +92,7 @@ public abstract class SwingControl extends Composite {
 	 * @see Widget#getStyle
 	 */
 	public SwingControl(final Composite parent, final int style) {
-		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
+		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 		setLayout(new FillLayout());
 		display = getDisplay();
 
@@ -194,7 +192,7 @@ public abstract class SwingControl extends Composite {
 		} else {
 			// If no border is needed, there is no need to create another
 			// Composite.
-			assert borderWidth == 0;
+			// assert borderWidth == 0;
 			borderlessChild = this;
 		}
 
@@ -218,19 +216,16 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * This method must be called from the SWT event thread.
 	 * <p>
-	 * The Swing component will be created by calling {@link #createSwingComponent()}. The creation is scheduled
-	 * asynchronously on the AWT event thread. This method does not wait for completion of this asynchronous task, so it
-	 * may return before createSwingComponent() is complete.
+	 * The Swing component will be created by calling {@link #createSwingComponent()}. The creation is scheduled asynchronously on the AWT event thread. This method does not wait for completion of
+	 * this asynchronous task, so it may return before createSwingComponent() is complete.
 	 * <p>
-	 * The Swing component is created inside a standard Swing containment hierarchy, rooted in a
-	 * {@link javax.swing.RootPaneContainer}. Clients can override {@link #addRootPaneContainer(Frame)} to provide their
-	 * own root pane container implementation.
+	 * The Swing component is created inside a standard Swing containment hierarchy, rooted in a {@link javax.swing.RootPaneContainer}. Clients can override {@link #addRootPaneContainer(Frame)} to
+	 * provide their own root pane container implementation.
 	 * <p>
 	 * The steps above happen only on the first call to this method; subsequent calls have no effect.
 	 * 
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-	 *                - if not called from the SWT event thread
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from the SWT event thread
 	 *                </ul>
 	 */
 	protected void populate() {
@@ -350,15 +345,13 @@ public abstract class SwingControl extends Composite {
 	}
 
 	/**
-	 * Adds a root pane container to the embedded AWT frame. Override this to provide your own
-	 * {@link javax.swing.RootPaneContainer} implementation. In most cases, it is not necessary
+	 * Adds a root pane container to the embedded AWT frame. Override this to provide your own {@link javax.swing.RootPaneContainer} implementation. In most cases, it is not necessary
 	 * to override this method.
 	 * <p>
 	 * This method is called from the AWT event thread.
 	 * <p>
-	 * If you are defining your own root pane container, make sure that there is at least one heavyweight (AWT)
-	 * component in the frame's containment hierarchy; otherwise, event processing will not work correctly. See
-	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522 for more information.
+	 * If you are defining your own root pane container, make sure that there is at least one heavyweight (AWT) component in the frame's containment hierarchy; otherwise, event processing will not
+	 * work correctly. See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522 for more information.
 	 * 
 	 * @param frame the frame to which the root pane container is added
 	 * @return a non-null Swing component
@@ -435,9 +428,8 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Creates the embedded Swing component. This method is called from the AWT event thread.
 	 * <p>
-	 * Implement this method to provide the Swing component that will be shown inside this composite. The returned
-	 * component will be added to the Swing content pane. At least one component must be created by this method; null is
-	 * not a valid return value.
+	 * Implement this method to provide the Swing component that will be shown inside this composite. The returned component will be added to the Swing content pane. At least one component must be
+	 * created by this method; null is not a valid return value.
 	 * 
 	 * @return a non-null Swing component
 	 */
@@ -982,17 +974,14 @@ public abstract class SwingControl extends Composite {
 	 * should update the size of this SWT control and of other SWT controls
 	 * in the window (as appropriate).
 	 * <p>
-	 * This method is a more flexible alternative to {@link #getLayoutAncestor()}. You should implement that method to
-	 * return null if you are overriding this method. A still more flexible way to be informed of preferred size changes
-	 * is to install a {@link SizeListener} with {@link #addSizeListener(SizeListener)}.
+	 * This method is a more flexible alternative to {@link #getLayoutAncestor()}. You should implement that method to return null if you are overriding this method. A still more flexible way to be
+	 * informed of preferred size changes is to install a {@link SizeListener} with {@link #addSizeListener(SizeListener)}.
 	 * <p>
 	 * This method is part of the size propagation from AWT to SWT. It is called on the SWT event thread.
 	 * <p>
-	 * The default implementation of this method calls <code>getLayoutableAncestor().layout()</code>, if
-	 * getLayoutableAncestor() returns a non-null. Otherwise, it does nothing.
+	 * The default implementation of this method calls <code>getLayoutableAncestor().layout()</code>, if getLayoutableAncestor() returns a non-null. Otherwise, it does nothing.
 	 * <p>
-	 * The parameters <var>minPoint</var>, <var>prefPoint</var>, <var>maxPoint</var> can usually be ignored: It is often
-	 * enough to rely on the {@link #layout()} method.
+	 * The parameters <var>minPoint</var>, <var>prefPoint</var>, <var>maxPoint</var> can usually be ignored: It is often enough to rely on the {@link #layout()} method.
 	 * @param minSize The new minimum size for this control, as reported by
 	 *            AWT, plus the border width on each side.
 	 * @param prefSize The new preferred size for this control, as reported by
@@ -1063,8 +1052,7 @@ public abstract class SwingControl extends Composite {
 	 * Specifies whether the particular mechanism for resizing with less flicker
 	 * should be enabled or not.
 	 * <p>
-	 * For this setting to be useful, a background colour should have been � * set that approximately matches the
-	 * window's contents.
+	 * For this setting to be useful, a background colour should have been � * set that approximately matches the window's contents.
 	 * <p>
 	 * By default, this setting is enabled on Windows with JDK 1.5 or older, and disabled otherwise.
 	 */
@@ -1156,9 +1144,8 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * This method is called from the AWT event thread.
 	 * <p>
-	 * In most cases it is not necessary to override this method. Normally, the implementation of this class will
-	 * automatically propogate font changes to the embedded Swing components through Swing's Look and Feel support.
-	 * However, if additional special processing is necessary, it can be done inside this method.
+	 * In most cases it is not necessary to override this method. Normally, the implementation of this class will automatically propogate font changes to the embedded Swing components through Swing's
+	 * Look and Feel support. However, if additional special processing is necessary, it can be done inside this method.
 	 * 
 	 * @param newFont New AWT font
 	 */
@@ -1273,15 +1260,11 @@ public abstract class SwingControl extends Composite {
 	 * Returns whether the SWT tab order is configured to extend to the
 	 * child Swing components inside this SwingControl.
 	 * <p>
-	 * If this method returns true, then when traversing (e.g. with the tab key) forward into this SwingControl, AWT
-	 * focus will be set to the first component in the frame, as determined by the AWT {@link FocusTraversalPolicy}.
-	 * Similarly, when traversing backward into this SwingControl, AWT focus will be set to the last component in the
-	 * frame.
+	 * If this method returns true, then when traversing (e.g. with the tab key) forward into this SwingControl, AWT focus will be set to the first component in the frame, as determined by the AWT
+	 * {@link FocusTraversalPolicy}. Similarly, when traversing backward into this SwingControl, AWT focus will be set to the last component in the frame.
 	 * <p>
-	 * If this method returns false, then the SwingControl participates in the tab order only as a single opaque
-	 * element. Focus on a child component will then be determined completely by the AWT focus subsystem, independent of
-	 * any current SWT traversal state. This normally means that focus will move to the most recently focused Swing
-	 * component within the embedded frame.
+	 * If this method returns false, then the SwingControl participates in the tab order only as a single opaque element. Focus on a child component will then be determined completely by the AWT focus
+	 * subsystem, independent of any current SWT traversal state. This normally means that focus will move to the most recently focused Swing component within the embedded frame.
 	 * 
 	 * @return true if the child componets are SWT traversal participants. false otherwise.
 	 */
@@ -1308,10 +1291,8 @@ public abstract class SwingControl extends Composite {
 	 * within that shell. If this property is set to <code>true</code> (the default), then
 	 * permanent focus loss is synthesized.
 	 * <p>
-	 * For more information on permanent/temporary focus loss, see the <a
-	 * href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html">AWT Focus Subsystem</a> spec.
-	 * For an example of the type of problem solved by keeping this property <code>true</code>, see <a
-	 * href="http://bugs.eclipse.org/60967">bug 60967</a>.
+	 * For more information on permanent/temporary focus loss, see the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html">AWT Focus Subsystem</a> spec. For an example
+	 * of the type of problem solved by keeping this property <code>true</code>, see <a href="http://bugs.eclipse.org/60967">bug 60967</a>.
 	 * 
 	 * @param isAWTPermanentFocusLossForced - <code>true</code> to enable the forcing of permanent
 	 *            focus loss. <code>false</code> to disable it.
@@ -1325,9 +1306,8 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * Overridden to return false and prevent any focus change if the embedded Swing component is not focusable.
 	 * <p>
-	 * Note: If the Swing component has not yet been created, then this method will temporarily set focus on its parent
-	 * SWT {@link Composite}. After the Swing component is created, and if it is focusable, focus will be transferred to
-	 * it.
+	 * Note: If the Swing component has not yet been created, then this method will temporarily set focus on its parent SWT {@link Composite}. After the Swing component is created, and if it is
+	 * focusable, focus will be transferred to it.
 	 */
 	@Override
 	public boolean setFocus() {
@@ -1349,9 +1329,8 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * Overridden to return false and prevent any focus change if the embedded Swing component is not focusable.
 	 * <p>
-	 * Note: If the Swing component has not yet been created, then this method will temporarily set focus on its parent
-	 * SWT {@link Composite}. After the Swing component is created, and if it is focusable, focus will be transferred to
-	 * it.
+	 * Note: If the Swing component has not yet been created, then this method will temporarily set focus on its parent SWT {@link Composite}. After the Swing component is created, and if it is
+	 * focusable, focus will be transferred to it.
 	 */
 	@Override
 	public boolean forceFocus() {
@@ -1526,8 +1505,8 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Returns the popup menu to be used on a given component.
 	 * <p>
-	 * The default implementation walks up the component hierarchy, looking for popup menus registered with
-	 * {@link SwtPopupRegistry#setMenu} and as fallback at the popup menu registered on this <code>Control</code>.
+	 * The default implementation walks up the component hierarchy, looking for popup menus registered with {@link SwtPopupRegistry#setMenu} and as fallback at the popup menu registered on this
+	 * <code>Control</code>.
 	 * <p>
 	 * This method can be overridden, to achieve dynamic popup menus.
 	 * @param component The component on which a popup event was received.
@@ -1613,8 +1592,7 @@ public abstract class SwingControl extends Composite {
 	}
 
 	/**
-	 * Returns the set of keystrokes which will be consumed by this control. See
-	 * {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
+	 * Returns the set of keystrokes which will be consumed by this control. See {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
 	 * 
 	 * @return Set the keystrokes configured to be consumed.
 	 */
@@ -1627,9 +1605,8 @@ public abstract class SwingControl extends Composite {
 	 * Configures a SWT keystroke to be consumed automatically by this control
 	 * whenever it is detected.
 	 * <p>
-	 * This method can be used to block a SWT keystroke from being propagated both to the embedded Swing component and
-	 * to the native window system. By consuming a keystroke, you can avoid conflicts in key handling between the Swing
-	 * component and the rest of the application.
+	 * This method can be used to block a SWT keystroke from being propagated both to the embedded Swing component and to the native window system. By consuming a keystroke, you can avoid conflicts in
+	 * key handling between the Swing component and the rest of the application.
 	 * 
 	 * @param key the keystroke to consume.
 	 */

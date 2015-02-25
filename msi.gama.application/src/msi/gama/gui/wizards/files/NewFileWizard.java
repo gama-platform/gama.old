@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NewFileWizard.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NewFileWizard.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,7 +13,6 @@ package msi.gama.gui.wizards.files;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import msi.gama.gui.navigator.commands.RefreshHandler;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -72,7 +71,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
-					RefreshHandler.run();
+					// RefreshHandler.run();
 				}
 			}
 		};

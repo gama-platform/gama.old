@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExperimentParametersView.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ExperimentParametersView.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,50 +13,33 @@ package msi.gama.gui.views;
 
 import java.util.Collection;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
-
+	public final static int REVERT = 0;
 	private IExperimentPlan experiment;
-	private Composite commandsComposite, commandsBody;
-	int maxButtonWidth;
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
-		super.ownCreatePartControl(view);
 		final Composite intermediate = new Composite(view, SWT.NONE);
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
-		parentLayout.verticalSpacing = 0;
+		parentLayout.verticalSpacing = 5;
 		intermediate.setLayout(parentLayout);
-		commandsComposite = new Composite(intermediate, SWT.BORDER_SOLID);
-		commandsComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		// layout.horizontalSpacing = 0;
-		commandsComposite.setLayout(layout);
-		Label l = new Label(commandsComposite, SWT.None);
-		l.setText("Commands");
-		l.setFont(SwtGui.getLabelfont());
-		commandsBody = new Composite(commandsComposite, SWT.None);
-		commandsBody.setBackgroundMode(SWT.INHERIT_FORCE);
-		layout = new GridLayout(5, true);
-		layout.verticalSpacing = 0;
-		layout.horizontalSpacing = 0;
-		commandsBody.setLayout(layout);
-		commandsBody.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		// commands.pack();
 		view.pack();
 		view.layout();
 		parent = intermediate;
@@ -67,7 +50,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 			experiment = exp;
 			reset();
 			editors = (EditorsList<String>) exp.getParametersEditors();
-			if ( editors == null ) { return; }
+			if ( editors == null && exp.getUserCommands().isEmpty() ) { return; }
 			displayItems();
 		} else {
 			experiment = null;
@@ -75,32 +58,27 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	}
 
 	@Override
+	public/* final */void createPartControl(final Composite composite) {
+		super.createPartControl(composite);
+	}
+
+	@Override
 	public void displayItems() {
 		super.displayItems();
+		this.displayCommands();
+	}
+
+	protected void displayCommands() {
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-		for ( final Control c : commandsBody.getChildren() ) {
-			c.dispose();
-		}
-		if ( userCommands.isEmpty() ) {
-			commandsComposite.setVisible(false);
-			((GridData) commandsComposite.getLayoutData()).exclude = true;
-			return;
-		}
-		((GridData) commandsComposite.getLayoutData()).exclude = false;
-		commandsComposite.setVisible(true);
 
+		String expInfo =
+			"Model " + experiment.getModel().getDescription().getTitle() + " / " +
+				StringUtils.capitalize(experiment.getDescription().getTitle());
+		leftToolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL);
+		leftToolbar.sep(2);
 		for ( final IStatement command : userCommands ) {
-			final Button b = new Button(commandsBody, SWT.PUSH);
-			GridData data = new GridData();
-			b.setLayoutData(data);
-			b.setText(command.getName());
-			b.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			b.pack();
-			if ( b.getSize().x > maxButtonWidth ) {
-				maxButtonWidth = b.getSize().x;
-			}
-
-			b.addSelectionListener(new SelectionAdapter() {
+			FlatButton f = FlatButton.button(leftToolbar, IGamaColors.BLUE, command.getName());
+			f.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -117,30 +95,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 				}
 
 			});
+			f.item();
+			leftToolbar.sep(2);
 		}
-		commandsComposite.layout();
-		int numColumns = commandsBody.getClientArea().width / maxButtonWidth;
-		((GridLayout) commandsBody.getLayout()).numColumns = numColumns;
-		commandsBody.layout();
-		parent.layout();
-		parent.addControlListener(new ControlListener() {
+		leftToolbar.refresh();
 
-			@Override
-			public void controlResized(final ControlEvent e) {
-				if ( !commandsComposite.isVisible() ) { return; }
-				commandsComposite.layout();
-				int numColumns = commandsBody.getClientArea().width / maxButtonWidth;
-				if ( numColumns == 0 ) {
-					numColumns = 1;
-				}
-				((GridLayout) commandsBody.getLayout()).numColumns = numColumns;
-				commandsBody.layout();
-				parent.layout();
-			}
-
-			@Override
-			public void controlMoved(final ControlEvent e) {}
-		});
 	}
 
 	/**
@@ -149,17 +108,43 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { /* SAVE, */REVERT };
+		return new Integer[] { REVERT };
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar tb) {
+		switch (code) {
+			case REVERT:
+				tb.button(IGamaIcons.ACTION_REVERT.getCode(), "Revert parameter values",
+					"Revert parameters to their initial values", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							EditorsList eds = (EditorsList) GAMA.getExperiment().getParametersEditors();
+							if ( eds != null ) {
+								eds.revertToDefaultValue();
+							}
+						}
+
+					});
+				break;
+
+		}
 	}
 
 	@Override
 	public boolean addItem(final String object) {
-		createItem(object, true);
+		createItem(parent, object, true);
 		return true;
 	}
 
 	public IExperimentPlan getExperiment() {
 		return experiment;
+	}
+
+	@Override
+	public void stopDisplayingTooltips() {
+		displayCommands();
 	}
 
 }

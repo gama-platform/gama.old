@@ -11,94 +11,73 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import java.util.Hashtable;
-import msi.gama.gui.swt.IGamaIcons;
+import java.util.*;
+import msi.gama.gui.swt.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.navigator.IDescriptionProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class NavigatorLabelProvider extends LabelProvider implements IDescriptionProvider {
+public class NavigatorLabelProvider extends CellLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
 
-	/* Cached icons */
-	private final Hashtable<Program, Image> iconCache = new Hashtable<Program, Image>();
+	// TODO BUILD A LIST FROM THE FILES LOADED IN GAMAFILE
+	private static final Set<String> HANDLED = new HashSet(Arrays.asList("shp", "gaml", "jpg", "jpeg", "png", "bmp",
+		"html", "htm", "gif", "csv", "ico", "asc", "pgm", "svg"));
 
 	@Override
 	public String getText(final Object element) {
-		if ( element instanceof UserProjectsFolder ) { return ((UserProjectsFolder) element).getName() + " ( " +
-			((UserProjectsFolder) element).getChildren().length + " )"; }
-		if ( element instanceof ModelsLibraryFolder ) { return ((ModelsLibraryFolder) element).getName() + " ( " +
-			((ModelsLibraryFolder) element).getChildren().length + " )"; }
-		if ( element instanceof VirtualSharedModelsFolder ) { return ((VirtualSharedModelsFolder) element).getName() +
-			" ( " + ((VirtualSharedModelsFolder) element).getChildren().length + " )"; }
-		if ( element instanceof FileBean ) {
-			String name = ((FileBean) element).toString();
-			return "Project " + name.substring(0, name.lastIndexOf("."));
-		}
-		// } if (element instanceof File) {
-		// String name = ((File) element).getName();
-		// return name.substring(0, name.lastIndexOf("."));
-		// }
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getName(); }
 		return null;
+	}
+
+	public static boolean isResource(final IResource r) {
+		if ( r instanceof IFile ) { return !FileMetaDataProvider.isGAML((IFile) r); }
+		if ( r instanceof IContainer ) {
+			try {
+				for ( IResource m : ((IContainer) r).members() ) {
+					if ( !isResource(m) ) { return false; }
+				}
+			} catch (CoreException e) {}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public Image getImage(final Object element) {
-		Image image = null;
-
-		if ( element instanceof VirtualSharedModelsFolder ) {
-			image = IGamaIcons.FOLDER_SHARED.image();
-		} else if ( element instanceof UserProjectsFolder ) {
-			image = IGamaIcons.FOLDER_USER.image();
-		} else if ( element instanceof ModelsLibraryFolder ) {
-			image = IGamaIcons.FOLDER_BUILTIN.image();
-		} else if ( element instanceof FileBean ) {
-			if ( ((FileBean) element).hasChildren() ) {
-				image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		if ( element instanceof WrappedFile ) { return WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider()
+			.getImage(((WrappedFile) element).getFile()); }
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getImage(); }
+		if ( element instanceof IProject ) { return IGamaIcons.FOLDER_PROJECT.image(); }
+		if ( element instanceof IFolder ) {
+			if ( isResource((IFolder) element) ) {
+				return IGamaIcons.FOLDER_RESOURCES.image();
 			} else {
-				FileBean file = (FileBean) element;
-				String nameString = file.toString();
-				/* Get icon from the fileSystem */
-				int dot = nameString.lastIndexOf('.');
-				if ( dot != -1 ) {
-					/* Find the program using the file extension */
-					String extension = nameString.substring(dot);
-					Program program = Program.findProgram(extension);
-
-					/* Get icon based on extension */
-					if ( program != null ) {
-						image = getIconFromProgram(program);
-					}
-				}
-				if ( image == null ) {
-					image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-				}
+				return IGamaIcons.FOLDER_MODEL.image();
 			}
-		} else {
-			return null;
 		}
-
-		return image;
+		if ( element instanceof IFile ) {
+			IFile f = (IFile) element;
+			String s = f.getFileExtension();
+			if ( isHandled(s) ) {
+				return null;
+			} else {
+				return GamaIcons.create("file.text2").image();
+			}
+		}
+		return null;
 	}
 
 	/**
-	 * Gets an image for a file associated with a given program
-	 * 
-	 * @param program the program
-	 * @return image
+	 * @param s
+	 * @return
 	 */
-	private Image getIconFromProgram(final Program program) {
-		Image image = iconCache.get(program);
-		if ( image == null ) {
-			ImageData imageData = program.getImageData();
-			if ( imageData != null ) {
-				image = new Image(Display.getDefault(), imageData);
-				iconCache.put(program, image);
-			}
+	private boolean isHandled(final String s) {
+		for ( String ext : HANDLED ) {
+			if ( ext.equalsIgnoreCase(s) ) { return true; }
 		}
-		return image;
+		return false;
 	}
 
 	@Override
@@ -115,9 +94,44 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 	@Override
 	public void removeListener(final ILabelProviderListener listener) {}
 
+	/**
+	 * Method getFont()
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
 	@Override
-	public String getDescription(final Object anElement) {
+	public Font getFont(final Object element) {
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getFont(); }
+		if ( element instanceof IProject ) { return SwtGui.getNavigHeaderFont(); }
+		if ( element instanceof IFolder && isResource((IFolder) element) ) { return SwtGui.getResourceFont(); }
+		if ( element instanceof IFile ) { return SwtGui.getNavigFileFont(); }
+		return SwtGui.getNavigFolderFont();
+	}
+
+	/**
+	 * Method getForeground()
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	@Override
+	public Color getForeground(final Object element) {
+		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getColor(); }
+		if ( !(element instanceof IFile) ) { return IGamaColors.GRAY_LABEL.color(); }
 		return null;
 	}
+
+	/**
+	 * Method getBackground()
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	@Override
+	public Color getBackground(final Object element) {
+		return null;
+	}
+
+	/**
+	 * Method update()
+	 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+	 */
+	@Override
+	public void update(final ViewerCell cell) {}
 
 }

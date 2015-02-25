@@ -14,6 +14,7 @@ package msi.gama.gui.swt.controls;
 import msi.gama.gui.swt.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * The class SimulationSpeedContributionItem.
@@ -27,6 +28,8 @@ import msi.gaml.operators.Maths;
 public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 	private static final double BASE_UNIT = 1000;
+
+	private static Image knob = GamaIcons.create("toolbar.knob4").image(); // IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB_HOVER.image()
 
 	/**
 	 * 
@@ -48,23 +51,22 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	}
 
 	public SimulationSpeedContributionItem() {
-		super("Adjust simulation speed", positionFromValue(GAMA.getDelayInMilliseconds()),
-			new IPositionChangeListener() {
+		super(positionFromValue(GAMA.getDelayInMilliseconds()), new IPositionChangeListener() {
 
-				@Override
-				public void positionChanged(final double position) {
-					GAMA.setDelayFromUI(valueFromPosition(position));
-				}
+			@Override
+			public void positionChanged(final double position) {
+				GAMA.setDelayFromUI(valueFromPosition(position));
+			}
 
-			}, new IToolTipProvider() {
+		}, new IToolTipProvider() {
 
-				@Override
-				public String getToolTipText(final double value) {
-					return "Minimum duration of a cycle " + Maths.opTruncate(GAMA.getDelayInMilliseconds() / 1000, 3) +
-						" s";
-				}
+			@Override
+			public String getToolTipText(final double value) {
+				return "Minimum duration of a cycle " + Maths.opTruncate(GAMA.getDelayInMilliseconds() / 1000, 3) +
+					" s";
+			}
 
-			}, IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB.image(), SwtGui.getOkColor());
+		}, knob, IGamaColors.GRAY_LABEL, IGamaColors.OK);
 		SwtGui.setSpeedControl(this);
 	}
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ApplicationWorkbenchAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ApplicationWorkbenchAdvisor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,8 +13,7 @@ package msi.gama.gui.swt;
 
 import java.util.Arrays;
 import msi.gama.gui.swt.perspectives.*;
-import msi.gama.runtime.FrontEndController;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -51,10 +50,10 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		try {
 			IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
-			dm.setEnabled("org.eclipse.jdt.ui.decorator", false);
-			dm.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
-			dm.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
-			dm.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
+			// dm.setEnabled("org.eclipse.jdt.ui.decorator", false);
+			// dm.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
+			// dm.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
+			// dm.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
 			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
 			dm.setEnabled("msi.gama.application.decorator", true);
 			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
@@ -162,11 +161,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public boolean preShutdown() {
 		try {
 			GAMA.controller.shutdown();
-			//hqnghi: if there are several controller, shut them down
+			// hqnghi: if there are several controller, shut them down
 			for ( FrontEndController s : GAMA.getControllers().values() ) {
 				s.shutdown();
 			}
-			//end-hqnghi
+			// end-hqnghi
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

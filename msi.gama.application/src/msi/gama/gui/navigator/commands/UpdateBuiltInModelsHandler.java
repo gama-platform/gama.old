@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'UpdateBuiltInModelsHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'UpdateBuiltInModelsHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,7 +14,7 @@ package msi.gama.gui.navigator.commands;
 import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.*;
 
 public class UpdateBuiltInModelsHandler extends AbstractHandler {
@@ -37,14 +37,14 @@ public class UpdateBuiltInModelsHandler extends AbstractHandler {
 		job.setUser(true);
 		job.schedule();
 
-		job.addJobChangeListener(new JobChangeAdapter() {
-
-			@Override
-			public void done(final IJobChangeEvent event) {
-				RefreshHandler.run();
-			}
-
-		});
+		// job.addJobChangeListener(new JobChangeAdapter() {
+		//
+		// @Override
+		// public void done(final IJobChangeEvent event) {
+		// RefreshHandler.run();
+		// }
+		//
+		// });
 
 		return null;
 	}

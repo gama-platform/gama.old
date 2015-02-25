@@ -12,23 +12,17 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class NumberEditor extends AbstractEditor {
+public abstract class NumberEditor<T extends Number> extends ExpressionBasedEditor<T> {
 
-	private ExpressionControl expression;
-	ToolItem plus, minus;
 	Number stepValue;
-	private Button defineButton;
-	private Composite internalComposite;
+	static final String UNDEFINED_LABEL = "-- Undefined --";
 
 	public NumberEditor(final IParameter param, final boolean canBeNull) {
 		super(param);
@@ -50,59 +44,9 @@ public abstract class NumberEditor extends AbstractEditor {
 	}
 
 	@Override
-	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
+	public Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 		normalizeValues();
-		Composite compo = new Composite(composite, SWT.None);
-		compo.setLayoutData(getParameterGridData());
-		GridLayout layout = new GridLayout(2, true);
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
-		compo.setLayout(layout);
-		internalComposite = compo;
-
-		if ( acceptNull ) {
-			internalComposite = new Composite(composite, SWT.None);
-			layout = new GridLayout(3, false);
-			layout.verticalSpacing = 0;
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			internalComposite.setLayout(layout);
-			defineButton = new Button(internalComposite, SWT.CHECK);
-			Object originalValue = getOriginalValue();
-			boolean selected = param.isDefined() && originalValue != null;
-			defineButton.setSelection(selected);
-			defineButton.setText(selected ? "Define:" : "Not defined");
-			defineButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-			defineButton.pack();
-			defineButton.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					if ( defineButton.getSelection() ) {
-						defineButton.setText("Define:");
-						expression.getControl().setEnabled(true);
-						defineButton.pack();
-						internalComposite.layout();
-						expression.widgetDefaultSelected(null);
-						param.setDefined(true);
-						modifyValue(expression.currentValue);
-					} else {
-						defineButton.setText("Not defined");
-						expression.getControl().setEnabled(false);
-						defineButton.pack();
-						internalComposite.layout();
-						param.setDefined(false);
-						modifyValue(null);
-					}
-				}
-
-			});
-		}
-
-		expression = new ExpressionControl(internalComposite, this);
-		createToolbar(internalComposite);
-		return expression.getControl();
+		return super.createCustomParameterControl(composite);
 	}
 
 	protected abstract Number normalizeValues() throws GamaRuntimeException;
@@ -110,56 +54,48 @@ public abstract class NumberEditor extends AbstractEditor {
 	protected abstract void computeStepValue();
 
 	@Override
-	protected void displayParameterValue() {
-		expression.getControl().setText(StringUtils.toGaml(currentValue));
+	protected void checkButtons() {
+		super.checkButtons();
+		ToolItem t = items[DEFINE];
+		if ( t == null || t.isDisposed() ) { return; }
+		if ( param.isDefined() ) {
+			t.setToolTipText("Set the parameter to undefined");
+			t.setImage(GamaIcons.create("small.undefine").image());
+			getEditorControl().setEnabled(true);
+		} else {
+			t.setToolTipText("Define the parameter (currently undefined)");
+			t.setImage(GamaIcons.create("small.define").image());
+			getEditorControl().setEnabled(false);
+		}
+	}
+
+	@Override
+	protected void applyDefine() {
+		if ( param.isDefined() ) {
+			param.setDefined(false);
+			internalModification = true;
+			getEditorControl().setText(UNDEFINED_LABEL);
+			internalModification = false;
+			modifyValue(null);
+		} else {
+			param.setDefined(true);
+			expression.modifyNoPopup();
+		}
 		checkButtons();
 	}
 
-	protected abstract void checkButtons();
+	@Override
+	protected ToolItem createPlusItem(final ToolBar t) {
+		ToolItem item = super.createPlusItem(t);
+		ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
+		unitItem.setText(String.valueOf(stepValue));
+		unitItem.setEnabled(false);
+		return item;
+	}
 
 	@Override
-	public Control getEditorControl() {
-		if ( expression == null ) { return null; }
-		return expression.getControl();
+	protected int[] getToolItems() {
+		if ( acceptNull ) { return new int[] { DEFINE, PLUS, MINUS, REVERT }; }
+		return new int[] { PLUS, MINUS, REVERT };
 	}
-
-	protected void createToolbar(final Composite compo) {
-		ToolBar comp = new ToolBar(compo, SWT.HORIZONTAL);
-		minus = new ToolItem(comp, SWT.PUSH);
-		minus.setText("");
-		minus.setImage(IGamaIcons.SMALL_MINUS.image());
-		plus = new ToolItem(comp, SWT.PUSH);
-		plus.setText("");
-		plus.setImage(IGamaIcons.SMALL_PLUS.image());
-
-		comp.addFocusListener(expression);
-
-		plus.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				expression.setFocus();
-				modifyAndDisplayValue(applyPlus());
-			}
-		});
-
-		minus.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				expression.setFocus();
-				modifyAndDisplayValue(applyMinus());
-			}
-		});
-	}
-
-	protected abstract Object applyPlus();
-
-	protected abstract Object applyMinus();
-
-	@Override
-	public String getTooltipText() {
-		return super.getTooltipText() + Text.DELIMITER + "step: " + stepValue;
-	}
-
 }

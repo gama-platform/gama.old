@@ -11,9 +11,10 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
-import java.util.ArrayList;
-import msi.gama.runtime.IScope;
+import java.util.Map;
+import msi.gama.runtime.*;
 import msi.gama.util.*;
+import msi.gaml.types.Types;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -32,23 +33,23 @@ public class MapEditorDialog extends Dialog {
 	// Revoir compl�tement pour �diter de vraies maps.
 	// Erreur laiss�e intentionnellement car classe non fonctionnelle
 
-	private final ArrayList<Object> data = new ArrayList();
+	// private final ArrayList<GamaPair> data = new ArrayList();
+
+	GamaMap data;
 
 	private Text elementText1 = null;
 	private Text elementText2 = null;
 	private Button newElementButton = null;
-	private Button upButton = null;
-	private Button downButton = null;
 	private Button removeButton = null;
 	private List list = null;
 
 	protected MapEditorDialog(final IScope scope, final Shell parentShell, final GamaMap list) {
 		super(parentShell);
-		IList<GamaPair> l = list.getPairs();
-		for ( GamaPair p : l ) {
-			data.add(p.first());
-			data.add(p.last());
-		}
+		data = list;
+		// IList<GamaPair> l = list.getPairs();
+		// for ( GamaPair p : l ) {
+		// data.add(p);
+		// }
 	}
 
 	/**
@@ -123,8 +124,16 @@ public class MapEditorDialog extends Dialog {
 			@Override
 			public void mouseUp(final MouseEvent me) {
 				if ( !existKey(elementText1.getText()) ) {
-					list.add(elementText1.getText() + " :: " + elementText2.getText());
-					data.add(elementText1.getText() + " :: " + elementText2.getText());
+					list.add(elementText1.getText() + "::" + elementText2.getText());
+					GAMA.run(new GAMA.InScope.Void() {
+
+						@Override
+						public void process(final IScope scope) {
+							data.addValue(scope, new GamaPair(elementText1.getText(), elementText2.getText(),
+								Types.STRING, Types.STRING));
+
+						}
+					});
 					elementText1.setText("");
 					elementText2.setText("");
 					newElementButton.setEnabled(false);
@@ -141,8 +150,8 @@ public class MapEditorDialog extends Dialog {
 		 * The list widget containing all the elements of the corresponding GAML list.
 		 */
 		list = new List(container, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		for ( final Object gamlElement : data ) {
-			list.add(gamlElement.toString());
+		for ( final Map.Entry gamlElement : data.getPairs() ) {
+			list.add(((GamaPair) gamlElement).serialize(false));
 		}
 
 		final GridData listGridData = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 5);
@@ -155,22 +164,8 @@ public class MapEditorDialog extends Dialog {
 			@Override
 			public void mouseUp(final MouseEvent me) {
 				if ( list.getSelectionIndex() != -1 ) {
-					if ( list.getSelectionIndex() > 0 ) {
-						upButton.setEnabled(true);
-					} else {
-						upButton.setEnabled(false);
-					}
-
-					if ( list.getSelectionIndex() < data.size() - 1 ) {
-						downButton.setEnabled(true);
-					} else {
-						downButton.setEnabled(false);
-					}
-
 					removeButton.setEnabled(true);
 				} else {
-					upButton.setEnabled(false);
-					downButton.setEnabled(false);
 					removeButton.setEnabled(false);
 				}
 			}
@@ -187,78 +182,6 @@ public class MapEditorDialog extends Dialog {
 		buttonBox.setLayoutData(buttonBoxGridData);
 
 		/** The Up button used to move an element up one position. */
-		upButton = new Button(buttonBox, SWT.PUSH);
-		upButton.setText("Up");
-		upButton.setEnabled(false);
-
-		final GridData upButtonGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
-		upButtonGridData.horizontalSpan = 1;
-		upButton.setLayoutData(upButtonGridData);
-
-		upButton.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseUp(final MouseEvent me) {
-				int selectionIndex = list.getSelectionIndex();
-
-				final String currentSelectedElement = list.getItem(selectionIndex);
-				list.remove(selectionIndex);
-				data.remove(selectionIndex);
-
-				if ( selectionIndex > 0 ) {
-					selectionIndex--;
-				}
-				list.add(currentSelectedElement, selectionIndex);
-				data.add(selectionIndex, currentSelectedElement);
-
-				list.setSelection(selectionIndex);
-
-				if ( selectionIndex == 0 ) {
-					upButton.setEnabled(false);
-				}
-
-				if ( selectionIndex < data.size() - 1 ) {
-					downButton.setEnabled(true);
-				}
-			}
-		});
-
-		/** The Down button used to move an element down the position. */
-		downButton = new Button(buttonBox, SWT.PUSH);
-		downButton.setText("Down");
-		downButton.setEnabled(false);
-
-		final GridData downButtonGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
-		downButtonGridData.horizontalSpan = 1;
-		downButton.setLayoutData(downButtonGridData);
-
-		downButton.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseUp(final MouseEvent me) {
-				int selectionIndex = list.getSelectionIndex();
-
-				final String currentSelectedElement = list.getItem(selectionIndex);
-				list.remove(selectionIndex);
-				data.remove(selectionIndex);
-
-				if ( selectionIndex < data.size() ) {
-					selectionIndex++;
-				}
-				list.add(currentSelectedElement, selectionIndex);
-				data.add(selectionIndex, currentSelectedElement);
-
-				list.setSelection(selectionIndex);
-
-				if ( selectionIndex >= data.size() - 1 ) {
-					downButton.setEnabled(false);
-				}
-
-				if ( selectionIndex > 0 ) {
-					upButton.setEnabled(true);
-				}
-			}
-		});
 
 		/** The Remove button used to remove an element. */
 		removeButton = new Button(buttonBox, SWT.PUSH);
@@ -288,20 +211,7 @@ public class MapEditorDialog extends Dialog {
 						removeButton.setEnabled(true);
 					}
 
-					if ( selectionIndex >= data.size() - 1 ) {
-						downButton.setEnabled(false);
-					} else {
-						downButton.setEnabled(true);
-					}
-
-					if ( selectionIndex > 0 ) {
-						upButton.setEnabled(true);
-					} else {
-						upButton.setEnabled(false);
-					}
 				} else {
-					upButton.setEnabled(false);
-					downButton.setEnabled(false);
 					removeButton.setEnabled(false);
 				}
 			}
@@ -310,8 +220,8 @@ public class MapEditorDialog extends Dialog {
 	}
 
 	public boolean existKey(final String elem) {
-		for ( final Object element : data ) {
-			String tmp = ((String) element).substring(0, ((String) element).indexOf(" ::"));
+		for ( final Object element : data.keySet() ) {
+			String tmp = element.toString();
 			if ( tmp.equals(elem) ) { return true; }
 		}
 		return false;
@@ -320,18 +230,7 @@ public class MapEditorDialog extends Dialog {
 	public GamaMap getMap() {
 		boolean isFirstElement = true;
 		Object first = null;
-		GamaMap map = new GamaMap();
-
-		for ( final Object element : data ) {
-			if ( isFirstElement ) {
-				isFirstElement = false;
-				first = element;
-			} else {
-				isFirstElement = true;
-				map.put(first, element);
-			}
-		}
-		return map;
+		return data;
 	}
 
 	@Override

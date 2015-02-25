@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
-import msi.gama.gui.swt.ApplicationWorkbenchWindowAdvisor;
+import msi.gama.common.util.GuiUtils;
 import org.eclipse.core.commands.*;
 
 public class HelpHandler extends AbstractHandler {
@@ -20,7 +20,7 @@ public class HelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ApplicationWorkbenchWindowAdvisor.openWebPage("https://code.google.com/p/gama-platform/wiki/G__Overview", null);
+		GuiUtils.showWebEditor("http://doc.gama-platform.org", null);
 		return null;
 	}
 }

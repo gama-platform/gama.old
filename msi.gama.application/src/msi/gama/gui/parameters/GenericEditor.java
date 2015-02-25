@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GenericEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'GenericEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,15 +12,13 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.types.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 
-public class GenericEditor extends AbstractEditor {
+public class GenericEditor<T> extends ExpressionBasedEditor<T> {
 
-	ExpressionControl control;
 	IType expectedType;
 
 	GenericEditor(final IParameter param) {
@@ -37,34 +35,21 @@ public class GenericEditor extends AbstractEditor {
 		expectedType = param.getType();
 	}
 
-	GenericEditor(final Composite parent, final String title, final Object value,
-		final EditorListener whenModified) {
+	GenericEditor(final Composite parent, final String title, final T value, final EditorListener whenModified) {
 		// Convenience method
 		super(new InputParameter(title, value), whenModified);
-		expectedType = value == null ? Types.NO_TYPE : Types.get(value.getClass());
+		expectedType = GamaType.of(value);
 		this.createComposite(parent);
-	}
-
-	@Override
-	protected Control createCustomParameterControl(final Composite comp) {
-		control = new ExpressionControl(comp, this);
-		return control.getControl();
-
-	}
-
-	@Override
-	protected void displayParameterValue() {
-		control.getControl().setText(StringUtils.toGaml(currentValue));
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return control.getControl();
 	}
 
 	@Override
 	public IType getExpectedType() {
 		return expectedType;
+	}
+
+	@Override
+	protected int[] getToolItems() {
+		return new int[] { REVERT };
 	}
 
 }

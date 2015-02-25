@@ -71,7 +71,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			protected JComponent createSwingComponent() {
-
 				final JComponent frameAwt = (JComponent) getOutput().getSurface();
 				frameAwt.addMouseMotionListener(mlAwt2);
 				return frameAwt;
@@ -99,7 +98,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.setHidden(false);
 				}
-
 			}
 
 			@Override
@@ -129,17 +127,15 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 						previousState = getOutput().getSurface().isPaused();
 						getOutput().getSurface().setPaused(true);
 					}
-					if ( overlay != null && layersOverlay != null ) {
+					if ( overlay != null ) {
 						overlay.hide();
-						layersOverlay.hide();
 					}
 				} else {
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
 						getOutput().getSurface().setPaused(previousState);
 					}
-					if ( overlay != null && layersOverlay != null ) {
+					if ( overlay != null ) {
 						overlay.update();
-						layersOverlay.update();
 					}
 				}
 			}
@@ -159,11 +155,11 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			public void run() {
-
+				// final Rectangle r = surfaceComposite.getClientArea();
 				final Rectangle r = parent.getClientArea();
-				final int x = r.width;
-				final int y = r.height;
-				surfaceComposite.setBounds(r);
+				// final int x = r.width;
+				// final int y = r.height;
+				// surfaceComposite.setBounds(r);
 				// parent.layout();
 
 				java.awt.EventQueue.invokeLater(new Runnable() {
@@ -171,10 +167,10 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					@Override
 					public void run() {
 
-						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
+						// ((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
 						((SwingControl) surfaceComposite).getFrame().validate();
-						getOutput().getSurface().resizeImage(x, y, false);
-						// getOutput().getSurface().setSize(x, y);
+						getOutput().getSurface().resizeImage(r.width, r.height, false);
+						getOutput().getSurface().setSize(r.width, r.height);
 						getOutput().getSurface().updateDisplay();
 
 						GuiUtils.asyncRun(new Runnable() {
@@ -183,6 +179,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 							public void run() {
 								// surfaceComposite.setBounds(r);
 								// GuiUtils.debug("AWTDisplayView.fixSize(). new bounds for composite:" + r);
+								// ((GridData) surfaceComposite.getLayoutData()).exclude = false;
 								if ( overlay != null ) {
 									overlay.relocate();
 									overlay.resize();
@@ -213,6 +210,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	@Override
 	public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
 		final int preferredResult) {
-		return 200;
+		return 400;
 	}
 }

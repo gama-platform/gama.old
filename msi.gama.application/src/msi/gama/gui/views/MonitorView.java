@@ -16,10 +16,13 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.controls.GamaToolbar;
 import msi.gama.outputs.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import msi.gama.util.GAML;
+import msi.gaml.expressions.*;
+import msi.gaml.types.Types;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -29,33 +32,34 @@ import org.eclipse.swt.widgets.*;
  * @author Alexis Drogoul
  */
 
-public class MonitorView extends ExpandableItemsView<MonitorOutput> {
+public class MonitorView extends ExpandableItemsView<MonitorOutput> implements IToolbarDecoratedView.Pausable {
 
 	private static int count = 0;
 
 	public static final String ID = GuiUtils.MONITOR_VIEW_ID;
+	public final static int NEW_MONITOR = 0;
 
 	private final ArrayList<MonitorOutput> outputs = new ArrayList();
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		super.ownCreatePartControl(parent);
+		// super.ownCreatePartControl(parent);
 		displayItems();
 	}
 
-	@Override
-	public void setRefreshRate(final int rate) {
-		if ( rate > 0 ) {
-			setPartName("Monitors");
-		}
-	}
+	// @Override
+	// public void setRefreshRate(final int rate) {
+	// if ( rate > 0 ) {
+	// setPartName("Monitors");
+	// }
+	// }
 
 	/**
 	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { REFRESH, PAUSE, SEP, NEW_MONITOR };
+		return new Integer[] { SEP, NEW_MONITOR };
 	}
 
 	@Override
@@ -68,7 +72,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	@Override
 	public boolean addItem(final MonitorOutput output) {
 		if ( output != null && !outputs.contains(output) ) {
-			createItem(output, output.getValue() == null);
+			createItem(parent, output, output.getValue() == null);
 			return true;
 		}
 		return false;
@@ -96,10 +100,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 			}).getEditor();
 
+		IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope());
+
 		Text c =
 			(Text) EditorFactory.createExpression(compo, "Expression:",
-				output.getValue() == null ? "Enter a new GAML expression..." : output.getExpressionText(),
-				new EditorListener<IExpression>() {
+				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
 
 					@Override
 					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
@@ -107,7 +112,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 						update(output);
 					}
 
-				}, Types.get(IType.NONE)).getEditor();
+				}, Types.NO_TYPE).getEditor();
 
 		c.addSelectionListener(new SelectionListener() {
 
@@ -164,7 +169,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
 		sb.append(o.getViewName()).append(ItemList.SEPARATION_CODE)
-			.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).toGaml() : v.toString());
+			.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
 		if ( o.isPaused() ) {
 			sb.append(" (paused)");
 		}
@@ -217,5 +222,22 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 	@Override
 	public void updateItemValues() {}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar tb) {
+		switch (code) {
+			case NEW_MONITOR:
+				tb.button(IGamaIcons.MENU_ADD_MONITOR.getCode(), "Add new monitor", "Add new monitor",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							createNewMonitor();
+						}
+
+					});
+				break;
+		}
+	}
 
 }

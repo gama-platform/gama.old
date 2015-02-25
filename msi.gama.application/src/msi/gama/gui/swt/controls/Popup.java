@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Popup.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'Popup.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,18 +14,10 @@ package msi.gama.gui.swt.controls;
 import msi.gama.gui.swt.SwtGui;
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TypedListener;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The class Popup.
@@ -78,7 +70,7 @@ public class Popup {
 	private boolean isVisible;
 
 	/*
-	 * 
+	 *
 	 */
 	public Popup(final IPopupProvider provider, final Widget ... controls) {
 		this.provider = provider;
@@ -114,7 +106,7 @@ public class Popup {
 		}
 
 		// We set the background of the popup by asking the provider
-		popupText.setBackground(provider.getPopupBackground());
+		popupText.setBackground(provider.getPopupBackground().color());
 
 		// We fix the max. width to 400
 		final int maxPopupWidth = 400;

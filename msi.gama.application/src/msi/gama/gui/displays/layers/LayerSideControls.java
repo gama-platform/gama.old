@@ -98,14 +98,14 @@ public class LayerSideControls {
 					expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 				}
 				if ( expr != null ) {
-					EditorFactory.createExpression(compo, "Agents:", expr.toGaml(), new EditorListener<IExpression>() {
+					EditorFactory.createExpression(compo, "Agents:", expr, new EditorListener<IExpression>() {
 
 						@Override
 						public void valueModified(final IExpression newValue) throws GamaRuntimeException {
 							((AgentLayerStatement) definition).setAgentsExpr(newValue);
 							updateIfPaused(layer, container);
 						}
-					}, Types.get(IType.LIST));
+					}, Types.LIST);
 				}
 				break;
 			}
@@ -130,7 +130,7 @@ public class LayerSideControls {
 							((TextLayerStatement) definition).setTextExpr(newValue);
 							updateIfPaused(layer, container);
 						}
-					}, Types.get(IType.STRING));
+					}, Types.STRING);
 				EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
 					new EditorListener<Color>() {
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'BooleanEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'BooleanEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -54,6 +54,7 @@ public class BooleanEditor extends AbstractEditor {
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		button = new Button(comp, SWT.CHECK);
+		// button.setLayoutData(this.getParameterGridData());
 		button.addSelectionListener(this);
 		return button;
 	}
@@ -75,7 +76,12 @@ public class BooleanEditor extends AbstractEditor {
 
 	@Override
 	public IType getExpectedType() {
-		return Types.get(IType.BOOL);
+		return Types.BOOL;
+	}
+
+	@Override
+	protected int[] getToolItems() {
+		return new int[] { REVERT };
 	}
 
 }

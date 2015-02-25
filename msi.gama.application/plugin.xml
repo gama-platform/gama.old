@@ -1,6 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            describer="msi.gama.gui.navigator.images.ImageContentTypeDescriber"
+            file-extensions="PNG,png,GIF,gif,JPEG,jpeg,JPG,jpg,BMP,bmp,ICO,ico,TIFF,tiff,TIF,tif,ASC,asc,PGM,pgm"
+            id="msi.gama.gui.images.type"
+            name="Image"
+            priority="high">
+         <property name="msi.gama.image.width"/>
+         <property name="msi.gama.image.height"/>
+         <property name="msi.gama.image.depth"/>
+         <property name="msi.gama.image.type"/>
+      </content-type>
+      <content-type
+            default-charset="UTF-8"
+            file-extensions="CSV,csv,TSV,tsv"
+            id="msi.gama.gui.csv.type"
+            name="CSV"
+            priority="high">
+      </content-type>
+      <content-type
+            file-extensions="shp, SHP"
+            id="msi.gama.gui.shapefile.type"
+            name="Shapefile"
+            priority="high">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            default-charset="UTF-8"
+            file-extensions="gaml"
+            id="msi.gama.gui.gaml.type"
+            name="GAML"
+            priority="high">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="html, HTML, htm, HTM, svg, SVG"
+            id="msi.gama.gui.html.type"
+            name="HTML"
+            priority="high">
+      </content-type>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="msi.gama.gui.navigator.shapefiles.LightweightShapefileSupportDecorator"
+            id="msi.gama.application.shapefile.support.decorator"
+            label="Shapefile Support Decorator"
+            lightweight="true"
+            state="true">
+         <enablement>
+               <objectClass
+                     name="org.eclipse.core.resources.IFile">
+               </objectClass>
+         </enablement>
+      </decorator>
+            <decorator
+                  adaptable="true"
+                  class="msi.gama.gui.navigator.NavigatorBaseLighweightDecorator"
+                  id="msi.gama.application.decorator"
+                  label="Metadata Decorator"
+                  lightweight="true"
+                  location="REPLACE"
+                  state="true">
+               <enablement>
+            <or>
+               <objectClass
+                     name="msi.gama.gui.navigator.WrappedFile">
+               </objectClass>
+               <and>
+                  <objectClass
+                        name="org.eclipse.core.resources.IFile">
+                  </objectClass>
+                  <or>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.gaml.type">
+                  </objectState>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.shapefile.type">
+                  </objectState>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.csv.type">
+                  </objectState>
+                  <objectState
+                        name="contentTypeId"
+                        value="msi.gama.gui.images.type">
+                  </objectState>
+                  </or>
+               </and>
+            </or>
+               </enablement>
+            </decorator>
+   </extension>
+
+
+      <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="msi.gama.gui.images"
+            label="image images jpeg jpg gif png bmp tiff ico asc pgm">
+      </keyword>
+   </extension>
+
+
+      <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="msi.gama.gui.navigator.images.ImagePropertyPage"
+            id="msi.gama.gui.images"
+            name="Image">
+         <enabledWhen>
+            <or>
+               <!-- From files -->
+               <adapt type="org.eclipse.core.resources.IResource">
+                  <instanceof value="org.eclipse.core.resources.IFile"/>
+                  <test
+                        args="isKindOf"
+                        property="org.eclipse.core.resources.contentTypeId"
+                        value="msi.gama.gui.images.type"/>
+               </adapt>
+               <!-- Screenshots will have one of these. Adapt only uses
+                    IAdapterFactories, so we need to do both here
+                 -->
+               <instanceof value="msi.gama.gui.viewers.image.ImageDataEditorInput"/>
+               <adapt type="org.eclipse.swt.graphics.ImageData"/>
+            </or>
+         </enabledWhen>
+         <keywordReference id="msi.gama.gui.images"/>
+      </page>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="msi.gama.gui.viewers.image.ImageViewer"
+            contributorClass="msi.gama.gui.viewers.image.ImageViewerActionBarContributor"
+            default="false"
+            extensions="JPG,jpg,JPEG,jpeg,PNG,png,BMP,bmp,TIFF,tiff,TIF,tif,ICO,ico,ASC,asc,PGM,pgm"
+            icon="icons/file.image2.png"
+            id="msi.gama.gui.images.editor.ImageViewer"
+            name="Image Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.images.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="msi.gama.gui.viewers.csv.MultiPageCSVEditor"
+            default="true"
+            extensions="CSV,csv"
+            icon="icons/file.csv2.png"
+            id="msi.gama.gui.csv.editor.CustomizableCSVEditor"
+            name="CSV Editor">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.csv.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="msi.gama.gui.viewers.html.HtmlViewer"
+            default="false"
+            extensions="html, htm, HTML, HTM, svg, SVG"
+            icon="icons/file.html2.png"
+            id="msi.gama.application.browser"
+            name="HTML Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.html.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="msi.gama.gui.viewers.shapefile.ShapeFileViewer"
+            default="true"
+            extensions="shp"
+            icon="icons/file.shape2.png"
+            id="msi.gama.application.shape.viewer"
+            name="ShapeFile Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.shapefile.type">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+
+
+
+
+
+
+
+
+
+
+
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -11,7 +208,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ConsoleView"
-            icon="icons/view.console.png"
+            icon="icons/view.console2.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="true">
@@ -21,23 +218,23 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.PopulationInspectView"
-            icon="icons/view.browser.png"
+            icon="icons/view.browser2.png"
             id="msi.gama.application.view.TableAgentInspectView"
-            name="Populations Browser">
+            name="Browser">
       </view>
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.AgentInspectView"
-            icon="icons/view.inspector.png"
+            icon="icons/view.inspector2.png"
             id="msi.gama.application.view.AgentInspectView"
-            name="Agent Inspector">
+            name="Inspector">
       </view>
       <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.MonitorView"
-            icon="icons/view.monitors.png"
+            icon="icons/view.monitors2.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -46,7 +243,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.AWTDisplayView"
-            icon="icons/view.display.png"
+            icon="icons/view.display2.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
             restorable="false">
@@ -55,7 +252,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"
-            icon="icons/view.parameters.png"
+            icon="icons/view.parameters2.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="true">
@@ -64,7 +261,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ErrorView"
-            icon="icons/view.errors.png"
+            icon="icons/view.errors2.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="true">
@@ -73,16 +270,16 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.navigator.GamaNavigator"
-            icon="icons/view.navigator.png"
+            icon="icons/view.navigator2.png"
             id="msi.gama.gui.view.GamaNavigator"
-            name="Gama Projects"
+            name="Models"
             restorable="true">
       </view>
       <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="org.eclipse.team.svn.ui.repository.RepositoriesView"
-            icon="icons/view.repositories.gif"
+            icon="icons/view.repositories2.png"
             id="org.eclipse.team.svn.ui.repository.RepositoriesView"
             name="Repositories"
             restorable="true">
@@ -91,18 +288,9 @@
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="icons/view.panel.png"
+            icon="icons/view.panel2.png"
             id="msi.gama.views.userControlView"
             name="User Control"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="true"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.WebDisplayView"
-            icon="icons/view.display.png"
-            id="msi.gama.application.view.WebDisplayView"
-            name="Web Display"
             restorable="true">
       </view>
 
@@ -115,6 +303,10 @@
       <application>
          <run
                class="msi.gama.gui.swt.Application">
+            <parameter
+                  name="preferenceCustomization"
+                  value="plugin_customization.ini">
+            </parameter>
          </run>
       </application>
    </extension>
@@ -123,14 +315,17 @@
       <perspective
             class="msi.gama.gui.swt.perspectives.ModelingPerspective"
             fixed="false"
-            icon="icons/perspective.modeling.png"
+            icon="icons/perspective.modeling2.png"
             id="msi.gama.application.perspectives.ModelingPerspective"
             name="Modeling">
+         <description>
+            The perspective used to edit GAMA models
+         </description>
       </perspective>
       <perspective
             class="msi.gama.gui.swt.perspectives.SimulationPerspective"
             fixed="false"
-            icon="icons/perspective.simulation.png"
+            icon="icons/perspective.simulation2.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
       </perspective>
@@ -181,8 +376,46 @@
 
       <perspectiveExtension
             targetID="msi.gama.application.perspectives.ModelingPerspective">
+         <view
+               closeable="false"
+               id="msi.gama.gui.view.GamaNavigator"
+               minimized="false"
+               moveable="true"
+               ratio="0.25"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
             <newWizardShortcut id="msi.gama.gui.wizards.newProjectWizard">
 </newWizardShortcut>
+         <view
+               closeable="true"
+               id="msi.gama.application.outline"
+               minimized="false"
+               moveable="true"
+               ratio="0.70"
+               relationship="bottom"
+               relative="msi.gama.gui.view.GamaNavigator"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="msi.gama.application.problems"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="msi.gama.application.outline"
+               visible="true">
+         </view>
+         <viewShortcut
+               id="msi.gama.application.outline">
+         </viewShortcut>
+         <viewShortcut
+               id="msi.gama.application.problems">
+         </viewShortcut>
+         <perspectiveShortcut
+               id="msi.gama.application.perspectives.SimulationPerspective">
+         </perspectiveShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="*">
@@ -232,6 +465,12 @@
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation">
          </hiddenToolBarItem>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="msi.gama.application.perspectives.SimulationPerspective">
+         <perspectiveShortcut
+               id="msi.gama.application.perspectives.ModelingPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -248,7 +487,7 @@
             </visibleWhen>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu.run.png"
+                  icon="icons/menu.run4.png"
                   label="Run"
                   style="push">
                <visibleWhen
@@ -260,7 +499,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu.pause.png"
+                  icon="icons/menu.pause4.png"
                   label="Pause"
                   style="push">
                <visibleWhen
@@ -272,7 +511,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu.step.png"
+                  icon="icons/menu.step4.png"
                   label="Step by step"
                   style="push">
             </command>
@@ -282,7 +521,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu.reload.png"
+                  icon="icons/menu.reload4.png"
                   label="Reload "
                   style="pulldown">
             </command>
@@ -292,19 +531,19 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.PauseAndEdit"
-                  icon="icons/view.errors.png"
+                  icon="icons/menu.stop2.png"
                   label="Stop at first error"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.commands.WarningsAsErrors"
-                  icon="icons/menu.warning.png"
+                  icon="icons/menu.warning2.png"
                   label="Treat warnings like errors"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.ShowErrors"
-                  icon="icons/menu.show.png"
+                  icon="icons/menu.show2.png"
                   label="Display errors and warnings"
                   style="toggle">
             </command>
@@ -314,7 +553,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/toolbar.stop.png"
+                  icon="icons/toolbar.stop2.png"
                   label="Force interrupt"
                   style="push"
                   tooltip="Interrupt the experiment and dispose of it. Use with extreme caution.">
@@ -349,14 +588,14 @@
                label="Views">
             <command
                   commandId="msi.gama.application.preferences"
-                  icon="icons/view.preferences.png"
+                  icon="icons/menu.open.preferences2.png"
                   label="Preferences"
                   style="push"
                   tooltip="Open preferences">
             </command>
             <command
                   commandId="msi.gama.application.command.web"
-                  icon="icons/view.www.png"
+                  icon="icons/menu.open.web2.png"
                   label="Welcome page"
                   style="push">
             </command>
@@ -366,7 +605,8 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
-                  icon="icons/view.parameters.png"
+                  icon="icons/menu.open.parameters2.png"
+                  label="Toggle Parameters"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -377,7 +617,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ShowHideConsoleView"
-                  icon="icons/view.console.png"
+                  icon="icons/menu.open.console2.png"
+                  label="Toggle Console"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -388,7 +629,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.AddMonitor"
-                  icon="icons/menu.monitor.png"
+                  icon="icons/menu.monitor2.png"
                   label="Add Monitor"
                   style="push">
                <visibleWhen
@@ -398,44 +639,48 @@
                   </reference>
                </visibleWhen>
             </command>
+            <menu
+                  icon="icons/menu.open.view2.png"
+                  label="Show View">
+               <dynamic
+                     class="msi.gama.gui.swt.commands.ShowViewContributionItem"
+                     id="msi.gama.application.showView">
+               </dynamic>
+            </menu>
             <separator
-                  name="msi.gama.application.separator4"
+                  name="msi.gama.application.window.views"
+                  visible="true">
+            </separator>
+            <menu
+                  icon="icons/menu.open.perspective2.png"
+                  label="Open Perspective">
+               <dynamic
+                     class="msi.gama.gui.swt.commands.OpenPerspectiveContributionItem"
+                     id="msi.gama.application.showView">
+               </dynamic>
+            </menu>
+            <command
+                  commandId="org.eclipse.ui.window.resetPerspective"
+                  icon="icons/menu.reset.perspective2.png"
+                  label="Reset Perspective..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isInModelingPerspective">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="msi.gama.application.window.perspectives"
                   visible="true">
             </separator>
             <command
-                  commandId="msi.gama.application.goto.modeling"
-                  icon="icons/perspective.modeling.png"
-                  label="Modeling Perspective"
+                  commandId="org.eclipse.ui.ToggleCoolbarAction"
+                  icon="icons/menu.toolbar2.png"
+                  label="Toggle Toolbar"
                   style="push"
-                  tooltip="Open modeling perspective">
-               <visibleWhen
-                     checkEnabled="false">
-                  <not>
-                     <reference
-                           definitionId="isInModelingPerspective">
-                     </reference>
-                  </not>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="msi.gama.application.goto.simulation"
-                  icon="icons/perspective.simulation.png"
-                  label="Simulation perspective"
-                  style="push"
-                  tooltip="Open simulation perspective">
-               <visibleWhen
-                     checkEnabled="false">
-                  <not>
-                     <reference
-                           definitionId="isInSimulationPerspective">
-                     </reference>
-                  </not>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.ui.window.resetPerspective"
-                  label="Reset Perspective..."
-                  style="push">
+                  tooltip="Toggle the main toolbar on and off">
             </command>
          </menu>
       </menuContribution>
@@ -445,15 +690,8 @@
                id="msi.gama.application.common"
                label="Common controls">
             <command
-                  commandId="msi.gama.application.preferences"
-                  icon="icons/view.preferences.png"
-                  label="Preferences"
-                  style="push"
-                  tooltip="Open preferences">
-            </command>
-            <command
                   commandId="msi.gama.application.goto.modeling"
-                  icon="icons/perspective.modeling.png"
+                  icon="icons/perspective.modeling2.png"
                   label="Modeling perspective"
                   style="push"
                   tooltip="Open modeling perspective">
@@ -468,7 +706,7 @@
             </command>
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  icon="icons/perspective.simulation.png"
+                  icon="icons/perspective.simulation2.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">
@@ -481,13 +719,27 @@
                   </not>
                </visibleWhen>
             </command>
-            <separator
-                  name="msi.gama.application.separator2"
-                  visible="true">
-            </separator>
+            <control
+                  class="msi.gama.gui.swt.controls.Separator"
+                  id="separator1">
+            </control>
+            <control
+                  class="msi.gama.gui.swt.controls.StatusControlContribution"
+                  id="msi.gama.application.status">
+            </control>
+            <control
+                  class="msi.gama.gui.swt.controls.Separator"
+                  id="separator2">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </control>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu.run.png"
+                  icon="icons/menu.run4.png"
                   label="Run"
                   style="push">
                <visibleWhen
@@ -499,7 +751,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu.pause.png"
+                  icon="icons/menu.pause4.png"
                   label="Pause"
                   style="push">
                <visibleWhen
@@ -511,7 +763,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu.step.png"
+                  icon="icons/menu.step4.png"
                   label="Step"
                   style="push">
                <visibleWhen
@@ -521,6 +773,28 @@
                   </reference>
                </visibleWhen>
             </command>
+            <command
+                  commandId="msi.gama.application.commands.ReloadSimulation"
+                  icon="icons/menu.reload4.png"
+                  label="Reload"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <control
+                  class="msi.gama.gui.swt.controls.Separator"
+                  id="separator4">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </control>
             <control
                   class="msi.gama.gui.swt.controls.SimulationSpeedContributionItem"
                   id="msi.gama.application.speed">
@@ -531,39 +805,47 @@
                   </reference>
                </visibleWhen>
             </control>
-            <command
-                  commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu.reload.png"
-                  label="Reload"
-                  style="push">
+            <control
+                  class="msi.gama.gui.swt.controls.Separator"
+                  id="separator3">
                <visibleWhen
                      checkEnabled="false">
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
                </visibleWhen>
-            </command>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
-            <control
-                  class="msi.gama.gui.swt.controls.StatusControlContribution"
-                  id="msi.gama.application.status">
             </control>
+            <command
+                  commandId="msi.gama.application.commands.Cancel"
+                  icon="icons/toolbar.stop2.png"
+                  label="Force interrupt"
+                  style="push"
+                  tooltip="Interrupt the experiment and dispose of it. Use with extreme caution.">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </command>
          </toolbar>
        </menuContribution>
       <menuContribution
             allPopups="true"
             locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
          <menu
-               icon="icons/navigator/navigator.new.png"
+               icon="icons/navigator/navigator.new2.png"
                id="menu.new"
                label="New...">
             <command
                   commandId="org.eclipse.ui.newWizard"
                   disabledIcon=""
-                  icon="icons/navigator/new.project.png"
+                  icon="icons/navigator/new.project2.png"
                   label="GAMA Project..."
                   style="push">
                <parameter
@@ -573,7 +855,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/new.model.png"
+                  icon="icons/navigator/new.model2.png"
                   label="Model File…"
                   style="push">
                <parameter
@@ -587,20 +869,20 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/navigator.new.png"
+                  icon="icons/navigator/navigator.new2.png"
                   label="Other..."
                   style="push">
             </command>
          </menu>
          <menu
-               icon="icons/navigator/navigator.import.png"
+               icon="icons/navigator/navigator.import2.png"
                id="menu.import"
                label="Import..."
                mnemonic=" ">
             <command
                   commandId="org.eclipse.ui.file.import"
                   hoverIcon=""
-                  icon="icons/navigator/navigator.import.png"
+                  icon="icons/navigator/navigator.import.project2.png"
                   label="GAMA Project…"
                   style="push">
                <parameter
@@ -610,7 +892,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.png"
+                  icon="platform:/plugin/msi.gama.application/icons/navigator/checkout2.png"
                   label="From SVN..."
                   style="push">
                <parameter
@@ -620,7 +902,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.png"
+                  icon="icons/navigator/navigator.import.disk2.png"
                   label="From Disk..."
                   style="push">
                <parameter
@@ -630,7 +912,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.png"
+                  icon="icons/navigator/navigator.import.archive2.png"
                   label="From Archive..."
                   style="push">
                <parameter
@@ -644,22 +926,22 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.png"
+                  icon="icons/navigator/navigator.import2.png"
                   label="Other..."
                   style="push">
             </command>
          </menu>
          <command
                commandId="msi.gama.application.commands.CheckoutProject"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/checkout.png"
-               label="Checkout Project From Repository"
+               icon="platform:/plugin/msi.gama.application/icons/navigator/checkout2.png"
+               label="Download Project"
                style="push">
             <visibleWhen
                   checkEnabled="true">
                <and>
                   <iterate>
                      <adapt
-                           type="msi.gama.gui.navigator.FileBean">
+                           type="msi.gama.gui.navigator.SVNProject">
                      </adapt>
                   </iterate>
                   <count
@@ -670,8 +952,8 @@
          </command>
          <command
                commandId="msi.gama.application.commands.CopyProjectToWorkspace"
-               icon="icons/navigator/navigator.copy.png"
-               label="Copy to Workspace"
+               icon="icons/navigator/navigator.copy2.png"
+               label="Copy to User Models"
                mnemonic="C"
                style="push">
             <visibleWhen
@@ -694,7 +976,7 @@
          </separator>
          <command
                commandId="msi.gama.application.commands.UpdateBuiltInModelsCommand"
-               icon="icons/navigator/navigator.update.png"
+               icon="icons/navigator/navigator.update2.png"
                label="Update Library"
                style="push">
             <visibleWhen
@@ -713,7 +995,7 @@
          </command>
          <command
                commandId="msi.gama.application.commands.ImportProjectFromSVN"
-               icon="icons/navigator/navigator.update.png"
+               icon="icons/navigator/navigator.update2.png"
                label="Update Shared Models"
                style="push">
             <visibleWhen
@@ -736,30 +1018,27 @@
          </separator>
          <command
                commandId="msi.gama.application.commands.OpenFile"
-               icon="icons/navigator/navigator.open.png"
-               label="Open File..."
+               icon="icons/navigator/navigator.open2.png"
+               label="Open External File..."
                mnemonic="O"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ui.navigate.openResource"
-               icon="icons/navigator/navigator.search.png"
-               label="Search for..."
+               icon="icons/navigator/navigator.search2.png"
+               label="Search file name..."
                mnemonic="S"
                style="push">
          </command>
          <command
                commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
-               icon="icons/navigator/navigator.refresh.png"
+               icon="icons/navigator/navigator.refresh2.png"
                label="Refresh"
                style="push">
             <visibleWhen>
                <and>
                   <iterate>
                      <or>
-                        <instanceof
-                              value="msi.gama.gui.navigator.FileBean">
-                        </instanceof>
                         <instanceof
                               value="msi.gama.gui.navigator.UserProjectsFolder">
                         </instanceof>
@@ -792,8 +1071,42 @@
             locationURI="menu:org.eclipse.search.menu?after=dialogGroup">
          <command
                commandId="org.eclipse.xtext.ui.shared.OpenXtextElementCommand"
-               label="Models Elements...">
+               label="Elements in models...">
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="msi.gama.application.submenu.new">
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="icons/navigator/new.project2.png"
+               label="GAMA Project..."
+               style="push">
+            <parameter
+                  name="newWizardId"
+                  value="msi.gama.gui.wizards.newProjectWizard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="icons/navigator/new.model2.png"
+               label="Model File…"
+               style="push">
+            <parameter
+                  name="newWizardId"
+                  value="msi.gama.gui.wizards.NewFileWizard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="icons/navigator/navigator.new2.png"
+               label="Other..."
+               style="push">
+         </command>
+         <separator
+               name="msi.gama.application.separator10"
+               visible="true">
+         </separator>
       </menuContribution>
    </extension>
    <extension
@@ -809,7 +1122,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/folder.icon.png"
+            icon="icons/folder.icon2.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -1022,6 +1335,17 @@
                </reference>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+               <reference
+                     definitionId="isInModelingPerspective">
+               </reference>
+            </or>
+         </enabledWhen>
+         
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.SwitchToModeling"
@@ -1105,12 +1429,6 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+Q">
       </key>
-   </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="msi.gama.gui.swt.ActionWiper">
-      </startup>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -1374,17 +1692,6 @@
             id="msi.gama.application.commands.OpenFile"
             name="Open File">
       </command>
-   </extension>
- <extension
-         point="org.eclipse.core.contenttype.contentTypes">
-      <content-type
-            base-type="org.eclipse.core.runtime.xml"
-            default-charset="UTF-8"
-            file-extensions="xml"
-            id="msi.gama.gui.gamlEditor.gaml"
-            name="GAML Source"
-            priority="high">
-      </content-type>
    </extension> <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -1394,7 +1701,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="icons/navigator/new.model.png"
+            icon="icons/navigator/new.model2.png"
             id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
             project="false">
@@ -1402,7 +1709,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="icons/navigator/new.project.png"
+            icon="icons/navigator/new.project2.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">
@@ -1423,6 +1730,12 @@
                   pattern="org.eclipse.ui.navigator.resources.UndoRedoActionProvider">
             </actionExtension>
             <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.RefactorActions">
+            </actionExtension>
+            <actionExtension
                   pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
             </actionExtension>
             <actionExtension
@@ -1431,16 +1744,10 @@
          </includes>
          <excludes>
             <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
-            </actionExtension>
-            <actionExtension
                   pattern="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
             </actionExtension>
             <actionExtension
                   pattern="org.eclipse.ui.navigator.resources.WorkingSetActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.RefactorActions">
             </actionExtension>
          </excludes>
       </viewerActionBinding>
@@ -1448,19 +1755,8 @@
             viewerId="msi.gama.gui.view.GamaNavigator">
          <includes>
             <contentExtension
+                  isRoot="true"
                   pattern="msi.gama.application.resourceVirtualNavigatorContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceNavigatorContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceProjectExplorerContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceLocalModelsExplorerContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceSharedModelsExplorerContent">
             </contentExtension>
             <contentExtension
                   pattern="org.eclipse.ui.navigator.resourceContent">
@@ -1470,135 +1766,93 @@
             </contentExtension>
             <contentExtension
                   pattern="org.eclipse.ui.navigator.resources.linkHelper">
+            </contentExtension>
+            <contentExtension
+                  pattern="msi.gama.application.shapefile.filter">
             </contentExtension>
          </includes>
       </viewerContentBinding>
       <dragAssistant
             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
             viewerId="msi.gama.gui.view.GamaNavigator">
+
       </dragAssistant>
-      <viewerActionBinding
-            viewerId="msi.gama.gui.view.LibraryNavigator">
-         <includes>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.OpenActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.EditActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.UndoRedoActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.NewActionProvider">
-            </actionExtension>
-         </includes>
-         <excludes>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.WorkingSetActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.RefactorActions">
-            </actionExtension>
-         </excludes>
-      </viewerActionBinding>
-      <viewerContentBinding
-            viewerId="msi.gama.gui.view.LibraryNavigator">
-         <includes>
-            <contentExtension
-                  pattern="msi.gama.application.resourceVirtualNavigatorContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceNavigatorContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceProjectExplorerContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceLocalModelsExplorerContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.resourceSharedModelsExplorerContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resourceContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.filters.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.linkHelper">
-            </contentExtension>
-         </includes>
-      </viewerContentBinding>
    </extension>
       <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            contentProvider="msi.gama.gui.navigator.VirtualContentProvider"
+            appearsBefore="org.eclipse.ui.navigator.resourceContent"
+            contentProvider="msi.gama.gui.navigator.NavigatorContentProvider"
             id="msi.gama.application.resourceVirtualNavigatorContent"
             labelProvider="msi.gama.gui.navigator.NavigatorLabelProvider"
             name="Virtual GamaNavigator Content"
-            priority="normal"
+            priority="highest"
             providesSaveables="false">
          <triggerPoints>
-            <instanceof
-                  value="msi.gama.gui.navigator.NavigatorRoot">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="msi.gama.gui.navigator.NavigatorRoot">
+               </instanceof>
+               <instanceof
+                     value="msi.gama.gui.navigator.VirtualContent">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+               <instanceof
+                     value="msi.gama.gui.navigator.WrappedGamlObject">
+               </instanceof>
+            </or>
          </triggerPoints>
+        <possibleChildren>
+           <or>
+              <instanceof
+                    value="msi.gama.gui.navigator.VirtualContent" />
+              <instanceof
+                     value="org.eclipse.core.resources.IResource" />
+              <instanceof
+                    value="msi.gama.gui.navigator.NavigatorRoot">
+              </instanceof>
+         </or>
+         </possibleChildren>
+        <commonSorter
+              class="msi.gama.gui.navigator.NavigatorSorter"
+              id="msi.gama.navigator.sorter">
+           <parentExpression>
+              <instanceof
+                    value="org.eclipse.core.resources.IFile">
+              </instanceof>
+           </parentExpression>
+        </commonSorter>
+        <commonSorter
+              class="msi.gama.gui.navigator.FileFolderSorter">
+           <parentExpression>
+              <instanceof
+                    value="org.eclipse.core.resources.IContainer">
+              </instanceof>
+           </parentExpression>
+        </commonSorter>
+        <dropAssistant
+              class="msi.gama.gui.navigator.NavigatorDropAssistant"
+              id="msi.gama.application.dropAssistant1">
+           <possibleDropTargets>
+              <or>
+                 <instanceof
+                       value="msi.gama.gui.navigator.VirtualContent">
+                 </instanceof>
+              </or>
+           </possibleDropTargets>
+        </dropAssistant>
       </navigatorContent>
-      <navigatorContent
+      <commonFilter
             activeByDefault="true"
-            contentProvider="msi.gama.gui.navigator.NavigatorContentProvider"
-            id="msi.gama.application.resourceNavigatorContent"
-            labelProvider="msi.gama.gui.navigator.NavigatorLabelProvider"
-            name="Resource Projects Folder Content"
-            priority="normal"
-            providesSaveables="false">
-         <triggerPoints>
-            <instanceof
-                  value="msi.gama.gui.navigator.UserProjectsFolder">
-            </instanceof>
-         </triggerPoints>
-      </navigatorContent>
-      <navigatorContent
-            activeByDefault="true"
-            contentProvider="msi.gama.gui.navigator.NavigatorContentProvider"
-            id="msi.gama.application.resourceLocalModelsExplorerContent"
-            labelProvider="msi.gama.gui.navigator.NavigatorLabelProvider"
-            name="Resource Local Models Content"
-            priority="normal"
-            providesSaveables="false">
-         <triggerPoints>
-            <instanceof
-                  value="msi.gama.gui.navigator.ModelsLibraryFolder">
-            </instanceof>
-         </triggerPoints>
-      </navigatorContent>
-      <navigatorContent
-            activeByDefault="true"
-            contentProvider="msi.gama.gui.navigator.NavigatorContentProvider"
-            id="msi.gama.application.resourceSharedModelsExplorerContent"
-            labelProvider="msi.gama.gui.navigator.NavigatorLabelProvider"
-            name="Resource Shared Models Content"
-            priority="normal"
-            providesSaveables="false">
-         <triggerPoints>
-            <instanceof
-                  value="msi.gama.gui.navigator.VirtualSharedModelsFolder">
-            </instanceof>
-         </triggerPoints>
-      </navigatorContent>
+            class="msi.gama.gui.navigator.NavigatorFilter"
+            id="msi.gama.application.shapefile.filter"
+            name="Filters out shapefile support files"
+            visibleInUI="true">
+      </commonFilter>
+
    </extension>
       <extension
             point="gama.display">
@@ -1630,21 +1884,6 @@
          </actionSet>
       </extension>
       <extension
-            point="org.eclipse.ui.decorators">
-         <decorator
-               class="msi.gama.gui.navigator.GamaDecorator"
-               id="msi.gama.application.decorator"
-               label="GAMA Decorator"
-               lightweight="true"
-               state="true">
-            <enablement>
-               <objectClass
-                     name="org.eclipse.core.resources.IResource">
-               </objectClass>
-            </enablement>
-         </decorator>
-      </extension>
-      <extension
             id="msi.gama.builtin.model"
             name="Built-In Model"
             point="org.eclipse.core.resources.natures">
@@ -1660,15 +1899,63 @@
                class="msi.gama.gui.svn.SVNKitConnectorFactory">
          </svnconnector>
       </extension>
-      <extension
-            point="org.eclipse.ui.editors">
-         <editor
-               class="msi.gama.gui.views.BrowserEditor"
-               default="false"
-               extensions="html, htm"
-               icon="icons/view.www.png"
-               id="msi.gama.application.browser"
-               name="GAMA">
-         </editor>
-      </extension>
+         <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.edit.copy"
+            icon="icons/menu.copy2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.cut"
+            icon="icons/menu.cut2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.delete"
+            icon="icons/menu.delete2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.paste"
+            icon="icons/menu.paste2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.print"
+            icon="icons/menu.print2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.undo"
+            icon="icons/menu.undo2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.edit.redo"
+            icon="icons/menu.redo2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.save"
+            icon="icons/menu.save2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.saveAll"
+            icon="icons/menu.saveall2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.saveAs"
+            icon="icons/menu.saveas2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.refresh"
+            icon="icons/navigator/navigator.refresh2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.export"
+            icon="icons/menu.export2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.import"
+            icon="icons/menu.import2.png">
+      </image>
+      <image
+            commandId="org.eclipse.ui.navigate.collapseAll"
+            icon="icons/navigator/navigator.collapse2.png">
+      </image>
+   </extension>
 </plugin>

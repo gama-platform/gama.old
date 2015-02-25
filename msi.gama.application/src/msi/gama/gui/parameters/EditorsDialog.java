@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'EditorsDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'EditorsDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,7 @@
 package msi.gama.gui.parameters;
 
 import java.util.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import org.eclipse.jface.dialogs.*;
@@ -55,7 +55,7 @@ public class EditorsDialog extends Dialog {
 		GridLayout layout = (GridLayout) composite.getLayout();
 		layout.numColumns = 2;
 		Label text = new Label(composite, SWT.None);
-		text.setBackground(SwtGui.getOkColor());
+		text.setBackground(IGamaColors.OK.inactive());
 		text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		text.setText(title);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);

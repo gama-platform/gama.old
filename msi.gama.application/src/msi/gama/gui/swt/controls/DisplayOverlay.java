@@ -13,7 +13,7 @@ package msi.gama.gui.swt.controls;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import org.eclipse.swt.SWT;
@@ -34,8 +34,8 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 	Label coord, zoom, left, center, right;
 	Canvas scalebar;
 
-	public DisplayOverlay(final LayeredDisplayView view, final IOverlayProvider provider) {
-		super(view, provider != null);
+	public DisplayOverlay(final LayeredDisplayView view, final Composite c, final IOverlayProvider provider) {
+		super(view, c, provider != null);
 		if ( provider != null ) {
 			provider.setTarget(new ThreadedOverlayUpdater(this));
 		}
@@ -173,9 +173,8 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 
 	@Override
 	protected Point getLocation() {
-		Composite surfaceComposite = getView().getComponent();
-		Rectangle r = surfaceComposite.getClientArea();
-		Point p = surfaceComposite.toDisplay(r.x, r.y);
+		Rectangle r = referenceComposite.getClientArea();
+		Point p = referenceComposite.toDisplay(r.x, r.y);
 		int x = p.x;
 		int y = p.y + r.height - (createExtraInfo ? 56 : 32);
 		return new Point(x, y);
@@ -183,7 +182,7 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 
 	@Override
 	protected Point getSize() {
-		Point s = getView().getComponent().getSize();
+		Point s = referenceComposite.getSize();
 		return new Point(s.x, -1);
 	}
 
@@ -234,19 +233,19 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		if ( infos[0] != null ) {
 			left.setText(infos[0]);
 			if ( colors != null ) {
-				setForeground(left, SwtGui.getColor(colors.get(0)));
+				setForeground(left, GamaColors.get(colors.get(0)).color());
 			}
 		}
 		if ( infos[1] != null ) {
 			center.setText(infos[1]);
 			if ( colors != null ) {
-				setForeground(center, SwtGui.getColor(colors.get(1)));
+				setForeground(center, GamaColors.get(colors.get(1)).color());
 			}
 		}
 		if ( infos[2] != null ) {
 			right.setText(infos[2]);
 			if ( colors != null ) {
-				setForeground(right, SwtGui.getColor(colors.get(2)));
+				setForeground(right, GamaColors.get(colors.get(2)).color());
 			}
 		}
 

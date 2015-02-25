@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ParameterExpandItem.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ParameterExpandItem.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,19 +12,10 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ExpandBar;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -54,21 +45,20 @@ public class ParameterExpandItem extends Item {
 	boolean expanded;
 	int x, y, width, height;
 
-	private static int imageHeight = 10, imageWidth = 10;
+	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused;
-	private static final int TEXT_INSET = 1;
+	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
-	private static final int BORDER = 2;
-	static final int CHEVRON_SIZE = 16;
+	private static final int BORDER = 4;
+	static final int CHEVRON_SIZE = 24;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value describing its
 	 * behavior and appearance.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
-	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
-	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
-	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that
+	 * is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable to the class. Style bits
+	 * are also inherited from superclasses.
 	 * </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -95,10 +85,9 @@ public class ParameterExpandItem extends Item {
 	 * behavior and appearance, and the index at which to place it in the items maintained by its
 	 * parent.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
-	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
-	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
-	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that
+	 * is, using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists the style constants that are applicable to the class. Style bits
+	 * are also inherited from superclasses.
 	 * </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -108,8 +97,7 @@ public class ParameterExpandItem extends Item {
 	 * 
 	 * @exception IllegalArgumentException <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent
-	 *                (inclusive)</li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent (inclusive)</li>
 	 *                </ul>
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
@@ -146,13 +134,15 @@ public class ParameterExpandItem extends Item {
 	void drawItem(final GC gc, final boolean drawFocus) {
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
-		Display display = getDisplay();
-		gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.fillRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
-		gc.drawRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
+		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
+		gc.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
+
+		// gc.drawRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
 		int drawX = x;
-		int imageY = y + 1 + (headerHeight - imageHeight) / 2;
+		int imageY = y - 1 + (headerHeight - imageHeight) / 2;
 		if ( getImage() != null ) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
@@ -160,19 +150,19 @@ public class ParameterExpandItem extends Item {
 		}
 		int endX = x + width;
 		if ( parent.isClosable ) {
-			endX -= ParameterExpandItem.TEXT_INSET + imageWidth;
-			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY + 2);
+			endX -= 2 * TEXT_INSET + imageWidth;
+			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY);
 		}
 		if ( parent.isPausable ) {
 			Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
-			endX -= ParameterExpandItem.SEPARATION + imageWidth;
-			gc.drawImage(image, endX, imageY + 2);
+			endX -= 2 * TEXT_INSET + imageWidth;
+			gc.drawImage(image, endX, imageY);
 		}
 		if ( getText().length() > 0 ) {
 			String title, other = null;
 			int i = getText().indexOf(ItemList.SEPARATION_CODE);
 			if ( i != -1 ) {
-				title = getText().substring(0, i);
+				title = getText().substring(0, i) + ": ";
 				other = getText().substring(i + 1);
 			} else {
 				title = getText();
@@ -180,7 +170,7 @@ public class ParameterExpandItem extends Item {
 			gc.setFont(SwtGui.getExpandfont());
 			drawX += ParameterExpandItem.SEPARATION;
 			Point size = gc.stringExtent(title);
-			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
+			gc.setForeground(IGamaColors.NEUTRAL.color());
 			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			// gc.setFont(SwtGui.getUnitFont());
@@ -190,18 +180,18 @@ public class ParameterExpandItem extends Item {
 				int l = other.indexOf(ItemList.WARNING_CODE);
 				if ( j != -1 ) {
 					other = other.substring(j + 1);
-					gc.setForeground(SwtGui.getErrorColor());
+					gc.setForeground(IGamaColors.ERROR.color());
 				} else if ( k != -1 ) {
 					other = other.substring(k + 1);
-					gc.setForeground(SwtGui.getOkColor());
+					gc.setForeground(IGamaColors.OK.color());
 				} else if ( l != -1 ) {
 					other = other.substring(l + 1);
-					gc.setForeground(SwtGui.getWarningColor());
+					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					gc.setForeground(IGamaColors.BLACK.color());
 				}
-				gc.setFont(SwtGui.getUnitFont());
-				drawX += size.x + SEPARATION;
+				// gc.setFont(SwtGui.getParameterEditorsFont());
+				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
 				gc.setClipping(drawX, y, endX - drawX, headerHeight);
 				gc.drawString(other, drawX, y + (headerHeight - size.y) / 2, true);
@@ -245,8 +235,7 @@ public class ParameterExpandItem extends Item {
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		if ( imageHeight > headerHeight ) {
-			parent.redraw(x + ParameterExpandItem.TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight,
-				false);
+			parent.redraw(x + TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight, false);
 		}
 		parent.redraw(x, y, width, headerHeight + height, false);
 	}
@@ -274,7 +263,9 @@ public class ParameterExpandItem extends Item {
 				control.setLocation(x + BORDER, y + headerHeight);
 			}
 			if ( size ) {
-				control.setSize(Math.max(0, width - 2 * BORDER), Math.max(0, height - BORDER));
+				control.setSize(control.computeSize(width - 2 * BORDER, height - BORDER));
+				((Composite) control).layout(true);
+				// control.setSize(Math.max(0, width - 2 * BORDER), Math.max(0, height - BORDER));
 			}
 		}
 	}
@@ -309,6 +300,7 @@ public class ParameterExpandItem extends Item {
 			int headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 				Math.max(0, height - BORDER));
+			control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
 	}
 
@@ -382,11 +374,11 @@ public class ParameterExpandItem extends Item {
 	}
 
 	public boolean closeRequested(final int x2, final int y2) {
-		return clickIn(x2, y2, x + width - ParameterExpandItem.TEXT_INSET - imageWidth);
+		return clickIn(x2, y2, x + width - 2 * TEXT_INSET - imageWidth);
 	}
 
 	public boolean pauseRequested(final int x2, final int y2) {
-		return clickIn(x2, y2, x + width - 2 * ParameterExpandItem.TEXT_INSET - 2 * imageWidth);
+		return clickIn(x2, y2, x + width - 4 * TEXT_INSET - 2 * imageWidth);
 	}
 
 }

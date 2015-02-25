@@ -20,82 +20,47 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class AgentEditor extends AbstractEditor {
+public class AgentEditor extends ExpressionBasedEditor {
 
-	private Button agentChooser;
 	Label agentDisplayer;
-	Button agentInspector;
 	String species;
 
-	AgentEditor(final IParameter param) {
-		this(null, param);
-	}
+	// AgentEditor(final IParameter param) {
+	// this(null, param);
+	// }
 
-	AgentEditor(final IAgent agent, final IParameter param) {
-		this(agent, param, null);
-	}
+	// AgentEditor(final IAgent agent, final IParameter param) {
+	// this(agent, param, null);
+	// }
 
 	AgentEditor(final IAgent agent, final IParameter param, final EditorListener l) {
 		super(agent, param, l);
 		species = param.getType().toString();
 	}
 
-	AgentEditor(final Composite parent, final String title, final Object value,
-		final EditorListener<java.util.List> whenModified) {
-		// Convenience method
-		super(new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
-	}
+	//
+	// AgentEditor(final Composite parent, final String title, final Object value,
+	// final EditorListener<java.util.List> whenModified) {
+	// // Convenience method
+	// super(new InputParameter(title, value), whenModified);
+	// this.createComposite(parent);
+	// }
+
+	// @Override
+	// public Control createCustomParameterControl(final Composite compo) {
+	// currentValue = getOriginalValue();
+	// agentDisplayer = new Label(compo, SWT.NONE);
+	// return agentDisplayer;
+	// }
 
 	@Override
-	public Control createCustomParameterControl(final Composite compo) {
-		currentValue = getOriginalValue();
-		Composite comp = new Composite(compo, SWT.None);
-		comp.setLayoutData(getParameterGridData());
-		final GridLayout layout = new GridLayout(3, false);
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
-		comp.setLayout(layout);
-		agentDisplayer = new Label(comp, SWT.NONE);
-
-		agentInspector = new Button(comp, SWT.FLAT | SWT.PUSH);
-		agentInspector.setAlignment(SWT.CENTER);
-		agentInspector.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if ( currentValue instanceof IAgent ) {
-					IAgent a = (IAgent) currentValue;
-					if ( !a.dead() ) {
-						GuiUtils.setSelectedAgent(a);
-					}
-				}
-			}
-		});
-		agentInspector.setImage(IGamaIcons.MENU_INSPECT.image());
-		agentInspector.setText("Inspect");
-
-		agentChooser = new Button(comp, SWT.FLAT | SWT.PUSH);
-		agentChooser.setAlignment(SWT.CENTER);
-		agentChooser.addSelectionListener(this);
-		agentChooser.setImage(IGamaIcons.BUTTON_EDIT.image());
-		agentChooser.setText("Change...");
-
-		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		agentChooser.setLayoutData(d);
-		return agentDisplayer;
-	}
-
-	@Override
-	public void widgetSelected(final SelectionEvent event) {
-		Menu old = agentChooser.getMenu();
-		agentChooser.setMenu(null);
+	public void applyChange() {
+		Menu old = items[CHANGE].getParent().getShell().getMenu();
+		items[CHANGE].getParent().getShell().setMenu(null);
 		if ( old != null ) {
 			old.dispose();
 		}
@@ -114,28 +79,51 @@ public class AgentEditor extends AbstractEditor {
 
 		}, IGamaIcons.MENU_AGENT.image(), "Choose");
 
-		Menu dropMenu = new Menu(agentChooser);
+		Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
 		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), null, action);
-		agentChooser.setMenu(dropMenu);
+		Rectangle rect = items[CHANGE].getBounds();
+		Point pt = items[CHANGE].getParent().toDisplay(new Point(rect.x, rect.y));
+		dropMenu.setLocation(pt.x, pt.y + rect.height);
 		dropMenu.setVisible(true);
 
 	}
 
-	@Override
-	protected void displayParameterValue() {
-		internalModification = true;
-		agentDisplayer.setText(currentValue instanceof IAgent ? ((IAgent) currentValue).getName() : "No agent");
-		internalModification = false;
-	}
+	// @Override
+	// protected void displayParameterValue() {
+	// internalModification = true;
+	// agentDisplayer.setText(currentValue instanceof IAgent ? ((IAgent) currentValue).getName() : "No agent");
+	// internalModification = false;
+	// }
 
-	@Override
-	public Control getEditorControl() {
-		return agentDisplayer;
-	}
+	// @Override
+	// public Control getEditorControl() {
+	// return agentDisplayer;
+	// }
 
 	@Override
 	public IType getExpectedType() {
 		return GAML.getModelContext().getTypeNamed(species);
+	}
+
+	/**
+	 * Method getToolItems()
+	 * @see msi.gama.gui.parameters.AbstractEditor#getToolItems()
+	 */
+	@Override
+	protected int[] getToolItems() {
+		return new int[] { INSPECT, CHANGE, REVERT };
+	}
+
+	@Override
+	protected void applyInspect() {
+
+		if ( currentValue instanceof IAgent ) {
+			IAgent a = (IAgent) currentValue;
+			if ( !a.dead() ) {
+				GuiUtils.setSelectedAgent(a);
+			}
+		}
+
 	}
 
 }

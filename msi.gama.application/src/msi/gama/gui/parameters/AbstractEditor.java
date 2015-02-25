@@ -11,46 +11,110 @@
  **********************************************************************************************/
 package msi.gama.gui.parameters;
 
+import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractEditor implements SelectionListener, ModifyListener, Comparable<AbstractEditor>, IParameterEditor {
+public abstract class AbstractEditor<T> implements SelectionListener, ModifyListener, Comparable<AbstractEditor>, IParameterEditor<T> {
 
-	public static final Color normal_bg = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-	public static final Color changed_bg = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+	private class ItemSelectionListener extends SelectionAdapter {
+
+		private final int code;
+
+		ItemSelectionListener(final int code) {
+			this.code = code;
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			switch (code) {
+				case REVERT:
+					modifyAndDisplayValue(applyRevert());
+					break;
+				case PLUS:
+					modifyAndDisplayValue(applyPlus());
+					break;
+				case MINUS:
+					modifyAndDisplayValue(applyMinus());
+					break;
+				case EDIT:
+					applyEdit();
+					break;
+				case INSPECT:
+					applyInspect();
+					break;
+				case BROWSE:
+					applyBrowse();
+					break;
+				case CHANGE:
+					if ( e.detail != SWT.ARROW ) { return; }
+					applyChange();
+					break;
+				case DEFINE:
+					applyDefine();
+					break;
+			}
+		}
+
+	}
+
+	public static final Color NORMAL_BACKGROUND = IGamaColors.WHITE.color();
+	public static final Color HOVERED_BACKGROUND = IGamaColors.WHITE.darker();
+	public static final Color CHANGED_BACKGROUND = IGamaColors.TOOLTIP.color();
 	private static int ORDER;
 	private final Integer order = ORDER++;
 	private final IAgent agent;
 	private final String name;
 	protected Label titleLabel = null;
-	private Label unitLabel = null;
 	protected final IParameter param;
 	boolean acceptNull = true;
-	private Object originalValue = null;
-	protected Object currentValue = null;
-	private GamaList possibleValues = null;
-	private final Boolean isCombo, isEditable, hasUnit;
+	private T originalValue = null;
+	protected T currentValue = null;
+	private List<T> possibleValues = null;
+	private final Boolean isCombo, isEditable;
 	protected Number minValue;
 	protected Number maxValue;
 	private Combo combo;
 	private CLabel fixedValue;
 	protected volatile boolean internalModification;
 	private final EditorListener listener;
-	private boolean acceptPopup = true;
+	// private final boolean acceptPopup = true;
+	private Composite composite;
+	protected ToolItem editor;
+	protected final ToolItem[] items = new ToolItem[8];
+	boolean isSubParameter;
+	protected ToolBar toolbar;
+	protected Set<Control> controlsThatShowHideToolbars = new HashSet();
+	private final MouseTrackListener hideShowToolbarListener = new MouseTrackListener() {
+
+		@Override
+		public void mouseEnter(final MouseEvent e) {
+			showToolbar();
+		}
+
+		@Override
+		public void mouseExit(final MouseEvent e) {
+			hideToolbar();
+		}
+
+		@Override
+		public void mouseHover(final MouseEvent e) {}
+
+	};
 
 	public AbstractEditor(final IParameter variable) {
 		this(null, variable, null);
@@ -69,12 +133,22 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		agent = a;
 		isCombo = param.getAmongValue() != null;
 		isEditable = param.isEditable();
-		hasUnit = param.getUnitLabel() != null;
 		name = param.getTitle();
 		minValue = param.getMinValue();
 		maxValue = param.getMaxValue();
 		listener = l;
 	}
+
+	public boolean isSubParameter() {
+		return isSubParameter;
+	}
+
+	@Override
+	public void isSubParameter(final boolean b) {
+		isSubParameter = b;
+	}
+
+	protected abstract int[] getToolItems();
 
 	@Override
 	public void setActive(final Boolean active) {
@@ -82,8 +156,15 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			titleLabel.setForeground(active ? SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK) : SwtGui.getDisplay()
 				.getSystemColor(SWT.COLOR_GRAY));
 		}
-		if ( unitLabel != null ) {
-			unitLabel.setEnabled(active);
+		if ( !active ) {
+			for ( ToolItem t : items ) {
+				if ( t == null ) {
+					continue;
+				}
+				t.setEnabled(false);
+			}
+		} else {
+			checkButtons();
 		}
 		this.getEditor().setEnabled(active);
 	}
@@ -127,11 +208,32 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected abstract Control getEditorControl();
 
-	public void createComposite(final Composite parent) {
-		// TODO Fixer automatiquement le layout du parent. Ou alors utiliser un nouveau composite.
+	protected Control createEditorControl(final Composite composite) {
+		Control paramControl;
+		try {
+			paramControl =
+				!isEditable ? createLabelParameterControl(composite) : isCombo ? createComboParameterControl(composite)
+					: createCustomParameterControl(composite);
+		} catch (final GamaRuntimeException e1) {
+			e1.addContext("The editor for " + name + " could not be created");
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
+			return null;
+		}
 
+		GridData data = getParameterGridData();
+		paramControl.setLayoutData(data);
+		// paramControl.setBackground(IGamaColors.PARAMETERS_EDITORS_BACKGROUND.color());
+		addToolbarHiders(paramControl);
+		return paramControl;
+	}
+
+	public void createComposite(final Composite parent) {
 		internalModification = true;
-		titleLabel = SwtGui.createLeftLabel(parent, name);
+		if ( !isSubParameter ) {
+			titleLabel = SwtGui.createLeftLabel(parent, name);
+		} else {
+			Label l = SwtGui.createLeftLabel(parent, " ");
+		}
 		try {
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {
@@ -139,49 +241,175 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 		}
 		currentValue = getOriginalValue();
-		final Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		final GridLayout layout = new GridLayout(hasUnit ? 2 : 1, false);
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
-		comp.setLayout(layout);
-		Control paramControl;
-		try {
-			paramControl =
-				!isEditable ? createLabelParameterControl(comp) : isCombo ? createComboParameterControl(comp)
-					: createCustomParameterControl(comp);
-		} catch (final GamaRuntimeException e1) {
-			e1.addContext("The editor for " + name + " could not be created");
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			return;
-		}
+		composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.minimumWidth = 150;
+		composite.setLayoutData(data);
 
-		if ( !isCombo ) {
-			paramControl.setLayoutData(getParameterGridData());
+		final GridLayout layout = new GridLayout(isSubParameter ? 3 : 2, false);
+		// layout.verticalSpacing = 8;
+		// layout.marginHeight = 5;
+		layout.marginWidth = 5;
+
+		composite.setLayout(layout);
+		if ( isSubParameter ) {
+			titleLabel = SwtGui.createLeftLabel(composite, name);
+			titleLabel.setFont(SwtGui.getNavigFolderFont());
+			GridData d = getParameterGridData();
+			d.grabExcessHorizontalSpace = false;
+			titleLabel.setLayoutData(d);
 		}
-		paramControl.setBackground(normal_bg);
+		createEditorControl(composite);
+		toolbar = createToolbar();
+
 		if ( isEditable && !isCombo ) {
-			displayParameterValue();
-		}
-
-		if ( hasUnit ) {
-			unitLabel = new Label(comp, SWT.READ_ONLY);
-			unitLabel.setFont(SwtGui.getUnitFont());
-			unitLabel.setLayoutData(getParameterGridData());
-			unitLabel.setText(param.getUnitLabel());
-			unitLabel.pack();
+			displayParameterValueAndCheckButtons();
 		}
 		internalModification = false;
+		composite.layout();
+		addToolbarHiders(composite, toolbar, titleLabel);
+		// toolbar.addDisposeListener(new DisposeListener() {
+		//
+		// @Override
+		// public void widgetDisposed(final DisposeEvent e) {
+		// System.out.println("Toolbar disposed !");
+		// }
+		// });
+		for ( final Control c : controlsThatShowHideToolbars ) {
+			c.addMouseTrackListener(hideShowToolbarListener);
+			c.addDisposeListener(new DisposeListener() {
+
+				@Override
+				public void widgetDisposed(final DisposeEvent e) {
+					c.removeMouseTrackListener(hideShowToolbarListener);
+					controlsThatShowHideToolbars.remove(c);
+				}
+			});
+		}
+		hideToolbar();
 	}
 
-	private Object getParameterValue() throws GamaRuntimeException {
-		return GAMA.run(new InScope() {
+	protected void addToolbarHiders(final Control ... c) {
+		controlsThatShowHideToolbars.addAll(Arrays.asList(c));
+	}
+
+	protected void hideToolbar() {
+		GridData d = (GridData) toolbar.getLayoutData();
+		if ( d.exclude ) { return; }
+		d.exclude = true;
+		toolbar.setVisible(false);
+		composite.setBackground(NORMAL_BACKGROUND);
+		composite.layout();
+	}
+
+	protected void showToolbar() {
+		GridData d = (GridData) toolbar.getLayoutData();
+		if ( !d.exclude ) { return; }
+		d.exclude = false;
+		toolbar.setVisible(true);
+		composite.setBackground(HOVERED_BACKGROUND);
+		composite.layout();
+	}
+
+	private String computeUnitLabel() {
+		String s = typeToDisplay();
+		if ( minValue != null ) {
+			String min = StringUtils.toGaml(minValue, false);
+			if ( maxValue != null ) {
+				s += " [" + min + ".." + StringUtils.toGaml(maxValue, false) + "]";
+			} else {
+				s += ">= " + min;
+			}
+		} else {
+			if ( maxValue != null ) {
+				s += "<=" + StringUtils.toGaml(maxValue, false);
+			}
+		}
+		String u = param.getUnitLabel();
+		if ( u != null ) {
+			s += " " + u;
+		}
+		return s;
+	}
+
+	protected String typeToDisplay() {
+		return param.getType().serialize(false);
+	}
+
+	private ToolBar createToolbar() {
+		ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
+		GridData d = this.getParameterGridData();
+		d.grabExcessHorizontalSpace = false;
+		t.setLayoutData(d);
+		String unitText = computeUnitLabel();
+		if ( !unitText.isEmpty() ) {
+			ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
+			unitItem.setText(unitText);
+			unitItem.setEnabled(false);
+		}
+		int[] codes = this.getToolItems();
+		for ( int i : codes ) {
+			ToolItem item = null;
+			switch (i) {
+				case REVERT:
+					item = createItem(t, "Revert to original value", GamaIcons.create("small.revert").image());
+					break;
+				case PLUS:
+					item = createPlusItem(t);
+					break;
+				case MINUS:
+					item = createItem(t, "Decrement the parameter", IGamaIcons.SMALL_MINUS.image());
+					break;
+				case EDIT:
+					item = createItem(t, "Edit the parameter", GamaIcons.create("small.edit").image());
+					break;
+				case INSPECT:
+					item = createItem(t, "Inspect the agent", GamaIcons.create("small.inspect").image());
+					break;
+				case BROWSE:
+					item = createItem(t, "Browse the list of agents", GamaIcons.create("small.browse").image());
+					break;
+				case CHANGE:
+					item = createItem(t, "Choose another agent", GamaIcons.create("small.change").image());
+					break;
+				case DEFINE:
+					item = createItem(t, "Set the parameter to undefined", GamaIcons.create("small.undefine").image());
+			}
+			if ( item != null ) {
+				items[i] = item;
+				item.addSelectionListener(new ItemSelectionListener(i));
+
+			}
+		}
+		t.layout();
+		t.pack();
+		return t;
+	}
+
+	protected ToolItem createPlusItem(final ToolBar t) {
+		ToolItem item = createItem(t, "Increment the parameter", IGamaIcons.SMALL_PLUS.image());
+		return item;
+	}
+
+	/**
+	 * @param string
+	 * @param image
+	 */
+	private ToolItem createItem(final ToolBar t, final String string, final Image image) {
+		ToolItem i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
+		i.setToolTipText(string);
+		i.setImage(image);
+		return i;
+	}
+
+	private T getParameterValue() throws GamaRuntimeException {
+		return GAMA.run(new InScope<T>() {
 
 			@Override
-			public Object run(final IScope scope) {
-				if ( agent == null ) { return param.value(scope); }
-				return scope.getAgentVarValue(getAgent(), param.getName());
+			public T run(final IScope scope) {
+				if ( agent == null ) { return (T) param.value(scope); }
+				return (T) scope.getAgentVarValue(getAgent(), param.getName());
 			}
 		});
 
@@ -210,9 +438,10 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	protected GridData getParameterGridData() {
-		final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		d.minimumWidth = 50;
-		d.widthHint = 100; // SWT.DEFAULT
+		final GridData d = new GridData(SWT.FILL, SWT.TOP, true, false);
+
+		d.minimumWidth = 70;
+		// d.widthHint = 100; // SWT.DEFAULT
 		return d;
 	}
 
@@ -220,19 +449,20 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected Control createLabelParameterControl(final Composite composite) {
 		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils
-			.toGaml(getOriginalValue()));
+		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils.toGaml(
+			getOriginalValue(), false));
+		// addToolbarHiders(fixedValue);
 		return fixedValue;
 	}
 
 	protected Control createComboParameterControl(final Composite composite) {
-		possibleValues = new GamaList(param.getAmongValue());
+		possibleValues = new ArrayList(param.getAmongValue());
 		final String[] valuesAsString = new String[possibleValues.size()];
 		for ( int i = 0; i < possibleValues.size(); i++ ) {
 			// if ( param.isLabel() ) {
 			// valuesAsString[i] = possibleValues.get(i).toString();
 			// } else {
-			valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i));
+			valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i), false);
 			// }
 		}
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -255,6 +485,12 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected abstract void displayParameterValue();
 
+	protected void checkButtons() {
+		ToolItem revert = items[REVERT];
+		if ( revert == null || revert.isDisposed() ) { return; }
+		revert.setEnabled(currentValue == null ? originalValue != null : !currentValue.equals(originalValue));
+	}
+
 	@Override
 	public boolean isValueModified() {
 		return isValueDifferent(getOriginalValue());
@@ -274,23 +510,19 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return param;
 	}
 
-	protected String getTooltipText() {
-		String s = "name: " + param.getName() + "\n" + "type: " + getExpectedType().toString();
-		if ( minValue != null || maxValue != null ) {
-			s +=
-				"\nrange: [" + (minValue != null ? StringUtils.toGaml(minValue) : "?") + ".." +
-					(maxValue != null ? StringUtils.toGaml(maxValue) : "?") + "]";
-		}
-		if ( isValueModified() ) {
-			s += "\ninit: " + StringUtils.toGaml(getOriginalValue());
-		}
-		return s;
-	}
+	// protected String getTooltipText() {
+	// String s = param.getName() + " (of type " + getExpectedType().serialize(true);
+	// if ( isValueModified() ) {
+	// s += ", with an initial value of " + StringUtils.toGaml(getOriginalValue(), false);
+	// }
+	// return s + ")";
+	// }
 
-	protected void modifyValue(final Object val) throws GamaRuntimeException {
+	protected void modifyValue(final T val) throws GamaRuntimeException {
 		currentValue = val;
-		if ( titleLabel != null ) {
-			titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
+		if ( titleLabel != null && !titleLabel.isDisposed() ) {
+			titleLabel
+				.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
 		if ( !internalModification ) {
 			setParameterValue(val);
@@ -300,10 +532,10 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	@Override
 	public void updateValue() {
 		try {
-			final Object newVal = getParameterValue();
+			final T newVal = getParameterValue();
 			if ( !isValueDifferent(newVal) ) { return; }
 			internalModification = true;
-			if ( titleLabel != null ) {
+			if ( titleLabel != null && !titleLabel.isDisposed() ) {
 				modifyAndDisplayValue(newVal);
 			}
 			internalModification = false;
@@ -314,15 +546,28 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		}
 	}
 
-	protected final void modifyAndDisplayValue(final Object val) {
+	private void displayParameterValueAndCheckButtons() {
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				displayParameterValue();
+				checkButtons();
+			}
+		});
+
+	}
+
+	protected final void modifyAndDisplayValue(final T val) {
 		modifyValue(val);
 		if ( !isEditable ) {
-			fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val));
+			fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
 		} else if ( isCombo ) {
 			combo.select(possibleValues.indexOf(val));
 		} else {
-			displayParameterValue();
+			displayParameterValueAndCheckButtons();
 		}
+		composite.update();
 	}
 
 	protected IAgent getAgent() {
@@ -346,24 +591,51 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent e) {}
 
-	public Label getUnitLabel() {
-		return unitLabel;
-	}
-
-	protected Object getOriginalValue() {
+	protected T getOriginalValue() {
 		return originalValue;
 	}
 
-	protected void setOriginalValue(final Object originalValue) {
+	protected void setOriginalValue(final T originalValue) {
 		this.originalValue = originalValue;
 	}
 
-	public boolean acceptPopup() {
-		return acceptPopup;
+	// public boolean acceptPopup() {
+	// return acceptPopup;
+	// }
+	//
+	// public void acceptPopup(final boolean accept) {
+	// acceptPopup = accept;
+	// }
+
+	protected T applyPlus() {
+		return null;
 	}
 
-	public void acceptPopup(final boolean accept) {
-		acceptPopup = accept;
+	protected T applyMinus() {
+		return null;
+	}
+
+	protected T applyRevert() {
+		return getOriginalValue();
+	}
+
+	protected void applyBrowse() {}
+
+	protected void applyInspect() {}
+
+	protected void applyEdit() {}
+
+	protected void applyChange() {}
+
+	protected void applyDefine() {}
+
+	public Composite getComposite() {
+		return composite;
+	}
+
+	@Override
+	public T getCurrentValue() {
+		return currentValue;
 	}
 
 }

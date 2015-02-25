@@ -14,13 +14,14 @@ package msi.gama.gui.swt.controls;
 import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.*;
 import msi.gama.kernel.simulation.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
@@ -29,7 +30,7 @@ import org.jfree.util.StringUtils;
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
 	private Composite compo;
-	Label label;
+	FlatButton label;
 	private Popup popup;
 	int state;
 	volatile String mainTaskName;
@@ -50,18 +51,17 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		compo = new Composite(parent, SWT.NONE);
+		compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 2;
 		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = 300;
-		label = new Label(compo, SWT.LEFT);
+		data.heightHint = 24;
+		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running");
 		label.setLayoutData(data);
-		label.setBackground(SwtGui.getNeutralColor());
-		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		label.setText("No simulation running");
+
 		label.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -91,14 +91,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		SimulationAgent simulation = GAMA.getSimulation();
 		if ( simulation == null ) { return "No simulation running"; }
 		SimulationClock clock = simulation.getClock();
-		sb.append("Cycles elapsed: ").append(Strings.TAB).append(clock.getCycle()).append(nl);
+		sb.append("Cycles elapsed: ").append(Strings.TAB).append(clock.getCycle()).append(" | ");
 		sb.append("Simulated time: ").append(Strings.TAB).append(Strings.asDate(clock.getTime(), null)).append(nl);
-		sb.append("Cycle duration: ").append(Strings.TAB).append(Strings.TAB).append(clock.getDuration()).append("ms")
-			.append(nl);
-		sb.append("Average duration: ").append(Strings.TAB).append((int) clock.getAverageDuration()).append("ms")
-			.append(nl);
-		sb.append("Total duration: ").append(Strings.TAB).append(Strings.TAB).append(clock.getTotalDuration())
-			.append("ms");
+		sb.append("Durations | cycle: ").append(Strings.TAB).append(Strings.TAB).append(clock.getDuration())
+			.append("ms").append(" | ");
+		sb.append("average: ").append(Strings.TAB).append((int) clock.getAverageDuration()).append("ms").append(" | ");
+		sb.append("total: ").append(Strings.TAB).append(Strings.TAB).append(clock.getTotalDuration()).append("ms");
 		return sb.toString();
 	}
 
@@ -106,9 +104,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
 	@Override
-	public Color getPopupBackground() {
-		return state == IGui.ERROR ? SwtGui.getErrorColor() : state == IGui.WAIT ? SwtGui.getWarningColor()
-			: state == IGui.NEUTRAL ? SwtGui.getNeutralColor() : SwtGui.getOkColor();
+	public GamaUIColor getPopupBackground() {
+		return state == IGui.ERROR ? IGamaColors.ERROR : state == IGui.WAIT ? IGamaColors.WARNING
+			: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
 
 	@Override
@@ -125,7 +123,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 		@Override
 		public void run() {
-			label.setBackground(getPopupBackground());
+			label.setColor(getPopupBackground());
 			if ( inSubTask ) {
 				label.setText(subTaskName +
 					(subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
@@ -153,13 +151,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				subTaskCompletion = ((SubTaskMessage) m).getCompletion();
 			} else if ( beginOrEnd ) {
 				// begin task
-				System.out.println("Begin Sub Task =" + m.getText());
 				subTaskName = m.getText();
 				inSubTask = true;
 				subTaskCompletion = null;
 			} else {
 				// end task
-				System.out.println("End Sub Task =" + m.getText());
 				inSubTask = false;
 				subTaskCompletion = null;
 			}

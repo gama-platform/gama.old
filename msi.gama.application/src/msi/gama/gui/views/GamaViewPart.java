@@ -12,8 +12,10 @@
 package msi.gama.gui.views;
 
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.actions.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -28,10 +30,26 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * @author drogoul
  */
-public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaViewActions {
+public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
+
+	/**
+	 * A composite that ensures an access to the toolbars, etc. from within any control of the view.
+	 * Class GamaComposite.
+	 * 
+	 * @author drogoul
+	 * @since 8 déc. 2014
+	 * 
+	 */
 
 	protected IDisplayOutput output = null;
 	protected Composite parent;
+	protected GamaToolbar leftToolbar, rightToolbar;
+
+	@Override
+	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+		leftToolbar = left;
+		rightToolbar = right;
+	}
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -55,7 +73,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 			// hqnghi in case of multi-controller
 			if ( out == null ) {
-				for ( FrontEndController fec : GAMA.getControllers().getValues() ) {
+				for ( FrontEndController fec : GAMA.getControllers().values() ) {
 					manager = fec.getExperiment().getSimulationOutputs();
 					if ( manager != null ) {
 						out = (IDisplayOutput) manager.getOutput(id);
@@ -98,27 +116,15 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	/**
 	 * @return
 	 */
+	@Override
 	public abstract Integer[] getToolbarActionsId();
 
 	@Override
-	public final void createPartControl(final Composite parent) {
-		this.parent = parent;
+	public/* final */void createPartControl(final Composite composite) {
+		this.parent = GamaToolbarFactory.createToolbars(this, composite);
 		ownCreatePartControl(parent);
 		activateContext();
 	}
-
-	// /**
-	// * @param state one of the IWorkbenchPage STATE_* values: STATE_MAXIMIZED,
-	// * STATE_MINIMIZED, STATE_RESTORED
-	// */
-	// public void setViewState(final int state) {
-	// IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	// int currentState = page.getPartState(page.getReference(this));
-	// if ( currentState != state ) {
-	// page.activate(this);
-	// page.setPartState(page.getReference(this), state);
-	// }
-	// }
 
 	public abstract void ownCreatePartControl(Composite parent);
 
@@ -127,13 +133,15 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
 
-	@Override
-	public void setRefreshRate(final int rate) {
-		if ( rate > 0 ) {
-			setPartName(getOutput().getName() + " [refresh every " + String.valueOf(rate) +
-				(rate == 1 ? " cycle]" : " cycles]"));
-		}
-	}
+	public void pauseChanged() {}
+
+	//
+	// public void setRefreshRate(final int rate) {
+	// if ( rate > 0 ) {
+	// setPartName(getOutput().getName() + " [refresh every " + String.valueOf(rate) +
+	// (rate == 1 ? " cycle]" : " cycles]"));
+	// }
+	// }
 
 	@Override
 	public void update(final IDisplayOutput output) {}
@@ -145,14 +153,12 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 	@Override
 	public void setOutput(final IDisplayOutput out) {
-		// if ( output != null ) {
 		resetButtonStates();
-		// }
 		output = out;
 	}
 
 	private void resetButtonStates() {
-		GamaToolbarFactory.resetToolbar(this);
+		GamaToolbarFactory.resetToolbar(this, rightToolbar);
 	}
 
 	@Override
@@ -169,13 +175,31 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 				ps.removePartListener(SwtGui.getPartListener());
 			}
 		}
-
+		super.dispose();
 	}
 
 	/**
-	 * Only for views that accept "pause". Does nothing by default
+	 * Needs to be redefined for views that use the left toolbar (so that they maintain their previous state)
+	 * Method stopDisplayingTooltips()
+	 * @see msi.gama.gui.swt.controls.ITooltipDisplayer#stopDisplayingTooltips()
 	 */
 	@Override
-	public void pauseChanged() {}
+	public void stopDisplayingTooltips() {
+		leftToolbar.wipe();
+	}
+
+	@Override
+	public void displayTooltip(final String text, final GamaUIColor color) {
+		if ( leftToolbar == null || leftToolbar.isDisposed() ) { return; }
+		final int width = 2 * (leftToolbar.getParent().getBounds().width - rightToolbar.getSize().x) / 3;
+		leftToolbar.wipe();
+		leftToolbar.tooltip(text, color, width);
+		leftToolbar.refresh();
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar tb) {
+		// Do nothing by default. Subclasses may override to create specific buttons
+	}
 
 }

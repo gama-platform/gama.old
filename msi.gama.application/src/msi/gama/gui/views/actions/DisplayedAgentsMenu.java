@@ -16,27 +16,27 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
+import msi.gama.gui.swt.controls.GamaToolbar;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.GAMA;
-import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
 /**
- * The class FocusItem.
+ * The class DisplayedAgentsMenu.
  * 
  * @author drogoul
  * @since 19 janv. 2012
  * 
  */
-public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
+public class DisplayedAgentsMenu extends GamaToolItem {
 
-	// private final Collection<IAgent> filteredList;
+	private Menu menu;
 
 	public static Map<Class, Image> layer_images = new THashMap();
 
@@ -50,57 +50,43 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
 	}
 
-	public DisplayedAgentsMenu(final GamaViewPart view) {
-		super(view);
+	@Override
+	public void dispose() {
+		if ( menu != null && !menu.isDisposed() ) {
+			menu.dispose();
+		}
+		super.dispose();
 	}
 
-	/**
-	 * @see msi.gama.gui.views.actions.GamaViewItem#createItem()
-	 */
 	@Override
-	protected IContributionItem createItem() {
-		final IAction action =
-			new GamaAction("Browse displayed agents", "Browse through all displayed agents", IAction.AS_DROP_DOWN_MENU,
-				IGamaIcons.MENU_POPULATION.descriptor()) {
+	public ToolItem createItem(final GamaToolbar toolbar, final IToolbarDecoratedView view) {
+		return toolbar.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
+			"Browse through all displayed agents", new SelectionAdapter() {
 
 				@Override
-				public void run() {}
-			};
-		action.setMenuCreator(this);
-		return new ActionContributionItem(action);
+				public void widgetSelected(final SelectionEvent trigger) {
+					boolean asMenu = trigger.detail == SWT.ARROW;
+					final ToolItem target = (ToolItem) trigger.widget;
+					final ToolBar toolBar = target.getParent();
+					if ( menu != null ) {
+						menu.dispose();
+					}
+					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
+					fill(view, menu, -1, false, true, null, null);
+					Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+					menu.setLocation(point.x, point.y);
+					menu.setVisible(true);
+
+				}
+			});
 	}
 
-	// @Override
-	// public boolean isDynamic() {
-	// return true;
-	// }
-
-	/**
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
-	@Override
-	public Menu getMenu(final Control parent) {
+	public Menu getMenu(final IToolbarDecoratedView view, final Control parent, final boolean withWorld,
+		final boolean byLayer, final Collection<IAgent> filteredList, final GamaPoint userLocation) {
 		// Dispose ?
 		Menu menu = new Menu(parent);
-		fill(menu, -1);
+		fill(view, menu, -1, withWorld, byLayer, filteredList, userLocation);
 		return menu;
-	}
-
-	public Menu getMenu(final Control parent, final boolean withWorld, final boolean byLayer,
-		final Collection<IAgent> filteredList, final GamaPoint userLocation) {
-		// Dispose ?
-		Menu menu = new Menu(parent);
-		fill(menu, -1, withWorld, byLayer, filteredList, userLocation);
-		return menu;
-	}
-
-	/**
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
-	@Override
-	public Menu getMenu(final Menu parent) {
-		fill(parent, -1);
-		return parent;
 	}
 
 	private static class FocusOnSelection extends SelectionAdapter {
@@ -139,49 +125,10 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	}
 
-	// private class FollowSelection extends SelectionAdapter {
-	//
-	// IDisplaySurface surface;
-	//
-	// FollowSelection(final IDisplaySurface surface) {
-	// this.surface = surface;
-	// }
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final MenuItem mi = (MenuItem) e.widget;
-	// final IAgent a = (IAgent) mi.getData("agent");
-	// if ( a != null && !a.dead() ) {
-	// new Thread(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// if ( !a.dead() ) {
-	// surface.followAgent(a);
-	// }
-	//
-	// }
-	// }).start();
-	//
-	// }
-	// }
-	//
-	// }
-
-	@Override
-	public boolean isDynamic() {
-		return true;
-	}
-
-	@Override
-	public void fill(final Menu menu, final int index) {
-		fill(menu, index, false, true, null, null);
-	}
-
-	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
-		final Collection<IAgent> filteredList, final GamaPoint userLocation) {
-		final LayeredDisplayView view = (LayeredDisplayView) this.view;
-		final IDisplaySurface displaySurface = view.getDisplaySurface();
+	public void fill(final IToolbarDecoratedView view, final Menu menu, final int index, final boolean withWorld,
+		final boolean byLayer, final Collection<IAgent> filteredList, final GamaPoint userLocation) {
+		final LayeredDisplayView view2 = (LayeredDisplayView) view;
+		final IDisplaySurface displaySurface = view2.getDisplaySurface();
 		// AgentsMenu.MenuAction follow =
 		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
@@ -200,29 +147,18 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
 			final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
 			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
-			if ( view.getOutput().isOpenGL() ) {
-				// FIXME: 18/03/2014 a.g the follow item has been temporaly remove from opengl because not yet
+			if ( view2.getOutput().isOpenGL() ) {
+				// FIXME: 18/03/2014 a.g the follow item has been temporaly removed from opengl because not yet
 				// implemented but should be available in 1.7
 				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus /* , follow */);
 			} else {
 				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
 			}
 		} else {
-			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
-				// boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
-				// boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
-				// if ( !isAgentLayer ) {
-				// continue;
-				// }
+
+			for ( final ILayer layer : view2.getDisplayManager().getItems() ) {
 				Collection<IAgent> pop = layer.getAgentsForMenu(displaySurface.getDisplayScope());
-				// if ( isSpeciesLayer ) {
-				// pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
-				// } else {
-				// pop = ((AgentLayer) layer).getAgentsForMenu(displaySurface.getDisplayScope());
-				// pop = new ArrayList(pop);
-				// }
 				pop = new ArrayList(pop);
-				// pop = new ArrayList(pop);
 				if ( pop.isEmpty() ) {
 					continue;
 				}
@@ -231,7 +167,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 				AgentsMenu.MenuAction focus =
 					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 
-				if ( view.getOutput().isOpenGL() ) {
+				if ( view2.getOutput().isOpenGL() ) {
 					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
 				} else {
 					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'UserControlDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'UserControlDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -20,7 +20,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -158,7 +157,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 							c.executeOn(scope);
 						}
 
-					});
+					}, false);
 				}
 
 				Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -229,10 +228,10 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		compo.setLayout(layout);
 		IAgent agent = scope.getAgentScope();
 		AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
-		editors.add(new GamaList<IParameter>(agent.getSpecies().getVars()), agent);
+		editors.add(new ArrayList<IParameter>(agent.getSpecies().getVars()), agent);
 		Map<String, IParameterEditor> parameters = editors.getCategories().get(agent);
 		if ( parameters != null ) {
-			List<AbstractEditor> list = new GamaList(parameters.values());
+			List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);
 			for ( AbstractEditor gpParam : list ) {
 				gpParam.createComposite(compo);

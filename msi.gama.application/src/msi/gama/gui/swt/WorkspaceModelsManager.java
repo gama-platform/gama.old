@@ -17,8 +17,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.navigator.FileBean;
-import msi.gama.gui.navigator.commands.RefreshHandler;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -35,6 +33,16 @@ import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
  * 
  */
 public class WorkspaceModelsManager {
+
+	private final static FileFilter noHiddenFiles = new FileFilter() {
+
+		@Override
+		public boolean accept(final File arg0) {
+			File f = arg0;
+			String s = f.getName();
+			return !s.startsWith(".");
+		}
+	};
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 	public static OpenDocumentEventProcessor processor;
@@ -156,16 +164,16 @@ public class WorkspaceModelsManager {
 		if ( !modelFile.exists() ) { return null; }
 
 		// We try to find a folder containing the model file which can be considered as a project
-		FileBean projectFileBean = new FileBean(modelFile);
+		File projectFileBean = new File(modelFile.getPath());
 		File dotFile = null;
 		while (projectFileBean != null && dotFile == null) {
-			projectFileBean = projectFileBean.getParent();
+			projectFileBean = projectFileBean.getParentFile();
 			if ( projectFileBean != null ) {
 				/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
-				FileBean[] children = projectFileBean.getChildrenWithHiddenFiles();
+				File[] children = projectFileBean.listFiles();
 				for ( int i = 0; i < children.length; i++ ) {
-					if ( children[i].toString().equals(".project") ) {
-						dotFile = new File(children[i].getPath());
+					if ( children[i].getName().equals(".project") ) {
+						dotFile = children[i];
 						break;
 					}
 				}
@@ -182,7 +190,7 @@ public class WorkspaceModelsManager {
 
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IPath location = new Path(dotFile.getAbsolutePath());
-		final String pathToProject = projectFileBean.toString();
+		final String pathToProject = projectFileBean.getName();
 
 		try {
 			// We load the project description.
@@ -228,12 +236,12 @@ public class WorkspaceModelsManager {
 				};
 				operation.run(new NullProgressMonitor() {
 
-					@Override
-					public void done() {
-						RefreshHandler.run();
-						// GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
-						// " has been imported");
-					}
+					// @Override
+					// public void done() {
+					// RefreshHandler.run();
+					// // GuiUtils.tell("Project " + workspace.getRoot().getProject(pathToProject).getName() +
+					// // " has been imported");
+					// }
 
 				});
 			}
@@ -284,7 +292,7 @@ public class WorkspaceModelsManager {
 				}
 			}
 			iFile.createLink(location, IResource.NONE, null);
-			RefreshHandler.run();
+			// RefreshHandler.run();
 			return iFile;
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -329,14 +337,14 @@ public class WorkspaceModelsManager {
 			return;
 		}
 		File modelsRep = new File(urlRep.getPath());
-		FileBean gFile = new FileBean(modelsRep);
-		FileBean[] projects = gFile.getChildren();
-		for ( final FileBean project : projects ) {
+		// FileBean gFile = new FileBean(modelsRep);
+		File[] projects = modelsRep.listFiles(noHiddenFiles);
+		for ( final File project : projects ) {
 			File dotFile = null;
 			/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
-			FileBean[] children = project.getChildrenWithHiddenFiles();
+			File[] children = project.listFiles();
 			for ( int i = 0; i < children.length; i++ ) {
-				if ( children[i].toString().equals(".project") ) {
+				if ( children[i].getName().equals(".project") ) {
 					dotFile = new File(children[i].getPath());
 					break;
 				}
@@ -361,14 +369,14 @@ public class WorkspaceModelsManager {
 				@Override
 				protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
 					InterruptedException {
-					IProject proj = workspace.getRoot().getProject(project.toString());
+					IProject proj = workspace.getRoot().getProject(project.getName());
 					if ( !proj.exists() ) {
 						proj.create(description, monitor);
 					} else {
 						// project exists but is not accessible
 						if ( !proj.isAccessible() ) {
 							proj.delete(true, null);
-							proj = workspace.getRoot().getProject(project.toString());
+							proj = workspace.getRoot().getProject(project.getName());
 							proj.create(description, monitor);
 						}
 					}
@@ -446,10 +454,9 @@ public class WorkspaceModelsManager {
 		}
 	}
 
-	static private IProjectDescription setProjectDescription(final FileBean project) {
-		final IProjectDescription description =
-			ResourcesPlugin.getWorkspace().newProjectDescription(project.toString());
-		final IPath location = new Path(project.getPath());
+	static private IProjectDescription setProjectDescription(final File project) {
+		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
+		final IPath location = new Path(project.getAbsolutePath());
 		description.setLocation(location);
 		return description;
 	}

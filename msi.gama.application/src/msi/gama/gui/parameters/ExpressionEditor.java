@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ExpressionEditor.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'ExpressionEditor.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -16,29 +16,34 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.eclipse.swt.widgets.*;
 
-public class ExpressionEditor extends GenericEditor {
+public class ExpressionEditor extends GenericEditor<IExpression> {
 
 	private String expressionText;
 
-	ExpressionEditor(final Composite parent, final String title, final Object value,
+	ExpressionEditor(final Composite parent, final String title, final IExpression value,
 		final EditorListener<IExpression> whenModified, final IType expectedType) {
 		super(parent, title, value, whenModified);
 		this.expectedType = expectedType;
 	}
 
 	@Override
-	protected Control createCustomParameterControl(final Composite comp) {
-		if ( currentValue instanceof String ) {
-			expressionText = (String) currentValue;
-		} else if ( currentValue instanceof IExpression ) {
-			expressionText = ((IExpression) currentValue).toGaml();
-		}
+	public Control createCustomParameterControl(final Composite comp) {
+		// if ( currentValue instanceof String ) {
+		// expressionText = (String) currentValue;
+		// } else if ( currentValue instanceof IExpression ) {
+		expressionText = currentValue.serialize(true);
+		// }
 		return super.createCustomParameterControl(comp);
 	}
 
 	@Override
 	protected void displayParameterValue() {
-		control.getControl().setText(expressionText);
+		getEditorControl().setText(expressionText);
+	}
+
+	@Override
+	protected String typeToDisplay() {
+		return "expression";
 	}
 
 	@Override
@@ -48,22 +53,8 @@ public class ExpressionEditor extends GenericEditor {
 
 	public void setEditorTextNoPopup(final String s) {
 		internalModification = true;
-		control.getControl().setText(s);
+		getEditorControl().setText(s);
 		internalModification = false;
 	}
-
-	//
-	// @Override
-	// public void modifyText(final ModifyEvent e) {
-	// super.modifyText(e);
-	// }
-
-	/**
-	 * @return
-	 *         //
-	 */
-	// public String getText() {
-	// return expressionText;
-	// }
 
 }

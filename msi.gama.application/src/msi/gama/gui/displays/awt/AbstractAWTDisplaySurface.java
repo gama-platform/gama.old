@@ -31,7 +31,6 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Files;
 
@@ -507,10 +506,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	@Override
-	public IList<IAgent> selectAgent(final int x, final int y) {
+	public Collection<IAgent> selectAgent(final int x, final int y) {
 		int xc = x - getOriginX();
 		int yc = y - getOriginY();
-		IList<IAgent> result = new GamaList<IAgent>();
+		List<IAgent> result = new ArrayList();
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
 		for ( ILayer layer : layers ) {
 			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);

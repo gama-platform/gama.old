@@ -12,19 +12,48 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.commands.*;
+import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
+import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 
 public class ColorEditor extends AbstractEditor {
 
-	private Button edit;
+	IColorRunnable runnable = new IColorRunnable() {
+
+		@Override
+		public void run(final int r, final int g, final int b) {
+			modifyAndDisplayValue(new GamaColor(r, g, b, 255));
+		}
+	};
+
+	SelectionListener listener = new SelectionAdapter() {
+
+		@Override
+		public void widgetDefaultSelected(final SelectionEvent e) {
+			widgetSelected(e);
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			MenuItem i = (MenuItem) e.widget;
+			String color = i.getText().replace("#", "");
+			GamaColor c = GamaColor.colors.get(color);
+			if ( c == null ) { return; }
+			modifyAndDisplayValue(c);
+		}
+
+	};
+
+	private FlatButton edit;
 
 	ColorEditor(final IParameter param) {
 		super(param);
@@ -46,56 +75,23 @@ public class ColorEditor extends AbstractEditor {
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
-		Shell shell = new Shell(Display.getDefault(), SWT.MODELESS);
-		final ColorDialog dlg = new ColorDialog(shell, SWT.MODELESS);
-		dlg.setRGB(edit.getBackground().getRGB());
-		dlg.setText("Choose a Color");
-		final RGB rgb = dlg.open();
-		if ( rgb != null ) {
-			modifyAndDisplayValue(new GamaColor(rgb.red, rgb.green, rgb.blue, 255));
-		}
+		GamaColorMenu.getInstance().open(edit, event, listener, runnable);
 	}
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		compo.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		edit = new Button(compo, SWT.PUSH);
-		GridData d = new GridData(SWT.LEFT, SWT.FILL, false, true);
-		d.widthHint = 48;
-		edit.setLayoutData(d);
-		edit.setAlignment(SWT.LEFT);
+		edit = FlatButton.menu(compo, IGamaColors.WHITE, "").light().small();
 		edit.addSelectionListener(this);
-		edit.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(final PaintEvent e) {
-				displayParameterValue();
-			}
-
-		});
-
+		displayParameterValue();
 		return edit;
 	}
 
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		java.awt.Color c = currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue;
-		Color color = new Color(Display.getDefault(), c.getRed(), c.getGreen(), c.getBlue());
-		int height = edit.getSize().y;
-		int width = edit.getSize().x;
-		if ( height <= 0 || width <= 0 ) { return; }
-		GC gc = new GC(edit);
-		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		gc.fillRoundRectangle(6, 6, width - 16, height - 16, 5, 5);
-		gc.setBackground(color);
-		gc.fillRoundRectangle(7, 7, width - 18, height - 18, 5, 5);
-		gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-		gc.drawRoundRectangle(7, 7, width - 18, height - 18, 5, 5);
-		gc.dispose();
-		// WARNING AD 19/04/14: this (commented) line seems to be the cause of Issue 923 (hangs on MacOSX).
-		// edit.setText("                " + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + " ");
-		color.dispose();
+		GamaUIColor color = GamaColors.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
+		edit.setText(color.toString()).setColor(color);
+		// color.dispose();
 		internalModification = false;
 	}
 
@@ -106,7 +102,20 @@ public class ColorEditor extends AbstractEditor {
 
 	@Override
 	public IType getExpectedType() {
-		return Types.get(IType.COLOR);
+		return Types.COLOR;
+	}
+
+	@Override
+	protected void applyEdit() {
+		GamaColorMenu.getInstance();
+		java.awt.Color color = (java.awt.Color) currentValue;
+		RGB rgb = new RGB(color.getRed(), color.getGreen(), color.getBlue());
+		GamaColorMenu.openView(runnable, rgb);
+	}
+
+	@Override
+	protected int[] getToolItems() {
+		return new int[] { EDIT, REVERT };
 	}
 
 }

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'NewProjectWizard.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'NewProjectWizard.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -13,7 +13,6 @@ package msi.gama.gui.wizards.projects;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import msi.gama.gui.navigator.commands.RefreshHandler;
 import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -137,7 +136,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			throw new CoreException(status);
 		} finally {
 			monitor.done();
-			RefreshHandler.run();
+			// RefreshHandler.run();
 		}
 	}
 

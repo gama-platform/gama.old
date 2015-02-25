@@ -21,25 +21,26 @@ public class ModelingPerspective implements IPerspectiveFactory {
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
 
-		layout.setFixed(false);
-		String editorId = layout.getEditorArea();
+		// layout.setFixed(false);
+		// String editorId = layout.getEditorArea();
 		layout.setEditorAreaVisible(true);
-		String navId = "msi.gama.gui.view.GamaNavigator";
+		// String navId = "msi.gama.gui.view.GamaNavigator";
 		// Positioning the navigator
 		// IPlaceholderFolderLayout navFolder =
 		// layout.createPlaceholderFolder("NavFolder", IPageLayout.LEFT, 0.25f, editorId);
 		// navFolder.addPlaceholder(navId);
-		layout.addView(navId, IPageLayout.LEFT, 0.3f, editorId);
+		// layout.addView(navId, IPageLayout.LEFT, 0.3f, editorId);
 		// IViewLayout v = layout.getViewLayout(navId);
 		// v.setMoveable(false);
 		// And the outline below it
 		// IPlaceholderFolderLayout outlineFolder =
 		// layout.createPlaceholderFolder("OutlineFolder", IPageLayout.BOTTOM, 0.5f, navId);
-		// outlineFolder.addPlaceholder(IPageLayout.ID_OUTLINE);
-		layout.addView(IPageLayout.ID_OUTLINE, IPageLayout.BOTTOM, 0.5f, navId);
+		// outlineFolder.addPlaceholder("msi.gama.application.outline");
+		// outlineFolder.addPlaceholder("msi.gama.application.problems");
+		// layout.addView("msi.gama.application.outline", IPageLayout.BOTTOM, 0.5f, navId);
 		// Positioning the problem view below
 		// IPlaceholderFolderLayout problemFolder =
-		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, 0.66f, editorId);
+		// layout.addView("msi.gama.application.problems", IPageLayout.BOTTOM, 0.66f, editorId);
 		// problemFolder.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
 		// layout.addView
 		// And finally the browser

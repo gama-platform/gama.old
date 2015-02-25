@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'CheckoutProjectHandler.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'CheckoutProjectHandler.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -48,8 +48,8 @@ public class CheckoutProjectHandler extends AbstractHandler {
 				monitor.beginTask("Please wait...", IProgressMonitor.UNKNOWN);
 
 				/* Get the file */
-				FileBean fb = (FileBean) ((IStructuredSelection) currentSelection).getFirstElement();
-				File f = new File(fb.getPath());
+				SVNProject fb = (SVNProject) ((IStructuredSelection) currentSelection).getFirstElement();
+				File f = fb.getFile();
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader(f));
 					try {
@@ -74,12 +74,11 @@ public class CheckoutProjectHandler extends AbstractHandler {
 						 * parcours des fils pour trouver le dot file et creer le lien vers le
 						 * projet
 						 */
-						FileBean filebean = new FileBean(file);
 						File dotFile = null;
-						FileBean[] children = filebean.getChildrenWithHiddenFiles();
+						File[] children = file.listFiles();
 						for ( int i = 0; i < children.length; i++ ) {
-							if ( children[i].toString().equals(".project") ) {
-								dotFile = new File(children[i].getPath());
+							if ( children[i].getName().equals(".project") ) {
+								dotFile = children[i];
 							}
 						}
 						// TODO use existing methods instead of hard coded
