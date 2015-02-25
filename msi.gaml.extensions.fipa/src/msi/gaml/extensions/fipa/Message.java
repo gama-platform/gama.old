@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the 
+ * 
+ * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,6 +12,7 @@
 package msi.gaml.extensions.fipa;
 
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -20,7 +21,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * The Class MessageProxy.
@@ -28,10 +29,8 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@vars({ @var(name = Message.SENDER, type = IType.AGENT),
-	@var(name = Message.RECEIVERS, type = IType.LIST),
-	@var(name = Message.PERFORMATIVE, type = IType.STRING),
-	@var(name = Message.CONTENT, type = IType.LIST),
+@vars({ @var(name = Message.SENDER, type = IType.AGENT), @var(name = Message.RECEIVERS, type = IType.LIST),
+	@var(name = Message.PERFORMATIVE, type = IType.STRING), @var(name = Message.CONTENT, type = IType.LIST),
 	@var(name = Message.UNREAD, type = IType.BOOL, init = IKeyword.TRUE),
 	@var(name = Message.CONVERSATION, type = ConversationType.CONV_ID),
 	@var(name = Message.PROTOCOL, type = IType.STRING, depends_on = Message.CONVERSATION),
@@ -89,8 +88,8 @@ public class Message implements IValue {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public Message(final IAgent sender, final IList<IAgent> receivers, final IList content,
-		final int performative, final Conversation conversation) throws GamaRuntimeException {
+	public Message(final IAgent sender, final IList<IAgent> receivers, final IList content, final int performative,
+		final Conversation conversation) throws GamaRuntimeException {
 		data = new MessageData();
 		setSender(sender);
 		setReceivers(receivers);
@@ -100,10 +99,10 @@ public class Message implements IValue {
 	}
 
 	@Override
-	public Message clone(){
+	public Message clone() {
 		return new Message(getSender(), getReceivers(), getContent(), getPerformative(), getConversation());
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -280,8 +279,8 @@ public class Message implements IValue {
 	}
 
 	@Override
-	public String toGaml() {
-		return data.getContent().toString();
+	public String serialize(final boolean includingBuiltIn) {
+		return StringUtils.toGaml(data.getContent(), includingBuiltIn);
 	}
 
 	//
@@ -291,16 +290,24 @@ public class Message implements IValue {
 	// }
 
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() +
-			"; performative: " + data.getPerformativeName() + "; content: " + data.getContent() +
-			"; content" + "]";
+		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() + "; performative: " +
+			data.getPerformativeName() + "; content: " + data.getContent() + "; content" + "]";
 	}
 
 	@Override
-	public IValue copy(IScope scope) throws GamaRuntimeException {
+	public IValue copy(final IScope scope) throws GamaRuntimeException {
 		return this;
+	}
+
+	/**
+	 * Method getType()
+	 * @see msi.gama.common.interfaces.ITyped#getType()
+	 */
+	@Override
+	public IType getType() {
+		return Types.get(MessageType.MESSAGE_ID);
 	}
 
 }

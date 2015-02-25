@@ -11,8 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
-import java.util.List;
-import msi.gama.util.GamaList;
+import java.util.*;
 import msi.gaml.operators.Strings;
 
 /**
@@ -33,13 +32,13 @@ public class ProtocolNode {
 	private boolean waitForResponse;
 
 	/** Reference to following nodes. */
-	private List<ProtocolNode> followingNodes;
+	private final List<ProtocolNode> followingNodes;
 
 	/**
 	 * Instantiates a new protocol node.
 	 */
 	public ProtocolNode() {
-		followingNodes = new GamaList<ProtocolNode>();
+		followingNodes = new ArrayList<ProtocolNode>();
 	}
 
 	/**
@@ -134,7 +133,8 @@ public class ProtocolNode {
 	 *            the followingNodes to set
 	 */
 	public void setFollowingNodes(final List<ProtocolNode> followingNodes) {
-		this.followingNodes = followingNodes;
+		this.followingNodes.clear();
+		this.followingNodes.addAll(followingNodes);
 	}
 
 	/*

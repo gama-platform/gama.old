@@ -12,7 +12,7 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import java.util.Map;
+import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -84,9 +84,9 @@ public class SingleEquationStatement extends AbstractStatement {
 	public static class SIngleEquationSerializer extends SymbolSerializer {
 
 		@Override
-		protected void serialize(final SymbolDescription desc, final StringBuilder sb) {
-			sb.append(desc.getFacets().get(LEFT).toGaml()).append(" = ").append(desc.getFacets().get(RIGHT).toGaml())
-				.append(";");
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
+			sb.append(desc.getFacets().get(LEFT).serialize(includingBuiltIn)).append(" = ")
+				.append(desc.getFacets().get(RIGHT).serialize(includingBuiltIn)).append(";");
 		}
 	}
 
@@ -113,13 +113,13 @@ public class SingleEquationStatement extends AbstractStatement {
 			}
 
 			IType type = ((IOperator) func).arg(0).getType();
-			if ( !type.isTranslatableInto(Types.get(IType.FLOAT)) ) {
+			if ( !type.isTranslatableInto(Types.FLOAT) ) {
 				d.error("The variable of the left-hand member of an equation is expected to be of type float",
 					IGamlIssue.WRONG_TYPE, fDesc.getTarget());
 				return;
 			}
 
-			if ( !expr.getType().isTranslatableInto(Types.get(IType.FLOAT)) ) {
+			if ( !expr.getType().isTranslatableInto(Types.FLOAT) ) {
 				d.error("The right-hand member of an equation is expected to be of type float", IGamlIssue.WRONG_TYPE,
 					eDesc.getTarget());
 			}
@@ -127,7 +127,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	private IExpression function, expression;
-	private final IList<IExpression> var = new GamaList<IExpression>();
+	private final List<IExpression> var = new ArrayList<IExpression>();
 	private IExpression var_t;
 
 	int order;
@@ -148,7 +148,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		this.expression = expression;
 	}
 
-	public IList<IExpression> getVars() {
+	public List<IExpression> getVars() {
 		return var;
 	}
 

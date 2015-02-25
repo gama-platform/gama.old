@@ -12,7 +12,7 @@
 package simtools.gaml.extensions.traffic;
 
 import gnu.trove.map.hash.THashMap;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -325,11 +325,10 @@ public class DrivingSkill extends MovingSkill {
 		final Coordinate[] segment2 = { new GamaPoint(newX, newY), target_pt };
 		double minDist = distance;
 		final Geometry basicLine = GeometryUtils.FACTORY.createLineString(segment2);
-		GamaList<IAgent> result = new GamaList<IAgent>();
+		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		for ( ISpecies species : obsSpecies ) {
 			// final IPopulation pop = agent.getPopulationFor(species);
-			result.addAll(new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine),
-				tolerance, species)));
+			result.addAll(scope.getTopology().getNeighboursOf(scope, new GamaShape(basicLine), tolerance, species));
 		}
 		for ( IAgent ia : result ) {
 			if ( ia == agent || ia.intersects(currentLocation) ) {
@@ -342,9 +341,9 @@ public class DrivingSkill extends MovingSkill {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
 				IAgentFilter filter = In.list(scope, result);
-				final List<IAgent> ns =
-					filter == null ? new GamaList() : new GamaList<IAgent>(scope.getTopology().getNeighboursOf(scope,
-						ia, livingSpace / 2.0, filter));
+				final Collection<IAgent> ns =
+					filter == null ? Collections.EMPTY_LIST : scope.getTopology().getNeighboursOf(scope, ia,
+						livingSpace / 2.0, filter);
 				int nbAg = 1;
 				for ( IAgent ag : ns ) {
 					if ( ag != agent ) {
@@ -373,7 +372,7 @@ public class DrivingSkill extends MovingSkill {
 		final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if ( indexVals == null ) { return; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -473,7 +472,7 @@ public class DrivingSkill extends MovingSkill {
 		final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if ( indexVals == null ) { return null; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -483,7 +482,7 @@ public class DrivingSkill extends MovingSkill {
 		final IList<IShape> edges = path.getEdgeGeometry();
 		final int nb = edges.size();
 		double distance = _distance;
-		final GamaList<IShape> segments = new GamaList();
+		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final THashMap agents = new THashMap();
 		for ( int i = index; i < nb; i++ ) {
@@ -581,9 +580,9 @@ public class DrivingSkill extends MovingSkill {
 		return followedPath;
 	}
 
-	protected GamaList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,
+	protected IList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,
 		final GamaPoint falseTarget, final IAgent currentRoad) {
-		final GamaList initVals = new GamaList();
+		final IList initVals = GamaListFactory.create(Types.INT);
 		Integer indexSegment = 0;
 		Integer endIndexSegment = 0;
 		final IList<IShape> edges = path.getEdgeGeometry();

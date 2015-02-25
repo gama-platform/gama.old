@@ -12,13 +12,13 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-
 import msi.gama.kernel.experiment.AgentScheduler;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.types.Types;
 
 /**
  * The Class MessageBroker.
@@ -46,10 +46,10 @@ public class MessageBroker {
 	 */
 	public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
-		if ( messagesForA == null ) { return GamaList.EMPTY_LIST; }
+		if ( messagesForA == null ) { return GamaListFactory.EMPTY_LIST; }
 
-		IList<Message> successfulDeliveries = new GamaList<Message>();
-		IList<Message> failedDeliveries = new GamaList<Message>();
+		IList<Message> successfulDeliveries = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
+		IList<Message> failedDeliveries = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
 
 		for ( Message m : messagesForA ) {
 			Conversation conv = m.getConversation();
@@ -83,7 +83,7 @@ public class MessageBroker {
 
 		final Message f = new Message();
 		f.setSender(null);
-		final GamaList<IAgent> receivers = new GamaList();
+		final IList<IAgent> receivers = GamaListFactory.create(Types.AGENT);
 		receivers.add(m.getSender());
 		f.setReceivers(receivers);
 		f.setPerformative(FIPAConstants.Performatives.FAILURE);
@@ -166,19 +166,19 @@ public class MessageBroker {
 	}
 
 	public IList<Message> getMessagesFor(final IAgent agent) {
-		if ( !conversationsMessages.containsKey(agent) ) { return GamaList.EMPTY_LIST; }
-		
+		if ( !conversationsMessages.containsKey(agent) ) { return GamaListFactory.EMPTY_LIST; }
+
 		return conversationsMessages.get(agent).messages;
 	}
 
 	public List<Conversation> getConversationsFor(final IAgent agent) {
-		if ( !conversationsMessages.containsKey(agent) ) { return GamaList.EMPTY_LIST; }
+		if ( !conversationsMessages.containsKey(agent) ) { return GamaListFactory.EMPTY_LIST; }
 
 		return conversationsMessages.get(agent).conversations;
 	}
 
 	public void addConversation(final Conversation c) {
-		List<IAgent> members = new GamaList<IAgent>();
+		List<IAgent> members = GamaListFactory.create(Types.AGENT);
 		members.add(c.getIntitiator());
 		for ( IAgent m : (GamaList<IAgent>) c.getParticipants() ) {
 			members.add(m);
@@ -191,7 +191,7 @@ public class MessageBroker {
 
 	private void addConversation(final IAgent a, final Conversation c) {
 		ConversationsMessages cm = conversationsMessages.get(a);
-		if (cm == null) {
+		if ( cm == null ) {
 			cm = new ConversationsMessages();
 			conversationsMessages.put(a, cm);
 		}
@@ -206,7 +206,7 @@ public class MessageBroker {
 
 		// remove ended conversations
 		List<Conversation> conversations;
-		List<Conversation> endedConversations = new GamaList<Conversation>();
+		List<Conversation> endedConversations = GamaListFactory.create(Types.get(ConversationType.CONV_ID));
 		for ( IAgent a : conversationsMessages.keySet() ) {
 			if ( a.dead() ) {
 				ConversationsMessages cm = conversationsMessages.get(a);
@@ -229,14 +229,15 @@ public class MessageBroker {
 			for ( final Conversation endedConv : endedConversations ) {
 				endedConv.dispose();
 			}
-			
-			List<Message> alreadyReadMessages = new GamaList<Message>();
-			for (final Message m : conversationsMessages.get(a).messages) {
-				if (!m.isUnread()) { alreadyReadMessages.add(m); }
+
+			List<Message> alreadyReadMessages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
+			for ( final Message m : conversationsMessages.get(a).messages ) {
+				if ( !m.isUnread() ) {
+					alreadyReadMessages.add(m);
+				}
 			}
 			conversationsMessages.get(a).messages.removeAll(alreadyReadMessages);
-			
-			
+
 			conversations.removeAll(endedConversations);
 		}
 	}
@@ -244,13 +245,13 @@ public class MessageBroker {
 	class ConversationsMessages {
 
 		IList<Conversation> conversations;
-		
+
 		// agent mailbox : all un-read messages of an agent
 		IList<Message> messages;
 
 		ConversationsMessages() {
-			this.conversations = new GamaList<Conversation>();
-			this.messages = new GamaList<Message>();
+			this.conversations = GamaListFactory.create(Types.get(ConversationType.CONV_ID));
+			this.messages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
 		}
 	}
 

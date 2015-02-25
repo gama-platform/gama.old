@@ -18,7 +18,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@type(name = ConversationType.CONVERSATION_STR, id = ConversationType.CONV_ID, wraps = { Conversation.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = ConversationType.CONVERSATION_STR,
+	id = ConversationType.CONV_ID,
+	wraps = { Conversation.class },
+	kind = ISymbolKind.Variable.CONTAINER)
 public class ConversationType extends GamaContainerType<Conversation> {
 
 	public final static String CONVERSATION_STR = "conversation";
@@ -28,7 +31,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	@Override
 	public Conversation cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentType) throws GamaRuntimeException {
+		final IType contentType, final boolean copy) throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
 		// if ( obj instanceof Message ) { return new
 		// Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
@@ -42,7 +45,8 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category = { IOperatorCategory.FIPA })
 	// @doc(value = "to be added", comment = "", special_cases = { "" }, examples = { })
-	public static Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
+		public static
+		Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return ConversationType.staticCast(scope, val, null);
 	}
 

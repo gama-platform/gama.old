@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Rk4Solver.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the 
+ * 
+ * 'Rk4Solver.java', in plugin 'ummisco.gaml.extensions.maths', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,18 +11,15 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
+import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.sampling.StepHandler;
-import org.apache.commons.math3.ode.sampling.StepInterpolator;
-
+import org.apache.commons.math3.ode.sampling.*;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class Rk4Solver extends Solver {
@@ -33,10 +30,10 @@ public class Rk4Solver extends Solver {
 	double time_initial;
 	double time_final;
 	public StepHandler stepHandler;
-	public GamaList integrated_time;
-	public GamaList integrated_val;
+	public List<Double> integrated_time;
+	public List<List> integrated_val;
 
-	public Rk4Solver(final double S, final GamaList iT, final GamaList iV) {
+	public Rk4Solver(final double S, final List<Double> iT, final List<List> iV) {
 		step = S;
 		integrated_time = iT;
 		integrated_val = iV;
@@ -45,19 +42,17 @@ public class Rk4Solver extends Solver {
 		stepHandler = new StepHandler() {
 
 			@Override
-			public void init(final double t0, final double[] y0, final double t) {
-			}
+			public void init(final double t0, final double[] y0, final double t) {}
 
 			@Override
-			public void handleStep(final StepInterpolator interpolator,
-					final boolean isLast) {
+			public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
 				final double time = interpolator.getCurrentTime();
 				final double[] y = interpolator.getInterpolatedState();
 
 				integrated_time.add(time);
 
-				for (int i = 0; i < integrated_val.size(); i++) {
-					((GamaList) integrated_val.get(i)).add(y[i]);
+				for ( int i = 0; i < integrated_val.size(); i++ ) {
+					integrated_val.get(i).add(y[i]);
 				}
 
 			}
@@ -76,14 +71,13 @@ public class Rk4Solver extends Solver {
 	}
 
 	@Override
-	public void solve(final IScope scope, final SystemOfEquationsStatement eq,
-			final double time_initial, final double time_final,
-			final double cycle_length) throws GamaRuntimeException {
+	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double time_initial,
+		final double time_final, final double cycle_length) throws GamaRuntimeException {
 		// call the integrator.
 		// We need to save the state (previous time the integrator has been
 		// solved, etc.)
 		// GuiUtils.informConsole("it work ");
-		if (eq instanceof SystemOfEquationsStatement) {
+		if ( eq instanceof SystemOfEquationsStatement ) {
 			// add all equations externe to have one complete systemofequation
 			//
 
@@ -96,40 +90,39 @@ public class Rk4Solver extends Solver {
 
 			integrated_val.clear();
 
-			final double[] y = new double[eq.variables_diff.getValues().size()];
-
-			for (int i = 0, n = eq.variables_diff.size(); i < n; i++) {
-				final IExpression v = eq.variables_diff.getValues().get(i);
+			final double[] y = new double[eq.variables_diff.size()];
+			List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
+			for ( int i = 0, n = equationValues.size(); i < n; i++ ) {
+				final IExpression v =equationValues.get(i);
 				boolean pushed = false;
-				if (eq.equaAgents.size() > 0) {
+				if ( eq.equaAgents.size() > 0 ) {
 					pushed = scope.push(eq.equaAgents.get(i));
 				}
 				try {
 					y[i] = Cast.asFloat(scope, v.value(scope));
 
-					final GamaList obj = new GamaList();
+					final List obj = new ArrayList();
 					integrated_val.add(obj);
 				} catch (final Exception ex1) {
 					GuiUtils.debug(ex1.getMessage());
 				} finally {
-					if (eq.equaAgents.size() > 0) {
-						if (pushed) {
+					if ( eq.equaAgents.size() > 0 ) {
+						if ( pushed ) {
 							scope.pop(eq.equaAgents.get(i));
 						}
 					}
 				}
 
 			}
-			if (y.length > 0)
-			try {
-				integrator.integrate(eq, (time_initial)
-						* (1), y, time_final
-						* (1), y);
+			if ( y.length > 0 ) {
+				try {
+					integrator.integrate(eq, time_initial * 1, y, time_final * 1, y);
 
-			} catch (final Exception ex) {
+				} catch (final Exception ex) {
 					ex.printStackTrace();
+				}
 			}
-			eq.assignValue(time_final * (step), y);
+			eq.assignValue(time_final * step, y);
 
 		}
 

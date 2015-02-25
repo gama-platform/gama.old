@@ -18,8 +18,8 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gaml.types.IType;
+import msi.gama.util.*;
+import msi.gaml.types.*;
 
 /**
  * This class represents the notion of a Conversation which is comprised of several Messages, the
@@ -49,7 +49,7 @@ public class Conversation extends GamaList<Message> {
 	private IAgent initiator;
 
 	/** Other Agent in the conversations. */
-	private final GamaList<IAgent> participants = new GamaList<IAgent>();
+	private final IList<IAgent> participants = GamaListFactory.create(Types.AGENT);
 
 	/** The protocol node participant map. */
 	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<IAgent, ProtocolNode>();
@@ -63,7 +63,7 @@ public class Conversation extends GamaList<Message> {
 	 * Plays the role of a mailbox, contains all the messages sent by the other agent in this
 	 * Conversation.
 	 */
-	private final GamaList<Message> messages = new GamaList<Message>();
+	private final IList<Message> messages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
 
 	/** The ended. */
 	private boolean ended = false;
@@ -86,20 +86,19 @@ public class Conversation extends GamaList<Message> {
 	 *                given class
 	 */
 	protected Conversation(final IScope scope, final Integer p, final Message message) throws GamaRuntimeException {
-
+		super(0, Types.get(MessageType.MESSAGE_ID));
 		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;
 		protocol = FIPAProtocol.named(proto);
 		if ( protocol == null ) { throw new UnknownProtocolException(scope, proto); }
 		initiator = message.getSender();
-		participants.addAll(message.getReceivers()); 
+		participants.addAll(message.getReceivers());
 
-		if ( participants == null || participants.isEmpty() || participants.contains(null) ) {
-			throw new ProtocolErrorException(scope, "The message : " + message.toString() + " has no receivers.");
-		}
+		if ( participants == null || participants.isEmpty() || participants.contains(null) ) { throw new ProtocolErrorException(
+			scope, "The message : " + message.toString() + " has no receivers."); }
 
 		// TODO A REVOIR COMPLETEMENT
 
-		final List<IAgent> members = new GamaList<IAgent>();
+		final List<IAgent> members = GamaListFactory.create(Types.AGENT);
 		members.addAll(message.getReceivers());
 		members.add(initiator);
 
@@ -219,7 +218,7 @@ public class Conversation extends GamaList<Message> {
 	 * @return the messages
 	 */
 	@getter(MESSAGES)
-	public GamaList<Message> getMessages() {
+	public IList<Message> getMessages() {
 		return messages;
 	}
 
@@ -239,7 +238,7 @@ public class Conversation extends GamaList<Message> {
 	 * @return the participants
 	 */
 	@getter(PARTICIPANTS)
-	public GamaList getParticipants() {
+	public IList getParticipants() {
 		return participants;
 	}
 
@@ -310,7 +309,7 @@ public class Conversation extends GamaList<Message> {
 	}
 
 	@Override
-	public String toGaml() {
+	public String serialize(final boolean includingBuiltIn) {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
 			this.getParticipants();
 	}
@@ -326,10 +325,10 @@ public class Conversation extends GamaList<Message> {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
 			this.getParticipants();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
-				this.getParticipants();
+			this.getParticipants();
 	}
 }

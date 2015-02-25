@@ -18,6 +18,8 @@ public interface IBoxDecorator {
 
 	void undecorate();
 
+	void forceUpdate();
+
 	// void selectCurrentBox();
 	// void unselectCurrentBox();
 }

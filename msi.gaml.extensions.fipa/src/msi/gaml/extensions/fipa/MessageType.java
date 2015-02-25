@@ -19,7 +19,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaType;
 
-@type(name = MessageType.MESSAGE_STR, id = MessageType.MESSAGE_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = MessageType.MESSAGE_STR,
+	id = MessageType.MESSAGE_ID,
+	wraps = { Message.class },
+	kind = ISymbolKind.Variable.REGULAR)
 public class MessageType extends GamaType<Message> {
 
 	public static final String MESSAGE_STR = "message";
@@ -51,7 +54,8 @@ public class MessageType extends GamaType<Message> {
 	}
 
 	@Override
-	public Message cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+	public Message cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 

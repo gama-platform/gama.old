@@ -114,7 +114,13 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return builder;
 	}
 
-	protected void update() {
+	@Override
+	public void forceUpdate() {
+		boxes = null;
+		update();
+	}
+
+	public void update() {
 		if ( decorated && visible ) {
 			if ( builder != null &&
 				(!builderName.equals(settings.getBuilder()) || builder.getTabSize() != boxText.getTabs()) ) {
@@ -307,17 +313,35 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	@Override
 	public void undecorate() {
 		if ( boxText == null && !decorated ) { return; }
+		if ( settingsChangeListener != null ) {
+			settings.removePropertyChangeListener(settingsChangeListener);
+		}
+		if ( boxText.isDisposed() ) { return; }
 		decorated = false;
 		if ( boxMouseClick != null ) {
 			boxText.removeMouseListener(boxMouseClick);
 		}
-		boxText.getContent().removeTextChangeListener(boxTextChange);
-		boxText.removeMouseTrackListener(boxMouseTrack);
-		boxText.removeMouseMoveListener(boxMouseMove);
-		boxText.removePaintListener(boxPaint);
-		boxText.removeMouseListener(fillMouseClick);
-		boxText.removeModifyListener(boxModify);
-		boxText.removeKeyListener(boxKey);
+		if ( boxTextChange != null ) {
+			boxText.getContent().removeTextChangeListener(boxTextChange);
+		}
+		if ( boxMouseTrack != null ) {
+			boxText.removeMouseTrackListener(boxMouseTrack);
+		}
+		if ( boxMouseMove != null ) {
+			boxText.removeMouseMoveListener(boxMouseMove);
+		}
+		if ( boxPaint != null ) {
+			boxText.removePaintListener(boxPaint);
+		}
+		if ( fillMouseClick != null ) {
+			boxText.removeMouseListener(fillMouseClick);
+		}
+		if ( boxModify != null ) {
+			boxText.removeModifyListener(boxModify);
+		}
+		if ( boxKey != null ) {
+			boxText.removeKeyListener(boxKey);
+		}
 		boxText.setIndent(oldIndent);
 		boxText.setBackgroundImage(null);
 		if ( oldBackground != null ) {
@@ -325,9 +349,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		} else {
 			boxText.setBackground(null);
 		}
-		if ( settingsChangeListener != null ) {
-			settings.removePropertyChangeListener(settingsChangeListener);
-		}
+
 	}
 
 	protected Collection<Box> visibleBoxes() {

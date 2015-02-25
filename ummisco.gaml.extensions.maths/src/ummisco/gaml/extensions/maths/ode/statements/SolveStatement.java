@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -127,8 +128,8 @@ public class SolveStatement extends AbstractStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
-		GamaList integrate_time = new GamaList();
-		GamaList integrate_val = new GamaList();
+		List<Double> integrate_time = new ArrayList();
+		List<List> integrate_val = new ArrayList();
 
 		discret = Cast.asInt(scope, discretExp.value(scope));
 		cycle_length = Cast.asFloat(scope, cycleExp.value(scope));
@@ -185,7 +186,7 @@ public class SolveStatement extends AbstractStatement {
 		return null;
 	}
 
-	public void decreaseDiscretTime(final GamaList integratedTimes, final GamaList integratedValues, double d) {
+	public void decreaseDiscretTime(final List integratedTimes, final List integratedValues, double d) {
 		int size = integratedTimes.size();
 		if ( size == 0 ) { return; }
 		if ( d == 0 ) {

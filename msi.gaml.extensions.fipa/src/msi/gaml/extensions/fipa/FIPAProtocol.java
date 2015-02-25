@@ -13,7 +13,6 @@ package msi.gaml.extensions.fipa;
 
 import java.util.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 
 /**
  * The Class FIPAProtocol.
@@ -89,7 +88,7 @@ abstract public class FIPAProtocol {
 	private List<ProtocolNode> getProtocolTree(final Object[] root,
 		final Map<Object[], List<ProtocolNode>> previousNodes) {
 
-		final List<ProtocolNode> tree = new GamaList<ProtocolNode>();
+		final List<ProtocolNode> tree = new ArrayList<ProtocolNode>();
 		for ( int i = 0; i < root.length / 4; i++ ) {
 			final ProtocolNode node = new ProtocolNode();
 			node.setPerformative((Integer) root[4 * i]);
@@ -106,7 +105,7 @@ abstract public class FIPAProtocol {
 					node.setFollowingNodes(subTree);
 				}
 			} else {
-				node.setFollowingNodes(new GamaList<ProtocolNode>());
+				node.setFollowingNodes(new ArrayList<ProtocolNode>());
 			}
 
 			tree.add(node);
@@ -187,7 +186,7 @@ abstract public class FIPAProtocol {
 		if ( followingNodes.size() == 0 ) { throw new ProtocolErrorException(scope,
 			"Message received in conversation which has already ended!"); }
 
-		final List<ProtocolNode> potentialMatchingNodes = new GamaList<ProtocolNode>();
+		final List<ProtocolNode> potentialMatchingNodes = new ArrayList<ProtocolNode>();
 		for ( final ProtocolNode followingNode : followingNodes ) {
 			if ( performative == followingNode.getPerformative() ) {
 				potentialMatchingNodes.add(followingNode);

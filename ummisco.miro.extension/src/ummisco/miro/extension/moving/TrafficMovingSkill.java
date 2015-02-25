@@ -125,14 +125,14 @@ public class TrafficMovingSkill extends MovingSkill {
 
 		if ( goal == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-1));
 			return new Float(-1);
 		}
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-1));
 			return new Float(-1);
 		}
@@ -143,7 +143,7 @@ public class TrafficMovingSkill extends MovingSkill {
 
 		if ( path == null ) {
 			System.out.println("error -> path null");
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-2));
 
 			return new Float(-2);
@@ -195,7 +195,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		final double maxSpeed) {
 
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		double duration = totalDuration;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -205,7 +205,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
-		GamaList<IShape> segments = new GamaList();
+		IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		THashMap agents = new THashMap();
 		IShape oldline = null;

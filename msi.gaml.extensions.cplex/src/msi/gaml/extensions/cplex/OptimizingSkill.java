@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'OptimizingSkill.java', in plugin 'msi.gaml.extensions.cplex', is part of the source code of the 
+ * 
+ * 'OptimizingSkill.java', in plugin 'msi.gaml.extensions.cplex', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -14,16 +14,17 @@ package msi.gaml.extensions.cplex;
 import ilog.cplex.*;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.eclipse.core.runtime.FileLocator;
 
 @skill(name = "optimizing")
@@ -41,8 +42,7 @@ public class OptimizingSkill extends Skill {
 		}
 		try {
 			/**/
-			URL urlRep =
-				FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
 			String nativeLibPath = urlRep.getPath() + "lib";
 			// System.setProperty( "java.library.path",
 			// "/Users/van-minhle/Applications/IBM/ILOG/CPLEX_Studio124/cplex/bin/x86-64_darwin9_gcc4.0"
@@ -61,10 +61,8 @@ public class OptimizingSkill extends Skill {
 			double[] objectiveValue = { 1, 2, 3 };
 
 			cplex.addMaximize(cplex.scalProd(x, objectiveValue));
-			cplex.addLe(cplex.sum(cplex.prod(-1, x[0]), cplex.prod(1, x[1]), cplex.prod(1, x[2])),
-				20);
-			cplex.addLe(cplex.sum(cplex.prod(1, x[0]), cplex.prod(-3, x[1]), cplex.prod(1, x[2])),
-				30);
+			cplex.addLe(cplex.sum(cplex.prod(-1, x[0]), cplex.prod(1, x[1]), cplex.prod(1, x[2])), 20);
+			cplex.addLe(cplex.sum(cplex.prod(1, x[0]), cplex.prod(-3, x[1]), cplex.prod(1, x[2])), 30);
 			if ( cplex.solve() ) {
 				System.out.println("status " + cplex.getStatus());
 				System.out.println("solution " + cplex.getObjValue());
@@ -119,8 +117,7 @@ public class OptimizingSkill extends Skill {
 		}
 
 		try {
-			URL urlRep =
-				FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
 			String nativeLibPath = urlRep.getPath() + "lib";
 			System.setProperty("java.library.path", nativeLibPath);
 			Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
@@ -129,13 +126,12 @@ public class OptimizingSkill extends Skill {
 			System.out.println("" + System.getProperty("java.library.path"));
 			IloCplex cplex = new IloCplex();
 
-			GamaList<VariableEntry> variableList = new GamaList<VariableEntry>();
-			GamaList<Double> objectiveList = new GamaList<Double>();
+			List<VariableEntry> variableList = new ArrayList<VariableEntry>();
+			List<Double> objectiveList = new ArrayList<Double>();
 			VariableEntry[] q = new VariableEntry[N];
 			for ( int i = 0; i < N; i++ ) {
 				IloNumVar currentVariable = cplex.numVar(0, Double.MAX_VALUE, IloNumVarType.Float);
-				VariableEntry variableDescription =
-					new VariableEntry(q_variable, i, -1, 0, currentVariable);
+				VariableEntry variableDescription = new VariableEntry(q_variable, i, -1, 0, currentVariable);
 				q[i] = variableDescription;
 				variableList.add(variableDescription);
 				objectiveList.add(Mu.get(i));
@@ -153,8 +149,7 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							IloNumVar currentVariable = cplex.numVar(0, 1, IloNumVarType.Int);
-							VariableEntry variableDescription =
-								new VariableEntry(a_variable, i, j, 0, currentVariable);
+							VariableEntry variableDescription = new VariableEntry(a_variable, i, j, 0, currentVariable);
 							a[i][j] = variableDescription;
 							variableList.add(variableDescription);
 							objectiveList.add(0.0);
@@ -182,10 +177,8 @@ public class OptimizingSkill extends Skill {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
 						cplex.addGe(
-							cplex.sum(cplex.prod(1.0, q[i].cplexReference),
-								cplex.prod(-1, q[j].cplexReference),
-								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) -
-								Qmax);
+							cplex.sum(cplex.prod(1.0, q[i].cplexReference), cplex.prod(-1, q[j].cplexReference),
+								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) - Qmax);
 					}
 				}
 			}
@@ -198,11 +191,9 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							leftHandExpression =
-								cplex.sum(leftHandExpression,
-									cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
+								cplex.sum(leftHandExpression, cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
 									cplex.prod(Qmax, a[i][j].cplexReference));
-							rightHandExpression =
-								rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
+							rightHandExpression = rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
 						}
 					}
 					cplex.addGe(leftHandExpression, rightHandExpression);
@@ -212,7 +203,7 @@ public class OptimizingSkill extends Skill {
 			// constraints: i not in X, sum(aij) <= 1;
 			for ( int i = 0; i < N; i++ ) {
 				if ( !isShelterVertex[i] ) {
-					GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+					List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							tempVariables.add(a[i][j].cplexReference);
@@ -232,7 +223,7 @@ public class OptimizingSkill extends Skill {
 			}
 
 			// constraints: sum(aij) <= K;
-			GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+			List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 			for ( int i = 0; i < N; i++ ) {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
@@ -252,22 +243,20 @@ public class OptimizingSkill extends Skill {
 			}
 			cplex.setParam(Param.TiLim, timeLimit);
 			cplex.setParam(Param.TreLim, 80 * 1024 * 1024);
-			GamaList<Object> result = new GamaList<Object>();
+			List<Object> result = new ArrayList<Object>();
 			if ( cplex.solve() ) {
 				System.out.println("Solution status = " + cplex.getStatus());
 				System.out.println("Solution value = " + cplex.getObjValue());
 				result.add(cplex.getObjValue());
 				double[] val = cplex.getValues(x);
 				int ncols = cplex.getNcols();
-				GamaList<GamaPoint> resultList = new GamaList<GamaPoint>();
+				IList<GamaPoint> resultList = GamaListFactory.create(Types.POINT);
 				for ( int j = 0; j < ncols; ++j ) {
 					System.out.println("Column: " + j + " Value = " + val[j]);
 					if ( val[j] > 0 ) {
 						VariableEntry variableDescription = variableList.get(j);
 						if ( variableDescription.type == OptimizingSkill.a_variable ) {
-							GamaPoint p =
-								new GamaPoint(variableDescription.index1,
-									variableDescription.index2);
+							GamaPoint p = new GamaPoint(variableDescription.index1, variableDescription.index2);
 							resultList.add(p);
 						}
 					}
@@ -304,7 +293,7 @@ public class OptimizingSkill extends Skill {
 			System.out.println("Cannot load X");
 			return null;
 		}
-		System.out.println(X.toGaml());
+		System.out.println(X.serialize(false));
 		GamaList<Double> Mu = (GamaList<Double>) scope.getArg("Mu", IType.NONE);
 		if ( Mu == null || Mu.size() == 0 ) {
 			System.out.println("Cannot load Mu");
@@ -330,8 +319,7 @@ public class OptimizingSkill extends Skill {
 		}
 		System.out.println(timeLimit);
 
-		GamaList<Integer> fixedPostions =
-			(GamaList<Integer>) scope.getArg("fixed_position", IType.NONE);
+		GamaList<Integer> fixedPostions = (GamaList<Integer>) scope.getArg("fixed_position", IType.NONE);
 		if ( fixedPostions == null || fixedPostions.size() == 0 ) { return null; }
 		System.out.println(fixedPostions.size());
 
@@ -344,8 +332,7 @@ public class OptimizingSkill extends Skill {
 		}
 
 		try {
-			URL urlRep =
-				FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
 			String nativeLibPath = urlRep.getPath() + "lib";
 			System.setProperty("java.library.path", nativeLibPath);
 			Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
@@ -354,13 +341,12 @@ public class OptimizingSkill extends Skill {
 			System.out.println("" + System.getProperty("java.library.path"));
 			IloCplex cplex = new IloCplex();
 
-			GamaList<VariableEntry> variableList = new GamaList<VariableEntry>();
-			GamaList<Double> objectiveList = new GamaList<Double>();
+			List<VariableEntry> variableList = new ArrayList<VariableEntry>();
+			List<Double> objectiveList = new ArrayList<Double>();
 			VariableEntry[] q = new VariableEntry[N];
 			for ( int i = 0; i < N; i++ ) {
 				IloNumVar currentVariable = cplex.numVar(0, Double.MAX_VALUE, IloNumVarType.Float);
-				VariableEntry variableDescription =
-					new VariableEntry(q_variable, i, -1, 0, currentVariable);
+				VariableEntry variableDescription = new VariableEntry(q_variable, i, -1, 0, currentVariable);
 				q[i] = variableDescription;
 				variableList.add(variableDescription);
 				objectiveList.add(Mu.get(i));
@@ -378,8 +364,7 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							IloNumVar currentVariable = cplex.numVar(0, 1, IloNumVarType.Int);
-							VariableEntry variableDescription =
-								new VariableEntry(a_variable, i, j, 0, currentVariable);
+							VariableEntry variableDescription = new VariableEntry(a_variable, i, j, 0, currentVariable);
 							a[i][j] = variableDescription;
 							variableList.add(variableDescription);
 							objectiveList.add(0.0);
@@ -407,10 +392,8 @@ public class OptimizingSkill extends Skill {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
 						cplex.addGe(
-							cplex.sum(cplex.prod(1.0, q[i].cplexReference),
-								cplex.prod(-1, q[j].cplexReference),
-								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) -
-								Qmax);
+							cplex.sum(cplex.prod(1.0, q[i].cplexReference), cplex.prod(-1, q[j].cplexReference),
+								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) - Qmax);
 					}
 				}
 			}
@@ -423,11 +406,9 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							leftHandExpression =
-								cplex.sum(leftHandExpression,
-									cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
+								cplex.sum(leftHandExpression, cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
 									cplex.prod(Qmax, a[i][j].cplexReference));
-							rightHandExpression =
-								rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
+							rightHandExpression = rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
 						}
 					}
 					cplex.addGe(leftHandExpression, rightHandExpression);
@@ -437,7 +418,7 @@ public class OptimizingSkill extends Skill {
 			// constraints: i not in X, sum(aij) <= 1;
 			for ( int i = 0; i < N; i++ ) {
 				if ( !isShelterVertex[i] ) {
-					GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+					List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							tempVariables.add(a[i][j].cplexReference);
@@ -457,7 +438,7 @@ public class OptimizingSkill extends Skill {
 			}
 
 			// constraints: sum(aij) <= K;
-			GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+			List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 			for ( int i = 0; i < N; i++ ) {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
@@ -473,8 +454,7 @@ public class OptimizingSkill extends Skill {
 					tempExpression[j] = tempVariables.get(j);
 					tempCoefficients[j] = 1.0;
 				}
-				cplex.addLe(cplex.scalProd(tempExpression, tempCoefficients),
-					fixedPostions.length(scope));
+				cplex.addLe(cplex.scalProd(tempExpression, tempCoefficients), fixedPostions.length(scope));
 			}
 
 			// constraints: aij = 0 forall i do not belong to fixed position
@@ -490,22 +470,20 @@ public class OptimizingSkill extends Skill {
 
 			cplex.setParam(Param.TiLim, timeLimit);
 			cplex.setParam(Param.TreLim, 80 * 1024 * 1024);
-			GamaList<Object> result = new GamaList<Object>();
+			List<Object> result = new ArrayList<Object>();
 			if ( cplex.solve() ) {
 				System.out.println("Solution status = " + cplex.getStatus());
 				System.out.println("Solution value = " + cplex.getObjValue());
 				result.add(cplex.getObjValue());
 				double[] val = cplex.getValues(x);
 				int ncols = cplex.getNcols();
-				GamaList<GamaPoint> resultList = new GamaList<GamaPoint>();
+				IList<GamaPoint> resultList = GamaListFactory.create(Types.POINT);
 				for ( int j = 0; j < ncols; ++j ) {
 					System.out.println("Column: " + j + " Value = " + val[j]);
 					if ( val[j] > 0 ) {
 						VariableEntry variableDescription = variableList.get(j);
 						if ( variableDescription.type == OptimizingSkill.a_variable ) {
-							GamaPoint p =
-								new GamaPoint(variableDescription.index1,
-									variableDescription.index2);
+							GamaPoint p = new GamaPoint(variableDescription.index1, variableDescription.index2);
 							resultList.add(p);
 						}
 					}
@@ -524,8 +502,7 @@ public class OptimizingSkill extends Skill {
 
 	@action(name = "computeAverageEvacuationTime")
 	@args(names = { "N", "E", "X", "Mu", "P", "max_aet", "signs_from", "signs_to", "time_limit" })
-	public Object primDoComputeAverageEvacuationTime(final IScope scope)
-		throws GamaRuntimeException {
+	public Object primDoComputeAverageEvacuationTime(final IScope scope) throws GamaRuntimeException {
 		Integer N = (Integer) scope.getArg("N", IType.NONE);
 		if ( N == null ) { return null; }
 		System.out.println(N);
@@ -568,8 +545,7 @@ public class OptimizingSkill extends Skill {
 		}
 
 		try {
-			URL urlRep =
-				FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gaml.extensions.cplex/"));
 			String nativeLibPath = urlRep.getPath() + "lib";
 			System.setProperty("java.library.path", nativeLibPath);
 			Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
@@ -578,13 +554,12 @@ public class OptimizingSkill extends Skill {
 			System.out.println("" + System.getProperty("java.library.path"));
 			IloCplex cplex = new IloCplex();
 
-			GamaList<VariableEntry> variableList = new GamaList<VariableEntry>();
-			GamaList<Double> objectiveList = new GamaList<Double>();
+			List<VariableEntry> variableList = new ArrayList<VariableEntry>();
+			List<Double> objectiveList = new ArrayList<Double>();
 			VariableEntry[] q = new VariableEntry[N];
 			for ( int i = 0; i < N; i++ ) {
 				IloNumVar currentVariable = cplex.numVar(0, Double.MAX_VALUE, IloNumVarType.Float);
-				VariableEntry variableDescription =
-					new VariableEntry(q_variable, i, -1, 0, currentVariable);
+				VariableEntry variableDescription = new VariableEntry(q_variable, i, -1, 0, currentVariable);
 				q[i] = variableDescription;
 				variableList.add(variableDescription);
 				objectiveList.add(Mu.get(i));
@@ -602,8 +577,7 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							IloNumVar currentVariable = cplex.numVar(0, 1, IloNumVarType.Int);
-							VariableEntry variableDescription =
-								new VariableEntry(a_variable, i, j, 0, currentVariable);
+							VariableEntry variableDescription = new VariableEntry(a_variable, i, j, 0, currentVariable);
 							a[i][j] = variableDescription;
 							variableList.add(variableDescription);
 							objectiveList.add(0.0);
@@ -631,10 +605,8 @@ public class OptimizingSkill extends Skill {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
 						cplex.addGe(
-							cplex.sum(cplex.prod(1.0, q[i].cplexReference),
-								cplex.prod(-1, q[j].cplexReference),
-								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) -
-								Qmax);
+							cplex.sum(cplex.prod(1.0, q[i].cplexReference), cplex.prod(-1, q[j].cplexReference),
+								cplex.prod(-Qmax, a[i][j].cplexReference)), C.get(scope, i, j) - Qmax);
 					}
 				}
 			}
@@ -647,11 +619,9 @@ public class OptimizingSkill extends Skill {
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							leftHandExpression =
-								cplex.sum(leftHandExpression,
-									cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
+								cplex.sum(leftHandExpression, cplex.prod(-P.get(scope, i, j), q[j].cplexReference),
 									cplex.prod(Qmax, a[i][j].cplexReference));
-							rightHandExpression =
-								rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
+							rightHandExpression = rightHandExpression + P.get(scope, i, j) * C.get(scope, i, j);
 						}
 					}
 					cplex.addGe(leftHandExpression, rightHandExpression);
@@ -661,7 +631,7 @@ public class OptimizingSkill extends Skill {
 			// constraints: i not in X, sum(aij) <= 1;
 			for ( int i = 0; i < N; i++ ) {
 				if ( !isShelterVertex[i] ) {
-					GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+					List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 					for ( int j = 0; j < N; j++ ) {
 						if ( C.get(scope, i, j) > 0 ) {
 							tempVariables.add(a[i][j].cplexReference);
@@ -681,7 +651,7 @@ public class OptimizingSkill extends Skill {
 			}
 
 			// constraints: sum(aij) <= K;
-			GamaList<IloNumVar> tempVariables = new GamaList<IloNumVar>();
+			List<IloNumVar> tempVariables = new ArrayList<IloNumVar>();
 			for ( int i = 0; i < N; i++ ) {
 				for ( int j = 0; j < N; j++ ) {
 					if ( a[i][j] != null ) {
@@ -697,8 +667,7 @@ public class OptimizingSkill extends Skill {
 					tempExpression[j] = tempVariables.get(j);
 					tempCoefficients[j] = 1.0;
 				}
-				cplex.addLe(cplex.scalProd(tempExpression, tempCoefficients),
-					signs_from.length(scope));
+				cplex.addLe(cplex.scalProd(tempExpression, tempCoefficients), signs_from.length(scope));
 			}
 
 			// constraints: aij = 1 (i sign from and j sign to) otherwise
@@ -733,8 +702,8 @@ public class OptimizingSkill extends Skill {
 		return null;
 	}
 
-	private boolean isExistSign(IScope scope, int ik, int jk, GamaList<Integer> signs_from,
-		GamaList<Integer> signs_to) {
+	private boolean isExistSign(final IScope scope, final int ik, final int jk, final GamaList<Integer> signs_from,
+		final GamaList<Integer> signs_to) {
 		if ( signs_from == null || signs_from.length(scope) == 0 ) { return false; }
 		if ( signs_to == null || signs_to.length(scope) == 0 ) { return false; }
 		if ( signs_from.length(scope) != signs_to.length(scope) ) { return false; }
@@ -755,7 +724,7 @@ class VariableEntry {
 	public int type;
 	public IloNumVar cplexReference;
 
-	public VariableEntry(int t, int i1, int i2, double val, IloNumVar ref) {
+	public VariableEntry(final int t, final int i1, final int i2, final double val, final IloNumVar ref) {
 		type = t;
 		index1 = i1;
 		index2 = i2;

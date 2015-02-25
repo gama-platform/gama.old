@@ -1,63 +1,62 @@
 package yifanhu;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.gephi.graph.api.GraphController;
-import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.Node;
-import org.gephi.graph.api.UndirectedGraph;
-import org.gephi.layout.plugin.force.StepDisplacement;
-import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
-import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
-import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2Builder;
-import org.gephi.layout.plugin.multilevel.MaximalMatchingCoarsening;
-import org.gephi.layout.plugin.multilevel.MultiLevelLayout;
-import org.gephi.layout.plugin.multilevel.YifanHuMultiLevel;
-import org.gephi.project.api.ProjectController;
-import org.gephi.project.api.Workspace;
-import org.openide.util.Lookup;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.outputs.layers.ChartDataListStatement;
-import msi.gama.outputs.layers.ChartDataStatement;
-import msi.gama.outputs.layers.ChartDataListStatement.ChartDataList;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import org.gephi.layout.plugin.force.StepDisplacement;
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
+import org.gephi.layout.plugin.multilevel.*;
 
-@symbol(name = "layout_yifanhu", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, doc = @doc("Apply YifanHu Layout."))
+@symbol(name = "layout_yifanhu",
+	kind = ISymbolKind.SINGLE_STATEMENT,
+	with_sequence = false,
+	doc = @doc("Apply YifanHu Layout."))
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(name = IKeyword.GRAPH, type = IType.GRAPH, optional = false, doc = @doc("the graph to apply the layout.")),
-	@facet(name = GraphYiFanHuLayoutStatement.OPTIMAL_DIST, type =  IType.FLOAT, optional = true, doc = @doc("the natural length of the springs. Bigger values mean nodes will be farther apart (default: 100).")),
-	@facet(name = GraphYiFanHuLayoutStatement.QUAD_MAX, type =  IType.INT, optional = true, doc = @doc("The maximum level to be used in the quadtree representation. Greater values mean more accuracy (default: 10).")),
-	@facet(name = GraphYiFanHuLayoutStatement.BARNES_THETA, type =  IType.FLOAT, optional = true, doc = @doc("The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy (default: 1.2).")),
-	@facet(name = GraphYiFanHuLayoutStatement.RELATIVE_STRENGTH, type =  IType.FLOAT, optional = true, doc = @doc("The relative strength between electrical force (repulsion) and spring force (attriaction). default: 0.2")),
-	@facet(name = GraphYiFanHuLayoutStatement.STEP_SIZE, type =  IType.FLOAT, optional = true, doc = @doc("The step size used in the algorithm. It has to be a meaningful size compared to the optimal distance (e.g. 10%). default: 10")),
-	@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P1, type =  IType.POINT, optional = true, doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null")),
-	@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P2, type =  IType.POINT, optional = true, doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null"))},
-    omissible = IKeyword.GRAPH)
-public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {	
+	@facet(name = GraphYiFanHuLayoutStatement.OPTIMAL_DIST,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("the natural length of the springs. Bigger values mean nodes will be farther apart (default: 100).")),
+	@facet(name = GraphYiFanHuLayoutStatement.QUAD_MAX,
+		type = IType.INT,
+		optional = true,
+		doc = @doc("The maximum level to be used in the quadtree representation. Greater values mean more accuracy (default: 10).")),
+	@facet(name = GraphYiFanHuLayoutStatement.BARNES_THETA,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy (default: 1.2).")),
+	@facet(name = GraphYiFanHuLayoutStatement.RELATIVE_STRENGTH,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("The relative strength between electrical force (repulsion) and spring force (attriaction). default: 0.2")),
+	@facet(name = GraphYiFanHuLayoutStatement.STEP_SIZE,
+		type = IType.FLOAT,
+		optional = true,
+		doc = @doc("The step size used in the algorithm. It has to be a meaningful size compared to the optimal distance (e.g. 10%). default: 10")),
+	@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P1,
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null")),
+	@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P2,
+		type = IType.POINT,
+		optional = true,
+		doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null")) },
+	omissible = IKeyword.GRAPH)
+public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 
-	public GraphYiFanHuLayoutStatement(IDescription desc) {
+	public GraphYiFanHuLayoutStatement(final IDescription desc) {
 		super(desc);
 		// TODO Auto-generated constructor stub
 	}
@@ -69,68 +68,72 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 	public static final String STEP_SIZE = "step_size";
 	public static final String BOUNDED_P1 = "bounded_point1";
 	public static final String BOUNDED_P2 = "bounded_point2";
-	
-	public static double stepvalue=-1;
-	
-	
-	/*	
-	private static ProjectController pc;
-	private static Workspace workspace;
-	private static GraphModel graph_model;
-	private static UndirectedGraph the_graph;
-	private static boolean initialized = false;
-	private static int node_index_diff = 0;
-	*/
 
-	private static final double OPTIMAL_DIST_DEFAULT=100;
-	private static final double STEP_RATIO_DEFAULT=0.95;
-	private static final double INITIAL_STEP_DEFAULT=10.0;
-	private static final double CONVERGENCE_THRESHOLD_DEFAULT=0.95;
-	private static final double BARNES_THETA_DEFAULT=1.2;
-	private static final int QUAD_MAX_DEFAULT=10;
-	private static final double RATIO_DEFAULT=0.2;
-	
+	public static double stepvalue = -1;
+
+	/*
+	 * private static ProjectController pc;
+	 * private static Workspace workspace;
+	 * private static GraphModel graph_model;
+	 * private static UndirectedGraph the_graph;
+	 * private static boolean initialized = false;
+	 * private static int node_index_diff = 0;
+	 */
+
+	private static final double OPTIMAL_DIST_DEFAULT = 100;
+	private static final double STEP_RATIO_DEFAULT = 0.95;
+	private static final double INITIAL_STEP_DEFAULT = 10.0;
+	private static final double CONVERGENCE_THRESHOLD_DEFAULT = 0.95;
+	private static final double BARNES_THETA_DEFAULT = 1.2;
+	private static final int QUAD_MAX_DEFAULT = 10;
+	private static final double RATIO_DEFAULT = 0.2;
+
 	@Override
-	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {		
-//		IGraph data = createData(scope);
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		// IGraph data = createData(scope);
 		IGraph g = Cast.asGraph(scope, getFacetValue(scope, IKeyword.GRAPH));
-		double optimal_distance=Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.OPTIMAL_DIST,OPTIMAL_DIST_DEFAULT));
-		double initial_step=Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.STEP_SIZE,INITIAL_STEP_DEFAULT));
-		double barnes_hut_theta=Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.BARNES_THETA,BARNES_THETA_DEFAULT));
-		int max_level=Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.QUAD_MAX,QUAD_MAX_DEFAULT));
-		double relative_strength=Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.RELATIVE_STRENGTH,RATIO_DEFAULT));
-		Object bp1=getFacetValue(scope, GraphYiFanHuLayoutStatement.BOUNDED_P1,null);
-		Object bp2=getFacetValue(scope, GraphYiFanHuLayoutStatement.BOUNDED_P2,null);
-//		public static IGraph YifanHuLayout_Step_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta) {
-			initializing();
-//			System.out.println("Yifan Hu algorithm (by step), starting.");
-//			System.out.println("converting ...");
-			IGraph_to_GraphModel(g);
-//			System.out.println("initialising ...");
-			initializing_GraphModel(g);
-			YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-			InitializingYifanHuLayout(layout, optimal_distance, initial_step, STEP_RATIO_DEFAULT, CONVERGENCE_THRESHOLD_DEFAULT, barnes_hut_theta,max_level,relative_strength);
-			layout.goAlgo();
-			if (bp1!=null && bp2!=null)
-			{
-				ILocation p1=Cast.asPoint(scope, bp1);
-				ILocation p2=Cast.asPoint(scope, bp2);
-				Update_locations(g, Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()), Math.max(p1.getX(), p2.getX()), Math.max(p1.getY(), p2.getY()));				
-			}
-			else
-			{
-				Update_locations(g);				
-			}
-//			System.out.println("ended.");
-//			return g;
-//		}
-		
+		double optimal_distance =
+			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.OPTIMAL_DIST, OPTIMAL_DIST_DEFAULT));
+		double initial_step =
+			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.STEP_SIZE, INITIAL_STEP_DEFAULT));
+		double barnes_hut_theta =
+			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.BARNES_THETA, BARNES_THETA_DEFAULT));
+		int max_level = Cast.asInt(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.QUAD_MAX, QUAD_MAX_DEFAULT));
+		double relative_strength =
+			Cast.asFloat(scope, getFacetValue(scope, GraphYiFanHuLayoutStatement.RELATIVE_STRENGTH, RATIO_DEFAULT));
+		Object bp1 = getFacetValue(scope, GraphYiFanHuLayoutStatement.BOUNDED_P1, null);
+		Object bp2 = getFacetValue(scope, GraphYiFanHuLayoutStatement.BOUNDED_P2, null);
+		// public static IGraph YifanHuLayout_Step_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta) {
+		initializing();
+		// System.out.println("Yifan Hu algorithm (by step), starting.");
+		// System.out.println("converting ...");
+		IGraph_to_GraphModel(g);
+		// System.out.println("initialising ...");
+		initializing_GraphModel(g);
+		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
+		InitializingYifanHuLayout(layout, optimal_distance, initial_step, STEP_RATIO_DEFAULT,
+			CONVERGENCE_THRESHOLD_DEFAULT, barnes_hut_theta, max_level, relative_strength);
+		layout.goAlgo();
+		if ( bp1 != null && bp2 != null ) {
+			ILocation p1 = Cast.asPoint(scope, bp1);
+			ILocation p2 = Cast.asPoint(scope, bp2);
+			Update_locations(g, Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()),
+				Math.max(p1.getX(), p2.getX()), Math.max(p1.getY(), p2.getY()));
+		} else {
+			Update_locations(g);
+		}
+		// System.out.println("ended.");
+		// return g;
+		// }
+
 		return g;
 
 	}
-	
+
 	// Initializing the layout with the given parameters
-	private static void InitializingYifanHuLayout(YifanHuLayout YHL, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta){
+	private static void InitializingYifanHuLayout(final YifanHuLayout YHL, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta) {
 		YHL.resetPropertiesValues();
 		YHL.setGraphModel(graph_model);
 		YHL.setOptimalDistance((float) optimal_distance);
@@ -139,9 +142,11 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		YHL.setBarnesHutTheta((float) barnes_hut_theta);
 		YHL.setConvergenceThreshold((float) convergence_threshold);
 	}
-	
+
 	// Initializing the layout with the given parameters including relative strength
-	private static void InitializingYifanHuLayout(YifanHuLayout YHL, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta,double max_level, double relative_strength){
+	private static void InitializingYifanHuLayout(final YifanHuLayout YHL, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta, final double max_level, final double relative_strength) {
 		YHL.resetPropertiesValues();
 		YHL.setGraphModel(graph_model);
 		YHL.setOptimalDistance((float) optimal_distance);
@@ -153,26 +158,30 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		YHL.setQuadTreeMaxLevel((int) max_level);
 		YHL.setRelativeStrength((float) relative_strength);
 	}
-	
+
 	// Full execution of the Yifan Hu algorithm with bounds limit
-	public static IGraph YifanHuLayout_Full_Limited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta, int max_step, boolean initialise, double max_x, double max_y) {
+	public static IGraph YifanHuLayout_Full_Limited(final IGraph g, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta, final int max_step, final boolean initialise, final double max_x,
+		final double max_y) {
 		initializing();
 		System.out.println("Yifan Hu algorithm (bounds limited), starting.");
 		System.out.println("converting ...");
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		//System.out.println("graphmodel constructed : " + graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+ graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
+		// System.out.println("graphmodel constructed : " + graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+ graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		System.out.println("initialising layout ...");
-		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold, barnes_hut_theta);
+		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
+			barnes_hut_theta);
 		System.out.println("initialising algorithm ...");
-		if(initialise){
+		if ( initialise ) {
 			layout.initAlgo();
-		}else{
-			//initializing_GraphModel(g);
+		} else {
+			// initializing_GraphModel(g);
 		}
 		System.out.println("working ...");
-		for ( int i = 0; i < max_step && layout.canAlgo(); i++) {
+		for ( int i = 0; i < max_step && layout.canAlgo(); i++ ) {
 			layout.goAlgo();
 		}
 		layout.endAlgo();
@@ -180,39 +189,45 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Full execution of the Yifan Hu algorithm without bounds limit
-//	public static IGraph YifanHuLayout_Full_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta, int max_step) {
-	public static IGraph YifanHuLayout_Full_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta, int max_step, boolean initialise) {
+	// public static IGraph YifanHuLayout_Full_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta, int
+	// max_step) {
+	public static IGraph YifanHuLayout_Full_Unlimited(final IGraph g, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta, final int max_step, final boolean initialise) {
 		initializing();
 		System.out.println("Yifan Hu algorithm starting.");
 		System.out.println("converting ...");
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		//System.out.println("graphmodel constructed : " + graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+ graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
+		// System.out.println("graphmodel constructed : " + graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+ graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		System.out.println("initialising layout ...");
-		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold, barnes_hut_theta);
+		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
+			barnes_hut_theta);
 		System.out.println("initialising algorithm ...");
-		if(initialise){
+		if ( initialise ) {
 			layout.initAlgo();
-		}else{
-			//initializing_GraphModel(g);
+		} else {
+			// initializing_GraphModel(g);
 		}
 		System.out.println("working ...");
-		for ( int i = 0; i < max_step && layout.canAlgo(); i++) {
+		for ( int i = 0; i < max_step && layout.canAlgo(); i++ ) {
 			layout.goAlgo();
-			System.out.println("..."+i+"/"+max_step+"/"+layout.canAlgo());
+			System.out.println("..." + i + "/" + max_step + "/" + layout.canAlgo());
 		}
-		System.out.println("... "+layout.canAlgo());
+		System.out.println("... " + layout.canAlgo());
 		layout.endAlgo();
 		Update_locations(g);
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Step execution of the Yifan Hu algorithm with bounds limit
-	public static IGraph YifanHuLayout_Step_Limited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta, double max_x, double max_y) {
+	public static IGraph YifanHuLayout_Step_Limited(final IGraph g, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta, final double max_x, final double max_y) {
 		initializing();
 		System.out.println("Yifan Hu algorithm (by step and bounds limited), starting.");
 		System.out.println("converting ...");
@@ -220,15 +235,18 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("initialising ...");
 		initializing_GraphModel(g);
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold, barnes_hut_theta);
+		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
+			barnes_hut_theta);
 		layout.goAlgo();
 		Update_locations(g, max_x, max_y);
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Step execution of the Yifan Hu algorithm without bounds limit
-	public static IGraph YifanHuLayout_Step_Unlimited(final IGraph g, double optimal_distance, double initial_step, double step_ratio, double convergence_threshold, double barnes_hut_theta) {
+	public static IGraph YifanHuLayout_Step_Unlimited(final IGraph g, final double optimal_distance,
+		final double initial_step, final double step_ratio, final double convergence_threshold,
+		final double barnes_hut_theta) {
 		initializing();
 		System.out.println("Yifan Hu algorithm (by step), starting.");
 		System.out.println("converting ...");
@@ -236,15 +254,18 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("initialising ...");
 		initializing_GraphModel(g);
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold, barnes_hut_theta);
+		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
+			barnes_hut_theta);
 		layout.goAlgo();
 		Update_locations(g);
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Full execution of the Multilevel Yifan Hu algorithm with bounds limit
-	public static IGraph YifanHuMultilevel_Full_Limited(final IGraph g, double optimal_distance, double min_coarsening_rate, int min_size, double step_ratio, double barnes_hut_theta, int max_step, double max_x, double max_y) {
+	public static IGraph YifanHuMultilevel_Full_Limited(final IGraph g, final double optimal_distance,
+		final double min_coarsening_rate, final int min_size, final double step_ratio, final double barnes_hut_theta,
+		final int max_step, final double max_x, final double max_y) {
 		initializing();
 		System.out.println("Yifan Hu Multilevel (bounds limited) algorithm, starting.");
 		System.out.println("converting ...");
@@ -261,7 +282,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
 		System.out.println("working ...");
-		for (int i = 0 ; i<max_step && MlL.canAlgo() ; i++){
+		for ( int i = 0; i < max_step && MlL.canAlgo(); i++ ) {
 			MlL.goAlgo();
 		}
 		MlL.endAlgo();
@@ -269,9 +290,11 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Full execution of the Multilevel Yifan Hu algorithm without bounds limit
-	public static IGraph YifanHuMultilevel_Full_Unlimited(final IGraph g, double optimal_distance, double min_coarsening_rate, int min_size, double step_ratio, double barnes_hut_theta, int max_step) {
+	public static IGraph YifanHuMultilevel_Full_Unlimited(final IGraph g, final double optimal_distance,
+		final double min_coarsening_rate, final int min_size, final double step_ratio, final double barnes_hut_theta,
+		final int max_step) {
 		initializing();
 		System.out.println("Yifan Hu Multilevel algorithm, starting.");
 		System.out.println("converting ...");
@@ -288,7 +311,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
 		System.out.println("working ...");
-		for (int i = 0 ; i<max_step && MlL.canAlgo() ; i++){
+		for ( int i = 0; i < max_step && MlL.canAlgo(); i++ ) {
 			MlL.goAlgo();
 		}
 		MlL.endAlgo();
@@ -296,9 +319,11 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Step execution of the Multilevel Yifan Hu algorithm with bounds limit
-	public static IGraph YifanHuMultilevelLayout_Step_Limited(final IGraph g, double optimal_distance, double min_coarsening_rate, int min_size, double step_ratio, double barnes_hut_theta, double max_x, double max_y) {
+	public static IGraph YifanHuMultilevelLayout_Step_Limited(final IGraph g, final double optimal_distance,
+		final double min_coarsening_rate, final int min_size, final double step_ratio, final double barnes_hut_theta,
+		final double max_x, final double max_y) {
 		initializing();
 		System.out.println("Yifan Hu Multilevel algorithm (by step and bounds limited), starting.");
 		System.out.println("converting ...");
@@ -321,9 +346,10 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 	// Step execution of the Multilevel Yifan Hu algorithm without bounds limit
-	public static IGraph YifanHuMultilevelLayout_Step(final IGraph g, double optimal_distance, double min_coarsening_rate, int min_size, double step_ratio, double barnes_hut_theta) {
+	public static IGraph YifanHuMultilevelLayout_Step(final IGraph g, final double optimal_distance,
+		final double min_coarsening_rate, final int min_size, final double step_ratio, final double barnes_hut_theta) {
 		initializing();
 		System.out.println("Yifan Hu Multilevel algorithm (by step), starting.");
 		System.out.println("converting ...");
@@ -346,5 +372,5 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		System.out.println("ended.");
 		return g;
 	}
-	
+
 }

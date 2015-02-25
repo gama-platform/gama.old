@@ -22,14 +22,31 @@ import com.vividsolutions.jts.geom.Coordinate;
 @skill(name = "trafficMoving")
 public class TrafficMovingSkill extends MovingSkill {
 
-	@action(name = "goto_traffic", args = {
-		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "duration", type = IType.FLOAT, optional = true, doc = @doc("duration of the moving")),
-		@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")),
-		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
-	public void primGotoTraffic(final IScope scope) throws GamaRuntimeException {
+	@action(name = "goto_traffic",
+		args = {
+			@arg(name = "target",
+				type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				optional = false,
+				doc = @doc("the location or entity towards which to move.")),
+			@arg(name = IKeyword.SPEED,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "on",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = true,
+				doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+			@arg(name = "duration", type = IType.FLOAT, optional = true, doc = @doc("duration of the moving")),
+			@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")),
+			@arg(name = "return_path",
+				type = IType.BOOL,
+				optional = true,
+				doc = @doc("if true, return the path followed (by default: false)")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)",
+			returns = "optional: the path followed by the agent.",
+			examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+	public
+		void primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
 
@@ -82,26 +99,40 @@ public class TrafficMovingSkill extends MovingSkill {
 		return;
 	}
 
-	@action(name = "theorical_duration", args = {
-		@arg(name = "from", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = "to", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
-	public Float computeTheoricalTransportationTime(final IScope scope) throws GamaRuntimeException {
+	@action(name = "theorical_duration",
+		args = {
+			@arg(name = "from",
+				type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				optional = false,
+				doc = @doc("the location or entity towards which to move.")),
+			@arg(name = "to",
+				type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				optional = false,
+				doc = @doc("the location or entity towards which to move.")),
+			@arg(name = "on",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = true,
+				doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+			@arg(name = "max_speed", type = IType.FLOAT, optional = true, doc = @doc("speedMoving")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)",
+			returns = "optional: the path followed by the agent.",
+			examples = { @example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+	public
+		Float computeTheoricalTransportationTime(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = computeFrom(scope, agent);
 		final ILocation goal = computeTo(scope, agent);
 
 		if ( goal == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-1));
 			return new Float(-1);
 		}
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-1));
 			return new Float(-1);
 		}
@@ -112,7 +143,7 @@ public class TrafficMovingSkill extends MovingSkill {
 
 		if ( path == null ) {
 			System.out.println("error -> path null");
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-2));
 
 			return new Float(-2);
@@ -164,7 +195,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		final double maxSpeed) {
 
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		double duration = totalDuration;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -174,7 +205,7 @@ public class TrafficMovingSkill extends MovingSkill {
 		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
-		GamaList<IShape> segments = new GamaList();
+		IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		THashMap agents = new THashMap();
 		IShape oldline = null;

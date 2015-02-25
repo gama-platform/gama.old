@@ -233,7 +233,7 @@ public class DrivingSkill2d extends MovingSkill {
 		/* obstacle agents */
 		final Collection<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
-		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
+		final IList<IAgent> obstacleAgents = GamaListFactory.create(Types.AGENT);
 		for ( IAgent ia : neighbours ) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
@@ -245,7 +245,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		/* creating candidate points */
 
-		final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
+		final IList<CandidateEntry> candidateEntries = GamaListFactory.create(Types.NO_TYPE);
 		GamaPoint pointToAdd = null;
 		final int currentHeadingAngle = getHeading(agent);
 		int candidateHeading, dAngle;
@@ -367,7 +367,7 @@ public class DrivingSkill2d extends MovingSkill {
 	}
 
 	private boolean isNonOverlapping(final IScope scope, final GamaShape candidateShape,
-		final GamaList<IAgent> obstacleAgents) {
+		final IList<IAgent> obstacleAgents) {
 		for ( final IAgent ia : obstacleAgents ) {
 			if ( msi.gaml.operators.Spatial.Properties.overlaps(scope, candidateShape, ia.getGeometry()) ) { return false; }
 		}
@@ -457,7 +457,7 @@ public class DrivingSkill2d extends MovingSkill {
 		/* obstacle agents */
 		final Collection<IAgent> neighbours =
 			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
-		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
+		final IList<IAgent> obstacleAgents = GamaListFactory.create(Types.AGENT);
 		for ( IAgent ia : neighbours ) {
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
@@ -469,7 +469,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		/* creating candidate points */
 		try {
-			final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
+			final IList<CandidateEntry> candidateEntries = GamaListFactory.create(Types.NO_TYPE);
 			GamaPoint pointToAdd = null;
 			final int currentHeadingAngle = getHeading(agent);
 			int candidateHeading, dAngle;
@@ -602,9 +602,9 @@ public class DrivingSkill2d extends MovingSkill {
 		return distanceToTarget <= currentPerimeter;
 	}
 
-	private double distanceToNearestInFront(final IScope scope, final IAgent agent,
-		final GamaList<IAgent> obstacleAgents, final int dAngle,
-		final IShape consideringBackgroundAgentForCurrentPosition, final int consideringRange, double minDistance) {
+	private double distanceToNearestInFront(final IScope scope, final IAgent agent, final IList<IAgent> obstacleAgents,
+		final int dAngle, final IShape consideringBackgroundAgentForCurrentPosition, final int consideringRange,
+		double minDistance) {
 		final int currentHeading = getHeading(agent);
 		final double currentPointX = agent.getLocation().getX();
 		final double currentPointY = agent.getLocation().getY();
@@ -687,14 +687,14 @@ public class DrivingSkill2d extends MovingSkill {
 			final File file = new File(fileName);
 			if ( !file.exists() || !file.isFile() ) { return null; }
 			final BufferedReader in = new BufferedReader(new FileReader(file));
-			final GamaList<Object> result = new GamaList<Object>();
-			GamaList<GamaPoint> positionList = null;
+			final IList<Object> result = GamaListFactory.create();
+			IList<GamaPoint> positionList = null;
 			String readingLine = in.readLine();
 			// System.out.println("2: " + readingLine);
 			while (readingLine != null) {
 				final String[] tokens = readingLine.split(":");
 				if ( tokens.length >= 3 ) {
-					positionList = new GamaList<GamaPoint>();
+					positionList = GamaListFactory.create(Types.POINT);
 					// System.out.println("3:" + tokens[0] + "|" + tokens[1]);
 					final String[] positions = tokens[2].split(";");
 					// System.out.println("4:" + tokens[1] + "|" + positions.length);

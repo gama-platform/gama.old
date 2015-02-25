@@ -22,7 +22,7 @@ import msi.gama.util.*;
 import msi.gama.util.path.GamaPath;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import ummisco.miro.extension.transportation.dikjstra.*;
 import ummisco.miro.extension.transportation.graph.*;
 
@@ -83,10 +83,18 @@ public class TransportationSkill extends Skill {
 		agent.setAttribute(FILE_PATH, v);
 	}
 
-	@action(name = "loadFile", args = {
-		@arg(name = "source", type = IType.STRING, optional = false, doc = @doc("Path of the source file")),
-		@arg(name = "datatype", type = IType.STRING, optional = true, doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
-	public void loadFile(final IScope scope) throws GamaRuntimeException {
+	@action(name = "loadFile",
+		args = {
+			@arg(name = "source", type = IType.STRING, optional = false, doc = @doc("Path of the source file")),
+			@arg(name = "datatype",
+				type = IType.STRING,
+				optional = true,
+				doc = @doc("determine file datatype: OD -> it is an Origin Destination Matrix; busline -> official timetable of the transportation service")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.",
+			returns = "the path followed by the agent.",
+			examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	public
+		void loadFile(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
 		String fileLocation = (String) scope.getArg("source", IType.STRING);
@@ -189,12 +197,20 @@ public class TransportationSkill extends Skill {
 		}
 	}
 
-	@action(name = "travel_arrival", args = {
-		@arg(name = "from", type = IType.STRING, optional = false, doc = @doc("departure station ID")),
-		@arg(name = "to", type = IType.STRING, optional = false, doc = @doc("arrival Station ID")),
-		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
-	public GamaMap computTravel(final IScope scope) throws GamaRuntimeException {
+	@action(name = "travel_arrival",
+		args = {
+			@arg(name = "from", type = IType.STRING, optional = false, doc = @doc("departure station ID")),
+			@arg(name = "to", type = IType.STRING, optional = false, doc = @doc("arrival Station ID")),
+			@arg(name = "on",
+				type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY },
+				optional = true,
+				doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+			@arg(name = "departureDate", type = IType.INT, optional = false, doc = @doc("date of the departure")) },
+		doc = @doc(value = "moves the agent towards the target passed in the arguments.",
+			returns = "the path followed by the agent.",
+			examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	public
+		GamaMap computTravel(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);
 		String departureID = (String) scope.getArg("from", IType.STRING);
@@ -210,7 +226,7 @@ public class TransportationSkill extends Skill {
 	private GamaMap computeTravelTimeTable(final IScope scope, final IAgent agent, final ILocation source,
 		final String departureID, final String arrivalID, final long departure_date) throws GamaRuntimeException {
 		if ( !this.busStations.containsKey(departureID) || !this.busStations.containsKey(arrivalID) ) {
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-1));
 			return result; // new Integer(-1);
 		}
@@ -220,14 +236,14 @@ public class TransportationSkill extends Skill {
 		// this.busStations.get(departureID),busStations.get(arrivalID) ,departure_date).duration);
 		if ( tmp.duration == Long.MAX_VALUE ) {
 			System.out.println("erreur => non trouv�...");
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-2));
 			return result; // new Integer(-1);
 		}
 
-		GamaList<IAgent> edges = computeTransportOnTraffic(scope, tmp, departureID, arrivalID);
+		IList<IAgent> edges = computeTransportOnTraffic(scope, tmp, departureID, arrivalID);
 
-		GamaMap<String, Object> result = new GamaMap<String, Object>();
+		GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		result.put("duration", new Integer((int) tmp.duration));
 		result.put("edges", edges);
 		return result;
@@ -239,17 +255,17 @@ public class TransportationSkill extends Skill {
 		HashMap<String, Double> mat = this.ODMatrix.get(departureID);
 		if ( mat == null ) {
 			System.out.println("error departure" + departureID);
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-2));
 			return result;
 		}
-		GamaList<IAgent> res = new GamaList<IAgent>();
+		IList<IAgent> res = GamaListFactory.create(Types.AGENT);
 
 		Double duration = mat.get(arrivalID);
 
 		if ( duration == null ) {
 			System.out.println("error arrival" + arrivalID + " (departure:" + departureID + ")");
-			GamaMap<String, Object> result = new GamaMap<String, Object>();
+			GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 			result.put("duration", new Integer(-2));
 			return result;
 		}
@@ -271,19 +287,19 @@ public class TransportationSkill extends Skill {
 			}
 
 		}
-		GamaMap<String, Object> result = new GamaMap<String, Object>();
+		GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		result.put("duration", new Long((int) duration.doubleValue() + departure_date));
 		result.put("edges", res);
 		return result;
 
 	}
 
-	protected GamaList<IAgent> computeTransportOnTraffic(final IScope scope,
+	protected IList<IAgent> computeTransportOnTraffic(final IScope scope,
 		final TransportationResult transportationPath, final String departureID, final String arrivalID) {
 		int idEnd = graph.getBusStationId(busStations.get(arrivalID));
 		int idDeparture = graph.getBusStationId(busStations.get(departureID));
 		int currentStation = idEnd;
-		GamaList<IAgent> res = new GamaList<IAgent>();
+		IList<IAgent> res = GamaListFactory.create(Types.AGENT);
 		while (currentStation != -1 && currentStation != idDeparture) {
 			BusStation currentB = graph.getStation(currentStation);
 			BusStation previousB = null;

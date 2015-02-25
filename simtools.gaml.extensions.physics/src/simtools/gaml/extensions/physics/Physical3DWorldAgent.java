@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Physical3DWorldAgent.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the 
+ * 
+ * 'Physical3DWorldAgent.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -28,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.RigidBody;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -41,7 +41,10 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 @species(name = "Physical3DWorld")
 @vars({
-	@var(name = "gravity", type = IType.BOOL, init = "true", doc = @doc("Define if the physical world has a gravity or not")),
+	@var(name = "gravity",
+		type = IType.BOOL,
+		init = "true",
+		doc = @doc("Define if the physical world has a gravity or not")),
 	@var(name = "registeredAgents", type = IType.LIST, init = "[]") })
 public class Physical3DWorldAgent extends GamlAgent {
 
@@ -81,18 +84,17 @@ public class Physical3DWorldAgent extends GamlAgent {
 	@setter("gravity")
 	public void setGravity(final Boolean gravity) {
 		this.setAttribute("gravity", gravity);
-		if(gravity){
-			world.dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,-9.81f));
+		if ( gravity ) {
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, -9.81f));
+		} else {
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, 0.0f));
 		}
-		else{
-			world.dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,0.0f));
-		}
-		
+
 	}
 
 	public void registerAgent(final IAgent _agent) {
 		if ( registeredAgents == null ) {
-			registeredAgents = new GamaList<IAgent>();
+			registeredAgents = GamaListFactory.create(Types.AGENT);
 		}
 		_registerAgent(_agent);
 	}
@@ -120,19 +122,16 @@ public class Physical3DWorldAgent extends GamlAgent {
 			computedZLocation = (float) geom.getInnerGeometry().getCoordinates()[0].z;
 		}
 		Vector3f position =
-			new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(),
-				computedZLocation);
+			new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(), computedZLocation);
 
-		GamaList<Double> velocity =
-			(GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
+		GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
 		Vector3f _velocity =
-			new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity
-				.get(2).floatValue());
+			new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
 		Double mass = (Double) geom.getAttribute("mass");
 
 		Object collBObj = geom.getAttribute("collisionBound");
-		GamaMap collisionBound = Cast.asMap(null, collBObj);
+		GamaMap collisionBound = Cast.asMap(null, collBObj, false);
 
 		if ( collisionBound.isEmpty() ) { // Default collision shape is a sphere of radius 1.0;
 			Double radius = 1.0;
@@ -185,8 +184,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 	@args(names = { "timeStep", "velocityIterations", "port", "dbName", "usrName", "password" })
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
-		Double timeStep =
-			scope.hasArg("timeStep") ? (Double) scope.getArg("timeStep", IType.FLOAT) : 1.0;
+		Double timeStep = scope.hasArg("timeStep") ? (Double) scope.getArg("timeStep", IType.FLOAT) : 1.0;
 		// System.out.println("Time step : "+ timeStep);
 		world.update(timeStep.floatValue());
 
@@ -194,8 +192,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 			RigidBody node = registeredMap.get(ia);
 			Vector3f _position = world.getNodePosition(node);
 			GamaPoint position =
-				new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(
-					_position.z));
+				new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
 			ia.setLocation(position);
 			Coordinate[] coordinates = ia.getInnerGeometry().getCoordinates();
 			for ( int i = 0; i < coordinates.length; i++ ) {

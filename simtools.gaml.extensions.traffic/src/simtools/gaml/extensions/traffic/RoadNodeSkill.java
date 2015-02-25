@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'RoadNodeSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the 
+ * 
+ * 'RoadNodeSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -19,7 +19,6 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gaml.skills.MovingSkill;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
@@ -27,8 +26,13 @@ import msi.gaml.types.IType;
 	@var(name = "roads_in", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of input roads")),
 	@var(name = "priority_roads", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of priority roads")),
 	@var(name = "roads_out", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of output roads")),
-	@var(name = "stop", type = IType.LIST, of = IType.LIST, doc = @doc("define for each type of stop, the list of concerned roads")),
-	@var(name = "block", type = IType.MAP, doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
+	@var(name = "stop",
+		type = IType.LIST,
+		of = IType.LIST,
+		doc = @doc("define for each type of stop, the list of concerned roads")),
+	@var(name = "block",
+		type = IType.MAP,
+		doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
 @skill(name = "skill_road_node")
 public class RoadNodeSkill extends Skill {
 
@@ -77,7 +81,7 @@ public class RoadNodeSkill extends Skill {
 	public void setBlock(final IAgent agent, final Map<IAgent, List> block) {
 		agent.setAttribute(BLOCK, block);
 	}
-	
+
 	@getter(PRIORITY_ROADS)
 	public List getPriorityRoads(final IAgent agent) {
 		return (List) agent.getAttribute(PRIORITY_ROADS);

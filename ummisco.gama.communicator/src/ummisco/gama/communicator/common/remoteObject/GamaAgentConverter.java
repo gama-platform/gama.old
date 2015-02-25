@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaAgentConverter.java', in plugin 'ummisco.gama.communicator', is part of the source code of the 
+ * 
+ * 'GamaAgentConverter.java', in plugin 'ummisco.gama.communicator', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,13 +12,8 @@
 package ummisco.gama.communicator.common.remoteObject;
 
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.agent.IAgent;
-
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.converters.*;
+import com.thoughtworks.xstream.io.*;
 
 public class GamaAgentConverter implements Converter {
 
@@ -27,24 +22,22 @@ public class GamaAgentConverter implements Converter {
 	}
 
 	@Override
-	public boolean canConvert(Class arg0) {
+	public boolean canConvert(final Class arg0) {
 		return arg0.equals(GamlAgent.class);
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter writer,
-			MarshallingContext arg2) {
-			GamlAgent agt = (GamlAgent)arg0;
-			arg2.convertAnother(new RemoteAgent(agt));
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+		GamlAgent agt = (GamlAgent) arg0;
+		arg2.convertAnother(new RemoteAgent(agt));
 	}
 
 	@Override
-	public Object unmarshal(HierarchicalStreamReader reader,
-			UnmarshallingContext arg1) {
-		
-			reader.moveDown();
-			RemoteAgent rmt =(RemoteAgent )arg1.convertAnother(null, RemoteAgent.class);
-			reader.moveUp();
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+
+		reader.moveDown();
+		RemoteAgent rmt = (RemoteAgent) arg1.convertAnother(null, RemoteAgent.class);
+		reader.moveUp();
 		return rmt; // ragt;
 	}
 

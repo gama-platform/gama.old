@@ -17,9 +17,9 @@ import javax.naming.NamingException;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+import msi.gama.util.*;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import ummisco.gama.communicator.common.remoteObject.*;
 import com.thoughtworks.xstream.XStream;
@@ -31,11 +31,11 @@ public class ConnectionManager extends Skill implements MessageListener {
 	protected String topicName;
 	private MessageProducer producer = null;
 	private Session session = null;
-	private final HashMap<String, LinkedList<GamaMap<String, Object>>> messages;
+	private final HashMap<String, LinkedList<Map<String, Object>>> messages;
 	private final XStream xstream;
 
 	public ConnectionManager() {
-		this.messages = new HashMap<String, LinkedList<GamaMap<String, Object>>>();
+		this.messages = new HashMap<String, LinkedList<Map<String, Object>>>();
 		this.xstream = new XStream();
 		this.xstream.registerConverter(new GamaAgentConverter());
 		this.xstream.registerConverter(new GamaScopeConverter());
@@ -55,7 +55,7 @@ public class ConnectionManager extends Skill implements MessageListener {
 													// already exist
 		}
 		agent.setAttribute(ICommunicatorSkill.NET_AGENT_NAME, name);
-		messages.put(name, new LinkedList<GamaMap<String, Object>>());
+		messages.put(name, new LinkedList<Map<String, Object>>());
 
 		if ( session == null ) {
 			this.serverURL =
@@ -145,10 +145,10 @@ public class ConnectionManager extends Skill implements MessageListener {
 
 	private void pushMessage(final String netAgentName, final String to, final String from, final MapMessage mapMsg)
 		throws JMSException {
-		LinkedList<GamaMap<String, Object>> myMsgBox = this.messages.get(netAgentName);
+		LinkedList<Map<String, Object>> myMsgBox = this.messages.get(netAgentName);
 		Object res = xstream.fromXML((String) mapMsg.getObject(ICommunicatorSkill.CONTENT));
 
-		GamaMap<String, Object> agentMsg = new GamaMap<String, Object>();
+		Map<String, Object> agentMsg = new TOrderedHashMap<String, Object>();
 		agentMsg.put(ICommunicatorSkill.SENDER, from);
 		agentMsg.put(ICommunicatorSkill.DEST, to);
 		agentMsg.put(ICommunicatorSkill.CONTENT, res);
@@ -168,11 +168,11 @@ public class ConnectionManager extends Skill implements MessageListener {
 		if ( !this.messages.containsKey(myName) ) { throw GamaRuntimeException
 			.error("Agent has not any mailbox", scope); }
 
-		LinkedList<GamaMap<String, Object>> mList = this.messages.get(myName);
+		LinkedList<Map<String, Object>> mList = this.messages.get(myName);
 		if ( mList.isEmpty() ) {
 			return null;
 		} else {
-			return this.messages.get(myName).pollFirst();
+			return GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE, this.messages.get(myName).pollFirst());
 		}
 	}
 

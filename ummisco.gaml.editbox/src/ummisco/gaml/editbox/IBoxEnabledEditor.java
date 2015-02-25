@@ -17,15 +17,9 @@ public interface IBoxEnabledEditor {
 
 	boolean isDecorationEnabled();
 
-	/**
-	 * @param provider
-	 * @param settings
-	 */
 	void createDecorator();
 
-	void decorate();
-
-	void undecorate();
+	void decorate(boolean doIt);
 
 	void enableUpdates(boolean visible);
 
