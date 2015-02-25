@@ -12,11 +12,8 @@
 package irit.gaml.extensions.database.skills;
 
 import java.sql.Connection;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.Calendar;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.database.sql.*;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -25,10 +22,10 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /*
  * @Author TRUONG Minh Thai
@@ -65,9 +62,9 @@ import msi.gaml.types.IType;
  * 07-Jan-2014:
  * Move arg "transform" of select and insert action as key of arg "Param"
  * 01-Aug-2014:
- *   Add date time functions:
- *     getCurrentDateTime: get system datetime
- *     getDateOffset: get (datetime + offsettime)
+ * Add date time functions:
+ * getCurrentDateTime: get system datetime
+ * getDateOffset: get (datetime + offsettime)
  * Last Modified: 01-Aug-2014
  */
 @skill(name = "SQLSKILL")
@@ -83,6 +80,7 @@ public class SQLSkill extends Skill {
 		GuiUtils.informConsole("Hello World");
 		return null;
 	}
+
 	// Get current time of system
 	// added from MaeliaSkill
 	@action(name = "timeStamp")
@@ -90,45 +88,47 @@ public class SQLSkill extends Skill {
 		Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
 	}
-	//Get current time of system
-	@action(name="getCurrentDateTime",
-			args = {
-			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' "))
-	})
+
+	// Get current time of system
+	@action(name = "getCurrentDateTime", args = { @arg(name = "dateFormat",
+		type = IType.STRING,
+		optional = false,
+		doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")) })
 	public String getCurrentDateTime(final IScope scope) throws GamaRuntimeException {
-		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);	
+		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
 		DateFormat datef = new SimpleDateFormat(dateFormat);
 		Calendar c = Calendar.getInstance();
 		return datef.format(c.getTime());
 	}
 
-	@action(name="getDateOffset",
-			args = {
-			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")),
-			@arg(name = "dateStr", type = IType.STRING, optional = false, doc = @doc("Start date")),
-			@arg(name = "offset", type = IType.STRING, optional = false, doc = @doc("number on day to increase or decrease"))
-	})
-	public  String getDateOffset(final IScope scope) throws GamaRuntimeException
-	{
-		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);	
-		String dateStr = (String)scope.getArg("dateStr", IType.STRING);	
-		int dateOffset =  Integer.parseInt(scope.getArg("offset", IType.INT).toString());	
+	@action(name = "getDateOffset", args = {
+		@arg(name = "dateFormat",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")),
+		@arg(name = "dateStr", type = IType.STRING, optional = false, doc = @doc("Start date")),
+		@arg(name = "offset",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("number on day to increase or decrease")) })
+	public String getDateOffset(final IScope scope) throws GamaRuntimeException {
+		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
+		String dateStr = (String) scope.getArg("dateStr", IType.STRING);
+		int dateOffset = Integer.parseInt(scope.getArg("offset", IType.INT).toString());
 		DateFormat datef = new SimpleDateFormat(dateFormat);
 		Calendar c = Calendar.getInstance();
 		try {
 			c.setTime(datef.parse(dateStr));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			throw GamaRuntimeException.error("getDate error: Date format may not correct!"+ e.toString(), scope ) ;
+			// e.printStackTrace();
+			throw GamaRuntimeException.error("getDate error: Date format may not correct!" + e.toString(), scope);
 		}
-		c.add(Calendar.DATE, dateOffset);  // number of days to add
-		   // dt is now the new date
+		c.add(Calendar.DATE, dateOffset); // number of days to add
+		// dt is now the new date
 
 		return datef.format(c.getTime());
 	}
-	
-
 
 	/*
 	 * Make a connection to BDMS
@@ -144,7 +144,10 @@ public class SQLSkill extends Skill {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action(name = "testConnection", args = { @arg(name = "params",
+		type = IType.MAP,
+		optional = false,
+		doc = @doc("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
 
 		SqlConnection sqlConn;
@@ -181,8 +184,14 @@ public class SQLSkill extends Skill {
 	 */
 	@action(name = "executeUpdate", args = {
 		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")) })
+		@arg(name = "updateComm",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("List of values that are used to replace question mark")) })
 	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException {
 
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
@@ -223,10 +232,13 @@ public class SQLSkill extends Skill {
 		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
 		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
 		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = false,
+			doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
 	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
 	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-	})
+		})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		SqlConnection sqlConn;
@@ -278,23 +290,26 @@ public class SQLSkill extends Skill {
 	@action(name = "select", args = {
 		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
 		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("List of values that are used to replace question marks"))
 	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
 	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
-	})
-	public GamaList select_QM(final IScope scope) throws GamaRuntimeException {
+		})
+	public IList select_QM(final IScope scope) throws GamaRuntimeException {
 
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
-		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// thai.truongminh@gmail.com
 		// Move transform arg of select to a key in params
 		// boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
 		// boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
 		SqlConnection sqlConn;
-		GamaList<? super GamaList<Object>> repRequest = new GamaList<Object>();
+		IList<? super IList<Object>> repRequest = GamaListFactory.create();
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			if ( values.size() > 0 ) {
@@ -321,9 +336,20 @@ public class SQLSkill extends Skill {
 	}
 
 	@action(name = "list2Matrix", args = {
-		@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata")),
-		@arg(name = "getName", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnNames and data. default is true")),
-		@arg(name = "getType", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnTypes and data. default is false"))
+		@arg(name = "param",
+			type = IType.LIST,
+			optional = false,
+			doc = @doc(value = "Param: a list of records and metadata")),
+		@arg(name = "getName",
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc(value = "getType: a boolean value, optional parameter",
+				comment = "if it is true then the action will return columnNames and data. default is true")),
+		@arg(name = "getType",
+			type = IType.BOOL,
+			optional = true,
+			doc = @doc(value = "getType: a boolean value, optional parameter",
+				comment = "if it is true then the action will return columnTypes and data. default is false"))
 
 	})
 	public IMatrix List2matrix(final IScope scope) throws GamaRuntimeException {
@@ -337,7 +363,8 @@ public class SQLSkill extends Skill {
 			int columnSize = columnNames.size();
 			int lineSize = records.size();
 
-			final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize + (getType ? 1 : 0) + (getName ? 1 : 0));
+			final IMatrix matrix =
+				new GamaObjectMatrix(columnSize, lineSize + (getType ? 1 : 0) + (getName ? 1 : 0), Types.NO_TYPE);
 			// Add ColumnNames to Matrix
 			if ( getName == true ) {
 				for ( int j = 0; j < columnSize; j++ ) {

@@ -9,7 +9,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import weka.clusterers.*;
 import weka.clusterers.forOPTICSAndDBScan.DataObjects.ManhattanDataObject;
 import weka.core.*;
@@ -45,10 +45,10 @@ public class Clustering {
 		try {
 			clusterer.buildClusterer(dataset);
 
-			IList<IList<IAgent>> groupes = new GamaList<IList<IAgent>>();
+			IList<IList<IAgent>> groupes = GamaListFactory.create(Types.LIST.of(Types.AGENT));
 
 			for ( int i = 0; i < clusterer.numberOfClusters(); i++ ) {
-				groupes.add(new GamaList<IAgent>());
+				groupes.add(GamaListFactory.<IAgent> create(Types.AGENT));
 			}
 			for ( int i = 0; i < dataset.numInstances(); i++ ) {
 				Instance inst = dataset.instance(i);

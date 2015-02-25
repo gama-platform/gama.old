@@ -22,7 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.types.IType;
 
 /*
@@ -128,7 +128,10 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "connect", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action(name = "connect", args = { @arg(name = "params",
+		type = IType.MAP,
+		optional = false,
+		doc = @doc("Connection parameters")) })
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
@@ -167,7 +170,10 @@ public class AgentDB extends GamlAgent {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action(name = "testConnection", args = { @arg(name = "params",
+		type = IType.MAP,
+		optional = false,
+		doc = @doc("Connection parameters")) })
 	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
 		try {
 			SqlConnection sqlConn;
@@ -194,18 +200,21 @@ public class AgentDB extends GamlAgent {
 	 */
 	@action(name = "select", args = {
 		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("List of values that are used to replace question marks"))
 	// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
 	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-	})
-	public GamaList select(final IScope scope) throws GamaRuntimeException {
+		})
+	public IList select(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
 			scope); }
 		String selectComm = (String) scope.getArg("select", IType.STRING);
-		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
-		GamaList<? super GamaList<? super GamaList>> repRequest = new GamaList<Object>();
+		IList<? super IList<? super IList>> repRequest = GamaListFactory.create(msi.gaml.types.Types.LIST);
 		// get data
 		try {
 			if ( values.size() > 0 ) {
@@ -236,11 +245,17 @@ public class AgentDB extends GamlAgent {
 	 * }
 	 */
 	@action(name = "executeUpdate", args = {
-		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark"))
+		@arg(name = "updateComm",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = true,
+			doc = @doc("List of values that are used to replace question mark"))
 	// , @arg(name = "transform", type = IType.BOOL, optional = true, doc =
 	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-	})
+		})
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
@@ -275,7 +290,10 @@ public class AgentDB extends GamlAgent {
 		return params;
 	}
 
-	@action(name = "setParameter", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action(name = "setParameter", args = { @arg(name = "params",
+		type = IType.MAP,
+		optional = false,
+		doc = @doc("Connection parameters")) })
 	public Object setParameter(final IScope scope) throws GamaRuntimeException {
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
@@ -301,10 +319,13 @@ public class AgentDB extends GamlAgent {
 	@action(name = "insert", args = {
 		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
 		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+		@arg(name = "values",
+			type = IType.LIST,
+			optional = false,
+			doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
 	// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
 	// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
-	})
+		})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		if ( !isConnection ) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",

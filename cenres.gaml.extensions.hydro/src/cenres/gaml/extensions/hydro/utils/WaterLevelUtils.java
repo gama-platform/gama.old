@@ -14,7 +14,8 @@ package cenres.gaml.extensions.hydro.utils;
 import java.util.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
+import msi.gaml.types.Types;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
@@ -253,7 +254,7 @@ public class WaterLevelUtils {
 
 	}
 
-	public static GamaList<GamaList<GamaPoint>> areaPolylines(final List<Coordinate> points, final double targetheight) {
+	public static IList<IList<GamaPoint>> areaPolylines(final List<Coordinate> points, final double targetheight) {
 		int nbtrap = points.size() - 1;
 
 		double[] nexttrapsurf = new double[nbtrap];
@@ -264,8 +265,8 @@ public class WaterLevelUtils {
 		boolean inthewater = false;
 
 		GamaPoint currentstartpoint = new GamaPoint(0, 0);
-		GamaList<GamaList<GamaPoint>> listoflist = new GamaList<GamaList<GamaPoint>>();
-		GamaList<GamaPoint> currentlist = new GamaList<GamaPoint>();
+		IList<IList<GamaPoint>> listoflist = GamaListFactory.create(Types.LIST.of(Types.POINT));
+		IList<GamaPoint> currentlist = GamaListFactory.create(Types.POINT);
 
 		List<Coordinate> sortedpointsx = new ArrayList<Coordinate>();
 		sortedpointsx.addAll(points);
@@ -277,7 +278,7 @@ public class WaterLevelUtils {
 		for ( int i = 0; i < nbtrap; i++ ) {
 			if ( leftheight[i] > 0 & leftheight[i + 1] > 0 ) {
 				if ( !inthewater ) {
-					currentlist = new GamaList<GamaPoint>();
+					currentlist = GamaListFactory.create(Types.POINT);
 					currentstartpoint = new GamaPoint(sortedpointsx.get(i).x, targetheight);
 					currentlist.add(new GamaPoint(sortedpointsx.get(i).x, targetheight));
 					currentlist.add(new GamaPoint(sortedpointsx.get(i).x, sortedpointsx.get(i).y));
@@ -294,7 +295,7 @@ public class WaterLevelUtils {
 						(sortedpointsx.get(i).y - sortedpointsx.get(i + 1).y);
 				leftheight[i] = 0;
 				if ( !inthewater ) {
-					currentlist = new GamaList<GamaPoint>();
+					currentlist = GamaListFactory.create(Types.POINT);
 					currentstartpoint = new GamaPoint(sortedpointsx.get(i).x + trapwidth[i], targetheight);
 					currentlist.add(new GamaPoint(sortedpointsx.get(i).x + trapwidth[i], targetheight));
 					inthewater = true;

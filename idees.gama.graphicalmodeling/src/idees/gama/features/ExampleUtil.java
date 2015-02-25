@@ -19,7 +19,7 @@ public class ExampleUtil {
 	 * @param dialogTitle
 	 *            the dialog title, or <code>null</code> if none
 	 * @param dialogMessage
-	 *            the dialog message, or <code>null</code> if none
+	 *            the dialog mainTaskName, or <code>null</code> if none
 	 * @param initialValue
 	 *            the initial input value, or <code>null</code> if none
 	 *            (equivalent to the empty string)

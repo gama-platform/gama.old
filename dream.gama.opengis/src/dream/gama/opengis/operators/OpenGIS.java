@@ -19,8 +19,9 @@ import javax.imageio.ImageIO;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gama.util.file.*;
+import msi.gaml.types.Types;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.data.wms.response.GetMapResponse;
 import org.geotools.swing.wms.WMSLayerChooser;
@@ -97,12 +98,12 @@ public class OpenGIS {
 
 	@operator(value = "gml_from_wfs", can_be_const = true)
 	@doc(value = "WMS: A simple call to WFS/GML2")
-	public static GamaList<GamaList<Object>> read_wfs(final IScope scope, final String fakeFile,
-		final String schemaLink, final String gmlLink)
+	public static IList<IList<Object>> read_wfs(final IScope scope, final String fakeFile, final String schemaLink,
+		final String gmlLink)
 	// public static int read_wfs(final IScope scope, final String fakeFile,final String schemaLink, final String
 	// gmlLink)
 	{
-		GamaList<GamaList<Object>> featureList = new GamaList<GamaList<Object>>();
+		IList<IList<Object>> featureList = GamaListFactory.create(Types.LIST);
 
 		if ( schemaLink == null || gmlLink == null ) { return null; }
 		if ( scope == null ) { return null; }
@@ -191,9 +192,8 @@ public class OpenGIS {
 
 	@operator(value = "read_json_rest", can_be_const = true)
 	@doc(value = "REST: Read data from RESTService")
-	public static GamaList<GamaList<Object>> read_json_rest(final IScope scope, final String fakeFile,
-		final String restLink) {
-		GamaList<GamaList<Object>> featureList = new GamaList<GamaList<Object>>();
+	public static IList<IList<Object>> read_json_rest(final IScope scope, final String fakeFile, final String restLink) {
+		IList<IList<Object>> featureList = GamaListFactory.create(Types.LIST);
 
 		return featureList;
 	}

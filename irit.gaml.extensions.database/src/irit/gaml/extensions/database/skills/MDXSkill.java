@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import org.olap4j.OlapConnection;
@@ -80,7 +80,10 @@ public class MDXSkill extends Skill {
 	 * ];
 	 * }
 	 */
-	@action(name = "testConnection", args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action(name = "testConnection", args = { @arg(name = "params",
+		type = IType.MAP,
+		optional = false,
+		doc = @doc("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
 		MdxConnection mdxConn;
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
@@ -96,24 +99,40 @@ public class MDXSkill extends Skill {
 		return true;
 	}
 
-	@action(name = "select", args = {
-		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-		// @arg(name = "select", type = IType.STRING, optional = false, doc =
-		// @doc("select string with question marks")),
-		// @arg(name = "values", type = IType.LIST, optional = true, doc =
-		// @doc("List of values that are used to replace question marks")),
-		// @arg(name = "transform", type = IType.BOOL, optional = true, doc =
-		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	@action(name = "select",
+		args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			// @arg(name = "select", type = IType.STRING, optional = false, doc =
+			// @doc("select string with question marks")),
+			// @arg(name = "values", type = IType.LIST, optional = true, doc =
+			// @doc("List of values that are used to replace question marks")),
+			// @arg(name = "transform", type = IType.BOOL, optional = true, doc =
+			// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
-		// @arg(name = "mdx", type = IType.STRING, optional = true, doc = @doc("select string with question marks")),
-		@arg(name = "onColumns", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-		@arg(name = "onRows", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "from", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "where", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			// @arg(name = "mdx", type = IType.STRING, optional = true, doc = @doc("select string with question marks")),
+			@arg(name = "onColumns",
+				type = IType.STRING,
+				optional = false,
+				doc = @doc("select string with question marks")),
+			@arg(name = "onRows",
+				type = IType.LIST,
+				optional = false,
+				doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "from",
+				type = IType.LIST,
+				optional = false,
+				doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "where",
+				type = IType.LIST,
+				optional = true,
+				doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "values",
+				type = IType.LIST,
+				optional = true,
+				doc = @doc("List of values that are used to replace question marks")),
 
-	})
-	public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
+		})
+	public IList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
 
 		// ------------------------------------------------------------------------------------------
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
@@ -126,11 +145,11 @@ public class MDXSkill extends Skill {
 		String onColumnStr = (String) scope.getArg("onColumns", IType.STRING);
 		String fromStr = (String) scope.getArg("from", IType.STRING);
 		String whereStr = scope.hasArg("where") ? (String) scope.getArg("where", IType.STRING) : null;
-		GamaList<Object> values = scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST) : null;
+		IList<Object> values = scope.hasArg("values") ? (IList<Object>) scope.getArg("values", IType.LIST) : null;
 		String selectStr = "SELECT " + onColumnStr + " ON COLUMNS , " + onRowStr + " ON ROWS FROM " + fromStr;
 
 		MdxConnection mdxConn;
-		GamaList<Object> repRequest = new GamaList<Object>();
+		IList<Object> repRequest = GamaListFactory.create();
 		try {
 			if ( whereStr != null ) {
 				selectStr = selectStr + " WHERE " + whereStr;

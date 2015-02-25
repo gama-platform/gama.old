@@ -95,18 +95,18 @@ public class AssertStatement extends AbstractStatement {
 		if ( equals != null ) {
 			if ( value.value(scope) != null ) {
 				if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException.error(
-					"Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope), scope); }
+					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope), scope); }
 				return null;
 			} else {
 				if ( equals.value(scope) != null ) { throw GamaRuntimeException.error(
-					"Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope), scope); }
+					"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope), scope); }
 				return null;
 			}
 		}
 
 		if ( isnot != null ) {
 			if ( value.value(scope).equals(isnot.value(scope)) ) { throw GamaRuntimeException.error(
-				"Assert is_not ERROR: " + value.toGaml() + " is equals to " + isnot.value(scope), scope); }
+				"Assert is_not ERROR: " + value.serialize(false) + " is equals to " + isnot.value(scope), scope); }
 			return null;
 		}
 
@@ -118,27 +118,27 @@ public class AssertStatement extends AbstractStatement {
 				boolean isWarning = e.isWarning() && !scope.getExperiment().getWarningsAsErrors();
 
 				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning.", scope); }
+					"Assert raises ERROR: " + value.serialize(false) + " does not raise an error. It raises a warning.", scope); }
 				if ( !isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error.", scope); }
+					"Assert raises ERROR: " + value.serialize(false) + " does not raise a warning. It raises an error.", scope); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-					.error("Assert raises ERROR: " + value.toGaml() + "does not raise a " + raises.getName() +
+					.error("Assert raises ERROR: " + value.serialize(false) + "does not raise a " + raises.getName() +
 						", it raises " + (isWarning ? "a warning." : "an error."), scope); }
 				return null;
 			} catch (Exception e) {
 				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException.error(
-					"Assert raises ERROR: " + value.toGaml() + " raises an error that is not managed by GAMA.", scope); }
+					"Assert raises ERROR: " + value.serialize(false) + " raises an error that is not managed by GAMA.", scope); }
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
-				.error("Assert raises ERROR: " + value.toGaml() + " does not raise anything.", scope); }
+				.error("Assert raises ERROR: " + value.serialize(false) + " does not raise anything.", scope); }
 			return null;
 		}
 
 		// Case where there no equals, is_not or raises
 		// the value is thus evaluated as a boolean and tested
 		if ( !Cast.asBool(scope, getFacet(IKeyword.VALUE).value(scope)) ) { throw GamaRuntimeException.error(
-			"Assert ERROR: " + value.toGaml() + " is false", scope); }
+			"Assert ERROR: " + value.serialize(false) + " is false", scope); }
 		return null;
 	}
 }

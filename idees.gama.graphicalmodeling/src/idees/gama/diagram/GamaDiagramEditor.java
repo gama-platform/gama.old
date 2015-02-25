@@ -1,79 +1,38 @@
 package idees.gama.diagram;
 
-import gama.EAction;
-import gama.EAspect;
-import gama.EDisplay;
-import gama.EExperiment;
-import gama.EGamaObject;
-import gama.ELayer;
-import gama.ELayerAspect;
-import gama.EMonitor;
-import gama.EParameter;
-import gama.EReflex;
-import gama.ESpecies;
-import gama.EVariable;
+import gama.*;
 import idees.gama.features.modelgeneration.ModelGenerator;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.IGamaColors;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Statement;
-import msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl;
-import msi.gama.lang.gaml.gaml.impl.BlockImpl;
-import msi.gama.lang.gaml.gaml.impl.FacetImpl;
-import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
-import msi.gama.lang.gaml.gaml.impl.S_DefinitionImpl;
-import msi.gama.lang.gaml.gaml.impl.S_DisplayImpl;
-import msi.gama.lang.gaml.gaml.impl.S_ExperimentImpl;
-import msi.gama.lang.gaml.gaml.impl.S_ReflexImpl;
-import msi.gama.lang.gaml.gaml.impl.S_SpeciesImpl;
-import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.gaml.impl.VariableRefImpl;
-import msi.gama.lang.gaml.gaml.impl.speciesOrGridDisplayStatementImpl;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.*;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.mm.pictograms.*;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
-public class GamaDiagramEditor extends DiagramEditor implements
-		IGamlBuilderListener {
+public class GamaDiagramEditor extends DiagramEditor implements IGamlBuilderListener {
+
 	private static final int INITIAL_BUTTONS = 20;
-	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(
-			SWT.COLOR_BLACK);
+	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private static Font labelFont;
 
 	GamlResource resource;
@@ -87,18 +46,16 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	Diagram diagram;
 	IFeatureProvider featureProvider;
 	List<GamlCompilationError> errors;
-	
-	List<String> facets = GamaList.with("torus:","width:", "height:", "neighbours:", "refresh_every:" 
-			,"background:", "among:", "->", "<-", "step:", "min:", "max:", "update:", "refresh:",
-			"size:", "position:", "background:", "transparency:", "color:", "empty:", "rotate:", "schedules:", "at:", "depth:", "texture:");
-			
-	
+
+	List<String> facets = Arrays.asList("torus:", "width:", "height:", "neighbours:", "refresh_every:", "background:",
+		"among:", "->", "<-", "step:", "min:", "max:", "update:", "refresh:", "size:", "position:", "background:",
+		"transparency:", "color:", "empty:", "rotate:", "schedules:", "at:", "depth:", "texture:");
+
 	boolean toRefresh = true;
-	GamaMap<List<String>, EObject> idsEObjects = new GamaMap<List<String>, EObject>();
-	
-	
-	Map<List<String>,Map<String,String>> errorsLoc = new GamaMap<List<String>, Map<String,String>>();
-	Map<List<String>,Map<String,String>> syntaxErrorsLoc = new GamaMap<List<String>, Map<String,String>>();
+	Map<List<String>, EObject> idsEObjects = new TOrderedHashMap<List<String>, EObject>();
+
+	Map<List<String>, Map<String, String>> errorsLoc = new TOrderedHashMap<List<String>, Map<String, String>>();
+	Map<List<String>, Map<String, String>> syntaxErrorsLoc = new TOrderedHashMap<List<String>, Map<String, String>>();
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -111,23 +68,21 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 
 	@Override
-	public void validationEnded(Set<String> experiments, ErrorCollector status) {
+	public void validationEnded(final Set<String> experiments, final ErrorCollector status) {
 		updateExperiments(experiments, status.hasErrors());
 		toRefresh = true;
 	}
-/*public void validationEnded(Set<String> experiments, boolean withErrors) {
-		
-	}*/
 
-	private void updateExperiments(final Set<String> newExperiments,
-			final boolean withErrors) {
-		if (withErrors == true && wasOK == false) {
-			return;
-		}
+	/*
+	 * public void validationEnded(Set<String> experiments, boolean withErrors) {
+	 * 
+	 * }
+	 */
+
+	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
+		if ( withErrors == true && wasOK == false ) { return; }
 		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
-		if (inited && wasOK && !withErrors && oldNames.equals(newExperiments)) {
-			return;
-		}
+		if ( inited && wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
 		inited = true;
 		wasOK = !withErrors;
 		completeNamesOfExperiments = new ArrayList(newExperiments);
@@ -139,14 +94,14 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		// Very simple method used here
 		int size = completeNamesOfExperiments.size();
 		abbreviations.clear();
-		if (size > 6) {
+		if ( size > 6 ) {
 			// We remove "Experiment".
-			for (String s : completeNamesOfExperiments) {
+			for ( String s : completeNamesOfExperiments ) {
 				abbreviations.add(s.replaceFirst("Experiment ", ""));
 			}
-		} else if (size > 4) {
+		} else if ( size > 4 ) {
 			// We replace "Experiment" by "Exp."
-			for (String s : completeNamesOfExperiments) {
+			for ( String s : completeNamesOfExperiments ) {
 				abbreviations.add(s.replaceFirst("Experiment", "Exp."));
 			}
 		} else {
@@ -161,31 +116,25 @@ public class GamaDiagramEditor extends DiagramEditor implements
 
 			@Override
 			public void run() {
-				if (toolbar == null || toolbar.isDisposed()) {
-					return;
-				}
-				for (Button b : buttons) {
-					if (b.isVisible()) {
+				if ( toolbar == null || toolbar.isDisposed() ) { return; }
+				for ( Button b : buttons ) {
+					if ( b.isVisible() ) {
 						hideButton(b);
 					}
 				}
-				if (ok) {
+				if ( ok ) {
 					int size = abbreviations.size();
-					if (size == 0) {
-						setStatus(
-								"Model is functional, but no experiments have been defined.",
-								ok);
+					if ( size == 0 ) {
+						setStatus("Model is functional, but no experiments have been defined.", ok);
 					} else {
 						setStatus(size == 1 ? "Run :" : "Run :", ok);
 					}
 					int i = 0;
-					for (String e : abbreviations) {
+					for ( String e : abbreviations ) {
 						enableButton(i++, e);
 					}
 				} else {
-					setStatus(
-							"Error(s) detected. Impossible to run any experiment",
-							ok);
+					setStatus("Error(s) detected. Impossible to run any experiment", ok);
 				}
 
 				toolbar.layout(true);
@@ -195,9 +144,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 
 	private void enableButton(final int index, final String text) {
-		if (text == null) {
-			return;
-		}
+		if ( text == null ) { return; }
 		((GridData) buttons[index].getLayoutData()).exclude = false;
 		buttons[index].setVisible(true);
 		buttons[index].setText(text);
@@ -210,8 +157,9 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	}
 
 	private void setStatus(final String text, final boolean ok) {
-		Color c = ok ? abbreviations.size() == 0 ? SwtGui.getWarningColor()
-				: SwtGui.getOkColor() : SwtGui.getErrorColor();
+		Color c =
+			ok ? abbreviations.size() == 0 ? IGamaColors.WARNING.inactive() : IGamaColors.OK.inactive()
+				: IGamaColors.ERROR.inactive();
 		indicator.setBackground(c);
 		status.setText(text);
 	}
@@ -262,7 +210,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		status.setLayoutData(data);
 		status.setForeground(COLOR_TEXT);
 
-		for (int i = 0; i < INITIAL_BUTTONS; i++) {
+		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
 			buttons[i] = new Button(toolbar, SWT.PUSH);
 			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			buttons[i].setLayoutData(data);
@@ -277,8 +225,7 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		data.horizontalSpan = 2;
 		parent2.setLayoutData(data);
 		parent2.setLayout(new FillLayout());
-		
-		
+
 		super.createPartControl(parent2);
 
 	}
@@ -289,10 +236,9 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		public void widgetSelected(final SelectionEvent evt) {
 			diagram = getDiagram();
 			String xp = ((Button) evt.getSource()).getText();
-			if (diagram != null && !diagram.getChildren().isEmpty()) {
-				IModel model = ModelGenerator.modelGeneration(featureProvider,
-						diagram);
-				if (model != null) {
+			if ( diagram != null && !diagram.getChildren().isEmpty() ) {
+				IModel model = ModelGenerator.modelGeneration(featureProvider, diagram);
+				if ( model != null ) {
 					GuiUtils.openSimulationPerspective();
 					GAMA.controller.newExperiment(xp, model);
 				}
@@ -302,29 +248,29 @@ public class GamaDiagramEditor extends DiagramEditor implements
 	};
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
+	public void doSave(final IProgressMonitor monitor) {
 		super.doSave(monitor);
 	}
 
 	@Override
 	public void initRefresh() {
-		
-		if (toRefresh) {
+		if ( toRefresh ) {
 			diagram = getDiagram();
 			featureProvider = this.getDiagramTypeProvider().getFeatureProvider();
-			if (diagram != null && !diagram.getChildren().isEmpty())
-				ModelGenerator.modelValidation(this.getDiagramTypeProvider()
-					.getFeatureProvider(), diagram);
-		} 
-		super.initRefresh();
+			if ( diagram != null && !diagram.getChildren().isEmpty() ) {
+				ModelGenerator.modelValidation(this.getDiagramTypeProvider().getFeatureProvider(), diagram);
+			}
+		}
 		this.refreshPalette();
+		super.initRefresh();
 
 	}
 
 	public Diagram getDiagram() {
 		Diagram diag = diagram;
-		if (diagram == null)
+		if ( diagram == null ) {
 			diag = this.getDiagramTypeProvider().getDiagram();
+		}
 		return diag;
 	}
 
@@ -338,320 +284,346 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		return resource;
 	}
 
-	public void setResource(GamlResource resource) {
+	public void setResource(final GamlResource resource) {
 		this.resource = resource;
-		if (resource != null)
+		if ( resource != null ) {
 			resource.setListener(GamaDiagramEditor.this);
+		}
 	}
 
 	public List<GamlCompilationError> getErrors() {
 		return errors;
 	}
-	
-	
-	public void setErrors(List<GamlCompilationError> errors/*, ValidateStyledText vst*/) {
+
+	public void setErrors(final List<GamlCompilationError> errors/* , ValidateStyledText vst */) {
 		this.errors = errors;
-		
-		for (GamlCompilationError error : errors) {
+
+		for ( GamlCompilationError error : errors ) {
 			EObject toto = error.getStatement();
-			//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
-			GamaList<String> ids = new GamaList<String>();
-			String fist_obj = buildLocation(toto,ids);
-			//System.out.println("location of error: " + ids);
+			// System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);*/
+			List<String> ids = new ArrayList();
+			String fist_obj = buildLocation(toto, ids);
+			// System.out.println("location of error: " + ids);
 			while (!ids.isEmpty()) {
-				//System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
-				if (!idsEObjects.getKeys().contains(ids)) {
-					ids.remove(ids.size()-1);
+				// System.out.println("idsEObjects.getKeys(): " + idsEObjects.getKeys());
+				if ( !idsEObjects.keySet().contains(ids) ) {
+					ids.remove(ids.size() - 1);
 				} else {
 					break;
 				}
 			}
-			Map<String,String> locs = errorsLoc.get(ids) ;
-			
-			if (locs == null) {
-				locs = new GamaMap<String,String>();
+			Map<String, String> locs = errorsLoc.get(ids);
+
+			if ( locs == null ) {
+				locs = new TOrderedHashMap<String, String>();
 			}
-			//System.out.println("error.getCode() : " + error.getCode());
-			String key = (error.getCode().equals("gaml.duplicate.definition.issue") || error.getCode().equals("gaml.duplicate.name.issue")) ? "name":fist_obj;
-			locs.put(key, (locs.containsKey(key) ? locs.get(key) : "") + "\n" +error.toString());
-			if (error.toString().equals("Syntax errors detected ")) {
-				if (syntaxErrorsLoc.isEmpty())
+			// System.out.println("error.getCode() : " + error.getCode());
+			String key =
+				error.getCode().equals("gaml.duplicate.definition.issue") ||
+					error.getCode().equals("gaml.duplicate.name.issue") ? "name" : fist_obj;
+			locs.put(key, (locs.containsKey(key) ? locs.get(key) : "") + "\n" + error.toString());
+			if ( error.toString().equals("Syntax errors detected ") ) {
+				if ( syntaxErrorsLoc.isEmpty() ) {
 					syntaxErrorsLoc.put(ids, locs);
-			} else 
+				}
+			} else {
 				errorsLoc.put(ids, locs);
-			
+			}
+
 		}
 		toRefresh = false;
 		updateEObjectErrors();
 	}
 
-	public String buildLocation(EObject toto, List<String> ids) {
+	public String buildLocation(EObject toto, final List<String> ids) {
 		String fist_obj = null;
 		do {
-			//System.out.println("toto: " + toto);
-			if (toto instanceof S_ReflexImpl) {
+			// System.out.println("toto: " + toto);
+			if ( toto instanceof S_ReflexImpl ) {
 				S_ReflexImpl vv = (S_ReflexImpl) toto;
-				if (vv.getName() != null)
-					ids.add(0,vv.getName());
-				if (fist_obj == null) {
-					if(vv.getName() != null)
+				if ( vv.getName() != null ) {
+					ids.add(0, vv.getName());
+				}
+				if ( fist_obj == null ) {
+					if ( vv.getName() != null ) {
 						fist_obj = vv.getName();
-					else if (vv.getKey() != null) {
+					} else if ( vv.getKey() != null ) {
 						fist_obj = vv.getKey();
 					}
 				}
-			} else if (toto instanceof S_SpeciesImpl) {
+			} else if ( toto instanceof S_SpeciesImpl ) {
 				S_SpeciesImpl vv = (S_SpeciesImpl) toto;
-				ids.add(0,vv.getName());
-				if (fist_obj == null) {
-					fist_obj = vv.getName();		
+				ids.add(0, vv.getName());
+				if ( fist_obj == null ) {
+					fist_obj = vv.getName();
 				}
-			 
-		} else if (toto instanceof FacetImpl) {
-			FacetImpl vv = (FacetImpl) toto;
-			//System.out.println("vv :" + vv.getKey() + ";");
-			if (fist_obj == null && facets.contains(vv.getKey())) {
-				fist_obj = vv.getKey();		
-				//System.out.println("fist_obj facet : " + fist_obj);
-			}
-		}else if (toto instanceof S_ActionImpl) {
-				S_ActionImpl vv = (S_ActionImpl) toto;
-				ids.add(0,vv.getName());
-				if (fist_obj == null) {
-					fist_obj = vv.getName();		
-				}
-		} else if (toto instanceof speciesOrGridDisplayStatementImpl) {
-			speciesOrGridDisplayStatementImpl vv = (speciesOrGridDisplayStatementImpl) toto;
-			ids.add(0,vv.getKey());
-			//System.out.println("vv:"+ vv.getKey());
-			
-		//	System.out.println("vv.getFacets:"+ vv.getFacets());
-		} else if (toto instanceof S_DisplayImpl) {
-			S_DisplayImpl vv = (S_DisplayImpl) toto;
-			ids.add(0,vv.getName());
-			if (fist_obj == null) {
-				fist_obj = vv.getName();	
-			}
-		} else if (toto instanceof BlockImpl) {
-				BlockImpl vv = (BlockImpl) toto;
-				/*System.out.println("block:" + vv );
-				System.out.println("block getFunction:" + vv.getFunction() );
-				System.out.println("block getStatements:" + vv.getStatements() );*/
-				if (vv.getStatements() != null) {
-					for (Statement st : vv.getStatements()) {
-						if (st != null && st.getKey() != null && st.getKey().equals("parameter")) {
-							ids.add(0,st.getExpr().getOp());
-							//System.out.println("st.getExpr " + st.getExpr());
-							//System.out.println("st.getFacets " + st.getFacets());
 
-							//System.out.println("st.getBlock " + st.getBlock());
+			} else if ( toto instanceof FacetImpl ) {
+				FacetImpl vv = (FacetImpl) toto;
+				// System.out.println("vv :" + vv.getKey() + ";");
+				if ( fist_obj == null && facets.contains(vv.getKey()) ) {
+					fist_obj = vv.getKey();
+					// System.out.println("fist_obj facet : " + fist_obj);
+				}
+			} else if ( toto instanceof S_ActionImpl ) {
+				S_ActionImpl vv = (S_ActionImpl) toto;
+				ids.add(0, vv.getName());
+				if ( fist_obj == null ) {
+					fist_obj = vv.getName();
+				}
+			} else if ( toto instanceof speciesOrGridDisplayStatementImpl ) {
+				speciesOrGridDisplayStatementImpl vv = (speciesOrGridDisplayStatementImpl) toto;
+				ids.add(0, vv.getKey());
+				// System.out.println("vv:"+ vv.getKey());
+
+				// System.out.println("vv.getFacets:"+ vv.getFacets());
+			} else if ( toto instanceof S_DisplayImpl ) {
+				S_DisplayImpl vv = (S_DisplayImpl) toto;
+				ids.add(0, vv.getName());
+				if ( fist_obj == null ) {
+					fist_obj = vv.getName();
+				}
+			} else if ( toto instanceof BlockImpl ) {
+				BlockImpl vv = (BlockImpl) toto;
+				/*
+				 * System.out.println("block:" + vv );
+				 * System.out.println("block getFunction:" + vv.getFunction() );
+				 * System.out.println("block getStatements:" + vv.getStatements() );
+				 */
+				if ( vv.getStatements() != null ) {
+					for ( Statement st : vv.getStatements() ) {
+						if ( st != null && st.getKey() != null && st.getKey().equals("parameter") ) {
+							ids.add(0, st.getExpr().getOp());
+							// System.out.println("st.getExpr " + st.getExpr());
+							// System.out.println("st.getFacets " + st.getFacets());
+
+							// System.out.println("st.getBlock " + st.getBlock());
 						}
 					}
 				}
-				
-			} else if (toto instanceof S_DefinitionImpl) {
+
+			} else if ( toto instanceof S_DefinitionImpl ) {
 				S_DefinitionImpl vv = (S_DefinitionImpl) toto;
-				ids.add(0,vv.getName());
-			} else if (toto instanceof ArgumentDefinitionImpl) {
+				ids.add(0, vv.getName());
+			} else if ( toto instanceof ArgumentDefinitionImpl ) {
 				ArgumentDefinitionImpl vv = (ArgumentDefinitionImpl) toto;
-				ids.add(0,vv.getName());
-			} else if (toto instanceof S_ExperimentImpl) {
+				ids.add(0, vv.getName());
+			} else if ( toto instanceof S_ExperimentImpl ) {
 				S_ExperimentImpl vv = (S_ExperimentImpl) toto;
-				ids.add(0,vv.getName());
-				if (fist_obj == null) {
+				ids.add(0, vv.getName());
+				if ( fist_obj == null ) {
 					fist_obj = vv.getName();
 				}
-			} else if (toto instanceof StatementImpl) {
+			} else if ( toto instanceof StatementImpl ) {
 				StatementImpl vv = (StatementImpl) toto;
-				if (vv.getKey().equals("text") || vv.getKey().equals("image")  || vv.getKey().equals("chart") || vv.getKey().equals("draw") ) 
-					ids.add(0,vv.getKey());
-			} else if (toto instanceof VariableRefImpl) {
-				//VariableRefImpl vv = (VariableRefImpl) toto;
-				//System.out.println("var:" + vv );
-				//System.out.println("var getRef:" + vv.getRef() );
-				
-			/*} else if (toto instanceof S_DefinitionImpl) {
-				S_DefinitionImpl vv = (S_DefinitionImpl) toto;
-				ids.add(0,vv.getName()); 
-				if (fist_obj == null) {
-					fist_obj = vv.getName();	
-				}*/
-			} else if (toto instanceof EGamaObject) {
-				EGamaObject vv = (EGamaObject) toto;
-				if (toto instanceof ELayer) {
-					ids.add(0,((ELayer) vv).getType() == null ? "species" : ((ELayer) vv).getType()); 
-				} else if (toto instanceof ELayerAspect) {
-						ids.add(0,"draw"); 
-				} else {
-					ids.add(0,vv.getName()); 
+				if ( vv.getKey().equals("text") || vv.getKey().equals("image") || vv.getKey().equals("chart") ||
+					vv.getKey().equals("draw") ) {
+					ids.add(0, vv.getKey());
 				}
-				if (fist_obj == null) {
-					fist_obj = vv.getName();	
+			} else if ( toto instanceof VariableRefImpl ) {
+				// VariableRefImpl vv = (VariableRefImpl) toto;
+				// System.out.println("var:" + vv );
+				// System.out.println("var getRef:" + vv.getRef() );
+
+				/*
+				 * } else if (toto instanceof S_DefinitionImpl) {
+				 * S_DefinitionImpl vv = (S_DefinitionImpl) toto;
+				 * ids.add(0,vv.getName());
+				 * if (fist_obj == null) {
+				 * fist_obj = vv.getName();
+				 * }
+				 */
+			} else if ( toto instanceof EGamaObject ) {
+				EGamaObject vv = (EGamaObject) toto;
+				if ( toto instanceof ELayer ) {
+					ids.add(0, ((ELayer) vv).getType() == null ? "species" : ((ELayer) vv).getType());
+				} else if ( toto instanceof ELayerAspect ) {
+					ids.add(0, "draw");
+				} else {
+					ids.add(0, vv.getName());
+				}
+				if ( fist_obj == null ) {
+					fist_obj = vv.getName();
 				}
 			}
-			
-			if (toto instanceof EAction) {
+
+			if ( toto instanceof EAction ) {
 				toto = ((EAction) toto).getActionLinks().get(0).getSpecies();
-			} else if (toto instanceof EReflex) {
+			} else if ( toto instanceof EReflex ) {
 				toto = ((EReflex) toto).getReflexLinks().get(0).getSpecies();
-			} else if (toto instanceof ELayer) {
+			} else if ( toto instanceof ELayer ) {
 				toto = ((ELayer) toto).getDisplay();
-			} else if (toto instanceof ELayerAspect) {
+			} else if ( toto instanceof ELayerAspect ) {
 				toto = ((ELayerAspect) toto).getAspect();
-			} else if (toto instanceof EAspect) {
+			} else if ( toto instanceof EAspect ) {
 				toto = ((EAspect) toto).getAspectLinks().get(0).getSpecies();
-			} else if (toto instanceof EExperiment) {
+			} else if ( toto instanceof EExperiment ) {
 				toto = ((EExperiment) toto).getExperimentLink().getSpecies();
-			} else if (toto instanceof EDisplay) {
+			} else if ( toto instanceof EDisplay ) {
 				toto = ((EDisplay) toto).getDisplayLink().getExperiment();
-			} else if (toto instanceof ESpecies) {
-				if (!((ESpecies) toto).getName().equals("world"))
+			} else if ( toto instanceof ESpecies ) {
+				if ( !((ESpecies) toto).getName().equals("world") ) {
 					toto = ((ESpecies) toto).getMacroSpeciesLinks().get(0).getMacro();
-				else toto = null;
-			}else {
+				} else {
+					toto = null;
+				}
+			} else {
 				toto = toto != null ? toto.eContainer() : toto;
 			}
-			
-		} while ((toto != null) && !(toto instanceof Model)) ;
-		if (!ids.contains("world"))
+
+		} while (toto != null && !(toto instanceof Model));
+		if ( !ids.contains("world") ) {
 			ids.add(0, "world");
-		//System.out.println("ids: " + ids);
+		}
+		// System.out.println("ids: " + ids);
 		return fist_obj;
 	}
-	public String containErrors (List<String> location, String name, List<String> uselessName) {
-		//System.out.println("syntaxErrorsLoc: " + syntaxErrorsLoc);
+
+	public String containErrors(final List<String> location, final String name, final List<String> uselessName) {
+		// System.out.println("syntaxErrorsLoc: " + syntaxErrorsLoc);
 		boolean noName = name.equals("");
-		//System.out.println("location: " + location + " name: " + name);
-				
-		//System.out.println("errorsLoc: " + errorsLoc);
-		if (errorsLoc == null || errorsLoc.isEmpty()|| !errorsLoc.containsKey(location))
-			return "";
-		
-		if (noName) {
+		// System.out.println("location: " + location + " name: " + name);
+
+		// System.out.println("errorsLoc: " + errorsLoc);
+		if ( errorsLoc == null || errorsLoc.isEmpty() || !errorsLoc.containsKey(location) ) { return ""; }
+
+		if ( noName ) {
 			Map<String, String> er = errorsLoc.get(location);
-			if (uselessName != null) {
-				for (String val: uselessName) 
+			if ( uselessName != null ) {
+				for ( String val : uselessName ) {
 					er.remove(val);
+				}
 			}
-			//System.out.println("er 2: " + er);
-			if (! er.isEmpty()) {
-				List<String> l = new GamaList<String>(er.values());
+			// System.out.println("er 2: " + er);
+			if ( !er.isEmpty() ) {
+				List<String> l = new ArrayList<String>(er.values());
 				return l.get(0);
 			}
-		} else if (errorsLoc.get(location).containsKey(name)) {
-			//System.out.println("errorsLoc.get(location).get(name): " + errorsLoc.get(location).get(name));
+		} else if ( errorsLoc.get(location).containsKey(name) ) {
+			// System.out.println("errorsLoc.get(location).get(name): " + errorsLoc.get(location).get(name));
 			return errorsLoc.get(location).get(name);
 		}
 
 		return "";
 	}
-	
-	public List<String> computeIds(final EObject obj){
+
+	public List<String> computeIds(final EObject obj) {
 		EObject toto = obj;
-		List<String> ids = new GamaList<String>();
+		List<String> ids = new ArrayList<String>();
 		do {
-			//System.out.println("toto : " + toto);
-			if (toto != null) {
-				if (toto instanceof EGamaObject) {
-					if (toto instanceof ELayer)
-						ids.add(0,((ELayer) toto).getType());
-					if (toto instanceof ELayerAspect)
-						ids.add(0,"draw");
-					else 
-						ids.add(0,((EGamaObject) toto).getName());
+			// System.out.println("toto : " + toto);
+			if ( toto != null ) {
+				if ( toto instanceof EGamaObject ) {
+					if ( toto instanceof ELayer ) {
+						ids.add(0, ((ELayer) toto).getType());
+					}
+					if ( toto instanceof ELayerAspect ) {
+						ids.add(0, "draw");
+					} else {
+						ids.add(0, ((EGamaObject) toto).getName());
+					}
 				}
-					
-				else if (toto instanceof EVariable)
-					ids.add(0,((EVariable) toto).getName());
-				if (toto instanceof EAction) {
+
+				else if ( toto instanceof EVariable ) {
+					ids.add(0, ((EVariable) toto).getName());
+				}
+				if ( toto instanceof EAction ) {
 					toto = ((EAction) toto).getActionLinks().get(0).getSpecies();
-				} else if (toto instanceof EReflex) {
+				} else if ( toto instanceof EReflex ) {
 					toto = ((EReflex) toto).getReflexLinks().get(0).getSpecies();
-				} else if (toto instanceof EAspect) {
+				} else if ( toto instanceof EAspect ) {
 					toto = ((EAspect) toto).getAspectLinks().get(0).getSpecies();
-				} else if (toto instanceof EExperiment) {
+				} else if ( toto instanceof EExperiment ) {
 					toto = ((EExperiment) toto).getExperimentLink().getSpecies();
-				} else if (toto instanceof EDisplay) {
+				} else if ( toto instanceof EDisplay ) {
 					toto = ((EDisplay) toto).getDisplayLink().getExperiment();
-				} else if (toto instanceof ELayer) {
+				} else if ( toto instanceof ELayer ) {
 					toto = ((ELayer) toto).getDisplay();
-				} else if (toto instanceof ELayerAspect) {
+				} else if ( toto instanceof ELayerAspect ) {
 					toto = ((ELayerAspect) toto).getAspect();
-				} else if (toto instanceof ESpecies) {
-					if (!((ESpecies) toto).getName().equals("world"))
+				} else if ( toto instanceof ESpecies ) {
+					if ( !((ESpecies) toto).getName().equals("world") ) {
 						toto = ((ESpecies) toto).getMacroSpeciesLinks().get(0).getMacro();
-					else toto = null;
+					} else {
+						toto = null;
+					}
 				} else {
-					toto = (EObject) toto.eContainer();
+					toto = toto.eContainer();
 				}
-			}	
-		} while ((toto != null) && !(toto instanceof Model)) ;
-		if (!ids.contains("world")) 
-			ids.add(0,"world");
+			}
+		} while (toto != null && !(toto instanceof Model));
+		if ( !ids.contains("world") ) {
+			ids.add(0, "world");
+		}
 		return ids;
 	}
-	public void addEOject(final EObject obj){
+
+	public void addEOject(final EObject obj) {
 		List<String> ids = computeIds(obj);
-		if (obj instanceof EVariable ) {
+		if ( obj instanceof EVariable ) {
 			idsEObjects.put(ids, ((EVariable) obj).eContainer());
-		} else if (obj instanceof EParameter) {
+		} else if ( obj instanceof EParameter ) {
 			idsEObjects.put(ids, ((EParameter) obj).eContainer());
-		} else if (obj instanceof EMonitor) {
+		} else if ( obj instanceof EMonitor ) {
 			idsEObjects.put(ids, ((EMonitor) obj).eContainer());
+		} else {
+			idsEObjects.put(ids, obj);
 		}
-		else 
-			idsEObjects.put(ids,obj);
-		
-		//System.out.println("add object: " + obj + " ids: " + ids + " idsEObjects: " + idsEObjects.keySet());
+
+		// System.out.println("add object: " + obj + " ids: " + ids + " idsEObjects: " + idsEObjects.keySet());
 	}
-	
-	public void addEOject(final EObject obj, String name){
+
+	public void addEOject(final EObject obj, final String name) {
 		List<String> ids = computeIds(obj);
 		ids.add(name);
-		idsEObjects.put(ids, obj );
+		idsEObjects.put(ids, obj);
 	}
-	public void removeEOject(final EObject obj){
+
+	public void removeEOject(final EObject obj) {
 		List<String> ids = computeIds(obj);
 		idsEObjects.remove(ids);
 	}
-	
+
 	public void updateEObjectErrors() {
-		TransactionalEditingDomain domain = TransactionUtil
-				.getEditingDomain(getDiagram());
-		if (domain != null) {
-			domain.getCommandStack().execute(
-				new RecordingCommand(domain) {
-					public void doExecute() {
-		
-		initIdsEObjects();
-		//System.out.println("idsEObjects : " + idsEObjects.keySet());
-		//System.out.println("errorsLoc : " + errorsLoc);
-		//System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);
-		List<List<String>> vals = new GamaList<List<String>>(idsEObjects.keySet());
-		Map<List<String>, EObject> valM = new GamaMap<List<String>, EObject>(idsEObjects);
-		for (final EObject bo : valM.values()) {
-			if (bo instanceof EGamaObject)
-				((EGamaObject) bo).setHasError(false);
-			else if (bo instanceof EVariable)
-				((EVariable) bo).setHasError(false);
+		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(getDiagram());
+		if ( domain != null ) {
+			domain.getCommandStack().execute(new RecordingCommand(domain) {
+
+				@Override
+				public void doExecute() {
+
+					initIdsEObjects();
+					// System.out.println("idsEObjects : " + idsEObjects.keySet());
+					// System.out.println("errorsLoc : " + errorsLoc);
+					// System.out.println("syntaxErrorsLoc : " + syntaxErrorsLoc);
+					List<List<String>> vals = new ArrayList<List<String>>(idsEObjects.keySet());
+					Map<List<String>, EObject> valM = new TOrderedHashMap<List<String>, EObject>(idsEObjects);
+					for ( final EObject bo : valM.values() ) {
+						if ( bo instanceof EGamaObject ) {
+							((EGamaObject) bo).setHasError(false);
+						} else if ( bo instanceof EVariable ) {
+							((EVariable) bo).setHasError(false);
+						}
+					}
+					for ( final List<String> ids : vals ) {
+						final EObject obj = valM.get(ids);
+						// System.out.println("ids: " + ids + " obj: " + obj);
+						if ( obj == null ) {
+							continue;
+						}
+						final boolean val = syntaxErrorsLoc.containsKey(ids) || errorsLoc.containsKey(ids);
+						// System.out.println("val = " +val);
+						if ( val && obj instanceof EGamaObject ) {
+							((EGamaObject) obj).setHasError(val);
+							// System.out.println(((EGamaObject) obj).getHasError());
+						}
+					}
+				}
+			});
 		}
-		for (final List<String> ids : vals) {
-			final EObject obj = valM.get(ids);
-			//System.out.println("ids: " + ids + " obj: " + obj);
-			if (obj == null) continue;
-			final boolean val = syntaxErrorsLoc.containsKey(ids) || errorsLoc.containsKey(ids);
-			//System.out.println("val = " +val);
-				if (val && obj instanceof EGamaObject)
-					((EGamaObject) obj).setHasError(val);	
-			//	System.out.println(((EGamaObject) obj).getHasError());
-			}
-		}
-		}
-			);
-		}		
 	}
 
-	public Map<List<String>, Map<String,String>> getErrorsLoc() {
+	public Map<List<String>, Map<String, String>> getErrorsLoc() {
 		return errorsLoc;
 	}
 
@@ -659,73 +631,77 @@ public class GamaDiagramEditor extends DiagramEditor implements
 		return syntaxErrorsLoc;
 	}
 
-	public GamaMap<List<String>, EObject> getIdsEObjects() {
+	public Map<List<String>, EObject> getIdsEObjects() {
 		return idsEObjects;
 	}
-	
+
 	public void initIdsEObjects() {
-		//System.out.println("initIdsEObjects");
-		if (diagram != null && !diagram.getChildren().isEmpty() && idsEObjects.isEmpty()) {
-			for (Shape obj : getDiagram().getChildren()) {
+		// System.out.println("initIdsEObjects");
+		if ( diagram != null && !diagram.getChildren().isEmpty() && idsEObjects.isEmpty() ) {
+			for ( Shape obj : getDiagram().getChildren() ) {
 				Object bo = featureProvider.getBusinessObjectForPictogramElement(obj);
-				//System.out.println("obj : " + bo);
-				if (bo instanceof EObject) {
+				// System.out.println("obj : " + bo);
+				if ( bo instanceof EObject ) {
 					addEOject((EObject) bo);
-					
+
 				}
-				if (bo instanceof ESpecies) {
+				if ( bo instanceof ESpecies ) {
 					boolean shape = false;
 					boolean location = false;
-					for (EVariable v : ((ESpecies) bo).getVariables()) {
+					for ( EVariable v : ((ESpecies) bo).getVariables() ) {
 						addEOject(v);
-						if (location || v.getName().equals("location")) 
+						if ( location || v.getName().equals("location") ) {
 							location = true;
-						if (shape || v.getName().equals("shape")) 
+						}
+						if ( shape || v.getName().equals("shape") ) {
 							shape = true;
+						}
 					}
-					if (! shape) {
+					if ( !shape ) {
 						addEOject((EObject) bo, "shape");
 					}
-					if (! location) {
+					if ( !location ) {
 						addEOject((EObject) bo, "location");
 					}
-				} else if (bo instanceof EAspect) {
+				} else if ( bo instanceof EAspect ) {
 					addEOject((EObject) bo, "draw");
-				} else if (bo instanceof EDisplay) {
-					for (ELayer lay: ((EDisplay) bo).getLayers()) {
+				} else if ( bo instanceof EDisplay ) {
+					for ( ELayer lay : ((EDisplay) bo).getLayers() ) {
 						addEOject((EObject) bo, lay.getType());
 					}
-				} else if (bo instanceof EExperiment) {
-					for (EParameter v : ((EExperiment) bo).getParameters()) {
+				} else if ( bo instanceof EExperiment ) {
+					for ( EParameter v : ((EExperiment) bo).getParameters() ) {
 						addEOject(v);
 					}
-					for (EMonitor v : ((EExperiment) bo).getMonitors()) {
+					for ( EMonitor v : ((EExperiment) bo).getMonitors() ) {
 						addEOject(v);
 					}
 				}
 			}
 		}
 	}
-	
-	public void updateErrors(List<String> oldId, List<String> newId){
-		Map<String,String> eMap = errorsLoc.remove(oldId);
-		if (eMap != null)
+
+	public void updateErrors(final List<String> oldId, final List<String> newId) {
+		Map<String, String> eMap = errorsLoc.remove(oldId);
+		if ( eMap != null ) {
 			errorsLoc.put(newId, eMap);
-		
-		Map<String,String> eMap2 = syntaxErrorsLoc.remove(oldId);
-		if (eMap2 != null)
+		}
+
+		Map<String, String> eMap2 = syntaxErrorsLoc.remove(oldId);
+		if ( eMap2 != null ) {
 			syntaxErrorsLoc.put(newId, eMap2);
-	
-		//System.out.println("idsEObjects: " + idsEObjects);
+		}
+
+		// System.out.println("idsEObjects: " + idsEObjects);
 		EObject obj = idsEObjects.remove(oldId);
-		if (obj != null)
+		if ( obj != null ) {
 			idsEObjects.put(newId, obj);
-		//System.out.println("idsEObjects apres: " + idsEObjects);
+			// System.out.println("idsEObjects apres: " + idsEObjects);
+		}
 	}
 
 	public boolean isWasOK() {
 		return wasOK;
 	}
 
-	
 }
