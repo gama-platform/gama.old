@@ -18,9 +18,10 @@ import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.AllImportUriGlobalS
 import msi.gama.lang.gaml.scoping.*;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.lang.utils.*;
-import msi.gama.util.GAML;
-import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.compilation.IModelBuilder;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.*;
+import msi.gaml.factories.ModelFactory.IModelBuilderProvider;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.*;
@@ -37,18 +38,33 @@ import com.google.inject.Binder;
  */
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
+	private static boolean initialized;
+
+	public static void staticInitialize() {
+		if ( !initialized ) {
+			System.out.println(">> Registering GAML expression compiler.");
+			GamlExpressionFactory.registerParserProvider(new GamlExpressionCompilerProvider());
+			ModelFactory.registerModelBuilderProvider(new IModelBuilderProvider() {
+
+				@Override
+				public IModelBuilder get() {
+					return new GamlModelBuilder();
+				}
+			});
+			DescriptionFactory.registerDocManager(GamlResourceDocManager.getInstance());
+			initialized = true;
+		}
+
+	}
+
 	@Override
 	public void configure(final Binder binder) {
 		super.configure(binder);
-		System.out.println(">> Registering GAML expression compiler.");
-		GAML.getExpressionFactory().registerParserProvider(new GamlExpressionCompilerProvider());
-		GAML.getModelFactory().registerModelBuilder(GamlModelBuilder.getInstance());
-		DescriptionFactory.registerDocManager(GamlResourceDocManager.getInstance());
+		staticInitialize();
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		binder.bind(ImportUriGlobalScopeProvider.class).to(AllImportUriGlobalScopeProvider.class);
-
 		// binder.bind(IResourceDescription.class).to(GamlResourceDescription.class);
 		// binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
 	}

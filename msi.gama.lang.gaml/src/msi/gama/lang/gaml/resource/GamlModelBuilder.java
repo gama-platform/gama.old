@@ -11,14 +11,21 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import java.io.InputStream;
+import gnu.trove.set.hash.TLinkedHashSet;
+import java.io.*;
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.utils.EGaml;
+import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import org.eclipse.emf.common.util.URI;
+import msi.gaml.types.GamaFileType;
+import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
+import org.eclipse.xtext.resource.*;
 
 /**
  * Class GamlResourceBuilder.
@@ -29,17 +36,19 @@ import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
  */
 public class GamlModelBuilder implements IModelBuilder {
 
-	SynchronizedXtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
+	XtextResourceSet buildResourceSet = new XtextResourceSet();
+
 	GamlResource fakeResource;
-	URI fakeURI = URI.createURI("temp_builder.gaml", false);
+	static URI fakeURI = URI.createURI("temp_builder.gaml", false);
 
-	private static GamlModelBuilder instance = new GamlModelBuilder();
+	// private static GamlModelBuilder instance = new GamlModelBuilder();
+	//
+	// public static GamlModelBuilder getInstance() {
+	// return instance;
+	// }
 
-	public static GamlModelBuilder getInstance() {
-		return instance;
-	}
+	public GamlModelBuilder() {
 
-	private GamlModelBuilder() {
 		buildResourceSet.setClasspathURIContext(GamlModelBuilder.class);
 	};
 
@@ -137,6 +146,55 @@ public class GamlModelBuilder implements IModelBuilder {
 			return r.buildDescription(r.getResourceSet(), errors);
 		} finally {
 			buildResourceSet.getResources().clear();
+		}
+	}
+
+	private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
+
+	@Override
+	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
+		SynchronizedXtextResourceSet infoResourceSet = new SynchronizedXtextResourceSet();
+		try {
+
+			GamlResource r = (GamlResource) infoResourceSet.createResource(uri);
+			r.load(Collections.EMPTY_MAP);
+			TreeIterator<EObject> tree = r.getAllContents();
+			Set<String> imports = new TLinkedHashSet();
+			Set<String> uses = new TLinkedHashSet();
+			Set<String> exps = new TLinkedHashSet();
+			while (tree.hasNext()) {
+				EObject e = tree.next();
+				if ( e instanceof StringLiteral ) {
+					String s = ((StringLiteral) e).getOp();
+					if ( s.length() > 4 ) {
+						String ext = s.substring(s.length() - 3, s.length());
+						if ( EXTS.contains(ext) ) {
+							uses.add(s);
+						}
+					}
+				} else if ( e instanceof S_Experiment ) {
+					String s = ((S_Experiment) e).getName();
+					Map<String, Facet> f = EGaml.getFacetsMapOf((Statement) e);
+					Facet typeFacet = f.get(IKeyword.TYPE);
+					if ( typeFacet != null ) {
+						String type = EGaml.getKeyOf(typeFacet.getExpr());
+						if ( IKeyword.BATCH.equals(type) ) {
+							s = GAMLFile.GamlInfo.BATCH_PREFIX + s;
+						}
+					}
+					exps.add(s);
+				} else if ( e instanceof Import ) {
+					imports.add(((Import) e).getImportURI());
+					tree.prune();
+				}
+			}
+
+			return new GAMLFile.GamlInfo(stamp, imports, uses, exps);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return null;
+		} finally {
+			infoResourceSet.getResources().clear();
 		}
 	}
 }

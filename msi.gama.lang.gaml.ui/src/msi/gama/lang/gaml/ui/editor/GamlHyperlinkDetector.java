@@ -11,12 +11,15 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import msi.gama.lang.gaml.gaml.Import;
+import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.ui.FileOpener;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.ui.editor.hyperlinking.DefaultHyperlinkDetector;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
@@ -27,9 +30,50 @@ import com.google.inject.Inject;
  * Represents an implementation of interface <code>{@link IHyperlinkDetector}</code> to find and
  * convert {@link CrossReference elements}, at a given location, to {@code IHyperlink}.
  * 
- * @author alruiz@google.com (Alex Ruiz)
+ * @author Alexis Drogoul
  */
 public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
+
+	class ImportHyperlink implements IHyperlink {
+
+		private final URI importUri;
+		private final IRegion region;
+		private final FileOpener fileOpener;
+
+		ImportHyperlink(final URI importUri, final IRegion region, final FileOpener fileOpener) {
+			this.importUri = importUri;
+			this.region = region;
+			this.fileOpener = fileOpener;
+		}
+
+		@Override
+		public void open() {
+			try {
+				if ( importUri.isPlatformResource() ) {
+					fileOpener.openFileInWorkspace(importUri);
+					return;
+				}
+
+			} catch (PartInitException e) {
+				System.out.println("Unable to open " + importUri.toString());
+			}
+		}
+
+		@Override
+		public String getTypeLabel() {
+			return null;
+		}
+
+		@Override
+		public IRegion getHyperlinkRegion() {
+			return region;
+		}
+
+		@Override
+		public String getHyperlinkText() {
+			return null;
+		}
+	}
 
 	private static final IHyperlink[] NO_HYPERLINKS = null;
 
@@ -59,6 +103,23 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			@Override
 			public IHyperlink[] exec(final XtextResource resource) {
 				EObject resolved = eObjectAtOffsetHelper.resolveElementAt(resource, region.getOffset());
+				// System.out.println("Hyperlink target:" + resolved == null ? null : resolved.getClass().getSimpleName());
+				if ( resolved instanceof StringLiteral ) {
+					String target = ((StringLiteral) resolved).getOp();
+					if ( target == null ) { return NO_HYPERLINKS; }
+					URI iu = URI.createURI(target, false).resolve(resource.getURI());
+					if ( isFileExisting(iu) ) {
+						IRegion hRegion;
+						try {
+							hRegion = importUriRegion(document, region.getOffset(), target);
+						} catch (BadLocationException e) {
+							return NO_HYPERLINKS;
+						}
+						if ( hRegion == null ) { return NO_HYPERLINKS; }
+						IHyperlink hyperlink = new ImportHyperlink(iu, hRegion, fileOpener);
+						return new IHyperlink[] { hyperlink };
+					}
+				}
 				if ( !(resolved instanceof Import) ) { return NO_HYPERLINKS; }
 				Import anImport = (Import) resolved;
 				// if ( !imports.isResolved(anImport) ) { return NO_HYPERLINKS; }
@@ -76,6 +137,15 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 				return new IHyperlink[] { hyperlink };
 			}
 		});
+	}
+
+	public boolean isFileExisting(final URI uri) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		String uriAsText = uri.toPlatformString(true);
+		IPath path = uriAsText != null ? new Path(uriAsText) : null;
+		if ( path == null ) { return false; }
+		IFile file = root.getFile(path);
+		return file.exists();
 	}
 
 	private IRegion importUriRegion(final IXtextDocument document, final int offset, final String importUri)

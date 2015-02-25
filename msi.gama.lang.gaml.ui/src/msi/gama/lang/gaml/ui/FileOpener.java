@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'FileOpener.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * 
+ * 'FileOpener.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -28,25 +28,17 @@ import com.google.inject.Singleton;
 public class FileOpener {
 
 	public IEditorPart openFileInWorkspace(final URI uri) throws PartInitException {
-		IFile file = referredFile(uri);
-		IEditorInput editorInput = new FileEditorInput(file);
-		return openFile(editorInput);
-	}
-
-	private IEditorPart openFile(final IEditorInput editorInput) throws PartInitException {
-		IWorkbenchPage page = SwtGui.getPage();
-		return page.openEditor(editorInput, "msi.gama.lang.gaml.Gaml");
-	}
-
-	public IFile referredFile(final URI uri) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath path = pathOf(uri);
-		return path != null ? root.getFile(path) : null;
-	}
-
-	private IPath pathOf(final URI uri) {
 		String uriAsText = uri.toPlatformString(true);
-		return uriAsText != null ? new Path(uriAsText) : null;
+		IPath path = uriAsText != null ? new Path(uriAsText) : null;
+		IFile file = path != null ? root.getFile(path) : null;
+		if ( file == null ) { return null; }
+		IEditorInput editorInput = new FileEditorInput(file);
+		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+		if ( desc == null ) { return null; }
+		IWorkbenchPage page = SwtGui.getPage();
+
+		return page.openEditor(editorInput, desc.getId());
 	}
 
 }

@@ -15,7 +15,7 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import java.util.*;
 import msi.gama.lang.gaml.parser.antlr.GamlParser;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.SyntacticModelElement;
 import org.antlr.runtime.CharStream;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.EcoreUtil2;
@@ -41,7 +41,7 @@ public class GamlSyntacticParser extends GamlParser {
 			}
 		}
 
-		public ISyntacticElement getSyntacticContents() {
+		public SyntacticModelElement getSyntacticContents() {
 			return element;
 		}
 

@@ -11,13 +11,14 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.labeling;
 
-import java.util.regex.*;
+import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
 import msi.gama.lang.utils.EGaml;
-import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
@@ -37,17 +38,13 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	// Model : GAMA icon
-	String image(final Model ele) {
-		return "icon-16x16x32b.gif";
+	@Override
+	public Image convertToImage(final Object imageDescription) {
+		return super.convertToImage(imageDescription);
 	}
 
-	private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
-
-	public String removeTags(final String string) {
-		if ( string == null || string.length() == 0 ) { return string; }
-		Matcher m = REMOVE_TAGS.matcher(string);
-		return m.replaceAll("");
+	String image(final Model ele) {
+		return "_model.png";
 	}
 
 	// Import
@@ -61,161 +58,187 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(final EObject ele) {
+
 		String text;
-		QualifiedName qn;
-		try {
-			qn = nameProvider.getFullyQualifiedName(ele);
-		} catch (IllegalArgumentException e) {
-			// e.printStackTrace();
-			return "";
-		}
 		String key = EGaml.getKeyOf(ele);
 		if ( key == null ) {
 			key = "";
 		}
-		if ( qn == null ) {
-			text = key;
-			if ( ele instanceof Statement ) {
-				String name = EGaml.getNameOf((Statement) ele);
-				if ( name == null ) {
-					Expression expr = ((Statement) ele).getExpr();
-					if ( expr != null ) {
-						name = EGaml.getKeyOf(expr);
-					}
+		text = key;
+		key = null;
+		if ( ele instanceof Statement ) {
+			if ( text.equals(IKeyword.PARAMETER) ) { return parameterText((Statement) ele); }
+			if ( GamlOutlineTreeProvider.isAttribute((Statement) ele) ) { return attributeText((S_Definition) ele); }
+			if ( GamlOutlineTreeProvider.isAction((Statement) ele) ) { return actionText((Statement) ele); }
+			String name = EGaml.getNameOf((Statement) ele);
+			if ( name == null ) {
+				Expression expr = ((Statement) ele).getExpr();
+				if ( expr != null ) {
+					name = EGaml.getKeyOf(expr);
 				}
-				text += " " + (name == null ? "" : name);
 			}
-		} else {
-			text = key + " " + qn.toString();
-		}
+			if ( name == null ) {
+				QualifiedName qn = null;
+				try {
+					qn = nameProvider.getFullyQualifiedName(ele);
+					name = qn == null ? null : qn.toString();
+				} catch (IllegalArgumentException e) {
+					name = null;
+				}
 
-		IGamlDescription ed = DescriptionFactory.getGamlDocumentation(ele);
-		if ( ed != null ) {
-			text += " [" + removeTags(ed.getTitle()) + "]";
+			}
+			text += " " + (name == null ? "" : name) + (key == null ? "" : " (" + key + ")");
 		}
+		// } else {
+		// text = key + " " + qn.toString();
+		// }
+
 		return text;
 	}
 
-	// String text(final Definition obj) {
-	// IGamlDescription ed = EGaml.getGamlDescription(obj);
-	// if ( ed != null ) { return removeTags(ed.getTitle()); }
-	// String s = text((EObject) obj);
-	// String n = obj.getName();
-	// if ( n == null ) {
-	// n = "";
-	// }
-	// return s + " " + obj.getName();
-	// }
+	/**
+	 * @param ele
+	 * @return
+	 */
+	private String attributeText(final S_Definition ele) {
+		String type = EGaml.getKeyOf(ele);
+		String key = type.equals(IKeyword.CONST) ? type : null;
+		Map<String, Facet> map = EGaml.getFacetsMapOf(ele);
+		if ( ele.getBlock() != null && ele.getBlock().getFunction() != null ) {
+			key = "function";
+		} else {
+			if ( map.containsKey(IKeyword.FUNCTION) || map.containsKey("->") ) {
+				type = "function";
+			}
+		}
+		if ( type.equals(IKeyword.VAR) || type.equals(IKeyword.CONST) ) {
+			Facet f = map.get(IKeyword.TYPE);
+			if ( f != null ) {
+				type = EGaml.getKeyOf(f.getExpr());
+			}
+		}
+		String name = EGaml.getNameOf(ele);
+		if ( name == null ) {
+			Expression expr = ((Statement) ele).getExpr();
+			if ( expr != null ) {
+				name = EGaml.getKeyOf(expr);
+			}
+		}
+		if ( name == null ) {
+			QualifiedName qn = null;
+			try {
+				qn = nameProvider.getFullyQualifiedName(ele);
+				name = qn == null ? null : qn.toString();
+			} catch (IllegalArgumentException e) {
+				name = null;
+			}
 
-	// String text(final Statement obj) {
-	// if ( !obj.getKey().equals(IKeyword.SPECIES) && !obj.getKey().equals(IKeyword.GRID) ) {
-	// IGamlDescription ed = EGaml.getGamlDescription(obj);
-	// if ( ed != null ) { return removeTags(ed.getTitle()); }
-	// }
-	// String s = EGaml.getKeyOf(obj);
-	// QualifiedName qn = nameProvider.getFullyQualifiedName(obj);
-	// String n = qn == null ? EGaml.getNameOf(obj) : qn.toString();
-	// if ( n == null ) {
-	// n = "";
-	// }
-	// return s + " " + n;
-	// }
+		}
+		return (name == null ? "" : name) +
+			(type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
+
+	}
+
+	/**
+	 * @param ele
+	 * @return
+	 */
+	private String actionText(final Statement ele) {
+		String type = EGaml.getKeyOf(ele);
+		String key = IKeyword.ACTION;
+		String name = EGaml.getNameOf(ele);
+		return key + " " + name + " " + (type.equals(IKeyword.ACTION) ? "" : " (" + type + ")");
+	}
 
 	String text(final Model obj) {
 		return obj.getName();
+	}
+
+	protected String parameterText(final Statement p) {
+		String type = null;
+		String var = null;
+		Map<String, Facet> map = EGaml.getFacetsMapOf(p);
+		Facet f = map.get(IKeyword.VAR);
+		if ( f != null ) {
+			Expression vr = f.getExpr();
+			if ( vr instanceof VariableRef ) {
+				VarDefinition vd = ((VariableRef) vr).getRef();
+				if ( vd instanceof S_Declaration ) {
+					type = EGaml.getKeyOf(vd);
+					var = EGaml.getNameOf((S_Declaration) vd);
+				}
+			}
+		}
+		// if ( type == null ) {
+		// type = "parameter";
+		// }
+		String name = null;
+		f = map.get(IKeyword.NAME);
+		if ( f == null ) {
+			Expression e = p.getExpr();
+			if ( e instanceof StringLiteral ) {
+				name = e.getOp();
+			}
+		} else {
+			Expression e = f.getExpr();
+			if ( e instanceof StringLiteral ) {
+				name = e.getOp();
+			}
+		}
+		return "\"" + name + "\"" + (var == null ? "" : " (" + var + ")" + (type == null ? "" : " (" + type + ")"));
 	}
 
 	String image(final Import ele) {
 		return "_include.png";
 	}
 
-	//
-	// String image(final SetEval ele) {
-	// return "_set.png";
-	// }
-	//
-	// String text(final SetEval ele) {
-	// return "set";
-	// }
-	//
-	// String image(final LoopEval ele) {
-	// return "_loop.png";
-	// }
-	//
-	// String text(final LoopEval ele) {
-	// return "loop";
-	// }
-	//
-	// String image(final IfEval ele) {
-	// return "_if.png";
-	// }
-	//
-	// String text(final IfEval ele) {
-	// return "if";
-	// }
-	//
-	// String image(final DoEval ele) {
-	// return "_do.png";
-	// }
-	//
-	// String text(final DoEval ele) {
-	// return "do";
-	// }
-	//
-	// String image(final ReturnEval ele) {
-	// return "_return.png";
-	// }
-	//
-	// String text(final ReturnEval ele) {
-	// return "return";
-	// }
-
-	// Statement : keyword.value
-	public String image(final/* Sub */Statement ele) {
-		String kw = EGaml.getKeyOf(ele);
-		if ( kw == null ) { return image((Facet) null); }
-		if ( kw.equals("var") || kw.equals("const") ) {
-			// for ( FacetExpr f : ele.getFacets() ) {
-			for ( Facet f : EGaml.getFacetsOf(ele) ) {
-				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
-					VariableRef type = (VariableRef) f.getExpr();
-					return typeImage(EGaml.getKeyOf(type));
-				}
+	String image(final S_Experiment ele) {
+		List<Facet> facets = EGaml.getFacetsOf(ele);
+		Facet type = null;
+		for ( Facet f : facets ) {
+			if ( f.getKey().startsWith(IKeyword.TYPE) ) {
+				type = f;
+				break;
 			}
 		}
-		return "_" + kw + ".png";
+		if ( type == null ) { return "_gui.png"; }
+		return typeImage(EGaml.toString(type.getExpr()));
+	}
+
+	// Statement : keyword.value
+	public String image(final Statement ele) {
+		String kw = EGaml.getKeyOf(ele);
+		if ( kw.equals(IKeyword.PARAMETER) ) { return parameterImage(ele); }
+		if ( kw.equals(IKeyword.VAR) || kw.equals(IKeyword.CONST) ) {
+			for ( Facet f : EGaml.getFacetsOf(ele) ) {
+				if ( EGaml.getKeyOf(f).startsWith(IKeyword.TYPE) ) { return typeImage(EGaml.getKeyOf(f.getExpr())); }
+			}
+		}
+		return typeImage(kw);
+	}
+
+	protected String parameterImage(final Statement p) {
+		if ( IKeyword.PARAMETER.equals(p.getKey()) ) {
+			String var = null;
+			Facet f = EGaml.getFacetsMapOf(p).get(IKeyword.VAR);
+			if ( f != null ) {
+				Expression vr = f.getExpr();
+				if ( vr instanceof VariableRef ) {
+					VarDefinition vd = ((VariableRef) vr).getRef();
+					if ( vd instanceof S_Declaration ) {
+						var = EGaml.getKeyOf(vd);
+					}
+				}
+			}
+			if ( var == null ) { return "_parameter.png"; }
+			return "_" + var + ".png";
+		} else {
+			return "_parameter.png";
+		}
 	}
 
 	public String typeImage(final String string) {
 		return "_" + string + ".png";
 	}
 
-	// String text(final Evaluation ele) {
-	// return ele.getKey().getRef().getName();
-	// }
-
-	// dirty image for now (debug purpose, proposal provider)
-	// String image(final FacetExpr ele) { // FIXME
-	// return "gaml_facet.png";
-	// }
-
-	String image(final Facet ele) { // FIXME
-		return "gaml_facet.png";
-	}
-
-	// String image(final DefKeyword ele) {
-	// return "gaml_keyword.png";
-	// }
-
-	// String image(final DefBinaryOp ele) {
-	// return "gaml_binaryop.png";
-	// }
-
-	// String image(final DefReserved ele) {
-	// return "gaml_reserved.png";
-	// }
-
-	// String image(final GamlUnitRef ele) {
-	// return "gaml_unit.png";
-	// }
 }

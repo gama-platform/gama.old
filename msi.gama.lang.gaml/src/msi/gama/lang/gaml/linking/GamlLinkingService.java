@@ -99,18 +99,6 @@ public class GamlLinkingService extends DefaultLinkingService {
 		String name = getCrossRefNodeAsString(node);
 		if ( GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType()) ) { return addSymbol(
 			name, ref.getEReferenceType()); }
-		// else if ( GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(ref.getEReferenceType()) &&
-		// name.contains("_model") ) {
-		// String newVar = name;// .replace("_model", "");
-		// QualifiedName qualifiedLinkName = qualifiedNameConverter.toQualifiedName(newVar);
-		// Iterator<Resource> r = context.eResource().getResourceSet().getResources().iterator();
-		// while (r.hasNext()) {
-		// EObject context1 = r.next().getContents().get(0);
-		// final IScope scope = getScope(context1, ref);
-		// IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
-		// if ( eObjectDescription != null ) { return addSymbol(name, ref.getEReferenceType()); }
-		// }
-		// }
 		return Collections.EMPTY_LIST;
 	}
 }

@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.scoping;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
+import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.util.*;
@@ -98,7 +99,7 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 	}
 
 	QualifiedName qualifiedName(final Model o) {
-		return QualifiedName.create(o.getName() + "_model");
+		return QualifiedName.create(o.getName() + ModelDescription.MODEL_SUFFIX);
 	}
 
 	QualifiedName qualifiedName(final Import i) {

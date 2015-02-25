@@ -2,23 +2,19 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-<extension point="org.eclipse.core.contenttype.contentTypes">
-<content-type id="gaml.encoding" name="GAML encoding"
-base-type="org.eclipse.core.runtime.text"
-priority="high"
-file-extensions="gaml"
-default-charset="UTF-8">
-</content-type>
-</extension>
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="gaml"
-            id="msi.gama.lang.gaml.Gaml"
-            name="Gaml Editor">
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+              contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+              default="true"
+              extensions="gaml"
+              icon="platform:/plugin/msi.gama.application/icons/file.icon2.png"
+              id="msi.gama.lang.gaml.Gaml"
+              name="Gaml Editor">
+           <contentTypeBinding
+                 contentTypeId="msi.gama.gui.gaml.type">
+           </contentTypeBinding>
         </editor>
     </extension>
     <extension
@@ -41,6 +37,33 @@ default-charset="UTF-8">
             </reference>
          </activeWhen>
       </handler>
+        <handler
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+              commandId="org.eclipse.xtext.ui.editor.FindReferences">
+           <activeWhen>
+              <reference
+                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
+        <handler
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+              commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
+           <activeWhen>
+              <reference
+                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
+        <handler
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+              commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
+           <activeWhen>
+              <reference
+                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="msi.gama.lang.gaml.Gaml.Editor.opened">
@@ -76,6 +99,15 @@ default-charset="UTF-8">
             name="Templates">
             <keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
         </page>
+        <page
+              category="msi.gama.lang.gaml.Gaml"
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+              id="msi.gama.lang.gaml.Gaml.refactoring"
+              name="Refactoring">
+           <keywordReference
+                 id="msi.gama.lang.gaml.ui.keyword_Gaml">
+           </keywordReference>
+        </page>
     </extension>
     <extension
                 point="org.eclipse.ui.propertyPages">
@@ -105,57 +137,60 @@ default-charset="UTF-8">
       </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
-        <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-             <command
-                 commandId="msi.gama.lang.gaml.Gaml.validate"
-                 style="push"
-                 tooltip="Trigger expensive validation">
-            <visibleWhen checkEnabled="false">
-                <reference
-                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-                </reference>
-            </visibleWhen>
-         </command>
-         </menuContribution>
-        <menuContribution
-              allPopups="true"
-              locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
-           <menu
-                 icon="platform:/plugin/msi.gama.application/icons/navigator/navigator.run.png"
-                 label="Run...">
-              <dynamic
-                    class="msi.gama.lang.gaml.ui.NavigatorRunMenu"
-                    id="msi.gama.application.run.menu">
-              </dynamic>
-           </menu>
-           <separator
-                 name="msi.gama.application.separator1"
-                 visible="true">
-           </separator>
-        </menuContribution>
-    </extension>
-    <extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
-			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
+			<command
+         commandId="org.eclipse.xtext.ui.editor.FindReferences"
+         icon="platform:/plugin/msi.gama.application/icons/navigator/navigator.search2.png">
 				<visibleWhen checkEnabled="false">
                 	<reference definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
 		</menuContribution>
+  <menuContribution
+        locationURI="popup:#TextEditorContext?after=group.edit">
+     <command
+           commandId="msi.gama.lang.gaml.Gaml.validate"
+           icon="platform:/plugin/msi.gama.application/icons/editor.validate2.png"
+           style="push"
+           tooltip="Trigger expensive validation">
+        <visibleWhen
+              checkEnabled="false">
+           <reference
+                 definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+           </reference>
+        </visibleWhen>
+     </command>
+  </menuContribution>
+  <menuContribution
+        locationURI="popup:#TextEditorContext?after=group.open">
+     <command
+           commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+           icon="platform:/plugin/msi.gama.application/icons/editor.outline2.png"
+           style="push"
+           tooltip="Open Quick Outline">
+        <visibleWhen
+              checkEnabled="false">
+           <reference
+                 definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+           </reference>
+        </visibleWhen>
+     </command>
+  </menuContribution>
+  <menuContribution
+        locationURI="popup:#TextEditorContext?after=group.edit">
+     <command
+           commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
+           style="push">
+        <visibleWhen
+              checkEnabled="false">
+           <reference
+                 definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+           </reference>
+        </visibleWhen>
+     </command>
+  </menuContribution>
 	</extension>
-	<extension point="org.eclipse.ui.handlers">
-	    <handler
-            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
-            commandId="org.eclipse.xtext.ui.editor.FindReferences">
-            <activeWhen>
-                <reference
-                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-                </reference>
-            </activeWhen>
-        </handler>
-    </extension>
 
 <!-- adding resource factories -->
 
@@ -173,6 +208,28 @@ default-charset="UTF-8">
         </resourceServiceProvider>
     </extension>
 
+    <!-- marker definitions for msi.gama.lang.gaml.Gaml -->
+    <extension
+            id="gaml.check.fast"
+            name="Gaml Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.fast"/>
+        <persistent value="true"/>
+    </extension>
+    <extension
+            id="gaml.check.normal"
+            name="Gaml Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.normal"/>
+        <persistent value="true"/>
+    </extension>
+    <extension
+            id="gaml.check.expensive"
+            name="Gaml Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.expensive"/>
+        <persistent value="true"/>
+    </extension>
 
 
    <extension
@@ -184,18 +241,6 @@ default-charset="UTF-8">
 
 	<!-- Quick Outline -->
 	<extension
-		point="org.eclipse.ui.handlers">
-		<handler
-			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
-			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
-			<activeWhen>
-				<reference
-					definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-	<extension
 		point="org.eclipse.ui.commands">
 		<command
 			description="Open the quick outline."
@@ -203,60 +248,36 @@ default-charset="UTF-8">
 			name="Quick Outline">
 		</command>
 	</extension>
-	<extension point="org.eclipse.ui.menus">
-		<menuContribution
-			locationURI="popup:#TextEditorContext?after=group.open">
-			<command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-				style="push"
-				tooltip="Open Quick Outline">
-				<visibleWhen checkEnabled="false">
-					<reference definitionId="msi.gama.lang.gaml.Gaml.Editor.opened"/>
-				</visibleWhen>
-			</command>
-		</menuContribution>
-	</extension>
    <!-- quickfix marker resolution generator -->
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
+    <extension
+            point="org.eclipse.ui.ide.markerResolution">
+        <markerResolutionGenerator
+            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="msi.gama.lang.gaml.ui.gaml.check.fast">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="msi.gama.lang.gaml.ui.gaml.check.normal">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="msi.gama.lang.gaml.ui.gaml.check.expensive">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+    </extension>
 
    	<!-- Rename Refactoring -->
-	<extension point="org.eclipse.ui.handlers">
-		<handler
-			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
-			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
-			<activeWhen>
-				<reference
-					definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-    <extension point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="msi.gama.lang.gaml.Gaml"
-	        class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="msi.gama.lang.gaml.Gaml.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
-	    </page>
-	</extension>
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="msi.gama.lang.gaml.Gaml.compare.contentViewers"
             class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
@@ -288,13 +309,67 @@ default-charset="UTF-8">
              Aggregates errors in resources to folders and projects.
           </description>
           <enablement>
-             <objectClass
-                   name="org.eclipse.core.resources.IResource">
-             </objectClass>
+             <or>
+                <objectClass
+                      name="org.eclipse.core.resources.IResource">
+                </objectClass>
+                <objectClass
+                      name="msi.gama.gui.navigator.VirtualContent">
+                </objectClass>
+             </or>
           </enablement>
        </decorator>
 	</extension>
-
-
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             allowMultiple="false"
+             category="msi.gama.gui.category.gama"
+             class="org.eclipse.ui.views.contentoutline.ContentOutline"
+             icon="platform:/plugin/msi.gama.application/icons/view.outline2.png"
+             id="msi.gama.application.outline"
+             name="Model outline"
+             restorable="true">
+       </view>
+       <view
+             allowMultiple="false"
+             category="msi.gama.gui.category.gama"
+             class="msi.gama.lang.gaml.ui.SyntaxErrorsView"
+             icon="platform:/plugin/msi.gama.application/icons/view.problems2.png"
+             id="msi.gama.application.problems"
+             name="Syntax errors"
+             restorable="true">
+       </view>
+       <view
+             class="msi.gama.lang.gaml.ui.templates.TemplatesView"
+             id="msi.gama.lang.gaml.ui.templates"
+             name="GAML templates"
+             restorable="true">
+       </view>
+    </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerImageProviders">
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.normal"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.normal">
+       </imageprovider>
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.expensive"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.expensive">
+       </imageprovider>
+       <imageprovider
+             class="msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider"
+             id="msi.gama.lang.gaml.ui.imageprovider.fast"
+             markertype="msi.gama.lang.gaml.ui.gaml.check.fast">
+       </imageprovider>
+    </extension>
+    <extension
+          point="org.eclipse.ui.startup">
+       <startup
+             class="msi.gama.lang.gaml.ui.AutoStartup">
+       </startup>
+    </extension>
 
 </plugin>

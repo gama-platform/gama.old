@@ -85,7 +85,13 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		return result;
 	}
 
-	static final GamlSwitch<IExpressionDescription> getExpr = new GamlSwitch() {
+	static final class ExpressionBuilder extends GamlSwitch<IExpressionDescription> {
+
+		private final Set<Diagnostic> currentErrors;
+
+		ExpressionBuilder(final Set<Diagnostic> errors) {
+			currentErrors = errors;
+		}
 
 		@Override
 		public IExpressionDescription caseIntLiteral(final IntLiteral object) {
@@ -122,6 +128,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		@Override
 		public IExpressionDescription caseStringLiteral(final StringLiteral object) {
 			IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
+
 			// AD: Change 14/11/14
 			// IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
 			// DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
@@ -140,14 +147,11 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			return new EcoreBasedExpressionDescription(object);
 		}
 
-	};
-
-	private static Set<Diagnostic> currentErrors;
+	}
 
 	public static IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
-		currentErrors = errors;
-		IExpressionDescription result = getExpr.doSwitch(expr);
-		currentErrors = null;
+		IExpressionDescription result = new ExpressionBuilder(errors).doSwitch(expr);
+
 		result.setTarget(expr);
 		return result;
 	}

@@ -19,7 +19,7 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partActivated(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null && editor.isDecorationEnabled() ) {
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(true);
 		}
 	}
@@ -28,7 +28,7 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partBroughtToTop(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null && editor.isDecorationEnabled() ) {
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(true);
 		}
 	}
@@ -37,7 +37,7 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partClosed(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null ) {
-			editor.undecorate();
+			editor.decorate(false);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partHidden(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null && editor.isDecorationEnabled() ) {
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(false);
 		}
 	}
@@ -57,9 +57,9 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partInputChanged(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null && editor.isDecorationEnabled() ) {
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(false);
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(true);
 		}
 	}
@@ -71,7 +71,7 @@ public class BoxDecoratorPartListener implements IPartListener2 {
 	public void partVisible(final IWorkbenchPartReference partRef) {
 		IBoxEnabledEditor editor = getEditor(partRef);
 		if ( editor != null && editor.isDecorationEnabled() ) {
-			editor.decorate();
+			editor.decorate(true);
 			editor.enableUpdates(true);
 		}
 	}

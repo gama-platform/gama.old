@@ -11,26 +11,32 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.ui.contentassist.*;
 import msi.gama.lang.gaml.ui.editor.*;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
+import msi.gama.lang.gaml.ui.outline.*;
+import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.utils.GamlEncodingProvider;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.eclipse.xtext.service.DispatchingProvider;
+import org.eclipse.xtext.service.*;
+import org.eclipse.xtext.ui.*;
+import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.contentassist.*;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.*;
+import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import org.eclipse.xtext.ui.resource.*;
@@ -44,10 +50,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
-		System.out.println("Configuring user interface access through SWT + XText");
-		GuiUtils.setSwtGui(new XtextGui());
-		// Logger.getLogger(GamlJavaValidator.class).setLevel(Level.DEBUG);
-		// setValidationTrigger(activeWorkbenchWindow(), plugin);
 	}
 
 	@Override
@@ -58,6 +60,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 			.toInstance(".");
+		// NavigatorContentProvider.setGamlContentProvider(new XTextContentProviderProvider());
 	}
 
 	// @SingletonBinding(eager = true)
@@ -74,7 +77,9 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	// return GamlEncodingProvider.class;
 	// }
 
-	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
+	public
+		Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
+		bindStatefulFactory() {
 		return ContentAssistContextFactory.class;
 	}
 
@@ -93,6 +98,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
 		return SimpleResourceSetProvider.class;
 	}
+
+	// public Class<? extends XtextMarkerAnnotationImageProvider> bindXtextMarkerAnnotationImageProvider() {
+	// return GamlAnnotationImageProvider.class;
+	// }
 
 	@Override
 	public void configureXtextEditorErrorTickUpdater(final com.google.inject.Binder binder) {
@@ -120,6 +129,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
 		// TODO Verify this as it is only needed, normally, for languages that do not use the builder infrastructure
 		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
+		// not correct for 2.7: return GamlEditorCallback.class;
 		return GamlEditorCallback.class;
 	}
 
@@ -166,5 +176,55 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
 		return ResourceForIEditorInputFactory.class;
 	}
+
+	@Override
+	public Class<? extends IContentOutlinePage> bindIContentOutlinePage() {
+		return GamlOutlinePage.class;
+	}
+
+	@Override
+	public Class<? extends IImageHelper> bindIImageHelper() {
+		return GamlImageHelper.class;
+	}
+
+	@Override
+	public Class<? extends IImageDescriptorHelper> bindIImageDescriptorHelper() {
+		return GamlImageHelper.class;
+	}
+
+	@Override
+	public void configureIOutlineContribution$Composite(final Binder binder) {
+		binder.bind(IPreferenceStoreInitializer.class).annotatedWith(IOutlineContribution.All.class)
+			.to(IOutlineContribution.Composite.class);
+	}
+
+	@Override
+	public void configureToggleSortingOutlineContribution(final Binder binder) {
+		binder.bind(IOutlineContribution.class).annotatedWith(IOutlineContribution.Sort.class)
+			.to(GamlSortOutlineContribution.class);
+	}
+
+	@Override
+	public void configureToggleLinkWithEditorOutlineContribution(final Binder binder) {
+		binder.bind(IOutlineContribution.class).annotatedWith(IOutlineContribution.LinkWithEditor.class)
+			.to(GamlLinkWithEditorOutlineContribution.class);
+	}
+
+	@Override
+	@SingletonBinding
+	public Class<? extends TemplateStore> bindTemplateStore() {
+		return GamlTemplateStore.class;
+	}
+
+	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
+	@Override
+	public Class<? extends org.eclipse.xtext.builder.IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
+		return org.eclipse.xtext.builder.ParallelBuilderParticipant.class;
+	}
+
+	//
+	// public Provider<? extends TemplateStore> provideTemplateStore() {
+	// return new GamlTemplateStore.GamlTemplateStoreProvider();
+	// }
 
 }

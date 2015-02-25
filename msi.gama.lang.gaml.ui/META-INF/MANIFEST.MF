@@ -18,8 +18,10 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  org.eclipse.ui,
  org.antlr.runtime,
  msi.gama.ext;bundle-version="1.0.0",
- ummisco.gaml.editbox;bundle-version="0.0.22";visibility:=reexport
-Import-Package: org.apache.log4j
+ ummisco.gaml.editbox;bundle-version="0.0.22";visibility:=reexport,
+ msi.gama.processor;bundle-version="1.4.0"
+Import-Package: org.apache.commons.lang;version="2.6.0",
+ org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml.ui,
  msi.gama.lang.gaml.ui.contentassist,
@@ -31,6 +33,5 @@ Export-Package: msi.gama.lang.gaml.ui,
  msi.gama.lang.gaml.ui.internal,
  msi.gama.lang.gaml.ui.labeling,
  msi.gama.lang.gaml.ui.outline,
- msi.gama.lang.gaml.ui.quickfix,
- msi.gama.lang.gaml.ui.resources
+ msi.gama.lang.gaml.ui.quickfix
 Bundle-Activator: msi.gama.lang.gaml.ui.internal.GamlActivator

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlTemplateProposalProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the 
+ * 
+ * 'GamlTemplateProposalProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -33,6 +33,10 @@ public class GamlTemplateProposalProvider extends DefaultTemplateProposalProvide
 	 * @param registry
 	 * @param helper
 	 */
+
+	@Inject
+	private XtextTemplateStore store;
+
 	@Inject
 	public GamlTemplateProposalProvider(final TemplateStore templateStore, final ContextTypeRegistry registry,
 		final ContextTypeIdHelper helper) {
@@ -49,7 +53,23 @@ public class GamlTemplateProposalProvider extends DefaultTemplateProposalProvide
 		EObject grammarElement = context.getCurrentNode().getGrammarElement();
 		if ( grammarElement == ga.getML_COMMENTRule() ) { return; }
 		if ( grammarElement == ga.getSL_COMMENTRule() ) { return; }
-		super.createTemplates(templateContext, context, acceptor);
+		TemplateContextType contextType = templateContext.getContextType();
+		Template[] templates = store.getTemplates();
+		for ( Template template : templates ) {
+			if ( !acceptor.canAcceptMoreTemplates() ) { return; }
+			if ( validate(template, templateContext) ) {
+				acceptor.accept(createProposal(template, templateContext, context, getImage(template),
+					getRelevance(template)));
+			}
+		}
+
+	}
+
+	@Override
+	protected boolean validate(final Template template, final TemplateContext context) {
+		return true;
+		// Accepting all templates
+		// FIXME To be changed at one point !
 	}
 
 }

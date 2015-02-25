@@ -16,6 +16,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.SyntacticFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -166,6 +167,16 @@ public class EGaml {
 	public static List<Facet> getFacetsOf(final Statement s) {
 		if ( ((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS) ) { return s.getFacets(); }
 		return Collections.EMPTY_LIST;
+	}
+
+	public static Map<String, Facet> getFacetsMapOf(final Statement s) {
+		List<Facet> list = getFacetsOf(s);
+		if ( list.isEmpty() ) { return Collections.EMPTY_MAP; }
+		Map<String, Facet> map = new TOrderedHashMap<String, Facet>();
+		for ( Facet f : list ) {
+			map.put(getKeyOf(f), f);
+		}
+		return map;
 	}
 
 	public static boolean hasChildren(final EObject obj) {

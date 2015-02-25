@@ -61,7 +61,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 			ResourceSet rs = new SynchronizedXtextResourceSet();
 			GamlResource resource = (GamlResource) rs.getResource(uri, true);
 			List<GamlCompilationError> errors = new ArrayList();
-			IModel model = GamlModelBuilder.getInstance().compile(resource, errors);
+			IModel model = new GamlModelBuilder()./* GamlModelBuilder.getInstance(). */compile(resource, errors);
 			if ( model == null ) {
 				error("File " + file.getFullPath().toString() + " cannot be built because of " + errors.size() +
 					" compilation errors");
@@ -70,5 +70,14 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 			GuiUtils.openSimulationPerspective();
 			GAMA.controller.newExperiment(exp, model);
 		}
+	}
+
+	/**
+	 * Method getName()
+	 * @see msi.gama.common.interfaces.IGui#getName()
+	 */
+	@Override
+	public String getName() {
+		return "SWT+XText-based UI";
 	}
 }

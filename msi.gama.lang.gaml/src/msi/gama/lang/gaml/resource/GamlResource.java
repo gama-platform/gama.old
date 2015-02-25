@@ -86,6 +86,7 @@ public class GamlResource extends LazyLinkingResource {
 	@Override
 	public GamlParseResult getParseResult() {
 		GamlParseResult r = (GamlParseResult) super.getParseResult();
+		if ( r == null ) { return null; }
 		r.fixURIsWith(this);
 		return r;
 	}
@@ -141,7 +142,7 @@ public class GamlResource extends LazyLinkingResource {
 	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
 
 		// AD -> Nghi: microModels to use
-		final Map<ISyntacticElement, String> microModels = new GamaMap();
+		final Map<ISyntacticElement, String> microModels = new TOrderedHashMap();
 		final List<ISyntacticElement> models = new ArrayList();
 		for ( Map.Entry<GamlResource, String> entry : resources.entrySet() ) {
 			if ( entry.getValue() == null ) {
@@ -167,19 +168,19 @@ public class GamlResource extends LazyLinkingResource {
 		// GamlResourceDocManager.clearCache();
 		// We document only when the resource is marked as 'edited'
 		// hqnghi build micro-model
-		GamaMap<String, ModelDescription> mm = new GamaMap<String, ModelDescription>();
+		Map<String, ModelDescription> mm = new TOrderedHashMap<String, ModelDescription>();
 		for ( ISyntacticElement r : microModels.keySet() ) {
 			List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
 			res.add(r);
 			ModelDescription mic =
 				getModelFactory().createModelDescription(projectPath, modelPath, res, getErrorCollector(), isEdited,
-					new GamaMap());
+					Collections.EMPTY_MAP, ((SyntacticModelElement) r).getImports());
 			mic.setAlias(microModels.get(r));
-			mm.addValue(null, new GamaPair<String, ModelDescription>(microModels.get(r), mic));
+			mm.put(microModels.get(r), mic);
 		}
 		// end-hqnghi
 		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited,
-			mm);
+			mm, ((SyntacticModelElement) getSyntacticContents()).getImports());
 	}
 
 	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {

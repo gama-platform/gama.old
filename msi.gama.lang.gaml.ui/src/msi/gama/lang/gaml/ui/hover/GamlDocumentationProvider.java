@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.*;
@@ -24,7 +23,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 
 	@Override
 	public String getDocumentation(final EObject o) {
-		GuiUtils.debug("GamlDocumentationProvider.getDocumentation for " + o);
+		// GuiUtils.debug("GamlDocumentationProvider.getDocumentation for " + o);
 		String comment = super.getDocumentation(o);
 		if ( comment == null ) {
 			comment = "";

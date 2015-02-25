@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamlResourceDocManager.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the 
+ * 
+ * 'GamlResourceDocManager.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,7 +12,7 @@
 package msi.gama.lang.gaml.resource;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gaml.compilation.AbstractGamlDocumentation;
+import java.nio.charset.Charset;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IOperator;
 import msi.gaml.factories.DescriptionFactory.IDocManager;
@@ -30,23 +30,26 @@ import org.eclipse.xtext.EcoreUtil2;
  */
 public class GamlResourceDocManager implements IDocManager {
 
+	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
+
+	public static byte[] encode(final String string) {
+		if ( string == null ) { return null; }
+		return string.getBytes(UTF8_CHARSET);
+	}
+
+	public static String decode(final byte[] bytes) {
+		if ( bytes == null ) { return null; }
+		return new String(bytes, UTF8_CHARSET);
+	}
+
 	static int MAX_SIZE = 10000;
 
 	// 0 is the default value of EObject gamlDoc attribute
 	static int count = 1;
 
-	// private static THashMap<URI, TIntObjectMap<IGamlDescription>> CACHE = new THashMap();
 	private static THashMap<URI, THashMap<String, IGamlDescription>> CACHE2 = new THashMap();
 
-	// private static TIntObjectMap<IGamlDescription> HUGE_CACHE = new TIntObjectHashMap(MAX_SIZE, 0.95f, -1);
-
 	private static IDocManager instance;
-
-	// public static void clearCache() {
-	// count = 1;
-	// HUGE_CACHE.clear();
-	// System.out.println(">>> Documentation cache cleared");
-	// }
 
 	static int getIndex() {
 		return count++;
@@ -59,28 +62,28 @@ public class GamlResourceDocManager implements IDocManager {
 
 		Documentation(final IGamlDescription desc) {
 
-			title = AbstractGamlDocumentation.encode(desc.getTitle());
+			title = encode(desc.getTitle());
 			if ( desc instanceof IOperator ) {
 				OperatorProto proto = ((IOperator) desc).getPrototype();
 				if ( proto != null ) {
-					doc = AbstractGamlDocumentation.getRawMain(proto.doc);
+					doc = encode(proto.getMainDoc());
 				} else {
-					doc = AbstractGamlDocumentation.encode(desc.getDocumentation());
+					doc = encode(desc.getDocumentation());
 				}
 			} else {
-				doc = AbstractGamlDocumentation.encode(desc.getDocumentation());
+				doc = encode(desc.getDocumentation());
 			}
 
 		}
 
 		@Override
 		public String getDocumentation() {
-			return AbstractGamlDocumentation.decode(doc);
+			return decode(doc);
 		}
 
 		@Override
 		public String getTitle() {
-			return AbstractGamlDocumentation.decode(title);
+			return decode(title);
 		}
 
 		@Override
@@ -89,8 +92,22 @@ public class GamlResourceDocManager implements IDocManager {
 		}
 
 		@Override
+		public void setName(final String name) {
+			// Nothing
+		}
+
+		@Override
 		public String toString() {
 			return getTitle() + " - " + getDocumentation();
+		}
+
+		/**
+		 * Method serialize()
+		 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+		 */
+		@Override
+		public String serialize(final boolean includingBuiltIn) {
+			return toString();
 		}
 
 	}

@@ -221,7 +221,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		public Set<java.util.Map.Entry<String, String>> entrySet() {
 			THashSet<Map.Entry<String, String>> keys = new THashSet();
 			for ( int i = 0; i < contents.length; i += 2 ) {
-				Map.Entry<String, String> entry = new GamaPair<String, String>(contents[i], contents[i + 1]);
+				Map.Entry<String, String> entry =
+					new GamaPair<String, String>(contents[i], contents[i + 1], Types.STRING, Types.STRING);
 				keys.add(entry);
 			}
 			return keys;
@@ -401,7 +402,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				addUnit(eUnit, t);
 			}
 			for ( OperatorProto t : AbstractGamlAdditions.getAllFields() ) {
-				addVar(eVar, t.name, t, "field");
+				addVar(eVar, t.getName(), t, "field");
 			}
 			for ( IDescription t : AbstractGamlAdditions.getAllVars() ) {
 				addVar(eVar, t.getName(), t, "variable");

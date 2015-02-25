@@ -23,46 +23,55 @@ package msi.gama.lang.gaml.ui.decorators;
  * 
  */
 
-import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.navigator.*;
+import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
 
 /**
- * Simple decorator for error and warning (right now hacking/testing).
+ * Simple decorator for error and warning
  * 
  */
 public class GamlDecorator implements ILightweightLabelDecorator {
 
-	private static String decoratorId = "msi.gama.light.decorator";
+	public static String decoratorId = "msi.gama.light.decorator";
 
-	private IResourceChangeListener listener = null;
+	private final ImageDescriptor[] overlay = new ImageDescriptor[1];
+	private final IResourceVisitor visitor = new IResourceVisitor() {
 
-	// private boolean useJDT;
+		@Override
+		public boolean visit(final IResource resource) throws CoreException {
+			if ( resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource) ) {
+				overlay[0] = getOkImageDescriptor();
+				return false;
+			}
+			return true;
+		}
+	};
+
+	// private final IResourceChangeListener listener = new IResourceChangeListener() {
+	//
+	// @Override
+	// public void resourceChanged(final IResourceChangeEvent event) {
+	// IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+	// if ( markerDeltas.length > 0 ) {
+	// PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// PlatformUI.getWorkbench().getDecoratorManager().update(decoratorId);
+	//
+	// }
+	// });
+	// }
+	// }
+	// };
 
 	public GamlDecorator() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		listener = new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(final IResourceChangeEvent event) {
-				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
-				if ( markerDeltas.length > 0 ) {
-					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-						@Override
-						public void run() {
-							PlatformUI.getWorkbench().getDecoratorManager().update(decoratorId);
-
-						}
-					});
-				}
-			}
-
-		};
-		workspace.addResourceChangeListener(listener);
+		// IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		// workspace.addResourceChangeListener(listener);
 	}
 
 	/*
@@ -72,9 +81,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	 * ILabelProviderListener)
 	 */
 	@Override
-	public void addListener(final ILabelProviderListener listener) {
-
-	}
+	public void addListener(final ILabelProviderListener listener) {}
 
 	/*
 	 * (non-Javadoc)
@@ -84,43 +91,34 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	 */
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
-		if ( element instanceof IResource == false ) { return; }
-
-		// get the max severity from markers
+		if ( element instanceof WrappedFile ) {
+			decorate((WrappedFile) element, decoration);
+			return;
+		}
+		if ( element instanceof VirtualContent ) {
+			decorate((VirtualContent) element, decoration);
+			return;
+		}
+		// See plugin.xml . Only applicable to IResource or VirtualContent
 		IResource resource = (IResource) element;
 		if ( !resource.isAccessible() ) { return; }
-
+		if ( NavigatorLabelProvider.isResource(resource) ) { return; }
 		int severity = -1;
 		try {
 			severity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
-		// decoration.addOverlay(id, IDecoration.TOP_LEFT);
-		// if ( severity < IMarker.SEVERITY_WARNING ) {
-
-		// return; }
-
-		final ImageDescriptor[] overlay = new ImageDescriptor[1];
+		overlay[0] = null;
 		if ( severity == IMarker.SEVERITY_ERROR ) {
 			overlay[0] = getErrorImageDescriptor();
 		} else if ( severity == IMarker.SEVERITY_WARNING ) {
 			overlay[0] = getWarningImageDescriptor();
-		} else if ( resource.getName().endsWith("gaml") ) {
-			overlay[0] = IGamaIcons.OVERLAY_OK.descriptor();
+		} else if ( resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource) ) {
+			overlay[0] = getOkImageDescriptor();
 		} else if ( resource instanceof IContainer ) {
 			try {
-				((IContainer) resource).accept(new IResourceVisitor() {
-
-					@Override
-					public boolean visit(final IResource resource) throws CoreException {
-						if ( resource.getName().endsWith(".gaml") ) {
-							overlay[0] = IGamaIcons.OVERLAY_OK.descriptor();
-							return false;
-						}
-						return true;
-					}
-				});
+				((IContainer) resource).accept(visitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -128,23 +126,53 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		if ( overlay[0] != null ) {
 			decoration.addOverlay(overlay[0], IDecoration.BOTTOM_LEFT);
 		}
+	}
 
-		// TODO Reimplement this for the next release. A way would be to get the experiment names directly from the
-		// resource
-		// if ( resource.getType() == IResource.FILE && resource.getFileExtension().equals("gaml") ) {
-		// XtextResourceSet rs = new XtextResourceSet();
-		// URI uri = URI.createPlatformResourceURI(resource.getFullPath().toString(), true);
-		// GamlResource xr = (GamlResource) rs.getResource(uri, true);
-		// if ( xr.getErrors().isEmpty() ) {
-		// ISyntacticElement el = xr.getSyntacticContents();
-		// for ( ISyntacticElement ch : el.getChildren() ) {
-		// if ( ch.isExperiment() ) {
-		// decoration.addOverlay(IGamaIcons.SMALL_RUN.descriptor(), IDecoration.TOP_RIGHT);
-		// }
-		// }
-		// }
-		//
-		// }
+	private void decorate(final WrappedFile element, final IDecoration decoration) {
+		IFile file = element.getFile();
+		if ( FileMetaDataProvider.isGAML(file) ) {
+			try {
+				int severity = file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				if ( severity == IMarker.SEVERITY_ERROR ) {
+					decoration.addOverlay(getErrorImageDescriptor(), IDecoration.BOTTOM_LEFT);
+				} else if ( severity == IMarker.SEVERITY_WARNING ) {
+					decoration.addOverlay(getWarningImageDescriptor(), IDecoration.BOTTOM_LEFT);
+				} else {
+					decoration.addOverlay(getOkImageDescriptor(), IDecoration.BOTTOM_LEFT);
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void decorate(final VirtualContent element, final IDecoration decoration) {
+		if ( !element.canBeDecorated() ) { return; }
+		Object[] resources = element.getNavigatorChildren();
+		int severity = -1;
+		for ( Object o : resources ) {
+			if ( o instanceof IResource ) {
+				try {
+					int s = ((IResource) o).findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+					if ( s > severity ) {
+						severity = s;
+					}
+					if ( severity == IMarker.SEVERITY_ERROR ) {
+						break;
+					}
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if ( severity == IMarker.SEVERITY_ERROR ) {
+			decoration.addOverlay(getErrorImageDescriptor(), IDecoration.BOTTOM_LEFT);
+		} else if ( severity == IMarker.SEVERITY_WARNING ) {
+			decoration.addOverlay(getWarningImageDescriptor(), IDecoration.BOTTOM_LEFT);
+		} else {
+			decoration.addOverlay(getOkImageDescriptor(), IDecoration.BOTTOM_LEFT);
+		}
+
 	}
 
 	/*
@@ -154,26 +182,22 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	 */
 	@Override
 	public void dispose() {
-		if ( listener != null ) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
-		}
+		// if ( listener != null ) {
+		// ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		// }
+	}
 
+	private ImageDescriptor getOkImageDescriptor() {
+		return GamaIcons.create("overlay.ok2").descriptor();
+		// IGamaIcons.OVERLAY_OK.descriptor()
 	}
 
 	private ImageDescriptor getErrorImageDescriptor() {
-		ImageDescriptor result =
-			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
-		// TODO: remove workaround see https://bugs.eclipse.org/bugs/show_bug.cgi?id=304397
-		return result != null ? result : JFaceResources.getImageRegistry().getDescriptor(
-			"org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR");
+		return GamaIcons.create("overlay.error2").descriptor();
 	}
 
 	private ImageDescriptor getWarningImageDescriptor() {
-		ImageDescriptor result =
-			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-		// TODO: remove workaround see https://bugs.eclipse.org/bugs/show_bug.cgi?id=304397
-		return result != null ? result : JFaceResources.getImageRegistry().getDescriptor(
-			"org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING");
+		return GamaIcons.create("overlay.warning2").descriptor();
 	}
 
 	/*
@@ -194,8 +218,6 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	 * ILabelProviderListener)
 	 */
 	@Override
-	public void removeListener(final ILabelProviderListener listener) {
-
-	}
+	public void removeListener(final ILabelProviderListener listener) {}
 
 }

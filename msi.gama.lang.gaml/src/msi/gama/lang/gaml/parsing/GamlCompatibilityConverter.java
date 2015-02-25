@@ -13,6 +13,7 @@ package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.utils.*;
@@ -20,6 +21,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.types.GamaFileType;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.*;
@@ -40,31 +42,28 @@ public class GamlCompatibilityConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
+	private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
+
 	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if ( !(root instanceof Model) ) { return null; }
 		ModelImpl m = (ModelImpl) root;
 		Object[] imps;
 		if ( m.eIsSet(GamlPackage.MODEL__IMPORTS) ) {
-			// GamlResource r = (GamlResource) root.eResource();
 			List<Import> imports = m.getImports();
 			imps = new Object[imports.size()];
 			for ( int i = 0; i < imps.length; i++ ) {
 				URI uri = URI.createURI(imports.get(i).getImportURI(), false);
 				imps[i] = uri;
-				// if ( EcoreUtil2.isValidUri(r, uri) ) {
-				// imps[i] = uri;
-				// }
-				// imps[i] = imports.get(i).getImportURI();
 			}
 		} else {
-			imps = new Object[0];
+			imps = null;
 		}
 
-		SyntacticModelElement syntacticContents =
+		SyntacticModelElement model =
 			(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), imps);
-		syntacticContents.setFacet(NAME, convertToLabel(null, m.getName()));
-		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
-		return syntacticContents;
+		model.setFacet(NAME, convertToLabel(null, m.getName()));
+		convStatements(model, EGaml.getStatementsOf(m), errors);
+		return model;
 	}
 
 	private static boolean doesNotDefineAttributes(final String keyword) {
@@ -75,6 +74,7 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
+		if ( !GamaPreferences.WARNINGS_ENABLED.getValue() ) { return; }
 		Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
 		errors.add(d);
 	}
@@ -483,7 +483,6 @@ public class GamlCompatibilityConverter {
 		if ( name != null ) { return convertToLabel(stm, name); }
 		Expression expr = stm.getExpr();
 		if ( expr != null ) { return convExpr(expr, errors); }
-
 		return null;
 	}
 
