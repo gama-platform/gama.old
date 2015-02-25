@@ -25,7 +25,6 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
-import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
@@ -258,14 +257,22 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setDisplayScope(null);
 	}
 
+	boolean alreadyZooming = false;
+
 	@Override
 	public void zoomIn() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		renderer.camera.zoom(true);
+		alreadyZooming = false;
 	}
 
 	@Override
 	public void zoomOut() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		renderer.camera.zoom(false);
+		alreadyZooming = false;
 	}
 
 	@Override
@@ -308,6 +315,36 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleArcball() {
 		arcball = !arcball;
+	}
+
+	@Override
+	public boolean isLayerSplitted() {
+		return splitLayer;
+	}
+
+	@Override
+	public boolean isTriangulationOn() {
+		return renderer.triangulation;
+	}
+
+	@Override
+	public boolean isRotationOn() {
+		return rotation;
+	}
+
+	@Override
+	public boolean isCameraSwitched() {
+		return switchCamera;
+	}
+
+	@Override
+	public boolean isArcBallDragOn() {
+		return arcball;
+	}
+
+	@Override
+	public boolean isInertiaOn() {
+		return renderer.getInertia();
 	}
 
 	@Override
@@ -503,7 +540,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public IList<IAgent> selectAgent(final int x, final int y) {
+	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		Set<IAgent> agents = null;
 		IScope s = GAMA.obtainNewScope();
@@ -517,6 +554,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		} finally {
 			GAMA.releaseScope(s);
 		}
-		return new GamaList<IAgent>(agents);
+		return agents;
 	}
 }

@@ -312,7 +312,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.removeMouseMotionListener(camera);
 		canvas.removeMouseWheelListener(camera);
 
-		if ( displaySurface.switchCamera ) {
+		if ( displaySurface.isCameraSwitched() ) {
 			camera = new FreeFlyCamera(this);
 		} else {
 			camera = new CameraArcBall(this);
@@ -513,7 +513,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Use when the rotation button is on.
 	public void rotateModel() {
-		if ( this.displaySurface.rotation ) {
+		if ( this.displaySurface.isRotationOn() ) {
 			frame++;
 		}
 		if ( frame != 0 ) {

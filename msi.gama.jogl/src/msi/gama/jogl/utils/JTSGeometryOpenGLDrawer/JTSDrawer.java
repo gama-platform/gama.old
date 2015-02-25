@@ -14,8 +14,7 @@ package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 import static javax.media.opengl.GL.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.math.BigInteger;
-import java.util.Iterator;
+import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import javax.vecmath.Vector3d;
@@ -23,8 +22,7 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
-
+import msi.gama.util.IList;
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.*;
@@ -53,7 +51,7 @@ public class JTSDrawer {
 	double temp[];
 
 	// Use for JTS triangulation
-	IList<IShape> triangles;
+	List<IShape> triangles;
 	Iterator<IShape> it;
 
 	// USe to inverse y composaant
@@ -150,7 +148,7 @@ public class JTSDrawer {
 		final boolean isTextured, final GeometryObject object,/* final Integer angle, */
 		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value, final int norm_dir) {
 		if ( bigPolygonDecomposition && p.getNumPoints() > nbPtsForDecomp ) {
-			GamaList<IShape> shapes = GeometryUtils.geometryDecomposition(new GamaShape(p), 2, 2);
+			IList<IShape> shapes = GeometryUtils.geometryDecomposition(new GamaShape(p), 2, 2);
 			for ( IShape shp : shapes ) {
 				if ( shp.getInnerGeometry().getNumGeometries() > 1 ) {
 					for ( int i = 0; i < shp.getInnerGeometry().getNumGeometries(); i++ ) {
@@ -339,7 +337,7 @@ public class JTSDrawer {
 		if ( p.getNumPoints() > 4 ) {
 			triangles = GeometryUtils.triangulation(null, p); // VERIFY NULL SCOPE
 
-			GamaList<Geometry> segments = new GamaList<Geometry>();
+			List<Geometry> segments = new ArrayList<Geometry>();
 			for ( int i = 0; i < p.getNumPoints() - 1; i++ ) {
 				Coordinate[] cs = new Coordinate[2];
 				cs[0] = p.getCoordinates()[i];
@@ -374,7 +372,7 @@ public class JTSDrawer {
 				}
 			}
 		} else if ( p.getNumPoints() == 4 ) {
-			triangles = new GamaList<IShape>();
+			triangles = new ArrayList<IShape>();
 			triangles.add(new GamaShape(p));
 		}
 		for ( IShape tri : triangles ) {
@@ -952,10 +950,6 @@ public class JTSDrawer {
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 
 	}
-
-	
-
-	
 
 	public void drawCone3D(final GeometryObject g) {
 		// (final Polygon p, final double radius, final Color c, final double alpha) {

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GeometryObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'GeometryObject.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,10 +12,10 @@
 package msi.gama.jogl.scene;
 
 import java.awt.Color;
+import java.util.List;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
@@ -26,14 +26,14 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public IShape.Type type; // see IShape.Type constants
 	public Color border;
 	public Boolean isTextured;
-	public IList<String> textureFileNames;
+	public List<String> textureFileNames;
 	public double height;
 	public boolean rounded;
 	private final MyTexture[] textures;
 
 	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
 		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
-		final IList<String> textureFileNames, final int angle, final double height, final boolean rounded,
+		final List<String> textureFileNames, final int angle, final double height, final boolean rounded,
 		final IShape.Type type) {
 		super(color, alpha);
 
@@ -71,7 +71,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		}
 		this.height = height;
 		this.rounded = rounded;
-
 	}
 
 	@Override
@@ -142,8 +141,8 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public boolean hasTextures() {
 		return textures != null && textures.length > 1;
 	}
+
 	public boolean isPie3D() {
 		return false;
 	}
-
 }

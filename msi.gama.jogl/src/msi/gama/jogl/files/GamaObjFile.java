@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaObjFile.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'GamaObjFile.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -50,9 +50,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		BufferedReader br = null;
 		try {
-			setBuffer(new GamaList());
+			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			br = new BufferedReader(new FileReader(getFile()));
-			IList<IShape> vertices = new GamaList();
+			IList<IShape> vertices = GamaListFactory.create(Types.GEOMETRY);
 			String newline;
 			while ((newline = br.readLine()) != null) {
 				if ( newline.length() > 0 ) {
@@ -98,7 +98,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 							StringTokenizer st2 = new StringTokenizer(sb.toString(), "/");
 							v[i] = Integer.parseInt(st2.nextToken());
 						}
-						GamaList<IShape> face = new GamaList();
+						IList<IShape> face = GamaListFactory.create(Types.GEOMETRY);
 						for ( int i = 0; i < v.length; i++ ) {
 							face.add(vertices.get(v[i] - 1)); // Correct only if all the vertices have been loaded
 																// before

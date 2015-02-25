@@ -1,52 +1,43 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import static javax.media.opengl.GL.*;
-
-
 import java.awt.Color;
 import java.math.BigInteger;
-
-import javax.media.opengl.GL2;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
-
+import javax.media.opengl.GL2ES1;
+import javax.media.opengl.glu.*;
 import msi.gama.jogl.scene.Pie3DObject;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.util.GamaColor;
-
 import com.vividsolutions.jts.geom.Polygon;
 
-public class Pie3DDrawer extends JTSDrawer{
-	
-	
-	public Pie3DDrawer(JOGLAWTGLRenderer gLRender) {
+public class Pie3DDrawer extends JTSDrawer {
+
+	public Pie3DDrawer(final JOGLAWTGLRenderer gLRender) {
 		super(gLRender);
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	public void _draw(final Pie3DObject geometry){
+
+	public void _draw(final Pie3DObject geometry) {
 		switch (geometry.type) {
 			case HEMISPHERE:
-				drawHemiSphereChart((Pie3DObject) geometry);
+				drawHemiSphereChart(geometry);
 				break;
 			case PIESPHERE:
-				drawPieSphere((Pie3DObject) geometry);
+				drawPieSphere(geometry);
 				break;
 			case PIESPHEREWITHDYNAMICALCOLOR:
-				drawPieSphere((Pie3DObject) geometry);
+				drawPieSphere(geometry);
 				break;
 			case PACMAN:
-				drawPacMan((Pie3DObject) geometry);
+				drawPacMan(geometry);
 				break;
 			case ANTISLICE:
-				drawPac((Pie3DObject) geometry);
+				drawPac(geometry);
 				break;
 			case SLICE:
-				drawMan((Pie3DObject) geometry);
+				drawMan(geometry);
 				break;
 			default:
-	    }	
+		}
 	}
 
 	public void drawHemiSphereChart(final Pie3DObject g) {
@@ -75,26 +66,26 @@ public class Pie3DDrawer extends JTSDrawer{
 		final int slices = 16;
 		final int stacks = 16;
 
-		gl.glEnable(GL2.GL_CLIP_PLANE0);
+		gl.glEnable(GL2ES1.GL_CLIP_PLANE0);
 		if ( g.ratio.get(0) > 0 ) {
-			gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 1.0, 0, 0, -(1 - 2 * g.ratio.get(0)) * g.height / 2 }, 0);
+			gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0, new double[] { 1.0, 0, 0, -(1 - 2 * g.ratio.get(0)) * g.height / 2 },
+				0);
 			myGlu.gluSphere(quad, g.height, slices, stacks);
 		} else {
-			gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { -1.0, 0, 0, (1 - 2 * -g.ratio.get(0)) * g.height / 2 }, 0);
+			gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0,
+				new double[] { -1.0, 0, 0, (1 - 2 * -g.ratio.get(0)) * g.height / 2 }, 0);
 			myGlu.gluSphere(quad, g.height, slices, stacks);
 		}
 
-		gl.glDisable(GL2.GL_CLIP_PLANE0);
+		gl.glDisable(GL2ES1.GL_CLIP_PLANE0);
 	}
-	
+
 	public void drawPieSphere(final Pie3DObject g) {
 
 		GamaColor curColor;
-		
+
 		Double curRatio = 0.0;
 		int curIndex = 0;
-		
-		
 
 		// final Polygon p, final double radius, final Color c, final double alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
@@ -123,8 +114,8 @@ public class Pie3DDrawer extends JTSDrawer{
 
 		for ( Double curR : g.ratio ) {
 
-			gl.glEnable(GL2.GL_CLIP_PLANE0);
-			gl.glEnable(GL2.GL_CLIP_PLANE1);
+			gl.glEnable(GL2ES1.GL_CLIP_PLANE0);
+			gl.glEnable(GL2ES1.GL_CLIP_PLANE1);
 
 			int n = g.ratio.size();
 			int k = n / 4;
@@ -144,54 +135,50 @@ public class Pie3DDrawer extends JTSDrawer{
 				bi1 = new BigInteger("" + k);
 				bi3 = bi1.gcd(bi2);
 			}
-            if(g.colors.size() == 0 || g.colors == null){
-            	curColor = new GamaColor(Color.getHSBColor((float) k / (float) n * curIndex, 1.0f, 1.0f), 1.0);	
-            }
-            else{
-            	curColor = g.colors.get(curIndex);
-            }
-			
+			if ( g.colors.size() == 0 || g.colors == null ) {
+				curColor = new GamaColor(Color.getHSBColor((float) k / (float) n * curIndex, 1.0f, 1.0f), 1.0);
+			} else {
+				curColor = g.colors.get(curIndex);
+			}
 
 			setColor(curColor, g.getAlpha());
 
 			if ( curR <= 0.5 ) {
-				gl.glClipPlane(GL2.GL_CLIP_PLANE0,
+				gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0,
 					new double[] { -Math.sin(2 * curRatio * Math.PI), Math.cos(2 * curRatio * Math.PI), 0, 0 }, 0);
 				gl.glClipPlane(
-					GL2.GL_CLIP_PLANE1,
+					GL2ES1.GL_CLIP_PLANE1,
 					new double[] { Math.sin(2 * (curRatio + curR) * Math.PI),
 						-Math.cos(2 * (curRatio + curR) * Math.PI), 0, 0 }, 0);
 				myGlu.gluSphere(quad, g.height, slices, stacks);
 			} else {
-				gl.glClipPlane(GL2.GL_CLIP_PLANE0,
+				gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0,
 					new double[] { -Math.sin(2 * curRatio * Math.PI), Math.cos(2 * curRatio * Math.PI), 0, 0 }, 0);
-				gl.glClipPlane(GL2.GL_CLIP_PLANE1,
+				gl.glClipPlane(GL2ES1.GL_CLIP_PLANE1,
 					new double[] { Math.sin(2 * (curRatio + 0.5) * Math.PI), -Math.cos(2 * (curRatio + 0.5) * Math.PI),
 						0, 0 }, 0);
 				myGlu.gluSphere(quad, g.height, slices, stacks);
-				gl.glClipPlane(GL2.GL_CLIP_PLANE0,
+				gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0,
 					new double[] { -Math.sin(2 * (curRatio + 0.5) * Math.PI), Math.cos(2 * (curRatio + 0.5) * Math.PI),
 						0, 0 }, 0);
 				gl.glClipPlane(
-					GL2.GL_CLIP_PLANE1,
+					GL2ES1.GL_CLIP_PLANE1,
 					new double[] { Math.sin(2 * (curRatio + curR) * Math.PI),
 						-Math.cos(2 * (curRatio + curR) * Math.PI), 0, 0 }, 0);
 				myGlu.gluSphere(quad, g.height, slices, stacks);
 			}
 
-			gl.glDisable(GL2.GL_CLIP_PLANE0);
-			gl.glDisable(GL2.GL_CLIP_PLANE1);
+			gl.glDisable(GL2ES1.GL_CLIP_PLANE0);
+			gl.glDisable(GL2ES1.GL_CLIP_PLANE1);
 
 			curRatio = curRatio + curR;
 			curIndex = curIndex + 1;
 		}
 	}
-	
+
 	public void drawPacMan(final Pie3DObject g) {
 		drawPac(g);
 	}
-
-
 
 	public void drawPac(final Pie3DObject g) {
 		// final Polygon p, final double radius, final Color c, final double alpha) {
@@ -219,20 +206,20 @@ public class Pie3DDrawer extends JTSDrawer{
 		final int slices = 16;
 		final int stacks = 16;
 
-		gl.glEnable(GL2.GL_CLIP_PLANE0);
-		gl.glEnable(GL2.GL_CLIP_PLANE1);
-		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 0, 1, 0, 0 }, 0);
-		gl.glClipPlane(GL2.GL_CLIP_PLANE1,
+		gl.glEnable(GL2ES1.GL_CLIP_PLANE0);
+		gl.glEnable(GL2ES1.GL_CLIP_PLANE1);
+		gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0, new double[] { 0, 1, 0, 0 }, 0);
+		gl.glClipPlane(GL2ES1.GL_CLIP_PLANE1,
 			new double[] { -Math.sin(g.ratio.get(0) * Math.PI), Math.cos(g.ratio.get(0) * Math.PI), 0, 0 }, 0);
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 
-		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 0, -1, 0, 0 }, 0);
-		gl.glClipPlane(GL2.GL_CLIP_PLANE1,
+		gl.glClipPlane(GL2ES1.GL_CLIP_PLANE0, new double[] { 0, -1, 0, 0 }, 0);
+		gl.glClipPlane(GL2ES1.GL_CLIP_PLANE1,
 			new double[] { -Math.sin(g.ratio.get(0) * Math.PI), -Math.cos(g.ratio.get(0) * Math.PI), 0, 0 }, 0);
 		myGlu.gluSphere(quad, g.height, slices, stacks);
 
-		gl.glDisable(GL2.GL_CLIP_PLANE0);
-		gl.glDisable(GL2.GL_CLIP_PLANE1);
+		gl.glDisable(GL2ES1.GL_CLIP_PLANE0);
+		gl.glDisable(GL2ES1.GL_CLIP_PLANE1);
 	}
 
 	public void drawMan(final Pie3DObject g) {

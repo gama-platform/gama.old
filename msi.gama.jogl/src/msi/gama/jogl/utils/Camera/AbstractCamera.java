@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractCamera.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'AbstractCamera.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -95,17 +95,17 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void updateCamera(final GL gl, final GLU glu, final int width, final int height) {
 		float aspect = (float) width / (height == 0 ? 1 : height);
-		if(!this.getRenderer().getOrtho()){
-			glu.gluPerspective(45.0f, aspect, getMaxDim() / 1000, getMaxDim() * 10);	
-		}
-		else{
-			if (aspect >= 1.0){
-				gl.glOrtho(-getMaxDim()*aspect, getMaxDim()*aspect, -getMaxDim(), getMaxDim(), getMaxDim(), -getMaxDim());	
-			}			
-			else{
-				gl.glOrtho(-getMaxDim(), getMaxDim(), -getMaxDim()/aspect, getMaxDim()/aspect, getMaxDim(), -getMaxDim());	
+		if ( !this.getRenderer().getOrtho() ) {
+			glu.gluPerspective(45.0f, aspect, getMaxDim() / 1000, getMaxDim() * 10);
+		} else {
+			if ( aspect >= 1.0 ) {
+				gl.glOrtho(-getMaxDim() * aspect, getMaxDim() * aspect, -getMaxDim(), getMaxDim(), getMaxDim(),
+					-getMaxDim());
+			} else {
+				gl.glOrtho(-getMaxDim(), getMaxDim(), -getMaxDim() / aspect, getMaxDim() / aspect, getMaxDim(),
+					-getMaxDim());
 			}
-			gl.glTranslated(0.0, 0.0, getMaxDim()*1.5);
+			gl.glTranslated(0.0, 0.0, getMaxDim() * 1.5);
 		}
 		makeGluLookAt(glu);
 		animate();
@@ -261,15 +261,15 @@ public abstract class AbstractCamera implements ICamera {
 				this.ctrlKeyDown = checkCtrlKeyDown(arg0);
 				break;
 		}
-		
+
 		switch (arg0.getKeyChar()) {
-          case '+':
-            zoom(true);
-            return;
-        case '-':
-            zoom(false);
-            return;
-        }
+			case '+':
+				zoom(true);
+				return;
+			case '-':
+				zoom(false);
+				return;
+		}
 	}
 
 	@Override
@@ -340,8 +340,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
-		if ( checkCtrlKeyDown(mouseEvent) && getRenderer().displaySurface.arcball == true ) { return false; }
-		if ( checkCtrlKeyDown(mouseEvent) || getRenderer().displaySurface.arcball == true ) { return true; }
+		if ( checkCtrlKeyDown(mouseEvent) && getRenderer().displaySurface.isArcBallDragOn() ) { return false; }
+		if ( checkCtrlKeyDown(mouseEvent) || getRenderer().displaySurface.isArcBallDragOn() ) { return true; }
 		return false;
 	}
 

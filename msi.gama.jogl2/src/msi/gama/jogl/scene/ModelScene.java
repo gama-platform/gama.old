@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ModelScene.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'ModelScene.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -28,7 +28,6 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.IList;
 import com.google.common.collect.Iterables;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -116,7 +115,8 @@ public class ModelScene {
 		currentLayer.addImage(img, agent, location, dimensions, angle, isDynamic, name);
 	}
 
-	public void addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
+	public void
+		addDEMFromPNG(final BufferedImage demTexture, final BufferedImage demDefinition, final Envelope3D bounds) {
 		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
 		currentLayer.addDEM(null, demTexture, demDefinition, null, false, false, false, false, true, false, bounds, 1,
 			null);
@@ -131,12 +131,13 @@ public class ModelScene {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-			final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-			final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio, final IList<GamaColor> colors) {
-			if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
-			currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textureFileNames, angle, height,
-				roundCorner, type, ratio,colors);
-		}
+		final Color border, final boolean isTextured, final List<String> textureFileNames, final Integer angle,
+		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
+		final List<GamaColor> colors) {
+		if ( currentLayer.isStatic() && staticObjectsAreLocked ) { return; }
+		currentLayer.addGeometry(geometry, agent, color, fill, border, isTextured, textureFileNames, angle, height,
+			roundCorner, type, ratio, colors);
+	}
 
 	public Iterable<GeometryObject> getGeometries() {
 		return Iterables.concat(layers.values());
@@ -207,16 +208,15 @@ public class ModelScene {
 	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
 		if ( image == null ) { return null; }
 		if ( textures.containsKey(image) ) { return textures.get(image); }
-		
 		renderer.getContext().makeCurrent();
 		Texture texture;
 
 		if(IsPowerOfTwo(image.getWidth()) && IsPowerOfTwo(image.getHeight())){
-			try {
-				texture = AWTTextureIO.newTexture(renderer.profile, image, false /* true for mipmapping */);	
-			} catch (final GLException e) {
-				return null;
-			}
+		try {
+			texture = AWTTextureIO.newTexture(renderer.profile, image, false /* true for mipmapping */);
+		} catch (final GLException e) {
+			return null;
+		}
 		}
 		//Resize the image to get a power of 2 size (mandatory in jogl2)
 		else{
@@ -238,7 +238,7 @@ public class ModelScene {
 		textures.put(image, curTexture);
 		return curTexture;
 	}
-	
+
 	boolean IsPowerOfTwo(int x)
 	{
 	   return (x & (x - 1)) == 0;

@@ -13,12 +13,11 @@ package msi.gama.jogl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
+import java.util.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
-import msi.gama.util.IList;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -122,11 +121,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final Color color, final boolean fill,
-		final Color border, final boolean isTextured, final IList<String> textureFileNames, final Integer angle,
-		final double height, final boolean roundCorner, final IShape.Type type, final IList<Double> ratio,final IList<GamaColor> colors) {
+		final Color border, final boolean isTextured, final List<String> textureFileNames, final Integer angle,
+		final double height, final boolean roundCorner, final IShape.Type type, final List<Double> ratio,
+		final List<GamaColor> colors) {
 		final GeometryObject curJTSGeometry;
-		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR 
-				|| type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE) {
+		if ( type == IShape.Type.PIESPHERE || type == IShape.Type.PIESPHEREWITHDYNAMICALCOLOR ||
+			type == IShape.Type.PACMAN || type == IShape.Type.ANTISLICE || type == IShape.Type.SLICE ) {
 			curJTSGeometry =
 				new Pie3DObject(geometry, agent, offset.z, id, color, alpha, fill, border, isTextured,
 					textureFileNames, angle == null ? 0 : angle, height, roundCorner, type, ratio, colors);

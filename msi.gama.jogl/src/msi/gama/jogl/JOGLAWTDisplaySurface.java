@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -46,20 +47,20 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// Use to toggle the Picking mode
 	// private boolean picking = false;
 
-	// Use to toggle the Arcball view
-	public boolean arcball = false;
+	// Use to toggle the Arcball drag
+	private boolean arcball = false;
 
 	// Use to toggle the selectRectangle tool
 	public boolean selectRectangle = false;
 
 	// Use to toggle the SplitLayer view
-	public boolean splitLayer = false;
+	private boolean splitLayer = false;
 
 	// Us toggle to switch cameras
-	public boolean switchCamera = false;
+	private boolean switchCamera = false;
 
 	// Use to toggle the Rotation view
-	public boolean rotation = false;
+	private boolean rotation = false;
 
 	// Used to follow an agent
 	public boolean followAgent = false;
@@ -258,14 +259,22 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setDisplayScope(null);
 	}
 
+	private boolean alreadyZooming = false;
+
 	@Override
 	public void zoomIn() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		renderer.camera.zoom(true);
+		alreadyZooming = false;
 	}
 
 	@Override
 	public void zoomOut() {
+		if ( alreadyZooming ) { return; }
+		alreadyZooming = true;
 		renderer.camera.zoom(false);
+		alreadyZooming = false;
 	}
 
 	@Override
@@ -331,6 +340,16 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
+	public boolean isTriangulationOn() {
+		return renderer.triangulation;
+	}
+
+	@Override
+	public boolean isInertiaOn() {
+		return renderer.getInertia();
+	}
+
+	@Override
 	public void toggleSplitLayer() {
 
 		splitLayer = !splitLayer;
@@ -361,6 +380,26 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.switchCamera();
 		zoomFit();
 		updateDisplay();
+	}
+
+	@Override
+	public boolean isLayerSplitted() {
+		return splitLayer;
+	}
+
+	@Override
+	public boolean isRotationOn() {
+		return rotation;
+	}
+
+	@Override
+	public boolean isCameraSwitched() {
+		return switchCamera;
+	}
+
+	@Override
+	public boolean isArcBallDragOn() {
+		return arcball;
 	}
 
 	@Override
@@ -503,7 +542,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public IList<IAgent> selectAgent(final int x, final int y) {
-		if ( getDisplayScope().getSimulationScope() == null ) { return GamaList.EMPTY_LIST; }
+		if ( getDisplayScope().getSimulationScope() == null ) { return GamaListFactory.EMPTY_LIST; }
 		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		Set<IAgent> agents = null;
 		agents =
@@ -513,6 +552,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				.getTopology()
 				.getNeighboursOf(getDisplayScope(), new GamaPoint(pp.x, pp.y), this.renderer.getMaxEnvDim() / 100,
 					Different.with());
-		return new GamaList<IAgent>(agents);
+		return GamaListFactory.<IAgent> createWithoutCasting(Types.AGENT, agents);
 	}
 }

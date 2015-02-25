@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Gama3DSFile.java', in plugin 'msi.gama.jogl2', is part of the source code of the 
+ * 
+ * 'Gama3DSFile.java', in plugin 'msi.gama.jogl2', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -18,7 +18,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile.Gama3DGeometryFile;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
@@ -78,7 +78,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	// Verified
 	@Override
 	public void fillBuffer(final IScope scope) {
-		setBuffer(new GamaList());
+		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		try {
 			FileInputStream fileInputStream = new FileInputStream(getFile());
 			dataInputStream = new DataInputStream(fileInputStream);

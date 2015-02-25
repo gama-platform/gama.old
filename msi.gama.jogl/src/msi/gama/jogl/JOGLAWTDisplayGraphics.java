@@ -15,6 +15,7 @@ package msi.gama.jogl;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -23,7 +24,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -88,10 +89,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
 		Double depth = 0d;
-		IList<String> textures = new GamaList<String>();
+		List<String> textures = new ArrayList<String>();
 		IShape.Type type = shape.getGeometricalType();
-		IList<Double> ratio = new GamaList<Double>();
-		IList<GamaColor> colors = new GamaList<GamaColor>();
+		List<Double> ratio = new ArrayList<Double>();
+		List<GamaColor> colors = new ArrayList<GamaColor>();
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
@@ -127,7 +128,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final IList<String> textures, final IList<Double> ratio, final IList<GamaColor> colors) {
+		final List<String> textures, final List<Double> ratio, final List<GamaColor> colors) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio, colors);
 

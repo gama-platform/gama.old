@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Simulation.java', in plugin 'msi.gama.hpc', is part of the source code of the 
+ * 
+ * 'Simulation.java', in plugin 'msi.gama.hpc', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -12,11 +12,6 @@
 package msi.gama.hpc.simulation;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import msi.gama.hpc.simulation.Result;
 
 public class Simulation {
 
@@ -29,7 +24,7 @@ public class Simulation {
 	/**
 	 * current step
 	 */
-	private int step;
+	// private int step;
 
 	/**
 	 * id of current experiment
@@ -37,18 +32,18 @@ public class Simulation {
 	private int experimentID;
 	public int maxStep;
 
-	public void addResult(Result p) {
-		 this.result.add(p);
+	public void addResult(final Result p) {
+		this.result.add(p);
 	}
 
-	public Simulation(int expId) {
+	public Simulation(final int expId) {
 		this.experimentID = expId;
 		result = new ArrayList<Result>();
 		initialize();
 	}
 
 	public void setup() {
-		this.step = 0;
+		// this.step = 0;
 		// this.model.setup();
 	}
 
@@ -56,7 +51,7 @@ public class Simulation {
 		return experimentID;
 	}
 
-	public void setExperimentID(int experimentID) {
+	public void setExperimentID(final int experimentID) {
 		this.experimentID = experimentID;
 	}
 
