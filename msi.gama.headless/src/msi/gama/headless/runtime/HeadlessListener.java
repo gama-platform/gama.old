@@ -311,4 +311,13 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void setSubStatusCompletion(final double status) {}
+
+	/**
+	 * Method getName()
+	 * @see msi.gama.common.interfaces.IGui#getName()
+	 */
+	@Override
+	public String getName() {
+		return "Headless";
+	}
 }
