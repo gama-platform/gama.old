@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="libs/xmlgraphics-commons-1.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msi.gama.ext"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msi.gama.processor"/>
+	<classpathentry kind="lib" path="libs/jdom-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
