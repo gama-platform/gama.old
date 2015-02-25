@@ -15,9 +15,9 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
+import msi.gama.display.WebDisplayView;
 import msi.gama.display.web.utils.Logger;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.WebDisplayView;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -537,7 +537,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 	}
 
 	private WebDisplayView webDisplayView = null;
-	private Browser internalBrowser = null;
+	private final Browser internalBrowser = null;
 
 	private boolean isWebDisplayViewNotFound() {
 		return null == this.webDisplayView;
@@ -554,7 +554,7 @@ public class WebDisplaySurface implements IDisplaySurface {
 					for ( IViewReference viewRef : listViews ) {
 						if ( viewRef.getId().equals(WebDisplayView.ID) ) {
 							webDisplayView = (WebDisplayView) viewRef.getView(true);
-							internalBrowser = (Browser) webDisplayView.getComponent();
+							// internalBrowser = (Browser) webDisplayView.getComponent();
 							Logger.mlog("Create browser OK grace a View found: ", viewRef.getId());
 						}
 					}
