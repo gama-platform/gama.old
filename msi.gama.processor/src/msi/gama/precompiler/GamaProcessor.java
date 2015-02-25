@@ -112,22 +112,22 @@ public class GamaProcessor extends AbstractProcessor {
 
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
-			Writer doc = createDocSourceWriter();
-			if ( source != null && doc != null ) {
+			// Writer doc = createDocSourceWriter();
+			if ( source != null /* && doc != null */) {
 				// try {
 				try {
 					StringBuilder sourceBuilder = new StringBuilder();
-					StringBuilder docBuilder = new StringBuilder();
-					new JavaWriter().write("gaml.additions", gp, sourceBuilder, docBuilder);
+					// StringBuilder docBuilder = new StringBuilder();
+					new JavaWriter().write("gaml.additions", gp, sourceBuilder/* , docBuilder */);
 					source.append(sourceBuilder);
-					doc.append(docBuilder);
+					// doc.append(docBuilder);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				// w.flush();
 				try {
 					source.close();
-					doc.close();
+					// doc.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -352,7 +352,7 @@ public class GamaProcessor extends AbstractProcessor {
 					sb.append(arrayToString(args)).append(SEP);
 				}
 			}
-			gp.put(sb.toString(), docToString(f.doc()));
+			gp.put(sb.toString(), "" /* docToString(f.doc()) */);
 		}
 	}
 
@@ -481,7 +481,7 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			sb.setLength(sb.length() - 1);
 			doc doc = e.getAnnotation(doc.class);
-			gp.put(sb.toString(), docToString(doc)); /* doc */
+			gp.put(sb.toString(), "" /* docToString(doc) */); /* doc */
 		}
 	}
 
@@ -635,7 +635,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( String s : spec.skills() ) {
 				sb.append(SEP).append(s);
 			}
-			gp.put(sb.toString(), docToString(spec.doc())); /* doc */
+			gp.put(sb.toString(), "" /* docToString(spec.doc()) */); /* doc */
 		}
 	}
 
@@ -676,7 +676,7 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(SEP).append(s);
 			}
 			processingEnv.getMessager().printMessage(Kind.NOTE, "Skill processed: " + rawNameOf(e));
-			gp.put(sb.toString(), docToString(skill.doc())); /* doc */
+			gp.put(sb.toString(), "" /* docToString(skill.doc()) */); /* doc */
 		}
 	}
 
@@ -713,7 +713,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( TypeMirror tm : wraps ) {
 				sb.append(SEP).append(rawNameOf(tm, e));
 			}
-			gp.put(sb.toString(), docToString(t.doc()));
+			gp.put(sb.toString(), ""/* docToString(t.doc()) */);
 		}
 	}
 
@@ -799,7 +799,7 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(SEP).append(names[i]);
 			}
 
-			gp.put(sb.toString(), docToString(documentation));
+			gp.put(sb.toString(), "" /* docToString(documentation) */);
 		}
 	}
 
@@ -870,7 +870,7 @@ public class GamaProcessor extends AbstractProcessor {
 				Kind.NOTE,
 				"Adding action " + action.name() + ", implemented by " + rawNameOf(ex.getEnclosingElement()) + " " +
 					ex.getSimpleName());
-			gp.put(sb.toString(), docToString(action.doc())); /* doc */
+			gp.put(sb.toString(), ""/* docToString(action.doc()) */); /* doc */
 		}
 	}
 
@@ -901,7 +901,7 @@ public class GamaProcessor extends AbstractProcessor {
 			// 3.value
 			sb.append(valueConstant);
 			// 4.doc
-			gp.put(sb.toString(), docToString(documentation));
+			gp.put(sb.toString(), "" /* docToString(documentation) */);
 		}
 	}
 
@@ -935,14 +935,14 @@ public class GamaProcessor extends AbstractProcessor {
 		return null;
 	}
 
-	private Writer createDocSourceWriter() {
-		try {
-			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
-				.openWriter();
-		} catch (Exception e) {
-			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
-		}
-		return null;
-	}
+	// private Writer createDocSourceWriter() {
+	// try {
+	// return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
+	// .openWriter();
+	// } catch (Exception e) {
+	// processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+	// }
+	// return null;
+	// }
 
 }

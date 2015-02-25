@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ISymbolKind.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * 
+ * 'ISymbolKind.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -65,7 +65,12 @@ public interface ISymbolKind {
 
 	public static final int ABSTRACT_SECTION = 14;
 
+	public static final int OPERATOR = 15;
+
 	// Update this variable when adding a kind of symbol
-	public static final int __NUMBER__ = 15;
+	public static final int __NUMBER__ = 16;
+
+	public static final String[] TEMPLATE_MENU = { "Species", "Model", "Statement", "Behavior", "Parameter", "Output",
+		"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator" };
 
 }

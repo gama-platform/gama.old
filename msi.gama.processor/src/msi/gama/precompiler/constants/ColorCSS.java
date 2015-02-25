@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'ColorCSS.java', in plugin 'msi.gama.processor', is part of the source code of the 
+ * 
+ * 'ColorCSS.java', in plugin 'msi.gama.processor', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,13 +11,11 @@
  **********************************************************************************************/
 package msi.gama.precompiler.constants;
 
-import msi.gama.precompiler.IConstantCategory;
-import msi.gama.precompiler.GamlAnnotations.constant;
-import msi.gama.precompiler.GamlAnnotations.doc;
 
 public class ColorCSS {
 
-	@constant(value="the set of CSS colors", category=IConstantCategory.COLOR_CSS, doc=@doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
+	// @constant(value="the set of CSS colors", category=IConstantCategory.COLOR_CSS,
+	// doc=@doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
 	public final static Object[] array = new Object[] { "transparent", new int[] { 0, 0, 0, 0 }, "aliceblue",
 		new int[] { 240, 248, 255, 1 }, "antiquewhite", new int[] { 250, 235, 215, 1 }, "aqua",
 		new int[] { 0, 255, 255, 1 }, "aquamarine", new int[] { 127, 255, 212, 1 }, "azure",
