@@ -29,13 +29,13 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = { SimpleBdiArchitecture.PLAN, SimpleBdiArchitecture.PERCEIVE }, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
+@symbol(name = { SimpleBdiArchitecture.PLAN}, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
-		@facet(name = SimpleBdiArchitecture.EXECUTEDWHEN, type = IType.BOOL, optional = true),
+		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
-public class SimpleBdiStatement extends AbstractStatementSequence {
+public class SimpleBdiPlan extends AbstractStatementSequence {
 
 	private final IExpression _when;
 	private final IExpression _priority;
@@ -53,11 +53,11 @@ public class SimpleBdiStatement extends AbstractStatementSequence {
 		return _executedwhen;
 	}
 
-	public SimpleBdiStatement(final IDescription desc) {
+	public SimpleBdiPlan(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
 		_priority = getFacet(SimpleBdiArchitecture.PRIORITY);
-		_executedwhen = getFacet(SimpleBdiArchitecture.EXECUTEDWHEN);
+		_executedwhen = getFacet(SimpleBdiArchitecture.FINISHEDWHEN);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}

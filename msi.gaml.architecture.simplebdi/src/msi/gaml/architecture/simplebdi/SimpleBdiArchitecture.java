@@ -30,26 +30,33 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 
-@vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT, type = IType.FLOAT, init = "1.0"),
-	@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_GOALS, type = IType.FLOAT, init = "1.0"),
+@vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_PLANS, type = IType.FLOAT, init = "1.0", doc= @doc ("plan persistence")),
+	@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_GOALS, type = IType.FLOAT, init = "1.0", doc= @doc ("goal persistence")),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "true"),
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.INTENSION_BASE, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]") })
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
+
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	public static final String SIMPLE_BDI = "simple_bdi";
 	public static final String PLAN = "plan";
 	public static final String PRIORITY = "priority";
-	public static final String EXECUTEDWHEN = "executed_when";
-	public static final String PERCEIVE = "perceive";
-	public static final String PERSISTENCE_COEFFICIENT = "persistence_coefficient_plans";
-	public static final String PERSISTENCE_COEFFICIENT_GOALS = "persistence_coefficient_goals";
+	public static final String FINISHEDWHEN = "finished_when";
+	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
+	public static final String PERSISTENCE_COEFFICIENT_GOALS = "goal_persistence";	
+	
+	//TODO: Not implemented yet
 	public static final String PROBABILISTIC_CHOICE = "probabilistic_choice";
+	public static final String INSTANTANEAOUS = "instantaneaous";
+
+	//INFORMATION THAT CAN BE DISPLAYED
 	public static final String LAST_THOUGHTS = "thinking";
 	public static final Integer LAST_THOUGHTS_SIZE = 5;
+	
+	
 	public static final String PREDICATE = "predicate";
 	public static final String PREDICATE_NAME = "name";
 	public static final String PREDICATE_VALUE = "value";
@@ -66,11 +73,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String EVERY_VALUE = "every_possible_value_";
 
 	private IScope _consideringScope;
-	private final List<SimpleBdiStatement> _plans = new ArrayList<SimpleBdiStatement>();
-	private final List<SimpleBdiStatement> _perceives = new ArrayList<SimpleBdiStatement>();
+	private final List<SimpleBdiPlan> _plans = new ArrayList<SimpleBdiPlan>();
+	private final List<SimpleBdiPlan> _perceives = new ArrayList<SimpleBdiPlan>();
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
-	private SimpleBdiStatement _persistentTask = null;
+	private SimpleBdiPlan _persistentTask = null;
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -83,20 +90,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public void addBehavior(final IStatement c) {
 		super.addBehavior(c);
-		if ( c instanceof SimpleBdiStatement ) {
+		if ( c instanceof SimpleBdiPlan ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
-			if ( statementKeyword.equals(PERCEIVE) ) {
-				_perceives.add((SimpleBdiStatement) c);
-				_perceiveNumber = _perceives.size();
-			} else {
-				_plans.add((SimpleBdiStatement) c);
-				_plansNumber++;
-			}
+			_plans.add((SimpleBdiPlan) c);
+			_plansNumber++;
 		}
 	}
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		super.executeOn(scope);
 		return executePlans(scope);
 	}
 
@@ -117,8 +120,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					: (GamaList<Predicate>) agent.getAttribute(INTENSION_BASE));
 
 			Double persistenceCoefficientPlans =
-				scope.hasArg(PERSISTENCE_COEFFICIENT) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT) : (Double) agent
-					.getAttribute(PERSISTENCE_COEFFICIENT);
+				scope.hasArg(PERSISTENCE_COEFFICIENT_PLANS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_PLANS) : (Double) agent
+					.getAttribute(PERSISTENCE_COEFFICIENT_PLANS);
 			Double persistenceCoefficientgoal =
 				scope.hasArg(PERSISTENCE_COEFFICIENT_GOALS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_GOALS)
 					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_GOALS);
@@ -229,21 +232,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	protected final SimpleBdiStatement selectExecutablePlanWithHighestPriority(final IScope scope) {
-		SimpleBdiStatement resultStatement = null;
+	protected final SimpleBdiPlan selectExecutablePlanWithHighestPriority(final IScope scope) {
+		SimpleBdiPlan resultStatement = null;
 		double highestPriority = Double.MIN_VALUE;
 		for ( Object statement : scope.getExperiment().getRandomGenerator().shuffle(_plans) ) {
 			boolean isContextConditionSatisfied =
-				((SimpleBdiStatement) statement).getContextExpression() == null ||
-					msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiStatement) statement).getContextExpression()
+				((SimpleBdiPlan) statement).getContextExpression() == null ||
+					msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
 						.value(scope));
 			if ( isContextConditionSatisfied ) {
 				double currentPriority =
-					msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiStatement) statement).getPriorityExpression()
+					msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
 						.value(scope));
 				if ( highestPriority < currentPriority ) {
 					highestPriority = currentPriority;
-					resultStatement = (SimpleBdiStatement) statement;
+					resultStatement = (SimpleBdiPlan) statement;
 				}
 			}
 		}
