@@ -145,6 +145,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 					width = Math.max(width, item.getPreferredWidth(gc));
 				}
 				gc.dispose();
+				height += ParameterExpandItem.BORDER;
 			}
 		}
 		if ( width == 0 ) {
@@ -159,6 +160,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		if ( hHint != SWT.DEFAULT ) {
 			height = hHint;
 		}
+		// return new Point(width, height);
 		Rectangle trim = computeTrim(0, 0, width, height);
 		return new Point(trim.width, trim.height);
 	}
@@ -268,20 +270,6 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		ParameterExpandItem[] result = new ParameterExpandItem[itemCount];
 		System.arraycopy(items, 0, result, 0, itemCount);
 		return result;
-	}
-
-	/**
-	 * Returns the receiver's spacing.
-	 * 
-	 * @return the spacing
-	 * 
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 */
-	public int getSpacing() {
-		return spacing;
 	}
 
 	/**

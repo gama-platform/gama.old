@@ -49,7 +49,7 @@ public class ParameterExpandItem extends Item {
 	boolean isPaused;
 	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
-	private static final int BORDER = 4;
+	static final int BORDER = 4;
 	static final int CHEVRON_SIZE = 24;
 
 	/**
@@ -136,7 +136,7 @@ public class ParameterExpandItem extends Item {
 		int headerHeight = parent.bandHeight;
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
+		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
 		gc.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
 
@@ -263,7 +263,7 @@ public class ParameterExpandItem extends Item {
 				control.setLocation(x + BORDER, y + headerHeight);
 			}
 			if ( size ) {
-				control.setSize(control.computeSize(width - 2 * BORDER, height - BORDER));
+				control.setSize(control.computeSize(width - 2 * BORDER, height + BORDER /*- BORDER*/));
 				((Composite) control).layout(true);
 				// control.setSize(Math.max(0, width - 2 * BORDER), Math.max(0, height - BORDER));
 			}
@@ -299,7 +299,7 @@ public class ParameterExpandItem extends Item {
 			control.setVisible(expanded);
 			int headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
-				Math.max(0, height - BORDER));
+				Math.max(0, height + BORDER));
 			control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
 	}
