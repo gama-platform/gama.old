@@ -4,11 +4,11 @@
  */
 package msi.gama.gui.navigator;
 
-import java.net.URL;
+import gnu.trove.map.hash.THashMap;
+import java.net.MalformedURLException;
 import java.util.*;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.util.file.*;
 import msi.gama.util.file.CsvReader.Stats;
 import msi.gama.util.file.GAMLFile.GamlInfo;
@@ -16,17 +16,13 @@ import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.simple.*;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Class FileMetaDataProvider.
@@ -42,8 +38,52 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public static final String IMAGE_CT_ID = "msi.gama.gui.images.type";
 	public static final String GAML_CT_ID = "msi.gama.gui.gaml.type";
 	public static final String SHAPEFILE_CT_ID = "msi.gama.gui.shapefile.type";
+	public static final String SHAPEFILE_SUPPORT_CT_ID = "msi.gama.gui.shapefile.support.type";
 
 	private final static FileMetaDataProvider instance = new FileMetaDataProvider();
+
+	public static final THashMap<String, String> longNames = new THashMap() {
+
+		{
+			put("prj", "Projection data");
+			put("shx", "Index data");
+			put("dbf", "Attribute data");
+			put("xml", "Metadata");
+			put("sbn", "Query data");
+			put("sbx", "Query data");
+			put("qix", "Query data");
+			put("qpj", "QGis project");
+			put("fix", "Feature index");
+			put("cpg", "Character set codepage");
+			put("qml", "Style information");
+		}
+	};
+
+	public static class GenericFileInfo extends GamaFileMetaData {
+
+		final String suffix;
+
+		public GenericFileInfo(final long stamp, final String suffix) {
+			super(stamp);
+			this.suffix = suffix;
+		}
+
+		public GenericFileInfo(final String propertiesString) {
+			super(propertiesString);
+			String[] segments = split(propertiesString);
+			suffix = segments[1];
+		}
+
+		@Override
+		public String getSuffix() {
+			return suffix;
+		}
+
+		@Override
+		public String toPropertyString() {
+			return super.toPropertyString() + DELIMITER + suffix;
+		}
+	}
 
 	public static final Map<String, Class> CLASSES = new HashMap() {
 
@@ -52,6 +92,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			put(IMAGE_CT_ID, ImageInfo.class);
 			put(GAML_CT_ID, GamlInfo.class);
 			put(SHAPEFILE_CT_ID, ShapeInfo.class);
+			put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
 		}
 	};
 
@@ -89,6 +130,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				data = createCSVFileMetaData(file);
 			} else if ( GAML_CT_ID.equals(ct) ) {
 				data = createGamlFileMetaData(file);
+			} else if ( SHAPEFILE_SUPPORT_CT_ID.equals(ct) ) {
+				data = createShapeFileSupportMetaData(file);
 			}
 			storeMetadata(file, data);
 		}
@@ -112,7 +155,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private void storeMetadata(final IFile file, final IGamaFileMetaData data) {
 		try {
-			file.setPersistentProperty(CACHE_KEY, data.toPropertyString());
+			file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 		} catch (Exception ignore) {
 			System.err.println("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
@@ -201,55 +244,28 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 */
 	private GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
 		ShapeInfo info = null;
-		URL url = null;
-		ShapefileDataStore store = null;
 		try {
-			url = file.getLocationURI().toURL();
-			store = new ShapefileDataStore(url);
-			SimpleFeatureSource source = store.getFeatureSource();
-			SimpleFeatureCollection features = source.getFeatures();
-			boolean noCRS = false;
-			CoordinateReferenceSystem crs = null;
-			try {
-				crs = source.getInfo().getCRS();
-			} catch (Exception e) {}
-			noCRS = crs == null;
-			ReferencedEnvelope env = source.getBounds();
-			if ( env != null ) {
-				if ( !noCRS ) {
-					try {
-						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
-					} catch (Exception e) {}
-				}
-			} else {
-				env = new ReferencedEnvelope();
-			}
-			info = new ShapeInfo(file.getModificationStamp(), features.size(), crs, env.getWidth(), env.getHeight());
-		} catch (Exception e) {
-			return null;
-		} finally {
-			if ( store != null ) {
-				store.dispose();
-			}
+			info = new ShapeInfo(file.getLocationURI().toURL(), file.getModificationStamp());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		}
 		return info;
 
 	}
 
-	public static boolean isShapefile(final IFile p) {
-		return p != null && SHAPEFILE_CT_ID.equals(getContentTypeId(p));
-	}
+	private GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
+		GenericFileInfo info = null;
+		IResource r = shapeFileSupportedBy(file);
+		if ( r == null ) { return null; }
+		String ext = file.getFileExtension();
+		String type = longNames.containsKey(ext) ? longNames.get(ext) : "Data";
+		info = new GenericFileInfo(file.getModificationStamp(), " (" + type + " for '" + r.getName() + "')");
+		return info;
 
-	public static boolean isImage(final IFile p) {
-		return p != null && IMAGE_CT_ID.equals(getContentTypeId(p));
-	}
-
-	public static boolean isCSV(final IFile p) {
-		return p != null && CSV_CT_ID.equals(getContentTypeId(p));
 	}
 
 	public static boolean isGAML(final IFile p) {
-		return p != null && GAML_CT_ID.equals(getContentTypeId(p));
+		return p != null && "gaml".equals(p.getFileExtension())/* GAML_CT_ID.equals(getContentTypeId(p)) */;
 	}
 
 	public static String getContentTypeId(final IFile p) {
@@ -261,11 +277,29 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				if ( type != null ) { return type.getId(); }
 			}
 		} catch (CoreException e) {}
-		IPath path = p.getLocation();
-		String ext = path.getFileExtension();
+		String ext = p.getFileExtension();
 		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
 		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
+		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
 		return "";
+	}
+
+	public static IResource shapeFileSupportedBy(final IFile r) {
+		String fileName = r.getName();
+		// Special case for these odd files
+		if ( fileName.endsWith(".shp.xml") ) {
+			fileName = fileName.replace(".xml", "");
+		} else {
+			String extension = r.getFileExtension();
+			if ( !longNames.contains(extension) ) { return null; }
+			fileName = fileName.replace(extension, "shp");
+		}
+		return r.getParent().findMember(fileName);
+	}
+
+	public static boolean isSupport(final IFile shapefile, final IFile other) {
+		IResource r = shapeFileSupportedBy(other);
+		return shapefile.equals(r);
 	}
 
 }

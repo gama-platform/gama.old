@@ -12,7 +12,6 @@
 package msi.gama.gui.navigator;
 
 import java.util.*;
-import msi.gama.gui.navigator.shapefiles.LightweightShapefileSupportDecorator;
 import msi.gama.util.file.GAMLFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -35,8 +34,9 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 				if ( folder.isParentOf(element) ) { return folder; }
 			}
 		}
-		if ( element instanceof IFile ) {
-			IResource r = LightweightShapefileSupportDecorator.shapeFileSupportedBy((IFile) element);
+		if ( element instanceof IFile &&
+			FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
+			IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
 			if ( r != null ) { return r; }
 		}
 		return super.getParent(element);
@@ -73,7 +73,7 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 					IContainer folder = ((IFile) p).getParent();
 					List<IResource> sub = new ArrayList();
 					for ( IResource r : folder.members() ) {
-						if ( r instanceof IFile && LightweightShapefileSupportDecorator.isSupport((IFile) p, (IFile) r) ) {
+						if ( r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r) ) {
 							sub.add(r);
 						}
 					}
@@ -94,8 +94,7 @@ public class NavigatorContentProvider extends BaseWorkbenchContentProvider {
 		if ( element instanceof NavigatorRoot ) { return true; }
 		if ( element instanceof IFile ) {
 			String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
-			if ( FileMetaDataProvider.GAML_CT_ID.equals(ext) ) { return true; }
-			if ( FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext) ) { return true; }
+			return FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext);
 		}
 		return super.hasChildren(element);
 	}
