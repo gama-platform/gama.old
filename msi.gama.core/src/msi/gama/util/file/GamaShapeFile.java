@@ -12,8 +12,10 @@
 package msi.gama.util.file;
 
 import java.io.*;
+import java.net.URL;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,7 +24,9 @@ import msi.gaml.types.*;
 import org.apache.commons.lang.StringUtils;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.*;
 import org.geotools.feature.*;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.*;
@@ -48,15 +52,42 @@ public class GamaShapeFile extends GamaGisFile {
 
 		final int itemNumber;
 		final CoordinateReferenceSystem crs;
-		final double width, height;
+		final double width;
+		final double height;
 
-		public ShapeInfo(final long modificationStamp, final int itemNumber, final CoordinateReferenceSystem crs,
-			final double width, final double height) {
+		public ShapeInfo(final URL url, final long modificationStamp) {
 			super(modificationStamp);
-			this.itemNumber = itemNumber;
-			this.crs = crs;
-			this.width = width;
-			this.height = height;
+			ShapefileDataStore store = null;
+			ReferencedEnvelope env = new ReferencedEnvelope();
+			CoordinateReferenceSystem crs = null;
+			int number = 0;
+			try {
+				store = new ShapefileDataStore(url);
+				SimpleFeatureSource source = store.getFeatureSource();
+				SimpleFeatureCollection features = source.getFeatures();
+				try {
+					crs = source.getInfo().getCRS();
+				} catch (Exception e) {}
+				env = source.getBounds();
+				if ( crs != null ) {
+					try {
+						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
+					} catch (Exception e) {}
+				}
+				number = features.size();
+			} catch (Exception e) {
+				System.out.println("Error in reading metadata of " + url);
+
+			} finally {
+				width = env.getWidth();
+				height = env.getHeight();
+				itemNumber = number;
+				this.crs = crs;
+				if ( store != null ) {
+					store.dispose();
+				}
+			}
+
 		}
 
 		public ShapeInfo(final String propertiesString) throws NoSuchAuthorityCodeException, FactoryException {
@@ -67,7 +98,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if ( "null".equals(crsString) ) {
 				crs = null;
 			} else {
-				crs = CRS.decode(crsString);
+				crs = CRS.parseWKT(crsString);
 			}
 			width = Double.valueOf(segments[3]);
 			height = Double.valueOf(segments[4]);
@@ -87,8 +118,7 @@ public class GamaShapeFile extends GamaGisFile {
 		@Override
 		public String toPropertyString() {
 			Object[] toSave =
-				new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.getName().getCode(),
-					width, height };
+				new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(), width, height };
 			return StringUtils.join(toSave, DELIMITER);
 		}
 	}
@@ -147,7 +177,7 @@ public class GamaShapeFile extends GamaGisFile {
 		}
 	}
 
-	public void readShapes(final IScope scope) {
+	protected void readShapes(final IScope scope) {
 		GuiUtils.beginSubStatus("Reading file" + getName());
 		ShapefileDataStore store = null;
 		FeatureReader reader = null;

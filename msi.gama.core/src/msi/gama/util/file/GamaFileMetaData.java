@@ -27,16 +27,16 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 	}
 
 	public static <T extends IGamaFileMetaData> T from(final String s, final long stamp, final Class<T> clazz) {
+		T result = null;
 		try {
 			Constructor<T> c = clazz.getDeclaredConstructor(String.class);
-			T result = c.newInstance(s);
-			if ( result == null ) { return null; }
+			result = c.newInstance(s);
 			if ( result.getModificationStamp() != stamp ) { return null; }
-			return result;
 		} catch (Exception ignore) {
-			System.err.println("Error loading metadata " + s + " : " + ignore.getMessage());
-			return null;
+			System.err.println("Error loading metadata " + s + " : " + ignore.getClass().getSimpleName() + ":" +
+				ignore.getMessage());
 		}
+		return result;
 	}
 
 	public GamaFileMetaData(final String propertyString) {
