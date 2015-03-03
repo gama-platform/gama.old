@@ -119,6 +119,7 @@ species to_pair{
 }
 species to_map{
 	init {
+		write sample(map<float, int>(°meter));
 		write sample(map(1));
 		write sample(map(1.0));
 		write sample(map("1"));
@@ -132,7 +133,7 @@ species to_map{
 		write sample(map([0::0]));
 		write sample(map({0,0,0}));
 		write sample(map(#AABBCC));
-		write sample(map(°meter));				
+		write sample(map<int,string>(1));				
 	}
 }
 experiment Casting type: gui{
