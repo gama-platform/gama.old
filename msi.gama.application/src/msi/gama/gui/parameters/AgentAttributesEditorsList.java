@@ -62,7 +62,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public void updateItemValues() {
-		for ( Map.Entry<IAgent, THashMap<String, IParameterEditor>> entry : categories.entrySet() ) {
+		for ( Map.Entry<IAgent, Map<String, IParameterEditor>> entry : categories.entrySet() ) {
 			if ( !entry.getKey().dead() ) {
 				for ( IParameterEditor gp : entry.getValue().values() ) {
 					gp.updateValue();

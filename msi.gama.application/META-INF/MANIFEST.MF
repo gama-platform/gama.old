@@ -1,15 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
 Bundle-Name: GamaApplication
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
- JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui.console,
- msi.gama.ext,
  msi.gama.core;bundle-version="1.0.0",
  org.eclipse.ui.navigator,
  org.eclipse.team.svn.ui,
- org.eclipse.ui.navigator.resources,
- org.apache.commons.logging,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
@@ -23,14 +19,13 @@ Require-Bundle: org.eclipse.ui.console,
  org.eclipse.equinox.p2.operations,
  org.eclipse.equinox.p2.metadata.repository,
  org.eclipse.ui.editors;bundle-version="3.8.0",
- org.eclipse.jface.databinding;bundle-version="1.6.0"
+ msi.gama.processor;bundle-version="1.4.0",
+ org.eclipse.ui.navigator.resources;bundle-version="3.4.400",
+ msi.gama.ext;bundle-version="1.0.0"
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.6.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
-Import-Package: msi.gama.precompiler,
- org.eclipse.core.filesystem,
- org.eclipse.emf.ecore
 Bundle-ClassPath: .,
  libs/gt-swt-11.4.jar,
  libs/svnkit-javahl.jar,

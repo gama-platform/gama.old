@@ -19,7 +19,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.actions.DisplayedAgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
@@ -42,7 +42,7 @@ public class DisplaySurfaceMenu {
 	org.eclipse.swt.widgets.Menu menu;
 
 	public void buildMenu(final int mousex, final int mousey, final int x, final int y,
-		final GamaPoint modelCoordinates, final List<ILayer> displays) {
+		final ILocation modelCoordinates, final List<ILayer> displays) {
 		if ( displays.isEmpty() ) { return; }
 		if ( menu != null && !menu.isDisposed() ) {
 			menu.dispose();
@@ -66,7 +66,7 @@ public class DisplaySurfaceMenu {
 			agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
 
-	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final GamaPoint modelCoordinates,
+	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
 		final Collection<IAgent> agents) {
 		GuiUtils.asyncRun(new Runnable() {
 

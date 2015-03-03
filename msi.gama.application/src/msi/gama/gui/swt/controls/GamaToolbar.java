@@ -202,10 +202,10 @@ public class GamaToolbar extends ToolBar {
 
 	public GamaToolbar height(final int n) {
 		// height = n;
-		if ( sizerItem != null && !sizerItem.isDisposed() && sizerItem.getImage() != null &&
-			sizerItem.getImage().getBounds().height == n ) { return this; }
-		disposeSizer();
-		sizerItem = new SizerToolItem(this, n);
+		// if ( sizerItem != null && !sizerItem.isDisposed() && sizerItem.getImage() != null &&
+		// sizerItem.getImage().getBounds().height == n ) { return this; }
+		// disposeSizer();
+		// sizerItem = new SizerToolItem(this, n);
 		return this;
 	}
 

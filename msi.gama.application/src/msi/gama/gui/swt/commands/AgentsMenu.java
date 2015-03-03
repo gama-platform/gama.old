@@ -19,13 +19,13 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -45,7 +45,7 @@ public class AgentsMenu extends ContributionItem {
 		return string;
 	}
 
-	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final GamaPoint userLocation,
+	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final ILocation userLocation,
 		final String title, final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
@@ -87,7 +87,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
-		final IPopulation population, final GamaPoint userLocation, final Image image) {
+		final IPopulation population, final ILocation userLocation, final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText("Population of " + population.getName());
 		result.setImage(image);
@@ -98,7 +98,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final IStatement command,
-		final GamaPoint point, final String prefix) {
+		final ILocation point, final String prefix) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix + " " + command.getName());
 		result.setImage(IGamaIcons.MENU_RUN_ACTION.image());
@@ -208,8 +208,7 @@ public class AgentsMenu extends ContributionItem {
 						Object[] result = new Object[1];
 						Arguments args = new Arguments();
 						if ( p != null ) {
-							args.put(IKeyword.USER_LOCATION,
-								GAML.getExpressionFactory().createConst(p, Types.POINT));
+							args.put(IKeyword.USER_LOCATION, GAML.getExpressionFactory().createConst(p, Types.POINT));
 						}
 						scope.execute(c, a, args, result);
 						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
@@ -242,7 +241,7 @@ public class AgentsMenu extends ContributionItem {
 
 	}
 
-	public static void createMenuForAgent(final Menu menu, final IAgent agent, final GamaPoint userLocation,
+	public static void createMenuForAgent(final Menu menu, final IAgent agent, final ILocation userLocation,
 		final boolean topLevel, final MenuAction ... actions) {
 		if ( agent == null ) { return; }
 		separate(menu, "Actions");
@@ -290,7 +289,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
-		final GamaPoint userLocation, final MenuAction ... actions) {
+		final ILocation userLocation, final MenuAction ... actions) {
 
 		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
 		if ( subMenuSize < 2 ) {

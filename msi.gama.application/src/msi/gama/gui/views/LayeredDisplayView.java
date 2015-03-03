@@ -18,7 +18,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.*;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
@@ -193,16 +193,16 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		// // cy = -cpos[1];
 		// // cz = cpos[2];
 		// }
-		GamaPoint point = surface.getModelCoordinates();
-		String x = point == null ? "N/A" : String.format("%8.2f", point.x);
-		String y = point == null ? "N/A" : String.format("%8.2f", point.y);
+		ILocation point = surface.getModelCoordinates();
+		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
+		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = null;
 		if ( !openGL ) {
 			objects = new Object[] { x, y, getZoomLevel() };
 		} else {
 			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-			GamaPoint camera = ds.getCameraPosition();
-			objects = new Object[] { x, y, getZoomLevel(), camera.x, camera.y, camera.z };
+			ILocation camera = ds.getCameraPosition();
+			objects = new Object[] { x, y, getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
 		}
 		return String.format(" X%10s | Y%10s | Zoom%10d%%" + (paused ? " | Paused" : "") +
 			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
@@ -247,9 +247,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean paused = surface.isPaused();
 		boolean synced = surface.isSynchronized();
-		GamaPoint point = surface.getModelCoordinates();
-		String x = point == null ? "N/A" : String.format("%8.2f", point.x);
-		String y = point == null ? "N/A" : String.format("%8.2f", point.y);
+		ILocation point = surface.getModelCoordinates();
+		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
+		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = new Object[] { x, y };
 		return String
 			.format("X%10s | Y%10s" + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : ""), objects);
@@ -267,8 +267,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 			objects = new Object[] { getZoomLevel() };
 		} else {
 			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-			GamaPoint camera = ds.getCameraPosition();
-			objects = new Object[] { getZoomLevel(), camera.x, camera.y, camera.z };
+			ILocation camera = ds.getCameraPosition();
+			objects = new Object[] { getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
 		}
 		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 

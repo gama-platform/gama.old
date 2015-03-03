@@ -22,7 +22,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.GamaToolbar;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -651,7 +651,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 									rc = stringComparator.compare(v1, v2);
 									break;
 								case IType.POINT:
-									rc = ((GamaPoint) v1).compareTo(v2);
+									rc = ((ILocation) v1).compareTo(v2);
 									break;
 								default:
 									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));

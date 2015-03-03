@@ -22,7 +22,6 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.*;
 import org.geotools.renderer.lite.StreamingRenderer;
-import org.geotools.styling.Style;
 import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.event.MapMouseEvent;
 import org.geotools.swt.tool.CursorTool;
@@ -104,7 +103,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			store = new ShapefileDataStore(f.toURI().toURL());
 			content = new MapContent();
 			SimpleFeatureSource featureSource = store.getFeatureSource();
-			Style style = Utils.createStyle(f, featureSource);
+			org.geotools.styling.Style style = Utils.createStyle(f, featureSource);
 			Layer layer = new FeatureLayer(featureSource, style);
 			content.addLayer(layer);
 		} catch (IOException e) {

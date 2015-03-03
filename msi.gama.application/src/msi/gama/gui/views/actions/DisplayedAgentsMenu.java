@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.IGamaIcons;
@@ -19,7 +18,7 @@ import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.GamaToolbar;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;
@@ -38,7 +37,7 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 
 	private Menu menu;
 
-	public static Map<Class, Image> layer_images = new THashMap();
+	public static Map<Class, Image> layer_images = new LinkedHashMap();
 
 	static {
 		layer_images.put(GridLayer.class, IGamaIcons.LAYER_GRID.image());
@@ -82,7 +81,7 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 	}
 
 	public Menu getMenu(final IToolbarDecoratedView view, final Control parent, final boolean withWorld,
-		final boolean byLayer, final Collection<IAgent> filteredList, final GamaPoint userLocation) {
+		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation) {
 		// Dispose ?
 		Menu menu = new Menu(parent);
 		fill(view, menu, -1, withWorld, byLayer, filteredList, userLocation);
@@ -126,7 +125,7 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 	}
 
 	public void fill(final IToolbarDecoratedView view, final Menu menu, final int index, final boolean withWorld,
-		final boolean byLayer, final Collection<IAgent> filteredList, final GamaPoint userLocation) {
+		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation) {
 		final LayeredDisplayView view2 = (LayeredDisplayView) view;
 		final IDisplaySurface displaySurface = view2.getDisplaySurface();
 		// AgentsMenu.MenuAction follow =
@@ -178,7 +177,7 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 	}
 
 	void fill(final Menu menu, final Image image, final String layerName, final Collection<IAgent> pop,
-		final Collection<IAgent> filteredList, final GamaPoint userLocation, final AgentsMenu.MenuAction ... actions) {
+		final Collection<IAgent> filteredList, final ILocation userLocation, final AgentsMenu.MenuAction ... actions) {
 		if ( filteredList != null ) {
 			pop.retainAll(filteredList);
 		}

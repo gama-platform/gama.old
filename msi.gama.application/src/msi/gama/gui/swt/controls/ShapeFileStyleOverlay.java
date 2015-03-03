@@ -32,7 +32,8 @@ import org.geotools.map.StyleLayer;
 import org.geotools.styling.*;
 import org.geotools.swt.styling.simple.*;
 import org.opengis.feature.simple.SimpleFeatureType;
-import scala.actors.threadpool.Arrays;
+
+// import scala.actors.threadpool.Arrays;
 
 /**
  * The class Popup.
