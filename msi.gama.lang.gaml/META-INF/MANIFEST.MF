@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.apache.commons.logging;resolution:=optional;visibility:=reexport,
  org.eclipse.emf.validation;bundle-version="1.4.0",
  msi.gama.ext,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.xtext.xbase.lib,
+ msi.gama.processor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.formatting,
@@ -36,7 +37,5 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.utils,
  msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.generator
-Import-Package: msi.gama.precompiler,
- org.apache.log4j;version="1.2.15",
- org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-ActivationPolicy: lazy
