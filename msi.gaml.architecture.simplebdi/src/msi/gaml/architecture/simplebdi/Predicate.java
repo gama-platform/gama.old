@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -172,7 +171,7 @@ public class Predicate implements IValue {
 
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return new Predicate(name, value, priority, new THashMap<String, Object>(parameters));
+		return new Predicate(name, value, priority, new LinkedHashMap<String, Object>(parameters));
 	}
 
 	public boolean isSimilarName(final Predicate other) {
