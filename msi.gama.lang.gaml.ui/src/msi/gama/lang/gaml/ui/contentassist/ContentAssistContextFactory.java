@@ -13,7 +13,6 @@ package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.util.TOrderedHashMap;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.*;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.FollowElementCalculator;
@@ -44,7 +43,7 @@ public class ContentAssistContextFactory extends StatefulFactory {
 		super.computeFollowElements(calculator, element);
 	}
 
-	Map<AbstractElement, Integer> recurse = new TOrderedHashMap();
+	Map<AbstractElement, Integer> recurse = new LinkedHashMap();
 	boolean stop = false;
 
 	/**

@@ -4,7 +4,6 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import gnu.trove.map.hash.THashMap;
 import java.util.*;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
@@ -82,7 +81,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	protected void fillMenuByName() {
-		THashMap<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		Map<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
 		List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for ( String name : nn ) {
@@ -115,8 +114,8 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	protected void fillMenuByCategory() {
-		THashMap<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
-		final THashMap<String, THashMap<String, THashMap<OperatorProto, Template>>> categories = new THashMap();
+		Map<String, Map<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final Map<String, Map<String, Map<OperatorProto, Template>>> categories = new LinkedHashMap();
 		List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for ( String name : nn ) {
@@ -127,14 +126,14 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 					continue;
 				}
 				String category = proto.getCategory().replace("-related", "");
-				THashMap<String, THashMap<OperatorProto, Template>> names = categories.get(category);
+				Map<String, Map<OperatorProto, Template>> names = categories.get(category);
 				if ( names == null ) {
-					names = new THashMap();
+					names = new LinkedHashMap();
 					categories.put(category, names);
 				}
-				THashMap<OperatorProto, Template> templates = names.get(name);
+				Map<OperatorProto, Template> templates = names.get(name);
 				if ( templates == null ) {
-					templates = new THashMap();
+					templates = new LinkedHashMap();
 					names.put(name, templates);
 				}
 				templates.put(proto, GamlTemplateFactory.from(proto));

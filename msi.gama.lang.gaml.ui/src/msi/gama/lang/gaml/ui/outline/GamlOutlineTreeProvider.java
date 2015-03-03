@@ -36,8 +36,8 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	@Inject
 	private GamlLabelProvider provider;
 
-	private int speciesCount = 0;
-	private int experimentCount = 0;
+	// private int speciesCount = 0;
+	// private int experimentCount = 0;
 
 	@Override
 	protected void _createChildren(final IOutlineNode parentNode, final EObject stm) {
@@ -45,8 +45,8 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	protected void _createChildren(final IOutlineNode parentNode, final Model stm) {
-		speciesCount = 0;
-		experimentCount = 0;
+		// speciesCount = 0;
+		// experimentCount = 0;
 		Block block = stm.getBlock();
 		if ( block != null ) {
 			for ( Statement s : EGaml.getStatementsOf(block) ) {
@@ -71,15 +71,15 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	// }
 	// }
 
-	protected void _createChildren(final IOutlineNode parentNode, final S_Experiment stm) {
-		experimentCount++;
-		ownCreateChildren(parentNode, stm);
-	}
-
-	protected void _createChildren(final IOutlineNode parentNode, final S_Species stm) {
-		speciesCount++;
-		ownCreateChildren(parentNode, stm);
-	}
+	// protected void _createChildren(final IOutlineNode parentNode, final S_Experiment stm) {
+	// experimentCount++;
+	// ownCreateChildren(parentNode, stm);
+	// }
+	//
+	// protected void _createChildren(final IOutlineNode parentNode, final S_Species stm) {
+	// speciesCount++;
+	// ownCreateChildren(parentNode, stm);
+	// }
 
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Statement stm) {
 		Block block = stm.getBlock();

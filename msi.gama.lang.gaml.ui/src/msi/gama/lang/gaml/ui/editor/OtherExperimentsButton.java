@@ -14,7 +14,6 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
@@ -152,7 +151,7 @@ public class OtherExperimentsButton {
 	}
 
 	private Map<URI, List<String>> grabProjectModelsAndExperiments() {
-		final Map<URI, List<String>> map = new TOrderedHashMap();
+		final Map<URI, List<String>> map = new LinkedHashMap();
 		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
