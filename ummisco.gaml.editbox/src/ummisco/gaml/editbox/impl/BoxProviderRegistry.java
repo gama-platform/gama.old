@@ -27,10 +27,11 @@ public class BoxProviderRegistry {
 			String[] split = pSetting.split(",");
 			if ( split.length > 0 ) {
 				result = new ArrayList<IBoxProvider>();
-			}
-			for ( String s : split ) {
-				if ( s.trim().length() > 0 ) {
-					result.add(createProvider(s.trim()));
+
+				for ( String s : split ) {
+					if ( s.trim().length() > 0 ) {
+						result.add(createProvider(s.trim()));
+					}
 				}
 			}
 		}
