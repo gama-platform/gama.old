@@ -21,7 +21,6 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.types.GamaFileType;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.*;
@@ -42,7 +41,7 @@ public class GamlCompatibilityConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
+	// private static final Set<String> EXTS = GamaFileType.extensionsToFullType.keySet();
 
 	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if ( !(root instanceof Model) ) { return null; }
