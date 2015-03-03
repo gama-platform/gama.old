@@ -237,7 +237,9 @@ species looping_on_maps {
 		// Besides iterator operators (like "collect", "where", etc.), which provide 
 		// functional iterations (i.e. filters), one can loop over maps using the imperative
 		// statement 'loop'
-		map<int, string> l1 <- list("This is a list of strings") as_map (first(each)::each);
+		list<string> strings <- list("This a list of string");
+		write sample(strings);
+		map<string, string> l1 <- strings as_map (first(each)::each);
 		write sample(l1);
 		int i <- 0;
 		list l2 <- [];
@@ -249,6 +251,7 @@ species looping_on_maps {
 		write sample(l2);
 		// To loop on the keys of l1, simply use its 'keys' attribute
 		l2 <- [];
+		 i <- 0;
 		loop s over: l1.keys{
 			i <- i + 1;
 			l2 << "Key #" + i + ": " + s;
