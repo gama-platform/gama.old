@@ -10,16 +10,13 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.builder,
  org.eclipse.xtext.ui.codetemplates.ui,
- org.eclipse.compare,
  msi.gama.core;bundle-version="1.0.0",
  msi.gama.application;bundle-version="1.6.0",
- org.eclipse.ui.ide,
- org.eclipse.ui.editors,
- org.eclipse.ui,
  org.antlr.runtime,
- msi.gama.ext;bundle-version="1.0.0",
  ummisco.gaml.editbox;bundle-version="0.0.22";visibility:=reexport,
- msi.gama.processor;bundle-version="1.4.0"
+ msi.gama.processor;bundle-version="1.4.0",
+ org.eclipse.ui.ide;bundle-version="3.8.2",
+ org.eclipse.compare;bundle-version="3.5.301"
 Import-Package: org.apache.commons.lang;version="2.6.0",
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
