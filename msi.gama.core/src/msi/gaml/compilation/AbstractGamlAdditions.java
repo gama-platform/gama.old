@@ -293,7 +293,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
-			OPERATORS.putIfAbsent(kw, new THashMap());
+			if ( !OPERATORS.containsKey(kw) ) {
+				OPERATORS.put(kw, new THashMap());
+			}
 			Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if ( !map.containsKey(signature) ) {
 				OperatorProto proto;

@@ -22,7 +22,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
 import org.geotools.referencing.CRS;
 import com.vividsolutions.jts.geom.Envelope;
@@ -42,15 +41,25 @@ public class GamaPreferences {
 	public static final String EDITOR = "Editor";
 	public static final String WORKSPACE = "Workspace";
 	public static final String LIBRARIES = "External";
-	private static Preferences store = Preferences.userRoot().node("gama");
+	static Preferences store;
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;
 
 	static {
 
 		try {
-			storeKeys = Arrays.asList(store.keys());
-		} catch (BackingStoreException e) {
+			store = Preferences.userRoot().node("gama");
+			try {
+				store.flush();
+			} catch (BackingStoreException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				storeKeys = Arrays.asList(store.keys());
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+			}
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
@@ -59,16 +68,17 @@ public class GamaPreferences {
 		return prefs.get(key);
 	}
 
-	public static <T> Entry<T> create(final String key, final T value) {
-		return create(key, value, IType.STRING);
-	}
+	//
+	// public static <T> Entry<T> create(final String key, final T value) {
+	// return create(key, value, IType.STRING);
+	// }
 
-	public static <T> Entry<T> create(final String key, final T value, final int type) {
-		return create(key, "Value of " + key, value, type);
-	}
+	// public static <T> Entry<T> create(final String key, final T value, final int type) {
+	// return create(key, "Value of " + key, value, type);
+	// }
 
 	public static <T> Entry<T> create(final String key, final String title, final T value, final int type) {
-		Entry e = new Entry(key).named(title).in(GENERAL).init(value).typed(type);
+		Entry e = new Entry(key, type).named(title).in(GENERAL).init(value);
 		register(e);
 		return e;
 	}
@@ -120,14 +130,15 @@ public class GamaPreferences {
 
 		String key, title, tab, group;
 		T value, initial;
-		IType type;
+		final int type;
 		List<T> values;
 		Number min, max;
 		String[] activates, deactivates;
 		Set<IPreferenceChangeListener<T>> listeners = new HashSet();
 
-		private Entry(final String key) {
+		private Entry(final String key, final int type) {
 			tab = GENERAL;
+			this.type = type;
 			this.key = key;
 		}
 
@@ -179,10 +190,10 @@ public class GamaPreferences {
 			return value == null ? newValue != null : !value.equals(newValue);
 		}
 
-		public Entry typed(final int type) {
-			this.type = Types.get(type);
-			return this;
-		}
+		// public Entry typed(final int type) {
+		// this.type = Types.get(type);
+		// return this;
+		// }
 
 		public Entry activates(final String ... link) {
 			activates = link;
@@ -200,7 +211,7 @@ public class GamaPreferences {
 
 		@Override
 		public IType getType() {
-			return type;
+			return Types.get(type);
 		}
 
 		@Override
@@ -554,60 +565,63 @@ public class GamaPreferences {
 	}
 
 	private static void register(final Entry gp) {
+		System.out.println("+++ Registering preference " + gp.key + " in store");
 		IScope scope = GAMA.obtainNewScope();
-		prefs.put(gp.getKey(), gp);
 		String key = gp.key;
+		if ( key == null ) { return; }
+		prefs.put(key, gp);
 		Object value = gp.value;
-		switch (gp.type.id()) {
+		switch (gp.type) {
 			case IType.INT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getInt(key, Cast.as(value, Integer.class, false)));
+					gp.setValue(scope, store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false)));
 				} else {
-					store.putInt(key, Cast.as(value, Integer.class, false));
+					store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 				}
 				break;
 			case IType.FLOAT:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getDouble(key, Cast.as(value, Double.class, false)));
+					gp.setValue(scope, store.getDouble(key, GamaFloatType.staticCast(scope, value, null, false)));
 				} else {
-					store.putDouble(key, Cast.as(value, Double.class, false));
+					store.putDouble(key, GamaFloatType.staticCast(scope, value, null, false));
 				}
 				break;
 			case IType.BOOL:
-				value = Cast.asBool(scope, value);
+				value = GamaBoolType.staticCast(scope, value, null, false);
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.getBoolean(key, Cast.as(value, Boolean.class, false)));
+					gp.setValue(scope, store.getBoolean(key, (Boolean) value));
 				} else {
-					store.putBoolean(key, Cast.as(value, Boolean.class, false));
+					store.putBoolean(key, (Boolean) value);
 				}
 				break;
 			case IType.STRING:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.get(key, Cast.as(value, String.class, false)));
+					gp.setValue(scope, store.get(key, GamaStringType.staticCast(scope, value, false)));
 				} else {
-					store.put(key, (String) value);
+					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
 				break;
 			case IType.FILE:
 				if ( storeKeys.contains(key) ) {
 					gp.setValue(scope, new GenericFile(store.get(key, "")));
 				} else {
-					store.put(key, ((IGamaFile) value).getPath());
+					store.put(key, value == null ? "" : ((IGamaFile) value).getPath());
 				}
 				break;
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class, false))));
+					int val = store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false));
+					gp.setValue(scope, GamaColor.getInt(val));
 				} else {
-					store.putInt(key, Cast.as(value, Integer.class, false));
+					store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 				}
 				break;
 			default:
 				if ( storeKeys.contains(key) ) {
-					gp.setValue(scope, store.get(key, Cast.as(value, String.class, false)));
+					gp.setValue(scope, store.get(key, GamaStringType.staticCast(scope, value, false)));
 				} else {
-					store.put(key, Cast.as(value, String.class, false));
+					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
 		}
 		if ( scope != null ) {
@@ -623,7 +637,7 @@ public class GamaPreferences {
 	public static void writeToStore(final Entry gp) {
 		String key = gp.key;
 		Object value = gp.value;
-		switch (gp.type.id()) {
+		switch (gp.type) {
 			case IType.INT:
 				store.putInt(key, (Integer) value);
 				break;

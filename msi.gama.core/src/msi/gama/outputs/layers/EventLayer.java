@@ -15,7 +15,7 @@ import java.awt.event.*;
 import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.ConstantExpressionDescription;
@@ -82,7 +82,7 @@ public class EventLayer extends AbstractLayer {
 
 	// We explicitely translate by the origin of the surface
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
 		return super.getModelCoordinatesFrom(xOnScreen - g.getOriginX(), yOnScreen - g.getOriginY(), g);
 	}
 
@@ -142,12 +142,13 @@ public class EventLayer extends AbstractLayer {
 
 		private void executeEvent(final MouseEvent arg0) {
 			if ( executer == null ) { return; }
-			final GamaPoint pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
-			if ( pp.x < 0 || pp.getY() < 0 || pp.x >= surface.getEnvWidth() || pp.y >= surface.getEnvHeight() ) { return; }
+			final ILocation pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
+			if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth() ||
+				pp.getY() >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
 			final Collection<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
 			if ( pointArg != null ) {
-				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
+				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
 			}
 			if ( listArg != null ) {
 				args.put(listArg, ConstantExpressionDescription.create(agentset));

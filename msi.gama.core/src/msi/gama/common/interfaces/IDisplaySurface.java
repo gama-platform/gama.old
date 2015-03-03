@@ -78,7 +78,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		/**
 		 * @return the position of the camera
 		 */
-		GamaPoint getCameraPosition();
+		ILocation getCameraPosition();
 
 		public boolean isLayerSplitted();
 
@@ -236,9 +236,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	public abstract void setZoomListener(IZoomListener listener);
 
-	public GamaPoint getModelCoordinates();
+	public ILocation getModelCoordinates();
 
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 		final Point positionInPixels);
 
 	public Collection<IAgent> selectAgent(final int x, final int y);

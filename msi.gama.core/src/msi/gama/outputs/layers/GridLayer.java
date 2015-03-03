@@ -104,7 +104,7 @@ public class GridLayer extends ImageLayer {
 		}
 	}
 
-	private IAgent getPlaceAt(final GamaPoint loc) {
+	private IAgent getPlaceAt(final ILocation loc) {
 		return ((GridLayerStatement) definition).getEnvironment().getAgentAt(loc);
 	}
 

@@ -19,12 +19,11 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
 
 public abstract class EditorsList<T> implements ItemList<T> {
 
 	/* Map to associate a category to each parameter */
-	protected final Map<T, THashMap<String, IParameterEditor>> categories = new TOrderedHashMap();
+	protected final Map<T, Map<String, IParameterEditor>> categories = new LinkedHashMap();
 
 	@Override
 	public List<T> getItems() {
@@ -36,7 +35,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 
 	public abstract void add(final Collection<? extends IParameter> params, final IAgent agent);
 
-	public Map<T, THashMap<String, IParameterEditor>> getCategories() {
+	public Map<T, Map<String, IParameterEditor>> getCategories() {
 		return categories;
 	}
 

@@ -35,7 +35,7 @@ public interface IExpressionCompiler<T> {
 		IKeyword.USER_LOCATION);
 	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR, IKeyword.HIS, IKeyword.ITS,
 		IKeyword.HER);
-	public static final THashMap<String, Map<Signature, OperatorProto>> OPERATORS = new THashMap();
+	public static final Map<String, Map<Signature, OperatorProto>> OPERATORS = new THashMap();
 	public static final Set<String> ITERATORS = new THashSet();
 
 	public abstract IExpression compile(final IExpressionDescription s, final IDescription parsingContext);

@@ -101,10 +101,10 @@ public class ModelAssembler {
 		model.isDocumenting(document);
 
 		// hqnghi add micro-models
-		if ( mm != null ) {
-			model.setMicroModels(mm);
-			model.addChildren(new ArrayList(mm.values()));
-		}
+		// if ( mm != null ) {
+		model.setMicroModels(mm);
+		model.addChildren(new ArrayList(mm.values()));
+		// }
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {

@@ -12,7 +12,7 @@
 package msi.gama.util.file;
 
 import static org.apache.commons.lang.StringUtils.*;
-import java.util.Collection;
+import java.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.IOutput;
@@ -24,8 +24,9 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.types.*;
-import scala.actors.threadpool.Arrays;
 import com.vividsolutions.jts.geom.Envelope;
+
+// import scala.actors.threadpool.Arrays;
 
 /**
  * Written by drogoul Modified on 13 nov. 2011

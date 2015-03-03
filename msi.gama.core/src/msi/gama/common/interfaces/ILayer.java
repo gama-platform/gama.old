@@ -34,7 +34,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	Set<IAgent> collectAgentsAt(int x, int y, IDisplaySurface g);
 
-	GamaPoint getModelCoordinatesFrom(int x, int y, IDisplaySurface g);
+	ILocation getModelCoordinatesFrom(int x, int y, IDisplaySurface g);
 
 	Point getScreenCoordinatesFrom(double x, double y, IDisplaySurface g);
 

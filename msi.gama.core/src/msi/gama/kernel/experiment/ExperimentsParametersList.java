@@ -51,7 +51,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	@Override
 	public void updateItemValues() {
-		for ( Map.Entry<String, THashMap<String, IParameterEditor>> entry : categories.entrySet() ) {
+		for ( Map.Entry<String, Map<String, IParameterEditor>> entry : categories.entrySet() ) {
 			for ( IParameterEditor gp : entry.getValue().values() ) {
 				gp.updateValue();
 			};

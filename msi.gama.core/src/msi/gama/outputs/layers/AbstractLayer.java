@@ -196,7 +196,7 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
 		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen, sizeInPixels, positionInPixels);
 	}
 
