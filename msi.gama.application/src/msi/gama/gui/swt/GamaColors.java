@@ -42,7 +42,7 @@ public class GamaColors {
 		}
 
 		public boolean isDark() {
-			return luminance() < 150;
+			return luminance() < 120;
 		}
 
 		public GamaUIColor(final Color c, final Color i) {
@@ -181,10 +181,12 @@ public class GamaColors {
 	 * @param create
 	 * @return
 	 */
-	public static GamaUIColor get(final GamaIcon palette) {
-		Image image = palette.image();
-		int rgb = image.getImageData().getPixel(0, 0);
-		return get(rgb);
+	public static GamaUIColor get(final GamaIcon icon) {
+		Image image = icon.image();
+		ImageData data = image.getImageData();
+		PaletteData palette = data.palette;
+		int pixelValue = data.getPixel(0, 0);
+		return get(palette.getRGB(pixelValue));
 	};
 
 }
