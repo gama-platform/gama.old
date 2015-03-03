@@ -128,6 +128,7 @@ species accessing_list_elements {
 		write sample(l2 min_of (length(each)));
 		write sample(l2 max_of (length(each))); 
 		write sample(copy_between(l2,1,3));
+		write sample(copy_between(l2, 1, length(l2) - 1));
 	}
 }
 
@@ -212,8 +213,8 @@ species modifying_lists {
 		// To remove all occurences of a specific element, "all:" (or ">>-") can be used
 		// For instance:
 		l1 >>- 2;
-		// or, written using the long syntactic form
 		l1 >>- 1;
+		// or, written using the long syntactic form
 		remove all: 1 from: l1;
 		write sample(l1);
 		// To remove all the elements present in a given container, the same syntax can be used
@@ -221,7 +222,7 @@ species modifying_lists {
 		write ("After l1 >>- [0,3] : " + sample( l1));
 		// By all means, l1 should now be empty! Let's fill it again
 		loop times: 20 {
-			l1 << rnd(3);
+			l1 <+ rnd(3);
 		}
 		write(sample(l1));
 		// It is also possible to remove an index rather than a value (this will remove the 
@@ -240,7 +241,7 @@ species modifying_lists {
 		l1 >>- l1 select (each > 20000);
 		// Removing duplicates
 		l1 <- remove_duplicates(l1);
-		// Another way (see Maps.gaml)
+		// Another way (see "../Maps.gaml")
 		l1 <- map(l1).values; 
 		write(sample(l1));
 	}}
@@ -285,6 +286,9 @@ species looping_on_lists {
 		write sample(l2);
 		// ... or, even simpler (since the casting of an agent to string returns its name)
 		list<string> l3 <- list<string>(my_agents);
+		write sample(l3);
+		// Powerful filter expressions can be built by combining the various 'iterator' operators
+		l3 <- list<string>(my_agents where even(int(each))) collect ("Agent " + each + " has an even id");
 		write sample(l3);
 	}
 }
