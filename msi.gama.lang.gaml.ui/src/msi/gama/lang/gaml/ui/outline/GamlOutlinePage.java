@@ -22,7 +22,8 @@ import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
  */
 public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedView, ITooltipDisplayer {
 
-	protected GamaToolbar leftToolbar, rightToolbar;
+	// protected GamaToolbar leftToolbar, rightToolbar;
+	GamaToolbar2 toolbar;
 	protected Composite intermediate;
 
 	public GamlOutlinePage() {}
@@ -32,9 +33,9 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 		super.configureActions();
 
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
-		rightToolbar.wipe();
+		toolbar.wipe(SWT.RIGHT);
 		for ( IContributionItem item : tbm.getItems() ) {
-			item.fill(rightToolbar, 0);
+			item.fill(toolbar, toolbar.getItemCount());
 		}
 		tbm.removeAll();
 		tbm.update(true);
@@ -71,8 +72,8 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -100,5 +101,19 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	 */
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {}
+
+	/**
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {}
 
 }

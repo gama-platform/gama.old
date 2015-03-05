@@ -41,7 +41,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.text.templates.*;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -54,7 +54,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
-import org.eclipse.xtext.ui.editor.templates.*;
+import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
+import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.osgi.service.prefs.*;
@@ -116,7 +117,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	IBoxDecorator decorator;
 	ErrorCollector lastErrorStatus;
-	GamaToolbar leftToolbar, rightToolbar;
+	// GamaToolbar leftToolbar, rightToolbar;
+	GamaToolbar2 toolbar;
 	EditToolbar editToolbar;
 	// Composite parent;
 	final List<String> completeNamesOfExperiments = new ArrayList();
@@ -138,11 +140,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	@Inject
 	Injector injector;
 
-	@Inject
-	private XtextTemplatePreferencePage templatePrefs;
+	// @Inject
+	// private XtextTemplatePreferencePage templatePrefs;
 
 	@Inject
 	private GamlEditTemplateDialogFactory templateDialogFactory;
+
+	@Inject
+	private TemplateStore templateStore;
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -213,7 +218,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	public GamlTemplateStore getTemplateStore() {
 
-		return (GamlTemplateStore) templatePrefs.getTemplateStore();
+		return (GamlTemplateStore) /* templatePrefs.getTemplateStore(); */templateStore;
 	}
 
 	public GamlEditTemplateDialogFactory getTemplateFactory() {
@@ -245,7 +250,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	public void createPartControl(final Composite compo) {
 		final Composite parent = GamaToolbarFactory.createToolbars(this, compo);
 
-		other = new OtherExperimentsButton(this, rightToolbar);
+		other = new OtherExperimentsButton(this, toolbar);
 
 		GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
@@ -257,7 +262,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		editToolbar = new EditToolbar(this, parent);
 		editToolbar.setVisible(editToolbarEnabled);
 
-		final ToolItem toggle = rightToolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null);
+		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -338,10 +343,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
-		leftToolbar.sep(4);
+		toolbar.sep(4, SWT.LEFT);
 		boolean isBatch = experimentTypes.get(index);
 		Image image = isBatch ? IGamaIcons.BUTTON_BATCH.image() : IGamaIcons.BUTTON_GUI.image();
-		ToolItem t = FlatButton.button(leftToolbar, IGamaColors.OK, text, image).item();
+		ToolItem t = FlatButton.button(toolbar, IGamaColors.OK, text, image).item(SWT.LEFT);
 		String type = isBatch ? "batch" : "regular";
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
 		((FlatButton) t.getControl()).addSelectionListener(listener);
@@ -355,11 +360,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
-		if ( leftToolbar == null || leftToolbar.isDisposed() ) { return; }
-		final int width = 2 * (leftToolbar.getParent().getBounds().width - rightToolbar.getSize().x) / 3;
-		leftToolbar.wipe();
-		leftToolbar.tooltip(text, color, width);
-		leftToolbar.getParent().layout();
+		if ( toolbar == null || toolbar.isDisposed() ) { return; }
+		final int width = toolbar.getParent().getBounds().width - toolbar.getSize().x / 3;
+		toolbar.wipe(SWT.LEFT);
+		toolbar.tooltip(text, color, width, SWT.LEFT);
+		toolbar.refresh(true);
 	}
 
 	// private void setStatus(final String text, final GamaUIColor c, final boolean small) {
@@ -386,29 +391,30 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 			@Override
 			public void run() {
-				if ( leftToolbar == null || leftToolbar.isDisposed() ) { return; }
+				if ( toolbar == null || toolbar.isDisposed() ) { return; }
 				GamaUIColor c = getColor(status);
 				if ( !status.hasErrors() ) {
 					int size = abbreviations.size();
 					if ( size == 0 ) {
-						leftToolbar.status((Image) null,
-							"This model is functional, but no experiments have been defined", c);
+						toolbar.status((Image) null, "This model is functional, but no experiments have been defined",
+							c, SWT.LEFT);
 					} else {
-						leftToolbar.wipe();
+						toolbar.wipe(SWT.LEFT);
 						int i = 0;
 						for ( String e : abbreviations ) {
 							enableButton(i++, e);
 						}
-						leftToolbar.getParent().layout();
+						toolbar.refresh(true);
 					}
 				} else if ( status.hasInternalErrors() || status.hasInternalSyntaxErrors() ) {
-					leftToolbar.status((Image) null, "Error(s) were detected. Impossible to run any experiment", c);
+					toolbar.status((Image) null, "Error(s) were detected. Impossible to run any experiment", c,
+						SWT.LEFT);
 				} else if ( status.hasImportedErrors() ) {
 					String msg = "This model is functional but error(s) were detected in imported files";
 					if ( abbreviations.size() != 0 ) {
 						msg += ". Impossible to run any experiment";
 					}
-					leftToolbar.status((Image) null, msg, c);
+					toolbar.status((Image) null, msg, c, SWT.LEFT);
 				}
 
 			}
@@ -595,8 +601,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -666,4 +672,33 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	public void createToolItem(final int code, final GamaToolbar tb) {
 		// nothing by default
 	}
+
+	public void openOutlinePopup() {
+
+		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+
+			@Override
+			public void process(final XtextResource state) throws Exception {
+				final QuickOutlinePopup popup = new GamlQuickOutlinePopup(GamlEditor.this);
+				injector.injectMembers(popup);
+				popup.open();
+			}
+		});
+
+	}
+
+	/**
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {}
+
 }

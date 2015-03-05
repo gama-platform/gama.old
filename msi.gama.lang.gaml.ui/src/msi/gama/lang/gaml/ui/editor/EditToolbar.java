@@ -3,7 +3,7 @@ package msi.gama.lang.gaml.ui.editor;
 import java.util.ArrayList;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.GamaToolbar;
 import msi.gaml.compilation.GamlCompilationError;
@@ -101,8 +101,11 @@ public class EditToolbar {
 
 	public void createToolbar(final Composite parentComposite) {
 		toolbar =
-			new GamaToolbar(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER).color(
-				IGamaColors.WHITE.color()).width(parentComposite);
+			new GamaToolbar(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL/* | SWT.BORDER */)
+				./*
+				 * color(
+				 * IGamaColors.WHITE.color()).
+				 */width(parentComposite);
 		editGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		editGridData.verticalIndent = 0;
 		editGridData.horizontalAlignment = SWT.LEFT;
@@ -251,7 +254,16 @@ public class EditToolbar {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				EditToolbarOutlinePopup.open(editor, e);
+				if ( e.detail != SWT.ARROW ) {
+					try {
+						SwtGui.getPage().showView("msi.gama.application.outline", null, IWorkbenchPage.VIEW_VISIBLE);
+					} catch (PartInitException ex) {
+						ex.printStackTrace();
+					}
+					return;
+				}
+				editor.openOutlinePopup();
+				// EditToolbarOutlinePopup.open(editor, e);
 			}
 		});
 
@@ -457,5 +469,12 @@ public class EditToolbar {
 		if ( menu != null ) {
 			menu.reset();
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public GamaToolbar getToolbar() {
+		return toolbar;
 	}
 }

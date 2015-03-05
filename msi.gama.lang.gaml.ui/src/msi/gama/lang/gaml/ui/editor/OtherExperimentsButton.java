@@ -60,10 +60,17 @@ public class OtherExperimentsButton {
 		});
 
 	GamlEditor editor;
-	GamaToolbar parent;
+	// GamaToolbar parent;
+	GamaToolbar2 parent;
 	ToolItem menu;
 
-	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar toolbar) {
+	// public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar toolbar) {
+	// this.editor = editor;
+	// this.parent = toolbar;
+	// createButton();
+	// }
+
+	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		this.editor = editor;
 		this.parent = toolbar;
 		createButton();
@@ -71,8 +78,8 @@ public class OtherExperimentsButton {
 
 	private void createButton() {
 
-		parent.sep(5);
-		menu = FlatButton.menu(parent, IGamaColors.BLUE, "Other...").item();
+		parent.sep(5, SWT.RIGHT);
+		menu = FlatButton.menu(parent, IGamaColors.BLUE, "Other...").item(SWT.RIGHT);
 		// parent.sep(5);
 		menu.getControl().setToolTipText("Run other experiments defined in models belonging to the same project");
 		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {

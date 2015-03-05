@@ -5,7 +5,7 @@ import java.util.List;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider;
@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -33,7 +34,8 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	public final static int INFOS = 37;
 
 	protected Composite parent;
-	protected GamaToolbar leftToolbar, rightToolbar;
+	// protected GamaToolbar leftToolbar, rightToolbar;
+	protected GamaToolbar2 toolbar;
 	protected IAction filterAction;
 
 	class ErrorField extends FieldSeverityAndMessage {
@@ -196,8 +198,8 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -236,7 +238,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 	@Override
 	protected void setContentDescription(final String description) {
-		leftToolbar.status((Image) null, description, IGamaColors.BLUE);
+		toolbar.status((Image) null, description, IGamaColors.BLUE, SWT.LEFT);
 	}
 
 	@Override
@@ -332,4 +334,104 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 		}
 	}
 
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+			case WARNINGS:
+				warningAction =
+					tb.check("build.warnings2", "", "Toogle display of warning markers", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							boolean b = ((ToolItem) e.widget).getSelection();
+							GamaPreferences.WARNINGS_ENABLED.set(b).save();
+						}
+					}, SWT.RIGHT);
+				warningAction.setSelection(GamaPreferences.WARNINGS_ENABLED.getValue());
+				break;
+			case INFOS:
+				infoAction =
+					tb.check("build.infos2", "", "Toogle display of information markers", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							boolean b = ((ToolItem) e.widget).getSelection();
+							GamaPreferences.INFO_ENABLED.set(b).save();
+						}
+					}, SWT.RIGHT);
+				infoAction.setSelection(GamaPreferences.INFO_ENABLED.getValue());
+				break;
+			case BUILD:
+				tb.button("build.project2", "", "Validate the current project", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						try {
+							ICommandService service = (ICommandService) getSite().getService(ICommandService.class);
+							Command c = service.getCommand("msi.gama.lang.gaml.Gaml.validate");
+							if ( c.isEnabled() ) {
+								IHandlerService handlerService =
+									(IHandlerService) getSite().getService(IHandlerService.class);
+								handlerService.executeCommand("msi.gama.lang.gaml.Gaml.validate", null);
+							}
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case CLEAN:
+				tb.button("build.all2", "", "Clean and validate all projects", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+						try {
+							workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+						} catch (CoreException ex) {
+							ex.printStackTrace();
+						}
+
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case AUTO:
+				tb.check("build.auto2", "", "Automatically validate models", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+
+						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+						IWorkspaceDescription description = workspace.getDescription();
+						description.setAutoBuilding(((ToolItem) e.widget).getSelection());
+						try {
+							workspace.setDescription(description);
+						} catch (CoreException ex) {
+							// ErrorDialog.openError(Swt.getShell(), null, null, e.getStatus());
+						}
+
+					}
+				}, SWT.RIGHT).setSelection(true);
+				break;
+			case FILTER:
+				tb.button("build.sort2", "", "Configure filters", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						filterAction.run();
+					}
+
+				}, SWT.RIGHT);
+		}
+	}
+
+	/**
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
 }
