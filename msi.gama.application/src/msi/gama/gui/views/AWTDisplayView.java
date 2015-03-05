@@ -167,7 +167,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					@Override
 					public void run() {
 
-						// ((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
+						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
 						((SwingControl) surfaceComposite).getFrame().validate();
 						getOutput().getSurface().resizeImage(r.width, r.height, false);
 						getOutput().getSurface().setSize(r.width, r.height);
@@ -177,7 +177,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 							@Override
 							public void run() {
-								// surfaceComposite.setBounds(r);
+								surfaceComposite.setBounds(r);
 								// GuiUtils.debug("AWTDisplayView.fixSize(). new bounds for composite:" + r);
 								// ((GridData) surfaceComposite.getLayoutData()).exclude = false;
 								if ( overlay != null ) {

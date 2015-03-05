@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views;
 
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.outputs.IDisplayOutput;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
@@ -23,6 +23,8 @@ public interface IToolbarDecoratedView {
 	public IWorkbenchSite getSite();
 
 	public void setToolbars(GamaToolbar left, GamaToolbar right);
+
+	public void setToolbar(GamaToolbar2 toolbar);
 
 	public Integer[] getToolbarActionsId();
 
@@ -48,8 +50,19 @@ public interface IToolbarDecoratedView {
 
 		void zoomFit();
 
-		Control getZoomableControl();
+		// Control getZoomableControl();
+
+		/**
+		 * @return the controls that will react to gestures / mouse doucle-cliks
+		 */
+		Control[] getZoomableControls();
 
 	}
+
+	/**
+	 * @param code
+	 * @param tb
+	 */
+	public void createToolItem(int code, GamaToolbar2 tb);
 
 }

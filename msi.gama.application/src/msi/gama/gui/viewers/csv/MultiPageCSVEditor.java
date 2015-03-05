@@ -15,10 +15,10 @@
  */
 package msi.gama.gui.viewers.csv;
 
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.viewers.csv.model.*;
 import msi.gama.gui.viewers.csv.text.*;
-import msi.gama.gui.views.*;
+import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -39,8 +39,8 @@ import org.eclipse.ui.part.*;
 public class MultiPageCSVEditor extends MultiPageEditorPart implements IResourceChangeListener, IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
-	GamaToolbar leftToolbar, rightToolbar;
-
+	// GamaToolbar leftToolbar, rightToolbar;
+	GamaToolbar2 toolbar;
 	private final static int ADD_ROW = -10, REMOVE_ROW = -11, DUPLICATE_ROW = -12, ADD_COLUMN = -13,
 		REMOVE_COLUMN = -14, SHOW_COLUMN = -15, SAVE_AS = -16;
 	/** index of the source page */
@@ -101,8 +101,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -307,9 +307,9 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		tableViewer.addFilter(tableFilter);
 
 		// add the filtering and coloring when searching specific elements.
-		final Text searchText = new Text(leftToolbar, SWT.BORDER);
-		leftToolbar.sep(16);
-		leftToolbar.control(searchText, 150);
+		final Text searchText = new Text(toolbar, SWT.BORDER);
+		toolbar.sep(16, SWT.LEFT);
+		toolbar.control(searchText, 150, SWT.LEFT);
 		searchText.addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -674,5 +674,138 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 				}
 			});
 		}
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case DUPLICATE_ROW:
+				tb.button("action.duplicate.row2", "Duplicate", "Duplicate Row", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+						if ( row != null ) {
+							model.duplicateRow(row);
+							tableModified();
+						}
+					}
+				}, SWT.RIGHT);
+				break;
+			case ADD_ROW:
+				tb.button("action.add.row2", "Add row",
+					"Insert a new row before the currently selected one or at the end of the file if none is selected",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+							if ( row != null ) {
+								model.addRowAfterElement(row);
+							} else {
+								model.addRow();
+							}
+							tableModified();
+						}
+					}, SWT.RIGHT);
+				break;
+			case REMOVE_ROW:
+				tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+
+						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+						while (row != null) {
+							row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+							if ( row != null ) {
+								model.removeRow(row);
+								tableModified();
+							}
+						}
+					}
+				}, SWT.RIGHT);
+				break;
+			case ADD_COLUMN:
+				if ( model.isFirstLineHeader() ) {
+					tb.button("action.add.column2", "Add column", "Add new column", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent arg0) {
+							// call insert/add column page
+							InsertColumnPage acPage =
+								new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
+							if ( acPage.open() == Window.OK ) {
+								String colToInsert = acPage.getColumnNewName();
+								model.addColumn(colToInsert);
+								tableViewer.setInput(model);
+								final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+								column.setText(colToInsert);
+								column.setWidth(100);
+								column.setResizable(true);
+								column.setMoveable(true);
+								addMenuItemToColumn(column, model.getColumnCount() - 1);
+								defineCellEditing();
+								tableModified();
+							}
+						}
+					}, SWT.RIGHT);
+				}
+				break;
+			case REMOVE_COLUMN:
+				if ( model.isFirstLineHeader() ) {
+					tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
+						new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e) {
+
+								// call delete column page
+								DeleteColumnPage dcPage =
+									new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
+								if ( dcPage.open() == Window.OK ) {
+									String[] colToDelete = dcPage.getColumnSelected();
+									for ( String column : colToDelete ) {
+										int colIndex = findColumnForName(column);
+										tableViewer.getTable().getColumn(colIndex).dispose();
+										// tableHeaderMenu.getItem(colIndex).dispose();
+										model.removeColumn(column);
+									}
+									tableModified();
+								}
+
+							}
+						}, SWT.RIGHT);
+				}
+				break;
+			case SHOW_COLUMN:
+				break;
+			case SAVE_AS:
+				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						doSaveAs();
+					}
+				}, SWT.RIGHT);
+				break;
+
+		}
+
 	}
 }

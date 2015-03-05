@@ -22,6 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.contexts.IContextService;
@@ -43,12 +44,19 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	protected IDisplayOutput output = null;
 	protected Composite parent;
-	protected GamaToolbar leftToolbar, rightToolbar;
+	protected GamaToolbar2 toolbar;
+
+	// protected GamaToolbar leftToolbar, rightToolbar;
 
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
+	}
+
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
 	}
 
 	@Override
@@ -158,7 +166,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	}
 
 	private void resetButtonStates() {
-		GamaToolbarFactory.resetToolbar(this, rightToolbar);
+		GamaToolbarFactory.resetToolbar(this, toolbar);
 	}
 
 	@Override
@@ -185,16 +193,16 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
-		leftToolbar.wipe();
+		toolbar.wipe(SWT.LEFT);
 	}
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
-		if ( leftToolbar == null || leftToolbar.isDisposed() ) { return; }
-		final int width = 2 * (leftToolbar.getParent().getBounds().width - rightToolbar.getSize().x) / 3;
-		leftToolbar.wipe();
-		leftToolbar.tooltip(text, color, width);
-		leftToolbar.refresh();
+		if ( toolbar == null || toolbar.isDisposed() ) { return; }
+		final int width = 2 * (toolbar.getParent().getBounds().width - toolbar.getSize().x) / 3; // revoir cela
+		toolbar.wipe(SWT.LEFT);
+		toolbar.tooltip(text, color, width, SWT.LEFT);
+		toolbar.refresh(true);
 	}
 
 	@Override

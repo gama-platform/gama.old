@@ -15,7 +15,8 @@ import java.io.*;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.console.*;
@@ -143,6 +144,22 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 						setText("");
 					}
 				});
+				break;
+
+		}
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+			case CLEAR:
+				tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent arg0) {
+						setText("");
+					}
+				}, SWT.RIGHT);
 				break;
 
 		}

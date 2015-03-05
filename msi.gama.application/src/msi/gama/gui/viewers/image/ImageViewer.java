@@ -24,6 +24,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -35,11 +36,13 @@ import org.eclipse.ui.part.*;
  */
 public class ImageViewer extends EditorPart implements IReusableEditor, IToolbarDecoratedView.Zoomable {
 
-	GamaToolbar leftToolbar, rightToolbar;
+	// GamaToolbar leftToolbar, rightToolbar;
+	GamaToolbar2 toolbar;
 	GamaUIColor background = IGamaColors.WHITE;
 	private Image image;
 	private ImageData imageData;
 	private ScrolledComposite scroll;
+	private Composite intermediate;
 	private Canvas imageCanvas;
 	private double zoomFactor = 1.0d;
 	private double maxZoomFactor = 1.0d;
@@ -121,8 +124,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	private void displayInfoString() {
 		GamaUIColor color = IGamaColors.OK;
 		String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
-		ToolItem item = FlatButton.button(leftToolbar, color, result).item();
-		leftToolbar.refresh();
+		ToolItem item = FlatButton.button(toolbar, color, result).item(SWT.LEFT);
+		toolbar.refresh(true);
 	}
 
 	/**
@@ -131,8 +134,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -178,16 +181,39 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	public void createPartControl(final Composite composite) {
 		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
 
-		scroll = new ScrolledComposite(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		scroll = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		// TODO: fixup scrolling (page) increment as things resize
 		scroll.getHorizontalBar().setIncrement(10);
 		scroll.getHorizontalBar().setPageIncrement(100);
 		scroll.getVerticalBar().setIncrement(10);
 		scroll.getVerticalBar().setPageIncrement(100);
+		scroll.addControlListener(new ControlAdapter() {
 
-		imageCanvas = new Canvas(scroll, SWT.NONE);
-		scroll.setContent(imageCanvas);
-		imageCanvas.setSize(0, 0);
+			@Override
+			public void controlResized(final ControlEvent e) {
+				resizeCanvas(imageCanvas.getSize());
+			}
+
+		});
+
+		// Intermediate composite
+		intermediate = new Composite(scroll, SWT.None);
+		GridLayout layout = new GridLayout(1, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		intermediate.setLayout(layout);
+		intermediate.setBackground(background.color());
+
+		// Image canvas
+		imageCanvas = new Canvas(intermediate, SWT.NONE);
+		GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		imageCanvas.setLayoutData(data);
+		imageCanvas.setBackground(background.color());
+		// Scroll composite
+		scroll.setContent(intermediate);
+		// imageCanvas.setSize(0, 0);
 		// make the canvas paint the image, if we have one
 		imageCanvas.addPaintListener(new PaintListener() {
 
@@ -198,6 +224,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 				// zoomed size
 				e.gc.setBackground(background.color());
 				e.gc.fillRectangle(bounds);
+				// System.out.println("Painting image at size " + bounds.width + "x" + bounds.height);
 				if ( image != null ) {
 					Rectangle imBounds = image.getBounds();
 					e.gc.drawImage(image, 0, 0, imBounds.width, imBounds.height, 0, 0, bounds.width, bounds.height);
@@ -206,6 +233,28 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		});
 
 		startImageLoad();
+	}
+
+	private void resizeCanvas(final Point p) {
+		Rectangle scrollSize = scroll.getClientArea();
+		int width = p.x > scrollSize.width ? p.x : scrollSize.width;
+		int height = p.y > scrollSize.height ? p.y : scrollSize.height;
+		intermediate.setSize(width, height);
+		imageCanvas.setSize(p);
+		GridData data = (GridData) imageCanvas.getLayoutData();
+		data.widthHint = p.x;
+		data.heightHint = p.y;
+
+		// System.out.println("Resizing intermediate to " + intermediate.getSize().x + "x" + intermediate.getSize().y);
+		intermediate.layout();
+		int x = 0, y = 0;
+		if ( width > scrollSize.width ) {
+			x = (width - scrollSize.width) / 2;
+		}
+		if ( height > scrollSize.height ) {
+			y = (height - scrollSize.height) / 2;
+		}
+		scroll.setOrigin(x, y);
 	}
 
 	/**
@@ -304,7 +353,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					image = new Image(imageCanvas.getDisplay(), imageData);
 				}
 				Rectangle imageSize = image.getBounds();
-				imageCanvas.setSize((int) (imageSize.width * zoomFactor), (int) (imageSize.height * zoomFactor));
+				Point newSize = new Point((int) (imageSize.width * zoomFactor), (int) (imageSize.height * zoomFactor));
+				resizeCanvas(newSize);
 				scroll.redraw();
 			} finally {
 				imageCanvas.setCursor(null);
@@ -681,8 +731,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	@Override
-	public Control getZoomableControl() {
-		return imageCanvas;
+	public Control[] getZoomableControls() {
+		return new Control[] { intermediate, imageCanvas };
 	}
 
 	/**
@@ -735,5 +785,97 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 				}
 			}
 		}
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case -32:
+				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						doSaveAs();
+					}
+				}, SWT.RIGHT);
+				break;
+			case -33:
+				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.getCode(), "Information", "Image information",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId())
+								.run();
+						}
+					}, SWT.RIGHT);
+				break;
+			case -34:
+				final ToolItem item = tb.button(null, "Background", "Background color", null, SWT.RIGHT);
+				item.setImage(GamaIcons.createTempColorIcon(background));
+				item.addSelectionListener(new SelectionAdapter() {
+
+					SelectionListener listener = new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							MenuItem i = (MenuItem) e.widget;
+							String color = i.getText().replace("#", "");
+							GamaColor c = GamaColor.colors.get(color);
+							if ( c == null ) { return; }
+							changeColor(c.red(), c.green(), c.blue());
+						}
+
+					};
+
+					void changeColor(final int r, final int g, final int b) {
+						background = GamaColors.get(r, g, b);
+						Image temp = item.getImage();
+						item.setImage(GamaIcons.createTempColorIcon(background));
+						temp.dispose();
+						if ( imageCanvas != null ) {
+							Runnable rr = new Runnable() {
+
+								@Override
+								public void run() {
+									intermediate.setBackground(background.color());
+									showImage(false);
+								}
+							};
+							GuiUtils.run(rr);
+						}
+					}
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+
+						GamaColorMenu.getInstance().open(item.getParent(), e, listener, new IColorRunnable() {
+
+							@Override
+							public void run(final int r, final int g, final int b) {
+								changeColor(r, g, b);
+							}
+						});
+
+					}
+				});
+				break;
+
+		}
+
 	}
 }

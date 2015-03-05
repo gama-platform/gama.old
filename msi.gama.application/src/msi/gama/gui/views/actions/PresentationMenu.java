@@ -16,7 +16,7 @@ import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
 import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -370,6 +370,35 @@ public class PresentationMenu extends GamaToolItem {
 			}
 
 		});
+
+	}
+
+	/**
+	 * @param tb
+	 * @param view
+	 */
+	public void createItem(final GamaToolbar2 tb, final IToolbarDecoratedView view) {
+
+		tb.menu("display.presentation2", "Presentation", "Presentation options", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent trigger) {
+				boolean asMenu = trigger.detail == SWT.ARROW;
+				if ( !asMenu ) { return; }
+				final ToolItem target = (ToolItem) trigger.widget;
+				final ToolBar toolBar = target.getParent();
+				if ( menu != null ) {
+					menu.dispose();
+				}
+				menu = new Menu(toolBar.getShell(), SWT.POP_UP);
+				fillMenu(menu, (LayeredDisplayView) view);
+				Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+				menu.setLocation(point.x, point.y);
+				menu.setVisible(true);
+
+			}
+
+		}, SWT.RIGHT);
 
 	}
 }

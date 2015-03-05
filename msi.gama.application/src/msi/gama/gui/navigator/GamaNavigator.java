@@ -15,7 +15,7 @@ import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gaml.types.IType;
@@ -70,7 +70,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	IAction link, collapse;
 	ToolItem linkItem, collapseItem, newFileItem, newProjectItem, importItem;
 	protected Composite parent;
-	protected GamaToolbar leftToolbar, rightToolbar;
+	// protected GamaToolbar leftToolbar, rightToolbar;
+	protected GamaToolbar2 toolbar;
 	private IDescriptionProvider commonDescriptionProvider;
 
 	@Override
@@ -226,8 +227,105 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case LINK:
+				linkItem =
+					tb.check("navigator/navigator.link2", "", "Stay in sync with the editor", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							link.run();
+						}
+
+					}, SWT.RIGHT);
+				break;
+			case COLLAPSE:
+				collapseItem =
+					tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							collapse.run();
+						}
+
+					}, SWT.RIGHT);
+				break;
+			case NEW:
+				newFileItem =
+					tb.menu("navigator/navigator.new2", "", "Create a project or a model", new SelectionAdapter() {
+
+						MenuManager mm;
+
+						private void initMenu() {
+
+							mm = new MenuManager("msi.gama.application.submenu.new");
+							CommandContributionItem cci;
+							// mm.setRemoveAllWhenShown(true);
+							// mm.addMenuListener(new IMenuListener() {
+							//
+							// @Override
+							// public void menuAboutToShow(final IMenuManager manager) {
+							// ISelection selection = getCommonViewer().getSelection();
+							// getNavigatorActionService().setContext(new ActionContext(selection));
+							// getNavigatorActionService().fillContextMenu(mm);
+							// }
+							// });
+							//
+							// getNavigatorActionService().prepareMenuForPlatformContributions(mm, getCommonViewer(),
+							// false);
+
+						}
+
+						@Override
+						public void widgetSelected(final SelectionEvent trigger) {
+							if ( mm == null ) {
+								initMenu();
+							}
+							boolean asMenu = trigger.detail == SWT.ARROW;
+							if ( !asMenu ) { return; }
+							final ToolItem target = (ToolItem) trigger.widget;
+							final ToolBar toolBar = target.getParent();
+
+							Menu menu = mm.createMenuBar(toolBar.getShell());
+							Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+							menu.setLocation(point.x, point.y);
+							menu.setVisible(true);
+
+						}
+
+					}, SWT.RIGHT);
+				break;
+			case IMPORT:
+				importItem =
+					tb.menu("navigator/navigator.import2", "", "Import a project or a model into GAMA",
+						new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e) {}
+
+						}, SWT.RIGHT);
+		}
+
 	}
 
 	/**
@@ -333,12 +431,12 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	public void selectionChanged(final SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		if ( selection == null || selection.isEmpty() ) {
-			leftToolbar.wipe();
+			toolbar.wipe(SWT.LEFT);
 			return;
 		}
 		String message = commonDescriptionProvider.getDescription(selection);
 		Image img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
-		leftToolbar.status(img, message, IGamaColors.BLUE);
+		toolbar.status(img, message, IGamaColors.BLUE, SWT.LEFT);
 	}
 
 	public Menu getSubMenu(final String text) {

@@ -22,26 +22,26 @@ import org.eclipse.swt.widgets.*;
  */
 public class GamaToolbar extends ToolBar {
 
-	public static class SizerToolItem extends ToolItem {
+	private class SizerToolItem extends ToolItem {
 
-		public SizerToolItem(final ToolBar parent, final int height) {
-			super(parent, SWT.FLAT);
-			setImage(GamaIcons.createSizer(height).image());
-			setEnabled(false);
+		public SizerToolItem(final int width, final int height) {
+			super(GamaToolbar.this, SWT.FLAT);
+			setImage(GamaIcons.createSizer(GamaToolbar.this.getBackground(), width, height).image());
+			// setEnabled(false);
 		}
 
 		@Override
 		protected void checkSubclass() {}
 
-		@Override
-		public void dispose() {
-			Image sizerImage = getImage();
-			if ( sizerImage != null && !sizerImage.isDisposed() ) {
-				// sizerItem.setImage(null);
-				sizerImage.dispose();
-			}
-			super.dispose();
-		}
+		// @Override
+		// public void dispose() {
+		// Image sizerImage = getImage();
+		// if ( sizerImage != null && !sizerImage.isDisposed() ) {
+		// // sizerItem.setImage(null);
+		// sizerImage.dispose();
+		// }
+		// super.dispose();
+		// }
 
 	}
 
@@ -50,6 +50,7 @@ public class GamaToolbar extends ToolBar {
 
 	public GamaToolbar(final Composite parent, final int style) {
 		super(parent, style);
+		setBackground(IGamaColors.WHITE.color());
 	}
 
 	@Override
@@ -69,10 +70,10 @@ public class GamaToolbar extends ToolBar {
 	@Override
 	protected void checkSubclass() {}
 
-	public GamaToolbar color(final Color c) {
-		setBackground(c);
-		return this;
-	}
+	// public GamaToolbar color(final Color c) {
+	// setBackground(c);
+	// return this;
+	// }
 
 	public ToolItem sep() {
 		return create(null, null, null, null, SWT.SEPARATOR, false);
@@ -202,19 +203,24 @@ public class GamaToolbar extends ToolBar {
 
 	public GamaToolbar height(final int n) {
 		// height = n;
-		// if ( sizerItem != null && !sizerItem.isDisposed() && sizerItem.getImage() != null &&
-		// sizerItem.getImage().getBounds().height == n ) { return this; }
+		if ( sizerItem != null && !sizerItem.isDisposed() && sizerItem.getImage() != null &&
+			sizerItem.getImage().getBounds().height == n ) { return this; }
+		// AD 3/3/15 : bug on Windows: the width of toolitems is computed
+		disposeSizer();
+		sizerItem.setWidth(SWT.SEPARATOR_FILL);
+		sizerItem = new SizerToolItem(GamaToolbarFactory.TOOLBAR_HEIGHT, n);
 		// disposeSizer();
-		// sizerItem = new SizerToolItem(this, n);
+		// sizerItem = new SizerToolItem(1, n);
 		return this;
 	}
 
-	public static void setHeight(final ToolBar bar, final int n) {
-		int height = n == SWT.DEFAULT ? GamaToolbarFactory.TOOLBAR_HEIGHT : n;
-		Image image = GamaIcons.create("editor.sizer2").image();
-		Image sizerImage = new Image(bar.getDisplay(), image.getImageData().scaledTo(1, height));
-		final ToolItem sizerItem = new SizerToolItem(bar, n);
-	}
+	//
+	// public static void setHeight(final ToolBar bar, final int n) {
+	// int height = n == SWT.DEFAULT ? GamaToolbarFactory.TOOLBAR_HEIGHT : n;
+	// Image image = GamaIcons.create("editor.sizer2").image();
+	// Image sizerImage = new Image(bar.getDisplay(), image.getImageData().scaledTo(1, height));
+	// final ToolItem sizerItem = new SizerToolItem(bar, n);
+	// }
 
 	private ToolItem create(final String i, final String text, final String tip, final SelectionListener listener,
 		final int style, final boolean forceText) {

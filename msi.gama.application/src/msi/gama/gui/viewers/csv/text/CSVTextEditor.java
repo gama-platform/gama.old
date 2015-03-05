@@ -15,9 +15,10 @@
  */
 package msi.gama.gui.viewers.csv.text;
 
-import msi.gama.gui.swt.controls.GamaToolbar;
-import msi.gama.gui.views.*;
+import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -29,7 +30,8 @@ import org.eclipse.ui.editors.text.TextEditor;
  */
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
-	GamaToolbar leftToolbar, rightToolbar;
+	// GamaToolbar leftToolbar, rightToolbar;
+	GamaToolbar2 toolbar;
 
 	public CSVTextEditor(final char delimiter) {
 		CSVTextSourceViewerConfiguration csvTextConfig =
@@ -39,8 +41,8 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
-		rightToolbar = right;
+		// leftToolbar = left;
+		// rightToolbar = right;
 	}
 
 	/**
@@ -78,6 +80,37 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 				break;
 
 		}
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case -32:
+				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						doSaveAs();
+					}
+				}, SWT.RIGHT);
+				break;
+
+		}
+
 	}
 
 }

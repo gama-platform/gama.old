@@ -6,7 +6,7 @@ package msi.gama.gui.viewers.html;
 
 import java.net.MalformedURLException;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +34,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	private final static int STOP = -54;
 
 	Browser browser;
-	private GamaToolbar leftToolbar;
+	// private GamaToolbar leftToolbar;
+	private GamaToolbar2 toolbar;
 	ToolItem back, forward, home;
 
 	public HtmlViewer() {}
@@ -72,7 +73,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 			@Override
 			public void completed(final ProgressEvent event) {
-				leftToolbar.status((Image) null, browser.getUrl(), IGamaColors.NEUTRAL);
+				toolbar.status((Image) null, browser.getUrl(), IGamaColors.NEUTRAL, SWT.LEFT);
 				checkButtons();
 			}
 		});
@@ -102,7 +103,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	public void setHtml(final String html) {
 		browser.setText(html, true);
-		leftToolbar.wipe();
+		toolbar.wipe(SWT.LEFT);
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
+		// leftToolbar = left;
 	}
 
 	@Override
@@ -180,6 +181,79 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 				});
 		}
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case BACK:
+				back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						browser.back();
+						checkButtons();
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case HOME:
+				home = tb.button("browser/home", "Home", "Go back to the welcome page", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						ApplicationWorkbenchWindowAdvisor.openWelcomePage(false);
+						checkButtons();
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case FORWARD:
+				forward = tb.button("browser/forward", "Forward", "Go to next page in history", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						browser.forward();
+						checkButtons();
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case REFRESH:
+				tb.button("browser/refresh", "Refresh", "Refresh current page", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						browser.refresh();
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case STOP:
+				tb.button("browser/stop", "Stop", "Stop loading page", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						browser.stop();
+					}
+
+				}, SWT.RIGHT);
+		}
+
 	}
 
 }

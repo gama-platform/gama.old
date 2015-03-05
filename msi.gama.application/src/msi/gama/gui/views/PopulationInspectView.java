@@ -20,7 +20,7 @@ import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
@@ -157,8 +157,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	// @Override
 	// protected void setContentDescription(final String description) {
-	// if ( leftToolbar == null ) { return; }
-	// leftToolbar.status((Image) null, description, IGamaColors.BLUE);
+	// if ( toolbar == null ) { return; }
+	// toolbar.status((Image) null, description, IGamaColors.BLUE);
 	// }
 
 	private void changePartName(final String name) {
@@ -191,7 +191,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createExpressionComposite() {
-		// Composite expressionComposite = new Composite(leftToolbar, SWT.NONE);
+		// Composite expressionComposite = new Composite(toolbar, SWT.NONE);
 		// expressionComposite.setBackground(IGamaColors.WHITE.color());
 		// expressionComposite.setLayout(new FillLayout());
 		// // expressionComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -201,7 +201,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		// final Label lock = new Label(expressionComposite, SWT.NONE);
 		// lock.setImage(IGamaIcons.SMALL_LOCK.image());
 		// lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
-		Composite compo = new Composite(leftToolbar, SWT.None);
+		Composite compo = new Composite(toolbar, SWT.None);
 		compo.setSize(new Point(200, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
@@ -234,7 +234,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		data.minimumHeight = 16;
 		data.heightHint = 16;
 		editor.getControl().setLayoutData(data);
-		// EditorFactory.createExpression(leftToolbar, "", IExpressionFactory.NIL_EXPR, new EditorListener<IExpression>() {
+		// EditorFactory.createExpression(toolbar, "", IExpressionFactory.NIL_EXPR, new EditorListener<IExpression>() {
 		//
 		// @Override
 		// public void valueModified(final IExpression newValue) {
@@ -265,8 +265,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		//
 		// });
 		// expressionComposite.pack();
-		leftToolbar.control(compo, 200);
-		leftToolbar.refresh();
+		toolbar.control(compo, 200, SWT.LEFT);
+		toolbar.refresh(true);
 	}
 
 	private final SelectionAdapter attributeAdapter = new SelectionAdapter() {
@@ -845,6 +845,24 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+
+			case SAVE:
+				tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							saveAsCSV();
+						}
+
+					}, SWT.RIGHT);
+				break;
+		}
+	}
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		viewer.getTable().dispose();
@@ -856,17 +874,17 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		if ( tooltip != null && !tooltip.isDisposed() ) {
 			tooltip.dispose();
 			tooltip = null;
-			leftToolbar.refresh();
+			toolbar.refresh(true);
 		}
 	}
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
-		if ( leftToolbar == null || leftToolbar.isDisposed() ) { return; }
-		final int width = 2 * (leftToolbar.getParent().getBounds().width - rightToolbar.getSize().x) / 3;
+		if ( toolbar == null || toolbar.isDisposed() ) { return; }
+		final int width = toolbar.getParent().getBounds().width - toolbar.getSize().x / 3;
 		stopDisplayingTooltips();
-		tooltip = leftToolbar.tooltip(text, color, width);
-		leftToolbar.refresh();
+		tooltip = toolbar.tooltip(text, color, width, SWT.LEFT);
+		toolbar.refresh(true);
 	}
 
 }

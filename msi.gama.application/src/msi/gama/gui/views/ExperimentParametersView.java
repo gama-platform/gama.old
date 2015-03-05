@@ -74,10 +74,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		String expInfo =
 			"Model " + experiment.getModel().getDescription().getTitle() + " / " +
 				StringUtils.capitalize(experiment.getDescription().getTitle());
-		leftToolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL);
-		leftToolbar.sep(2);
+		toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
+		toolbar.sep(2, SWT.LEFT);
 		for ( final IStatement command : userCommands ) {
-			FlatButton f = FlatButton.button(leftToolbar, IGamaColors.BLUE, command.getName());
+			FlatButton f = FlatButton.button(toolbar, IGamaColors.BLUE, command.getName());
 			f.addSelectionListener(new SelectionAdapter() {
 
 				@Override
@@ -95,10 +95,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 				}
 
 			});
-			f.item();
-			leftToolbar.sep(2);
+			f.item(SWT.LEFT);
+			toolbar.sep(2, SWT.LEFT);
 		}
-		leftToolbar.refresh();
+		toolbar.refresh(true);
 
 	}
 
@@ -127,6 +127,27 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 						}
 
 					});
+				break;
+
+		}
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+			case REVERT:
+				tb.button(IGamaIcons.ACTION_REVERT.getCode(), "Revert parameter values",
+					"Revert parameters to their initial values", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							EditorsList eds = (EditorsList) GAMA.getExperiment().getParametersEditors();
+							if ( eds != null ) {
+								eds.revertToDefaultValue();
+							}
+						}
+
+					}, SWT.RIGHT);
 				break;
 
 		}

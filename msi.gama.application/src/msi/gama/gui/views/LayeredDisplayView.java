@@ -312,6 +312,44 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		}
 	}
 
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+			case SNAP:
+				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							getDisplaySurface().snapshot();
+						}
+
+					}, SWT.RIGHT);
+				break;
+
+			case FOCUS:
+				new DisplayedAgentsMenu().createItem(tb, this);
+				break;
+
+			case SYNC:
+				tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							getDisplaySurface().setSynchronized(((ToolItem) e.widget).getSelection());
+							overlay.update();
+						}
+
+					}, SWT.RIGHT);
+				break;
+			case PRESENTATION:
+				new PresentationMenu().createItem(tb, this);
+				break;
+
+		}
+	}
+
 	public void zoom(final int type) {
 		new Thread(new Runnable() {
 
@@ -356,8 +394,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	@Override
-	public Control getZoomableControl() {
-		return surfaceComposite;
+	public Control[] getZoomableControls() {
+		return new Control[] { surfaceComposite };
 	}
 
 }

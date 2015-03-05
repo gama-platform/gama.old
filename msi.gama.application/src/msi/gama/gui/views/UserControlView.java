@@ -78,8 +78,8 @@ public class UserControlView extends GamaViewPart {
 		setPartName(title);
 		parent.setLayout(new FillLayout());
 		parent.setBackground(IGamaColors.WHITE.color());
-		leftToolbar.status((Image) null, "User control, agent " + scope.getAgentScope().getName() + ", cycle " +
-			scope.getClock().getCycle(), IGamaColors.NEUTRAL);
+		toolbar.status((Image) null, "User control, agent " + scope.getAgentScope().getName() + ", cycle " +
+			scope.getClock().getCycle(), IGamaColors.NEUTRAL, SWT.LEFT);
 		body = new Composite(parent, SWT.None);
 		GridLayout layout = new GridLayout(3, false);
 		body.setLayout(layout);
@@ -166,6 +166,55 @@ public class UserControlView extends GamaViewPart {
 					});
 				inspectItem.setEnabled(false);
 		}
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case CONTINUE:
+				continueItem =
+					tb.button(IGamaIcons.PANEL_CONTINUE.getCode(), "Continue", "Continue", new SelectionListener() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							GAMA.controller.getScheduler().setUserHold(false);
+							deactivate(parent);
+							GuiUtils.hideView(ID);
+						}
+
+						@Override
+						public void widgetDefaultSelected(final SelectionEvent e) {
+							widgetSelected(e);
+						}
+
+					}, SWT.RIGHT);
+				continueItem.setEnabled(false);
+				break;
+			case INSPECT:
+				inspectItem =
+					tb.button(IGamaIcons.PANEL_INSPECT.getCode(), "Inspect", "Inspect", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							GuiUtils.setSelectedAgent(scope.getAgentScope());
+						}
+
+					}, SWT.RIGHT);
+				inspectItem.setEnabled(false);
+		}
+
 	}
 
 }

@@ -17,7 +17,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.IGamaIcons;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.outputs.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -236,6 +236,23 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 						}
 
 					});
+				break;
+		}
+	}
+
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+		switch (code) {
+			case NEW_MONITOR:
+				tb.button(IGamaIcons.MENU_ADD_MONITOR.getCode(), "Add new monitor", "Add new monitor",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							createNewMonitor();
+						}
+
+					}, SWT.RIGHT);
 				break;
 		}
 	}

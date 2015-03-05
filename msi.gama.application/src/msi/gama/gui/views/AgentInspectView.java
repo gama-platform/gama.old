@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.InspectDisplayOutput;
@@ -170,5 +171,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] {};
 	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {}
 
 }

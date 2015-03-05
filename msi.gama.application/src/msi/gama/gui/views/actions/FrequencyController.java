@@ -130,4 +130,80 @@ public class FrequencyController {
 		view.pauseChanged();
 	}
 
+	/**
+	 * @param tb
+	 */
+	public void install(final GamaToolbar2 tb) {
+		createFrequencyItem(tb);
+		createPauseItem(tb);
+	}
+
+	/**
+	 * @param tb
+	 */
+	private void createPauseItem(final GamaToolbar2 tb) {
+
+		tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE.getCode(), "Pause", "Pause or resume the current view",
+			new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+
+					IOutput output = view.getOutput();
+					if ( output != null ) {
+						if ( output.isPaused() ) {
+							// hqnghi resume thread of co-experiment
+							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
+							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
+									FrontEndController._START);
+							}
+							// end-hqnghi
+							resume((ToolItem) e.widget, output);
+						} else {
+							pause((ToolItem) e.widget, output);
+							// hqnghi pause thread of co-experiment
+							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
+							if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
+								GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
+									FrontEndController._PAUSE);
+							}
+							// end-hqnghi
+						}
+					} else {
+						toggle();
+					}
+
+				}
+
+			}, SWT.RIGHT);
+
+	}
+
+	/**
+	 * @param tb
+	 */
+	private void createFrequencyItem(final GamaToolbar2 tb) {
+
+		SpeedContributionItem i = new SpeedContributionItem(getInit(), new IPositionChangeListener() {
+
+			@Override
+			public void positionChanged(final double position) {
+				IDisplayOutput output = view.getOutput();
+				if ( output == null ) { return; }
+				output.setRefreshRate(getRefresh(position));
+			}
+		}, new IToolTipProvider() {
+
+			@Override
+			public String getToolTipText(final double value) {
+				int i = getRefresh(value);
+				return "Update every" + (i > 1 ? " " + i + " steps" : " step");
+			}
+		}, IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaColors.BLUE, IGamaColors.GRAY_LABEL);
+		Control c = i.createControl(tb);
+		tb.control(c, SWT.DEFAULT, SWT.RIGHT);
+
+	}
+
 }

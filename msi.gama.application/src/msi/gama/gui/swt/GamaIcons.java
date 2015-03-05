@@ -81,12 +81,16 @@ public class GamaIcons /* implements IGamaIcons */{
 		return imageCache.get(code);
 	}
 
-	public static GamaIcon createSizer(final int height) {
-		String name = SIZER_PREFIX + height;
+	public static GamaIcon createSizer(final Color color, final int width, final int height) {
+		String name = SIZER_PREFIX + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
 		if ( sizer == null ) {
-			GamaIcon result = create("editor.sizer2");
-			Image sizerImage = new Image(Display.getDefault(), result.image().getImageData().scaledTo(1, height));
+			RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
+			Image sizerImage = new Image(Display.getDefault(), width, height);
+			GC gc = new GC(sizerImage);
+			gc.setBackground(color);
+			gc.fillRectangle(0, 0, width, height);
+			gc.dispose();
 			sizer = new GamaIcon(name, name);
 			getInstance().putImageInCache(name, sizerImage);
 			getInstance().putIconInCache(name, sizer);
@@ -102,8 +106,6 @@ public class GamaIcons /* implements IGamaIcons */{
 		}
 		return result;
 	}
-
-	static PaletteData palette = new PaletteData(0xFF, 0xFF00, 0xFF0000);
 
 	public static GamaIcon createColorIcon(final String s, final GamaUIColor gcolor, final int width, final int height) {
 		String name = COLOR_PREFIX + s;

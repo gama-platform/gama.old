@@ -82,7 +82,8 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 
 	SwtMapPane pane;
 	MapContent content;
-	GamaToolbar leftToolbar;
+	// GamaToolbar leftToolbar;
+	GamaToolbar2 toolbar;
 	ShapefileDataStore store;
 	IPath path;
 	boolean noCRS = false;
@@ -154,7 +155,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			s = "Error in reading file information";
 			color = IGamaColors.ERROR;
 		}
-		ToolItem item = FlatButton.menu(leftToolbar, color, s).item();
+		ToolItem item = FlatButton.menu(toolbar, color, s).item(SWT.LEFT);
 		((FlatButton) item.getControl()).addSelectionListener(new SelectionAdapter() {
 
 			Menu menu;
@@ -162,10 +163,10 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				if ( menu == null ) {
-					menu = new Menu(leftToolbar.getShell(), SWT.POP_UP);
+					menu = new Menu(toolbar.getShell(), SWT.POP_UP);
 					fillMenu();
 				}
-				Point point = leftToolbar.toDisplay(new Point(e.x, e.y + leftToolbar.getSize().y));
+				Point point = toolbar.toDisplay(new Point(e.x, e.y + toolbar.getSize().y));
 				menu.setLocation(point.x, point.y);
 				menu.setVisible(true);
 
@@ -237,7 +238,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	 */
 	@Override
 	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
-		leftToolbar = left;
+		// leftToolbar = left;
 	}
 
 	/**
@@ -302,7 +303,46 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	}
 
 	@Override
-	public Control getZoomableControl() {
-		return pane;
+	public Control[] getZoomableControls() {
+		return new Control[] { pane };
+	}
+
+	/**
+	 * Method setToolbar()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void setToolbar(final GamaToolbar2 toolbar) {
+		this.toolbar = toolbar;
+	}
+
+	/**
+	 * Method createToolItem()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 */
+	@Override
+	public void createToolItem(final int code, final GamaToolbar2 tb) {
+
+		switch (code) {
+			case -32:
+				tb.button("menu.open.preferences2", "Preferences", "Style preferences", new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						StyleLayer styleLayer = (StyleLayer) content.layers().get(0);
+						try {
+							ShapeFileStyleOverlay s =
+								new ShapeFileStyleOverlay(ShapeFileViewer.this, store.getFeatureSource(), styleLayer,
+									SWT.RESIZE);
+							s.open();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}, SWT.RIGHT);
+				break;
+
+		}
+
 	}
 }

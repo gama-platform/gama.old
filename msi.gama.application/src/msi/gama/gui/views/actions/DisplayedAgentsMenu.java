@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -188,6 +188,34 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 		Menu submenu = new Menu(layerMenu);
 		layerMenu.setMenu(submenu);
 		AgentsMenu.fillPopulationSubMenu(submenu, pop, userLocation, actions);
+
+	}
+
+	/**
+	 * @param tb
+	 * @param view
+	 */
+	public void createItem(final GamaToolbar2 tb, final IToolbarDecoratedView view) {
+
+		tb.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
+			"Browse through all displayed agents", new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent trigger) {
+					boolean asMenu = trigger.detail == SWT.ARROW;
+					final ToolItem target = (ToolItem) trigger.widget;
+					final ToolBar toolBar = target.getParent();
+					if ( menu != null ) {
+						menu.dispose();
+					}
+					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
+					fill(view, menu, -1, false, true, null, null);
+					Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+					menu.setLocation(point.x, point.y);
+					menu.setVisible(true);
+
+				}
+			}, SWT.RIGHT);
 
 	}
 

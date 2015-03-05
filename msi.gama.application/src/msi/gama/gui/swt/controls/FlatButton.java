@@ -313,6 +313,18 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return t;
 	}
 
+	public ToolItem item(final int direction /* SWT.LEFT or SWT.RIGHT */) {
+		if ( getParent() instanceof GamaToolbar2 ) {
+			GamaToolbar2 p = (GamaToolbar2) getParent();
+			return p.control(this, computeSize(SWT.DEFAULT, height, false).x + 4, direction);
+		}
+		ToolItem t = new ToolItem((ToolBar) getParent(), SWT.SEPARATOR);
+		int width = this.computeSize(SWT.DEFAULT, height, false).x + 4;
+		t.setControl(this);
+		t.setWidth(width);
+		return t;
+	}
+
 	public FlatButton disabled() {
 		setEnabled(false);
 		return this;
