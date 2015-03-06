@@ -71,17 +71,19 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	// }
 	// }
 
-	// protected void _createChildren(final IOutlineNode parentNode, final S_Experiment stm) {
-	// experimentCount++;
-	// ownCreateChildren(parentNode, stm);
-	// }
-	//
-	// protected void _createChildren(final IOutlineNode parentNode, final S_Species stm) {
-	// speciesCount++;
-	// ownCreateChildren(parentNode, stm);
-	// }
+	protected void _createChildren(final IOutlineNode parentNode, final S_Experiment stm) {
+		ownCreateChildren(parentNode, stm);
+	}
+
+	protected void _createChildren(final IOutlineNode parentNode, final S_Species stm) {
+		ownCreateChildren(parentNode, stm);
+	}
 
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Statement stm) {
+
+		if ( stm instanceof S_Species ) {
+			System.out.println("");
+		}
 		Block block = stm.getBlock();
 		IOutlineNode attributesNode = null;
 		IOutlineNode parametersNode = null;

@@ -49,16 +49,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	@Override
 	public void createControl(final Composite compo) {
 		intermediate = new Composite(compo, SWT.NONE);
-		// Composite ancestor = compo.getParent().getParent();
-		// ancestor.setLayoutDeferred(true);
-		// // ancestor.setLayout(new GridLayout(1, false));
-		// // compo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		// Composite newParent = new Composite(ancestor, SWT.NONE);
-		// // newParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		//
 		Composite parent = GamaToolbarFactory.createToolbars(this, intermediate);
-		// compo.setParent(parent);
-		// ancestor.setLayoutDeferred(false);
 		super.createControl(parent);
 	}
 

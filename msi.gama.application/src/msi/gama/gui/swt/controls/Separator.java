@@ -15,9 +15,43 @@ public class Separator extends WorkbenchWindowControlContribution {
 	@Override
 	protected Control createControl(final Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText("       ");
-		label.setVisible(false);
+		label.setSize(18, 32);
 		return label;
+	}
+
+	@Override
+	protected int computeWidth(final Control control) {
+		return control.computeSize(18, 32).x;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean isGroupMarker() {
+		return false;
+	}
+
+	@Override
+	public boolean isSeparator() {
+		return true;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
+
+	@Override
+	public void fill(final CoolBar parent, final int index) {
+		super.fill(parent, index);
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return super.isDynamic();
 	}
 
 }

@@ -35,7 +35,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	protected Object currentValue;
 	protected Exception currentException;
 	final boolean evaluateExpression;
-	final IAgent hostAgent;
+	private final IAgent hostAgent;
 	final IType expectedType;
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
@@ -128,11 +128,12 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	private void computeValue() {
 		try {
 			currentException = null;
-			IAgent agent = hostAgent;
+			IAgent agent = getHostAgent();
 			String s = text.getText();
 			// AD: Fix for Issue 1042
-			if ( hostAgent != null && hostAgent.getScope().interrupted() && hostAgent instanceof SimulationAgent ) {
-				agent = hostAgent.getExperiment();
+			if ( getHostAgent() != null && getHostAgent().getScope().interrupted() &&
+				getHostAgent() instanceof SimulationAgent ) {
+				agent = getHostAgent().getExperiment();
 			}
 			if ( NumberEditor.UNDEFINED_LABEL.equals(s) ) {
 				currentValue = null;
@@ -232,6 +233,10 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			}
 		}
 		return result;
+	}
+
+	IAgent getHostAgent() {
+		return hostAgent == null ? editor == null ? null : editor.getAgent() : hostAgent;
 	}
 
 }

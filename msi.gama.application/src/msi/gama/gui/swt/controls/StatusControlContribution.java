@@ -29,7 +29,8 @@ import org.jfree.util.StringUtils;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
-	private Composite compo;
+	// private Composite compo;
+	// private Composite parent;
 	FlatButton label;
 	private Popup popup;
 	int state;
@@ -37,6 +38,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	volatile String subTaskName;
 	volatile boolean inSubTask = false;
 	volatile Double subTaskCompletion;
+	private final static int WIDTH = 300;
 
 	public StatusControlContribution() {}
 
@@ -46,18 +48,24 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	@Override
 	protected int computeWidth(final Control control) {
-		return control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		return WIDTH;
+		// return label.computeMinWidth();
+		// return compo.getBounds().y;
+		// return control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 	}
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
-		GridLayout layout = new GridLayout(2, false);
+		parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		// this.parent = parent;
+		Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
+		compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
-		layout.marginWidth = 2;
+		layout.marginWidth = 0;
 		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.widthHint = 300;
+		data.widthHint = WIDTH;
 		data.heightHint = 24;
 		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running");
 		label.setLayoutData(data);
@@ -130,6 +138,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			} else {
 				label.setText(mainTaskName);
 			}
+			// int width = label.computeMinWidth();
+			// compo.setSize(width, compo.getSize().y);
+			// ((GridData) label.getLayoutData()).widthHint = width;
+			// parent.layout(true, true);
 			if ( popup.isVisible() ) {
 				popup.display();
 			}
@@ -173,6 +185,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public int getCurrentState() {
 		return state;
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return false;
 	}
 
 }

@@ -34,11 +34,11 @@ public class GamaToolbar2 extends ToolBar {
 
 	}
 
-	private class SeparatorToolItem extends ToolItem implements ControlListener {
+	private class DynamicSeparatorToolItem extends ToolItem implements ControlListener {
 
 		Control c;
 
-		public SeparatorToolItem() {
+		public DynamicSeparatorToolItem() {
 			super(GamaToolbar2.this, SWT.FLAT | SWT.SEPARATOR);
 			c = new Label(GamaToolbar2.this, SWT.None);
 			setControl(c);
@@ -66,14 +66,17 @@ public class GamaToolbar2 extends ToolBar {
 
 	}
 
-	final SeparatorToolItem separator;
-	final SizerToolItem sizer;
+	final DynamicSeparatorToolItem separator;
+	final SizerToolItem iconSizer, toolbarSizer;
+	final int height;
 
 	public GamaToolbar2(final Composite parent, final int style, final int height) {
 		super(parent, style); // No wrapping allowed
+		this.height = height;
 		setBackground(IGamaColors.WHITE.color());
-		sizer = new SizerToolItem(height, height);
-		separator = new SeparatorToolItem();
+		iconSizer = new SizerToolItem(GamaIcons.CORE_ICONS_HEIGHT.getValue(), GamaIcons.CORE_ICONS_HEIGHT.getValue());
+		toolbarSizer = new SizerToolItem(1, height);
+		separator = new DynamicSeparatorToolItem();
 		// addControlListener(separator);
 		parent.addControlListener(separator);
 	}
@@ -125,8 +128,9 @@ public class GamaToolbar2 extends ToolBar {
 	}
 
 	public ToolItem sep(final int n, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		ToolItem item = control(new Label(this, SWT.NONE), n, side);
-		item.getControl().setVisible(false);
+		GamaIcon icon = GamaIcons.createSizer(getBackground(), n, height);
+		ToolItem item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
+		// item.getControl().setVisible(false);
 		return item;
 	}
 
@@ -230,7 +234,7 @@ public class GamaToolbar2 extends ToolBar {
 		// Removes everything excluding the sizer item and the separator, after or before the separator depending on 'side'
 		if ( side == SWT.LEFT ) {
 			for ( ToolItem t : getItems() ) {
-				if ( t == sizer ) {
+				if ( t == iconSizer ) {
 					break;
 				}
 				Control c = t.getControl();
@@ -264,7 +268,7 @@ public class GamaToolbar2 extends ToolBar {
 		final int style, final boolean forceText, final Control control, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		ToolItem button;
 		if ( side == SWT.LEFT ) {
-			button = new ToolItem(this, style, indexOf(sizer));
+			button = new ToolItem(this, style, indexOf(iconSizer));
 		} else {
 			button = new ToolItem(this, style);
 		}

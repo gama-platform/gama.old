@@ -35,6 +35,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		final Composite intermediate = new Composite(view, SWT.NONE);
+		intermediate.setBackground(IGamaColors.WHITE.color());
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
@@ -57,10 +58,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		}
 	}
 
-	@Override
-	public/* final */void createPartControl(final Composite composite) {
-		super.createPartControl(composite);
-	}
+	// @Override
+	// public/* final */void createPartControl(final Composite composite) {
+	// super.createPartControl(composite);
+	// }
 
 	@Override
 	public void displayItems() {

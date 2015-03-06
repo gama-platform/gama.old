@@ -71,7 +71,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 	}
 
 	public static int TOOLBAR_HEIGHT = GamaIcons.CORE_ICONS_HEIGHT.getValue();
-	public static int TOOLBAR_SEP = 10;
+	public static int TOOLBAR_SEP = 4;
 
 	private static void
 		createContributionItemOld(final IToolbarDecoratedView view, final int code, final GamaToolbar tb) {
@@ -173,10 +173,15 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		final GridData toolbarCompositeData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
 		toolbarComposite.setLayoutData(toolbarCompositeData2);
 		GridLayout layout = new GridLayout(1, false);
-		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		// layout.marginBottom = 8;
+		// layout.marginLeft = 8;
+		// layout.horizontalSpacing = 0;
+		// layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginTop = 4;
+		layout.marginBottom = 8;
 		toolbarComposite.setLayout(layout);
 		toolbarComposite.setBackground(IGamaColors.WHITE.color());
 		// Creating the toggle
@@ -231,7 +236,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		// rightToolbar.setBackground(IGamaColors.WHITE.color());
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.verticalIndent = 0;
-		data.horizontalAlignment = SWT.RIGHT;
+		data.horizontalAlignment = SWT.LEFT;
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		rightToolbar.setLayoutData(data);
 		view.setToolbars(leftToolbar, rightToolbar);
@@ -258,8 +263,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 
 		// leftToolbar.setBackground(IGamaColors.WHITE.color());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		data.verticalIndent = 0;
-		data.horizontalAlignment = SWT.LEFT;
+		// data.verticalIndent = 4;
+		data.horizontalAlignment = SWT.CENTER;
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		leftToolbar.setLayoutData(data);
 

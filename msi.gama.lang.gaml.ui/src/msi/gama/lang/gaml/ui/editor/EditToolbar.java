@@ -101,7 +101,7 @@ public class EditToolbar {
 
 	public void createToolbar(final Composite parentComposite) {
 		toolbar =
-			new GamaToolbar(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL/* | SWT.BORDER */)
+			new GamaToolbar(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
 				./*
 				 * color(
 				 * IGamaColors.WHITE.color()).

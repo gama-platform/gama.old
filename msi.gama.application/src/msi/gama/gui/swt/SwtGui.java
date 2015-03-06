@@ -86,7 +86,7 @@ public class SwtGui implements IGui {
 	// }
 
 	private static Font expandFont;
-	private static Font bigFont;
+	// private static Font bigFont;
 	private static Font smallFont;
 	private static Font smallNavigFont;
 	private static Font smallNavigLinkFont;
@@ -651,24 +651,27 @@ public class SwtGui implements IGui {
 	}
 
 	static void initFonts() {
-		FontData fd = new FontData("Helvetica", 12, SWT.BOLD);
+		FontData baseData = getDisplay().getSystemFont().getFontData()[0];
+		String baseFont = baseData.name;
+		int baseSize = 11;
+		FontData fd = new FontData(baseFont, baseSize, SWT.BOLD);
 		labelFont = new Font(Display.getDefault(), fd);
 		expandFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 10, SWT.ITALIC);
+		fd = new FontData(baseFont, baseSize, SWT.ITALIC);
 		unitFont = new Font(Display.getDefault(), fd);
 		smallNavigLinkFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 12, SWT.BOLD);
-		bigFont = new Font(Display.getDefault(), fd);
+		fd = new FontData(baseFont, baseSize + 1, SWT.BOLD);
+		// bigFont = new Font(Display.getDefault(), fd);
 		navigHeaderFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 10, SWT.NORMAL);
+		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
 		smallFont = new Font(Display.getDefault(), fd);
 		smallNavigFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 11, SWT.NORMAL);
+		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
 		parameterEditorsFont = new Font(Display.getDefault(), fd);
 		navigFileFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 12, SWT.NORMAL);
+		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
 		navigRegularFont = new Font(Display.getDefault(), fd);
-		fd = new FontData("Helvetica", 12, SWT.ITALIC);
+		fd = new FontData(baseFont, baseSize, SWT.ITALIC);
 		navigResourceFont = new Font(Display.getDefault(), fd);
 	}
 
@@ -1030,12 +1033,12 @@ public class SwtGui implements IGui {
 		return labelFont;
 	}
 
-	public static Font getBigfont() {
-		if ( bigFont == null ) {
-			initFonts();
-		}
-		return bigFont;
-	}
+	// public static Font getBigfont() {
+	// if ( bigFont == null ) {
+	// initFonts();
+	// }
+	// return bigFont;
+	// }
 
 	public static Font getSmallFont() {
 		if ( smallFont == null ) {

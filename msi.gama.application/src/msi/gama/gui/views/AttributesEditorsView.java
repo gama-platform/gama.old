@@ -35,37 +35,6 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> im
 			GridLayout layout = new GridLayout(2, false);
 			layout.verticalSpacing = EDITORS_SPACING;
 			setLayout(layout);
-			// addControlListener(new ControlListener() {
-			//
-			// @Override
-			// public void controlResized(final ControlEvent e) {
-			// float averageWidth = 0;
-			// float maxWidth = 0;
-			// for ( Label l : labels ) {
-			// int width = l.getText().length() * 8;
-			// averageWidth += width;
-			// if ( width > maxWidth ) {
-			// maxWidth = width;
-			// }
-			// }
-			// averageWidth /= labels.size();
-			//
-			// if ( averageWidth == 0.0 ) { return; }
-			// averageWidth += 20;
-			// averageWidth = Math.max(averageWidth, maxWidth / 2);
-			// for ( Label l : labels ) {
-			// // l.setSize(l.computeSize((int) averageWidth, SWT.DEFAULT));
-			// ((GridData) l.getLayoutData()).widthHint = (int) averageWidth;
-			// l.getParent().update();
-			// l.getParent().layout();
-			// }
-			// update();
-			// layout();
-			// }
-			//
-			// @Override
-			// public void controlMoved(final ControlEvent e) {}
-			// });
 		}
 
 		public void addEditor(final AbstractEditor editor) {
@@ -149,9 +118,5 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> im
 			editors.updateItemValues();
 		}
 	}
-	//
-	// public Map<T, THashMap<String, IParameterEditor>> getCategories() {
-	// return editors.getCategories();
-	// }
 
 }

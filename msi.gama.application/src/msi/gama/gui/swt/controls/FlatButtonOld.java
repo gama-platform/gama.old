@@ -11,35 +11,35 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class FlatButton extends Canvas implements PaintListener, Listener {
+public class FlatButtonOld extends Canvas implements PaintListener, Listener {
 
-	public static FlatButton create(final Composite comp, final int style) {
-		return new FlatButton(comp, style);
+	public static FlatButtonOld create(final Composite comp, final int style) {
+		return new FlatButtonOld(comp, style);
 	}
 
-	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text) {
+	public static FlatButtonOld label(final Composite comp, final GamaUIColor color, final String text) {
 		return button(comp, color, text).disabled();
 	}
 
-	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text, final Image image) {
+	public static FlatButtonOld label(final Composite comp, final GamaUIColor color, final String text, final Image image) {
 		return label(comp, color, text).setImage(image);
 	}
 
-	public static FlatButton button(final Composite comp, final GamaUIColor color, final String text) {
+	public static FlatButtonOld button(final Composite comp, final GamaUIColor color, final String text) {
 		return create(comp, SWT.None).setText(text).setColor(color);
 	}
 
-	public static FlatButton
+	public static FlatButtonOld
 		button(final Composite comp, final GamaUIColor color, final String text, final Image image) {
 		return button(comp, color, text).setImage(image);
 	}
 
-	public static FlatButton menu(final Composite comp, final GamaUIColor color, final String text) {
+	public static FlatButtonOld menu(final Composite comp, final GamaUIColor color, final String text) {
 		return button(comp, color, text).setImageStyle(IMAGE_RIGHT)
 			.setImage(GamaIcons.create("small.dropdown").image());
 	}
 
-	private static int FIXED_HEIGHT = 22;
+	private static int FIXED_HEIGHT = 18;
 
 	private int height = FIXED_HEIGHT;
 	// private int width;
@@ -54,7 +54,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public static int IMAGE_RIGHT = 1;
 	private int imageStyle = IMAGE_LEFT;
 
-	private FlatButton(final Composite parent, final int style) {
+	private FlatButtonOld(final Composite parent, final int style) {
 		super(parent, style | SWT.NO_BACKGROUND);
 		setFont(SwtGui.getLabelfont());
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -121,25 +121,28 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void paintControl(final PaintEvent e) {
 		// Init GC
 		GC gc = e.gc;
-		// gc.setAntialias(SWT.ON);
-		// gc.setAdvanced(true);
+		gc.setAntialias(SWT.ON);
+		gc.setAdvanced(true);
 		gc.setFont(getFont());
+		// System.out.println("Size of '" + getText() + "':" + getSize());
+		// System.out.println("Width of repaint event" + getText() + "':" + e.width);
+		// System.out.println("Minimum width of " + getText() + "':" + computeMinWidth());
+		// System.out.println("Client area width of '" + getText() + "':" + getClientArea().width);
+		// System.out.println("Parent bounds of '" + getText() + "':" + getParent().getBounds().width);
 		int width = getSize().x;
 		int v_inset = e.height < height ? 1 : (e.height - height) / 2 + 1;
 		int h_inset = e.width < width ? 5 : (e.width - width) / 2 + 5;
 		width = Math.min(width, getParent().getBounds().width);
-		Rectangle rect = new Rectangle(h_inset, v_inset, width - h_inset, height - 1);
+		Rectangle rect = new Rectangle(h_inset, v_inset, width - h_inset, height);
 
 		// add transparency by making the canvas background the same as
 		// the parent background (only needed for rounded corners)
-		// gc.setBackground(getParent().getBackground());
-		// gc.fillRectangle(rect);
-		gc.setForeground(IGamaColors.BLACK.color());
-		// gc.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
-		gc.drawRoundRectangle(rect.x, rect.y, rect.width - 1, rect.height - 1, 5, 10);
+		gc.setBackground(getParent().getBackground());
+		gc.fillRectangle(rect);
 		GamaUIColor color = GamaColors.get(colorCode);
-		gc.setForeground(/* !enabled ? color.inactive() : */hovered ? /* color.darker() */IGamaColors.BLACK.color()
-			: color.color());
+		gc.setBackground(!enabled ? color.inactive() : hovered ? color.darker() : color.color());
+		gc.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
+		gc.fillRoundRectangle(rect.x - 1, rect.y - 1, rect.width, rect.height, 10, 10);
 
 		int x = this.innerMarginWidth + h_inset;
 		int y_image = v_inset;
@@ -237,7 +240,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * 
 	 * @param image
 	 */
-	public FlatButton setImage(final Image image) {
+	public FlatButtonOld setImage(final Image image) {
 		super.setBackgroundImage(image);
 		redraw();
 		return this;
@@ -249,7 +252,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * 
 	 * @param imageStyle
 	 */
-	public FlatButton setImageStyle(final int imageStyle) {
+	public FlatButtonOld setImageStyle(final int imageStyle) {
 		this.imageStyle = imageStyle;
 		return this;
 	}
@@ -262,7 +265,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return text;
 	}
 
-	public FlatButton setText(final String text) {
+	public FlatButtonOld setText(final String text) {
 		if ( text == null ) { return this; }
 		if ( text.equals(this.text) ) { return this; }
 		this.text = text;
@@ -322,31 +325,31 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return t;
 	}
 
-	public FlatButton disabled() {
+	public FlatButtonOld disabled() {
 		setEnabled(false);
 		return this;
 	}
 
-	public FlatButton enabled() {
+	public FlatButtonOld enabled() {
 		setEnabled(true);
 		return this;
 	}
 
-	public FlatButton light() {
-		// if ( getFont().equals(SwtGui.getParameterEditorsFont()) ) { return this; }
-		// setFont(SwtGui.getParameterEditorsFont());
-		// redraw();
+	public FlatButtonOld light() {
+		if ( getFont().equals(SwtGui.getParameterEditorsFont()) ) { return this; }
+		setFont(SwtGui.getParameterEditorsFont());
+		redraw();
 		return this;
 	}
 
-	public FlatButton small() {
+	public FlatButtonOld small() {
 		if ( height == 20 ) { return this; }
 		height = 20;
 		redraw();
 		return this;
 	}
 
-	public FlatButton setColor(final GamaUIColor c) {
+	public FlatButtonOld setColor(final GamaUIColor c) {
 		RGB oldColorCode = colorCode;
 		RGB newColorCode = c.getRGB();
 		if ( newColorCode.equals(oldColorCode) ) { return this; }

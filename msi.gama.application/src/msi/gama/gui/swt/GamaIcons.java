@@ -82,7 +82,7 @@ public class GamaIcons /* implements IGamaIcons */{
 	}
 
 	public static GamaIcon createSizer(final Color color, final int width, final int height) {
-		String name = SIZER_PREFIX + height + color.hashCode();
+		String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
 		if ( sizer == null ) {
 			RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
