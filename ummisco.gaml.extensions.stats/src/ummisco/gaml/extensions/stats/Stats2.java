@@ -433,7 +433,7 @@ public class Stats2 extends Stats {
 		 * @param sd
 		 * @return
 		 */
-		@operator(value = "normal_area", can_be_const = true, type = IType.FLOAT)
+		@operator(value = {"normal_area","pnorm"}, can_be_const = true, type = IType.FLOAT)
 		@doc(value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.", comment = "", examples = {})
 		public static Double opNormalArea(final IScope scope, final Double x, final Double mean, final Double sd) {
 
@@ -510,7 +510,7 @@ public class Stats2 extends Stats {
 		 * @param sd
 		 * @return
 		 */
-		@operator(value = "normal_density", can_be_const = true, type = IType.FLOAT)
+		@operator(value = {"normal_density","dnorm"}, can_be_const = true, type = IType.FLOAT)
 		@doc(value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.", comment = "", examples = {})
 		public static Double opNormalDensity(final IScope scope, final Double x, final Double mean, final Double sd) {
 
@@ -554,9 +554,9 @@ public class Stats2 extends Stats {
 		 * @param p
 		 * @return
 		 */
-		@operator(value = "binomial_sum", can_be_const = true, type = IType.FLOAT)
+		@operator(value = {"binomial_sum","pbinom"}, can_be_const = true, type = IType.FLOAT)
 		@doc(value = "Returns the sum of the terms 0 through k of the Binomial probability density, where n is the number of trials and p is the probability of success in the range 0 to 1.", comment = "", examples = {})
-		public static Double opBinomialSum(final IScope scope, final Integer n, final Integer k, final Double p) {
+		public static Double opBinomialSum(final IScope scope, final Integer k, final Integer n, final Double p) {
 
 			// Returns the sum of the terms 0 through k of the Binomial
 			// probability density, where n is the number of trials and p is
@@ -569,7 +569,53 @@ public class Stats2 extends Stats {
 				throw GamaRuntimeException.error("colt Probability.normal reports: " + ex, scope);
 			}
 		}
+		
+		/**
+		 * 
+		 * 
+		 * @param scope
+		 * @param a the paramater a (alpha) of the gamma distribution (shape parameter).
+		 * @param b the paramater b (beta, lambda) of the gamma distribution (rate parameter, inverse scale parameter theta).
+		 * @param x integration end point.
+		 * @return
+		 */
+		@operator(value = {"gamma_distribution","pgamma"}, can_be_const = true, type = IType.FLOAT)
+		@doc(value = "Returns the integral from zero to x of the gamma probability density function.", comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).", examples = {})
+		public static Double opGamma(final IScope scope, final Double a, final Double b, final Double x) {
 
+			// Returns the integral from zero to x of the gamma probability density function.
+			try {
+				return Probability.gamma(a,b,x);
+			} catch (IllegalArgumentException ex) {
+				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
+			} catch (ArithmeticException ex) {
+				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
+			}
+		}		
+
+		/**
+		 * 
+		 * 
+		 * @param scope
+		 * @param a the paramater a (alpha) of the gamma distribution.
+		 * @param b the paramater b (beta, lambda) of the gamma distribution.
+		 * @param x integration end point.
+		 * @return
+		 */
+		@operator(value = "gamma_distribution_complemented", can_be_const = true, type = IType.FLOAT)
+		@doc(value = "Returns the integral from x to infinity of the gamma probability density function.", comment = "", examples = {})
+		public static Double opGammaComplemented(final IScope scope, final Double a, final Double b, final Double x) {
+
+			// Returns the integral from x to infinity of the gamma probability density function.
+			try {
+				return Probability.gammaComplemented(a,b,x);
+			} catch (IllegalArgumentException ex) {
+				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
+			} catch (ArithmeticException ex) {
+				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
+			}
+		}
+		
 		/**
 		 * 
 		 * 
@@ -603,7 +649,7 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = "chi_square", can_be_const = true, type = IType.FLOAT)
+		@operator(value = {"chi_square","pchisq"}, can_be_const = true, type = IType.FLOAT)
 		@doc(value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.", comment = "", examples = {})
 		public static Double opChiSquare(final IScope scope, final Double x, final Double df) {
 
@@ -641,7 +687,9 @@ public class Stats2 extends Stats {
 				throw GamaRuntimeException.error("colt .chiSquareComplemented reports: " + ex, scope);
 			}
 		}
+	}
 
+	public static abstract class GammaFunction {
 		/**
 		 * 
 		 * 
@@ -670,7 +718,7 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = "log_gamma", can_be_const = true, type = IType.FLOAT)
+		@operator(value = {"log_gamma","lgamma"}, can_be_const = true, type = IType.FLOAT)
 		@doc(value = "Returns the log of the value of the Gamma function at x.", comment = "", examples = {})
 		public static Double opLogGamma(final IScope scope, final Double x) {
 
@@ -773,6 +821,7 @@ public class Stats2 extends Stats {
 			} catch (ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .incompleteBeta reports: " + ex, scope);
 			}
-		}
+		}		
 	}
+
 }
