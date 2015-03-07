@@ -14,8 +14,8 @@ package msi.gama.gui.swt.swing;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.ui.IWorkbenchPage;
 
 public class OutputSynchronizer {
@@ -56,11 +56,11 @@ public class OutputSynchronizer {
 	}
 
 	public static void decInitializingViews(final String view) {
-		// GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
+		GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
 		// GuiUtils.debug("Showing :" + view);
-		GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
+		// GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, view, IWorkbenchPage.VIEW_VISIBLE);
 	}
 
 	public static void waitForViewsToBeInitialized() {
@@ -72,7 +72,21 @@ public class OutputSynchronizer {
 					// even briefly so that OpenGL can call the init() method of the renderer
 					final List<String> names = new ArrayList(viewsScheduledToOpen);
 					// GuiUtils.debug("Briefly showing :" + names.get(0));
-					GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0), IWorkbenchPage.VIEW_ACTIVATE);
+					final LayeredDisplayView view =
+						(LayeredDisplayView) GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0),
+							IWorkbenchPage.VIEW_ACTIVATE);
+
+					if ( view != null ) {
+						GuiUtils.run(new Runnable() {
+
+							@Override
+							public void run() {
+								view.getSurfaceComposite().getParent().layout(true, true);
+							}
+
+						});
+
+					}
 				}
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
@@ -105,22 +119,22 @@ public class OutputSynchronizer {
 	public static void cleanResize() {
 
 		final List<String> names = new ArrayList(viewsScheduledToBeActivated);
-		// GuiUtils.debug("OutputSynchronizer.cleanResize called on " + names);
+		GuiUtils.debug("OutputSynchronizer.cleanResize called on " + names);
 		if ( !GamaPreferences.CORE_DISPLAY_ORDER.getValue() ) {
 			Collections.reverse(names);
 		}
 		viewsScheduledToBeActivated.clear();
 		for ( String name : names ) {
 			// GuiUtils.debug("Activating :" + name);
-			final IGamaView v = GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, name, IWorkbenchPage.VIEW_ACTIVATE);
+			// try {
+			// Thread.sleep(100);
+			// } catch (InterruptedException e) {
+			// e.printStackTrace();
+			// }
 		}
 		for ( Runnable r : cleanResizers ) {
-			GuiUtils.run(r);
+			GuiUtils.asyncRun(r);
 		}
 
 		cleanResizers.clear();

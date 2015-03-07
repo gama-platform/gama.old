@@ -61,43 +61,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		return getOutput().getSurface().getManager();
 	}
 
-	protected LayersOverlay2 createSidebar() {
-		// We cache the parent just the time to create the various layer controls (sidebar)
-		// Composite trueParent = parent;
-		LayersOverlay2 layersOverlay = new LayersOverlay2(this, SWT.RESIZE);
-		// parent = layersOverlay.getContent();
-		// createViewer(layersOverlay.getContent());
-		// getViewer().setLayoutData(null);
-		// getViewer().setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		// getViewer().setBackgroundMode(SWT.INHERIT_NONE);
-		// parent = trueParent;
-
-		// getViewer().addListener(SWT.Collapse, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event e) {
-		// layersOverlay.resize();
-		// }
-		//
-		// });
-		// getViewer().addListener(SWT.Expand, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event e) {
-		// layersOverlay.resize();
-		// }
-		//
-		// });
-		return layersOverlay;
-	}
-
 	public DisplayOverlay getOverlay() {
 		return overlay;
 	}
-
-	// public LayersOverlay2 getSidebar() {
-	// return layersOverlay;
-	// }
 
 	public Composite getSurfaceComposite() {
 		return surfaceComposite;
@@ -151,9 +117,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		if ( overlay != null ) {
 			overlay.close();
 		}
-		// if ( layersOverlay != null ) {
-		// layersOverlay.close();
-		// }
 		super.dispose();
 	}
 
@@ -185,14 +148,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		boolean paused = surface.isPaused();
 		boolean synced = surface.isSynchronized();
 		boolean openGL = getOutput().isOpenGL();
-		// double cx = 0, cy = 0, cz = 0;
-		// if ( openGL ) {
-		// IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-		// GamaPoint camera = ds.getCameraPosition();
-		// // cx = cpos[0];
-		// // cy = -cpos[1];
-		// // cz = cpos[2];
-		// }
 		ILocation point = surface.getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
@@ -208,11 +163,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 	};
 
-	//
-	// public Composite getComponent() {
-	// return parent;
-	// }
-
 	@Override
 	public void pauseChanged() {
 		overlay.update();
@@ -224,25 +174,16 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		return envWidth / displayWidth;
 	}
 
-	/**
-	 *
-	 */
 	public void toggleSideBar() {
-		LayersOverlay2 l = createSidebar();
+		LayersOverlay2 layersOverlay = new LayersOverlay2(this, SWT.RESIZE);
+		LayersOverlay2 l = layersOverlay;
 		l.open();
-		// this.layersOverlay.toggle();
 	}
 
-	/**
-	 *
-	 */
 	public void toggleOverlay() {
 		this.overlay.toggle();
 	}
 
-	/**
-	 * @return
-	 */
 	public String getOverlayCoordInfo() {
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean paused = surface.isPaused();
@@ -256,9 +197,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	}
 
-	/**
-	 * @return
-	 */
 	public String getOverlayZoomInfo() {
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean openGL = getOutput().isOpenGL();

@@ -149,43 +149,21 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	public void fixSize() {
 
 		// AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT
-		// thread
-		// and run the sizing inside an AWT thread
+		// thread and run the sizing inside an AWT thread
 		OutputSynchronizer.cleanResize(new Runnable() {
 
 			@Override
 			public void run() {
-				// final Rectangle r = surfaceComposite.getClientArea();
-				final Rectangle r = parent.getClientArea();
-				// final int x = r.width;
-				// final int y = r.height;
-				// surfaceComposite.setBounds(r);
-				// parent.layout();
+				final Rectangle r = parent.getBounds();
 
 				java.awt.EventQueue.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
-
 						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
-						((SwingControl) surfaceComposite).getFrame().validate();
 						getOutput().getSurface().resizeImage(r.width, r.height, false);
-						getOutput().getSurface().setSize(r.width, r.height);
 						getOutput().getSurface().updateDisplay();
 
-						GuiUtils.asyncRun(new Runnable() {
-
-							@Override
-							public void run() {
-								surfaceComposite.setBounds(r);
-								// GuiUtils.debug("AWTDisplayView.fixSize(). new bounds for composite:" + r);
-								// ((GridData) surfaceComposite.getLayoutData()).exclude = false;
-								if ( overlay != null ) {
-									overlay.relocate();
-									overlay.resize();
-								}
-							}
-						});
 					}
 				});
 
@@ -194,19 +172,11 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 		});
 	}
 
-	/**
-	 * Method getSizeFlags()
-	 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-	 */
 	@Override
 	public int getSizeFlags(final boolean width) {
 		return SWT.MIN;
 	}
 
-	/**
-	 * Method computePreferredSize()
-	 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-	 */
 	@Override
 	public int computePreferredSize(final boolean width, final int availableParallel, final int availablePerpendicular,
 		final int preferredResult) {

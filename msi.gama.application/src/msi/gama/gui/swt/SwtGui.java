@@ -423,9 +423,12 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				try {
-					getPage().zoomOut();
-					result[0] = getPage().showView(viewId, secondaryId, code);
-				} catch (final PartInitException e) {
+					IWorkbenchPage page = getPage();
+					if ( page != null ) {
+						page.zoomOut();
+						result[0] = page.showView(viewId, secondaryId, code);
+					}
+				} catch (final Exception e) {
 					result[0] = e;
 				}
 			}
@@ -618,10 +621,10 @@ public class SwtGui implements IGui {
 				surfaces.add(view.getDisplaySurface());
 				view.fixSize();
 			}
-			if ( partRef.getId().equals("org.eclipse.ui.views.ContentOutline") ) {
-				IWorkbenchPart part = partRef.getPart(false);
-				part.setFocus();
-			}
+			// if ( partRef.getId().equals("org.eclipse.ui.views.ContentOutline") ) {
+			// IWorkbenchPart part = partRef.getPart(false);
+			// part.setFocus();
+			// }
 
 		}
 
