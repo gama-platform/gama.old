@@ -9,6 +9,7 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.lang.gaml.ui.decorators.GamlMarkerImageProvider;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -34,7 +35,6 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	public final static int INFOS = 37;
 
 	protected Composite parent;
-	// protected GamaToolbar leftToolbar, rightToolbar;
 	protected GamaToolbar2 toolbar;
 	protected IAction filterAction;
 
@@ -63,9 +63,33 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 	}
 
+	class LineNumberField extends FieldLineNumber {
+
+		@Override
+		public String getColumnHeaderText() {
+			return "Line ";
+		}
+
+		@Override
+		public String getValue(final Object obj) {
+			String s = super.getValue(obj);
+			if ( s == null || s.isEmpty() ) { return s; }
+			String[] segments = StringUtils.split(s);
+			if ( segments.length < 2 ) { return StringUtils.EMPTY; }
+			return segments[1];
+		}
+
+		@Override
+		public int getPreferredWidth() {
+			return 30;
+		}
+
+	}
+
 	ToolItem warningAction, infoAction;
 	final BuildPreferenceChangeListener listener;
 	final ErrorField errorField = new ErrorField();
+	final LineNumberField lineField = new LineNumberField();
 
 	public SyntaxErrorsView() {
 		listener = new BuildPreferenceChangeListener(this);
@@ -113,22 +137,36 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 
 	@Override
 	public IField[] getAllFields() {
+		// super: return new IField[] { severityAndMessage, resource, folder, lineNumber,
+		// creationTime };
 		IField[] fields = super.getAllFields();
-		fields[0] = errorField;
-		return fields;
+		IField[] newFields = new IField[4];
+		newFields[0] = errorField;
+		newFields[1] = fields[1];
+		newFields[2] = lineField;
+		newFields[3] = fields[2];
+		return newFields;
 	}
 
 	@Override
 	public IField[] getSortingFields() {
-		IField[] fields = super.getAllFields();
-		fields[0] = errorField;
-		return fields;
+		// super: return new IField[] { severityAndMessage, resource, folder, lineNumber,
+		// creationTime };
+		IField[] fields = super.getSortingFields();
+		IField[] newFields = new IField[5];
+		newFields[0] = errorField;
+		newFields[1] = fields[1];
+		newFields[2] = lineField;
+		newFields[3] = fields[2];
+		newFields[4] = fields[5];
+		return newFields;
 	}
 
 	@Override
 	protected Tree createTree(final Composite parent) {
 		Tree tree = super.createTree(parent);
 		tree.setLinesVisible(false);
+		tree.setHeaderVisible(false);
 		return tree;
 	}
 

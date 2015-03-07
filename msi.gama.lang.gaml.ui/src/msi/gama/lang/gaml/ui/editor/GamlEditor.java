@@ -116,14 +116,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	protected static Map<IPartService, IPartListener2> partListeners;
 
 	IBoxDecorator decorator;
-	ErrorCollector lastErrorStatus;
-	// GamaToolbar leftToolbar, rightToolbar;
+	GamlEditorState state = new GamlEditorState(null, Collections.EMPTY_LIST);
 	GamaToolbar2 toolbar;
 	EditToolbar editToolbar;
-	// Composite parent;
-	final List<String> completeNamesOfExperiments = new ArrayList();
-	final List<Boolean> experimentTypes = new ArrayList();
-	final List<String> abbreviations = new ArrayList();
 	boolean decorationEnabled = GamlEditor.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = GamlEditor.EDITOR_SHOW_TOOLBAR.getValue();
 	OtherExperimentsButton other;
@@ -140,9 +135,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	@Inject
 	Injector injector;
 
-	// @Inject
-	// private XtextTemplatePreferencePage templatePrefs;
-
 	@Inject
 	private GamlEditTemplateDialogFactory templateDialogFactory;
 
@@ -156,17 +148,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	static GamlAnnotationImageProvider imageProvider = new GamlAnnotationImageProvider();
-
-	// static AnnotationPreferenceLookup newLookup = new AnnotationPreferenceLookup() {
-	//
-	// @Override
-	// public AnnotationPreference getAnnotationPreference(final Annotation annotation) {
-	// AnnotationPreference pref = super.getAnnotationPreference(annotation);
-	// pref.setAnnotationImageProvider(imageProvider);
-	// return pref;
-	// }
-	//
-	// };
 
 	@Override
 	protected IAnnotationAccess createAnnotationAccess() {
@@ -315,9 +296,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
 			String name = ((FlatButton) evt.widget).getText();
-			int i = abbreviations.indexOf(name);
+			int i = state.abbreviations.indexOf(name);
 			if ( i == -1 ) { return; }
-			name = completeNamesOfExperiments.get(i);
+			name = state.experiments.get(i);
 			IModel model = null;
 			try {
 				model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
@@ -343,7 +324,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
-		boolean isBatch = experimentTypes.get(index);
+		boolean isBatch = state.types.get(index);
 		Image image = isBatch ? IGamaIcons.BUTTON_BATCH.image() : IGamaIcons.BUTTON_GUI.image();
 		ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 		String type = isBatch ? "batch" : "regular";
@@ -354,7 +335,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Override
 	public void stopDisplayingTooltips() {
-		updateToolbar(lastErrorStatus);
+		updateToolbar(state);
 	}
 
 	@Override
@@ -366,54 +347,24 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		toolbar.refresh(true);
 	}
 
-	// private void setStatus(final String text, final GamaUIColor c, final boolean small) {
-	// if ( text != null && !text.isEmpty() ) {
-	// leftToolbar.sep(5);
-	// FlatButton f = FlatButton.label(leftToolbar, c, text);
-	// if ( small ) {
-	// f.light();
-	// }
-	// f.item();
-	// }
-	// }
-
-	private GamaUIColor getColor(final ErrorCollector status) {
-		if ( status.hasInternalErrors() ) { return IGamaColors.ERROR; }
-		if ( status.hasImportedErrors() ) { return IGamaColors.IMPORTED; }
-		if ( abbreviations.size() == 0 ) { return IGamaColors.WARNING; }
-		return IGamaColors.OK;
-	}
-
-	private void updateToolbar(final ErrorCollector status) {
-		lastErrorStatus = status;
+	private void updateToolbar(final GamlEditorState newState) {
+		if ( state.equals(newState) ) { return; }
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				if ( toolbar == null || toolbar.isDisposed() ) { return; }
-				GamaUIColor c = getColor(status);
-				if ( !status.hasErrors() ) {
-					int size = abbreviations.size();
-					if ( size == 0 ) {
-						toolbar.status((Image) null, "This model is functional, but no experiments have been defined",
-							c, SWT.LEFT);
-					} else {
-						toolbar.wipe(SWT.LEFT);
-						int i = 0;
-						for ( String e : abbreviations ) {
-							enableButton(i++, e);
-						}
-						toolbar.refresh(true);
-					}
-				} else if ( status.hasInternalErrors() || status.hasInternalSyntaxErrors() ) {
-					toolbar.status((Image) null, "Error(s) were detected. Impossible to run any experiment", c,
-						SWT.LEFT);
-				} else if ( status.hasImportedErrors() ) {
-					String msg = "This model is functional but error(s) were detected in imported files";
-					if ( abbreviations.size() != 0 ) {
-						msg += ". Impossible to run any experiment";
-					}
+				GamaUIColor c = state.getColor();
+				String msg = state.getStatus();
+				if ( msg != null ) {
 					toolbar.status((Image) null, msg, c, SWT.LEFT);
+				} else {
+					toolbar.wipe(SWT.LEFT);
+					int i = 0;
+					for ( String e : state.abbreviations ) {
+						enableButton(i++, e);
+					}
+					toolbar.refresh(true);
 				}
 
 			}
@@ -426,28 +377,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	 */
 	@Override
 	public void validationEnded(final Set<String> newExperiments, final ErrorCollector status) {
-		completeNamesOfExperiments.clear();
-		completeNamesOfExperiments.addAll(newExperiments);
-		abbreviations.clear();
-		for ( String s : completeNamesOfExperiments ) {
-			abbreviations.add(s.replaceFirst("Experiment ", ""));
-			experimentTypes.add(false);
-		}
-		updateToolbar(status);
+
 	}
 
 	@Override
 	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ErrorCollector status) {
-		completeNamesOfExperiments.clear();
-		experimentTypes.clear();
-		abbreviations.clear();
-		for ( IDescription ep : newExperiments ) {
-			String name = ep.getName();
-			completeNamesOfExperiments.add(name);
-			abbreviations.add(name.replaceFirst("Experiment ", ""));
-			experimentTypes.add(((ExperimentDescription) ep).isBatch());
-		}
-		updateToolbar(status);
+		GamlEditorState newState = new GamlEditorState(status, newExperiments);
+		updateToolbar(newState);
+		state = newState;
 	}
 
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
@@ -471,9 +408,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		super.doSaveAs();
 	}
 
-	/**
-	 *
-	 */
 	private void beforeSave() {
 		if ( !EDITOR_CLEAN_UP.getValue() ) { return; }
 		SourceViewer sv = (SourceViewer) getInternalSourceViewer();

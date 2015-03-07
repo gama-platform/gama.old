@@ -95,7 +95,7 @@ public class OtherExperimentsButton {
 				menu.setData(dropMenu);
 				Rectangle rect = menu.getBounds();
 				Point pt = new Point(rect.x, rect.y + rect.height);
-				pt = parent.toDisplay(pt);
+				pt = menu.getControl().toDisplay(pt);
 				dropMenu.setLocation(pt.x, pt.y);
 				dropMenu.setVisible(true);
 			}

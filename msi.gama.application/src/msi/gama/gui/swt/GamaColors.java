@@ -26,7 +26,7 @@ public class GamaColors {
 
 	public static class GamaUIColor {
 
-		Color active, inactive, darker, gray;
+		Color active, inactive, darker, gray, lighter;
 
 		public GamaUIColor(final Color c) {
 			active = c;
@@ -66,6 +66,13 @@ public class GamaColors {
 				darker = computeDarker(active);
 			}
 			return darker;
+		}
+
+		public Color lighter() {
+			if ( lighter == null ) {
+				lighter = computeLighter(active);
+			}
+			return lighter;
 		}
 
 		public Color gray() {
@@ -122,6 +129,17 @@ public class GamaColors {
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
 		newHsb[2] = Math.max(0.0f, hsb[2] - 0.1f);
+		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
+		return getColor(newData.red, newData.green, newData.blue);
+	}
+
+	private static Color computeLighter(final Color c) {
+		RGB data = c.getRGB();
+		float[] hsb = data.getHSB();
+		float[] newHsb = new float[3];
+		newHsb[0] = hsb[0];
+		newHsb[1] = hsb[1];
+		newHsb[2] = Math.min(1f, hsb[2] + 0.2f);
 		RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}

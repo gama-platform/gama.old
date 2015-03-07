@@ -59,7 +59,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		}
 
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create(show ? "action.toolbar.toggle2" : "action.toolbar.toggle3")
+			setImageDescriptor(GamaIcons.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3")
 				.descriptor());
 		}
 
