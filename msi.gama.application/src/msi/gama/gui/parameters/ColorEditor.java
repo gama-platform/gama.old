@@ -82,6 +82,15 @@ public class ColorEditor extends AbstractEditor {
 	public Control createCustomParameterControl(final Composite compo) {
 		edit = FlatButton.menu(compo, IGamaColors.WHITE, "").light().small();
 		edit.addSelectionListener(this);
+		edit.setImage(GamaIcons.createTempColorIcon(IGamaColors.WHITE));
+		edit.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(final DisposeEvent e) {
+				edit.getImage().dispose();
+			}
+
+		});
 		displayParameterValue();
 		return edit;
 	}
@@ -90,8 +99,13 @@ public class ColorEditor extends AbstractEditor {
 	protected void displayParameterValue() {
 		internalModification = true;
 		GamaUIColor color = GamaColors.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
-		edit.setText(color.toString()).setColor(color);
-		// color.dispose();
+		GamaUIColor oldColor = edit.getColor();
+		if ( oldColor == null || !color.equals(oldColor) ) {
+			edit.getImage().dispose();
+			edit.setText(color.toString());
+			edit.setImage(GamaIcons.createTempColorIcon(color));
+			edit.setColor(color);
+		}
 		internalModification = false;
 	}
 

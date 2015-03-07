@@ -134,7 +134,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case CLEAR:
 				tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {

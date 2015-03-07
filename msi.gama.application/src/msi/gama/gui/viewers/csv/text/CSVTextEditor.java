@@ -40,7 +40,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	}
 
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -67,7 +67,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case -32:
 				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {

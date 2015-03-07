@@ -58,7 +58,7 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 	}
 
 	@Override
-	public ToolItem createItem(final GamaToolbar toolbar, final IToolbarDecoratedView view) {
+	public ToolItem createItem(final GamaToolbarSimple toolbar, final IToolbarDecoratedView view) {
 		return toolbar.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
 			"Browse through all displayed agents", new SelectionAdapter() {
 

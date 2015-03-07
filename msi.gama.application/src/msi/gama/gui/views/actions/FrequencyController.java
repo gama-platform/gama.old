@@ -51,12 +51,12 @@ public class FrequencyController {
 		return (int) (100 * (1 - slider));
 	}
 
-	public void install(final GamaToolbar tb) {
+	public void install(final GamaToolbarSimple tb) {
 		createFrequencyItem(tb);
 		createPauseItem(tb);
 	}
 
-	protected ToolItem createFrequencyItem(final GamaToolbar toolbar) {
+	protected ToolItem createFrequencyItem(final GamaToolbarSimple toolbar) {
 		SpeedContributionItem i = new SpeedContributionItem(getInit(), new IPositionChangeListener() {
 
 			@Override
@@ -77,7 +77,7 @@ public class FrequencyController {
 		return toolbar.control(c, SWT.DEFAULT);
 	}
 
-	protected ToolItem createPauseItem(final GamaToolbar toolbar) {
+	protected ToolItem createPauseItem(final GamaToolbarSimple toolbar) {
 		return toolbar.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE.getCode(), "Pause", "Pause or resume the current view",
 			new SelectionAdapter() {
 
@@ -201,7 +201,7 @@ public class FrequencyController {
 				return "Update every" + (i > 1 ? " " + i + " steps" : " step");
 			}
 		}, IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaColors.BLUE, IGamaColors.GRAY_LABEL);
-		Control c = i.createControl(tb);
+		Control c = i.createControl(tb.getToolbar(SWT.RIGHT));
 		tb.control(c, SWT.DEFAULT, SWT.RIGHT);
 
 	}

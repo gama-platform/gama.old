@@ -5,7 +5,7 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -21,7 +21,7 @@ import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 public class GamlQuickOutlinePopup extends QuickOutlinePopup {
 
 	private final Control textWidget;
-	private final GamaToolbar toolbar;
+	private final GamaToolbarSimple toolbar;
 
 	public GamlQuickOutlinePopup(final GamlEditor editor) {
 		super(editor.getEditorSite().getShell());

@@ -224,7 +224,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public void updateItemValues() {}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case NEW_MONITOR:
 				tb.button(IGamaIcons.MENU_ADD_MONITOR.getCode(), "Add new monitor", "Add new monitor",

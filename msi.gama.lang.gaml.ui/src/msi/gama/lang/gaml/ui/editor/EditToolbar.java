@@ -5,7 +5,7 @@ import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.GamaColorMenu;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.factories.DescriptionFactory;
@@ -35,7 +35,7 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 public class EditToolbar {
 
 	private GridData editGridData;
-	private GamaToolbar toolbar;
+	private GamaToolbarSimple toolbar;
 	private ToolItem minus, mark, line, folding;
 	private final GamlEditor editor;
 	private Font font;
@@ -101,7 +101,7 @@ public class EditToolbar {
 
 	public void createToolbar(final Composite parentComposite) {
 		toolbar =
-			new GamaToolbar(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
+			new GamaToolbarSimple(parentComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.FILL | SWT.BORDER)
 				./*
 				 * color(
 				 * IGamaColors.WHITE.color()).
@@ -474,7 +474,7 @@ public class EditToolbar {
 	/**
 	 * @return
 	 */
-	public GamaToolbar getToolbar() {
+	public GamaToolbarSimple getToolbar() {
 		return toolbar;
 	}
 }

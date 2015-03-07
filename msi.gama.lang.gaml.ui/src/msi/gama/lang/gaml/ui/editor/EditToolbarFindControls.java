@@ -6,7 +6,7 @@ package msi.gama.lang.gaml.ui.editor;
 
 import java.util.regex.Pattern;
 import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.*;
@@ -41,7 +41,7 @@ public class EditToolbarFindControls {
 		this.editor = editor;
 	}
 
-	public void fill(final GamaToolbar toolbar) {
+	public void fill(final GamaToolbarSimple toolbar) {
 
 		composite = new Composite(toolbar, SWT.NONE);
 		composite.setBackground(IGamaColors.WHITE.color());

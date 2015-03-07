@@ -201,7 +201,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		// final Label lock = new Label(expressionComposite, SWT.NONE);
 		// lock.setImage(IGamaIcons.SMALL_LOCK.image());
 		// lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
-		Composite compo = new Composite(toolbar, SWT.None);
+		Composite compo = new Composite(toolbar.getToolbar(SWT.RIGHT), SWT.None);
 		compo.setSize(new Point(200, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
@@ -827,7 +827,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 
 			case SAVE:

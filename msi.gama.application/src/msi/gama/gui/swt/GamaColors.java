@@ -146,6 +146,7 @@ public class GamaColors {
 	}
 
 	public static GamaUIColor get(final RGB rgb) {
+		if ( rgb == null ) { return null; }
 		GamaUIColor c = colors.get(rgb);
 		if ( c == null ) {
 			Color cc = getColor(rgb.red, rgb.green, rgb.blue);

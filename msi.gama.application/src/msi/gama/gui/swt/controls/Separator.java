@@ -44,14 +44,4 @@ public class Separator extends WorkbenchWindowControlContribution {
 		return true;
 	}
 
-	@Override
-	public void fill(final CoolBar parent, final int index) {
-		super.fill(parent, index);
-	}
-
-	@Override
-	public boolean isDynamic() {
-		return super.isDynamic();
-	}
-
 }

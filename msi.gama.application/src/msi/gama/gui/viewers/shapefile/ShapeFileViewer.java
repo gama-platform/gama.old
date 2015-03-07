@@ -155,7 +155,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			s = "Error in reading file information";
 			color = IGamaColors.ERROR;
 		}
-		ToolItem item = FlatButton.menu(toolbar, color, s).item(SWT.LEFT);
+		ToolItem item = toolbar.menu(color, s, SWT.LEFT);
 		((FlatButton) item.getControl()).addSelectionListener(new SelectionAdapter() {
 
 			Menu menu;
@@ -237,7 +237,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 	}
 
@@ -255,7 +255,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 
 		switch (code) {
 			case -32:

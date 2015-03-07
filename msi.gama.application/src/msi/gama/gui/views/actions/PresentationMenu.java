@@ -47,7 +47,7 @@ public class PresentationMenu extends GamaToolItem {
 	 * @see msi.gama.gui.views.actions.GamaViewItem#createItem()
 	 */
 	@Override
-	public ToolItem createItem(final GamaToolbar toolbar, final IToolbarDecoratedView view) {
+	public ToolItem createItem(final GamaToolbarSimple toolbar, final IToolbarDecoratedView view) {
 
 		return toolbar.menu("display.presentation2", "Presentation", "Presentation options", new SelectionAdapter() {
 

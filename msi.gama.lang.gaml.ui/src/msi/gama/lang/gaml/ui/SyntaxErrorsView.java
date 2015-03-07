@@ -197,7 +197,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -242,7 +242,7 @@ public class SyntaxErrorsView extends ProblemView implements IToolbarDecoratedVi
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case WARNINGS:
 				warningAction =

@@ -49,7 +49,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	// protected GamaToolbar leftToolbar, rightToolbar;
 
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -206,7 +206,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		// Do nothing by default. Subclasses may override to create specific buttons
 	}
 

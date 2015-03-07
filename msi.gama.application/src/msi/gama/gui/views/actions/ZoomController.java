@@ -63,7 +63,7 @@ public class ZoomController {
 		this.view = view;
 	}
 
-	public void install(final GamaToolbar tb) {
+	public void install(final GamaToolbarSimple tb) {
 		tb.addControlListener(new ControlAdapter() {
 
 			@Override

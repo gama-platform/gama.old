@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.controls.GamaToolbar;
+import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public abstract class GamaToolItem/* implements SelectionListener */{
 
-	protected abstract ToolItem createItem(GamaToolbar toolbar, final IToolbarDecoratedView view);
+	protected abstract ToolItem createItem(GamaToolbarSimple toolbar, final IToolbarDecoratedView view);
 
 	public void dispose() {}
 

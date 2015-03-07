@@ -133,7 +133,7 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case CONTINUE:
 				continueItem =

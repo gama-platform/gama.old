@@ -124,7 +124,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	private void displayInfoString() {
 		GamaUIColor color = IGamaColors.OK;
 		String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
-		ToolItem item = FlatButton.button(toolbar, color, result).item(SWT.LEFT);
+		toolbar.button(color, result, null, SWT.LEFT);
 		toolbar.refresh(true);
 	}
 
@@ -133,7 +133,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -635,7 +635,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 
 		switch (code) {
 			case -32:

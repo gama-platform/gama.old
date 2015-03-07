@@ -35,7 +35,8 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
 		toolbar.wipe(SWT.RIGHT);
 		for ( IContributionItem item : tbm.getItems() ) {
-			item.fill(toolbar, toolbar.getItemCount());
+			toolbar.item(item, SWT.RIGHT);
+			// item.fill(toolbar, toolbar.getItemCount());
 		}
 		tbm.removeAll();
 		tbm.update(true);
@@ -62,7 +63,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -79,7 +80,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {}
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {}
 
 	/**
 	 * @see msi.gama.gui.swt.controls.ITooltipDisplayer#stopDisplayingTooltips()

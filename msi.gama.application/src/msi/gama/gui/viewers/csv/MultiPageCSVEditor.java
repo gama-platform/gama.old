@@ -100,7 +100,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -121,7 +121,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case DUPLICATE_ROW:
 				tb.button("action.duplicate.row2", "Duplicate", "Duplicate Row", new SelectionAdapter() {
@@ -307,7 +307,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		tableViewer.addFilter(tableFilter);
 
 		// add the filtering and coloring when searching specific elements.
-		final Text searchText = new Text(toolbar, SWT.BORDER);
+		final Text searchText = new Text(toolbar.getToolbar(SWT.LEFT), SWT.BORDER);
 		toolbar.sep(16, SWT.LEFT);
 		toolbar.control(searchText, 150, SWT.LEFT);
 		searchText.addKeyListener(new KeyAdapter() {

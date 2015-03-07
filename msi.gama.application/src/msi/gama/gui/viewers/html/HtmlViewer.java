@@ -116,7 +116,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	}
 
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 	}
 
@@ -126,7 +126,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case BACK:
 				back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {

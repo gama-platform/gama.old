@@ -29,7 +29,7 @@ import org.eclipse.ui.*;
  * @since 19 janv. 2012
  * 
  */
-public class GamaToolbarFactory implements IGamaViewActions {
+public class GamaToolbarFactoryOld implements IGamaViewActions {
 
 	public static class GamaComposite extends Composite {
 
@@ -46,6 +46,11 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		if ( c instanceof GamaComposite ) { return ((GamaComposite) c).displayer; }
 		String parents = "";
 		Control t = c;
+		// while (t != null && !(t instanceof Shell)) {
+		// parents = t.getClass().getSimpleName() + " > " + parents;
+		// t = t.getParent();
+		// }
+		// System.out.println("Hierarchy: " + parents);
 		return findTooltipDisplayer(c.getParent());
 	}
 
@@ -67,6 +72,17 @@ public class GamaToolbarFactory implements IGamaViewActions {
 
 	public static int TOOLBAR_HEIGHT = GamaIcons.CORE_ICONS_HEIGHT.getValue();
 	public static int TOOLBAR_SEP = 4;
+
+	private static void createContributionItemOld(final IToolbarDecoratedView view, final int code,
+		final GamaToolbarSimple tb) {
+		switch (code) {
+			case IToolbarDecoratedView.SEP:
+				tb.sep(TOOLBAR_SEP);
+				break;
+			default:
+				view.createToolItem(code, tb);
+		}
+	}
 
 	private static void createContributionItem(final IToolbarDecoratedView view, final int code, final GamaToolbar2 tb) {
 		switch (code) {
@@ -113,16 +129,15 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		return layout;
 	}
 
-	private static Composite createToolbarComposite(final IToolbarDecoratedView view, final Composite composite) {
+	private static Composite createToolbarCompositeOld(final IToolbarDecoratedView view, final Composite composite) {
 		final Composite toolbarComposite = new Composite(composite, SWT.None);
 		final GridData toolbarCompositeData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
 		toolbarComposite.setLayoutData(toolbarCompositeData2);
-		GridLayout layout = new GridLayout(1, false);
-		layout.verticalSpacing = 0;
+		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
-		layout.marginTop = 0;
-		layout.marginBottom = 0;
+		layout.marginHeight = 0;
 		toolbarComposite.setLayout(layout);
 		toolbarComposite.setBackground(IGamaColors.WHITE.color());
 		// Creating the toggle
@@ -153,6 +168,89 @@ public class GamaToolbarFactory implements IGamaViewActions {
 
 	}
 
+	private static Composite createToolbarComposite(final IToolbarDecoratedView view, final Composite composite) {
+		final Composite toolbarComposite = new Composite(composite, SWT.None);
+		final GridData toolbarCompositeData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
+		toolbarComposite.setLayoutData(toolbarCompositeData2);
+		GridLayout layout = new GridLayout(1, false);
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		// layout.marginBottom = 8;
+		// layout.marginLeft = 8;
+		// layout.horizontalSpacing = 0;
+		// layout.verticalSpacing = 0;
+		layout.marginWidth = 0;
+		layout.marginTop = 4;
+		layout.marginBottom = 8;
+		toolbarComposite.setLayout(layout);
+		toolbarComposite.setBackground(IGamaColors.WHITE.color());
+		// Creating the toggle
+		Action toggle = new ToggleAction() {
+
+			@Override
+			public void run() {
+				show = !show;
+				toolbarCompositeData2.exclude = !show;
+				toolbarComposite.setVisible(show);
+				toolbarComposite.getParent().layout();
+				setIcon();
+			}
+		};
+		// Install the toogle in the view site
+		IWorkbenchSite site = view.getSite();
+		if ( site instanceof IViewSite ) {
+			IToolBarManager2 tm = (IToolBarManager2) ((IViewSite) site).getActionBars().getToolBarManager();
+			tm.add(toggle);
+			tm.update(true);
+		} else if ( site instanceof IEditorSite ) {
+			// WARNING Disabled for the moment.
+			// IActionBars tm = ((IEditorSite) site).getActionBars();
+			// tm.getToolBarManager().add(toggle);
+			// tm.updateActionBars();
+		}
+		return toolbarComposite;
+
+	}
+
+	public static Composite createToolbarsOld(final IToolbarDecoratedView view, final Composite composite) {
+		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
+		final Composite toolbarComposite = createToolbarCompositeOld(view, intermediateComposite);
+		Composite childComposite = new Composite(intermediateComposite, SWT.None);
+		childComposite.setLayoutData(getLayoutDataForChild());
+		childComposite.setLayout(getLayoutForChild());
+
+		final GamaToolbarSimple leftToolbar =
+			new GamaToolbarSimple(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.LEFT | SWT.NO_FOCUS)
+				.height(TOOLBAR_HEIGHT);
+
+		// leftToolbar.setBackground(IGamaColors.WHITE.color());
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.verticalIndent = 0;
+		data.horizontalAlignment = SWT.LEFT;
+		data.minimumWidth = TOOLBAR_HEIGHT * 2;
+		leftToolbar.setLayoutData(data);
+
+		final GamaToolbarSimple rightToolbar =
+			new GamaToolbarSimple(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.LEFT | SWT.NO_FOCUS)
+				.height(TOOLBAR_HEIGHT);
+		// rightToolbar.setBackground(IGamaColors.WHITE.color());
+		data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.verticalIndent = 0;
+		data.horizontalAlignment = SWT.LEFT;
+		data.minimumWidth = TOOLBAR_HEIGHT * 2;
+		rightToolbar.setLayoutData(data);
+		view.setToolbars(leftToolbar, rightToolbar);
+		composite.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(final DisposeEvent e) {
+				disposeToolbarsOld(view, leftToolbar, rightToolbar);
+			}
+		});
+		buildToolbarOld(view, rightToolbar, view.getToolbarActionsId());
+		return childComposite;
+	}
+
 	public static Composite createToolbars(final IToolbarDecoratedView view, final Composite composite) {
 		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
 		final Composite toolbarComposite = createToolbarComposite(view, intermediateComposite);
@@ -162,9 +260,23 @@ public class GamaToolbarFactory implements IGamaViewActions {
 
 		final GamaToolbar2 leftToolbar =
 			new GamaToolbar2(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS, TOOLBAR_HEIGHT);
+
+		// leftToolbar.setBackground(IGamaColors.WHITE.color());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// data.verticalIndent = 4;
+		// data.horizontalAlignment = SWT.CENTER;
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		leftToolbar.setLayoutData(data);
+
+		// final GamaToolbar rightToolbar =
+		// new GamaToolbar(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.LEFT | SWT.NO_FOCUS)
+		// .height(TOOLBAR_HEIGHT);
+		// // rightToolbar.setBackground(IGamaColors.WHITE.color());
+		// data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// data.verticalIndent = 0;
+		// data.horizontalAlignment = SWT.RIGHT;
+		// data.minimumWidth = TOOLBAR_HEIGHT * 2;
+		// rightToolbar.setLayoutData(data);
 		view.setToolbar(leftToolbar);
 		composite.addDisposeListener(new DisposeListener() {
 
@@ -177,6 +289,17 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		return childComposite;
 	}
 
+	public static void disposeToolbarsOld(final IToolbarDecoratedView view, final GamaToolbarSimple leftToolbar,
+		final GamaToolbarSimple rightToolbar) {
+		if ( leftToolbar != null && !leftToolbar.isDisposed() ) {
+			leftToolbar.dispose();
+		}
+		if ( rightToolbar != null && !rightToolbar.isDisposed() ) {
+			rightToolbar.dispose();
+		}
+		view.setToolbars(null, null);
+	}
+
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 leftToolbar) {
 		if ( leftToolbar != null && !leftToolbar.isDisposed() ) {
 			leftToolbar.dispose();
@@ -184,10 +307,36 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		view.setToolbar(null);
 	}
 
+	public static void resetToolbarOld(final IToolbarDecoratedView view, final GamaToolbarSimple tb) {
+		if ( tb == null ) { return; }
+		tb.wipe();
+		buildToolbarOld(view, tb, view.getToolbarActionsId());
+	}
+
 	public static void resetToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if ( tb == null ) { return; }
 		tb.wipe(SWT.RIGHT);
 		buildToolbar(view, tb, view.getToolbarActionsId());
+	}
+
+	public static void buildToolbarOld(final IToolbarDecoratedView view, final GamaToolbarSimple tb,
+		final Integer ... codes) {
+		if ( codes == null ) { return; }
+		if ( view instanceof IToolbarDecoratedView.Sizable ) {
+			FontSizer fs = new FontSizer((IToolbarDecoratedView.Sizable) view);
+			fs.install(tb);
+		}
+		if ( view instanceof IToolbarDecoratedView.Pausable ) {
+			FrequencyController fc = new FrequencyController((IToolbarDecoratedView.Pausable) view);
+			fc.install(tb);
+		}
+		if ( view instanceof IToolbarDecoratedView.Zoomable ) {
+			ZoomController zc = new ZoomController((IToolbarDecoratedView.Zoomable) view);
+			zc.install(tb);
+		}
+		for ( Integer i : codes ) {
+			createContributionItemOld(view, i, tb);
+		}
 	}
 
 	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb, final Integer ... codes) {

@@ -343,14 +343,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
-		toolbar.sep(4, SWT.LEFT);
 		boolean isBatch = experimentTypes.get(index);
 		Image image = isBatch ? IGamaIcons.BUTTON_BATCH.image() : IGamaIcons.BUTTON_GUI.image();
-		ToolItem t = FlatButton.button(toolbar, IGamaColors.OK, text, image).item(SWT.LEFT);
+		ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 		String type = isBatch ? "batch" : "regular";
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
 		((FlatButton) t.getControl()).addSelectionListener(listener);
-
+		toolbar.sep(4, SWT.LEFT);
 	}
 
 	@Override
@@ -600,7 +599,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void setToolbars(final GamaToolbar left, final GamaToolbar right) {
+	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
 		// leftToolbar = left;
 		// rightToolbar = right;
 	}
@@ -669,7 +668,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		// nothing by default
 	}
 

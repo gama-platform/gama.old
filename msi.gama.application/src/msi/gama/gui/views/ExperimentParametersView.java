@@ -24,7 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
@@ -78,8 +78,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
 		toolbar.sep(2, SWT.LEFT);
 		for ( final IStatement command : userCommands ) {
-			FlatButton f = FlatButton.button(toolbar, IGamaColors.BLUE, command.getName());
-			f.addSelectionListener(new SelectionAdapter() {
+			ToolItem f = toolbar.button(IGamaColors.BLUE, command.getName(), null, SWT.LEFT);
+			((FlatButton) f.getControl()).addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -96,7 +96,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 				}
 
 			});
-			f.item(SWT.LEFT);
 			toolbar.sep(2, SWT.LEFT);
 		}
 		toolbar.refresh(true);
@@ -113,7 +112,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbar tb) {
+	public void createToolItem(final int code, final GamaToolbarSimple tb) {
 		switch (code) {
 			case REVERT:
 				tb.button(IGamaIcons.ACTION_REVERT.getCode(), "Revert parameter values",

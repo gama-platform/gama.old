@@ -20,13 +20,13 @@ import org.eclipse.swt.widgets.*;
  * @since 3 déc. 2014
  * 
  */
-public class GamaToolbar extends ToolBar {
+public class GamaToolbarSimple extends ToolBar {
 
 	private class SizerToolItem extends ToolItem {
 
 		public SizerToolItem(final int width, final int height) {
-			super(GamaToolbar.this, SWT.FLAT);
-			setImage(GamaIcons.createSizer(GamaToolbar.this.getBackground(), width, height).image());
+			super(GamaToolbarSimple.this, SWT.FLAT);
+			setImage(GamaIcons.createSizer(GamaToolbarSimple.this.getBackground(), width, height).image());
 			// setEnabled(false);
 		}
 
@@ -48,7 +48,7 @@ public class GamaToolbar extends ToolBar {
 	SizerToolItem sizerItem;
 	ControlListener widthListener;
 
-	public GamaToolbar(final Composite parent, final int style) {
+	public GamaToolbarSimple(final Composite parent, final int style) {
 		super(parent, style);
 		setBackground(IGamaColors.WHITE.color());
 	}
@@ -79,7 +79,7 @@ public class GamaToolbar extends ToolBar {
 		return create(null, null, null, null, SWT.SEPARATOR, false);
 	}
 
-	public GamaToolbar width(final Control parent) {
+	public GamaToolbarSimple width(final Control parent) {
 		if ( widthListener != null ) {
 			removeControlListener(widthListener);
 		}
@@ -201,7 +201,7 @@ public class GamaToolbar extends ToolBar {
 		}
 	}
 
-	public GamaToolbar height(final int n) {
+	public GamaToolbarSimple height(final int n) {
 		// height = n;
 		if ( sizerItem != null && !sizerItem.isDisposed() && sizerItem.getImage() != null &&
 			sizerItem.getImage().getBounds().height == n ) { return this; }

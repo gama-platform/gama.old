@@ -22,13 +22,13 @@ public interface IToolbarDecoratedView {
 
 	public IWorkbenchSite getSite();
 
-	public void setToolbars(GamaToolbar left, GamaToolbar right);
+	public void setToolbars(GamaToolbarSimple left, GamaToolbarSimple right);
 
 	public void setToolbar(GamaToolbar2 toolbar);
 
 	public Integer[] getToolbarActionsId();
 
-	public void createToolItem(int code, GamaToolbar tb);
+	public void createToolItem(int code, GamaToolbarSimple tb);
 
 	public static interface Pausable extends IToolbarDecoratedView {
 

@@ -39,7 +39,7 @@ public class FontSizer {
 		this.view = view;
 	}
 
-	public void install(final GamaToolbar tb) {
+	public void install(final GamaToolbarSimple tb) {
 		// We add a control listener to the toolbar in order to install the gesture once the control to resize have been created.
 		tb.addControlListener(new ControlAdapter() {
 
