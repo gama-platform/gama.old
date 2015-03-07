@@ -36,9 +36,8 @@ import org.eclipse.ui.part.*;
  */
 public class ImageViewer extends EditorPart implements IReusableEditor, IToolbarDecoratedView.Zoomable {
 
-	// GamaToolbar leftToolbar, rightToolbar;
 	GamaToolbar2 toolbar;
-	GamaUIColor background = IGamaColors.WHITE;
+	GamaUIColor background = GamaColors.get(SwtGui.IMAGE_VIEWER_BACKGROUND.getValue());
 	private Image image;
 	private ImageData imageData;
 	private ScrolledComposite scroll;

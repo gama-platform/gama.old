@@ -1,6 +1,8 @@
 package msi.gama.gui.viewers.shapefile;
 
+import java.awt.Color;
 import java.io.*;
+import java.util.List;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.AgentsMenu;
@@ -22,10 +24,13 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.*;
 import org.geotools.renderer.lite.StreamingRenderer;
+import org.geotools.styling.*;
 import org.geotools.swt.SwtMapPane;
 import org.geotools.swt.event.MapMouseEvent;
+import org.geotools.swt.styling.simple.*;
 import org.geotools.swt.tool.CursorTool;
 import org.geotools.swt.utils.Utils;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 
 public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable {
@@ -106,6 +111,19 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			SimpleFeatureSource featureSource = store.getFeatureSource();
 			org.geotools.styling.Style style = Utils.createStyle(f, featureSource);
 			Layer layer = new FeatureLayer(featureSource, style);
+			Mode mode = determineMode(featureSource.getSchema(), "Polygon");
+			FeatureTypeStyle fts;
+			List<FeatureTypeStyle> ftsList = style.featureTypeStyles();
+			if ( ftsList.size() > 0 ) {
+				fts = ftsList.get(0);
+			} else {
+				fts = null;
+			}
+			if ( fts != null ) {
+				this.setFillColor(SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), mode, fts);
+				this.setStrokeColor(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), mode, fts);
+				((StyleLayer) layer).setStyle(style);
+			}
 			content.addLayer(layer);
 		} catch (IOException e) {
 			System.out.println("Unable to view file " + path);
@@ -344,5 +362,75 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 
 		}
 
+	}
+
+	public void setStrokeColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
+		if ( mode == Mode.LINE ) {
+			LineSymbolizer sym = SLD.lineSymbolizer(fts);
+			SLD.setLineColour(sym, color);
+		} else if ( mode == Mode.POLYGON ) {
+			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
+			Stroke s = new StyleBuilder().createStroke(color);
+			sym.setStroke(s);
+		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
+			PointSymbolizer sym = SLD.pointSymbolizer(fts);
+			SLD.setPointColour(sym, color);
+		}
+	}
+
+	public Stroke getStroke(final Mode mode, final FeatureTypeStyle fts) {
+		Stroke stroke = null;
+		if ( mode == Mode.LINE ) {
+			LineSymbolizer sym = SLD.lineSymbolizer(fts);
+			return SLD.stroke(sym);
+		} else if ( mode == Mode.POLYGON ) {
+			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
+			return SLD.stroke(sym);
+		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
+			PointSymbolizer sym = SLD.pointSymbolizer(fts);
+			return SLD.stroke(sym);
+		}
+		return new StyleBuilder().createStroke();
+	}
+
+	public Fill getFill(final Mode mode, final FeatureTypeStyle fts) {
+		if ( mode == Mode.POLYGON ) {
+			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
+			return SLD.fill(sym);
+		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
+			PointSymbolizer sym = SLD.pointSymbolizer(fts);
+			return SLD.fill(sym);
+		}
+		return new StyleBuilder().createFill();
+	}
+
+	public void setFillColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
+		if ( mode == Mode.POLYGON ) {
+			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
+			Fill s = new StyleBuilder().createFill(color);
+			sym.setFill(s);
+		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
+			PointSymbolizer sym = SLD.pointSymbolizer(fts);
+			SLD.setPointColour(sym, color);
+		}
+	}
+
+	public Mode determineMode(final SimpleFeatureType schema, final String def) {
+		if ( schema == null ) {
+			return Mode.NONE;
+		} else if ( SLDs.isLine(schema) ) {
+			return Mode.LINE;
+		} else if ( SLDs.isPolygon(schema) ) {
+			return Mode.POLYGON;
+		} else if ( SLDs.isPoint(schema) ) {
+			return Mode.POINT;
+		} else { // default
+			if ( def.equals("Polygon") ) {
+				return Mode.POLYGON;
+			} else if ( def.equals("Line") ) {
+				return Mode.LINE;
+			} else if ( def.equals("Point") ) { return Mode.POINT; }
+		}
+		return Mode.ALL; // we are a generic geometry
 	}
 }

@@ -12,11 +12,13 @@
 package msi.gama.gui.swt;
 
 import gnu.trove.map.hash.THashMap;
+import java.awt.Color;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.*;
+import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
@@ -112,6 +114,18 @@ public class SwtGui implements IGui {
 	private static int dialogReturnCode;
 	private static final List<IDisplaySurface> surfaces = new ArrayList();
 	private static IPartListener2 partListener;
+
+	public static final Entry<Color> SHAPEFILE_VIEWER_FILL = GamaPreferences
+		.create("shapefile.viewer.background", "Default fill color", Color.LIGHT_GRAY, IType.COLOR)
+		.in(GamaPreferences.LIBRARIES).group("Shapefile viewer (settings effective for new viewers)");
+
+	public static final Entry<Color> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
+		.create("shapefile.viewer.line.color", "Default line color", Color.black, IType.COLOR)
+		.in(GamaPreferences.LIBRARIES).group("Shapefile viewer (settings effective for new viewers)");
+
+	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
+		.create("image.viewer.background", "Default background color", Color.white, IType.COLOR)
+		.in(GamaPreferences.LIBRARIES).group("Image viewer (settings effective for new viewers)");
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);

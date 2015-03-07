@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.viewers.shapefile.ShapeFileViewer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -82,7 +82,7 @@ public class ShapeFileStyleOverlay extends PopupDialog {
 		} else {
 			fts = null;
 		}
-		this.mode = determineMode((SimpleFeatureType) source.getSchema(), true);
+		this.mode = view.determineMode((SimpleFeatureType) source.getSchema(), "Polygon");
 	}
 
 	private Style getStyle() {
@@ -90,11 +90,15 @@ public class ShapeFileStyleOverlay extends PopupDialog {
 		Style s = null;
 		SimpleFeatureType schema = featureCollection.getSchema();
 		if ( SLDs.isLine(schema) ) {
-			s = SLD.createLineStyle(Color.blue, 1);
+			s = SLD.createLineStyle(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), 1);
 		} else if ( SLDs.isPoint(schema) ) {
-			s = SLD.createPointStyle("Circle", Color.blue, Color.lightGray, 1f, 3f);
+			s =
+				SLD.createPointStyle("Circle", SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(),
+					SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), 1f, 3f);
 		} else if ( SLDs.isPolygon(schema) ) {
-			s = SLD.createPolygonStyle(Color.blue, Color.lightGray, 1f);
+			s =
+				SLD.createPolygonStyle(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(),
+					SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), 1f);
 		}
 		return s;
 	}
@@ -215,103 +219,29 @@ public class ShapeFileStyleOverlay extends PopupDialog {
 		// modeEditor = EditorFactory.choose(compo, "Mode:", "All", false, modeNames, null);
 
 		lineColorEditor =
-			EditorFactory.create(compo, "Line color:", SLD.color(getStroke()), new EditorListener<Color>() {
-
-				@Override
-				public void valueModified(final Color newValue) throws GamaRuntimeException {
-					setStrokeColor(newValue);
-					layer.setStyle(style);
-				}
-
-			});
-		if ( mode != Mode.LINE ) {
-			fillColorEditor =
-				EditorFactory.create(compo, "Fill color:", SLD.color(getFill()), new EditorListener<Color>() {
+			EditorFactory.create(compo, "Line color:", SLD.color(view.getStroke(mode, fts)),
+				new EditorListener<Color>() {
 
 					@Override
 					public void valueModified(final Color newValue) throws GamaRuntimeException {
-						setFillColor(newValue);
+						view.setStrokeColor(newValue, mode, fts);
 						layer.setStyle(style);
 					}
+
 				});
+		if ( mode != Mode.LINE ) {
+			fillColorEditor =
+				EditorFactory.create(compo, "Fill color:", SLD.color(view.getFill(mode, fts)),
+					new EditorListener<Color>() {
+
+						@Override
+						public void valueModified(final Color newValue) throws GamaRuntimeException {
+							view.setFillColor(newValue, mode, fts);
+							layer.setStyle(style);
+						}
+					});
 		}
 		return compo;
-	}
-
-	private void setStrokeColor(final Color color) {
-		if ( mode == Mode.LINE ) {
-			LineSymbolizer sym = SLD.lineSymbolizer(fts);
-			SLD.setLineColour(sym, color);
-		} else if ( mode == Mode.POLYGON ) {
-			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
-			Stroke s = new StyleBuilder().createStroke(color);
-			sym.setStroke(s);
-		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
-			PointSymbolizer sym = SLD.pointSymbolizer(fts);
-			SLD.setPointColour(sym, color);
-		}
-	}
-
-	private Stroke getStroke() {
-		Stroke stroke = null;
-		if ( mode == Mode.LINE ) {
-			LineSymbolizer sym = SLD.lineSymbolizer(fts);
-			return SLD.stroke(sym);
-		} else if ( mode == Mode.POLYGON ) {
-			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
-			return SLD.stroke(sym);
-		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
-			PointSymbolizer sym = SLD.pointSymbolizer(fts);
-			return SLD.stroke(sym);
-		}
-		return new StyleBuilder().createStroke();
-	}
-
-	private Fill getFill() {
-		if ( mode == Mode.POLYGON ) {
-			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
-			return SLD.fill(sym);
-		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
-			PointSymbolizer sym = SLD.pointSymbolizer(fts);
-			return SLD.fill(sym);
-		}
-		return new StyleBuilder().createFill();
-	}
-
-	private void setFillColor(final Color color) {
-		if ( mode == Mode.POLYGON ) {
-			PolygonSymbolizer sym = SLD.polySymbolizer(fts);
-			Fill s = new StyleBuilder().createFill(color);
-			sym.setFill(s);
-		} else if ( mode == Mode.POINT || mode == Mode.ALL ) { // default to handling as Point
-			PointSymbolizer sym = SLD.pointSymbolizer(fts);
-			SLD.setPointColour(sym, color);
-		}
-	}
-
-	public Mode determineMode(final SimpleFeatureType schema, final boolean askUser) {
-		if ( schema == null ) {
-			return Mode.NONE;
-		} else if ( SLDs.isLine(schema) ) {
-			return Mode.LINE;
-		} else if ( SLDs.isPolygon(schema) ) {
-			return Mode.POLYGON;
-		} else if ( SLDs.isPoint(schema) ) {
-			return Mode.POINT;
-		} else {
-			// we must be Geometry?
-			if ( askUser ) {
-				// could not figure it out from the schema
-				// try trusting the user?
-				String _mode = modeEditor.getCurrentValue();
-				if ( _mode.equals("Polygon") ) {
-					return Mode.POLYGON;
-				} else if ( _mode.equals("Line") ) {
-					return Mode.LINE;
-				} else if ( _mode.equals("Point") ) { return Mode.POINT; }
-			}
-			return Mode.ALL; // we are a generic geometry
-		}
 	}
 
 	protected void refresh() {

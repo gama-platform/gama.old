@@ -164,6 +164,13 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 						getOutput().getSurface().resizeImage(r.width, r.height, false);
 						getOutput().getSurface().updateDisplay();
 
+						GuiUtils.run(new Runnable() {
+
+							@Override
+							public void run() {
+								parent.layout(true, true);
+							}
+						});
 					}
 				});
 
