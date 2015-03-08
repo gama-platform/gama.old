@@ -199,10 +199,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
 		if ( toolbar == null || toolbar.isDisposed() ) { return; }
-		final int width = 2 * (toolbar.getParent().getBounds().width - toolbar.getSize().x) / 3; // revoir cela
-		toolbar.wipe(SWT.LEFT);
-		toolbar.tooltip(text, color, width, SWT.LEFT);
-		toolbar.refresh(true);
+		toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
 	@Override

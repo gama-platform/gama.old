@@ -874,17 +874,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		if ( tooltip != null && !tooltip.isDisposed() ) {
 			tooltip.dispose();
 			tooltip = null;
-			toolbar.refresh(true);
 		}
 	}
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
 		if ( toolbar == null || toolbar.isDisposed() ) { return; }
-		final int width = toolbar.getParent().getBounds().width - toolbar.getSize().x / 3;
 		stopDisplayingTooltips();
-		tooltip = toolbar.tooltip(text, color, width, SWT.LEFT);
-		toolbar.refresh(true);
+		tooltip = toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
 }

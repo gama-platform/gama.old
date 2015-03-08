@@ -204,7 +204,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	public void setFocus() {
 		text.setFocus();
-		displayTooltip();
+		// displayTooltip();
 	}
 
 	/**

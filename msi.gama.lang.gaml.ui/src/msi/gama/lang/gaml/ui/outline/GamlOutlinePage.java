@@ -4,7 +4,6 @@
  */
 package msi.gama.lang.gaml.ui.outline;
 
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
@@ -20,9 +19,8 @@ import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
  * @since 24 nov. 2014
  * 
  */
-public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedView, ITooltipDisplayer {
+public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedView {
 
-	// protected GamaToolbar leftToolbar, rightToolbar;
 	GamaToolbar2 toolbar;
 	protected Composite intermediate;
 
@@ -81,18 +79,6 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	 */
 	@Override
 	public void createToolItem(final int code, final GamaToolbarSimple tb) {}
-
-	/**
-	 * @see msi.gama.gui.swt.controls.ITooltipDisplayer#stopDisplayingTooltips()
-	 */
-	@Override
-	public void stopDisplayingTooltips() {}
-
-	/**
-	 * @see msi.gama.gui.swt.controls.ITooltipDisplayer#displayTooltip(java.lang.String, msi.gama.gui.swt.GamaColors.GamaUIColor)
-	 */
-	@Override
-	public void displayTooltip(final String text, final GamaUIColor color) {}
 
 	/**
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)

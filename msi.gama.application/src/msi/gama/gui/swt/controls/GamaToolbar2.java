@@ -4,6 +4,8 @@
  */
 package msi.gama.gui.swt.controls;
 
+import java.io.*;
+import java.util.ArrayList;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
@@ -128,33 +130,28 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public ToolItem
-		tooltip(final String s, final GamaUIColor color, final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
+	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		if ( s == null ) { return null; }
-		final Composite c = new Composite(side == SWT.LEFT ? left : right, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
-		c.setLayout(layout);
-		c.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(final PaintEvent e) {
-				if ( e.width == 0 || e.height == 0 ) { return; }
-				GC gc = e.gc;
-				gc.setAntialias(SWT.ON);
-				gc.setBackground(IGamaColors.WHITE.color());
-				gc.fillRectangle(e.x, e.y, e.width, e.height);
-				gc.setBackground(color.inactive());
-				gc.fillRoundRectangle(e.x + 4, e.y + 4, e.width - 8, e.height - 8, 5, 5);
-			}
-		});
-
-		Label label = new Label(c, SWT.WRAP);
+		final GamaToolbarSimple tb = side == SWT.LEFT ? left : right;
+		final GamaToolbarSimple other = side == SWT.LEFT ? right : left;
+		int width = getSize().x - other.getSize().x - 30;
+		wipe(side);
+		Label label = new Label(tb, SWT.WRAP);
 		label.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
-		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		label.setLayoutData(data);
-		label.setText(s);
-		// label.setSize(width - 4, this.getBounds().height);
-		ToolItem t = control(c, /* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
+		String newString = "";
+		java.util.List<String> result = new ArrayList();
+		try {
+			BufferedReader reader = new BufferedReader(new StringReader(s));
+			String line = reader.readLine();
+			while (line != null) {
+				newString += line;
+				line = reader.readLine();
+			}
+		} catch (IOException exc) {}
+		label.setText(newString);
+		label.setFont(SwtGui.getSmallFont());
+		label.setBackground(color.inactive());
+		ToolItem t = control(label, /* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
 		refresh(true);
 		return t;
 	}

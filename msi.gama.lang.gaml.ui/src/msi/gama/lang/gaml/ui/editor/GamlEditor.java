@@ -335,40 +335,38 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Override
 	public void stopDisplayingTooltips() {
-		updateToolbar(state);
+		updateToolbar(state, true);
 	}
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
 		if ( toolbar == null || toolbar.isDisposed() ) { return; }
-		final int width = toolbar.getParent().getBounds().width - toolbar.getSize().x / 3;
-		toolbar.wipe(SWT.LEFT);
-		toolbar.tooltip(text, color, width, SWT.LEFT);
-		toolbar.refresh(true);
+		toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
-	private void updateToolbar(final GamlEditorState newState) {
-		if ( state.equals(newState) ) { return; }
-		Display.getDefault().asyncExec(new Runnable() {
+	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
+		if ( forceState || !state.equals(newState) ) {
+			Display.getDefault().asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
-				if ( toolbar == null || toolbar.isDisposed() ) { return; }
-				GamaUIColor c = state.getColor();
-				String msg = state.getStatus();
-				if ( msg != null ) {
-					toolbar.status((Image) null, msg, c, SWT.LEFT);
-				} else {
-					toolbar.wipe(SWT.LEFT);
-					int i = 0;
-					for ( String e : state.abbreviations ) {
-						enableButton(i++, e);
+				@Override
+				public void run() {
+					if ( toolbar == null || toolbar.isDisposed() ) { return; }
+					GamaUIColor c = state.getColor();
+					String msg = state.getStatus();
+					if ( msg != null ) {
+						toolbar.status((Image) null, msg, c, SWT.LEFT);
+					} else {
+						toolbar.wipe(SWT.LEFT);
+						int i = 0;
+						for ( String e : state.abbreviations ) {
+							enableButton(i++, e);
+						}
+						toolbar.refresh(true);
 					}
-					toolbar.refresh(true);
-				}
 
-			}
-		});
+				}
+			});
+		}
 
 	}
 
@@ -383,7 +381,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	@Override
 	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ErrorCollector status) {
 		GamlEditorState newState = new GamlEditorState(status, newExperiments);
-		updateToolbar(newState);
+		updateToolbar(newState, false);
 		state = newState;
 	}
 
