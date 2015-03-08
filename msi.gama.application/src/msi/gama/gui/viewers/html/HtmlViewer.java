@@ -4,12 +4,15 @@
  */
 package msi.gama.gui.viewers.html;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.net.*;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -17,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
+import org.osgi.framework.Bundle;
 
 /**
  * Class BrowserEditor.
@@ -32,6 +36,26 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	private final static int HOME = -52;
 	private final static int REFRESH = -53;
 	private final static int STOP = -54;
+	private static String HOME_URL = null;
+
+	public static void openWelcomePage(final boolean ifEmpty) {
+		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
+		if ( ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
+		if ( HOME_URL == null ) {
+			Bundle bundle = Platform.getBundle("msi.gama.ext");
+			URL url = bundle.getEntry("/images/welcome.html");
+			try {
+				url = FileLocator.toFileURL(url);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+			HOME_URL = url.toString();
+		}
+		if ( HOME_URL != null ) {
+			GuiUtils.showWebEditor(HOME_URL, null);
+		}
+	}
 
 	Browser browser;
 	// private GamaToolbar leftToolbar;
@@ -144,7 +168,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						ApplicationWorkbenchWindowAdvisor.openWelcomePage(false);
+						openWelcomePage(false);
 						checkButtons();
 					}
 
@@ -216,7 +240,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						ApplicationWorkbenchWindowAdvisor.openWelcomePage(false);
+						openWelcomePage(false);
 						checkButtons();
 					}
 

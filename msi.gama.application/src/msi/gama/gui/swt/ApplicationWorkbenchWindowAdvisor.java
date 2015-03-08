@@ -11,21 +11,14 @@
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
-import java.io.IOException;
-import java.net.URL;
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.runtime.GAMA;
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
-import org.osgi.framework.Bundle;
 
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
-
-	private static String HOME_URL = null;
 
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
@@ -58,27 +51,8 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public void postWindowOpen() {
-		openWelcomePage(true);
+		HtmlViewer.openWelcomePage(true);
 		RearrangeMenus.run();
-	}
-
-	public static void openWelcomePage(final boolean ifEmpty) {
-		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
-		if ( ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
-		if ( HOME_URL == null ) {
-			Bundle bundle = Platform.getBundle("msi.gama.ext");
-			URL url = bundle.getEntry("/images/welcome.html");
-			try {
-				url = FileLocator.toFileURL(url);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
-			HOME_URL = url.toString();
-		}
-		if ( HOME_URL != null ) {
-			GuiUtils.showWebEditor(HOME_URL, null);
-		}
 	}
 
 }

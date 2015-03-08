@@ -8,7 +8,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class GamaIcon {
@@ -26,9 +25,10 @@ public class GamaIcon {
 		if ( descriptor == null ) {
 			descriptor =
 				AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, GamaIcons.DEFAULT_PATH + path + ".png");
+
 			if ( descriptor == null ) {
 				GuiUtils.debug("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png");
-				descriptor = GamaIcons.getEclipseIconDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK);
+				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}
 		return descriptor;

@@ -35,6 +35,10 @@ public class GamaIcons /* implements IGamaIcons */{
 		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
 		.among(16, 24).in(GamaPreferences.GENERAL).group("User interface");
 
+	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
+		.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.GENERAL)
+		.group("User interface");
+
 	static private GamaIcons instance = new GamaIcons();
 
 	public static GamaIcons getInstance() {

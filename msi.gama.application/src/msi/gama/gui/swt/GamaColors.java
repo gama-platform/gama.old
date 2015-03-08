@@ -32,17 +32,26 @@ public class GamaColors {
 			active = c;
 		}
 
+		// Returns a normal or lighter version of the color depending on the user's choice (see GamaIcons.CORE_ICONS_BRIGHTNESS). Used only for the basic palette
+		public GamaUIColor validate() {
+			if ( GamaIcons.CORE_ICONS_BRIGHTNESS.getValue() ) {
+				return this;
+			} else {
+				return GamaColors.get(lighter().getRGB());
+			}
+		}
+
 		@Override
 		public String toString() {
 			return active.getRed() + ", " + active.getGreen() + ", " + active.getBlue();
 		}
 
 		public int luminance() {
-			return (int) (0.2126 * active.getRed() + 0.7152 * active.getGreen() + 0.0722 * active.getBlue());
+			return GamaColors.luminanceOf(active);
 		}
 
 		public boolean isDark() {
-			return luminance() < 120;
+			return GamaColors.isDark(active);
 		}
 
 		public GamaUIColor(final Color c, final Color i) {
@@ -100,6 +109,10 @@ public class GamaColors {
 			if ( darker != null ) {
 				darker.dispose();
 				darker = null;
+			}
+			if ( lighter != null ) {
+				lighter.dispose();
+				lighter = null;
 			}
 
 		}
@@ -206,6 +219,22 @@ public class GamaColors {
 		PaletteData palette = data.palette;
 		int pixelValue = data.getPixel(0, 0);
 		return get(palette.getRGB(pixelValue));
+	}
+
+	/**
+	 * @param background
+	 * @return
+	 */
+	public static boolean isDark(final Color color) {
+		return luminanceOf(color) < 130;
 	};
+
+	public static int luminanceOf(final Color color) {
+		// return (int) (0.2126 * color.getRed() * color.getRed() / 255+ 0.7152 * color.getGreen() * color.getGreen() / 255+ 0.0722 * color.getBlue()* color.getRed() / 255); //first formula
+		return (int) (0.299 * color.getRed() * color.getRed() / 255 + 0.587 * color.getGreen() * color.getGreen() / 255 + 0.114 *
+			color.getBlue() * color.getBlue() / 255); // http://alienryderflex.com/hsp.html
+		// return (int) (0.241 * color.getRed() * color.getRed() / 255 + 0.691 * color.getGreen() * color.getGreen() / 255 + 0.068 * color.getBlue()* color.getBlue() / 255); //
+		// http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+	}
 
 }
