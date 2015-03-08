@@ -13,7 +13,7 @@ package msi.gama.gui.swt;
 
 import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.runtime.GAMA;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 
@@ -53,6 +53,18 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public void postWindowOpen() {
 		HtmlViewer.openWelcomePage(true);
 		RearrangeMenus.run();
+		// This code below is necessary because it happens that if an editor is already opened when launching GAMA,
+		// the keystrokes (like command-S) do not work on it until it has been deactivated and reactivated (at least on
+		// MacOS X)
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IEditorPart editor = page.getActiveEditor();
+		if ( editor != null ) {
+			IViewPart nav = page.findView("msi.gama.gui.view.GamaNavigator");
+			if ( nav != null ) {
+				page.activate(nav);
+				page.activate(editor);
+			}
+		}
 	}
 
 }
