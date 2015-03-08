@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
-import org.jfree.util.StringUtils;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
@@ -95,16 +94,14 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if ( !GuiUtils.isSimulationPerspective() ) { return null; }
 		if ( state == IGui.ERROR || state == IGui.WAIT ) { return label.getText(); }
 		StringBuilder sb = new StringBuilder(300);
-		String nl = StringUtils.getLineSeparator();
 		SimulationAgent simulation = GAMA.getSimulation();
 		if ( simulation == null ) { return "No simulation running"; }
 		SimulationClock clock = simulation.getClock();
-		sb.append("Cycles elapsed: ").append(Strings.TAB).append(clock.getCycle()).append(" | ");
-		sb.append("Simulated time: ").append(Strings.TAB).append(Strings.asDate(clock.getTime(), null)).append(nl);
-		sb.append("Durations | cycle: ").append(Strings.TAB).append(Strings.TAB).append(clock.getDuration())
-			.append("ms").append(" | ");
-		sb.append("average: ").append(Strings.TAB).append((int) clock.getAverageDuration()).append("ms").append(" | ");
-		sb.append("total: ").append(Strings.TAB).append(Strings.TAB).append(clock.getTotalDuration()).append("ms");
+
+		sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
+			Strings.asDate(clock.getTime(), null)));
+		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Durations (ms)", clock.getDuration(),
+			(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		return sb.toString();
 	}
 

@@ -849,7 +849,7 @@
                   commandId="org.eclipse.ui.newWizard"
                   disabledIcon=""
                   icon="icons/navigator/new.project2.png"
-                  label="GAMA Project..."
+                  label="Project..."
                   style="push">
                <parameter
                      name="newWizardId"
@@ -859,7 +859,7 @@
             <command
                   commandId="org.eclipse.ui.newWizard"
                   icon="icons/navigator/new.model2.png"
-                  label="Model File…"
+                  label="Model…"
                   style="push">
                <parameter
                      name="newWizardId"
@@ -879,14 +879,14 @@
          </menu>
          <menu
                icon="icons/navigator/navigator.import2.png"
-               id="menu.import"
+               id="menu.gama.import"
                label="Import..."
                mnemonic=" ">
             <command
                   commandId="org.eclipse.ui.file.import"
                   hoverIcon=""
                   icon="icons/navigator/navigator.import.project2.png"
-                  label="GAMA Project…"
+                  label="Project…"
                   style="push">
                <parameter
                      name="importWizardId"
@@ -906,7 +906,7 @@
             <command
                   commandId="org.eclipse.ui.file.import"
                   icon="icons/navigator/navigator.import.disk2.png"
-                  label="From Disk..."
+                  label="From disk..."
                   style="push">
                <parameter
                      name="importWizardId"
@@ -916,7 +916,7 @@
             <command
                   commandId="org.eclipse.ui.file.import"
                   icon="icons/navigator/navigator.import.archive2.png"
-                  label="From Archive..."
+                  label="From archive..."
                   style="push">
                <parameter
                      name="importWizardId"
@@ -1324,31 +1324,6 @@
                   definitionId="isInSimulationPerspective">
             </reference>
          </activeWhen>
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.PreferencesHandler"
-            commandId="org.eclipse.ui.window.preferences">
-         <activeWhen>
-            <or>
-               <reference
-                     definitionId="isInSimulationPerspective">
-               </reference>
-               <reference
-                     definitionId="isInModelingPerspective">
-               </reference>
-            </or>
-         </activeWhen>
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isInSimulationPerspective">
-               </reference>
-               <reference
-                     definitionId="isInModelingPerspective">
-               </reference>
-            </or>
-         </enabledWhen>
-         
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.SwitchToModeling"

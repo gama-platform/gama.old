@@ -109,7 +109,7 @@ public class Popup {
 		popupText.setBackground(provider.getPopupBackground().color());
 
 		// We fix the max. width to 400
-		final int maxPopupWidth = 400;
+		final int maxPopupWidth = 800;
 
 		// We compute the width of the text (+ 5 pixels to accomodate for the border)
 		final GC gc = new GC(popupText);

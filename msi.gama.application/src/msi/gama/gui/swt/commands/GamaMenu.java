@@ -6,6 +6,7 @@ package msi.gama.gui.swt.commands;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 
 /**
@@ -55,10 +56,22 @@ public abstract class GamaMenu {
 		return action(mainMenu, s, listener);
 	}
 
+	protected final GamaMenuItem action(final String s, final SelectionListener listener, final Image image) {
+		return action(mainMenu, s, listener, image);
+	}
+
 	protected final GamaMenuItem action(final Menu m, final String s, final SelectionListener listener) {
+		return action(m, s, listener, null);
+	}
+
+	protected final GamaMenuItem action(final Menu m, final String s, final SelectionListener listener,
+		final Image image) {
 		GamaMenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
 		action.addSelectionListener(listener);
+		if ( image != null ) {
+			action.setImage(image);
+		}
 		return action;
 	}
 
@@ -66,12 +79,25 @@ public abstract class GamaMenu {
 		return check(mainMenu, s, selected, listener);
 	}
 
+	protected final GamaMenuItem check(final String s, final boolean selected, final SelectionListener listener,
+		final Image image) {
+		return check(mainMenu, s, selected, listener, image);
+	}
+
 	protected final GamaMenuItem check(final Menu m, final String s, final boolean select,
 		final SelectionListener listener) {
+		return check(m, s, select, listener, null);
+	}
+
+	protected final GamaMenuItem check(final Menu m, final String s, final boolean select,
+		final SelectionListener listener, final Image image) {
 		GamaMenuItem action = createItem(m, SWT.CHECK);
 		action.setText(s);
 		action.setSelection(select);
 		action.addSelectionListener(listener);
+		if ( image != null ) {
+			action.setImage(image);
+		}
 		return action;
 	}
 

@@ -271,59 +271,34 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					}, SWT.RIGHT);
 				break;
 			case NEW:
-				newFileItem =
-					tb.menu("navigator/navigator.new2", "", "Create a project or a model", new SelectionAdapter() {
+				newFileItem = tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
 
-						MenuManager mm;
+					@Override
+					public void widgetSelected(final SelectionEvent trigger) {
+						GamaNavigatorNewMenu menu =
+							new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
+						final ToolItem target = (ToolItem) trigger.widget;
+						final ToolBar toolBar = target.getParent();
+						menu.open(toolBar, trigger);
 
-						private void initMenu() {
+					}
 
-							mm = new MenuManager("msi.gama.application.submenu.new");
-							CommandContributionItem cci;
-							// mm.setRemoveAllWhenShown(true);
-							// mm.addMenuListener(new IMenuListener() {
-							//
-							// @Override
-							// public void menuAboutToShow(final IMenuManager manager) {
-							// ISelection selection = getCommonViewer().getSelection();
-							// getNavigatorActionService().setContext(new ActionContext(selection));
-							// getNavigatorActionService().fillContextMenu(mm);
-							// }
-							// });
-							//
-							// getNavigatorActionService().prepareMenuForPlatformContributions(mm, getCommonViewer(),
-							// false);
-
-						}
-
-						@Override
-						public void widgetSelected(final SelectionEvent trigger) {
-							if ( mm == null ) {
-								initMenu();
-							}
-							boolean asMenu = trigger.detail == SWT.ARROW;
-							if ( !asMenu ) { return; }
-							final ToolItem target = (ToolItem) trigger.widget;
-							final ToolBar toolBar = target.getParent();
-
-							Menu menu = mm.createMenuBar(toolBar.getShell());
-							Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
-							menu.setLocation(point.x, point.y);
-							menu.setVisible(true);
-
-						}
-
-					}, SWT.RIGHT);
+				}, SWT.RIGHT);
 				break;
 			case IMPORT:
-				importItem =
-					tb.menu("navigator/navigator.import2", "", "Import a project or a model into GAMA",
-						new SelectionAdapter() {
+				importItem = tb.menu("navigator/navigator.import2", "", "Import...", new SelectionAdapter() {
 
-							@Override
-							public void widgetSelected(final SelectionEvent e) {}
+					@Override
+					public void widgetSelected(final SelectionEvent trigger) {
+						GamaNavigatorImportMenu menu =
+							new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
+						final ToolItem target = (ToolItem) trigger.widget;
+						final ToolBar toolBar = target.getParent();
+						menu.open(toolBar, trigger);
 
-						}, SWT.RIGHT);
+					}
+
+				}, SWT.RIGHT);
 		}
 
 	}
