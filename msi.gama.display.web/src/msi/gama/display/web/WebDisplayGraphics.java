@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'WebDisplayGraphics.java', in plugin 'msi.gama.display.web', is part of the source code of the 
+ * 
+ * 'WebDisplayGraphics.java', in plugin 'msi.gama.display.web', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -17,8 +17,6 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
-
-
 
 /**
  * Class WebDisplayGraphics.
@@ -49,22 +47,20 @@ public class WebDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawGrid()
-	 * @see msi.gama.common.interfaces.IGraphics#drawGrid(msi.gama.runtime.IScope, java.awt.image.BufferedImage,
-	 *      double[], boolean, boolean, boolean, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation,
-	 *      java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGraphics#drawGrid(msi.gama.runtime.IScope, java.awt.image.BufferedImage, double[], boolean, boolean, boolean, msi.gama.metamodel.shape.ILocation,
+	 *      msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer, java.lang.Double, double, java.lang.String)
 	 */
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, final Color gridColor,
-		final double cellSize, final String name) {
+		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
+		final Color gridColor, final double cellSize, final String name) {
 		return null;
 	}
 
 	/**
 	 * Method drawImage()
-	 * @see msi.gama.common.interfaces.IGraphics#drawImage(msi.gama.runtime.IScope, java.awt.image.BufferedImage,
-	 *      msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation, java.awt.Color, java.lang.Integer,
-	 *      java.lang.Double, boolean, java.lang.String)
+	 * @see msi.gama.common.interfaces.IGraphics#drawImage(msi.gama.runtime.IScope, java.awt.image.BufferedImage, msi.gama.metamodel.shape.ILocation, msi.gama.metamodel.shape.ILocation,
+	 *      java.awt.Color, java.lang.Integer, java.lang.Double, boolean, java.lang.String)
 	 */
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
@@ -75,8 +71,7 @@ public class WebDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawString()
-	 * @see msi.gama.common.interfaces.IGraphics#drawString(java.lang.String, java.awt.Color,
-	 *      msi.gama.metamodel.shape.ILocation, java.lang.Double, java.lang.String, java.lang.Integer,
+	 * @see msi.gama.common.interfaces.IGraphics#drawString(java.lang.String, java.awt.Color, msi.gama.metamodel.shape.ILocation, java.lang.Double, java.lang.String, java.lang.Integer,
 	 *      java.lang.Integer, java.lang.Double, java.lang.Boolean)
 	 */
 	@Override
@@ -88,8 +83,7 @@ public class WebDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawGamaShape()
-	 * @see msi.gama.common.interfaces.IGraphics#drawGamaShape(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape,
-	 *      java.awt.Color, boolean, java.awt.Color, java.lang.Integer, boolean)
+	 * @see msi.gama.common.interfaces.IGraphics#drawGamaShape(msi.gama.runtime.IScope, msi.gama.metamodel.shape.IShape, java.awt.Color, boolean, java.awt.Color, java.lang.Integer, boolean)
 	 */
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
@@ -131,7 +125,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 * @see msi.gama.common.interfaces.IGraphics#setHighlightColor(int[])
 	 */
 	@Override
-	public void setHighlightColor(final int[] rgb) {}
+	public void setHighlightColor(final Color h) {}
 
 	/**
 	 * Method beginDrawingLayers()
@@ -213,8 +207,7 @@ public class WebDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawChart()
-	 * @see msi.gama.common.interfaces.IGraphics#drawChart(msi.gama.runtime.IScope,
-	 *      msi.gama.common.interfaces.JFreeChart, java.lang.Double)
+	 * @see msi.gama.common.interfaces.IGraphics#drawChart(msi.gama.runtime.IScope, msi.gama.common.interfaces.JFreeChart, java.lang.Double)
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final BufferedImage chart, final Double z) {
