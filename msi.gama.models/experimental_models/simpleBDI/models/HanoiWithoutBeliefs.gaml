@@ -51,6 +51,7 @@ global
 			predicate da34 <- new_predicate("anddesire", true, ["first"::d3, "second"::d4], 100);
 			predicate masterplan <- new_predicate("anddesire", true, ["first"::da12, "second"::da34], 100);
 			do add_desire(masterplan);
+			isPlanning<-false;
 		}
 
 	}
@@ -103,6 +104,8 @@ entities
 
 	species hanoiphilosopher control: simple_bdi
 	{
+		bool isPlanning;
+
 		aspect default
 		{
 			draw circle(1) color: #white;
@@ -111,10 +114,14 @@ entities
 			write ("D:" + length(desire_base) + ":" + desire_base);
 			write ("I:" + length(intension_base) + ":" + intension_base);
 			write ("G:" + get_current_goal());
+		
+			draw circle(0.5) color: isPlanning ? #red : #green;	
+			
+			
 		}
 
 		action move (block over, agent under)
-		{
+		{   isPlanning<-false;
 			write ("move " + over + " on " + under + " from " + over.onwhat);
 			over.onwhat <- under;
 			ask over
@@ -165,12 +172,13 @@ entities
 			return res;
 		}
 
-		plan anddesire when: is_current_goal(new_predicate("anddesire")) priority: 3 executed_when: true
-		{
+		plan anddesire when: is_current_goal(new_predicate("anddesire")) priority: 3 finished_when: true
+		{  isPlanning<-true;
 			predicate currentgoal <- get_current_goal();
 			map goalparams <- currentgoal.parameters;
 			predicate subdesire1 <- predicate(goalparams at "first");
 			predicate subdesire2 <- predicate(goalparams at "second");
+			
 			if (testgoal(currentgoal))
 			{
 				write ("AND REMOVED!" + currentgoal);
@@ -194,8 +202,8 @@ entities
 
 		}
 
-		plan onblock when: is_current_goal(new_predicate("onblock")) priority: 2 executed_when: true
-		{
+		plan onblock when: is_current_goal(new_predicate("onblock")) priority: 2 finished_when: true
+		{   isPlanning<-true;
 			predicate currentgoal <- get_current_goal();
 			map goalparams <- currentgoal.parameters;
 			block overblock <- block(goalparams at "over");
@@ -226,8 +234,8 @@ entities
 
 		}
 
-		plan freeblock when: is_current_goal(new_predicate("free")) priority: 2 executed_when: true
-		{
+		plan freeblock when: is_current_goal(new_predicate("free")) priority: 2 finished_when: true
+		{   isPlanning<-true;
 			predicate currentgoal <- get_current_goal();
 			map goalparams <- currentgoal.parameters;
 			block underblock <- block(goalparams at "block");
@@ -258,7 +266,7 @@ experiment bditest type: gui
 {
 	output
 	{
-		display oi type: opengl camera_pos: { 50, -120, 70 } camera_up_vector: { 0.0, 1.0, 0.0 }
+		display oi type: opengl// camera_pos: { 50, -120, 70 } camera_up_vector: { 0.0, 1.0, 0.0 }
 		{
 			species table refresh: false;
 			species block;
