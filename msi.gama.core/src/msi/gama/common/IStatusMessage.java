@@ -4,7 +4,7 @@
  */
 package msi.gama.common;
 
-import msi.gama.common.util.ThreadedUpdater.IUpdaterMessage;
+import msi.gama.common.interfaces.IUpdaterMessage;
 
 /**
  * Class IStatusMessage.

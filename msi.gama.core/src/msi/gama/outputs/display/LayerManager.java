@@ -107,22 +107,20 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void enableLayer(final ILayer display, final Boolean enable) {
-		while (!surface.canBeUpdated()) {
-			try {
-				Thread.sleep(100);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		final boolean before = surface.canBeUpdated();
-		surface.canBeUpdated(false);
-		if ( enable ) {
-			enable(display);
-		} else {
-			disable(display);
-		}
-		surface.canBeUpdated(before);
 
+		surface.waitForUpdateAndRun(new Runnable() {
+
+			@Override
+			public void run() {
+				surface.canBeUpdated(false);
+				if ( enable ) {
+					enable(display);
+				} else {
+					disable(display);
+				}
+				surface.canBeUpdated(true);
+			}
+		});
 	}
 
 	@Override

@@ -261,8 +261,8 @@ public class FileOutput extends AbstractOutput {
 
 	@Override
 	public boolean step(final IScope scope) {
-		if ( scope.interrupted() ) { return false; }
-		setLastValue(data.value(scope));
+		if ( getScope().interrupted() ) { return false; }
+		setLastValue(data.value(getScope()));
 		return true;
 	}
 

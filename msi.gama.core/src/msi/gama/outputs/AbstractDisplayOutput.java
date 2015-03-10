@@ -29,6 +29,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	protected boolean disposed = false;
+	protected boolean synchro = false;
 
 	final Runnable opener = new Runnable() {
 
@@ -45,20 +46,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	public void open() {
 		super.open();
 		GuiUtils.run(opener);
-		setRefreshRate(getRefreshRate()); // Workaround for displaying the title
 	}
-
-	@Override
-	public void resume() {
-		if ( !paused ) { return; }
-		super.resume();
-	}
-
-	// @Override
-	// public void setRefreshRate(final int refresh) {
-	// super.setRefreshRate(refresh);
-	// GuiUtils.setViewRateOf(this, refresh);
-	// }
 
 	@Override
 	public void dispose() {
@@ -81,13 +69,18 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	@Override
-	public void forceUpdate() throws GamaRuntimeException {
-		update();
+	public boolean isUnique() {
+		return false;
 	}
 
 	@Override
-	public boolean isUnique() {
-		return false;
+	public boolean isSynchronized() {
+		return synchro;
+	}
+
+	@Override
+	public void setSynchronized(final boolean sync) {
+		synchro = sync;
 	}
 
 	@Override

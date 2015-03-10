@@ -95,7 +95,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			o.dispose();
 			outputs.values().remove(o);
 		} else {
-			o.pause();
+			o.setPaused(true);
 		}
 	}
 
@@ -159,7 +159,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			}
 
 			if ( scope.init(output) ) {
-				output.resume();
+				output.setPaused(false);
 				if ( scope.step(output) ) {
 					try {
 						output.open();
@@ -186,18 +186,12 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		final int cycle = scope.getClock().getCycle();
 		for ( final IOutput o : ImmutableList.copyOf(outputs.values()) ) {
 			if ( !o.isPaused() && o.isOpen() && o.isRefreshable() && o.getScope().step(o) ) {
-				// final long ii = o.getNextTime();
-				// if ( cycle >= ii ) {
-				// if ( scope.step(o) ) {
 				try {
 					o.update();
 				} catch (RuntimeException e) {
 					e.printStackTrace();
 					continue;
 				}
-				// o.setNextTime(cycle + o.getRefreshRate());
-				// }
-				// }
 			}
 		}
 		return true;

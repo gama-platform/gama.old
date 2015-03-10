@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGraphics.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IGraphics.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -34,8 +34,8 @@ public interface IGraphics {
 	public abstract int getDisplayHeightInPixels();
 
 	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, Color gridColor,
-		final double cellSize, String name);
+		final boolean isTextured, final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText,
+		Color gridColor, final double cellSize, String name);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Double angle,
@@ -58,7 +58,7 @@ public interface IGraphics {
 
 	public abstract void setQualityRendering(boolean quality);
 
-	void setHighlightColor(int[] rgb);
+	void setHighlightColor(Color h);
 
 	public abstract void beginDrawingLayers();
 

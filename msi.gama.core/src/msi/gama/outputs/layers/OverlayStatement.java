@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ThreadedUpdater;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -66,7 +65,7 @@ public class OverlayStatement extends AbstractLayerStatement implements IOverlay
 	List<int[]> constantColors;
 	IUpdaterTarget<OverlayInfo> overlay;
 
-	public static class OverlayInfo implements ThreadedUpdater.IUpdaterMessage {
+	public static class OverlayInfo implements IUpdaterMessage {
 
 		public String[] infos;
 

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AbstractDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AbstractDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,29 +22,30 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	protected double currentAlpha = 1;
-	protected Integer widthOfLayerInPixels;
-	protected Integer heightOfLayerInPixels;
-	protected Integer xOffsetInPixels;
-	protected Integer yOffsetInPixels;
-	protected Double xRatioBetweenPixelsAndModelUnits;
-	protected Double yRatioBetweenPixelsAndModelUnits;
-	protected Integer widthOfDisplayInPixels;
-	protected Integer heightOfDisplayInPixels;
-	protected Integer widthOfEnvironmentInModelUnits;
-	protected Integer heightOfEnvironmentInModelUnits;
+	protected int widthOfLayerInPixels;
+	protected int heightOfLayerInPixels;
+	protected int xOffsetInPixels;
+	protected int yOffsetInPixels;
+	protected double xRatioBetweenPixelsAndModelUnits;
+	protected double yRatioBetweenPixelsAndModelUnits;
+	final protected int widthOfDisplayInPixels;
+	final protected int heightOfDisplayInPixels;
+	final protected int widthOfEnvironmentInModelUnits;
+	final protected int heightOfEnvironmentInModelUnits;
 
 	public AbstractDisplayGraphics(final IDisplaySurface surface) {
-		initFor(surface);
-	}
-
-	@Override
-	public void initFor(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = (int) surface.getEnvWidth();
 		heightOfEnvironmentInModelUnits = (int) surface.getEnvHeight();
 		widthOfDisplayInPixels = surface.getDisplayWidth();
 		heightOfDisplayInPixels = surface.getDisplayHeight();
 		xRatioBetweenPixelsAndModelUnits = (double) widthOfDisplayInPixels / (double) widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = (double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits;
+		initFor(surface);
+	}
+
+	@Override
+	public void initFor(final IDisplaySurface surface) {
+
 		setQualityRendering(surface.getQualityRendering());
 	}
 
@@ -58,18 +59,9 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		return heightOfDisplayInPixels;
 	}
 
-	// @Override
-	// public abstract void beginHighlight();
-	//
-	// @Override
-	// public abstract void endHighlight();
-
-	// @Override
-	// public void setQualityRendering(final boolean quality) {}
-
 	@Override
-	public void setHighlightColor(final int[] rgb) {
-		highlightColor = new Color(rgb[0], rgb[1], rgb[2]);
+	public void setHighlightColor(final Color c) {
+		highlightColor = c;
 	}
 
 	@Override
@@ -148,10 +140,6 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public void endDrawingLayer(final ILayer layer) {
-		xOffsetInPixels = null;
-		yOffsetInPixels = null;
-		widthOfLayerInPixels = null;
-		heightOfLayerInPixels = null;
 		xRatioBetweenPixelsAndModelUnits = (double) widthOfDisplayInPixels / (double) widthOfEnvironmentInModelUnits;
 		yRatioBetweenPixelsAndModelUnits = (double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits;
 	}

@@ -35,20 +35,17 @@ import msi.gaml.types.Types;
 @display("image")
 public class ImageDisplaySurface implements IDisplaySurface {
 
+	private LayeredDisplayOutput output;
 	private boolean needsUpdate = true;
-	private double widthHeightConstraint = 1.0;
 	private BufferedImage buffImage = null;
 	private Graphics2D g2 = null;
 	private int width = 500, height = 500;
 	private IGraphics displayGraphics;
 	protected Color bgColor = Color.black;
 	ILayerManager manager;
-	private String snapshotFileName;
 	public static String snapshotFolder = "/tmp/";
-	public double envWidth, envHeight;
 	protected IScope scope;
-
-	public ImageDisplaySurface() {}
+	private LayeredDisplayData data;
 
 	public ImageDisplaySurface(final Object ... args) {}
 
@@ -56,8 +53,23 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
-	public void initialize(final IScope scope, final double w, final double h, final LayeredDisplayOutput output) {
-		outputChanged(scope, w, h, output);
+	public void initialize(final IScope scope, final LayeredDisplayOutput output) {
+		if ( output == null ) { return; }
+		this.scope = scope.copy();
+		data = output.getData();
+		scope.disableErrorReporting();
+		this.output = output;
+		bgColor = output.getBackgroundColor();
+		if ( manager == null ) {
+			manager = new LayerManager(this);
+			final List<? extends ISymbol> layers = output.getChildren();
+			for ( final ISymbol layer : layers ) {
+				manager.addLayer(AbstractLayer.createLayer(scope, (ILayerStatement) layer));
+			}
+		} else {
+			manager.outputChanged();
+		}
+
 	}
 
 	@Override
@@ -80,7 +92,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			return;
 		}
 
-		final String file = snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
+		final String file =
+			snapshotFolder + "/" + GAMA.getModel().getName() + "_display_" + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -108,30 +121,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void outputChanged(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput output) {
-		this.scope = scope.copy();
-		scope.disableErrorReporting();
-		widthHeightConstraint = env_height / env_width;
-		envWidth = env_width;
-		envHeight = env_height;
-		if ( output == null ) { return; }
-		bgColor = output.getBackgroundColor();
-		if ( manager == null ) {
-			manager = new LayerManager(this);
-			final List<? extends ISymbol> layers = output.getChildren();
-			for ( final ISymbol layer : layers ) {
-				manager.addLayer(AbstractLayer.createLayer(scope, (ILayerStatement) layer));
-			}
-		} else {
-			manager.outputChanged();
-		}
-
-	}
-
-	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		final int[] dim = new int[2];
+		double widthHeightConstraint = getEnvWidth() / getEnvHeight();
 		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
 		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
 		return dim;
@@ -145,7 +137,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		final Image copy = buffImage;
 		createBuffImage();
 		if ( GAMA.isPaused() ) {
-			updateDisplay();
+			updateDisplay(true);
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
 		}
@@ -154,15 +146,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void updateDisplay() {
-		if ( needsUpdate ) {
+	public void updateDisplay(final boolean force) {
+		if ( needsUpdate || force ) {
 			drawAllDisplays();
 		}
-	}
-
-	@Override
-	public void forceUpdateDisplay() {
-		updateDisplay();
 	}
 
 	private void drawAllDisplays() {
@@ -266,16 +253,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.gui.graphics.IDisplaySurface#canBeUpdated()
-	 */
-	@Override
-	public boolean canBeUpdated() {
-		return needsUpdate;
-	}
-
 	@Override
 	public void canBeUpdated(final boolean ok) {
 		needsUpdate = ok;
@@ -287,29 +264,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.gui.graphics.IDisplaySurface#setBackgroundColor(java.awt.Color)
 	 */
 	@Override
-	public void setBackgroundColor(final Color c) {
+	public void setBackground(final Color c) {
 		bgColor = c;
 	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setPaused(boolean)
-	 */
-	@Override
-	public void setPaused(final boolean b) {}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#isPaused()
-	 */
-	@Override
-	public boolean isPaused() {
-		return false;
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSynchronized(boolean)
-	 */
-	@Override
-	public void setSynchronized(final boolean checked) {}
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setQualityRendering(boolean)
@@ -317,17 +274,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void setQualityRendering(final boolean quality) {
 		displayGraphics.setQualityRendering(quality);
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
-	 */
-	@Override
-	public void setAutoSave(final boolean autosave, final int x, final int y) {}
-
-	@Override
-	public void setSnapshotFileName(final String file) {
-		snapshotFileName = file;
 	}
 
 	/**
@@ -393,35 +339,24 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public int[] getHighlightColor() {
-		return new int[] { 0, 0, 0 };
+	public Color getHighlightColor() {
+		return Color.black;
 	}
 
 	@Override
-	public void setHighlightColor(final int[] rgb) {}
-
-	//
-	// @Override
-	// public ILayerManager getLayerManager() {
-	// return manager;
-	// }
+	public void setHighlightColor(final Color c) {}
 
 	@Override
 	public void addMouseListener(final MouseListener e) {}
 
 	@Override
-	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {
-		;
-	}
-
-	@Override
 	public double getEnvWidth() {
-		return envWidth;
+		return data.getEnvWidth();
 	}
 
 	@Override
 	public double getEnvHeight() {
-		return envHeight;
+		return data.getEnvHeight();
 	}
 
 	@Override
@@ -444,15 +379,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public GamaPoint getModelCoordinates() {
 		return null;
-	}
-
-	/**
-	 * Method isSynchronized()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
-	 */
-	@Override
-	public boolean isSynchronized() {
-		return false;
 	}
 
 	/**
@@ -521,6 +447,24 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Method getOutput()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
+	 */
+	@Override
+	public IDisplayOutput getOutput() {
+		return output;
+	}
+
+	/**
+	 * Method waitForUpdateAndRun()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
+	 */
+	@Override
+	public void waitForUpdateAndRun(final Runnable r) {
+		r.run();
 	}
 
 }

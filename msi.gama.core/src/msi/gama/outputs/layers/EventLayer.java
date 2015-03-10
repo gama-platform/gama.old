@@ -162,8 +162,8 @@ public class EventLayer extends AbstractLayer {
 					executer.executeOn(scope);
 				}
 			});
-			if ( surface.isPaused() || GAMA.isPaused() ) {
-				surface.forceUpdateDisplay();
+			if ( surface.getOutput().isPaused() || GAMA.isPaused() ) {
+				surface.updateDisplay(true);
 			}
 		}
 	}

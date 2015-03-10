@@ -31,11 +31,10 @@ import msi.gaml.operators.Cast;
 public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	private IScope scope;
-	boolean paused = false;
-	boolean open = false;
+	boolean paused, open, permanent = false;
+	private boolean isUserCreated = true;
 	final IExpression refresh;
 
-	// private Integer nextRefreshTime;
 	private int refreshRate = 1;
 
 	public AbstractOutput(final IDescription desc) {
@@ -53,11 +52,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 				name = "output";
 			}
 		}
-		// setRefreshRate(1);
 	}
-
-	private boolean isUserCreated = true;
-	private boolean permanent = false;
 
 	@Override
 	public final boolean isUserCreated() {
@@ -76,13 +71,12 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
-		// setNextTime(getScope().getClock().getCycle());
 		return true;
 	}
 
 	@Override
 	public void close() {
-		pause();
+		setPaused(true);
 		setOpen(false);
 	}
 
@@ -99,17 +93,6 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public void open() {
 		setOpen(true);
-	}
-
-	@Override
-	public void pause() {
-		setPaused(true);
-	}
-
-	@Override
-	public void resume() {
-		setPaused(false);
-		// reschedule();
 	}
 
 	@Override
@@ -139,23 +122,10 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		this.open = open;
 	}
 
+	@Override
 	public void setPaused(final boolean suspended) {
 		paused = suspended;
 	}
-
-	// private void reschedule() {
-	// setNextTime(getScope().getClock().getCycle() + getRefreshRate());
-	// }
-	//
-	// @Override
-	// public void setNextTime(final Integer i) {
-	// nextRefreshTime = i;
-	// }
-	//
-	// @Override
-	// public long getNextTime() {
-	// return nextRefreshTime;
-	// }
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {

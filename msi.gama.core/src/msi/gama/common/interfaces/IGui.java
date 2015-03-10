@@ -95,8 +95,7 @@ public interface IGui {
 
 	boolean openSimulationPerspective();
 
-	IDisplaySurface getDisplaySurfaceFor(IScope scope, String keyword, LayeredDisplayOutput layerDisplayOutput,
-		double w, double h, Object ... args);
+	IDisplaySurface getDisplaySurfaceFor(IScope scope, LayeredDisplayOutput layerDisplayOutput);
 
 	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues, Map<String, IType> types);
 

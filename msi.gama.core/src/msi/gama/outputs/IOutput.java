@@ -23,9 +23,11 @@ public interface IOutput extends ISymbol, IStepable {
 
 	public String getId();
 
-	public void pause();
+	// public void pause();
+	//
+	// public void resume();
 
-	public void resume();
+	public void setPaused(boolean paused);
 
 	public void open();
 

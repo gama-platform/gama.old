@@ -24,9 +24,6 @@ public interface IGamaView {
 
 	IDisplayOutput getOutput();
 
-	/**
-	 *
-	 */
-	// public void showToolbars(boolean show);
+	public void close();
 
 }

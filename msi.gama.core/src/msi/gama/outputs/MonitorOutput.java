@@ -73,7 +73,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		setNewExpressionText(expr);
 		if ( getScope().init(this) ) {
 			GAMA.getExperiment().getSimulationOutputs().addOutput(this);
-			resume();
+			setPaused(false);
 			open();
 		}
 	}
@@ -98,10 +98,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public boolean step(final IScope scope) {
-		if ( scope.interrupted() ) { return false; }
+		if ( getScope().interrupted() ) { return false; }
 		if ( getValue() != null ) {
 			try {
-				lastValue = getValue().value(scope);
+				lastValue = getValue().value(getScope());
 			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}

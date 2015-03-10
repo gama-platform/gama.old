@@ -1,13 +1,13 @@
 /*********************************************************************************************
- *
- *
+ * 
+ * 
  * 'GamlAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
+ * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
+ * 
+ * 
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -162,7 +162,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Callback Actions
-	 *
+	 * 
 	 */
 	static Object[] callbackResult = new Object[1];
 
@@ -257,7 +257,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 *
+	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -289,7 +289,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
 	 * species.
-	 *
+	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
@@ -333,7 +333,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Saves agent's attributes to a map.
-		 *
+		 * 
 		 * @param agent
 		 * @throws GamaRuntimeException
 		 */
@@ -362,7 +362,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		/**
 		 * Recursively save micro-agents of an agent.
-		 *
+		 * 
 		 * @param agent The agent having micro-agents to be saved.
 		 * @throws GamaRuntimeException
 		 */
@@ -383,7 +383,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		/**
 		 * @param scope
 		 *            Restores the saved agent as a member of the target population.
-		 *
+		 * 
 		 * @param targetPopulation The population that the saved agent will be restored to.
 		 * @return
 		 * @throws GamaRuntimeException
@@ -398,8 +398,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 
 		/**
-		 *
-		 *
+		 * 
+		 * 
 		 * @param host
 		 * @throws GamaRuntimeException
 		 */
@@ -594,7 +594,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IPopulation[] getMicroPopulations() {
 		Iterable<IPopulation> it = Iterables.filter(attributes.values(), IPopulation.class);
 		IPopulation[] pops = Iterables.toArray(it, IPopulation.class);
-
 		return pops;
 	}
 
@@ -676,7 +675,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
-	 *
+	 * 
 	 * @return true if the following conditions are correct:
 	 *         1. newSpecies is one micro-species of this agent's species;
 	 *         2. newSpecies is a sub-species of this agent's species or other species is a

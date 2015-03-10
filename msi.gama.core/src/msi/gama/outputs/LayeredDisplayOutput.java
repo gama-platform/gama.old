@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.*;
@@ -211,41 +211,21 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public static final String THREED = "3D";
 
 	private List<AbstractLayerStatement> layers;
-	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
 	protected IDisplaySurface surface;
-	String snapshotFileName;
-	private boolean autosave = false;
-	private boolean output3D = false;
-	private boolean tesselation = true;
-	private int traceDisplay = 0;
-	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
-	private final boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
-	private final boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
-	private boolean ortho = false;
-	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
-	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
-	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
-	private boolean isLightOn = GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-	private boolean drawDiffLight = false;
-	private Color ambientLightColor = new GamaColor(100, 100, 100, 255);
-	private Color diffuseLightColor = new GamaColor(10, 10, 10, 255);
-	private GamaPoint diffuseLightPosition = new GamaPoint(-1, -1, -1);
-	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
-	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
-	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
-	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
 	private boolean constantDiffuseLight = true;
 	private boolean constantDiffusePos = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
-	private boolean polygonMode = true;
-	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
-	private ILocation imageDimension = new GamaPoint(-1, -1);
-	private ILocation output3DNbCycles = new GamaPoint(0, 0);
-	private double envWidth;
-	private double envHeight;
+	final LayeredDisplayData data = new LayeredDisplayData(GamaPreferences.CORE_BACKGROUND.getValue(), false, false,
+		true, 0, GamaPreferences.CORE_Z_FIGHTING.getValue(), GamaPreferences.CORE_DRAW_NORM.getValue(),
+		GamaPreferences.CORE_CUBEDISPLAY.getValue(), false, GamaPreferences.CORE_SCALE.getValue(),
+		GamaPreferences.CORE_SHOW_FPS.getValue(), GamaPreferences.CORE_DRAW_ENV.getValue(),
+		GamaPreferences.CORE_IS_LIGHT_ON.getValue(), false, new GamaColor(100, 100, 100, 255), new GamaColor(10, 10,
+			10, 255), new GamaPoint(-1, -1, -1), new GamaPoint(-1, -1, -1), new GamaPoint(-1, -1, -1), new GamaPoint(0,
+			1, 0), true, GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL,
+		new GamaPoint(-1, -1), new GamaPoint(0, 0), GamaPreferences.CORE_HIGHLIGHT.getValue());
 	// Specific to overlays
 	OverlayStatement overlayInfo;
 
@@ -253,7 +233,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		super(desc);
 
 		if ( hasFacet(IKeyword.TYPE) ) {
-			displayType = getLiteral(IKeyword.TYPE);
+			data.setDisplayType(getLiteral(IKeyword.TYPE));
 		}
 		layers = new ArrayList<AbstractLayerStatement>();
 	}
@@ -280,10 +260,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			if ( auto.getType().equals(Types.POINT) ) {
-				autosave = true;
-				imageDimension = Cast.asPoint(getScope(), auto.value(getScope()));
+				data.setAutosave(true);
+				data.setImageDimension(Cast.asPoint(getScope(), auto.value(getScope())));
 			} else {
-				autosave = Cast.asBool(getScope(), auto.value(getScope()));
+				data.setAutosave(Cast.asBool(getScope(), auto.value(getScope())));
 			}
 		}
 		for ( final ILayerStatement layer : getLayers() ) {
@@ -310,9 +290,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression scale = getFacet(IKeyword.SCALE);
 		if ( scale != null ) {
 			if ( scale.getType().equals(Types.BOOL) ) {
-				displayScale = Cast.asBool(getScope(), scale.value(getScope()));
+				data.setDisplayScale(Cast.asBool(getScope(), scale.value(getScope())));
 			} else {
-				displayScale = true;
+				data.setDisplayScale(true);
 			}
 		}
 
@@ -451,9 +431,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		} else {
 			env = new Envelope3D(0, 100, 0, 100, 0, 0);
 		}
-		this.envWidth = env.getWidth();
-		this.envHeight = env.getHeight();
-		createSurface(getScope(), env);
+		this.data.setEnvWidth(env.getWidth());
+		this.data.setEnvHeight(env.getHeight());
+		createSurface(getScope());
 		return true;
 	}
 
@@ -528,12 +508,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		computeTrace(getScope());
 
-		// GuiUtils.debug("LayeredDisplayOutput.update");
 		if ( overlayInfo != null ) {
 			getScope().step(overlayInfo);
 		}
 
-		surface.updateDisplay();
+		if ( isSynchronized() ) {
+			surface.updateDisplay(false);
+		} else {
+			super.update();
+		}
 
 	}
 
@@ -550,31 +533,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	@Override
-	public void forceUpdate() throws GamaRuntimeException {
-		if ( surface != null /* && surface.canBeUpdated() */) {
-			surface.forceUpdateDisplay();
-		}
-	}
-
-	public void setImageFileName(final String fileName) {
-		snapshotFileName = fileName;
-	}
-
 	public boolean shouldDisplayScale() {
-		return displayScale;
+		return data.isDisplayScale();
 	}
 
 	public void toogleScaleDisplay() {
-		displayScale = !displayScale;
+		data.setDisplayScale(!data.isDisplayScale());
 	}
 
 	@Override
 	public void dispose() {
 		if ( disposed ) { return; }
-		if ( surface != null ) {
-			surface.setSynchronized(false);
-		}
+		setSynchronized(false);
 		super.dispose();
 		if ( surface != null ) {
 			surface.dispose();
@@ -583,38 +553,24 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	protected void createSurface(final IScope scope, final Envelope env) {
+	protected void createSurface(final IScope scope) {
 		if ( surface != null ) {
-			surface.outputChanged(scope, envWidth, envHeight, this);
-			return;
+			surface.initialize(scope, this);
+		} else {
+			surface = GuiUtils.getDisplaySurfaceFor(scope, this);
 		}
-		surface = GuiUtils.getDisplaySurfaceFor(scope, displayType, this, envWidth, envHeight);
-		if ( !GuiUtils.isInHeadLessMode() ) {
-			// FIXME These lines do nothing...
-			surface.setSnapshotFileName(GAMA.getModel().getName() + "_display_" + getName());
-			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
-		}
-		// IExpression expr = getFacet(IKeyword.FOCUS);
-		// if ( expr != null ) {
-		// surface.focusOn(expr);
-		// }
 	}
 
-	// public void setSurface(final IDisplaySurface sur) {
-	// surface = sur;
-	// }
-
 	public double getEnvWidth() {
-		return envWidth;
+		return data.getEnvWidth();
 	}
 
 	public double getEnvHeight() {
-		return envHeight;
+		return data.getEnvHeight();
 	}
 
 	@Override
 	public String getViewId() {
-		if ( displayType.equals(WEB) ) { return GuiUtils.WEB_VIEW_ID; }
 		return GuiUtils.LAYER_VIEW_ID;
 	}
 
@@ -641,7 +597,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public Color getBackgroundColor() {
-		return backgroundColor;
+		return data.getBackgroundColor();
 	}
 
 	public BufferedImage getImage() {
@@ -649,9 +605,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public void setBackgroundColor(final Color background) {
-		this.backgroundColor = background;
+		this.data.setBackgroundColor(background);
 		if ( surface != null ) {
-			surface.setBackgroundColor(background);
+			surface.setBackground(background);
 		}
 	}
 
@@ -664,172 +620,167 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void pause() {
-		super.pause();
-		surface.setPaused(true);
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
-		surface.setPaused(false);
-		// getScope().step(this);
+	public void setPaused(final boolean paused) {
+		boolean wasPaused = isPaused();
+		super.setPaused(paused);
+		if ( isOpenGL() ) {
+			((IDisplaySurface.OpenGL) surface).setPaused(paused);
+		}
+		if ( wasPaused && !paused ) {
+			surface.updateDisplay(false);
+		}
 	}
 
 	public boolean isOpenGL() {
-		return displayType.equals(OPENGL) || displayType.equals(THREED);
+		return data.getDisplayType().equals(OPENGL) || data.getDisplayType().equals(THREED);
 	}
 
 	public boolean getTesselation() {
-		return tesselation;
+		return data.isTesselation();
 	}
 
 	private void setTesselation(final boolean tesselation) {
-		this.tesselation = tesselation;
+		this.data.setTesselation(tesselation);
 	}
 
 	public boolean getZFighting() {
-		return z_fighting;
+		return data.isZ_fighting();
 	}
 
 	private void setZFighting(final boolean z) {
-		this.z_fighting = z;
+		this.data.setZ_fighting(z);
 	}
 
 	public boolean getDrawNorm() {
-		return draw_norm;
+		return data.isDraw_norm();
 	}
 
-	// private void setDrawNorm(final boolean draw_norm) {
-	// this.draw_norm = draw_norm;
-	// }
-
 	public boolean getCubeDisplay() {
-		return cubeDisplay;
+		return data.isCubeDisplay();
 	}
 
 	public boolean getOrtho() {
-		return ortho;
+		return data.isOrtho();
 	}
 
 	private void setOrtho(final boolean o) {
-		this.ortho = o;
+		this.data.setOrtho(o);
 	}
 
-	// private void setCubeDisplay(final boolean c) {
-	// this.cubeDisplay = c;
-	// }
-
 	public boolean getShowFPS() {
-		return showfps;
+		return data.isShowfps();
 	}
 
 	private void setShowFPS(final boolean fps) {
-		this.showfps = fps;
+		this.data.setShowfps(fps);
 	}
 
 	public int getTraceDisplay() {
-		return traceDisplay;
+		return data.getTraceDisplay();
 	}
 
 	private void setTraceDisplay(final int agg) {
-		this.traceDisplay = agg;
+		this.data.setTraceDisplay(agg);
 	}
 
 	public boolean getDrawEnv() {
-		return drawEnv;
+		return data.isDrawEnv();
 	}
 
 	private void setDrawEnv(final boolean drawEnv) {
-		this.drawEnv = drawEnv;
+		this.data.setDrawEnv(drawEnv);
 	}
 
 	public boolean getDrawDiffuseLight() {
-		return drawDiffLight;
+		return data.isDrawDiffLight();
 	}
 
 	private void setDrawDiffuseLight(final boolean drawDiff) {
-		this.drawDiffLight = drawDiff;
+		this.data.setDrawDiffLight(drawDiff);
 	}
 
 	public boolean getIsLightOn() {
-		return isLightOn;
+		return data.isLightOn();
 	}
 
 	private void setIsLightOn(final boolean islight) {
-		this.isLightOn = islight;
+		this.data.setLightOn(islight);
 	}
 
 	public boolean getOutput3D() {
-		return output3D;
+		return data.isOutput3D();
 	}
 
 	private void setOutput3D(final boolean output3D) {
-		this.output3D = output3D;
+		this.data.setOutput3D(output3D);
 	}
 
 	public ILocation getCameraPos() {
-		return cameraPos;
+		return data.getCameraPos();
 	}
 
 	private void setCameraPos(final ILocation cameraPos) {
-		this.cameraPos = cameraPos;
+		this.data.setCameraPos(cameraPos);
 	}
 
 	public ILocation getCameraLookPos() {
-		return cameraLookPos;
+		return data.getCameraLookPos();
 	}
 
 	private void setCameraLookPos(final ILocation cameraLookPos) {
-		this.cameraLookPos = cameraLookPos;
+		this.data.setCameraLookPos(cameraLookPos);
 	}
 
 	public ILocation getCameraUpVector() {
-		return cameraUpVector;
+		return data.getCameraUpVector();
 	}
 
 	private void setCameraUpVector(final ILocation cameraUpVector) {
-		this.cameraUpVector = cameraUpVector;
+		this.data.setCameraUpVector(cameraUpVector);
 	}
 
 	public Color getAmbientLightColor() {
-		return ambientLightColor;
+		return data.getAmbientLightColor();
 	}
 
 	private void setAmbientLightColor(final Color ambientLightColor) {
-		this.ambientLightColor = ambientLightColor;
+		this.data.setAmbientLightColor(ambientLightColor);
 	}
 
 	public Color getDiffuseLightColor() {
-		return diffuseLightColor;
+		return data.getDiffuseLightColor();
 	}
 
 	private void setDiffuseLightColor(final Color diffuseLightColor) {
-		this.diffuseLightColor = diffuseLightColor;
+		this.data.setDiffuseLightColor(diffuseLightColor);
 	}
 
 	public GamaPoint getDiffuseLightPosition() {
-		return diffuseLightPosition;
+		return data.getDiffuseLightPosition();
 	}
 
 	private void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
-		this.diffuseLightPosition = diffuseLightPosition;
+		this.data.setDiffuseLightPosition(diffuseLightPosition);
 	}
 
 	public boolean getPolygonMode() {
-		return polygonMode;
+		return data.isPolygonMode();
 	}
 
 	private void setPolygonMode(final boolean polygonMode) {
-		this.polygonMode = polygonMode;
+		this.data.setPolygonMode(polygonMode);
 	}
 
 	public ILocation getOutput3DNbCycles() {
-		return output3DNbCycles;
+		return data.getOutput3DNbCycles();
 	}
 
 	private void setOutput3DNbCycles(final ILocation output3DNbCycles) {
-		this.output3DNbCycles = output3DNbCycles;
+		this.data.setOutput3DNbCycles(output3DNbCycles);
+	}
+
+	public LayeredDisplayData getData() {
+		return data;
 	}
 
 }

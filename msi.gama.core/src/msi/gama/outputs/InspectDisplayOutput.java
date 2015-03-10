@@ -141,13 +141,13 @@ public class InspectDisplayOutput extends MonitorOutput {
 	public boolean init(final IScope scope) {
 		super.init(scope);
 		if ( type.equals(IKeyword.AGENT) && getValue() != null ) {
-			lastValue = getValue().value(scope);
+			lastValue = getValue().value(getScope());
 		}
 		if ( attributes != null ) {
-			listOfAttributes = Cast.asList(scope, attributes.value(scope));
+			listOfAttributes = Cast.asList(getScope(), attributes.value(getScope()));
 		}
 		if ( rootAgent == null || rootAgent.dead() ) {
-			rootAgent = scope.getSimulationScope();
+			rootAgent = getScope().getSimulationScope();
 			// GuiUtils.debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
 		}
 		return true;
@@ -197,7 +197,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 			public void process(final IScope scope) {
 				if ( !scope.init(InspectDisplayOutput.this) ) { return; }
 				GAMA.getExperiment().getSimulationOutputs().addOutput(InspectDisplayOutput.this);
-				resume();
+				setPaused(false);
 				open();
 				step(scope);
 				update();
@@ -210,18 +210,11 @@ public class InspectDisplayOutput extends MonitorOutput {
 	public boolean step(final IScope scope) {
 		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return false; }
-			boolean pushed = scope.push(rootAgent);
-			try {
-				return super.step(scope);
-			} finally {
-				if ( pushed ) {
-					scope.pop(rootAgent);
-				}
-			}
-
+			if ( getValue() == null ) { return true; }
+			if ( getScope().interrupted() ) { return false; }
+			lastValue = getScope().evaluate(getValue(), rootAgent);
 		}
 		return true;
-		// super.step(scope);
 	}
 
 	@Override
@@ -241,23 +234,24 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	}
 
-	//
+	final static IAgent[] EMPTY = new IAgent[0];
+
 	@Override
-	public List<IAgent> getLastValue() {
+	public IAgent[] getLastValue() {
 		if ( IKeyword.TABLE.equals(type) ) {
-			if ( rootAgent == null || rootAgent.dead() ) { return Collections.EMPTY_LIST; }
+			if ( rootAgent == null || rootAgent.dead() ) { return EMPTY; }
 		}
-		if ( lastValue instanceof IAgent ) { return GamaListFactory.createWithoutCasting(Types.AGENT, (IAgent) lastValue); }
-		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
-			.getMicroPopulation((ISpecies) lastValue); }
-		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope(), Types.NO_TYPE,
-			false); }
-		return null;
+		if ( lastValue instanceof IAgent ) { return new IAgent[] { (IAgent) lastValue }; }
+		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent.getMicroPopulation(
+			(ISpecies) lastValue).toArray(new IAgent[0]); }
+		if ( lastValue instanceof IContainer ) { return (IAgent[]) ((IContainer) lastValue).listValue(getScope(),
+			Types.NO_TYPE, false).toArray(new IAgent[0]); }
+		return EMPTY;
 	}
 
 	public ISpecies getSpecies() {
 		if ( getValue() == null ) { return null; }
-		return GAMA.getModel().getSpecies(getValue().getType().getContentType().getSpeciesName());
+		return rootAgent.getSpecies().getMicroSpecies(getValue().getType().getContentType().getSpeciesName());
 	}
 
 	public List<String> getAttributes() {

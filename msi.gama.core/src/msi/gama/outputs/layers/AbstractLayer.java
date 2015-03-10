@@ -17,7 +17,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -76,11 +76,6 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public int compareTo(final ILayer o) {
 		return definition.compareTo(o.getDefinition());
-	}
-
-	@Override
-	public boolean isPaused(final IDisplaySurface container) {
-		return container.isPaused() || GAMA.isPaused();
 	}
 
 	@Override

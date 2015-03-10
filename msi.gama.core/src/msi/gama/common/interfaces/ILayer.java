@@ -84,12 +84,6 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	ILayerStatement getDefinition();
 
 	/**
-	 * @param container
-	 * @return
-	 */
-	boolean isPaused(IDisplaySurface container);
-
-	/**
 	 * @param newValue
 	 */
 	void setPosition(ILocation newValue);

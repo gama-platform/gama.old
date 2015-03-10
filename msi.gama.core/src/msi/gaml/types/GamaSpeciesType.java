@@ -74,22 +74,6 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 		return Types.INT;
 	}
 
-	// @Override
-	// public IType typeIfCasting(final IDescription context, final IExpression exp) {
-	// IType itemType = exp.getType();
-	// if ( itemType.isSpeciesType() ) { return itemType; }
-	// switch (exp.getType().id()) {
-	// case SPECIES:
-	// return exp.getContentType();
-	// case STRING:
-	// if ( exp.isConst() ) {
-	// SpeciesDescription spec = context.getModelDescription().getSpeciesDescription(exp.literalValue());
-	// if ( spec != null ) { return spec.getType(); }
-	// }
-	// }
-	// return Types.NO_TYPE;
-	// }
-
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
 		IType itemType = exp.getType();

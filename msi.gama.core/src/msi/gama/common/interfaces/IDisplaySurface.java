@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 
 /**
@@ -92,6 +92,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 		public boolean isInertiaOn();
 
+		void setPaused(boolean flag);
+
 	}
 
 	public interface IZoomListener {
@@ -106,16 +108,12 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void dispose();
 
-	void updateDisplay();
-
-	void forceUpdateDisplay(); // toggling off synchronization
+	/** Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance) **/
+	void updateDisplay(boolean force);
 
 	int[] computeBoundsFrom(int width, int height);
 
 	boolean resizeImage(int width, int height, boolean force);
-
-	// void outputChanged(final double env_width, final double env_height, final
-	// IDisplayOutput output);
 
 	void zoomIn();
 
@@ -125,37 +123,17 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	ILayerManager getManager();
 
-	// void fireSelectionChanged(Object a);
-
 	void focusOn(IShape geometry);
-
-	boolean canBeUpdated();
 
 	void canBeUpdated(boolean ok);
 
-	void setBackgroundColor(Color background);
+	void waitForUpdateAndRun(Runnable r);
 
-	void setPaused(boolean b);
-
-	public boolean isPaused();
+	void setBackground(Color background);
 
 	public void setQualityRendering(boolean quality);
 
-	void setSynchronized(boolean checked);
-
-	void setAutoSave(boolean autosave, int x, int y);
-
-	void initOutput3D(final boolean output3D, final ILocation output3DNbCycles);
-
-	void setSnapshotFileName(String string);
-
 	void snapshot();
-
-	/**
-	 * @param swtNavigationPanel
-	 *            FIXME Create an interface for the navigqtion panel
-	 */
-	// void setNavigator(Object swtNavigationPanel);
 
 	/**
 	 * @return the width of the panel
@@ -205,22 +183,17 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	/**
 	 * Post-constructor that initializes the surface
 	 * 
-	 * @param w
-	 * @param h
 	 * @param layerDisplayOutput
 	 */
-	void initialize(IScope scope, double w, double h, LayeredDisplayOutput layerDisplayOutput);
-
-	public void outputChanged(IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput output);
+	void initialize(IScope scope, LayeredDisplayOutput layerDisplayOutput);
 
 	/**
 	 * 
 	 * @return an Array of size 3 containing the red, green and blue components
 	 */
-	int[] getHighlightColor();
+	Color getHighlightColor();
 
-	void setHighlightColor(int[] rgb);
+	void setHighlightColor(Color h);
 
 	public void addMouseListener(MouseListener e);
 
@@ -243,8 +216,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	public Collection<IAgent> selectAgent(final int x, final int y);
 
-	public boolean isSynchronized();
-
 	void followAgent(IAgent a);
 
 	/**
@@ -257,5 +228,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	boolean getQualityRendering();
 
 	IScope getDisplayScope();
+
+	IDisplayOutput getOutput();
 
 }

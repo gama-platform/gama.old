@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IDisplayOutput.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -22,6 +22,8 @@ public interface IDisplayOutput extends IOutput {
 
 	public String getViewId();
 
-	public void forceUpdate();
+	public boolean isSynchronized();
+
+	public void setSynchronized(final boolean sync);
 
 }
