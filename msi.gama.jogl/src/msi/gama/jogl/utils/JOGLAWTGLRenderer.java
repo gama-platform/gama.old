@@ -128,7 +128,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		setContext(drawable.getContext());
 
 		// Set background color
-		setBackground(displaySurface.getBackgroundColor());
+		setBackground(displaySurface.getBackground());
 
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtilLight.enableSmooth(gl);
@@ -161,7 +161,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera.updateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
 
-		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
+		OutputSynchronizer.decInitializingViews(displaySurface.getOutput().getName());
 
 	}
 
@@ -176,7 +176,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void display(final GLAutoDrawable drawable) {
 		// AD : 10/09/13 Addition of the second condition to addres Issue 607.
 		// TODO : Understand why some OpenGL operations are triggered even when the simulation is gone.
-		if ( !displaySurface.isPaused() /* && GAMA.getSimulation() != null */) {
+		if ( !displaySurface.getOutput().isPaused() /* && GAMA.getSimulation() != null */) {
 			gl = drawable.getGL();
 			setContext(drawable.getContext());
 			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);

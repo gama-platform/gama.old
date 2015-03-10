@@ -34,7 +34,6 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 		toolbar.wipe(SWT.RIGHT);
 		for ( IContributionItem item : tbm.getItems() ) {
 			toolbar.item(item, SWT.RIGHT);
-			// item.fill(toolbar, toolbar.getItemCount());
 		}
 		tbm.removeAll();
 		tbm.update(true);
@@ -55,15 +54,6 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	@Override
 	protected int getDefaultExpansionLevel() {
 		return 2;
-	}
-
-	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-		// rightToolbar = right;
 	}
 
 	/**

@@ -36,9 +36,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	private static final long serialVersionUID = 1L;
 
-	protected Point mousePosition;
-
-	private boolean output3D = false;
+	// private boolean output3D = false;
 	// Environment properties useful to set the camera position.
 
 	// Use to toggle the 3D view.
@@ -87,28 +85,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
 					s.wipe(getOutput().getTraceDisplay());
-					// FIXME: Why setting this at each run??
-					renderer.setTessellation(getOutput().getTesselation());
-					renderer.setShowFPS(getOutput().getShowFPS());
-					// renderer.setTraceDisplay(getOutput().getTraceDisplay());
-					// renderer.setDrawEnv(getOutput().getDrawEnv());
-					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
-					renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
-					renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());
-					renderer.setPolygonMode(getOutput().getPolygonMode());
-					renderer.setCameraPosition(getOutput().getCameraPos());
-					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-					renderer.setCameraUpVector(getOutput().getCameraUpVector());
-					if ( autosave ) {
+					feedRenderer();
+					if ( data.isAutosave() ) {
 						snapshot();
 					}
-
 					drawDisplaysWithoutRepainting();
-
-					if ( output3D ) {
+					if ( data.isOutput3D() ) {
 						output3DManager.updateOutput3D(renderer);
 					}
-
 				}
 				canBeUpdated(true);
 			}
@@ -117,35 +101,43 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public void updateDisplay() {
-		super.updateDisplay();
+	public void updateDisplay(final boolean force) {
+		boolean oldState = getOutput().isPaused();
+		if ( force ) {
+			getOutput().setPaused(false);
+		}
+		super.updateDisplay(force);
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
 			IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
-			// IShape geometry = GAMA.run(new GAMA.InScope<IShape>() {
-			//
-			// @Override
-			// public IShape run(final IScope scope) {
-			// return Cast.asGeometry(scope, temp_focus.value(scope));
-			// }
-			// });
 			if ( geometry != null ) {
 				temp_focus = null;
 				canBeUpdated(true);
 				focusOn(geometry);
 			}
-
-			// canBeUpdated(false);
 		}
+		if ( force ) {
+			getOutput().setPaused(oldState);
+		}
+	}
 
-		// EXPERIMENTAL
+	// TODO Move data to the Renderer so that it feeds itself
+	private void feedRenderer() {
+		renderer.setTessellation(data.isTesselation());
+		renderer.setShowFPS(data.isShowfps());
+		renderer.setAmbientLightValue(data.getAmbientLightColor());
+		renderer.setDiffuseLightValue(data.getDiffuseLightColor());
+		renderer.setDiffuseLightPosition(data.getDiffuseLightPosition());
+		renderer.setPolygonMode(data.isPolygonMode());
+		renderer.setCameraPosition(data.getCameraPos());
+		renderer.setCameraLookPosition(data.getCameraLookPos());
+		renderer.setCameraUpVector(data.getCameraUpVector());
 	}
 
 	@Override
-	public void initialize(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput out) {
-		super.initialize(scope, env_width, env_height, out);
+	public void initialize(final IScope scope, final LayeredDisplayOutput out) {
+		super.initialize(scope, out);
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
 		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
@@ -153,24 +145,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		System.setProperty("sun.awt.noerasebackground", "true");
 		renderer = new JOGLAWTGLRenderer(this);
 		renderer.setAntiAliasing(getQualityRendering());
-		// renderer.setPolygonTriangulated(false);
-		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setZFighting(getOutput().getZFighting());
 		renderer.setDrawNorm(getOutput().getDrawNorm());
 		renderer.setCubeDisplay(getOutput().getCubeDisplay());
 		renderer.setOrtho(getOutput().getOrtho());
-		renderer.setShowFPS(getOutput().getShowFPS());
-		// renderer.setTraceDisplay(getOutput().getTraceDisplay());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setDrawDiffuseLight(getOutput().getDrawDiffuseLight());
 		renderer.setIsLightOn(getOutput().getIsLightOn());
-		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
-		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
-		renderer.setDiffuseLightPosition(getOutput().getDiffuseLightPosition());
-		renderer.setPolygonMode(getOutput().getPolygonMode());
-		renderer.setCameraPosition(getOutput().getCameraPos());
-		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-		renderer.setCameraUpVector(getOutput().getCameraUpVector());
+		feedRenderer();
 		add(renderer.canvas, BorderLayout.CENTER);
 		zoomFit();
 		this.setVisible(true);
@@ -209,25 +191,17 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				renderer.animator.start();
 			}
 		}
-		super.setPaused(flag);
 	}
 
-	@Override
-	public void outputChanged(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput output) {
-		super.outputChanged(scope, env_width, env_height, output);
-		setBackgroundColor(output.getBackgroundColor());
-		this.setBackground(getBackgroundColor());
-	}
-
-	@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		// we take the smallest dimension as a guide
-		final int[] dim = new int[2];
-		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
-		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
-		return dim;
-	}
+	// @Override
+	// public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+	// // we take the smallest dimension as a guide
+	// final int[] dim = new int[2];
+	// double widthHeightConstraint = envWidth / envHeight;
+	// dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
+	// dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
+	// return dim;
+	// }
 
 	public void selectAgents(final IAgent agent) {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
@@ -238,10 +212,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			getModelCoordinates(), agents);
 	}
 
-	@Override
-	public void forceUpdateDisplay() {
-		updateDisplay();
-	}
+	//
+	// @Override
+	// public void forceUpdateDisplay() {
+	// updateDisplay();
+	// }
 
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
@@ -300,7 +275,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleView() {
 		threeD = !threeD;
 		zoomFit();
-		updateDisplay();
+		updateDisplay(true);
 	}
 
 	@Override
@@ -336,7 +311,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleTriangulation() {
 		renderer.triangulation = !renderer.triangulation;
-		updateDisplay();
+		updateDisplay(true);
 	}
 
 	@Override
@@ -365,7 +340,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			}
 			i++;
 		}
-		this.updateDisplay();
+		this.updateDisplay(true);
 	}
 
 	@Override
@@ -379,7 +354,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		switchCamera = !switchCamera;
 		renderer.switchCamera();
 		zoomFit();
-		updateDisplay();
+		updateDisplay(true);
 	}
 
 	@Override
@@ -431,13 +406,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	}
 
-	@Override
-	public void initOutput3D(final boolean yes, final ILocation output3DNbCycles) {
-		output3D = yes;
-		if ( output3D ) {
+	protected void initOutput3D(final boolean yes, final ILocation output3DNbCycles) {
+		data.setOutput3D(yes);
+		if ( data.isOutput3D() ) {
 			output3DManager = new Output3D(output3DNbCycles, renderer);
-			// (new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries,
-			// openGLGraphicsGLRender);
 		}
 	}
 
@@ -454,10 +426,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public synchronized void addMouseMotionListener(final MouseMotionListener e) {
 		renderer.canvas.addMouseMotionListener(e);
-	}
-
-	public Color getBackgroundColor() {
-		return bgColor;
 	}
 
 	@Override
@@ -516,10 +484,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public void setBackgroundColor(final Color c) {
-		super.setBackgroundColor(c);
+	public void setBackground(final Color c) {
+		super.setBackground(c);
 		if ( iGraphics != null ) {
-			iGraphics.fillBackground(bgColor, 1);
+			iGraphics.fillBackground(c, 1);
 		}
 	}
 

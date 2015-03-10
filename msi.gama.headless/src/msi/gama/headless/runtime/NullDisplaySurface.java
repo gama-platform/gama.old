@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 
@@ -56,14 +56,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#updateDisplay()
 	 */
 	@Override
-	public void updateDisplay() {}
-
-	/**
-	 * Method forceUpdateDisplay()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#forceUpdateDisplay()
-	 */
-	@Override
-	public void forceUpdateDisplay() {}
+	public void updateDisplay(final boolean force) {}
 
 	/**
 	 * Method computeBoundsFrom()
@@ -122,15 +115,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method canBeUpdated()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#canBeUpdated()
-	 */
-	@Override
-	public boolean canBeUpdated() {
-		return false;
-	}
-
-	/**
-	 * Method canBeUpdated()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#canBeUpdated(boolean)
 	 */
 	@Override
@@ -141,23 +125,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setBackgroundColor(java.awt.Color)
 	 */
 	@Override
-	public void setBackgroundColor(final Color background) {}
-
-	/**
-	 * Method setPaused()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setPaused(boolean)
-	 */
-	@Override
-	public void setPaused(final boolean b) {}
-
-	/**
-	 * Method isPaused()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#isPaused()
-	 */
-	@Override
-	public boolean isPaused() {
-		return false;
-	}
+	public void setBackground(final Color background) {}
 
 	/**
 	 * Method setQualityRendering()
@@ -165,34 +133,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void setQualityRendering(final boolean quality) {}
-
-	/**
-	 * Method setSynchronized()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSynchronized(boolean)
-	 */
-	@Override
-	public void setSynchronized(final boolean checked) {}
-
-	/**
-	 * Method setAutoSave()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean, int, int)
-	 */
-	@Override
-	public void setAutoSave(final boolean autosave, final int x, final int y) {}
-
-	/**
-	 * Method initOutput3D()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#initOutput3D(boolean, msi.gama.metamodel.shape.ILocation)
-	 */
-	@Override
-	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {}
-
-	/**
-	 * Method setSnapshotFileName()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSnapshotFileName(java.lang.String)
-	 */
-	@Override
-	public void setSnapshotFileName(final String string) {}
 
 	/**
 	 * Method snapshot()
@@ -267,23 +207,14 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final IScope scope, final double w, final double h,
-		final LayeredDisplayOutput layerDisplayOutput) {}
-
-	/**
-	 * Method outputChanged()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#outputChanged(double, double, msi.gama.outputs.LayeredDisplayOutput)
-	 */
-	@Override
-	public void outputChanged(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput output) {}
+	public void initialize(final IScope scope, final LayeredDisplayOutput layerDisplayOutput) {}
 
 	/**
 	 * Method getHighlightColor()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getHighlightColor()
 	 */
 	@Override
-	public int[] getHighlightColor() {
+	public Color getHighlightColor() {
 		return null;
 	}
 
@@ -292,7 +223,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setHighlightColor(int[])
 	 */
 	@Override
-	public void setHighlightColor(final int[] rgb) {}
+	public void setHighlightColor(final Color c) {}
 
 	/**
 	 * Method addMouseListener()
@@ -379,14 +310,14 @@ public class NullDisplaySurface implements IDisplaySurface {
 		return null;
 	}
 
-	/**
-	 * Method isSynchronized()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
-	 */
-	@Override
-	public boolean isSynchronized() {
-		return false;
-	}
+	// /**
+	// * Method isSynchronized()
+	// * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
+	// */
+	// @Override
+	// public boolean isSynchronized() {
+	// return false;
+	// }
 
 	/**
 	 * Method followAgent()
@@ -419,5 +350,21 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public boolean getQualityRendering() {
 		return false;
 	}
+
+	/**
+	 * Method getOutput()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
+	 */
+	@Override
+	public IDisplayOutput getOutput() {
+		return null;
+	}
+
+	/**
+	 * Method waitForUpdateAndRun()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
+	 */
+	@Override
+	public void waitForUpdateAndRun(final Runnable r) {}
 
 }

@@ -59,7 +59,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, final JOGLAWTGLRenderer r) {
 		super(surface);
 		renderer = r;
-		fillBackground(surface.getBackgroundColor(), 1);
+		fillBackground(surface.getBackground(), 1);
 	}
 
 	// This method is normally called either when the graphics is created or when the output is changed
