@@ -29,7 +29,7 @@ import org.eclipse.ui.*;
  * @since 19 janv. 2012
  * 
  */
-public class GamaToolbarFactory implements IGamaViewActions {
+public class GamaToolbarFactory {
 
 	public static class GamaComposite extends Composite {
 

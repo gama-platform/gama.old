@@ -30,22 +30,11 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 	@Override
 	protected Composite createSurfaceComposite() {
 
-		// TODO do a test to know whether or not we are in a "simple" chart environment ?
-
-		// final Runnable forceFocus = new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// if ( surfaceComposite.getDisplay() != null && !surfaceComposite.isFocusControl() ) {
-		// surfaceComposite.setFocus();
-		// }
-		// }
-		// };
-
 		final Runnable displayOverlay = new Runnable() {
 
 			@Override
 			public void run() {
+				if ( overlay.isHidden() ) { return; }
 				overlay.update();
 			}
 		};
@@ -107,7 +96,6 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					// see JOGLAWTGLRendered.init()
 					OutputSynchronizer.decInitializingViews(outputName);
 				}
-				// FIXME Hack to create a menu displayable on SWT
 				new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
@@ -124,15 +112,15 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
-						previousState = getOutput().getSurface().isPaused();
-						getOutput().getSurface().setPaused(true);
+						previousState = getOutput().isPaused();
+						getOutput().setPaused(true);
 					}
 					if ( overlay != null ) {
 						overlay.hide();
 					}
 				} else {
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
-						getOutput().getSurface().setPaused(previousState);
+						getOutput().setPaused(previousState);
 					}
 					if ( overlay != null ) {
 						overlay.update();
@@ -162,7 +150,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					public void run() {
 						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
 						getOutput().getSurface().resizeImage(r.width, r.height, false);
-						getOutput().getSurface().updateDisplay();
+						getOutput().getSurface().updateDisplay(true);
 
 						GuiUtils.run(new Runnable() {
 

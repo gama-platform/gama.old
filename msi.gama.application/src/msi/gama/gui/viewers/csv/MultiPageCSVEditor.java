@@ -99,12 +99,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		// model = createCSVFile();
 	}
 
-	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-		// rightToolbar = right;
-	}
-
 	/**
 	 * Method getToolbarActionsId()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()

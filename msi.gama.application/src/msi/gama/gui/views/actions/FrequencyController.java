@@ -54,6 +54,21 @@ public class FrequencyController {
 	public void install(final GamaToolbarSimple tb) {
 		createFrequencyItem(tb);
 		createPauseItem(tb);
+		createSynchronizeItem(tb);
+	}
+
+	protected ToolItem createSynchronizeItem(final GamaToolbarSimple tb) {
+		return tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
+			new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					view.getOutput().setSynchronized(((ToolItem) e.widget).getSelection());
+					view.synchronizeChanged();
+				}
+
+			});
+
 	}
 
 	protected ToolItem createFrequencyItem(final GamaToolbarSimple toolbar) {
@@ -119,13 +134,13 @@ public class FrequencyController {
 	}
 
 	void resume(final ToolItem item, final IOutput out) {
-		out.resume();
+		out.setPaused(false);
 		item.setToolTipText("Pause " + out.getName());
 		view.pauseChanged();
 	}
 
 	void pause(final ToolItem item, final IOutput out) {
-		out.pause();
+		out.setPaused(true);
 		item.setToolTipText("Resume " + out.getName());
 		view.pauseChanged();
 	}
@@ -136,6 +151,21 @@ public class FrequencyController {
 	public void install(final GamaToolbar2 tb) {
 		createFrequencyItem(tb);
 		createPauseItem(tb);
+		createSynchronizeItem(tb);
+	}
+
+	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
+		return tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
+			new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					view.getOutput().setSynchronized(((ToolItem) e.widget).getSelection());
+					view.synchronizeChanged();
+				}
+
+			}, SWT.RIGHT);
+
 	}
 
 	/**

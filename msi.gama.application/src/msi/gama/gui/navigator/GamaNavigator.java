@@ -223,15 +223,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	}
 
 	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-		// rightToolbar = right;
-	}
-
-	/**
 	 * Method setToolbar()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)
 	 */

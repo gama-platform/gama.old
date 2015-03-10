@@ -168,4 +168,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		displayCommands();
 	}
 
+	@Override
+	protected GamaUIJob createUpdateJob() {
+		return null;
+	}
+
 }

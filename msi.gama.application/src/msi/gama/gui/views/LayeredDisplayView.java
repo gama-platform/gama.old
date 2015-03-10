@@ -21,6 +21,7 @@ import msi.gama.gui.views.actions.*;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gaml.descriptions.IDescription;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -85,7 +86,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		surfaceComposite.setLayoutData(gd);
 		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
 		getDisplaySurface().setZoomListener(this);
-		getDisplaySurface().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
+		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
 		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_ANTIALIAS.getValue());
 		overlay.update();
 		parent.layout();
@@ -144,18 +145,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public String getOverlayText() {
-		IDisplaySurface surface = getOutput().getSurface();
-		boolean paused = surface.isPaused();
-		boolean synced = surface.isSynchronized();
+		boolean paused = getOutput().isPaused();
+		boolean synced = getOutput().isSynchronized();
 		boolean openGL = getOutput().isOpenGL();
-		ILocation point = surface.getModelCoordinates();
+		ILocation point = getOutput().getSurface().getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = null;
 		if ( !openGL ) {
 			objects = new Object[] { x, y, getZoomLevel() };
 		} else {
-			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) getOutput().getSurface();
 			ILocation camera = ds.getCameraPosition();
 			objects = new Object[] { x, y, getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
 		}
@@ -165,6 +165,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	@Override
 	public void pauseChanged() {
+		overlay.update();
+	}
+
+	@Override
+	public void synchronizeChanged() {
 		overlay.update();
 	}
 
@@ -185,10 +190,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public String getOverlayCoordInfo() {
-		IDisplaySurface surface = getOutput().getSurface();
-		boolean paused = surface.isPaused();
-		boolean synced = surface.isSynchronized();
-		ILocation point = surface.getModelCoordinates();
+		boolean paused = getOutput().isPaused();
+		boolean synced = getOutput().isSynchronized();
+		ILocation point = getOutput().getSurface().getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = new Object[] { x, y };
@@ -231,18 +235,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 				new DisplayedAgentsMenu().createItem(tb, this);
 				break;
 
-			case SYNC:
-				tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							getDisplaySurface().setSynchronized(((ToolItem) e.widget).getSelection());
-							overlay.update();
-						}
-
-					});
-				break;
 			case PRESENTATION:
 				new PresentationMenu().createItem(tb, this);
 				break;
@@ -269,18 +261,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 				new DisplayedAgentsMenu().createItem(tb, this);
 				break;
 
-			case SYNC:
-				tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation", "Synchronize",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							getDisplaySurface().setSynchronized(((ToolItem) e.widget).getSelection());
-							overlay.update();
-						}
-
-					}, SWT.RIGHT);
-				break;
 			case PRESENTATION:
 				new PresentationMenu().createItem(tb, this);
 				break;
@@ -289,31 +269,23 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public void zoom(final int type) {
-		new Thread(new Runnable() {
+		getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
 			@Override
 			public void run() {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-
-					}
-				}
 				switch (type) {
 					case -1:
-						surface.zoomOut();
+						getDisplaySurface().zoomOut();
 						break;
 					case 0:
-						surface.zoomFit();
+						getDisplaySurface().zoomFit();
 						break;
 					case 1:
-						surface.zoomIn();
+						getDisplaySurface().zoomIn();
 						break;
 				}
 			}
-		}).start();
+		});
 	}
 
 	@Override
@@ -334,6 +306,18 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	@Override
 	public Control[] getZoomableControls() {
 		return new Control[] { surfaceComposite };
+	}
+
+	@Override
+	protected GamaUIJob createUpdateJob() {
+		return new GamaUIJob() {
+
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				getOutput().getSurface().updateDisplay(false);
+				return Status.OK_STATUS;
+			}
+		};
 	}
 
 }

@@ -150,14 +150,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public void resumeItem(final MonitorOutput o) {
 		if ( o.isPaused() ) {
-			o.resume();
+			o.setPaused(false);
 		}
 		update(o);
 	}
 
 	@Override
 	public void pauseItem(final MonitorOutput o) {
-		o.pause();
+		o.setPaused(true);
 		update(o);
 	}
 
@@ -193,12 +193,13 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		outputs.clear();
 	}
 
-	@Override
-	public void update(final IDisplayOutput displayOutput) {
-		final MonitorOutput output = (MonitorOutput) displayOutput;
-		if ( !outputs.contains(output) ) { return; }
-		super.update(output);
-	}
+	//
+	// @Override
+	// public void update(final IDisplayOutput displayOutput) {
+	// final MonitorOutput output = (MonitorOutput) displayOutput;
+	// if ( !outputs.contains(output) ) { return; }
+	// super.update(output);
+	// }
 
 	@Override
 	public void focusItem(final MonitorOutput data) {

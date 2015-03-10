@@ -22,8 +22,6 @@ public interface IToolbarDecoratedView {
 
 	public IWorkbenchSite getSite();
 
-	public void setToolbars(GamaToolbarSimple left, GamaToolbarSimple right);
-
 	public void setToolbar(GamaToolbar2 toolbar);
 
 	public Integer[] getToolbarActionsId();
@@ -35,6 +33,8 @@ public interface IToolbarDecoratedView {
 		public void pauseChanged();
 
 		public IDisplayOutput getOutput();
+
+		public void synchronizeChanged();
 	}
 
 	public static interface Sizable extends IToolbarDecoratedView {

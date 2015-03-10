@@ -17,11 +17,11 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -128,8 +128,15 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	@Override
-	public void update(final IDisplayOutput output) {
-		initFor(scope, userCommands, title);
+	protected GamaUIJob createUpdateJob() {
+		return new GamaUIJob() {
+
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				initFor(scope, userCommands, title);
+				return Status.OK_STATUS;
+			}
+		};
 	}
 
 	@Override

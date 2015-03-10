@@ -12,22 +12,20 @@
 package msi.gama.gui.views;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.outputs.IDisplayOutput;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T>, Runnable {
+public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
 
 	private ParameterExpandBar viewer;
 
 	protected boolean isOpen = true;
-	Thread runThread;
-	private final Semaphore semaphore = new Semaphore(1);
+
+	// private final Semaphore semaphore = new Semaphore(1);
 
 	public ParameterExpandBar getViewer() {
 		return viewer;
@@ -146,37 +144,19 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	}
 
 	@Override
-	public void run() {
-		while (isOpen) {
+	protected GamaUIJob createUpdateJob() {
+		return new GamaUIJob() {
 
-			try {
-				semaphore.acquire();
-				GuiUtils.run(new Runnable() {
-
-					@Override
-					public void run() {
-						if ( !isOpen ) { return; }
-						if ( getViewer() != null && !getViewer().isDisposed() ) {
-							getViewer().updateItemNames();
-							updateItemValues();
-						}
-					}
-				});
-			} catch (Exception e) {
-				e.printStackTrace();
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				if ( !isOpen ) { return Status.CANCEL_STATUS; }
+				if ( getViewer() != null && !getViewer().isDisposed() ) {
+					getViewer().updateItemNames();
+					updateItemValues();
+				}
+				return Status.OK_STATUS;
 			}
-
-		}
-	}
-
-	@Override
-	public void update(final IDisplayOutput output) {
-		// TODO Attention : un release pour CHAQUE output ! Ne marche pas pour MonitorView
-		semaphore.release();
-		if ( runThread == null ) {
-			runThread = new Thread(this, getClass().getSimpleName());
-			runThread.start();
-		}
+		};
 	}
 
 	@Override

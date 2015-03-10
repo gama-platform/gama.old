@@ -101,27 +101,17 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
-				new Thread(new Runnable() {
+				surface.waitForUpdateAndRun(new Runnable() {
 
 					@Override
 					public void run() {
-						while (!surface.canBeUpdated()) {
-							try {
-								Thread.sleep(10);
-							} catch (final InterruptedException e) {
-
-							}
-						}
 						if ( !a.dead() ) {
 							surface.focusOn(a);
 						}
-
 					}
-				}).start();
-
+				});
 			}
 		}
-
 	}
 
 	public void fill(final IToolbarDecoratedView view, final Menu menu, final int index, final boolean withWorld,

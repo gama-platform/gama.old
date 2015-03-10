@@ -30,19 +30,12 @@ import org.eclipse.ui.editors.text.TextEditor;
  */
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
-	// GamaToolbar leftToolbar, rightToolbar;
 	GamaToolbar2 toolbar;
 
 	public CSVTextEditor(final char delimiter) {
 		CSVTextSourceViewerConfiguration csvTextConfig =
 			new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());
 		setSourceViewerConfiguration(csvTextConfig);
-	}
-
-	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-		// rightToolbar = right;
 	}
 
 	/**

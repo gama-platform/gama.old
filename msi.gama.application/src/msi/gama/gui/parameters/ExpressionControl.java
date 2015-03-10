@@ -22,6 +22,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import org.eclipse.swt.events.*;
@@ -36,7 +37,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	protected Exception currentException;
 	final boolean evaluateExpression;
 	private final IAgent hostAgent;
-	final IType expectedType;
+	private final IType expectedType;
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
 		@Override
@@ -46,9 +47,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	};
 
 	public ExpressionControl(final Composite comp, final ExpressionBasedEditor ed, final IAgent agent,
-		final IType expectedType, final int controlStyle) {
+		final IType expectedType, final int controlStyle, final boolean evaluate) {
 		editor = ed;
-		evaluateExpression = ed == null ? false : ed.evaluateExpression();
+		evaluateExpression = evaluate;
 		hostAgent = agent;
 		this.expectedType = expectedType;
 		text = createTextBox(comp, controlStyle);
@@ -68,7 +69,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		displayTooltip();
 	}
 
-	void displayTooltip() {
+	protected void displayTooltip() {
 		String s = getPopupText();
 		if ( s == null || s.isEmpty() ) {
 			removeTooltip();
@@ -83,7 +84,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	}
 
-	void removeTooltip() {
+	protected void removeTooltip() {
 		ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 		if ( displayer != null ) {
 			displayer.stopDisplayingTooltips();
@@ -223,7 +224,13 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 				@Override
 				public Boolean run(final IScope scope) {
-					return expectedType.canBeTypeOf(scope, currentValue);
+					if ( evaluateExpression ) {
+						return expectedType.canBeTypeOf(scope, currentValue);
+					} else if ( currentValue instanceof IExpression ) {
+						return expectedType.isAssignableFrom(((IExpression) currentValue).getType());
+					} else {
+						return false;
+					}
 				}
 			}) ) {
 				background = IGamaColors.OK;

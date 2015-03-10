@@ -30,8 +30,9 @@ import msi.gaml.operators.Cast;
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
-	private Point snapshotDimension, mousePosition;
+	private Point mousePosition;
 	private BufferedImage buffImage;
+	private boolean alreadyZooming = false;
 
 	private class DisplayMouseListener extends MouseAdapter {
 
@@ -46,6 +47,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 				if ( mousePosition == null ) {
 					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 				}
+				Point origin = getOrigin();
 				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
 				mousePosition = p;
 				repaint();
@@ -65,10 +67,11 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			mousePosition = e.getPoint();
 			Point p = new Point(mousePosition.x, mousePosition.y);
 			double zoomFactor = applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement);
+			Point origin = getOrigin();
 			double newx = Math.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2);
 			double newy = Math.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2);
 			centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-			updateDisplay();
+			updateDisplay(true);
 		}
 
 		@Override
@@ -83,7 +86,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		@Override
 		public void mouseReleased(final MouseEvent e) {
 			if ( dragging ) {
-				updateDisplay();
+				updateDisplay(true);
 				dragging = false;
 			}
 			canBeUpdated(true);
@@ -92,8 +95,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void updateDisplay() {
-		super.updateDisplay();
+	public void updateDisplay(final boolean force) {
+		super.updateDisplay(force);
 		// EXPERIMENTAL
 
 		if ( temp_focus != null ) {
@@ -113,25 +116,24 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			}
 			temp_focus = null;
 			// canBeUpdated(true);
-			super.updateDisplay();
+			super.updateDisplay(force);
 			// canBeUpdated(false);
 		}
 
 		// EXPERIMENTAL
 	}
 
-	private boolean alreadyZooming = false;
-
 	@Override
 	public void zoomIn() {
 		if ( alreadyZooming ) { return; }
 		alreadyZooming = true;
+		Point origin = getOrigin();
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 + zoomIncrement);
 		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-		updateDisplay();
+		updateDisplay(true);
 		alreadyZooming = false;
 	}
 
@@ -139,28 +141,52 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void zoomOut() {
 		if ( alreadyZooming ) { return; }
 		alreadyZooming = true;
+		Point origin = getOrigin();
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		double zoomFactor = applyZoom(1.0 - zoomIncrement);
 		double newx = Math.round(zoomFactor * (getWidth() / 2 - origin.x));
 		double newy = Math.round(zoomFactor * (getHeight() / 2 - origin.y));
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
-		updateDisplay();
+		updateDisplay(true);
 		alreadyZooming = false;
 	}
 
 	public AWTDisplaySurface(final Object ... args) {
+		super(args);
 		displayBlock = new Runnable() {
 
 			@Override
 			public void run() {
-				// System.err.println("Display surface entering displayBlock");
 				canBeUpdated(false);
 				drawDisplaysWithoutRepainting();
 				repaint();
 				canBeUpdated(true);
-				// System.err.println("Display surface leaving displayBlock");
 			}
 		};
+		final DisplayMouseListener d = new DisplayMouseListener();
+		addMouseListener(d);
+		addMouseMotionListener(d);
+		addMouseWheelListener(d);
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentResized(final ComponentEvent e) {
+				if ( buffImage == null || zoomFit ) {
+					zoomFit();
+				} else {
+					if ( isFullImageInPanel() ) {
+						centerImage();
+					} else if ( isImageEdgeInPanel() ) {
+						scaleOrigin();
+					}
+					updateDisplay(true);
+				}
+				final double newZoom =
+					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
+				setZoomLevel(1 / newZoom);
+				previousPanelSize = getSize();
+			}
+		});
 	}
 
 	@Override
@@ -182,63 +208,13 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void initialize(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput layerDisplayOutput) {
-		super.initialize(scope, env_width, env_height, layerDisplayOutput);
-		final DisplayMouseListener d = new DisplayMouseListener();
-		addMouseListener(d);
-		addMouseMotionListener(d);
-		addMouseWheelListener(d);
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentResized(final ComponentEvent e) {
-				// System.out.println("Display surface entering a resize event =" + e);
-				if ( buffImage == null || zoomFit ) {
-					zoomFit();
-				} else {
-					if ( isFullImageInPanel() ) {
-						centerImage();
-					} else if ( isImageEdgeInPanel() ) {
-						scaleOrigin();
-					}
-					updateDisplay();
-				}
-				// System.out.println("Display surface leaving a resize event");
-				final double newZoom =
-					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
-				setZoomLevel(1 / newZoom);
-				previousPanelSize = getSize();
-			}
-		});
-		// OutputSynchronizer.decInitializingViews(getOutputName());
-	}
-
-	@Override
-	public void outputChanged(final IScope scope, final double env_width, final double env_height,
-		final LayeredDisplayOutput output) {
-		super.outputChanged(scope, env_width, env_height, output);
-		bgColor = output.getBackgroundColor();
-		this.setBackground(bgColor);
+	public void initialize(final IScope scope, final LayeredDisplayOutput output) {
+		super.initialize(scope, output);
 		repaint();
 	}
 
-	@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		// GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight);
-		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
-		final int[] dim = new int[2];
-		if ( widthHeightConstraint < 1 ) {
-			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
-			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
-		} else {
-			dim[0] = Math.min(vwidth, (int) Math.round(vheight / widthHeightConstraint));
-			dim[1] = Math.min(vheight, (int) Math.round(dim[0] * widthHeightConstraint));
-		}
-		return dim;
-	}
-
 	public void selectAgents(final int mousex, final int mousey) {
+		Point origin = getOrigin();
 		final int xc = mousex - origin.x;
 		final int yc = mousey - origin.y;
 		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
@@ -255,6 +231,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public ILocation getModelCoordinates() {
+		Point origin = getOrigin();
 		if ( mousePosition == null ) { return null; }
 		final int xc = mousePosition.x - origin.x;
 		final int yc = mousePosition.y - origin.y;
@@ -263,18 +240,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		return layers.get(0).getModelCoordinatesFrom(xc, yc, this);
 	}
 
-	@Override
-	public void forceUpdateDisplay() {
-		final boolean old = synchronous;
-		setSynchronized(false);
-		canBeUpdated(true);
-		updateDisplay();
-		setSynchronized(old);
-	}
-
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
-		iGraphics.fillBackground(bgColor, 1);
+		iGraphics.fillBackground(getBackground(), 1);
 		manager.drawLayersOn(iGraphics);
 	}
 
@@ -282,7 +250,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
-		if ( autosave ) {
+		if ( data.isAutosave() ) {
 			snapshot();
 		}
 	}
@@ -313,10 +281,11 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
 		centerOnDisplayCoordinates(center);
 
-		updateDisplay();
+		updateDisplay(true);
 	}
 
 	public void centerOnViewCoordinates(final Point p) {
+		Point origin = getOrigin();
 		int translationX = p.x - Math.round(getWidth() / (float) 2);
 		int translationY = p.y - Math.round(getHeight() / (float) 2);
 		setOrigin(origin.x - translationX, origin.y - translationY);
@@ -324,6 +293,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	public void centerOnDisplayCoordinates(final Point p) {
+		Point origin = getOrigin();
 		centerOnViewCoordinates(new Point(p.x + origin.x, p.y + origin.y));
 	}
 
@@ -377,6 +347,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 		if ( success ) {
 			zoomFit = false;
+			double widthHeightConstraint = getEnvWidth() / getEnvHeight();
+
 			if ( widthHeightConstraint < 1 ) {
 				setZoomLevel((double) getDisplayWidth() / (double) getWidth());
 			} else {
@@ -392,7 +364,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( resizeImage(getWidth(), getHeight(), false) ) {
 			super.zoomFit();
 			centerImage();
-			updateDisplay();
+			updateDisplay(true);
 		}
 	}
 
@@ -405,38 +377,24 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
-	 */
-	@Override
-	public void setAutoSave(final boolean autosave, final int x, final int y) {
-		super.setAutoSave(autosave, x, y);
-		snapshotDimension = new Point(x, y);
-	}
-
-	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
 	 */
 	@Override
 	public void snapshot() {
-		if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
+		if ( data.getImageDimension().getX() == -1 && data.getImageDimension().getY() == -1 ) {
 			super.snapshot();
 			return;
 		}
 
-		final BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+		final BufferedImage newImage =
+			ImageUtils.createCompatibleImage(data.getImageDimension().getX(), data.getImageDimension().getY());
 		final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
-		tempGraphics.fillBackground(bgColor, 1);
+		tempGraphics.fillBackground(getBackground(), 1);
 		manager.drawLayersOn(tempGraphics);
 		save(getDisplayScope(), newImage);
 		newImage.flush();
 
 	}
-
-	/**
-	 * These methods do nothing yet for JAVA2D display
-	 */
-	@Override
-	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {}
 
 	/**
 	 * Method followAgent()

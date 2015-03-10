@@ -221,52 +221,7 @@ public abstract class AbstractOverlay {
 		referenceComposite = c;
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
-		// slidingShell = new Shell(parentShell, SWT.NO_TRIM);
-		// slidingShell.setBackground(BLACK);
-		// slidingShell.setAlpha(40);
-		// slidingShell.addMouseTrackListener(new MouseTrackAdapter() {
-		//
-		// @Override
-		// public void mouseHover(final MouseEvent e) {
-		// slidingShell.setVisible(false);
-		// setHidden(false);
-		// }
-		//
-		// @Override
-		// public void mouseExit(final MouseEvent e) {
-		// slidingShell.setVisible(false);
-		// }
-		//
-		// });
 
-		// slidingShell.addMouseListener(new MouseAdapter() {
-		//
-		// @Override
-		// public void mouseUp(final MouseEvent e) {
-		// slidingShell.setVisible(false);
-		// setHidden(false);
-		// }
-		//
-		// @Override
-		// public void mouseDown(final MouseEvent e) {
-		// // slidingShell.setVisible(false);
-		// // toggle();
-		// }
-		//
-		// @Override
-		// public void mouseDoubleClick(final MouseEvent e) {
-		// slidingShell.setVisible(false);
-		// }
-		//
-		// });
-		// slidingShell.addFocusListener(new FocusAdapter() {
-		//
-		// @Override
-		// public void focusLost(final FocusEvent e) {
-		// slidingShell.setVisible(false);
-		// }
-		//
-		// });
 		popup.setAlpha(140);
 		FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
@@ -281,13 +236,7 @@ public abstract class AbstractOverlay {
 		parentShell.addShellListener(listener);
 		parentShell.addControlListener(listener);
 		c.addControlListener(listener);
-		// popup.addMouseListener(toggleListener);
 	}
-
-	// public void appear() {
-	// slidingShell.setVisible(true);
-	// slidingShell.setActive();
-	// }
 
 	protected void createPopupControl() {};
 
@@ -367,7 +316,7 @@ public abstract class AbstractOverlay {
 		}
 	}
 
-	protected boolean isHidden() {
+	public boolean isHidden() {
 		// AD: Temporary fix for Issue 548. When a view is detached, the overlays are not displayed
 		return isDisposed() || isHidden;
 	}
@@ -396,46 +345,6 @@ public abstract class AbstractOverlay {
 			// resize();
 			display();
 		}
-	}
-
-	/**
-	 * allows the window to be animated.
-	 * 
-	 * @param reverse
-	 *            if false, it goes right->left. if true, it goes left->right
-	 */
-	public void slide(final boolean reverse) {
-		slide(reverse, 0);
-	}
-
-	/**
-	 * allows the window to be animated.
-	 * 
-	 * @param reverse
-	 *            if false, it goes right->left. if true, it goes left->right
-	 * @param speed
-	 *            how much time to wait between "frames" in the sliding animation.
-	 */
-	public void slide(final boolean reverse, final int speed) {
-		final int rate = 4;
-		final int direction = reverse ? rate : -rate;
-
-		run(new Runnable() {
-
-			@Override
-			public void run() {
-				for ( int i = 0; i <= popup.getBounds().width / rate; i++ ) {
-					popup.setBounds(popup.getLocation().x, popup.getLocation().y, popup.getBounds().width + direction,
-						popup.getBounds().height);
-					if ( speed > 0 ) {
-						try {
-							Thread.sleep(speed);
-						} catch (InterruptedException e) {}
-					}
-					update();
-				}
-			}
-		});
 	}
 
 }

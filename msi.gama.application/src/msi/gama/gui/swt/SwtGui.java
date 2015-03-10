@@ -104,7 +104,7 @@ public class SwtGui implements IGui {
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
-	private static ThreadedStatusUpdater status = new ThreadedStatusUpdater();
+	private static ThreadedUpdater<IStatusMessage> status = new ThreadedUpdater("Status refresh");
 	private static ISpeedDisplayer speedStatus;
 	private Tell tell = new Tell();
 	private Error error = new Error();
@@ -136,76 +136,43 @@ public class SwtGui implements IGui {
 		return label;
 	}
 
+	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
+
 	private class Views {
 
-		static final int close1 = -10, /* reset = -9, */update = -7, none = -6;
-
-		class ViewAction implements Runnable {
-
-			int actionId;
-			IDisplayOutput output;
-
-			ViewAction(final IDisplayOutput out, final int act) {
-				actionId = act;
-				output = out;
-
-			}
-
-			@Override
-			public void run() {
-				if ( actionId == none ) { return; }
-				final IWorkbenchPage page = getPage();
-				if ( page == null ) { return; } // Closing the workbench
-				final IViewReference ref =
-					page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
-				if ( ref == null ) { return; }
-				final IViewPart part = ref.getView(true);
-				if ( !(part instanceof IGamaView) ) { return; }
-				final IGamaView view = (IGamaView) part;
-				switch (actionId) {
-					case close1:
-						try {
-							((IViewPart) view).getSite().getPage().hideView((IViewPart) view);
-							// ((IViewPart) view).dispose();
-						} catch (final Exception e) {
-							e.printStackTrace();
-						}
-						break;
-					case update:
-						view.update(output);
-						break;
-					// case reset:
-					// view.reset();
-					// break;
-					case none:
-						break;
-					default:
-						// if ( view instanceof IToolbarDecoratedView.Pausable ) {
-						// ((IToolbarDecoratedView.Pausable) view).setRefreshRate(actionId);
-						// }
-				}
-
-			}
-
+		IGamaView findView(final IDisplayOutput output) {
+			final IWorkbenchPage page = getPage();
+			if ( page == null ) { return null; } // Closing the workbench
+			final IViewReference ref =
+				page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
+			if ( ref == null ) { return null; }
+			final IViewPart part = ref.getView(true);
+			if ( !(part instanceof IGamaView) ) { return null; }
+			return (IGamaView) part;
 		}
 
 		void close(final IDisplayOutput out) {
-			// debug("View to close : " + out.getViewId() + " : " +
-			// (out.isUnique() ? "" : out.getName()));
-			run(new ViewAction(out, close1));
+			final IGamaView view = findView(out);
+			if ( view == null ) { return; }
+			run(new Runnable() {
+
+				@Override
+				public void run() {
+					view.close();
+				}
+			});
+
 		}
 
 		void update(final IDisplayOutput out) {
-			run(new ViewAction(out, update));
+			final IGamaView view = findView(out);
+			if ( view == null ) { return; }
+			view.update(out);
 		}
 
-		// void reset(final IDisplayOutput out) {
-		// GUI.run(new ViewAction(out, reset));
+		// void refresh(final IDisplayOutput out, final int rate) {
+		// new ViewAction(out, rate).schedule();
 		// }
-
-		void refresh(final IDisplayOutput out, final int rate) {
-			run(new ViewAction(out, rate));
-		}
 	}
 
 	class Tell implements Runnable {
@@ -237,13 +204,6 @@ public class SwtGui implements IGui {
 			MessageDialog.openError(getShell(), "Error", message);
 		}
 	}
-
-	// static {
-	// log = Logger.getLogger("gama");
-	// change the level to disable log display
-	// log.setLevel(Level.DEBUG);
-	// ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-	// }
 
 	@Override
 	public void debug(final String msg) {
@@ -417,11 +377,12 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	public void setViewRateOf(final IDisplayOutput output, final int refresh) {
-		if ( views != null ) {
-			views.refresh(output, refresh);
-		}
-	}
+	//
+	// public void setViewRateOf(final IDisplayOutput output, final int refresh) {
+	// if ( views != null ) {
+	// views.refresh(output, refresh);
+	// }
+	// }
 
 	@Override
 	public void closeViewOf(final IDisplayOutput output) {
@@ -878,14 +839,14 @@ public class SwtGui implements IGui {
 	static final Map<String, Class> displayClasses = new THashMap();
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final String keyword,
-		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
+	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final LayeredDisplayOutput output) {
 
 		IDisplaySurface surface = null;
+		String keyword = output.getData().getDisplayType();
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
-			surface = creator.create(args);
-			surface.initialize(scope, w, h, layerDisplayOutput);
+			surface = creator.create();
+			surface.initialize(scope, output);
 		} else {
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
 		}

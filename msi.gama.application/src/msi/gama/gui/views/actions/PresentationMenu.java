@@ -144,7 +144,7 @@ public class PresentationMenu extends GamaToolItem {
 					@Override
 					public void run(final int r, final int g, final int b) {
 						java.awt.Color background = new java.awt.Color(r, g, b);
-						view.getDisplaySurface().setBackgroundColor(background);
+						view.getDisplaySurface().setBackground(background);
 						image.dispose();
 					}
 				}, new RGB(background.getRed(), background.getGreen(), background.getBlue()));
@@ -153,8 +153,8 @@ public class PresentationMenu extends GamaToolItem {
 		});
 
 		MenuItem highlightItem = new MenuItem(menu, SWT.CHECK);
-		final int[] highlight = view.getDisplaySurface().getHighlightColor();
-		final Image highlightImage = GamaIcons.createTempColorIcon(GamaColors.get(highlight));
+		final java.awt.Color h = view.getDisplaySurface().getHighlightColor();
+		final Image highlightImage = GamaIcons.createTempColorIcon(GamaColors.get(h));
 		highlightItem.setImage(highlightImage);
 		highlightItem.setText("Highlight color...");
 		highlightItem.addSelectionListener(new SelectionAdapter() {
@@ -165,10 +165,10 @@ public class PresentationMenu extends GamaToolItem {
 
 					@Override
 					public void run(final int r, final int g, final int b) {
-						view.getDisplaySurface().setHighlightColor(new int[] { r, g, b });
+						view.getDisplaySurface().setHighlightColor(h);
 						highlightImage.dispose();
 					}
-				}, new RGB(highlight[0], highlight[1], highlight[2]));
+				}, new RGB(h.getRed(), h.getGreen(), h.getBlue()));
 			}
 
 		});
@@ -185,27 +185,14 @@ public class PresentationMenu extends GamaToolItem {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-					new Thread(new Runnable() {
+				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-						@Override
-						public void run() {
-							IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-							while (!surface.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (InterruptedException e) {
-
-								}
-							}
-							surface.toggleCamera();
-
-						}
-					}).start();
-				}
-
+					@Override
+					public void run() {
+						((OpenGL) view.getDisplaySurface()).toggleCamera();
+					}
+				});
 			}
-
 		});
 		if ( arcBall ) {
 			MenuItem drag = new MenuItem(menu, SWT.PUSH);
@@ -216,27 +203,14 @@ public class PresentationMenu extends GamaToolItem {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-						new Thread(new Runnable() {
+					view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-							@Override
-							public void run() {
-								final IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-								while (!surface.canBeUpdated()) {
-									try {
-										Thread.sleep(10);
-									} catch (final InterruptedException e) {
-
-									}
-								}
-								surface.toggleArcball();
-
-							}
-						}).start();
-					}
-
+						@Override
+						public void run() {
+							((OpenGL) view.getDisplaySurface()).toggleArcball();
+						}
+					});
 				}
-
 			});
 
 			MenuItem inertia = new MenuItem(menu, SWT.CHECK);
@@ -248,29 +222,17 @@ public class PresentationMenu extends GamaToolItem {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-						new Thread(new Runnable() {
 
-							@Override
-							public void run() {
-								final IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-								while (!surface.canBeUpdated()) {
-									try {
-										Thread.sleep(10);
-									} catch (final InterruptedException e) {
+					view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-									}
-								}
-								surface.toggleInertia();
-
-							}
-						}).start();
-					}
-
+						@Override
+						public void run() {
+							((OpenGL) view.getDisplaySurface()).toggleInertia();
+						}
+					});
 				}
 
 			});
-
 		}
 		new MenuItem(menu, SWT.SEPARATOR);
 
@@ -284,27 +246,14 @@ public class PresentationMenu extends GamaToolItem {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-					new Thread(new Runnable() {
+				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-						@Override
-						public void run() {
-							final IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-							while (!surface.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (final InterruptedException e) {
-
-								}
-							}
-							surface.toggleRotation();
-
-						}
-					}).start();
-				}
-
+					@Override
+					public void run() {
+						((OpenGL) view.getDisplaySurface()).toggleRotation();
+					}
+				});
 			}
-
 		});
 		MenuItem split = new MenuItem(menu, SWT.CHECK);
 		split.setImage(IGamaIcons.DISPLAY_TOOLBAR_SPLIT.image());
@@ -316,27 +265,14 @@ public class PresentationMenu extends GamaToolItem {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-					new Thread(new Runnable() {
+				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-						@Override
-						public void run() {
-							final IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-							while (!surface.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (final InterruptedException e) {
-
-								}
-							}
-							surface.toggleSplitLayer();
-
-						}
-					}).start();
-				}
-
+					@Override
+					public void run() {
+						((OpenGL) view.getDisplaySurface()).toggleSplitLayer();
+					}
+				});
 			}
-
 		});
 		MenuItem triangle = new MenuItem(menu, SWT.CHECK);
 		boolean triangulated = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isTriangulationOn();
@@ -348,27 +284,14 @@ public class PresentationMenu extends GamaToolItem {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				if ( view.getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-					new Thread(new Runnable() {
+				view.getDisplaySurface().waitForUpdateAndRun(new Runnable() {
 
-						@Override
-						public void run() {
-							final IDisplaySurface.OpenGL surface = (OpenGL) view.getDisplaySurface();
-							while (!surface.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (final InterruptedException e) {
-
-								}
-							}
-							surface.toggleTriangulation();
-
-						}
-					}).start();
-				}
-
+					@Override
+					public void run() {
+						((OpenGL) view.getDisplaySurface()).toggleTriangulation();
+					}
+				});
 			}
-
 		});
 
 	}

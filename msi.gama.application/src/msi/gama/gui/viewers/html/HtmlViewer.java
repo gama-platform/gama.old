@@ -140,11 +140,6 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	}
 
 	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-	}
-
-	@Override
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] { BACK, HOME, FORWARD, SEP, REFRESH, STOP };
 	}

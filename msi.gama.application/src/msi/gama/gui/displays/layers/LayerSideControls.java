@@ -14,7 +14,7 @@ import msi.gama.outputs.layers.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
@@ -33,9 +33,9 @@ public class LayerSideControls {
 	public LayerSideControls() {}
 
 	public static void updateIfPaused(final ILayer layer, final IDisplaySurface container) {
-		if ( layer.isPaused(container) ) {
-			container.forceUpdateDisplay();
-		}
+		// if ( layer.isPaused(container) ) {
+		container.updateDisplay(true);
+		// }
 	}
 
 	public static void fill(final Composite compo, final ILayer layer, final IDisplaySurface container) {

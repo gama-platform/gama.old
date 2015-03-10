@@ -17,11 +17,11 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.gui.parameters.ExpressionControl;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.commands.AgentsMenu;
+import msi.gama.gui.swt.commands.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
@@ -33,6 +33,7 @@ import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -55,47 +56,71 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public static final String CUSTOM = "custom";
 
 	public final static int SAVE = 0;
+	public final static int LOCK = 1;
+	public final static int POP = 2;
+	public final static int EXPR = 3;
 	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
 		IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
-	boolean locked;
+	IScope scope;
+	volatile boolean locked, refreshing;
+	ToolItem populationMenu;
 	TableViewer viewer;
-	org.eclipse.swt.widgets.List /* speciesMenu, */attributesMenu;
+	org.eclipse.swt.widgets.List attributesMenu;
 	private AgentComparator comparator;
-	// private Label attributesLabel;
-	// private Composite expressionComposite;
 	private ExpressionControl editor;
 	private String speciesName;
+
+	IAgent[] elements = new IAgent[0];
 	Font currentFont = new Font(SwtGui.getDisplay(), SwtGui.getSmallFont().getFontData());
-	// private CLabel sizeLabel;
-	// private CTabItem currentTab;
-	// private CTabFolder tabFolder;
 	Map<String, List<String>> selectedColumns = new HashMap();
-	// Map<String, List<String>> selectedColumns = new THashMap();
+
+	class AgentContentProvider implements ILazyContentProvider {
+
+		@Override
+		public void dispose() {
+			elements = new IAgent[0];
+		}
+
+		@Override
+		public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
+			IAgent[] list = newInput == null ? new IAgent[0] : (IAgent[]) newInput;
+			elements = list;
+			if ( elements.length > 1 && comparator != null ) {
+				Arrays.sort(elements, comparator);
+			}
+			viewer.setItemCount(elements.length);
+		}
+
+		@Override
+		public void updateElement(final int index) {
+			viewer.replace(elements[index], index);
+		}
+
+	}
+
 	final private AgentContentProvider provider = new AgentContentProvider();
 
 	@Override
-	public void update(final IDisplayOutput output) {
-		final IExpression expr = getOutput().getValue();
-		if ( expr != null ) {
-			viewer.setInput(getOutput().getLastValue());
-		} else {
-			viewer.setInput(null);
-		}
-		changePartName(speciesName);
-		// refreshTabVisibility();
-		viewer.refresh();
-	}
+	protected GamaUIJob createUpdateJob() {
+		return new GamaUIJob() {
 
-	private int computeCustomSize() {
-		int size;
-		final IExpression expr = getOutput().getValue();
-		if ( expr != null ) {
-			final List list = getOutput().getLastValue();
-			size = list == null ? 0 : list.size();
-		} else {
-			size = 0;
-		}
-		return size;
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				if ( !locked ) {
+					IAgent[] agents = getOutput().getLastValue();
+					if ( Arrays.equals(elements, agents) ) {
+						viewer.refresh();
+					} else {
+						viewer.setInput(agents);
+						// changePartName(speciesName);
+					}
+				} else {
+					viewer.refresh();
+				}
+
+				return Status.OK_STATUS;
+			}
+		};
 	}
 
 	@Override
@@ -120,19 +145,9 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	private void setSpeciesName(final String name, final boolean fromMenu) {
 		speciesName = name;
-		// if ( !CUSTOM.equals(speciesName) ) {
-		// if ( fromMenu ) {
-		// hideExpressionComposite();
-		// getOutput().setNewExpressionText(name);
-		// }
-		// } else {
-		// if ( fromMenu ) {
-		// showExpressionComposite();
-		// if ( editor != null ) {
-		// editor.setEditorTextNoPopup(getOutput().getExpressionText());
-		// }
-		// }
-		// }
+		if ( fromMenu && editor != null ) {
+			editor.getControl().setText(name);
+		}
 		if ( !selectedColumns.containsKey(name) ) {
 			selectedColumns.put(name, new ArrayList());
 			final List<String> names = getOutput().getAttributes();
@@ -191,23 +206,13 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void createExpressionComposite() {
-		// Composite expressionComposite = new Composite(toolbar, SWT.NONE);
-		// expressionComposite.setBackground(IGamaColors.WHITE.color());
-		// expressionComposite.setLayout(new FillLayout());
-		// // expressionComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		// final GridLayout layout = new GridLayout(3, false);
-		// layout.verticalSpacing = 5;
-		// expressionComposite.setLayout(layout);
-		// final Label lock = new Label(expressionComposite, SWT.NONE);
-		// lock.setImage(IGamaIcons.SMALL_LOCK.image());
-		// lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
 		Composite compo = new Composite(toolbar.getToolbar(SWT.RIGHT), SWT.None);
-		compo.setSize(new Point(200, 30));
+		compo.setSize(new Point(150, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
 		editor =
-			new ExpressionControl(compo, null, output.getScope().getAgentScope(), Types.LIST.of(Types.AGENT),
-				SWT.BORDER) {
+			new ExpressionControl(compo, null, output.getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT),
+				SWT.BORDER, false) {
 
 				@Override
 				public void modifyValue() {
@@ -233,39 +238,12 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumHeight = 16;
 		data.heightHint = 16;
+		if ( speciesName != null ) {
+			editor.getControl().setText(speciesName);
+		}
 		editor.getControl().setLayoutData(data);
-		// EditorFactory.createExpression(toolbar, "", IExpressionFactory.NIL_EXPR, new EditorListener<IExpression>() {
-		//
-		// @Override
-		// public void valueModified(final IExpression newValue) {
-		// if ( output == null ) { return; }
-		// try {
-		// ((InspectDisplayOutput) output).setNewExpression(newValue);
-		// } catch (final GamaRuntimeException e) {
-		// e.printStackTrace();
-		// }
-		// final ISpecies species = getOutput().getSpecies();
-		// setSpeciesName(species == null ? null : species.getName(), false);
-		// fillAttributeMenu();
-		// // TODO Make a test on the columns.
-		// recreateViewer();
-		// update(output);
-		// }
-		// }, Types.LIST.of(Types.AGENT));
-
 		editor.getControl().setToolTipText("Enter a GAML expression returning one or several agents ");
-		// lock.addMouseListener(new MouseAdapter() {
-		//
-		// @Override
-		// public void mouseDown(final MouseEvent e) {
-		// locked = !locked;
-		// lock.setImage(locked ? IGamaIcons.SMALL_UNLOCK.image() : IGamaIcons.SMALL_LOCK.image());
-		// editor.getEditor().setEnabled(!locked);
-		// }
-		//
-		// });
-		// expressionComposite.pack();
-		toolbar.control(compo, 200, SWT.LEFT);
+		toolbar.control(compo, 150, SWT.RIGHT);
 		toolbar.refresh(true);
 	}
 
@@ -279,12 +257,10 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		}
 
 	};
-	private ToolItem tooltip;
 
 	private void fillAttributeMenu() {
+		if ( attributesMenu.isDisposed() ) { return; }
 		attributesMenu.removeAll();
-		// attributesMenu.setVisible(false);
-		// attributesLabel.setVisible(false);
 		String tooltipText;
 		if ( CUSTOM.equals(speciesName) ) {
 			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
@@ -309,74 +285,19 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 					}
 				}
 				attributesMenu.addSelectionListener(attributeAdapter);
-				// attributesLabel.setVisible(true);
-				// attributesMenu.setVisible(true);
 			}
 		}
 	}
 
-	// private void createTab(final String s, final int size) {
-	// final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
-	// refreshTabName(s, size, item);
-	// item.setImage(IGamaIcons.MENU_POPULATION.image());
-	// item.setShowClose(true);
-	// }
-
-	// private void refreshTabName(final String s, final int size, final CTabItem t) {
-	// CTabItem item = t == null ? getItem(s) : t;
-	// if ( item != null ) {
-	// item.setText(s + " (" + size + ")");
-	// }
-	// }
-
 	@Override
 	public void ownCreatePartControl(final Composite c) {
-		// tabFolder = new CTabFolder(c, SWT.BOTTOM);
-		// tabFolder.setBorderVisible(true);
-		// tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		// tabFolder.setSimple(true); // rounded tabs
-		// // tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		// final Iterable<ISpecies> populations = getOutput().getRootAgent().getSpecies().getMicroSpecies();
-		// final List<String> names = new ArrayList();
-		// final List<Integer> sizes = new ArrayList();
-		// for ( final ISpecies pop : populations ) {
-		// names.add(pop.getName());
-		// }
-		// names.add(CUSTOM);
-		// for ( final String s : names ) {
-		// createTab(s, 0);
-		// }
-		// Adds a composite to the tab
-
-		final Composite view = new Composite(/* c */c, SWT.None);
+		final Composite view = new Composite(c, SWT.None);
 		speciesName = getOutput().getExpressionText();
-		// int index = names.indexOf(speciesName);
-		// if ( index == -1 ) {
-		// index = names.indexOf(CUSTOM);
-		// }
-		// currentTab = tabFolder.getItem(index);
-		// currentTab.setControl(view);
-		// tabFolder.setSelection(currentTab);
-		// tabFolder.addSelectionListener(new SelectionAdapter() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// currentTab = (CTabItem) e.item;
-		// final String name = getTabText(currentTab);
-		// currentTab.setControl(view);
-		// setSpeciesName(name, true);
-		// fillAttributeMenu();
-		// recreateViewer();
-		// update(getOutput());
-		// }
-		//
-		// });
 		final GridLayout viewLayout = new GridLayout(1, false);
 		viewLayout.marginWidth = 0;
 		viewLayout.marginHeight = 0;
 		viewLayout.verticalSpacing = 0;
 		view.setLayout(viewLayout);
-		createExpressionComposite();
 		final Composite intermediate = new Composite(view, SWT.NONE);
 		intermediate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		final GridLayout intermediateLayout = new GridLayout(2, false);
@@ -390,63 +311,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		parent = intermediate;
 	}
 
-	// private void hideExpressionComposite() {
-	// if ( expressionComposite == null ) { return; }
-	// expressionComposite.setVisible(false);
-	// ((GridData) expressionComposite.getLayoutData()).exclude = true;
-	// expressionComposite.getParent().layout();
-	// }
-	//
-	// private void showExpressionComposite() {
-	// if ( expressionComposite == null ) { return; }
-	// expressionComposite.setVisible(true);
-	// ((GridData) expressionComposite.getLayoutData()).exclude = false;
-	// expressionComposite.getParent().layout();
-	// }
-
-	class AgentContentProvider implements ILazyContentProvider {
-
-		List<IAgent> elements;
-
-		@Override
-		public void dispose() {
-			elements = null;
-		}
-
-		@Override
-		public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
-			List<IAgent> agents = (List<IAgent>) newInput;
-			if ( agents == null ) {
-				elements = Collections.EMPTY_LIST;
-			} else {
-				elements = new ArrayList(agents);
-				if ( comparator != null ) {
-					sortElements();
-				}
-			}
-			viewer.setItemCount(elements.size());
-		}
-
-		@Override
-		public void updateElement(final int index) {
-			viewer.replace(elements.get(index), index);
-		}
-
-		public void sortElements() {
-			Collections.sort(elements, comparator);
-		}
-
-	}
-
 	private void createViewer(final Composite parent) {
-		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		createColumns();
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setFont(currentFont);
 		viewer.setUseHashlookup(true);
-		// viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setContentProvider(provider);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
@@ -493,39 +365,11 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	private void recreateViewer() {
 		final Table table = viewer.getTable();
+		if ( table.isDisposed() ) { return; }
 		table.dispose();
 		createViewer(parent);
 		parent.layout(true);
 	}
-
-	// private String getTabText(final CTabItem i) {
-	// return StringUtils.clean(StringUtils.split(i.getText(), '(')[0]);
-	// }
-	//
-	// private CTabItem getItem(final String s) {
-	// for ( CTabItem i : tabFolder.getItems() ) {
-	// if ( getTabText(i).equals(s) ) { return i; }
-	// }
-	// return null;
-	// }
-	//
-	// private void refreshTabVisibility() {
-	// for ( IPopulation p : getOutput().getRootAgent().getMicroPopulations() ) {
-	// CTabItem item = getItem(p.getName());
-	// if ( p.isEmpty() ) {
-	// if ( item != null ) {
-	// item.dispose();
-	// }
-	// } else {
-	// if ( item == null ) {
-	// createTab(p.getName(), p.size());
-	// } else {
-	// refreshTabName(p.getName(), p.size(), item);
-	// }
-	// }
-	// }
-	// refreshTabName(CUSTOM, computeCustomSize(), null);
-	// }
 
 	private void createColumns() {
 		final List<String> selection = new ArrayList(Arrays.asList(attributesMenu.getSelection()));
@@ -559,7 +403,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				viewer.getTable().setSortDirection(dir);
 				viewer.getTable().setSortColumn(column);
 				if ( GAMA.isPaused() || getOutput().isPaused() ) {
-					provider.sortElements();
+					Arrays.sort(elements, comparator);
 				}
 				viewer.refresh();
 			}
@@ -579,10 +423,6 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		return viewerColumn;
 	}
 
-	// public TableViewer getViewer() {
-	// return viewer;
-	// }
-
 	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
@@ -590,8 +430,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 	@Override
 	public Integer[] getToolbarActionsId() {
-		// TODO Need to be usable (not the case now)
-		return new Integer[] { SEP, SAVE };
+		return new Integer[] { LOCK, EXPR, POP, SEP, SAVE };
 	}
 
 	public class AgentComparator extends ViewerComparator implements Comparator {
@@ -624,7 +463,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		public int compare(final Object e1, final Object e2) {
 			final IAgent p1 = (IAgent) e1;
 			final IAgent p2 = (IAgent) e2;
-			final IScope scope = getOutput().getScope();
+			final IScope scope = getScope();
 			int rc = 0;
 			if ( attribute == null || attribute.equals(ID_ATTRIBUTE) ) {
 				rc = p1.compareTo(p2);
@@ -668,6 +507,16 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				rc = -rc;
 			}
 			return rc;
+		}
+
+		/**
+		 * @return
+		 */
+		private IScope getScope() {
+			if ( scope == null ) {
+				scope = getOutput().getScope().copy();
+			}
+			return scope;
 		}
 	}
 
@@ -847,7 +696,52 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	@Override
 	public void createToolItem(final int code, final GamaToolbar2 tb) {
 		switch (code) {
+			case EXPR:
+				createExpressionComposite();
+				break;
+			case POP:
+				populationMenu = tb.menu("population.list2", "", "Browse a species", new SelectionAdapter() {
 
+					@Override
+					public void widgetSelected(final SelectionEvent trigger) {
+						if ( locked ) { return; }
+						GamaMenu menu = new GamaMenu() {
+
+							@Override
+							protected void fillMenu() {
+								IPopulation[] pops = getOutput().getRootAgent().getMicroPopulations();
+								for ( final IPopulation p : pops ) {
+									action(p.getName(), new SelectionAdapter() {
+
+										@Override
+										public void widgetSelected(final SelectionEvent e) {
+											setSpeciesName(p.getName(), true);
+										}
+
+									}, GamaIcons.create("display.agents2").image());
+								}
+							}
+						};
+						menu.open(toolbar, trigger);
+					}
+
+				}, SWT.RIGHT);
+				break;
+			case LOCK:
+				tb.check("population.lock2", "", "Lock the current population (prevents editing it)",
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							locked = !locked;
+							editor.getControl().setEnabled(!locked);
+							populationMenu.setEnabled(!locked);
+
+							// TODO let the list of agents remain the same ??
+						}
+
+					}, SWT.RIGHT);
+				break;
 			case SAVE:
 				tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
 					new SelectionAdapter() {
@@ -867,21 +761,6 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		super.dispose();
 		viewer.getTable().dispose();
 		currentFont.dispose();
-	}
-
-	@Override
-	public void stopDisplayingTooltips() {
-		if ( tooltip != null && !tooltip.isDisposed() ) {
-			tooltip.dispose();
-			tooltip = null;
-		}
-	}
-
-	@Override
-	public void displayTooltip(final String text, final GamaUIColor color) {
-		if ( toolbar == null || toolbar.isDisposed() ) { return; }
-		stopDisplayingTooltips();
-		tooltip = toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
 }

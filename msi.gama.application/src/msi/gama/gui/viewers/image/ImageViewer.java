@@ -128,16 +128,6 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	/**
-	 * Method setToolbars()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbars(msi.gama.gui.swt.controls.GamaToolbar, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void setToolbars(final GamaToolbarSimple left, final GamaToolbarSimple right) {
-		// leftToolbar = left;
-		// rightToolbar = right;
-	}
-
-	/**
 	 * Method getToolbarActionsId()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#getToolbarActionsId()
 	 */

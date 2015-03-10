@@ -4,10 +4,11 @@
  */
 package msi.gama.gui.swt.commands;
 
+import msi.gama.gui.swt.SwtGui;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The class GamaMenu.
@@ -126,5 +127,19 @@ public abstract class GamaMenu {
 			mainMenu = null;
 		}
 	}
+
+	public void open(final Control c, final SelectionEvent trigger) {
+
+		if ( mainMenu == null ) {
+			mainMenu = new Menu(SwtGui.getWindow().getShell(), SWT.POP_UP);
+			fillMenu();
+		}
+
+		Point point = c.toDisplay(new Point(trigger.x, trigger.y));
+		mainMenu.setLocation(point.x, point.y);
+		mainMenu.setVisible(true);
+	}
+
+	protected abstract void fillMenu();
 
 }

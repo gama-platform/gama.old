@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.console.*;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
-public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
+public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
 	private final static int CLEAR = 0;
@@ -163,6 +163,11 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 				break;
 
 		}
+	}
+
+	@Override
+	protected GamaUIJob createUpdateJob() {
+		return null;
 	}
 
 }

@@ -46,7 +46,8 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		expression = new ExpressionControl(compo, this, getAgent(), this.getExpectedType(), SWT.BORDER);
+		expression =
+			new ExpressionControl(compo, this, getAgent(), this.getExpectedType(), SWT.BORDER, evaluateExpression());
 		return expression.getControl();
 	}
 

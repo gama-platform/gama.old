@@ -189,7 +189,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	}
 
 	// In case the editor allows to edit the expression, should it be evaluated ?
-	public boolean evaluateExpression() {
+	protected boolean evaluateExpression() {
 		return true;
 	}
 
