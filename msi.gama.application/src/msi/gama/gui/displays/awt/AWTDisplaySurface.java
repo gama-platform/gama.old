@@ -344,7 +344,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 		if ( success ) {
 			zoomFit = false;
-			double widthHeightConstraint = getEnvWidth() / getEnvHeight();
+			double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 
 			if ( widthHeightConstraint < 1 ) {
 				setZoomLevel((double) getDisplayWidth() / (double) getWidth());

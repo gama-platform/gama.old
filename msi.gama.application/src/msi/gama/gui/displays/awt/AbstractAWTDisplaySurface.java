@@ -278,7 +278,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setOrigin(final int x, final int y) {
-		viewPort.setLocation(x, y);
+		viewPort.x = x;
+		viewPort.y = y;
 		translation.setToTranslation(x, y);
 	}
 
@@ -374,7 +375,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	protected void setDisplayWidth(final int displayWidth) {
-		viewPort.setSize(displayWidth, viewPort.height);
+		viewPort.width = displayWidth;
 	}
 
 	@Override
@@ -383,7 +384,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	protected void setDisplayHeight(final int displayHeight) {
-		viewPort.setSize(viewPort.width, displayHeight);
+		viewPort.height = displayHeight;
 	}
 
 	@Override
@@ -426,7 +427,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
-		double widthHeightConstraint = getEnvWidth() / getEnvHeight();
+		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		if ( widthHeightConstraint < 1 ) {
 			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
 			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
@@ -436,6 +437,17 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		}
 		return dim;
 	}
+
+	//
+	// @Override
+	// public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+	// // we take the smallest dimension as a guide
+	// final int[] dim = new int[2];
+	// double widthHeightConstraint = getEnvWidth() / getEnvHeight();
+	// dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
+	// dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
+	// return dim;
+	// }
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,

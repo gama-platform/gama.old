@@ -124,7 +124,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		final int[] dim = new int[2];
-		double widthHeightConstraint = getEnvWidth() / getEnvHeight();
+		double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
 		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
 		return dim;
