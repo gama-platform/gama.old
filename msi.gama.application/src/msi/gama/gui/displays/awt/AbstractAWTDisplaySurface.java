@@ -289,7 +289,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	protected void runDisplay() {
 		canBeUpdated(false);
-		if ( output.isSynchronized() ) {
+		if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
+			EventQueue.invokeLater(displayRunnable);
+		} else if ( output.isSynchronized() ) {
 			try {
 				EventQueue.invokeAndWait(displayRunnable);
 			} catch (InterruptedException e) {
@@ -306,10 +308,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void updateDisplay(final boolean force) {
 
 		if ( !canBeUpdated() ) { return; }
-		// if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
-		// runDisplay();
-		// return;
-		// }
 		runDisplay();
 
 	}
@@ -482,10 +480,12 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		}).start();
 	}
 
-	// @Override
-	// public void setBackground(final Color bg) {
-	// super.setBackground(bg);
-	// data.setBackgroundColor(bg);
-	// }
+	@Override
+	public void setBackground(final Color bg) {
+		super.setBackground(bg);
+		if ( data != null ) {
+			data.setBackgroundColor(bg);
+		}
+	}
 
 }
