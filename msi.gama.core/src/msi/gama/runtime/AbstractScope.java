@@ -42,7 +42,7 @@ import msi.gaml.types.*;
 public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
-	private final Deque<IAgent> agents = new ArrayDeque();
+	private final Deque<IAgent> agents = new ArrayDeque(3);
 	private final Deque<IRecord> statements = new ArrayDeque();
 	private IGraphics graphics;
 	private ITopology topology;
@@ -57,6 +57,8 @@ public abstract class AbstractScope implements IScope {
 
 	// Allows to disable error reporting for this scope (the value will be read by the error reporting mechnanism).
 	private boolean reportErrors = true;
+	// Allows (for debugging purposes) to trace how the agents are popped and pushed to the scope
+	public boolean traceAgents = false;
 
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
@@ -282,7 +284,9 @@ public abstract class AbstractScope implements IScope {
 	public boolean push(final IAgent agent) {
 		final IAgent a = agents.peek();
 		if ( a != null && a.equals(agent) ) { return false; }
-		// GuiUtils.debug("AbstractScope.push " + agent);
+		if ( traceAgents ) {
+			System.out.println("" + a + " pushed to " + agents);
+		}
 		agents.push(agent);
 		return true;
 	}
@@ -329,7 +333,11 @@ public abstract class AbstractScope implements IScope {
 		// if ( agent != a ) {
 		// GuiUtils.debug("AbstractScope.pop : Different agents !");
 		// }
-		agents.pop();
+
+		IAgent a = agents.pop();
+		if ( traceAgents ) {
+			System.out.println("" + a + " popped from " + agents);
+		}
 		_agent_halted = false;
 	}
 

@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 
 /**
@@ -181,11 +181,11 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	int getOriginY();
 
 	/**
-	 * Post-constructor that initializes the surface
+	 * Whatever is needed to do when the simulation has been reloaded.
 	 * 
 	 * @param layerDisplayOutput
 	 */
-	void initialize(IScope scope, LayeredDisplayOutput layerDisplayOutput);
+	void outputReloaded();
 
 	/**
 	 * 

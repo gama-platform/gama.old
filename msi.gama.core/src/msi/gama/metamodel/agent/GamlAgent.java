@@ -191,16 +191,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	protected Object stepSubPopulations(final IScope scope) {
-		for ( IPopulation pop : getMicroPopulations() ) {
-			// try {
-			// for ( final IPopulation pop : ImmutableList.copyOf(getMicroPopulations()) ) {
-			scope.step(pop);
+		// AD: dont use getMicroPopulations() so that no temp array is created
+		// Object[] hash = attributes._set;
+		for ( Object pop : attributes.getRawValues() /* getMicroPopulations() */) {
+			if ( pop instanceof IPopulation ) {
+				scope.step((IPopulation) pop);
+			}
 		}
-		// if ( !scope.step(pop) ) { return null; }
-		// }
-		// } catch (final GamaRuntimeException g) {
-		// GAMA.reportError(g);
-		// }
 		return this;
 	}
 
@@ -437,9 +434,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void dispose() {
 		if ( dead() ) { return; }
-		// if ( getSpecies().getName().equals("flock") ) {
-		// GuiUtils.debug("GamlAgent.dispose " + this);
-		// }
 		try {
 			acquireLock();
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
@@ -610,8 +604,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public boolean hasMembers() {
 		if ( dead() ) { return false; }
-		for ( final IPopulation pop : getMicroPopulations() ) {
-			if ( pop.size() > 0 ) { return true; }
+		for ( final Object pop : attributes.getRawValues() ) {
+			if ( pop instanceof IPopulation && ((IPopulation) pop).size() > 0 ) { return true; }
 		}
 		return false;
 	}
@@ -619,7 +613,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
 		if ( dead() ) { return GamaListFactory.EMPTY_LIST; }
-		return new MetaPopulation(getMicroPopulations());
+		MetaPopulation mp = new MetaPopulation();
+		for ( final Object pop : attributes.getRawValues() ) {
+			if ( pop instanceof IPopulation && ((IPopulation) pop).size() > 0 ) {
+				mp.addPopulation((IPopulation) pop);
+			}
+		}
+		return mp;
 	}
 
 	@Override

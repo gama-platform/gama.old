@@ -177,8 +177,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 			Boolean isOpenGLDefault = !GamaPreferences.CORE_DISPLAY.getValue().equals("Java2D");
 			Boolean isOpenGLWanted =
-				type == null ? isOpenGLDefault : type.getExpression().literalValue()
-					.equals(LayeredDisplayOutput.OPENGL);
+				type == null ? isOpenGLDefault : type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 
 			if ( !isOpenGLWanted ) { return; }
 
@@ -205,11 +204,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	public static final String JAVA2D = "java2D";
-	public static final String OPENGL = "opengl";
-	public static final String WEB = "web";
-	public static final String THREED = "3D";
-
 	private List<AbstractLayerStatement> layers;
 	protected IDisplaySurface surface;
 	private boolean constantBackground = true;
@@ -218,14 +212,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantDiffusePos = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
-	final LayeredDisplayData data = new LayeredDisplayData(GamaPreferences.CORE_BACKGROUND.getValue(), false, false,
-		true, 0, GamaPreferences.CORE_Z_FIGHTING.getValue(), GamaPreferences.CORE_DRAW_NORM.getValue(),
-		GamaPreferences.CORE_CUBEDISPLAY.getValue(), false, GamaPreferences.CORE_SCALE.getValue(),
-		GamaPreferences.CORE_SHOW_FPS.getValue(), GamaPreferences.CORE_DRAW_ENV.getValue(),
-		GamaPreferences.CORE_IS_LIGHT_ON.getValue(), false, new GamaColor(100, 100, 100, 255), new GamaColor(10, 10,
-			10, 255), new GamaPoint(-1, -1, -1), new GamaPoint(-1, -1, -1), new GamaPoint(-1, -1, -1), new GamaPoint(0,
-			1, 0), true, GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL,
-		new GamaPoint(-1, -1), new GamaPoint(0, 0), GamaPreferences.CORE_HIGHLIGHT.getValue());
+	final LayeredDisplayData data = new LayeredDisplayData();
 	// Specific to overlays
 	OverlayStatement overlayInfo;
 
@@ -249,12 +236,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
-
-			if ( color.isConst() ) {
-				constantBackground = true;
-			} else {
-				constantBackground = false;
-			}
+			constantBackground = color.isConst();
 		}
 
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
@@ -279,12 +261,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// OpenGL parameter initialization
 		final IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
-			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
+			this.data.setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
 		}
 
 		final IExpression z = getFacet(IKeyword.ZFIGHTING);
 		if ( z != null ) {
-			setZFighting(Cast.asBool(getScope(), z.value(getScope())));
+			this.data.setZ_fighting(Cast.asBool(getScope(), z.value(getScope())));
 		}
 
 		final IExpression scale = getFacet(IKeyword.SCALE);
@@ -298,119 +280,88 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression fps = getFacet(IKeyword.SHOWFPS);
 		if ( fps != null ) {
-			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
+			this.data.setShowfps(Cast.asBool(getScope(), fps.value(getScope())));
 		}
 
 		computeTrace(getScope());
 
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
-			setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
+			this.data.setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
 		}
 
 		final IExpression ortho = getFacet(IKeyword.ORTHOGRAPHIC_PROJECTION);
 		if ( ortho != null ) {
-			setOrtho(Cast.asBool(getScope(), ortho.value(getScope())));
+			this.data.setOrtho(Cast.asBool(getScope(), ortho.value(getScope())));
 		}
 
 		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
 		if ( ddiff != null ) {
-			setDrawDiffuseLight(Cast.asBool(getScope(), ddiff.value(getScope())));
+			this.data.setDrawDiffLight(Cast.asBool(getScope(), ddiff.value(getScope())));
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
 		if ( lightOn != null ) {
-			setIsLightOn(Cast.asBool(getScope(), lightOn.value(getScope())));
+			this.data.setLightOn(Cast.asBool(getScope(), lightOn.value(getScope())));
 		}
 
 		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
-
 			if ( light.getType().equals(Types.COLOR) ) {
-				setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
+				this.data.setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+				this.data.setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
-
-			if ( light.isConst() ) {
-				constantAmbientLight = true;
-			} else {
-				constantAmbientLight = false;
-			}
-
+			constantAmbientLight = light.isConst();
 		}
 
 		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 		if ( light2 != null ) {
-
 			if ( light2.getType().equals(Types.COLOR) ) {
-				setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
+				this.data.setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-				setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+				this.data.setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
-
-			if ( light2.isConst() ) {
-				constantDiffuseLight = true;
-			} else {
-				constantDiffuseLight = false;
-			}
-
+			constantDiffuseLight = light2.isConst();
 		}
 
 		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 		if ( light3 != null ) {
-			setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
-			if ( light3.isConst() ) {
-				constantDiffusePos = true;
-			} else {
-				constantDiffusePos = false;
-			}
+			this.data.setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+			constantDiffusePos = light3.isConst();
 		}
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
-
-			setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
-
-			if ( camera.isConst() ) {
-				constantCamera = true;
-			} else {
-				constantCamera = false;
-			}
-
+			this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+			constantCamera = camera.isConst();
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
-			setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
-
-			if ( cameraLook.isConst() ) {
-				constantCameraLook = true;
-			} else {
-				constantCameraLook = false;
-			}
-
+			this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+			constantCameraLook = cameraLook.isConst();
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
-			setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
+			this.data.setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
 		}
 
 		final IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
-			setPolygonMode(Cast.asBool(getScope(), poly.value(getScope())));
+			this.data.setPolygonMode(Cast.asBool(getScope(), poly.value(getScope())));
 		}
 
 		final IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
 			if ( out3D.getType().equals(Types.POINT) ) {
-				setOutput3D(true);
-				setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
+				this.data.setOutput3D(true);
+				this.data.setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
 			} else {
-				setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
+				this.data.setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
 		SimulationAgent sim = getScope().getSimulationScope();
@@ -463,10 +414,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
 				if ( light.getType().equals(Types.COLOR) ) {
-					setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
+					this.data.setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+					this.data.setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
 			}
 		}
@@ -475,10 +426,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 			if ( light2 != null ) {
 				if ( light2.getType().equals(Types.COLOR) ) {
-					setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
+					this.data.setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
 				} else {
 					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-					setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+					this.data.setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
 			}
 		}
@@ -486,7 +437,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantDiffusePos ) {
 			final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 			if ( light3 != null ) {
-				setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+				this.data.setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
 
 			}
 		}
@@ -495,7 +446,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCamera ) {
 			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if ( camera != null ) {
-				setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
+				this.data.setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 			}
 			// graphics.setCameraPosition(getCameraPos());
 		}
@@ -503,7 +454,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCameraLook ) {
 			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if ( cameraLook != null ) {
-				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
+				this.data.setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
 		}
 		computeTrace(getScope());
@@ -529,7 +480,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			} else {
 				limit = Cast.asInt(scope, agg.value(scope));
 			}
-			setTraceDisplay(limit);
+			this.data.setTraceDisplay(limit);
 		}
 	}
 
@@ -555,18 +506,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	protected void createSurface(final IScope scope) {
 		if ( surface != null ) {
-			surface.initialize(scope, this);
+			surface.outputReloaded();
 		} else {
-			surface = GuiUtils.getDisplaySurfaceFor(scope, this);
+			surface = GuiUtils.getDisplaySurfaceFor(this);
 		}
-	}
-
-	public double getEnvWidth() {
-		return data.getEnvWidth();
-	}
-
-	public double getEnvHeight() {
-		return data.getEnvHeight();
 	}
 
 	@Override
@@ -596,16 +539,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		setLayers(list);
 	}
 
-	public Color getBackgroundColor() {
-		return data.getBackgroundColor();
-	}
-
 	public BufferedImage getImage() {
 		return surface.getImage();
 	}
 
-	public void setBackgroundColor(final Color background) {
-		this.data.setBackgroundColor(background);
+	private void setBackgroundColor(final Color background) {
+		data.setBackgroundColor(background);
 		if ( surface != null ) {
 			surface.setBackground(background);
 		}
@@ -632,151 +571,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public boolean isOpenGL() {
-		return data.getDisplayType().equals(OPENGL) || data.getDisplayType().equals(THREED);
-	}
-
-	public boolean getTesselation() {
-		return data.isTesselation();
-	}
-
-	private void setTesselation(final boolean tesselation) {
-		this.data.setTesselation(tesselation);
-	}
-
-	public boolean getZFighting() {
-		return data.isZ_fighting();
-	}
-
-	private void setZFighting(final boolean z) {
-		this.data.setZ_fighting(z);
-	}
-
-	public boolean getDrawNorm() {
-		return data.isDraw_norm();
-	}
-
-	public boolean getCubeDisplay() {
-		return data.isCubeDisplay();
-	}
-
-	public boolean getOrtho() {
-		return data.isOrtho();
-	}
-
-	private void setOrtho(final boolean o) {
-		this.data.setOrtho(o);
-	}
-
-	public boolean getShowFPS() {
-		return data.isShowfps();
-	}
-
-	private void setShowFPS(final boolean fps) {
-		this.data.setShowfps(fps);
-	}
-
-	public int getTraceDisplay() {
-		return data.getTraceDisplay();
-	}
-
-	private void setTraceDisplay(final int agg) {
-		this.data.setTraceDisplay(agg);
-	}
-
-	public boolean getDrawEnv() {
-		return data.isDrawEnv();
-	}
-
-	private void setDrawEnv(final boolean drawEnv) {
-		this.data.setDrawEnv(drawEnv);
-	}
-
-	public boolean getDrawDiffuseLight() {
-		return data.isDrawDiffLight();
-	}
-
-	private void setDrawDiffuseLight(final boolean drawDiff) {
-		this.data.setDrawDiffLight(drawDiff);
-	}
-
-	public boolean getIsLightOn() {
-		return data.isLightOn();
-	}
-
-	private void setIsLightOn(final boolean islight) {
-		this.data.setLightOn(islight);
-	}
-
-	public boolean getOutput3D() {
-		return data.isOutput3D();
-	}
-
-	private void setOutput3D(final boolean output3D) {
-		this.data.setOutput3D(output3D);
-	}
-
-	public ILocation getCameraPos() {
-		return data.getCameraPos();
-	}
-
-	private void setCameraPos(final ILocation cameraPos) {
-		this.data.setCameraPos(cameraPos);
-	}
-
-	public ILocation getCameraLookPos() {
-		return data.getCameraLookPos();
-	}
-
-	private void setCameraLookPos(final ILocation cameraLookPos) {
-		this.data.setCameraLookPos(cameraLookPos);
-	}
-
-	public ILocation getCameraUpVector() {
-		return data.getCameraUpVector();
-	}
-
-	private void setCameraUpVector(final ILocation cameraUpVector) {
-		this.data.setCameraUpVector(cameraUpVector);
-	}
-
-	public Color getAmbientLightColor() {
-		return data.getAmbientLightColor();
-	}
-
-	private void setAmbientLightColor(final Color ambientLightColor) {
-		this.data.setAmbientLightColor(ambientLightColor);
-	}
-
-	public Color getDiffuseLightColor() {
-		return data.getDiffuseLightColor();
-	}
-
-	private void setDiffuseLightColor(final Color diffuseLightColor) {
-		this.data.setDiffuseLightColor(diffuseLightColor);
-	}
-
-	public GamaPoint getDiffuseLightPosition() {
-		return data.getDiffuseLightPosition();
-	}
-
-	private void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
-		this.data.setDiffuseLightPosition(diffuseLightPosition);
-	}
-
-	public boolean getPolygonMode() {
-		return data.isPolygonMode();
-	}
-
-	private void setPolygonMode(final boolean polygonMode) {
-		this.data.setPolygonMode(polygonMode);
-	}
-
-	public ILocation getOutput3DNbCycles() {
-		return data.getOutput3DNbCycles();
-	}
-
-	private void setOutput3DNbCycles(final ILocation output3DNbCycles) {
-		this.data.setOutput3DNbCycles(output3DNbCycles);
+		return data.getDisplayType().equals(LayeredDisplayData.OPENGL) ||
+			data.getDisplayType().equals(LayeredDisplayData.THREED);
 	}
 
 	public LayeredDisplayData getData() {

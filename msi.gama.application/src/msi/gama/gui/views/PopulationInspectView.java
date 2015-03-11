@@ -211,8 +211,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
 		editor =
-			new ExpressionControl(compo, null, output.getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT),
-				SWT.BORDER, false) {
+			new ExpressionControl(compo, null, getScope().getAgentScope(), Types.CONTAINER.of(Types.AGENT), SWT.BORDER,
+				false) {
 
 				@Override
 				public void modifyValue() {
@@ -388,7 +388,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 				final IAgent agent = (IAgent) element;
 				if ( agent.dead() && !title.equals(ID_ATTRIBUTE) ) { return "N/A"; }
 				if ( title.equals(ID_ATTRIBUTE) ) { return String.valueOf(agent.getIndex()); }
-				return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
+				return Cast.toGaml(getScope().getAgentVarValue(agent, title));
 			}
 		};
 	}
@@ -512,12 +512,14 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		/**
 		 * @return
 		 */
-		private IScope getScope() {
-			if ( scope == null ) {
-				scope = getOutput().getScope().copy();
-			}
-			return scope;
+
+	}
+
+	private IScope getScope() {
+		if ( scope == null ) {
+			scope = getOutput().getScope().copy();
 		}
+		return scope;
 	}
 
 	public static class NaturalOrderComparator implements Comparator {
@@ -620,17 +622,17 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	 */
 	public void saveAsCSV() {
 		try {
-			Files.newFolder(output.getScope(), exportFolder);
+			Files.newFolder(getScope(), exportFolder);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + exportFolder);
-			GAMA.reportError(output.getScope(), e1, false);
+			GAMA.reportError(getScope(), e1, false);
 			e1.printStackTrace();
 			return;
 		}
 
 		String exportFileName =
-			FileUtils.constructAbsoluteFilePath(getOutput().getScope(), exportFolder + "/" + speciesName +
-				"_population" + output.getScope().getClock().getCycle() + ".csv", false);
+			FileUtils.constructAbsoluteFilePath(getScope(), exportFolder + "/" + speciesName + "_population" +
+				getScope().getClock().getCycle() + ".csv", false);
 		// File file = new File(exportFileName);
 		// FileWriter fileWriter = null;
 		// try {

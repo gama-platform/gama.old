@@ -839,16 +839,16 @@ public class SwtGui implements IGui {
 	static final Map<String, Class> displayClasses = new THashMap();
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final LayeredDisplayOutput output) {
+	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
 
 		IDisplaySurface surface = null;
 		String keyword = output.getData().getDisplayType();
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
-			surface = creator.create();
-			surface.initialize(scope, output);
+			surface = creator.create(output);
+			surface.outputReloaded();
 		} else {
-			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
+			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());
 		}
 		return surface;
 	}

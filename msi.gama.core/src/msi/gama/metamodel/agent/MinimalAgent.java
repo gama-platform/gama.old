@@ -199,7 +199,6 @@ public abstract class MinimalAgent implements IAgent {
 		acquireLock();
 		try {
 			dead = true;
-			// GuiUtils.debug("MinimalAgent.dispose " + this);
 			final IPopulation p = getPopulation();
 			if ( p != null ) {
 				p.removeValue(null, this);
@@ -306,7 +305,8 @@ public abstract class MinimalAgent implements IAgent {
 		if ( pop != null ) {
 			IScope scope = getScope();
 			final IList<IAgent> retVal =
-				GamaListFactory.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
+				GamaListFactory.<IAgent> createWithoutCasting(scope.getModelContext().getTypeNamed(getSpeciesName()),
+					pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
@@ -384,21 +384,6 @@ public abstract class MinimalAgent implements IAgent {
 		return false;
 	}
 
-	// @Override
-	// public Integer getHeading() {
-	// Integer h = (Integer) getAttribute(IKeyword.HEADING);
-	// if ( h == null ) {
-	// h = RandomUtils.getDefault().between(0, 359);
-	// setHeading(h);
-	// }
-	// return Maths.checkHeading(h);
-	// }
-	//
-	// @Override
-	// public void setHeading(final Integer newHeading) {
-	// setAttribute(IKeyword.HEADING, newHeading);
-	// }
-
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
 		final IVariable var = checkedPopulation().getVar(this, n);
@@ -438,7 +423,6 @@ public abstract class MinimalAgent implements IAgent {
 	 * drawing or disposing the agent. After finish the task, the thread invokes "releaseLock" to
 	 * release the agent's lock.
 	 * 
-	 * return true if the agent is available for drawing or disposing false otherwise
 	 */
 	@Override
 	public synchronized void acquireLock() {

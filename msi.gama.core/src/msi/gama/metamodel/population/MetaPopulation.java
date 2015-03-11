@@ -44,6 +44,13 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 		populationSets = Arrays.asList(pop);
 	}
 
+	/**
+	 * @param pop
+	 */
+	public void addPopulation(final IPopulation pop) {
+		populationSets.add(pop);
+	}
+
 	@Override
 	public IContainerType getType() {
 		return type;

@@ -208,6 +208,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public boolean step(final IScope scope) {
+		// ((AbstractScope) getScope()).traceAgents = true;
 		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return false; }
 			if ( getValue() == null ) { return true; }

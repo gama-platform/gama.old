@@ -15,16 +15,32 @@ import gnu.trove.impl.hash.TObjectHash;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.*;
 import java.util.*;
+import msi.gama.runtime.IScope;
 
 public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
-	private static final int EMPTY = -1;
+	protected static final int EMPTY = -1;
 
 	protected transient int[] _indicesByInsertOrder = new int[capacity()];
 	{
 		Arrays.fill(_indicesByInsertOrder, EMPTY);
 	}
 	protected transient int _lastInsertOrderIndex = -1;
+
+	public static void main(final String[] args) {
+		TOrderedHashMap map = new TOrderedHashMap();
+		map.put("first", "first");
+		map.put("second", "second");
+		map.put("third", "third");
+		map.put("fourth", "fourth");
+		map.put("fifth", "fifth");
+		map.put("sixth", "sixth");
+		map.remove("first");
+		Object third = map.valueAt(2);
+		Object fifth = map.valueAt(4);
+		Object ff = third;
+		ff = fifth;
+	}
 
 	public TOrderedHashMap() {
 		super();
@@ -281,9 +297,6 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		// must execute before postInsertHook
 		if ( isNewMapping ) {
 			appendToInsertionOrder(index, capacity());
-		}
-
-		if ( isNewMapping ) {
 			postInsertHook(consumeFreeSlot);
 		}
 
@@ -702,6 +715,29 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	int maxSize() {
 		return _maxSize;
+	}
+
+	public V anyValue(final IScope scope) {
+		int size = _size;
+		if ( size == 0 ) { return null; }
+		final int i = scope.getRandom().between(0, _size - 1);
+		return valueAt(i);
+	}
+
+	// Zero-based access
+	public V valueAt(final int i) {
+		if ( i > _size - 1 ) { return null; }
+		int index = -1;
+		for ( int insert = 0; insert <= _lastInsertOrderIndex; insert++ ) {
+			int keyIndex = _indicesByInsertOrder[insert];
+			if ( keyIndex == EMPTY ) {
+				continue;
+			} else {
+				index++;
+				if ( index == i ) { return _values[keyIndex]; }
+			}
+		}
+		return null;
 	}
 
 }

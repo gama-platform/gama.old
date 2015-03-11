@@ -349,9 +349,8 @@ public class GuiUtils {
 	 * @param h
 	 * @return
 	 */
-	public static IDisplaySurface
-		getDisplaySurfaceFor(final IScope scope, final LayeredDisplayOutput layerDisplayOutput) {
-		return gui != null ? gui.getDisplaySurfaceFor(scope, layerDisplayOutput) : null;
+	public static IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput layerDisplayOutput) {
+		return gui != null ? gui.getDisplaySurfaceFor(layerDisplayOutput) : null;
 	}
 
 	public static Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,

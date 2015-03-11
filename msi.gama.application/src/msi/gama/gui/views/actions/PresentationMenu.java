@@ -131,7 +131,7 @@ public class PresentationMenu extends GamaToolItem {
 		});
 
 		MenuItem backgroundItem = new MenuItem(menu, SWT.CHECK);
-		final java.awt.Color background = view.getOutput().getBackgroundColor();
+		final java.awt.Color background = view.getOutput().getData().getBackgroundColor();
 		final Image image = GamaIcons.createTempColorIcon(GamaColors.get(background));
 		backgroundItem.setImage(image);
 		backgroundItem.setText("Background color...");

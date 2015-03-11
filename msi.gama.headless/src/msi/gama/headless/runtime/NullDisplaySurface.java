@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.*;
+import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 
@@ -207,7 +207,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
-	public void initialize(final IScope scope, final LayeredDisplayOutput layerDisplayOutput) {}
+	public void outputReloaded() {}
 
 	/**
 	 * Method getHighlightColor()

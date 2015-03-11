@@ -41,60 +41,64 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	protected boolean qualityRendering = GamaPreferences.CORE_ANTIALIAS.getValue();
 
-	private IDisplayOutput output;
-	protected ILayerManager manager;
-	protected IGraphics iGraphics;
-	protected Runnable displayBlock;
-	protected DisplaySurfaceMenu menuManager;
-	protected volatile boolean canBeUpdated = true;
-
-	protected Rectangle viewPort = new Rectangle();
-	protected Dimension previousPanelSize;
+	private final LayeredDisplayOutput output;
+	protected final LayeredDisplayData data;
+	protected final Rectangle viewPort = new Rectangle();
+	protected final ILayerManager manager;
+	protected final Runnable displayBlock;
 	protected final AffineTransform translation = new AffineTransform();
 
+	protected IGraphics iGraphics;
+
+	protected DisplaySurfaceMenu menuManager;
+	protected volatile boolean canBeUpdated = true;
+	protected IExpression temp_focus;
+
+	protected Dimension previousPanelSize;
 	protected double zoomIncrement = 0.1;
 	protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	private IZoomListener zoomListener;
-	protected LayeredDisplayData data;
+
 	private IScope scope;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {
+		output = (LayeredDisplayOutput) args[0];
+		data = output.getData();
+		temp_focus = output.getFacet(IKeyword.FOCUS);
 		setOpaque(true);
 		setDoubleBuffered(false);
 		setLayout(new BorderLayout());
-	}
-
-	// / EXPERIMENTAL
-
-	protected IExpression temp_focus;
-
-	@Override
-	public void initialize(final IScope scope, final LayeredDisplayOutput output) {
-		this.output = output;
-		// We first copy the scope
-		setDisplayScope(scope.copy());
-		// Then the display data
-		data = output.getData();
-		// We disable error reporting
-		getDisplayScope().disableErrorReporting();
-
-		if ( iGraphics != null ) {
-			iGraphics.initFor(this);
-		}
 		setBackground(data.getBackgroundColor());
 		setName(output.getName());
 		setHighlightColor(data.getHighlightColor());
-		if ( manager == null ) {
-			manager = new LayerManager(this);
-			final List<AbstractLayerStatement> layers = output.getLayers();
-			for ( final AbstractLayerStatement layer : layers ) {
-				manager.addLayer(AbstractLayer.createLayer(scope, layer));
-			}
-		} else {
-			manager.outputChanged();
+		manager = new LayerManager(this);
+		final List<AbstractLayerStatement> layers = output.getLayers();
+		for ( final AbstractLayerStatement layer : layers ) {
+			manager.addLayer(AbstractLayer.createLayer(scope, layer));
 		}
-		temp_focus = output.getFacet(IKeyword.FOCUS);
+		displayBlock = new Runnable() {
+
+			@Override
+			public void run() {
+				internalDisplayUpdate();
+			}
+		};
+	}
+
+	protected abstract void internalDisplayUpdate();
+
+	@Override
+	public void outputReloaded() {
+		// We first copy the scope
+		setDisplayScope(output.getScope().copy());
+		// We disable error reporting
+		getDisplayScope().disableErrorReporting();
+		if ( iGraphics != null ) {
+			iGraphics.initFor(this);
+		}
+		manager.outputChanged();
+
 		resizeImage(getWidth(), getHeight(), true);
 		if ( zoomFit ) {
 			zoomFit();
@@ -384,7 +388,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public LayeredDisplayOutput getOutput() {
-		return (LayeredDisplayOutput) output;
+		return output;
 	}
 
 	public void setZoomLevel(final Double newZoomLevel) {
@@ -461,6 +465,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	protected void setDisplayScope(final IScope scope) {
+		if ( this.scope != null ) {
+			GAMA.releaseScope(this.scope);
+		}
 		this.scope = scope;
 	}
 

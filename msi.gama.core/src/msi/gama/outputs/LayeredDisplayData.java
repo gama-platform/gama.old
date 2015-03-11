@@ -5,158 +5,127 @@
 package msi.gama.outputs;
 
 import java.awt.Color;
+import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
+import msi.gama.util.GamaColor;
 
 /**
  */
 public class LayeredDisplayData {
 
-	/**
-	 * 
-	 */
-	private Color backgroundColor;
-	/**
-	 * 
-	 */
-	private boolean autosave;
-	/**
-	 * 
-	 */
-	private boolean output3D;
-	/**
-	 * 
-	 */
-	private boolean tesselation;
-	/**
-	 * 
-	 */
-	private int traceDisplay;
-	/**
-	 * 
-	 */
-	private boolean z_fighting;
-	/**
-	 * 
-	 */
-	private boolean draw_norm;
-	/**
-	 * 
-	 */
-	private boolean cubeDisplay;
-	/**
-	 * 
-	 */
-	private boolean ortho;
-	/**
-	 * 
-	 */
-	private boolean displayScale;
-	/**
-	 * 
-	 */
-	private boolean showfps;
-	/**
-	 * 
-	 */
-	private boolean drawEnv;
-	/**
-	 * 
-	 */
-	private boolean isLightOn;
-	/**
-	 * 
-	 */
-	private boolean drawDiffLight;
-	/**
-	 * 
-	 */
-	private Color ambientLightColor;
-	/**
-	 * 
-	 */
-	private Color diffuseLightColor;
-	/**
-	 * 
-	 */
-	private GamaPoint diffuseLightPosition;
-	/**
-	 * 
-	 */
-	private ILocation cameraPos;
-	/**
-	 * 
-	 */
-	private ILocation cameraLookPos;
-	/**
-	 * 
-	 */
-	private ILocation cameraUpVector;
-	/**
-	 * 
-	 */
-	private boolean polygonMode;
-	/**
-	 * 
-	 */
-	private String displayType;
-	/**
-	 * 
-	 */
-	private ILocation imageDimension;
-	/**
-	 * 
-	 */
-	private ILocation output3DNbCycles;
-	/**
-	 * 
-	 */
-	private double envWidth;
-	/**
-	 * 
-	 */
-	private double envHeight;
-	/**
-	 * 
-	 */
-	private Color highlightColor;
+	public static final String JAVA2D = "java2D";
+	public static final String OPENGL = "opengl";
+	public static final String WEB = "web";
+	public static final String THREED = "3D";
 
 	/**
 	 * 
 	 */
-	public LayeredDisplayData(final Color backgroundColor, final boolean autosave, final boolean output3d,
-		final boolean tesselation, final int traceDisplay, final boolean z_fighting, final boolean draw_norm,
-		final boolean cubeDisplay, final boolean ortho, final boolean displayScale, final boolean showfps,
-		final boolean drawEnv, final boolean isLightOn, final boolean drawDiffLight, final Color ambientLightColor,
-		final Color diffuseLightColor, final GamaPoint diffuseLightPosition, final ILocation cameraPos,
-		final ILocation cameraLookPos, final ILocation cameraUpVector, final boolean polygonMode,
-		final String displayType, final ILocation imageDimension, final ILocation output3dNbCycles,
-		final Color highlightColor) {
-		this.backgroundColor = backgroundColor;
-		this.autosave = autosave;
-		output3D = output3d;
-		this.tesselation = tesselation;
-		this.traceDisplay = traceDisplay;
-		this.z_fighting = z_fighting;
-		this.draw_norm = draw_norm;
-		this.cubeDisplay = cubeDisplay;
-		this.ortho = ortho;
-		this.displayScale = displayScale;
-		this.showfps = showfps;
-		this.drawEnv = drawEnv;
-		this.isLightOn = isLightOn;
-		this.drawDiffLight = drawDiffLight;
-		this.ambientLightColor = ambientLightColor;
-		this.diffuseLightColor = diffuseLightColor;
-		this.diffuseLightPosition = diffuseLightPosition;
-		this.cameraPos = cameraPos;
-		this.cameraLookPos = cameraLookPos;
-		this.cameraUpVector = cameraUpVector;
-		this.polygonMode = polygonMode;
-		this.displayType = displayType;
-		this.imageDimension = imageDimension;
-		output3DNbCycles = output3dNbCycles;
-		this.highlightColor = highlightColor;
-	}
+	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
+	/**
+	 * 
+	 */
+	private boolean autosave = false;
+	/**
+	 * 
+	 */
+	private boolean output3D = false;
+	/**
+	 * 
+	 */
+	private boolean tesselation = true;
+	/**
+	 * 
+	 */
+	private int traceDisplay = 0;
+	/**
+	 * 
+	 */
+	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
+	/**
+	 * 
+	 */
+	private boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
+	/**
+	 * 
+	 */
+	private boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
+	/**
+	 * 
+	 */
+	private boolean ortho = false;
+	/**
+	 * 
+	 */
+	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
+	/**
+	 * 
+	 */
+	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
+	/**
+	 * 
+	 */
+	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
+	/**
+	 * 
+	 */
+	private boolean isLightOn = GamaPreferences.CORE_IS_LIGHT_ON.getValue();
+	/**
+	 * 
+	 */
+	private boolean drawDiffLight = false;
+	/**
+	 * 
+	 */
+	private Color ambientLightColor = new GamaColor(100, 100, 100, 255);
+	/**
+	 * 
+	 */
+	private Color diffuseLightColor = new GamaColor(10, 10, 10, 255);
+	/**
+	 * 
+	 */
+	private GamaPoint diffuseLightPosition = new GamaPoint(-1, -1, -1);
+	/**
+	 * 
+	 */
+	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
+	/**
+	 * 
+	 */
+	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
+	/**
+	 * 
+	 */
+	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
+	/**
+	 * 
+	 */
+	private boolean polygonMode = true;
+	/**
+	 * 
+	 */
+	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
+	/**
+	 * 
+	 */
+	private ILocation imageDimension = new GamaPoint(-1, -1);
+	/**
+	 * 
+	 */
+	private ILocation output3DNbCycles = new GamaPoint(0, 0);
+	/**
+	 * 
+	 */
+	private double envWidth = 0d;
+	/**
+	 * 
+	 */
+	private double envHeight = 0d;
+	/**
+	 * 
+	 */
+	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 
 	/**
 	 * @return the backgroundColor

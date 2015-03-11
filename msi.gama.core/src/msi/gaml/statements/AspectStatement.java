@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
+import gnu.trove.impl.Constants;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.GamaPreferences;
@@ -50,6 +52,18 @@ import msi.gaml.types.*;
 		@example(value = "	}", isExecutable = false), @example(value = "}", isExecutable = false) }) })
 public class AspectStatement extends AbstractStatementSequence {
 
+	private static final TObjectIntHashMap SHAPES = new TObjectIntHashMap() {
+
+		{
+			put("circle", 1);
+			put("square", 2);
+			put("triangle", 3);
+			put("sphere", 4);
+			put("cube", 5);
+			put("point", 6);
+		}
+	};
+
 	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
 
 		@Override
@@ -67,26 +81,40 @@ public class AspectStatement extends AbstractStatementSequence {
 					final Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : GamaPreferences.CORE_COLOR.getValue();
-					IShape ag = agent.getGeometry();
 					String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
-					if ( !defaultShape.equals("shape") ) {
-						// Optimize this
+					int index = SHAPES.get(defaultShape);
+					IShape ag;
+
+					if ( index != Constants.DEFAULT_INT_NO_ENTRY_VALUE ) {
 						Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
 						ILocation point = agent.getLocation();
-						if ( defaultShape.equals("circle") ) {
-							ag = GamaGeometryType.buildCircle(defaultSize, point);
-						} else if ( defaultShape.equals("square") ) {
-							ag = GamaGeometryType.buildSquare(defaultSize, point);
-						} else if ( defaultShape.equals("triangle") ) {
-							ag = GamaGeometryType.buildTriangle(defaultSize, point);
-						} else if ( defaultShape.equals("sphere") ) {
-							ag = GamaGeometryType.buildSphere(defaultSize, point);
-						} else if ( defaultShape.equals("cube") ) {
-							ag = GamaGeometryType.buildCube(defaultSize, point);
-						} else if ( defaultShape.equals("point") ) {
-							ag = GamaGeometryType.createPoint(point);
+
+						switch (SHAPES.get(defaultShape)) {
+							case 1:
+								ag = GamaGeometryType.buildCircle(defaultSize, point);
+								break;
+							case 2:
+								ag = GamaGeometryType.buildSquare(defaultSize, point);
+								break;
+							case 3:
+								ag = GamaGeometryType.buildTriangle(defaultSize, point);
+								break;
+							case 4:
+								ag = GamaGeometryType.buildSphere(defaultSize, point);
+								break;
+							case 5:
+								ag = GamaGeometryType.buildCube(defaultSize, point);
+								break;
+							case 6:
+								ag = GamaGeometryType.createPoint(point);
+								break;
+							default:
+								ag = agent.getGeometry();
 						}
+					} else {
+						ag = agent.getGeometry();
 					}
+
 					final IShape ag2 = ag.copy(scope);
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, false);
 					return r;
@@ -101,11 +129,6 @@ public class AspectStatement extends AbstractStatementSequence {
 			return null;
 		}
 
-		// @Override
-		// public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		// return null;
-		// }
-
 	};
 
 	public AspectStatement(final IDescription desc) {
@@ -114,9 +137,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	// public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		public
-		Rectangle2D executeOn(final IScope scope) {
+	public Rectangle2D executeOn(final IScope scope) {
 		IAgent agent = scope.getAgentScope();
 		if ( agent != null && !agent.dead() ) {
 			IGraphics g = scope.getGraphics();

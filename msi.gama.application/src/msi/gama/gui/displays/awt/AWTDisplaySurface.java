@@ -21,10 +21,9 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.AWTDisplayGraphics;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Cast;
 
 @display("java2D")
@@ -153,16 +152,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	public AWTDisplaySurface(final Object ... args) {
 		super(args);
-		displayBlock = new Runnable() {
-
-			@Override
-			public void run() {
-				canBeUpdated(false);
-				drawDisplaysWithoutRepainting();
-				repaint();
-				canBeUpdated(true);
-			}
-		};
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -190,6 +179,14 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
+	protected void internalDisplayUpdate() {
+		canBeUpdated(false);
+		drawDisplaysWithoutRepainting();
+		repaint();
+		canBeUpdated(true);
+	}
+
+	@Override
 	protected void createIGraphics() {
 		iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
 		iGraphics.setQualityRendering(qualityRendering);
@@ -208,8 +205,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void initialize(final IScope scope, final LayeredDisplayOutput output) {
-		super.initialize(scope, output);
+	public void outputReloaded() {
+		super.outputReloaded();
 		repaint();
 	}
 

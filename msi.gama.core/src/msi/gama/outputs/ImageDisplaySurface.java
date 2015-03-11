@@ -35,7 +35,7 @@ import msi.gaml.types.Types;
 @display("image")
 public class ImageDisplaySurface implements IDisplaySurface {
 
-	private LayeredDisplayOutput output;
+	private final LayeredDisplayOutput output;
 	private boolean needsUpdate = true;
 	private BufferedImage buffImage = null;
 	private Graphics2D g2 = null;
@@ -45,21 +45,22 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	ILayerManager manager;
 	public static String snapshotFolder = "/tmp/";
 	protected IScope scope;
-	private LayeredDisplayData data;
+	private final LayeredDisplayData data;
 
-	public ImageDisplaySurface(final Object ... args) {}
+	public ImageDisplaySurface(final Object ... args) {
+		output = (LayeredDisplayOutput) args[0];
+		data = output.getData();
+
+	}
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
-	public void initialize(final IScope scope, final LayeredDisplayOutput output) {
-		if ( output == null ) { return; }
-		this.scope = scope.copy();
-		data = output.getData();
+	public void outputReloaded() {
+		this.scope = output.getScope().copy();
 		scope.disableErrorReporting();
-		this.output = output;
-		bgColor = output.getBackgroundColor();
+		bgColor = data.getBackgroundColor();
 		if ( manager == null ) {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();

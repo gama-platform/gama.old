@@ -22,7 +22,6 @@ import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gaml.operators.Cast;
@@ -66,7 +65,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	final String[] shapeFileName = new String[1];
 
 	// private (return the renderer of the openGLGraphics)
-	private JOGLAWTGLRenderer renderer;
+	private final JOGLAWTGLRenderer renderer;
 
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
@@ -75,30 +74,42 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	private MouseListener eventMouse;
 
 	public JOGLAWTDisplaySurface(final Object ... args) {
-		displayBlock = new Runnable() {
+		super(args);
+		System.setProperty("sun.awt.noerasebackground", "true");
+		renderer = new JOGLAWTGLRenderer(this);
+		add(renderer.canvas, BorderLayout.CENTER);
+		this.setVisible(true);
 
-			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
+		addComponentListener(new ComponentAdapter() {
+
 			@Override
-			public void run() {
-				final ModelScene s = renderer.getScene();
-				if ( s != null ) {
-					s.wipe(getOutput().getTraceDisplay());
-					feedRenderer();
-					if ( data.isAutosave() ) {
-						snapshot();
-					}
-
-					drawDisplaysWithoutRepainting();
-
-					if ( data.isOutput3D() ) {
-						output3DManager.updateOutput3D(renderer);
-					}
-
+			public void componentResized(final ComponentEvent e) {
+				if ( renderer != null && renderer.canvas != null ) {
+					renderer.canvas.setSize(getWidth(), getHeight());
 				}
-				canBeUpdated(true);
+				initOutput3D(data.isOutput3D(), data.getOutput3DNbCycles());
+				// updateDisplay();
+				previousPanelSize = getSize();
 			}
-		};
+		});
+		renderer.animator.start();
+	}
 
+	@Override
+	protected void internalDisplayUpdate() {
+		final ModelScene s = renderer.getScene();
+		if ( s != null ) {
+			s.wipe(data.getTraceDisplay());
+			feedRenderer();
+			if ( data.isAutosave() ) {
+				snapshot();
+			}
+			drawDisplaysWithoutRepainting();
+			if ( data.isOutput3D() ) {
+				output3DManager.updateOutput3D(renderer);
+			}
+		}
+		canBeUpdated(true);
 	}
 
 	@Override
@@ -127,6 +138,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// TODO Move data to the Renderer so that it feeds itself
 	private void feedRenderer() {
+		renderer.setAntiAliasing(getQualityRendering());
+		renderer.setZFighting(data.isZ_fighting());
+		renderer.setDrawNorm(data.isDraw_norm());
+		renderer.setCubeDisplay(data.isCubeDisplay());
+		renderer.setOrtho(data.isOrtho());
+		renderer.setDrawEnv(data.isDrawEnv());
+		renderer.setDrawDiffuseLight(data.isDrawDiffLight());
+		renderer.setIsLightOn(data.isLightOn());
 		renderer.setTessellation(data.isTesselation());
 		renderer.setShowFPS(data.isShowfps());
 		renderer.setAmbientLightValue(data.getAmbientLightColor());
@@ -139,40 +158,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	@Override
-	public void initialize(final IScope scope, final LayeredDisplayOutput out) {
-		super.initialize(scope, out);
-		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
-		// due to AWT erasing the GLCanvas every time before jogl repaint.
-		System.setProperty("sun.awt.noerasebackground", "true");
-		renderer = new JOGLAWTGLRenderer(this);
-		renderer.setAntiAliasing(getQualityRendering());
-		renderer.setZFighting(getOutput().getZFighting());
-		renderer.setDrawNorm(getOutput().getDrawNorm());
-		renderer.setCubeDisplay(getOutput().getCubeDisplay());
-		renderer.setOrtho(getOutput().getOrtho());
-		renderer.setDrawEnv(getOutput().getDrawEnv());
-		renderer.setDrawDiffuseLight(getOutput().getDrawDiffuseLight());
-		renderer.setIsLightOn(getOutput().getIsLightOn());
+	public void outputReloaded() {
 		feedRenderer();
-		add(renderer.canvas, BorderLayout.CENTER);
-		zoomFit();
-		this.setVisible(true);
-
-		addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentResized(final ComponentEvent e) {
-				if ( renderer != null && renderer.canvas != null ) {
-					renderer.canvas.setSize(getWidth(), getHeight());
-				}
-				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
-				// updateDisplay();
-				previousPanelSize = getSize();
-			}
-		});
-		renderer.animator.start();
+		super.outputReloaded();
 	}
 
 	@Override

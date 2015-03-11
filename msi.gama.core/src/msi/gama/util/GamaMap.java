@@ -14,8 +14,6 @@ package msi.gama.util;
 import java.util.*;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
@@ -23,6 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import msi.gaml.types.*;
+import com.google.common.base.Objects;
 
 /**
  * The Class GamaMap.
@@ -124,13 +123,14 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 
 	}
 
-	@Override
-	public V anyValue(final IScope scope) {
-		if ( isEmpty() ) { return null; }
-		final V[] array = (V[]) values().toArray();
-		final int i = scope.getRandom().between(0, array.length - 1);
-		return array[i];
-	}
+	//
+	// @Override
+	// public V anyValue(final IScope scope) {
+	// int size = _size;
+	// if ( size == 0 ) { return null; }
+	// final int i = scope.getRandom().between(0, _size - 1);
+	// return valueAt(i);
+	// }
 
 	/**
 	 * Method add()
@@ -194,9 +194,10 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	public void setAllValues(final IScope scope, final V value) {
 		// value is supposed to be correctly casted to V
 		V val = buildValue(scope, value);
-		for ( Map.Entry<K, V> entry : entrySet() ) {
-			entry.setValue(val);
-		}
+		// for ( Map.Entry<K, V> entry : entrySet() ) {
+		// entry.setValue(val);
+		// }
+		Arrays.fill(_values, val);
 	}
 
 	/**
@@ -206,15 +207,29 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
 		// Dont know what to do... Removing the first pair with value = value ?
-		Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<K, V> entry = it.next();
-			boolean toRemove = value == null ? entry.getValue() == null : value.equals(entry.getValue());
-			if ( toRemove ) {
-				it.remove();
+		Object[] keys = _set;
+		V[] values = _values;
+		int[] inserts = _indicesByInsertOrder;
+		for ( int i = 0; i <= _lastInsertOrderIndex; i++ ) {
+			final int index = inserts[i];
+			if ( index == EMPTY ) {
+				continue;
+			}
+			if ( Objects.equal(value, values[index]) ) {
+				removeAt(index);
 				return;
 			}
 		}
+
+		// Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<K, V> entry = it.next();
+		// boolean toRemove = value == null ? entry.getValue() == null : value.equals(entry.getValue());
+		// if ( toRemove ) {
+		// it.remove();
+		// return;
+		// }
+		// }
 	}
 
 	/**
@@ -244,42 +259,60 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 	 */
 	@Override
 	public void removeAllOccurencesOfValue(final IScope scope, final Object value) {
-		Iterator<Map.Entry<K, V>> it = super.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<K, V> entry = it.next();
-			if ( value == null ? entry.getValue() == null : value.equals(entry.getValue()) ) {
-				it.remove();
+		for ( int i = 0; i < _size; i++ ) {
+			if ( Objects.equal(_values[i], value) ) {
+				removeAt(i);
 			}
 		}
+		// Iterator<Map.Entry<K, V>> it = super.entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<K, V> entry = it.next();
+		// if ( value == null ? entry.getValue() == null : value.equals(entry.getValue()) ) {
+		// it.remove();
+		// }
+		// }
 	}
 
 	@Override
 	public V firstValue(final IScope scope) {
-		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		final Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
-		return entry == null ? null : entry.getValue();
+		return valueAt(0);
+		//
+		// final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		// final Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
+		// return entry == null ? null : entry.getValue();
 	}
 
-	public GamaPair getAtIndex(final Integer index) {
-		if ( index >= size() ) { return null; }
-		final List<Map.Entry<Object, Object>> list = new ArrayList(entrySet());
-		final Map.Entry entry = list.get(index);
-		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue(), type.getKeyType(),
-			type.getContentType());
-
-	}
+	//
+	// public GamaPair getAtIndex(final int i) {
+	// if ( i >= _size ) { return null; }
+	// int index = 0;
+	// for ( int keyIndex = 0; keyIndex < _size; keyIndex++ ) {
+	// Object o = _set[keyIndex];
+	// if ( o != FREE && o != REMOVED ) {
+	// index++;
+	// if ( index == i ) { return new GamaPair(o, _values[keyIndex], type.getKeyType(), type.getContentType()); }
+	// }
+	// }
+	// return null;
+	//
+	// // final List<Map.Entry<Object, Object>> list = new ArrayList(entrySet());
+	// // final Map.Entry entry = list.get(index);
+	// // return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue(), type.getKeyType(),
+	// // type.getContentType());
+	// }
 
 	@Override
 	public V lastValue(final IScope scope) {
-		if ( size() == 0 ) { return null; }
-		final List<Map.Entry<K, V>> list = new ArrayList(entrySet());
-		final Map.Entry<K, V> entry = list.get(list.size() - 1);
-		return entry == null ? null : entry.getValue();
+		return valueAt(_size - 1);
+		//
+		// final List<Map.Entry<K, V>> list = new ArrayList(entrySet());
+		// final Map.Entry<K, V> entry = list.get(list.size() - 1);
+		// return entry == null ? null : entry.getValue();
 	}
 
 	@Override
 	public int length(final IScope scope) {
-		return size();
+		return _size;
 	}
 
 	@Override
@@ -332,7 +365,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 
 	@Override
 	public boolean isEmpty(final IScope scope) {
-		return isEmpty();
+		return _size == 0;
 	}
 
 	@Override
@@ -412,6 +445,14 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 			result.add(buildIndex(scope, o));
 		}
 		return result;
+	}
+
+	/**
+	 * WARNING: exposes raw internal values
+	 * Never use this method unless you are sure of what you are doing
+	 */
+	public Object[] getRawValues() {
+		return _values;
 	}
 
 }

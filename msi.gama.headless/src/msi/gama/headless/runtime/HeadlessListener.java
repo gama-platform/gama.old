@@ -190,13 +190,13 @@ public class HeadlessListener implements IGui {
 	static Map<String, Class> displayClasses = null;
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final IScope scope, final LayeredDisplayOutput layerDisplayOutputs) {
+	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get("image");
 		if ( creator != null ) {
-			surface = creator.create();
-			surface.initialize(scope, layerDisplayOutputs);
+			surface = creator.create(output);
+			surface.outputReloaded();
 		} else {
 			return new NullDisplaySurface();
 			// throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", scope);
