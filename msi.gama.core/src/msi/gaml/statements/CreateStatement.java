@@ -336,6 +336,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		Object source = from == null ? null : from.value(scope);
 		if ( source instanceof String ) {
 			source = Files.from(scope, (String) source);
+		} else if ( source instanceof GamaShape ) {
+			source = GamaListFactory.createWithoutCasting(Types.GEOMETRY, source);
 		}
 		return source;
 	}
