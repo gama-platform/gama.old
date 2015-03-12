@@ -19,4 +19,6 @@ public interface IUpdaterTarget<Message> {
 
 	public int getCurrentState();
 
+	public void resume();
+
 }

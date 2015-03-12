@@ -263,4 +263,11 @@ public class InspectDisplayOutput extends MonitorOutput {
 		return rootAgent;
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		rootAgent = null;
+		attributes = null;
+	}
+
 }

@@ -121,28 +121,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return Iterables.filter(outputs.values(), IDisplayOutput.class);
 	}
 
-	// public boolean initSingleOutput1(final IScope scope, final IOutput output) {
-	// try {
-	// Thread.sleep(200);
-	// } catch (InterruptedException e1) {
-	// e1.printStackTrace();
-	// }
-	//
-	// if ( scope.init(output) ) {
-	// output.resume();
-	// if ( scope.step(output) ) {
-	// try {
-	// output.open();
-	// output.update();
-	// } catch (RuntimeException e) {
-	// GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
-	// return false;
-	// }
-	// }
-	// }
-	// return true;
-	// }
-
 	@Override
 	public boolean init(final IScope scope) {
 		List<IOutput> list = new ArrayList(outputs.values());

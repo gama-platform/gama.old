@@ -37,7 +37,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	private final static int PRESENTATION = 0;
 	private final static int FOCUS = 1;
 	private final static int SNAP = 2;
-	private final static int SYNC = 3;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -48,7 +47,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { SYNC, SEP, FOCUS, PRESENTATION, SEP, SNAP };
+		return new Integer[] { FOCUS, PRESENTATION, SEP, SNAP };
 	}
 
 	public boolean isOpenGL() {

@@ -180,6 +180,9 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void setOutput(final IDisplayOutput out) {
 		resetButtonStates();
+		if ( output != null && output != out ) {
+			output.dispose();
+		}
 		output = out;
 	}
 
@@ -227,11 +230,28 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 
 	@Override
 	public void close() {
-		try {
-			getSite().getPage().hideView(this);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					getSite().getPage().hideView(GamaViewPart.this);
+
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	@Override
+	public void outputReloaded(final IDisplayOutput output) {
+		// if ( getOutput() != output ) {
+		// setOutput(output);
+		// }
+
 	}
 
 }

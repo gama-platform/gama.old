@@ -337,6 +337,7 @@ public interface IKeyword {
 	public static final String START_SOUND = "start_sound";
 	public static final String STATE = "state";
 	public static final String STATES = "states";
+	public static final String STATUS = "status";
 	public static final String STEP = "step";
 	public static final String STOP_SOUND = "stop_sound";
 	public static final String STRATEGY = "scheduling_strategy";

@@ -33,6 +33,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
@@ -108,7 +109,7 @@ public class SwtGui implements IGui {
 	private static ISpeedDisplayer speedStatus;
 	private Tell tell = new Tell();
 	private Error error = new Error();
-	private Views views = new Views();
+	// private Views views = new Views();
 	private ConsoleView console = null;
 	private final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
@@ -138,42 +139,31 @@ public class SwtGui implements IGui {
 
 	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
 
-	private class Views {
-
-		IGamaView findView(final IDisplayOutput output) {
-			final IWorkbenchPage page = getPage();
-			if ( page == null ) { return null; } // Closing the workbench
-			final IViewReference ref =
-				page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
-			if ( ref == null ) { return null; }
-			final IViewPart part = ref.getView(true);
-			if ( !(part instanceof IGamaView) ) { return null; }
-			return (IGamaView) part;
-		}
-
-		void close(final IDisplayOutput out) {
-			final IGamaView view = findView(out);
-			if ( view == null ) { return; }
-			run(new Runnable() {
-
-				@Override
-				public void run() {
-					view.close();
-				}
-			});
-
-		}
-
-		void update(final IDisplayOutput out) {
-			final IGamaView view = findView(out);
-			if ( view == null ) { return; }
-			view.update(out);
-		}
-
-		// void refresh(final IDisplayOutput out, final int rate) {
-		// new ViewAction(out, rate).schedule();
-		// }
-	}
+	// private class Views {
+	//
+	// void close(final IDisplayOutput out) {
+	// final IGamaView view = findView(out);
+	// if ( view == null ) { return; }
+	// run(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// view.close();
+	// }
+	// });
+	//
+	// }
+	//
+	// void update(final IDisplayOutput out) {
+	// final IGamaView view = findView(out);
+	// if ( view == null ) { return; }
+	// view.update(out);
+	// }
+	//
+	// // void refresh(final IDisplayOutput out, final int rate) {
+	// // new ViewAction(out, rate).schedule();
+	// // }
+	// }
 
 	class Tell implements Runnable {
 
@@ -203,6 +193,18 @@ public class SwtGui implements IGui {
 		public void run() {
 			MessageDialog.openError(getShell(), "Error", message);
 		}
+	}
+
+	@Override
+	public IGamaView findView(final IDisplayOutput output) {
+		final IWorkbenchPage page = getPage();
+		if ( page == null ) { return null; } // Closing the workbench
+		final IViewReference ref =
+			page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
+		if ( ref == null ) { return null; }
+		final IViewPart part = ref.getView(true);
+		if ( !(part instanceof IGamaView) ) { return null; }
+		return (IGamaView) part;
 	}
 
 	@Override
@@ -291,6 +293,16 @@ public class SwtGui implements IGui {
 		status.updateWith(new StatusMessage(msg, code));
 	}
 
+	@Override
+	public void setStatus(final String msg, final GamaColor color) {
+		status.updateWith(new UserStatusMessage(msg, color));
+	}
+
+	@Override
+	public void resumeStatus() {
+		status.resume();
+	}
+
 	public static void setStatusControl(final StatusControlContribution l) {
 		status.setTarget(l);
 	}
@@ -370,12 +382,12 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	@Override
-	public void updateViewOf(final IDisplayOutput output) {
-		if ( views != null ) {
-			views.update(output);
-		}
-	}
+	// @Override
+	// public void updateViewOf(final IDisplayOutput output) {
+	// if ( views != null ) {
+	// views.update(output);
+	// }
+	// }
 
 	//
 	// public void setViewRateOf(final IDisplayOutput output, final int refresh) {
@@ -383,13 +395,13 @@ public class SwtGui implements IGui {
 	// views.refresh(output, refresh);
 	// }
 	// }
-
-	@Override
-	public void closeViewOf(final IDisplayOutput output) {
-		if ( views != null ) {
-			views.close(output);
-		}
-	}
+	//
+	// @Override
+	// public void closeViewOf(final IDisplayOutput output) {
+	// if ( views != null ) {
+	// views.close(output);
+	// }
+	// }
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
 		final Object[] result = new Object[1];
@@ -532,21 +544,21 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	public void resetMonitorView() {
-		run(new Runnable() {
-
-			@Override
-			public void run() {
-				final IWorkbenchPage activePage = getPage();
-				if ( activePage == null ) { return; } // Closing the workbench
-				final IWorkbenchPart part = activePage.findView(MonitorView.ID);
-				if ( part != null && part instanceof MonitorView && activePage.isPartVisible(part) ) {
-					((MonitorView) part).reset();
-				}
-			}
-		});
-
-	}
+	// public void resetMonitorView() {
+	// run(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// final IWorkbenchPage activePage = getPage();
+	// if ( activePage == null ) { return; } // Closing the workbench
+	// final IWorkbenchPart part = activePage.findView(MonitorView.ID);
+	// if ( part != null && part instanceof MonitorView && activePage.isPartVisible(part) ) {
+	// ((MonitorView) part).reset();
+	// }
+	// }
+	// });
+	//
+	// }
 
 	@Override
 	public void showConsoleView() {
@@ -1088,84 +1100,6 @@ public class SwtGui implements IGui {
 		return unitFont;
 	}
 
-	// public static Color getOkColor() {
-	// if ( COLOR_OK == null ) {
-	// initColors();
-	// }
-	// return COLOR_OK;
-	//
-	// }
-	//
-	// public static Color getOkColorInactive() {
-	// if ( COLOR_OK_INACTIVE == null ) {
-	// initColors();
-	// }
-	// return COLOR_OK_INACTIVE;
-	// }
-	//
-	// public static Color getImportedErrorColor() {
-	// if ( COLOR_IMPORTED == null ) {
-	// initColors();
-	// }
-	// return COLOR_IMPORTED;
-	// }
-	//
-	// public static Color getErrorColor() {
-	// if ( COLOR_ERROR == null ) {
-	// initColors();
-	// }
-	// return COLOR_ERROR;
-	// }
-	//
-	// public static Color getWarningColor() {
-	// if ( COLOR_WARNING == null ) {
-	// initColors();
-	// }
-	// return COLOR_WARNING;
-	// }
-	//
-	// public static Color getNeutralColor() {
-	// if ( COLOR_NEUTRAL == null ) {
-	// initColors();
-	// }
-	// return COLOR_NEUTRAL;
-	// }
-	//
-	// public static Color getNeutralColorInactive() {
-	// if ( COLOR_NEUTRAL_INACTIVE == null ) {
-	// initColors();
-	// }
-	// return COLOR_NEUTRAL_INACTIVE;
-	// }
-	//
-	// public static Color getDarkGrayColor() {
-	// if ( COLOR_GRAY_LABEL == null ) {
-	// initColors();
-	// }
-	// return COLOR_GRAY_LABEL;
-	// }
-
-	// @Override
-	// public void cycleDisplayViews(final Set<String> names) {
-	// final Set<String> names2 = new HashSet(names);
-	// run(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// for ( final String name : names2 ) {
-	// final IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
-	// if ( r != null ) {
-	// final IViewPart p = r.getView(false);
-	// // GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
-	// getPage().activate(p);
-	// }
-	// }
-	//
-	// }
-	// });
-
-	// }
-
 	/**
 	 * Method setSelectedAgent()
 	 * @see msi.gama.common.interfaces.IGui#setSelectedAgent(msi.gama.metamodel.agent.IAgent)
@@ -1198,7 +1132,7 @@ public class SwtGui implements IGui {
 		clearErrors();
 		if ( !agent.getExperiment().getSpecies().isBatch() ) {
 			showConsoleView();
-			resetMonitorView();
+			// resetMonitorView();
 		} else {
 			if ( console == null ) {
 				showConsoleView();
@@ -1214,7 +1148,7 @@ public class SwtGui implements IGui {
 			updateParameterView(exp);
 			tell = new Tell();
 			error = new Error();
-			views = new Views();
+			// views = new Views();
 			// OutputSynchronizer.waitForViewsToBeClosed();
 			// hqnghi:
 			// TODO in case of multi controllers, open an experiment cause "closing-reopen" many times displays,
@@ -1250,10 +1184,7 @@ public class SwtGui implements IGui {
 		setSelectedAgent(null);
 		setHighlightedAgent(null);
 		surfaces.clear();
-		// clearErrors();
-		// hideMonitorView();
-		// eraseConsole(true);
-
+		status.resume();
 	}
 
 	/**

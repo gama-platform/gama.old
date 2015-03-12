@@ -13,6 +13,7 @@ package msi.gama.gui.views;
 
 import java.util.List;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.controls.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
@@ -93,7 +94,14 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected void disposeViewer() {
 		try {
 			if ( viewer != null ) {
-				viewer.dispose();
+				GuiUtils.run(new Runnable() {
+
+					@Override
+					public void run() {
+						viewer.dispose();
+					}
+				});
+
 				viewer = null;
 			}
 		} catch (Exception e) {

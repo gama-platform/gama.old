@@ -14,10 +14,11 @@ package msi.gama.gui.swt.controls;
 import msi.gama.common.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.kernel.simulation.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -36,8 +37,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	volatile String mainTaskName;
 	volatile String subTaskName;
 	volatile boolean inSubTask = false;
+	volatile boolean InUserStatus = false;
 	volatile Double subTaskCompletion;
 	private final static int WIDTH = 300;
+	private GamaUIColor color;
 
 	public StatusControlContribution() {}
 
@@ -110,6 +113,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public GamaUIColor getPopupBackground() {
+		if ( InUserStatus && color != null ) { return color; }
 		return state == IGui.ERROR ? IGamaColors.ERROR : state == IGui.WAIT ? IGamaColors.WARNING
 			: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
@@ -133,12 +137,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				label.setText(subTaskName +
 					(subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
 			} else {
-				label.setText(mainTaskName);
+				label.setText(mainTaskName == null ? "" : mainTaskName);
 			}
-			// int width = label.computeMinWidth();
-			// compo.setSize(width, compo.getSize().y);
-			// ((GridData) label.getLayoutData()).widthHint = width;
-			// parent.layout(true, true);
 			if ( popup.isVisible() ) {
 				popup.display();
 			}
@@ -153,6 +153,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public void updateWith(final IStatusMessage m) {
 		if ( m instanceof SubTaskMessage ) {
+			if ( InUserStatus ) { return; }
 			SubTaskMessage m2 = (SubTaskMessage) m;
 			Boolean beginOrEnd = m2.getBeginOrEnd();
 			if ( beginOrEnd == null ) {
@@ -168,8 +169,24 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				inSubTask = false;
 				subTaskCompletion = null;
 			}
-
-		} else {
+		} else if ( m instanceof UserStatusMessage ) {
+			String s = m.getText();
+			if ( s == null ) {
+				resume();
+			} else {
+				inSubTask = false; // in case
+				InUserStatus = true;
+				GamaColor c = m.getColor();
+				if ( c == null ) {
+					color = null;
+					state = IGui.NEUTRAL;
+				} else {
+					color = GamaColors.get(c);
+				}
+				mainTaskName = m.getText();
+			}
+		} else if ( m instanceof StatusMessage ) {
+			if ( InUserStatus ) { return; }
 			inSubTask = false; // in case
 			mainTaskName = m.getText();
 			state = m.getCode();
@@ -187,6 +204,17 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public boolean isDynamic() {
 		return false;
+	}
+
+	/**
+	 * Method resume()
+	 * @see msi.gama.common.interfaces.IUpdaterTarget#resume()
+	 */
+	@Override
+	public void resume() {
+		InUserStatus = false;
+		color = null;
+		mainTaskName = null;
 	}
 
 }

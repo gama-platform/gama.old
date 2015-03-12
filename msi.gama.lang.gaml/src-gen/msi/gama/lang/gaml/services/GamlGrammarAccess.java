@@ -1916,16 +1916,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cMatch_betweenKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
 		private final Keyword cMatch_oneKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
 		private final Keyword cParameterKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cStatusKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
 		//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 		//	"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
-		//	"match_one" | "parameter";
+		//	"match_one" | "parameter" | "status";
 		public ParserRule getRule() { return rule; }
 
 		//_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 		//"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one"
-		//| "parameter"
+		//| "parameter" | "status"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//_LayerKey
@@ -1996,6 +1997,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"parameter"
 		public Keyword getParameterKeyword_22() { return cParameterKeyword_22; }
+
+		//"status"
+		public Keyword getStatusKeyword_23() { return cStatusKeyword_23; }
 	}
 
 	public class _LayerKeyElements extends AbstractParserRuleElementFinder {
@@ -5504,7 +5508,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//_1Expr_Facets_BlockOrEnd_Key:
 	//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 	//	"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
-	//	"match_one" | "parameter";
+	//	"match_one" | "parameter" | "status";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {
 		return p_1Expr_Facets_BlockOrEnd_Key;
 	}

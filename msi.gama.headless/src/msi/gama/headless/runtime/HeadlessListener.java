@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.CoreException;
@@ -117,8 +118,8 @@ public class HeadlessListener implements IGui {
 		// System.out.println("Information: " + s);
 	}
 
-	@Override
-	public void updateViewOf(final IDisplayOutput output) {}
+	// @Override
+	// public void updateViewOf(final IDisplayOutput output) {}
 
 	@Override
 	public void debug(final String string) {
@@ -156,8 +157,9 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void setWorkbenchWindowTitle(final String string) {}
 
-	@Override
-	public void closeViewOf(final IDisplayOutput out) {}
+	//
+	// @Override
+	// public void closeViewOf(final IDisplayOutput out) {}
 
 	@Override
 	public IGamaView hideView(final String viewId) {
@@ -318,5 +320,30 @@ public class HeadlessListener implements IGui {
 	@Override
 	public String getName() {
 		return "Headless";
+	}
+
+	/**
+	 * Method setStatus()
+	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String, msi.gama.util.GamaColor)
+	 */
+	@Override
+	public void setStatus(final String msg, final GamaColor color) {
+		System.out.println(msg);
+	}
+
+	/**
+	 * Method resumeStatus()
+	 * @see msi.gama.common.interfaces.IGui#resumeStatus()
+	 */
+	@Override
+	public void resumeStatus() {}
+
+	/**
+	 * Method findView()
+	 * @see msi.gama.common.interfaces.IGui#findView(msi.gama.outputs.IDisplayOutput)
+	 */
+	@Override
+	public IGamaView findView(final IDisplayOutput output) {
+		return null;
 	}
 }

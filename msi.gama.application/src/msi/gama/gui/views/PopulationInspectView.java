@@ -106,16 +106,22 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				TableViewer v = viewer;
 				if ( !locked ) {
 					IAgent[] agents = getOutput().getLastValue();
 					if ( Arrays.equals(elements, agents) ) {
-						viewer.refresh();
+						if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
+							v.refresh();
+						}
 					} else {
-						viewer.setInput(agents);
-						// changePartName(speciesName);
+						if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
+							viewer.setInput(agents);
+						}
 					}
 				} else {
-					viewer.refresh();
+					if ( v != null && v.getTable() != null && !v.getTable().isDisposed() ) {
+						viewer.refresh();
+					}
 				}
 
 				return Status.OK_STATUS;
@@ -131,6 +137,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	@Override
 	public void setOutput(final IDisplayOutput output) {
 		super.setOutput(output);
+		scope = null;
+		selectedColumns.clear();
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
 			final String name = expr.getType().getContentType().getSpeciesName();
@@ -141,6 +149,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 			}
 		}
 		comparator = new AgentComparator();
+
+		recreateViewer();
 	}
 
 	private void setSpeciesName(final String name, final boolean fromMenu) {
@@ -364,6 +374,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	}
 
 	private void recreateViewer() {
+		if ( viewer == null ) { return; }
 		final Table table = viewer.getTable();
 		if ( table.isDisposed() ) { return; }
 		table.dispose();
@@ -763,6 +774,13 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		super.dispose();
 		viewer.getTable().dispose();
 		currentFont.dispose();
+	}
+
+	@Override
+	public void close() {
+		attributesMenu.removeAll();
+		provider.dispose();
+		super.close();
 	}
 
 }

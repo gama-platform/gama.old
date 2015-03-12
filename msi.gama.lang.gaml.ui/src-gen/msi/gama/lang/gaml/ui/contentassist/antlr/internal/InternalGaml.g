@@ -3988,6 +3988,14 @@ rule___1Expr_Facets_BlockOrEnd_Key__Alternatives
 { after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getParameterKeyword_22()); }
 )
 
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getStatusKeyword_23()); }
+
+	'status' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getStatusKeyword_23()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);

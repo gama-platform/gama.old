@@ -5,6 +5,7 @@
 package msi.gama.common;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.util.GamaColor;
 
 /**
  * Class SubTaskMessage.
@@ -63,6 +64,15 @@ public class SubTaskMessage implements IStatusMessage {
 
 	public Boolean getBeginOrEnd() {
 		return beginOrEnd;
+	}
+
+	/**
+	 * Method getColor()
+	 * @see msi.gama.common.IStatusMessage#getColor()
+	 */
+	@Override
+	public GamaColor getColor() {
+		return null;
 	}
 
 }

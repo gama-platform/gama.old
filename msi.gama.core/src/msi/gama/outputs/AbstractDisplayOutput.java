@@ -13,7 +13,7 @@ package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -30,12 +30,15 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	protected boolean disposed = false;
 	protected boolean synchro = false;
+	protected IGamaView view;
 
 	final Runnable opener = new Runnable() {
 
 		@Override
 		public void run() {
-			IGamaView view = GuiUtils.showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
+			if ( view == null ) {
+				view = GuiUtils.showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
+			}
 			if ( view == null ) { return; }
 			view.setOutput(AbstractDisplayOutput.this);
 		}
@@ -49,10 +52,23 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	@Override
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
+		// if ( view != null ) {
+		// view.outputReloaded(this);
+		// }
+		return true;
+	}
+
+	@Override
 	public void dispose() {
 		if ( disposed ) { return; }
 		disposed = true;
-		GuiUtils.closeViewOf(this);
+		if ( view != null ) {
+			view.close();
+			view = null;
+		}
+		// GuiUtils.closeViewOf(this);
 		if ( getScope() != null ) {
 			GAMA.releaseScope(getScope());
 		}
@@ -65,7 +81,11 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		GuiUtils.updateViewOf(this);
+		if ( view != null ) {
+			view.update(this);
+			// else
+			// GuiUtils.updateViewOf(this);
+		}
 	}
 
 	@Override

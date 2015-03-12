@@ -64,9 +64,9 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void setOutput(final IDisplayOutput output) {
+		if ( output == null || outputs.contains(output) ) { return; }
 		// always consider the latest monitor as the output
 		addItem((MonitorOutput) output);
-		super.setOutput(output);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		o.close();
 		outputs.remove(o);
 		if ( outputs.isEmpty() ) {
-			GuiUtils.closeViewOf(o);
+			close();
 		}
 	}
 
@@ -181,11 +181,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		new MonitorOutput("monitor" + count++, "");
 	}
 
-	@Override
-	public void dispose() {
-		reset();
-		super.dispose();
-	}
+	// @Override
+	// public void dispose() {
+	// reset();
+	// super.dispose();
+	// }
 
 	@Override
 	public void reset() {
@@ -256,6 +256,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 					}, SWT.RIGHT);
 				break;
 		}
+	}
+
+	@Override
+	public void outputReloaded(final IDisplayOutput output) {
+
 	}
 
 }

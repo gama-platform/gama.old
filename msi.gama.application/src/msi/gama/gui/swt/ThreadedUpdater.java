@@ -58,4 +58,9 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 		control.updateWith(message);
 		return Status.OK_STATUS;
 	}
+
+	@Override
+	public void resume() {
+		control.resume();
+	}
 }

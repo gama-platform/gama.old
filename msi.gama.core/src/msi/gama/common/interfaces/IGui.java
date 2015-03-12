@@ -19,6 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.CoreException;
@@ -36,12 +37,15 @@ public interface IGui {
 	public static final int WAIT = 1;
 	public static final int INFORM = 2;
 	public static final int NEUTRAL = 3;
+	public static final int USER = 4;
 	public static final String PLUGIN_ID = "msi.gama.application";
 	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap();
 
 	void setSubStatusCompletion(double status);
 
 	void setStatus(String error, int code);
+
+	void setStatus(String msg, GamaColor color);
 
 	void beginSubStatus(String name);
 
@@ -65,7 +69,7 @@ public interface IGui {
 
 	void informConsole(String s);
 
-	void updateViewOf(IDisplayOutput output);
+	// void updateViewOf(IDisplayOutput output);
 
 	void debug(String string);
 
@@ -81,9 +85,11 @@ public interface IGui {
 
 	void setWorkbenchWindowTitle(String string);
 
-	void closeViewOf(IDisplayOutput out);
+	// void closeViewOf(IDisplayOutput out);
 
 	IGamaView hideView(String viewId);
+
+	IGamaView findView(final IDisplayOutput output);
 
 	boolean isModelingPerspective();
 
@@ -140,5 +146,10 @@ public interface IGui {
 	 * @return
 	 */
 	String getName();
+
+	/**
+	 * 
+	 */
+	void resumeStatus();
 
 }

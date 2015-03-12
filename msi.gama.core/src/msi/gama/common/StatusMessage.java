@@ -5,11 +5,12 @@
 package msi.gama.common;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.util.GamaColor;
 
 public class StatusMessage implements IStatusMessage {
 
 	String message = "";
-	int code = IGui.INFORM;
+	protected int code = IGui.INFORM;
 
 	public StatusMessage(final String msg, final int s) {
 		message = msg;
@@ -30,4 +31,14 @@ public class StatusMessage implements IStatusMessage {
 	public int getCode() {
 		return code;
 	}
+
+	/**
+	 * Method getColor()
+	 * @see msi.gama.common.IStatusMessage#getColor()
+	 */
+	@Override
+	public GamaColor getColor() {
+		return null;
+	}
+
 }

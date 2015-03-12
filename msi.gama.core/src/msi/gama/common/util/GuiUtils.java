@@ -19,6 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.CoreException;
@@ -104,6 +105,19 @@ public class GuiUtils {
 		} else {
 			System.out.println("Status:" + message);
 		}
+	}
+
+	public static void setStatus(final String message, final GamaColor color) {
+		if ( gui != null ) {
+			if ( message == null ) {
+				gui.resumeStatus();
+			} else {
+				gui.setStatus(message, color);
+			}
+		} else {
+			System.out.println("Status:" + message);
+		}
+
 	}
 
 	public static void beginSubStatus(final String n) {
@@ -214,11 +228,12 @@ public class GuiUtils {
 		}
 	}
 
-	public static void updateViewOf(final IDisplayOutput output) {
-		if ( gui != null ) {
-			gui.updateViewOf(output);
-		}
-	}
+	//
+	// public static void updateViewOf(final IDisplayOutput output) {
+	// if ( gui != null ) {
+	// gui.updateViewOf(output);
+	// }
+	// }
 
 	public static void warn(final String string) {
 		if ( gui != null ) {
@@ -291,10 +306,15 @@ public class GuiUtils {
 		}
 	}
 
-	public static void closeViewOf(final IDisplayOutput out) {
-		if ( gui != null ) {
-			gui.closeViewOf(out);
-		}
+	// public static void closeViewOf(final IDisplayOutput out) {
+	// if ( gui != null ) {
+	// gui.closeViewOf(out);
+	// }
+	// }
+
+	public static IGamaView findView(final IDisplayOutput output) {
+		if ( gui != null ) { return gui.findView(output); }
+		return null;
 	}
 
 	public static void hideView(final String viewId) {

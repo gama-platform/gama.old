@@ -261,4 +261,11 @@ public class DisplayOverlay extends AbstractOverlay implements IUpdaterTarget<Ov
 		return IGui.NEUTRAL;
 	}
 
+	/**
+	 * Method resume()
+	 * @see msi.gama.common.interfaces.IUpdaterTarget#resume()
+	 */
+	@Override
+	public void resume() {}
+
 }

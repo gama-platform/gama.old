@@ -26,4 +26,6 @@ public interface IGamaView {
 
 	public void close();
 
+	public void outputReloaded(IDisplayOutput output);
+
 }

@@ -75,7 +75,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		manager = new LayerManager(this);
 		final List<AbstractLayerStatement> layers = output.getLayers();
 		for ( final AbstractLayerStatement layer : layers ) {
-			manager.addLayer(AbstractLayer.createLayer(scope, layer));
+			manager.addLayer(AbstractLayer.createLayer(output.getScope(), layer));
 		}
 		displayBlock = new Runnable() {
 

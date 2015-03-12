@@ -5,6 +5,7 @@
 package msi.gama.common;
 
 import msi.gama.common.interfaces.IUpdaterMessage;
+import msi.gama.util.GamaColor;
 
 /**
  * Class IStatusMessage.
@@ -18,4 +19,6 @@ public interface IStatusMessage extends IUpdaterMessage {
 	public String getText();
 
 	public int getCode();
+
+	public GamaColor getColor();
 }
