@@ -642,7 +642,7 @@ public class SwtGui implements IGui {
 
 	static void initFonts() {
 		FontData baseData = getDisplay().getSystemFont().getFontData()[0];
-		String baseFont = baseData.name;
+		String baseFont = baseData.getName();
 		int baseSize = 11;
 		FontData fd = new FontData(baseFont, baseSize, SWT.BOLD);
 		labelFont = new Font(Display.getDefault(), fd);
