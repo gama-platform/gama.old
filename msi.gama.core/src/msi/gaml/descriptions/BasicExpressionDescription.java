@@ -43,7 +43,6 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return expression == null ? toOwnString() : expression.serialize(includingBuiltIn);
-		// return expression != null ? expression.toGaml() : "";
 	}
 
 	@Override

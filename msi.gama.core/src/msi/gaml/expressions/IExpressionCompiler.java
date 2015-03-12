@@ -41,7 +41,7 @@ public interface IExpressionCompiler<T> {
 	public abstract IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
 
 	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
-		IDescription context);
+		IDescription context, boolean compileArgValues);
 
 	// hqnghi 11/Oct/13 two method for compiling models directly from files
 	public abstract ModelDescription createModelDescriptionFromFile(String filepath);

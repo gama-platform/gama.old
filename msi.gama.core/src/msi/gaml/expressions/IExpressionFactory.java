@@ -15,6 +15,7 @@ import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.IUnits;
+import msi.gaml.statements.Arguments;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -55,9 +56,6 @@ public interface IExpressionFactory {
 
 	public IExpression createMap(final List<? extends IExpression> elements);
 
-	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression call,
-		IExpression args);
-
 	/**
 	 * @param op
 	 * @param context
@@ -97,5 +95,16 @@ public interface IExpressionFactory {
 	 * @return
 	 */
 	public UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String[] names);
+
+	/**
+	 * @param op
+	 * @param callerContext
+	 * @param action
+	 * @param call
+	 * @param arguments
+	 * @return
+	 */
+	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression call,
+		Arguments arguments);
 
 }

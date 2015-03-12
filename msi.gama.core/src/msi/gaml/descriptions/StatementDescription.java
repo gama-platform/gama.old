@@ -334,12 +334,17 @@ public class StatementDescription extends SymbolDescription {
 				} else if ( arg.getValue() != null && arg.getValue().getExpression() != null ) {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
-					boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
-					accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
-					if ( !accepted ) {
-						caller
-							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
-						return false;
+					if ( Types.intFloatCase(formalType, callerType) ) {
+						caller.warning("The argument " + name + " (of type " + callerType + ") will be casted to " +
+							formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
+					} else {
+						boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
+						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
+						if ( !accepted ) {
+							caller.error("The type of argument " + name + " should be " + formalType,
+								IGamlIssue.WRONG_TYPE);
+							return false;
+						}
 					}
 				}
 			}

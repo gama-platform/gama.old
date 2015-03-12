@@ -106,7 +106,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public Map<String, IExpressionDescription> createArgumentMap(final StatementDescription action,
 		final IExpressionDescription args, final IDescription context) {
 		if ( args == null ) { return Collections.EMPTY_MAP; }
-		return getParser().parseArguments(action, args.getTarget(), context);
+		return getParser().parseArguments(action, args.getTarget(), context, false);
 	}
 
 	@Override
@@ -218,23 +218,31 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext,
-		final StatementDescription action, final IExpression call, final IExpression arguments) {
-		Arguments args = createArgs(arguments);
-		if ( action.verifyArgs(callerContext, args) ) { return new PrimitiveOperator(null, callerContext, action, call,
-			args); }
+		final StatementDescription action, final IExpression call, final Arguments arguments) {
+		// Arguments args = createArgs(arguments);
+		if ( action.verifyArgs(callerContext, arguments) ) { return new PrimitiveOperator(null, callerContext, action,
+			call, arguments); }
 		return null;
 	}
 
-	private Arguments createArgs(final IExpression mapExpression) {
-		final Arguments result = new Arguments();
-		if ( !(mapExpression instanceof MapExpression) ) { return result; }
-		final IExpression[] keys = ((MapExpression) mapExpression).keysArray();
-		final IExpression[] values = ((MapExpression) mapExpression).valuesArray();
-		for ( int i = 0; i < keys.length; i++ ) {
-			result.put(keys[i].literalValue(), values[i]);
-		}
-		return result;
-	}
+	// /**
+	// * @param arguments
+	// * @return
+	// */
+	// private Arguments createArgs(final Map<String, IExpressionDescription> arguments) {
+	// return null;
+	// }
+	//
+	// private Arguments createArgs(final IExpression mapExpression) {
+	// final Arguments result = new Arguments();
+	// if ( !(mapExpression instanceof MapExpression) ) { return result; }
+	// final IExpression[] keys = ((MapExpression) mapExpression).keysArray();
+	// final IExpression[] values = ((MapExpression) mapExpression).valuesArray();
+	// for ( int i = 0; i < keys.length; i++ ) {
+	// result.put(keys[i].literalValue(), values[i]);
+	// }
+	// return result;
+	// }
 
 	// @Override
 	// public Set<String> parseLiteralArray(final IExpressionDescription s,

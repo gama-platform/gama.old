@@ -13,7 +13,6 @@ package msi.gama.lang.utils;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionFactory.*;
-import gnu.trove.map.hash.THashMap;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -30,7 +29,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.statements.DrawStatement;
+import msi.gaml.statements.*;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -317,8 +316,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private IExpression action(final String name, final IExpression callee, final EObject args,
 		final StatementDescription action) {
-		IExpression right = compileArguments(action, args);
-		return factory.createAction(name, getContext(), action, callee, right);
+		Arguments arguments = parseArguments(action, args, getContext(), true);
+		return factory.createAction(name, getContext(), action, callee, arguments);
 	}
 
 	// KEEP
@@ -445,24 +444,28 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	// FIXME Possibility to simplify here as we recreate a map that will be later decompiled...
 	// Create Arguments directly ?
-	private IExpression compileArguments(final StatementDescription action, final EObject args) {
-		Map<String, IExpressionDescription> descriptions = parseArguments(action, args, getContext());
-		if ( descriptions == null ) { return null; }
-		final List list = new ArrayList();
-		for ( Map.Entry<String, IExpressionDescription> d : descriptions.entrySet() ) {
-			list.add(factory.createOperator("::", getContext(), d.getValue().getTarget(),
-				factory.createConst(d.getKey(), Types.STRING), compile(d.getValue(), getContext())));
-		}
-		return factory.createMap(list);
-	}
+	// private List<IExpressionDescription> compileArguments(final StatementDescription action, final EObject args) {
+	// Map<String, IExpressionDescription> descriptions = parseArguments(action, args, getContext());
+	// if ( descriptions == null ) { return null; }
+	// final List list = new ArrayList();
+	// for ( Map.Entry<String, IExpressionDescription> d : descriptions.entrySet() ) {
+	// IExpressionDescription right = d.getValue();
+	// EObject target = right.getTarget();
+	// IExpression argName = factory.createConst(d.getKey(), Types.STRING);
+	// IExpression value = compile(right, getContext());
+	// IExpression result = factory.createOperator("::", getContext(), target, argName, value);
+	// list.add(result);
+	// }
+	// return factory.createMap(list);
+	// }
 
 	/**
 	 * @see msi.gaml.expressions.IExpressionParser#parseArguments(msi.gaml.descriptions.ExpressionDescription, msi.gaml.descriptions.IDescription)
 	 */
 	@Override
-	public Map<String, IExpressionDescription> parseArguments(final StatementDescription action, final EObject o,
-		final IDescription command) {
-		if ( o == null ) { return Collections.EMPTY_MAP; }
+	public Arguments parseArguments(final StatementDescription action, final EObject o, final IDescription command,
+		final boolean compileArgValue) {
+		if ( o == null ) { return new Arguments(); }
 		boolean completeArgs = false;
 		List<Expression> parameters = null;
 		if ( o instanceof Array ) {
@@ -474,9 +477,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			completeArgs = true;
 		} else {
 			command.error("Arguments must be written [a1::v1, a2::v2], (a1:v1, a2:v2) or (v1, v2)");
-			return Collections.EMPTY_MAP;
+			return new Arguments();
 		}
-		Map<String, IExpressionDescription> argMap = new THashMap();
+		Arguments argMap = new Arguments();
 		List<String> args = action == null ? null : action.getArgNames();
 
 		int index = 0;
@@ -497,6 +500,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				}
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
 				ed = EcoreBasedExpressionDescription.create(exp, errors);
+				// WARNING Necessary ??
+				if ( compileArgValue ) {
+					ed.compile(command);
+				}
 			}
 			if ( !errors.isEmpty() ) {
 				for ( Diagnostic d : errors ) {
@@ -788,6 +795,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseDoubleLiteral(final DoubleLiteral object) {
 
 		String s = EGaml.getKeyOf(object);
+
 		if ( s == null ) { return null; }
 		try {
 			return factory.createConst(Double.parseDouble(s), Types.FLOAT);

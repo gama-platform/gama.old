@@ -31,7 +31,6 @@ import com.google.common.collect.*;
 
 public class PrimitiveOperator extends AbstractNAryOperator {
 
-	// IStatement.WithArgs statement;
 	final Arguments parameters;
 	final StatementDescription action;
 
