@@ -12,22 +12,52 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class GamaIcon {
 
-	String code;
-	String path;
+	final String code;
+	final String path;
+	final String plugin;
 	ImageDescriptor descriptor;
 
+	/**
+	 * Constructor for dynamic icons
+	 * @param c the code
+	 */
+	GamaIcon(final String c) {
+		this(c, c);
+	}
+
+	/**
+	 * Constructor for images loaded from the main application plugin
+	 * @param c the code
+	 * @param p the path (in the 'icons' folder)
+	 */
 	GamaIcon(final String c, final String p) {
+		this(c, p, IGui.PLUGIN_ID);
+	}
+
+	/**
+	 * Constructor for images loaded from a plugin
+	 * @param c the code
+	 * @param p the path (in the 'icons' folder)
+	 * @param plugin the id of the plugin in which the 'icons' folder resides
+	 */
+	GamaIcon(final String c, final String p, final String plugin) {
 		code = c;
 		path = p;
+		this.plugin = plugin;
 	}
 
 	public ImageDescriptor descriptor() {
 		if ( descriptor == null ) {
-			descriptor =
-				AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, GamaIcons.DEFAULT_PATH + path + ".png");
+			Image image = GamaIcons.getInstance().getImageInCache(code);
+			if ( image != null ) {
+				descriptor = ImageDescriptor.createFromImage(image);
+			} else {
+				descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(plugin, GamaIcons.DEFAULT_PATH + path + ".png");
+			}
 
 			if ( descriptor == null ) {
-				GuiUtils.debug("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png");
+				GuiUtils
+					.debug("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png in plugin: " + plugin);
 				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}

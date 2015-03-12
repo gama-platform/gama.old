@@ -14,6 +14,7 @@ package msi.gama.gui.swt;
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gaml.types.IType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -95,7 +96,7 @@ public class GamaIcons /* implements IGamaIcons */{
 			gc.setBackground(color);
 			gc.fillRectangle(0, 0, width, height);
 			gc.dispose();
-			sizer = new GamaIcon(name, name);
+			sizer = new GamaIcon(name);
 			getInstance().putImageInCache(name, sizerImage);
 			getInstance().putIconInCache(name, sizer);
 		}
@@ -103,10 +104,18 @@ public class GamaIcons /* implements IGamaIcons */{
 	}
 
 	public static GamaIcon create(final String s) {
-		GamaIcon result = getInstance().getIcon(s);
+		return create(s, IGui.PLUGIN_ID);
+	}
+
+	public static GamaIcon create(final String code, final String plugin) {
+		return create(code, code, plugin);
+	}
+
+	public static GamaIcon create(final String code, final String path, final String plugin) {
+		GamaIcon result = getInstance().getIcon(code);
 		if ( result == null ) {
-			result = new GamaIcon(s, s);
-			getInstance().putIconInCache(s, result);
+			result = new GamaIcon(code, path, plugin);
+			getInstance().putIconInCache(code, result);
 		}
 		return result;
 	}
@@ -125,7 +134,7 @@ public class GamaIcons /* implements IGamaIcons */{
 			gc.dispose();
 			ImageData data = image.getImageData();
 			data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
-			icon = new GamaIcon(name, name);
+			icon = new GamaIcon(name);
 			getInstance().putImageInCache(name, new Image(Display.getDefault(), data));
 			image.dispose();
 			getInstance().putIconInCache(name, icon);
