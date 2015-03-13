@@ -31,11 +31,11 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 
 @vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_PLANS, type = IType.FLOAT, init = "1.0", doc= @doc ("plan persistence")),
-	@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_GOALS, type = IType.FLOAT, init = "1.0", doc= @doc ("goal persistence")),
+	@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_INTENTIONS, type = IType.FLOAT, init = "1.0", doc= @doc ("intention persistence")),
 	@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "true"),
 	@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.LAST_THOUGHTS, type = IType.LIST, init = "[]"),
-	@var(name = SimpleBdiArchitecture.INTENSION_BASE, type = IType.LIST, init = "[]"),
+	@var(name = SimpleBdiArchitecture.INTENTION_BASE, type = IType.LIST, init = "[]"),
 	@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]") })
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
 
@@ -46,7 +46,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PRIORITY = "priority";
 	public static final String FINISHEDWHEN = "finished_when";
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
-	public static final String PERSISTENCE_COEFFICIENT_GOALS = "goal_persistence";	
+	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";	
 	
 	//TODO: Not implemented yet
 	public static final String PROBABILISTIC_CHOICE = "probabilistic_choice";
@@ -64,13 +64,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PREDICATE_PARAMETERS = "parameters";
 	public static final String PREDICATE_ONHOLD = "on_hold_until";
 	public static final String PREDICATE_TODO = "todo";
-	public static final String PREDICATE_SUBGOALS = "subgoals";
+	public static final String PREDICATE_SUBINTENTIONS = "subintentions";
 	public static final String PREDICATE_DATE = "date";
 	public static final String BELIEF_BASE = "belief_base";
-	public static final String REMOVE_DESIRE_AND_INTENSION = "desire_also";
+	public static final String REMOVE_DESIRE_AND_INTENTION = "desire_also";
 	public static final String DESIRE_BASE = "desire_base";
-	public static final String INTENSION_BASE = "intension_base";
-	public static final String EVERY_VALUE = "every_possible_value_";
+	public static final String INTENTION_BASE = "intention_base";
+	public static final String EVERY_VALUE = "every_possible_value";
 
 	private IScope _consideringScope;
 	private final List<SimpleBdiPlan> _plans = new ArrayList<SimpleBdiPlan>();
@@ -115,26 +115,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			GamaList<Predicate> desireBase =
 				(GamaList<Predicate>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE)
 					: (GamaList<Predicate>) agent.getAttribute(DESIRE_BASE));
-			GamaList<Predicate> intensionBase =
-				(GamaList<Predicate>) (scope.hasArg(INTENSION_BASE) ? scope.getListArg(INTENSION_BASE)
-					: (GamaList<Predicate>) agent.getAttribute(INTENSION_BASE));
+			GamaList<Predicate> intentionBase =
+				(GamaList<Predicate>) (scope.hasArg(INTENTION_BASE) ? scope.getListArg(INTENTION_BASE)
+					: (GamaList<Predicate>) agent.getAttribute(INTENTION_BASE));
 
 			Double persistenceCoefficientPlans =
 				scope.hasArg(PERSISTENCE_COEFFICIENT_PLANS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_PLANS) : (Double) agent
 					.getAttribute(PERSISTENCE_COEFFICIENT_PLANS);
-			Double persistenceCoefficientgoal =
-				scope.hasArg(PERSISTENCE_COEFFICIENT_GOALS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_GOALS)
-					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_GOALS);
+			Double persistenceCoefficientintention =
+				scope.hasArg(PERSISTENCE_COEFFICIENT_INTENTIONS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_INTENTIONS)
+					: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
-			// RANDOMLY REMOVE (last)INTENSION
-			Boolean flipResultgoal = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientgoal);
-			while (!flipResultgoal) {
-				flipResultgoal = msi.gaml.operators.Random.opFlip(scope,
-						persistenceCoefficientgoal);
-				if (intensionBase.size() > 0) {
-					int toremove=intensionBase.size()-1;
-					Predicate previousint = intensionBase.get(toremove);
-					intensionBase.remove(toremove);
+			// RANDOMLY REMOVE (last)INTENTION
+			Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
+			while (!flipResultintention) {
+				flipResultintention = msi.gaml.operators.Random.opFlip(scope,
+						persistenceCoefficientintention);
+				if (intentionBase.size() > 0) {
+					int toremove=intentionBase.size()-1;
+					Predicate previousint = intentionBase.get(toremove);
+					intentionBase.remove(toremove);
 					String think="check what happens if I remove: "
 							+ previousint;					
 					addThoughts(scope, think);
@@ -142,9 +142,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 
-			// If current intension has no plan or is on hold, choose a new
+			// If current intention has no plan or is on hold, choose a new
 			// Desire
-			if ( testOnHold(scope, currentGoal(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
+			if ( testOnHold(scope, currentIntention(scope)) || selectExecutablePlanWithHighestPriority(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = null;
 
@@ -164,19 +164,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			}
 
-			// choose a plan for the current goal
+			// choose a plan for the current intention
 
-			if ( _persistentTask == null && currentGoal(scope) == null ) {
+			if ( _persistentTask == null && currentIntention(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
-				if ( currentGoal(scope) == null ) {
+				if ( currentIntention(scope) == null ) {
 					addThoughts(scope, "I want nothing...");
 					return null;
 
 				}
-				addThoughts(scope, "ok, new goal: " + currentGoal(scope) + " with plan " + _persistentTask.getName());
+				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
-			if ( _persistentTask == null && currentGoal(scope) != null ) {
+			if ( _persistentTask == null && currentIntention(scope) != null ) {
 				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				if ( _persistentTask != null ) {
 					addThoughts(scope, "use plan : " + _persistentTask.getName());
@@ -192,10 +192,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						_persistentTask = null;
 
 					}
-					if ( getBase(scope, BELIEF_BASE).contains(currentGoal(scope)) ) {
-						addThoughts(scope, "goal " + currentGoal(scope) + " reached! abort current plan... ");
-						removeFromBase(scope, currentGoal(scope), DESIRE_BASE);
-						removeFromBase(scope, currentGoal(scope), INTENSION_BASE);
+					if ( getBase(scope, BELIEF_BASE).contains(currentIntention(scope)) ) {
+						addThoughts(scope,"intention " + currentIntention(scope) + " reached! abort current plan... ");
+						removeFromBase(scope, currentIntention(scope), DESIRE_BASE);
+						removeFromBase(scope, currentIntention(scope), INTENTION_BASE);
 
 						_persistentTask = null;
 
@@ -211,21 +211,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected final Boolean selectDesireWithHighestPriority(final IScope scope) {
 		GamaList<Predicate> desireBase =
 			(GamaList<Predicate>) scope.getExperiment().getRandomGenerator().shuffle(getBase(scope, DESIRE_BASE));
-		GamaList<Predicate> intensionBase = getBase(scope, INTENSION_BASE);
+		GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
 		double maxpriority = Double.NEGATIVE_INFINITY;
-		if ( desireBase.size() > 0 && intensionBase != null ) {
-			Predicate newGoal = desireBase.anyValue(scope);
+		if ( desireBase.size() > 0 && intentionBase != null ) {
+			Predicate newIntention = desireBase.anyValue(scope);
 			for ( Predicate desire : desireBase ) {
 				if ( desire.priority > maxpriority ) {
-					if ( !intensionBase.contains(desire) ) {
+					if ( !intentionBase.contains(desire) ) {
 						maxpriority = desire.priority;
-						newGoal = desire;
+						newIntention = desire;
 
 					}
 				}
 			}
-			if ( !intensionBase.contains(newGoal) ) {
-				intensionBase.add(newGoal);
+			if ( !intentionBase.contains(newIntention) ) {
+				intentionBase.add(newIntention);
 				return true;
 			}
 		}
@@ -271,17 +271,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return newthoughts;
 	}
 
-	public boolean testOnHold(final IScope scope, final Predicate goal) {
-		if ( goal == null ) { return false; }
-		if ( goal.onHoldUntil == null ) { return false; }
-		Object cond = goal.onHoldUntil;
+	public boolean testOnHold(final IScope scope, final Predicate intention) {
+		if ( intention == null ) { return false; }
+		if ( intention.onHoldUntil == null ) { return false; }
+		Object cond = intention.onHoldUntil;
 		if ( cond instanceof GamaList ) {
 			GamaList desbase = getBase(scope, DESIRE_BASE);
 			if ( desbase.isEmpty() ) { return false; }
-			for ( Object subgoal : (GamaList) cond ) {
-				if ( desbase.contains(subgoal) ) { return true; }
+			for ( Object subintention : (GamaList) cond ) {
+				if ( desbase.contains(subintention) ) { return true; }
 			}
-			addThoughts(scope, "no more subgoals for" + goal);
+			addThoughts(scope, "no more subintention for" + intention);
 			return false;
 		}
 		if ( cond instanceof String ) {
@@ -370,28 +370,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
-	@action(name = "is_current_goal",
+	@action(name = "is_current_intention",
 		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to check")) },
-		doc = @doc(value = "check if the predicates is the current goal (last entry of intension base).",
+		doc = @doc(value = "check if the predicates is the current intention (last entry of intention base).",
 			returns = "true if it is in the base.",
 			examples = { @example("") }))
-	public Boolean iscurrentGoal(final IScope scope) throws GamaRuntimeException {
+	public Boolean iscurrentIntention(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		Predicate currentGoal = currentGoal(scope);
+		Predicate currentIntention = currentIntention(scope);
 
-		if ( predicateDirect != null && currentGoal != null ) { return predicateDirect.equals(currentGoal); }
+		if ( predicateDirect != null && currentIntention != null ) { return predicateDirect.equals(currentIntention); }
 
 		return false;
 	}
 
-	@action(name = "get_current_goal", doc = @doc(value = "returns the current goal (last entry of intension base).",
+	@action(name = "get_current_intention", doc = @doc(value = "returns the current intention (last entry of intention base).",
 		returns = "true if it is in the base.",
 		examples = { @example("") }))
-	public Predicate currentGoal(final IScope scope) throws GamaRuntimeException {
-		GamaList<Predicate> intensionBase = getBase(scope, INTENSION_BASE);
-		if ( intensionBase == null ) { return null; }
-		if ( !intensionBase.isEmpty() ) { return intensionBase.lastValue(scope); }
+	public Predicate currentIntention(final IScope scope) throws GamaRuntimeException {
+		GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+		if ( intentionBase == null ) { return null; }
+		if ( !intentionBase.isEmpty() ) { return intentionBase.lastValue(scope); }
 		return null;
 	}
 
@@ -412,22 +412,22 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	@action(name = "currentgoal_on_hold",
+	@action(name = "current_intention_on_hold",
 		args = { @arg(name = PREDICATE_ONHOLD,
 			type = IType.NONE,
 			optional = true,
-			doc = @doc("the specified intension is put on hold (fited plan are not considered) until specific condition is reached. Can be an expression (which will be tested), a list (of subgoals), or nil (by default the condition will be the current list of subgoals of the intension)")) },
-		doc = @doc(value = "puts the current goal on hold until the specified condition is reached or all subgoals are reached (not in desire base anymore).",
+			doc = @doc("the specified intention is put on hold (fited plan are not considered) until specific condition is reached. Can be an expression (which will be tested), a list (of subintentions), or nil (by default the condition will be the current list of subintentions of the intention)")) },
+		doc = @doc(value = "puts the current intention on hold until the specified condition is reached or all subintentions are reached (not in desire base anymore).",
 			returns = "true if it is in the base.",
 			examples = { @example("") }))
 	public
-		Boolean primOnHoldIntension(final IScope scope) throws GamaRuntimeException {
-		Predicate predicate = currentGoal(scope);
+		Boolean primOnHoldIntention(final IScope scope) throws GamaRuntimeException {
+		Predicate predicate = currentIntention(scope);
 		Object until = scope.hasArg(PREDICATE_ONHOLD) ? scope.getArg(PREDICATE_ONHOLD, IType.NONE) : null;
 		if ( until == null ) {
-			List<Predicate> subgoal = predicate.subgoals;
-			if ( subgoal != null && !subgoal.isEmpty() ) {
-				predicate.onHoldUntil = subgoal;
+			List<Predicate> subintention = predicate.subintentions;
+			if ( subintention != null && !subintention.isEmpty() ) {
+				predicate.onHoldUntil = subintention;
 
 			}
 		} else {
@@ -436,29 +436,29 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
-	@action(name = "add_subgoal",
+	@action(name = "add_subintention",
 		args = {
 			@arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate name")),
-			@arg(name = PREDICATE_SUBGOALS,
+			@arg(name = PREDICATE_SUBINTENTIONS,
 				type = PredicateType.id,
 				optional = false,
-				doc = @doc("the subgoal to add to the predicate")) },
+				doc = @doc("the subintention to add to the predicate")) },
 		doc = @doc(value = "adds the predicates is in the desire base.",
 			returns = "true if it is in the base.",
 			examples = { @example("") }))
-	public Boolean addSubGoal(final IScope scope) throws GamaRuntimeException {
+	public Boolean addSubIntention(final IScope scope) throws GamaRuntimeException {
 		Predicate predicate = (Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		Predicate subpredicate =
-			(Predicate) (scope.hasArg(PREDICATE_SUBGOALS) ? scope.getArg(PREDICATE_SUBGOALS, PredicateType.id) : null);
+			(Predicate) (scope.hasArg(PREDICATE_SUBINTENTIONS) ? scope.getArg(PREDICATE_SUBINTENTIONS, PredicateType.id) : null);
 
 		if ( predicate == null || subpredicate == null ) { return false; }
 
-		if ( predicate.getSubgoals() == null ) {
-			predicate.subgoals = GamaListFactory.create(Types.get(PredicateType.id));
+		if ( predicate.getSubintentions() == null ) {
+			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 		} else {
-			predicate.getSubgoals().remove(subpredicate);
+			predicate.getSubintentions().remove(subpredicate);
 		}
-		predicate.getSubgoals().add(subpredicate);
+		predicate.getSubintentions().add(subpredicate);
 
 		return true;
 	}
@@ -469,7 +469,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			@arg(name = PREDICATE_TODO,
 				type = PredicateType.id,
 				optional = true,
-				doc = @doc("add the desire as a subgoal of this parameter")) },
+				doc = @doc("add the desire as a subintention of this parameter")) },
 		doc = @doc(value = "adds the predicates is in the desire base.",
 			returns = "true if it is in the base.",
 			examples = { @example("") }))
@@ -480,11 +480,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			Predicate superpredicate =
 				(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
 			if ( superpredicate != null ) {
-				if ( superpredicate.getSubgoals() == null ) {
-					superpredicate.subgoals = GamaListFactory.create(Types.get(PredicateType.id));
+				if ( superpredicate.getSubintentions() == null ) {
+					superpredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 
 				}
-				superpredicate.getSubgoals().add(predicateDirect);
+				superpredicate.getSubintentions().add(predicateDirect);
 
 			}
 			addToBase(scope, predicateDirect, DESIRE_BASE);
@@ -527,7 +527,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@action(name = "remove_intention",
 		args = {
 			@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to add")),
-			@arg(name = REMOVE_DESIRE_AND_INTENSION,
+			@arg(name = REMOVE_DESIRE_AND_INTENTION,
 				type = IType.BOOL,
 				optional = false,
 				doc = @doc("removes also desire")) },
@@ -540,8 +540,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) {
 			Boolean dodesire =
-				scope.hasArg(REMOVE_DESIRE_AND_INTENSION) ? scope.getBoolArg(REMOVE_DESIRE_AND_INTENSION) : false;
-			getBase(scope, INTENSION_BASE).remove(predicateDirect);
+				scope.hasArg(REMOVE_DESIRE_AND_INTENTION) ? scope.getBoolArg(REMOVE_DESIRE_AND_INTENTION) : false;
+			getBase(scope, INTENTION_BASE).remove(predicateDirect);
 			if ( dodesire ) {
 				getBase(scope, DESIRE_BASE).remove(predicateDirect);
 			}

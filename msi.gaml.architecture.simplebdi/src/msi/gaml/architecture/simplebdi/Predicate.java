@@ -22,7 +22,7 @@ import msi.gaml.types.*;
 
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "value", type = IType.NONE),
 	@var(name = "parameters", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
-	@var(name = "date", type = IType.FLOAT), @var(name = "subgoals", type = IType.LIST),
+	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
 	@var(name = "on_hold_until", type = IType.NONE) })
 public class Predicate implements IValue {
 
@@ -32,7 +32,7 @@ public class Predicate implements IValue {
 	Double priority = 1.0;
 	Double date;
 	Object onHoldUntil;
-	List<Predicate> subgoals;
+	List<Predicate> subintentions;
 	boolean everyPossibleValue = false;
 	boolean everyPossibleParam = false;
 
@@ -61,9 +61,9 @@ public class Predicate implements IValue {
 		return date;
 	}
 
-	@getter("subgoals")
-	public List<Predicate> getSubgoals() {
-		return subgoals;
+	@getter("subintentions")
+	public List<Predicate> getSubintentions() {
+		return subintentions;
 	}
 
 	public Object getOnHoldUntil() {
@@ -92,8 +92,8 @@ public class Predicate implements IValue {
 		this.date = date;
 	}
 
-	public void setSubgoals(final List<Predicate> subgoals) {
-		this.subgoals = subgoals;
+	public void setSubintentions(final List<Predicate> subintentions) {
+		this.subintentions = subintentions;
 	}
 
 	public Predicate() {
