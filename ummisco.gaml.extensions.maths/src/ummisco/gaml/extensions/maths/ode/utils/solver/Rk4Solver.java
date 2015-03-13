@@ -13,6 +13,7 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -31,13 +32,13 @@ public class Rk4Solver extends Solver {
 	double time_final;
 	public StepHandler stepHandler;
 	public List<Double> integrated_time;
-	public List<List> integrated_val;
-
-	public Rk4Solver(final double S, final List<Double> iT, final List<List> iV) {
+	public List<List<Double>> integrated_val;
+	private int count = 0;
+	public Rk4Solver(final double S, final int discretizing_step, final List<Double> iT, final List<List<Double>> integrate_val) {
 		step = S;
 		integrated_time = iT;
-		integrated_val = iV;
-
+		integrated_val = integrate_val;
+		count = 0;
 		integrator = new ClassicalRungeKuttaIntegrator(step);
 		stepHandler = new StepHandler() {
 
@@ -48,13 +49,14 @@ public class Rk4Solver extends Solver {
 			public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
 				final double time = interpolator.getCurrentTime();
 				final double[] y = interpolator.getInterpolatedState();
-
-				integrated_time.add(time);
-
-				for ( int i = 0; i < integrated_val.size(); i++ ) {
-					integrated_val.get(i).add(y[i]);
+				count++;
+//				System.out.println(count+" "+1/step/discretizing_step+" "+count / (1/step/discretizing_step) % 1);					
+				if(count / (1/step/discretizing_step) % 1<= 0.0001 && count< (int)(1/step)) {
+					integrated_time.add(time);
+					for ( int i = 0; i < y.length; i++ ) {
+						integrated_val.get(i).add(y[i]);
+					}
 				}
-
 			}
 		};
 		integrator.addStepHandler(stepHandler);
@@ -88,7 +90,7 @@ public class Rk4Solver extends Solver {
 			 * value 4. return to previous scope
 			 */
 
-			integrated_val.clear();
+//			integrated_val.clear();
 
 			final double[] y = new double[eq.variables_diff.size()];
 			List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
@@ -114,6 +116,12 @@ public class Rk4Solver extends Solver {
 				}
 
 			}
+			if(GAMA.getClock().getCycle()==0) {
+				integrated_time.add(time_initial);
+				for ( int i = 0; i < y.length; i++ ) {
+					integrated_val.get(i).add(y[i]);
+				}
+			}
 			if ( y.length > 0 ) {
 				try {
 					integrator.integrate(eq, time_initial * 1, y, time_final * 1, y);
@@ -123,7 +131,11 @@ public class Rk4Solver extends Solver {
 				}
 			}
 			eq.assignValue(time_final * step, y);
-
+			integrated_time.add(time_final);
+			for ( int i = 0; i < y.length; i++ ) {
+				integrated_val.get(i).add(y[i]);
+			}					
+//				System.out.println(integrated_time);
 		}
 
 	}

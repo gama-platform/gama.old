@@ -12,6 +12,7 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -21,6 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -64,7 +66,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.*;
 		doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 	@facet(name = IKeyword.STEP,
 		type = IType.FLOAT,
-		optional = false,
+		optional = true,
 		doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
 	@facet(name = "min_step",
 		type = IType.FLOAT,
@@ -92,12 +94,13 @@ public class SolveStatement extends AbstractStatement {
 
 	Solver solver;
 	final String equationName, solverName;
-	SystemOfEquationsStatement equations;
+	SystemOfEquationsStatement theEquations;
 	double timeInit = 0, timeFinal = 1;
 	int discret = 0;
 	double cycle_length = 1;
 	final IExpression stepExp, cycleExp, discretExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
 		timeFinalExp;
+
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -105,7 +108,7 @@ public class SolveStatement extends AbstractStatement {
 		IExpression sn = getFacet(IKeyword.METHOD);
 		solverName = sn == null ? "rk4" : sn.literalValue();
 		sn = getFacet(IKeyword.STEP);
-		stepExp = sn == null ? new ConstantExpression(1d) : sn;
+		stepExp = sn == null ? new ConstantExpression(0.2d) : sn;
 		sn = getFacet("cycle_length");
 		cycleExp = sn == null ? new ConstantExpression(1d) : sn;
 		sn = getFacet("discretizing_step");
@@ -119,17 +122,14 @@ public class SolveStatement extends AbstractStatement {
 	}
 
 	private SystemOfEquationsStatement getEquations(final IScope scope) {
-		if ( equations == null ) {
-			equations = scope.getAgentScope().getSpecies().getStatement(SystemOfEquationsStatement.class, equationName);
+		if ( theEquations == null ) {
+			theEquations = scope.getAgentScope().getSpecies().getStatement(SystemOfEquationsStatement.class, equationName);
 		}
-		return equations;
+		return theEquations;
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-
-		List<Double> integrate_time = new ArrayList();
-		List<List> integrate_val = new ArrayList();
 
 		discret = Cast.asInt(scope, discretExp.value(scope));
 		cycle_length = Cast.asFloat(scope, cycleExp.value(scope));
@@ -139,10 +139,10 @@ public class SolveStatement extends AbstractStatement {
 		// step = cycle_length > 1?(step/cycle_length):1;
 		step = cycle_length > 1.0 ? step / cycle_length : step;
 		if ( getEquations(scope) == null ) { return null; }
-		equations.currentScope = scope;
+		theEquations.currentScope = scope;
 
 		if ( solverName.equals("rk4") ) {
-			solver = new Rk4Solver(step, integrate_time, integrate_val);
+			solver = new Rk4Solver(step, discret>0?discret:0, theEquations.integrated_times, theEquations.integrated_values);
 		} else if ( solverName.equals("dp853") && minStepExp != null && maxStepExp != null && absTolerExp != null &&
 			relTolerExp != null ) {
 			double minStep = Cast.asFloat(scope, minStepExp.value(scope));
@@ -154,8 +154,8 @@ public class SolveStatement extends AbstractStatement {
 			double scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
 
 			solver =
-				new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-					integrate_time, integrate_val);
+				new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, discret>0?discret:0,
+						theEquations.integrated_times, theEquations.integrated_values);
 		}
 
 		timeInit = timeInitExp == null ? scope.getClock().getCycle() : Cast.asFloat(scope, timeInitExp.value(scope));
@@ -165,45 +165,23 @@ public class SolveStatement extends AbstractStatement {
 		timeInit = cycle_length > 1.0 ? timeInit / cycle_length : timeInit;
 		timeFinal = cycle_length > 1.0 ? timeFinal / cycle_length : timeFinal;
 
-		equations.addExtern(equationName);
-		solver.solve(scope, equations, timeInit, timeFinal, cycle_length);
-		equations.removeExtern(scope, equationName);
-
-		decreaseDiscretTime(integrate_time, integrate_val, discret);
+		theEquations.addExtern(equationName);
+		solver.solve(scope, theEquations, timeInit, timeFinal, cycle_length);
+		theEquations.removeExtern(scope, equationName);
 
 		if ( getFacet("integrated_times") != null ) {
-			((VariableExpression) getFacet("integrated_times")).setVal(scope, integrate_time, false);
+			((VariableExpression) getFacet("integrated_times")).setVal(scope, theEquations.integrated_times, false);
 		}
 
 		if ( getFacet("integrated_values") != null ) {
 			IExpression fv = getFacet("integrated_values").resolveAgainst(scope);
 			IExpression[] exp = ((ListExpression) fv).getElements();
 			for ( int i = 0; i < exp.length; i++ ) {
-				((VariableExpression) exp[i]).setVal(scope, integrate_val.get(i), false);
+				((VariableExpression) exp[i]).setVal(scope, theEquations.integrated_values.get(i), false);
 			}
 		}
 
 		return null;
-	}
-
-	public void decreaseDiscretTime(final List integratedTimes, final List integratedValues, double d) {
-		int size = integratedTimes.size();
-		if ( size == 0 ) { return; }
-		if ( d == 0 ) {
-			d = size;
-		}
-		int tmp = size / (int) d;
-
-		int i = size - 2;
-		while (i > 1) {
-			if ( i % tmp != 0 ) {
-				integratedTimes.remove(i);
-				for ( int j = 0; j < integratedValues.size(); j++ ) {
-					((GamaList) integratedValues.get(j)).remove(i);
-				}
-			}
-			i--;
-		}
 	}
 
 }

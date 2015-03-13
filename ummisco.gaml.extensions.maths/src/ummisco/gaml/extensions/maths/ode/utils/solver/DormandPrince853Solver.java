@@ -13,6 +13,7 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
@@ -35,13 +36,13 @@ public class DormandPrince853Solver extends Solver {
 	double scalRelativeTolerance;
 	public StepHandler stepHandler;
 	public List<Double> integrated_time;
-	public List<List> integrated_val;
-
+	public List<List<Double>> integrated_val;
+	private int count = 0;
 	public DormandPrince853Solver(final double minStep, final double maxStep, final double scalAbsoluteTolerance,
-		final double scalRelativeTolerance, final List<Double> iT, final List<List> iV) {
+		final double scalRelativeTolerance, final int discretizing_step, final List<Double> iT, final List<List<Double>> integrate_val) {
 
 		integrated_time = iT;
-		integrated_val = iV;
+		integrated_val = integrate_val;
 		this.minStep = minStep;
 		this.maxStep = maxStep;
 		this.step = (minStep + maxStep) / 2;
@@ -57,10 +58,13 @@ public class DormandPrince853Solver extends Solver {
 			public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
 				final double time = interpolator.getCurrentTime();
 				final double[] y = interpolator.getInterpolatedState();
-				integrated_time.add(time);
-
-				for ( int i = 0; i < integrated_val.size(); i++ ) {
-					integrated_val.get(i).add(y[i]);
+				count++;
+//				System.out.println(count+" "+1/step/discretizing_step+" "+count / (1/step/discretizing_step) % 1);					
+				if(count / (1/step/discretizing_step) % 1<= 0.0001 && count< (int)(1/step)) {
+					integrated_time.add(time);
+					for ( int i = 0; i < y.length; i++ ) {
+						integrated_val.get(i).add(y[i]);
+					}
 				}
 			}
 		};
@@ -98,7 +102,7 @@ public class DormandPrince853Solver extends Solver {
 			 * value 4. return to previous scope
 			 */
 
-			integrated_val.clear();
+//			integrated_val.clear();
 
 			final double[] y = new double[eq.variables_diff.size()];
 			List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
@@ -124,6 +128,12 @@ public class DormandPrince853Solver extends Solver {
 				}
 
 			}
+			if(GAMA.getClock().getCycle()==0) {
+				integrated_time.add(time_initial);
+				for ( int i = 0; i < y.length; i++ ) {
+					integrated_val.get(i).add(y[i]);
+				}
+			}
 			if ( y.length > 0 ) {
 				try {
 
@@ -133,7 +143,11 @@ public class DormandPrince853Solver extends Solver {
 				}
 			}
 			eq.assignValue(time_final * step, y);
-
+			integrated_time.add(time_final);
+			for ( int i = 0; i < y.length; i++ ) {
+				integrated_val.get(i).add(y[i]);
+			}					
+//				System.out.println(integrated_time);
 		}
 
 	}
