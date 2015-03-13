@@ -92,7 +92,7 @@ import org.jfree.ui.RectangleInsets;
 		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
 			IKeyword.BOX_WHISKER },
 		optional = true,
-		doc = @doc("the type of chart. It could be histogram, series, xy or pie. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
 		IKeyword.BAR }, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
@@ -106,7 +106,36 @@ import org.jfree.ui.RectangleInsets;
 		optional = true,
 		doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true) },
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true),
+	@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true),
+	@facet(name = ChartLayerStatement.TICKFONTSTYLE,
+		type = IType.ID,
+		values = { "plain", "bold", "italic" },
+		optional = true,
+		doc = @doc("the style used to display ticks")),
+	@facet(name = ChartLayerStatement.LABELFONTFACE, type = IType.STRING, optional = true),
+	@facet(name = ChartLayerStatement.LABELFONTSIZE, type = IType.INT, optional = true),
+	@facet(name = ChartLayerStatement.LABELFONTSTYLE,
+		type = IType.ID,
+		values = { "plain", "bold", "italic" },
+		optional = true,
+		doc = @doc("the style used to display labels")),
+	@facet(name = ChartLayerStatement.LEGENDFONTFACE, type = IType.STRING, optional = true),
+	@facet(name = ChartLayerStatement.LEGENDFONTSIZE, type = IType.INT, optional = true),
+	@facet(name = ChartLayerStatement.LEGENDFONTSTYLE,
+		type = IType.ID,
+		values = { "plain", "bold", "italic" },
+		optional = true,
+		doc = @doc("the style used to display legend")),
+	@facet(name = ChartLayerStatement.TITLEFONTFACE, type = IType.STRING, optional = true),
+	@facet(name = ChartLayerStatement.TITLEFONTSIZE, type = IType.INT, optional = true),
+	@facet(name = ChartLayerStatement.TITLEFONTSTYLE,
+		type = IType.ID,
+		values = { "plain", "bold", "italic" },
+		optional = true,
+		doc = @doc("the style used to display titles")), },
+
 	omissible = IKeyword.NAME)
 @doc(value = "`" +
 	IKeyword.CHART +
@@ -125,6 +154,22 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String YTICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
+
+	public static final String TICKFONTFACE = "tick_font";
+	public static final String TICKFONTSIZE = "tick_font_size";
+	public static final String TICKFONTSTYLE = "tick_font_style";
+
+	public static final String LABELFONTFACE = "label_font";
+	public static final String LABELFONTSIZE = "label_font_size";
+	public static final String LABELFONTSTYLE = "label_font_style";
+
+	public static final String LEGENDFONTFACE = "legend_font";
+	public static final String LEGENDFONTSIZE = "legend_font_size";
+	public static final String LEGENDFONTSTYLE = "legend_font_style";
+
+	public static final String TITLEFONTFACE = "title_font";
+	public static final String TITLEFONTSIZE = "title_font_size";
+	public static final String TITLEFONTSTYLE = "title_font_style";
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {
 
@@ -156,12 +201,24 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private static final int XY_CHART = 3;
 	private static final int BOX_WHISKER_CHART = 4;
 	private static final int SCATTER_CHART = 5;
-	private static final String nl = java.lang.System.getProperty("line.separator");
+
 	private int type = SERIES_CHART;
 	private String style = IKeyword.DEFAULT;
 	private JFreeChart chart = null;
 	private StringBuilder history;
 	private static String chartFolder = "charts";
+	private String tickFontFace = Font.SANS_SERIF;
+	private int tickFontSize = 10;
+	private int tickFontStyle = Font.PLAIN;
+	private String labelFontFace = Font.SANS_SERIF;
+	private int labelFontSize = 12;
+	private int labelFontStyle = Font.BOLD;
+	private String legendFontFace = Font.SANS_SERIF;
+	private int legendFontSize = 10;
+	private int legendFontStyle = Font.ITALIC;
+	private String titleFontFace = Font.SERIF;
+	private int titleFontSize = 14;
+	private int titleFontStyle = Font.BOLD;
 	private GamaColor backgroundColor = null, axesColor = null;
 	private final Map<String, Integer> expressions_index = new HashMap();
 	private Dataset dataset;
@@ -181,9 +238,25 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		axesColor = Cast.asColor(null, "black");
+		axesColor = new GamaColor(Color.black);
 		lastValues = new LinkedHashMap();
 		lastComputeCycle = 0l;
+	}
+
+	Font getLabelFont() {
+		return new Font(labelFontFace, labelFontStyle, labelFontSize);
+	}
+
+	Font getTickFont() {
+		return new Font(tickFontFace, tickFontStyle, tickFontSize);
+	}
+
+	Font getLegendFont() {
+		return new Font(legendFontFace, legendFontStyle, legendFontSize);
+	}
+
+	Font getTitleFont() {
+		return new Font(titleFontFace, titleFontStyle, titleFontSize);
 	}
 
 	@Override
@@ -194,10 +267,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamaRuntimeException {
 		final XYPlot plot = (XYPlot) chart.getPlot();
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+		domainAxis.setTickLabelFont(getTickFont());
+		domainAxis.setLabelFont(getLabelFont());
 		if ( isTimeSeries ) {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 			if ( timeSeriesXData == null ) {
-
 				timeSeriesXData =
 					(ChartDataStatement) DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
 						xAxisName, IKeyword.VALUE, SimulationAgent.CYCLE).compile();
@@ -239,11 +313,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				}
 			}
 		}
-		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 		if ( datas.size() > 0 ) {
 			domainAxis.setLabel(datas.get(0).getName());
 		}
 		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+		yAxis.setTickLabelFont(getTickFont());
+		yAxis.setLabelFont(getLabelFont());
 		expr = getFacet(YRANGE);
 		expr2 = getFacet(YTICKUNIT);
 		if ( expr != null ) {
@@ -273,13 +348,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		if ( datas.size() == 2 ) {
-			yAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 			yAxis.setLabel(datas.get(1).getName());
 			chart.removeLegend();
 		}
 		final LegendTitle ll = chart.getLegend();
 		if ( ll != null ) {
-			ll.setItemFont(new Font("SansSerif", Font.PLAIN, 10));
+			ll.setItemFont(getLegendFont());
 		}
 
 		for ( int i = 0; i < datas.size(); i++ ) {
@@ -328,7 +402,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if ( history.length() > 0 ) {
 			history.deleteCharAt(history.length() - 1);
 		}
-		history.append(nl);
+		history.append(Strings.LN);
 
 	}
 
@@ -364,10 +438,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		history.deleteCharAt(history.length() - 1);
-		history.append(nl);
+		history.append(Strings.LN);
 		plot.setDataset(dataset);
 		chart.removeLegend();
 		final CategoryAxis axis = plot.getDomainAxis();
+		axis.setTickLabelFont(getTickFont());
+		axis.setLabelFont(getLabelFont());
 		// ((BarRenderer3D) plot.getRenderer()).setItemMargin(0.1);
 		axis.setCategoryMargin(0.1);
 		axis.setUpperMargin(0.05);
@@ -418,7 +494,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if ( history.length() > 0 ) {
 			history.deleteCharAt(history.length() - 1);
 		}
-		history.append(nl);
+		history.append(Strings.LN);
 		plot.setDataset((DefaultPieDataset) dataset);
 		i = 0;
 		for ( final ChartData e : datas ) {
@@ -431,7 +507,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		plot.setSectionOutlinesVisible(false);
-		plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
+		plot.setLabelFont(getLabelFont());
 		plot.setNoDataMessage("No data available yet");
 		plot.setCircular(true);
 		plot.setLabelGap(0.02);
@@ -452,6 +528,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		BarRenderer renderer = new CustomRenderer();
 		plot.setRenderer(renderer);
+
 		dataset = new DefaultCategoryDataset();
 		int i = 0;
 		for ( final ChartData e : datas ) {
@@ -474,11 +551,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if ( history.length() > 0 ) {
 			history.deleteCharAt(history.length() - 1);
 		}
-		history.append(nl);
+		history.append(Strings.LN);
 		plot.setDataset((DefaultCategoryDataset) dataset);
 
 		chart.removeLegend();
 		final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+		yAxis.setTickLabelFont(getTickFont());
+		yAxis.setLabelFont(getLabelFont());
 		IExpression expr = getFacet(YRANGE);
 		IExpression expr2 = getFacet(YTICKUNIT);
 		if ( expr != null ) {
@@ -575,7 +654,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		Plot plot = chart.getPlot();
-		chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+		chart.getTitle().setFont(getTitleFont());
 		if ( backgroundColor == null ) {
 			plot.setBackgroundPaint(null);
 			chart.setBackgroundPaint(null);
@@ -640,12 +719,66 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			style = Cast.asString(scope, string.value(scope));
 			// TODO Verifier style;
 		}
+		IExpression face = getFacet(ChartLayerStatement.TICKFONTFACE);
+		if ( face != null ) {
+			tickFontFace = Cast.asString(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.LABELFONTFACE);
+		if ( face != null ) {
+			labelFontFace = Cast.asString(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.LEGENDFONTFACE);
+		if ( face != null ) {
+			legendFontFace = Cast.asString(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.TITLEFONTFACE);
+		if ( face != null ) {
+			titleFontFace = Cast.asString(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.TICKFONTSIZE);
+		if ( face != null ) {
+			tickFontSize = Cast.asInt(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.LABELFONTSIZE);
+		if ( face != null ) {
+			labelFontSize = Cast.asInt(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.LEGENDFONTSIZE);
+		if ( face != null ) {
+			legendFontSize = Cast.asInt(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.TITLEFONTSIZE);
+		if ( face != null ) {
+			titleFontSize = Cast.asInt(scope, face.value(scope));
+		}
+		face = getFacet(ChartLayerStatement.TICKFONTSTYLE);
+		if ( face != null ) {
+			tickFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
+		}
+		face = getFacet(ChartLayerStatement.LABELFONTSTYLE);
+		if ( face != null ) {
+			labelFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
+		}
+		face = getFacet(ChartLayerStatement.LEGENDFONTSTYLE);
+		if ( face != null ) {
+			legendFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
+		}
+		face = getFacet(ChartLayerStatement.TITLEFONTSTYLE);
+		if ( face != null ) {
+			titleFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
+		}
 		createChart(scope);
 		createData(scope);
 		// dataswithoutlists = datas;
 		updateseries(scope);
 		chart.setNotify(false);
 		return true;
+	}
+
+	int toFontStyle(final String style) {
+		if ( style.equals("bold") ) { return Font.BOLD; }
+		if ( style.equals("italic") ) { return Font.ITALIC; }
+		return Font.PLAIN;
 	}
 
 	public void updateseries(final IScope scope) throws GamaRuntimeException {
@@ -873,7 +1006,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							if ( history.length() > 0 ) {
 								history.deleteCharAt(history.length() - 1);
 							}
-							history.append(nl);
+							history.append(Strings.LN);
 							// plot.setDataset((DefaultCategoryDataset) dataset);
 
 						}
@@ -890,8 +1023,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 							if ( history.length() > 0 ) {
 								history.deleteCharAt(history.length() - 1);
 							}
-							history.append(nl);
-							history.append(nl);
+							history.append(Strings.LN);
+							history.append(Strings.LN);
 							// plot.setDataset((DefaultPieDataset) dataset);
 							l = 0;
 							for ( final ChartData e : datas ) {
@@ -1162,7 +1295,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		history.deleteCharAt(history.length() - 1);
-		history.append(nl);
+		history.append(Strings.LN);
 		return true;
 	}
 
@@ -1277,7 +1410,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		history.deleteCharAt(history.length() - 1);
-		history.append(nl);
+		history.append(Strings.LN);
 
 	}
 

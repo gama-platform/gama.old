@@ -12,6 +12,7 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.matrix.IMatrix;
@@ -43,7 +44,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 	@Override
 	public void applyEdit() {
 		if ( currentValue instanceof IMatrix ) {
-			MatrixEditorDialog d = new MatrixEditorDialog(Display.getCurrent().getActiveShell(), currentValue);
+			MatrixEditorDialog d = new MatrixEditorDialog(SwtGui.getShell(), currentValue);
 			if ( d.open() == IDialogConstants.OK_ID ) {
 				modifyValue(d.getMatrix());
 			}

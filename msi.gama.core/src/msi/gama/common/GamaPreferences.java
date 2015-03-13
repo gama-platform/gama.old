@@ -41,6 +41,7 @@ public class GamaPreferences {
 	public static final String EDITOR = "Editor";
 	public static final String WORKSPACE = "Workspace";
 	public static final String LIBRARIES = "External";
+	public static final String CHARTS = "Charts";
 	static Preferences store;
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;

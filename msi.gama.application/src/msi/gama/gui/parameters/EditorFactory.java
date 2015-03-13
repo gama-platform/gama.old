@@ -19,6 +19,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
 public class EditorFactory implements IEditorFactory {
@@ -32,6 +33,11 @@ public class EditorFactory implements IEditorFactory {
 	public static BooleanEditor create(final Composite parent, final String title, final Boolean value,
 		final EditorListener<Boolean> whenModified) {
 		return new BooleanEditor(parent, title, value, whenModified);
+	}
+
+	public static FontEditor create(final Composite parent, final String title, final FontData value,
+		final EditorListener<FontData> whenModified) {
+		return new FontEditor(parent, title, value, whenModified);
 	}
 
 	public static ColorEditor create(final Composite parent, final String title, final java.awt.Color value,
@@ -138,6 +144,8 @@ public class EditorFactory implements IEditorFactory {
 				return new MatrixEditor(agent, var, l);
 			case IType.FILE:
 				return new FileEditor(agent, var, l);
+			case IType.FONT:
+				return new FontEditor(agent, var, l);
 			case IType.STRING:
 				return new StringEditor(agent, var, l);
 			default:

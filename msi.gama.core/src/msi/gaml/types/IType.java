@@ -34,6 +34,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public static final int TYPE_ID = -202;
 	public static final int NEW_VAR_ID = -203;
 	public static final int NEW_TEMP_ID = -204;
+
 	public static final int NONE = 0;
 	public final static int INT = 1;
 	public final static int FLOAT = 2;
@@ -46,13 +47,17 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public final static int PAIR = 9;
 	public final static int MAP = 10;
 	public final static int AGENT = 11;
-	public final static int SPECIES = 14;
 	public final static int FILE = 12;
 	public static final int GEOMETRY = 13;
+	public final static int SPECIES = 14;
 	public static final int GRAPH = 15;
+	public static final int CONTAINER = 16;
 	public static final int PATH = 17;
 	public static final int TOPOLOGY = 18;
-	public static final int CONTAINER = 16;
+
+	public static final int FONT = 19;
+	public static final int IMAGE = 20;
+
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
