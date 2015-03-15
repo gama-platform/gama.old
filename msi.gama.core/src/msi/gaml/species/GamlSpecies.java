@@ -26,7 +26,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.*;
@@ -131,6 +131,23 @@ public class GamlSpecies extends AbstractSpecies {
 		 */
 		@Override
 		public void validate(final IDescription desc) {
+
+			// Issue 1138
+			IExpression freq = desc.getFacets().getExpr(FREQUENCY);
+			if ( freq != null && freq.isConst() && freq.value(null) == Integer.valueOf(0) ) {
+				SpeciesDescription sd = (SpeciesDescription) desc;
+				for ( VariableDescription vd : sd.getVariables().values() ) {
+					if ( vd.getFacets().getDescr(UPDATE, VALUE) != null ) {
+						vd.warning(vd.getName() + " will never be updated because " + desc.getName() +
+							" has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
+					}
+				}
+				for ( IDescription bd : sd.getBehaviors() ) {
+					bd.warning(bd.getName() + " will never be run because " + desc.getName() +
+						" has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
+
+				}
+			}
 			// If torus is declared on a species other than "global", emit a warning
 			IExpression torus = desc.getFacets().getExpr(TORUS);
 			if ( torus != null ) {
