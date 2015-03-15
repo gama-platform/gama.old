@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -102,9 +103,15 @@ public class SetStatement extends AbstractStatement {
 
 	public SetStatement(final IDescription desc) {
 		super(desc);
-		value = getFacet(IKeyword.VALUE);
 		varExpr = (IVarExpression) getFacet(IKeyword.NAME);
 		setName(IKeyword.SET + getVarName());
+		IExpression expr = getFacet(IKeyword.VALUE);
+		if ( expr == null ) {
+			value = GAML.getExpressionFactory().createConst(varExpr.getType().getDefault(), varExpr.getType());
+		} else {
+			value = expr;
+		}
+
 	}
 
 	@Override
