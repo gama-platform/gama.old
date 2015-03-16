@@ -86,6 +86,24 @@ public abstract class Spatial {
 			return GamaGeometryType.buildCircle(radius, location);
 		}
 
+		@operator(value = "ellipse", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "An ellipse geometry which x-radius is equal to the first operand and y-radius is equal to the second operand",
+			usages = { @usage(value = "returns a point if both operands are lower or equal to 0, a line if only one is.") },
+			comment = "the centre of the ellipse is by default the location of the current agent in which has been called this operator.",
+			examples = { @example(value = "circle(10)", equals = "a geometry as a circle of radius 10.", test = false) },
+			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+				"triangle" })
+		public static
+			IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
+			GamaPoint location;
+			final IAgent a = scope.getAgentScope();
+			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			if ( xRadius <= 0 ) {
+				if ( yRadius <= 0 ) { return new GamaShape(location); }
+			}
+			return GamaGeometryType.buildEllipse(xRadius, yRadius, location);
+		}
+
 		@operator(value = "cylinder", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE,
 			IOperatorCategory.THREED })
 		@doc(value = "A cylinder geometry which radius is equal to the operand.",
@@ -827,8 +845,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL })
-		@doc(usages = @usage(value = "if both operands are a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries", 
-			examples = @example(value = "geom1 - geom2", equals = "a geometry corresponding to difference between geom1 and geom2", isExecutable = false) ))
+		@doc(usages = @usage(value = "if both operands are a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries",
+			examples = @example(value = "geom1 - geom2",
+				equals = "a geometry corresponding to difference between geom1 and geom2",
+				isExecutable = false)))
 		public static
 			IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
@@ -838,9 +858,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = IKeyword.MINUS, category = { IOperatorCategory.SPATIAL })
-		@doc(usages = 
-				@usage(value ="if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries",
-					examples = @example(value = "rectangle(10,10) - [circle(2), square(2)]", equals = "rectangle(10,10) - (circle(2) + square(2))") ))
+		@doc(usages = @usage(value = "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries",
+			examples = @example(value = "rectangle(10,10) - [circle(2), square(2)]",
+				equals = "rectangle(10,10) - (circle(2) + square(2))")))
 		public static
 			IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
 			if ( g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
@@ -880,7 +900,9 @@ public abstract class Spatial {
 
 		@operator(value = { "add_point" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT })
 		@doc(value = "A geometry resulting from the addition of the right point (coordinate) to the left-hand geometry",
-			examples = { @example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}", returnType="geometry", equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
+			examples = { @example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
+				returnType = "geometry",
+				equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
 		public static
 			IShape add_point(final IScope scope, final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
@@ -1219,10 +1241,10 @@ public abstract class Spatial {
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" }, category = { IOperatorCategory.SPATIAL,
 			IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(usages = { @usage(value = "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient",
-			examples = { 
-				//@example(value = "shape * 2",
-				//equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2",
-				@example(value = "circle(10) * 2", equals = "circle(20)") }) })
+			examples = {
+			// @example(value = "shape * 2",
+			// equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2",
+			@example(value = "circle(10) * 2", equals = "circle(20)") }) })
 		public static
 			IShape scaled_by(final IScope scope, final IShape g, final Double coefficient) {
 			return new GamaShape(g, null, null, null, coefficient);
@@ -1281,8 +1303,8 @@ public abstract class Spatial {
 			IOperatorCategory.SP_TRANSFORMATIONS })
 		@doc(usages = { @usage(value = "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance",
 			examples = { @example(value = "circle(5) + 5",
-				//equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5", test = false
-				equals= "circle(10)") }) })
+			// equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5", test = false
+				equals = "circle(10)") }) })
 		public static
 			IShape enlarged_by(final IScope scope, final IShape g, final Double size) {
 			if ( g == null ) { return null; }
@@ -1549,7 +1571,8 @@ public abstract class Spatial {
 		@doc(value = "A list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
 			examples = { @example(value = "self as_hexagonal_grid {10, 5}",
 				equals = "list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
-				test = false) }, see = {"as_4_grid", "as_grid"})
+				test = false) },
+			see = { "as_4_grid", "as_grid" })
 		public static
 			IList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
@@ -1560,7 +1583,8 @@ public abstract class Spatial {
 		@doc(value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_grid {10, 5}",
 				equals = "a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
-				test = false) }, see = {"as_4_grid", "as_hexagonal_grid"})
+				test = false) },
+			see = { "as_4_grid", "as_hexagonal_grid" })
 		public static
 			IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim) throws GamaRuntimeException {
 			// cols, rows
@@ -1572,7 +1596,8 @@ public abstract class Spatial {
 		@doc(value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
 			examples = { @example(value = "self as_4_grid {10, 5}",
 				equals = "the matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
-				test = false) }, see = {"as_grid", "as_hexagonal_grid"})
+				test = false) },
+			see = { "as_grid", "as_hexagonal_grid" })
 		public static
 			IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim) throws GamaRuntimeException {
 			// cols, rows

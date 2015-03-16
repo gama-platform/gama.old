@@ -25,7 +25,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
-import com.vividsolutions.jts.util.AssertionFailedException;
+import com.vividsolutions.jts.util.*;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
@@ -341,6 +341,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 			}
 		}
 		return new GamaShape(g);
+	}
+
+	public static IShape buildEllipse(final double xRadius, final double yRadius, final GamaPoint location) {
+		if ( xRadius <= 0 ) {
+			if ( yRadius <= 0 ) { return new GamaShape(location); }
+		}
+		GeometricShapeFactory factory = new GeometricShapeFactory();
+		factory.setCentre(location);
+		factory.setWidth(xRadius);
+		factory.setHeight(yRadius);
+		return new GamaShape(factory.createEllipse());
 	}
 
 	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {
