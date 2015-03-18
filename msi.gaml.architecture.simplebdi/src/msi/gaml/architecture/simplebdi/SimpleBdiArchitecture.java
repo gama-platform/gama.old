@@ -244,9 +244,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) statement).getContextExpression()
 						.value(scope));
 			if ( isContextConditionSatisfied ) {
-				double currentPriority =
-					msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
-						.value(scope));
+				double currentPriority =1.0;
+				if(((SimpleBdiPlan) statement).getFacet(SimpleBdiArchitecture.PRIORITY)!=null){
+					 currentPriority = msi.gaml.operators.Cast.asFloat(scope, ((SimpleBdiPlan) statement).getPriorityExpression()
+							.value(scope));
+				}
+
 				if ( highestPriority < currentPriority ) {
 					highestPriority = currentPriority;
 					resultStatement = (SimpleBdiPlan) statement;
