@@ -81,7 +81,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		super.setChildren(children);
+		clearBehaviors();
 		for ( ISymbol c : children ) {
 			addBehavior((IStatement) c);
 		}
@@ -89,11 +89,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public void addBehavior(final IStatement c) {
-		super.addBehavior(c);
+		
 		if ( c instanceof SimpleBdiPlan ) {
 			String statementKeyword = c.getFacet("keyword").value(_consideringScope).toString();
 			_plans.add((SimpleBdiPlan) c);
 			_plansNumber++;
+		} else {
+			super.addBehavior(c);
 		}
 	}
 
@@ -168,12 +170,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			if ( _persistentTask == null && currentIntention(scope) == null ) {
 				selectDesireWithHighestPriority(scope);
-				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 				if ( currentIntention(scope) == null ) {
 					addThoughts(scope, "I want nothing...");
 					return null;
 
 				}
+				_persistentTask = selectExecutablePlanWithHighestPriority(scope);
+				
 				addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan " + _persistentTask.getName());
 			}
 			if ( _persistentTask == null && currentIntention(scope) != null ) {
