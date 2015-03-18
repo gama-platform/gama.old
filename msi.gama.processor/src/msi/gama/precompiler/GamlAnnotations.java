@@ -1199,4 +1199,29 @@ public final class GamlAnnotations {
 		doc[] doc() default {};
 	}
 
+	/**
+	 * Used to annotate a populations linker implemented in Java. 
+	 * 
+	 * @author voducan
+	 */
+	@Retention(RetentionPolicy.SOURCE)
+	@Target(ElementType.TYPE)
+	public static @interface populations_linker {
+		
+		/**
+		 * Name.
+		 * 
+		 * @return a String representing the skill name in GAML (must be unique throughout GAML)
+		 */
+		String name();
+
+		/**
+		 * Doc.
+		 * 
+		 * @return the documentation attached to this skill
+		 * @see doc
+		 */
+		doc[] doc() default {};
+		
+	}	
 }

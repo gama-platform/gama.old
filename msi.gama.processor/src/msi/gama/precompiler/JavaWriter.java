@@ -30,6 +30,7 @@ public class JavaWriter {
 	public final static String FILE_PREFIX = "+";
 	public final static String DOC_PREFIX = "@";
 	public final static String CONSTANT_PREFIX = "Â£";
+	public final static String POPULATIONS_LINKER_PREFIX = "Û";
 	public final static String DOC_SEP = "~";
 	public final static String DOC_REGEX = "\\~";
 	public final static String SEP = "$";
@@ -60,7 +61,7 @@ public class JavaWriter {
 		"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.file",
 		"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
 		"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-		"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators" };
+		"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar" };
 	final static String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 		"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -91,6 +92,8 @@ public class JavaWriter {
 		writeSkillsInitialization(props, sb/* , doc */);
 		sb.append(ln);
 		writeDisplaysInitialization(props, sb/* , doc */);
+		sb.append(ln);
+		writePopulationsLinkersInitialization(props, sb);
 		sb.append(ln);
 		writeFooter(sb);
 		// writeDocFooter(doc);
@@ -136,6 +139,14 @@ public class JavaWriter {
 		}
 		sb.append("};");
 	}
+
+	private void writePopulationsLinkersInitialization(final GamlProperties props, final StringBuilder sb) {
+	sb.append("public void initializePopulationsLinkers() {");
+	for ( Map.Entry<String, String> entry : props.filterFirst(POPULATIONS_LINKER_PREFIX).entrySet() ) {
+		writePopulationsLinker(sb, entry.getKey(), entry.getValue());
+	}
+	sb.append("};");
+}
 
 	private void
 		writeActionsInitialization(final GamlProperties props, final StringBuilder sb/* , final StringBuilder doc */) {
@@ -704,6 +715,15 @@ public class JavaWriter {
 			OVERRIDE, "public IDisplaySurface create(Object...args){return new ", clazz, "(args);}}"));
 		sb.append(");");
 	}
+
+	protected void writePopulationsLinker(final StringBuilder sb, final String s, final String doc) {
+			String[] segments = s.split("\\$");
+			String name = segments[0];
+			String clazz = segments[1];
+			sb.append(concat(in, "_populationsLinker(", toJavaString(name), ",", toClassObject(clazz), ", new IGamaPopulationsLinkerConstructor() {",
+				OVERRIDE, "public IGamaPopulationsLinker newInstance() {return new ", clazz, "();}}"));
+			sb.append(");");
+		}
 
 	protected void writeDocHeader(final StringBuilder sb, final String packageName) {
 		sb.append("package ").append(packageName).append(';');

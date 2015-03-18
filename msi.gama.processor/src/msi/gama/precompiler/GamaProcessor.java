@@ -13,15 +13,18 @@ package msi.gama.precompiler;
 
 import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.*;
+
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
+
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
+
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -35,6 +38,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.populations_linker;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -109,6 +113,7 @@ public class GamaProcessor extends AbstractProcessor {
 			processDisplays(env);
 			processFiles(env);
 			processConstants(env);
+			processPopulationsLinkers(env);
 
 			gp.store(createWriter(GAML));
 			Writer source = createSourceWriter();
@@ -902,6 +907,28 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(valueConstant);
 			// 4.doc
 			gp.put(sb.toString(), "" /* docToString(documentation) */);
+		}
+	}
+
+	/**
+	 * Format : prefix 0.name 1. class
+	 * 
+	 * @param env
+	 */
+	private void processPopulationsLinkers(final RoundEnvironment env) {
+		Set<? extends Element> populationsLinkers = env.getElementsAnnotatedWith(populations_linker.class);
+		for ( Element e : populationsLinkers ) {
+			populations_linker pLinker = e.getAnnotation(populations_linker.class);
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(POPULATIONS_LINKER_PREFIX);
+			// name
+			sb.append(pLinker.name()).append(SEP);
+			// class
+			sb.append(rawNameOf(e));
+			
+			processingEnv.getMessager().printMessage(Kind.NOTE, "Populations Linker processed: " + rawNameOf(e));
+			gp.put(sb.toString(), docToString(pLinker.doc())); /* doc */
 		}
 	}
 
