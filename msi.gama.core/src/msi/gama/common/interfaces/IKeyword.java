@@ -435,4 +435,12 @@ public interface IKeyword {
 
 	public final static String INTERNAL = "internal_";
 
+	
+	/**
+	 * Gen*
+	 */
+	public static final String POPULATION_GENERATORS = "population_generators";
+	public static final String SYNTHETIC_POPULATIONS = "synthetic_populations";
+	public static final String GENSTAR_POPULATION = "genstar_population";
+	public static final String GENSTAR_ENTITY = "genstar_entity";
 }

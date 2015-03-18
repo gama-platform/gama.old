@@ -15,8 +15,10 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.*;
+
 import java.lang.reflect.*;
 import java.util.*;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.*;
@@ -26,6 +28,8 @@ import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.extensions.genstar.IGamaPopulationsLinker;
+import msi.gaml.extensions.genstar.IGamaPopulationsLinkerConstructor;
 import msi.gaml.factories.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
@@ -47,6 +51,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private final static Map<Class, ISkill> SKILL_INSTANCES = new THashMap();
 	private final static Map<Class, List<IDescription>> ADDITIONS = new THashMap();
 	private final static Map<Class, List<OperatorProto>> FIELDS = new THashMap();
+	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<String, IGamaPopulationsLinker>();
 
 	protected static String[] S(final String ... strings) {
 		return strings;
@@ -335,6 +340,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			}
 		}
 
+	}
+
+	protected void _populationsLinker(final String name, final Class clazz, final IGamaPopulationsLinkerConstructor helper) {
+		IGamaPopulationsLinker linker = helper.newInstance();
+		if (POPULATIONS_LINKERS.get(name) != null) { } // TODO inform duplication
+		POPULATIONS_LINKERS.put(name, linker);
 	}
 
 	private void add(final Class clazz, final IDescription desc) {
