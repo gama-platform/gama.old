@@ -253,7 +253,7 @@ public class GamaDiagramEditor extends DiagramEditor implements IGamlBuilderList
 	}
 
 	@Override
-	public void initRefresh() {
+	public void refresh() {
 		if ( toRefresh ) {
 			diagram = getDiagram();
 			featureProvider = this.getDiagramTypeProvider().getFeatureProvider();
@@ -262,7 +262,7 @@ public class GamaDiagramEditor extends DiagramEditor implements IGamlBuilderList
 			}
 		}
 		this.refreshPalette();
-		super.initRefresh();
+		super.refresh();
 
 	}
 

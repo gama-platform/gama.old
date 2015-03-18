@@ -13,6 +13,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.types.*;
@@ -1147,14 +1148,14 @@ public class HumanMovingSkill extends MovingSkill {
 			return null;
 		}
 		int direction = 0;
-		GamaList<GamaPoint> passedList = (GamaList<GamaPoint>) agent.getAttribute("passedList");// args.listValue("passedList");
+		ArrayList<GamaPoint> passedList = (ArrayList<GamaPoint>) agent.getAttribute("passedList");// args.listValue("passedList");
 
 		if ( passedList == null ) {
-			passedList = new GamaList<GamaPoint>();
+			passedList = new ArrayList<GamaPoint>();
 		} else {
 			// System.out.println("longueur de passedList : "+passedList.length());
-			if ( passedList.length(scope) == 5 ) {
-				passedList = new GamaList<GamaPoint>();
+			if ( passedList.size() == 5 ) {
+				passedList = new ArrayList<GamaPoint>();
 			}
 		}
 
@@ -2096,7 +2097,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// System.out.println("**************************************\nlocation : " + startingPoint
 		// + "  target : " + target);
 		// ******
-		GamaList<GamaPoint> passedList = (GamaList<GamaPoint>) agent.getAttribute("passedList");// agent.getAttribute("passedList"));
+		ArrayList<GamaPoint> passedList = (ArrayList<GamaPoint>) agent.getAttribute("passedList");// agent.getAttribute("passedList"));
 
 		// ****
 		boolean freeSpace = false;
@@ -2126,7 +2127,7 @@ public class HumanMovingSkill extends MovingSkill {
 			if ( freeSpace ) {
 				// System.out.println("le place est libre !");
 				if ( passedList == null ) {
-					passedList = new GamaList<GamaPoint>();
+					passedList = new ArrayList<GamaPoint>();
 				}
 				if ( alreadyVisited(scope, passedList) ) {
 					// System.out.println("on a une boucle "+passedList);
@@ -2210,12 +2211,12 @@ public class HumanMovingSkill extends MovingSkill {
 					 * ///////
 					 * i =0;
 					 */
-					passedList = new GamaList<GamaPoint>();
+					passedList = new ArrayList<GamaPoint>();
 					agent.setAttribute("passedList", passedList);
 					break;
 				} else {
-					if ( passedList.length(scope) == 4 ) {
-						passedList = new GamaList<GamaPoint>();
+					if ( passedList.size() == 4 ) {
+						passedList = new ArrayList<GamaPoint>();
 					}
 					final GamaPoint gm = new GamaPoint(i, 0);//
 					passedList.add(gm);
@@ -2238,8 +2239,8 @@ public class HumanMovingSkill extends MovingSkill {
 		return (GamaPoint) agent.getLocation();
 	}
 
-	private boolean alreadyVisited(final IScope scope, final GamaList<GamaPoint> list) {
-		if ( list.length(scope) == 4 ) {
+	private boolean alreadyVisited(final IScope scope, final ArrayList<GamaPoint> list) {
+		if ( list.size() == 4 ) {
 			;
 			if ( list.get(0).getX() == list.get(2).getX() && list.get(1).getX() == list.get(3).getX() &&
 				list.get(0).getX() != list.get(1).getX() ) { return true; }
@@ -2247,8 +2248,8 @@ public class HumanMovingSkill extends MovingSkill {
 		return false;
 	}
 
-	private boolean isInLoop(final IScope scope, final GamaList<GamaPoint> list) {
-		if ( list.length(scope) == 4 ) {
+	private boolean isInLoop(final IScope scope, final ArrayList<GamaPoint> list) {
+		if ( list.size() == 4 ) {
 			;
 			if ( list.get(0).getX() == list.get(2).getX() && list.get(1).getX() == list.get(3).getX() ) { return true; }
 		}
