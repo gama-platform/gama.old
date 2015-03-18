@@ -112,8 +112,8 @@ entities
 			draw (thinking as string) size: 5 color: #red;
 			write ("B:" + length(belief_base) + ":" + belief_base);
 			write ("D:" + length(desire_base) + ":" + desire_base);
-			write ("I:" + length(intension_base) + ":" + intension_base);
-			write ("G:" + get_current_goal());
+			write ("I:" + length(intention_base) + ":" + intention_base);
+			write ("G:" + get_current_intention());
 		
 			draw circle(0.5) color: isPlanning ? #red : #green;	
 			
@@ -172,9 +172,9 @@ entities
 			return res;
 		}
 
-		plan anddesire when: is_current_goal(new_predicate("anddesire")) priority: 3 finished_when: true
+		plan anddesire when: is_current_intention(new_predicate("anddesire")) priority: 3 finished_when: true
 		{  isPlanning<-true;
-			predicate currentgoal <- get_current_goal();
+			predicate currentgoal <- get_current_intention();
 			map goalparams <- currentgoal.parameters;
 			predicate subdesire1 <- predicate(goalparams at "first");
 			predicate subdesire2 <- predicate(goalparams at "second");
@@ -187,24 +187,24 @@ entities
 			{
 				if (!testgoal(subdesire1))
 				{
-					do add_subgoal(currentgoal, subdesire1);
+					do add_subintention(currentgoal, subdesire1);
 					do add_desire(subdesire1);
 				}
 
 				if (!testgoal(subdesire2))
 				{
-					do add_subgoal(currentgoal, subdesire2);
+					do add_subintention(currentgoal, subdesire2);
 					do add_desire(subdesire2);
 				}
 
-				do currentgoal_on_hold();
+				do current_intention_on_hold();
 			}
 
 		}
 
-		plan onblock when: is_current_goal(new_predicate("onblock")) priority: 2 finished_when: true
+		plan onblock when: is_current_intention(new_predicate("onblock")) priority: 2 finished_when: true
 		{   isPlanning<-true;
-			predicate currentgoal <- get_current_goal();
+			predicate currentgoal <- get_current_intention();
 			map goalparams <- currentgoal.parameters;
 			block overblock <- block(goalparams at "over");
 			block underblock <- block(goalparams at "under");
@@ -216,13 +216,13 @@ entities
 				if (length(block where (each.onwhat=underblock))>0)
 				{
 					do add_desire(new_predicate("free", true, ["block"::underblock], 100), currentgoal);
-					do currentgoal_on_hold();
+					do current_intention_on_hold();
 				}
 
 				if (length(block where (each.onwhat = overblock)) > 0)
 				{
 					do add_desire(new_predicate("free", true, ["block"::overblock], 100), currentgoal);
-					do currentgoal_on_hold();
+					do current_intention_on_hold();
 				}
 
 				if ((length(block where (each.onwhat = underblock)) = 0) and (length(block where (each.onwhat = overblock)) = 0))
@@ -234,9 +234,9 @@ entities
 
 		}
 
-		plan freeblock when: is_current_goal(new_predicate("free")) priority: 2 finished_when: true
+		plan freeblock when: is_current_intention(new_predicate("free")) priority: 2 finished_when: true
 		{   isPlanning<-true;
-			predicate currentgoal <- get_current_goal();
+			predicate currentgoal <- get_current_intention();
 			map goalparams <- currentgoal.parameters;
 			block underblock <- block(goalparams at "block");
 			if (length(block where (each.onwhat = underblock)) = 0)
@@ -248,7 +248,7 @@ entities
 				if (length(block where (each.onwhat = overblock)) > 0)
 				{
 					do add_desire(new_predicate("free", true, ["block"::overblock], 100), currentgoal);
-					do currentgoal_on_hold();
+					do current_intention_on_hold();
 				} else
 				{
 					do move(overblock, thetable);

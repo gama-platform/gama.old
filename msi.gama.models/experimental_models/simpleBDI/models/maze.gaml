@@ -72,7 +72,7 @@ global{
 					speed<-0.5;
 					shape<-circle(1);
 					plan_persistence <- 1.0;
-					goal_persistence <- 1.0;
+					intention_persistence <- 1.0;
 					set location<-(cell[i,j]).location;					
 					my_cell<-cell[i,j];
 					write("new adventurer at"+i+j+" loc "+(cell at {i,j}).location);
@@ -319,22 +319,22 @@ species Adventurer skills:[moving] control:simple_bdi parent:PerceiveAgent{
 		}
 	}
 
-	plan be_rich when:is_current_goal(new_predicate("be_rich",true)) priority:3    {
+	plan be_rich when:is_current_intention(new_predicate("be_rich",true)) priority:3    {
 		predicate p <-new_predicate("find_treasure",true,nil,100);
 		do add_desire(p);
-		do add_subgoal(get_current_goal(),p);
-		do currentgoal_on_hold();
-//		write "plan 1 "+" current goal: "+get_current_goal();
+		do add_subintention(get_current_intention(),p);
+		do current_intention_on_hold();
+//		write "plan 1 "+" current goal: "+get_current_intention();
 	}
 
-	plan find_treasure when:is_current_goal(new_predicate("find_treasure",true)) priority:2  {
+	plan find_treasure when:is_current_intention(new_predicate("find_treasure",true)) priority:2  {
 		do add_desire(new_predicate("everything_explored",true,nil,100));
-		do currentgoal_on_hold();
+		do current_intention_on_hold();
 	}		
 		
 
-	plan explore  priority:2 when:is_current_goal(new_predicate("explored")) finished_when:false {
-		predicate currentgoal<-get_current_goal();
+	plan explore  priority:2 when:is_current_intention(new_predicate("explored")) finished_when:false {
+		predicate currentgoal<-get_current_intention();
 		map goalparams<-currentgoal.parameters;
 		cell target<-goalparams at "cell";
 		mycurrentpath<-path_between(mygraph,my_cell,target);
@@ -343,9 +343,9 @@ species Adventurer skills:[moving] control:simple_bdi parent:PerceiveAgent{
 		do follow(path::mycurrentpath);
 	}
 
-	plan plantake  priority:2 when:is_current_goal(new_predicate("take")) finished_when:false {
-//		write "exploring ... "+get_current_goal();
-		predicate currentgoal<-get_current_goal();
+	plan plantake  priority:2 when:is_current_intention(new_predicate("take")) finished_when:false {
+//		write "exploring ... "+get_current_intention();
+		predicate currentgoal<-get_current_intention();
 		map goalparams<-currentgoal.parameters;
 		cell target<-goalparams at "at";
 		agent something<-goalparams at "what";
@@ -375,9 +375,9 @@ species Adventurer skills:[moving] control:simple_bdi parent:PerceiveAgent{
 		}
 	}
 
-	plan planopen  priority:2 when:is_current_goal(new_predicate("open")) finished_when:false {
-//		write "exploring ... "+get_current_goal();
-		predicate currentgoal<-get_current_goal();
+	plan planopen  priority:2 when:is_current_intention(new_predicate("open")) finished_when:false {
+//		write "exploring ... "+get_current_intention();
+		predicate currentgoal<-get_current_intention();
 		map goalparams<-currentgoal.parameters;
 		cell targetc<-goalparams at "at";
 		agent something<-goalparams at "door";
@@ -407,8 +407,8 @@ species Adventurer skills:[moving] control:simple_bdi parent:PerceiveAgent{
 //		write("plan: goto "+target+" via "+mycurrentpath);
 	}
 
-	plan planflee  priority:2 when:is_current_goal(new_predicate("flee")) finished_when:false {
-		predicate currentgoal<-get_current_goal();
+	plan planflee  priority:2 when:is_current_intention(new_predicate("flee")) finished_when:false {
+		predicate currentgoal<-get_current_intention();
 		map goalparams<-currentgoal.parameters;
 		Monster target<-goalparams at "monster";
 		write("dist "+self distance_to target);
@@ -459,8 +459,8 @@ species Adventurer skills:[moving] control:simple_bdi parent:PerceiveAgent{
 		
 		write ("B:" + length(belief_base) + ":" + belief_base);
 			write ("D:" + length(desire_base) + ":" + desire_base);
-			write ("I:" + length(intension_base) + ":" + intension_base);
-			write ("G:" + get_current_goal());
+			write ("I:" + length(intention_base) + ":" + intention_base);
+			write ("G:" + get_current_intention());
 	}
 }
 
