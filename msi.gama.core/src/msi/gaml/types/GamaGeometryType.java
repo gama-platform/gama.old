@@ -22,6 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -266,26 +267,6 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	}
 
-	// public static IShape buildRectangle(final double width, final double height, final ILocation location) {
-	// Coordinate[] coordinates = new Coordinate[5];
-	// double x = location == null ? 0 : location.getX();
-	// double y = location == null ? 0 : location.getY();
-	// coordinates[0] = new Coordinate(x - width / 2.0, y + height / 2.0);
-	// coordinates[1] = new Coordinate(x + width / 2.0, y + height / 2.0);
-	// coordinates[2] = new Coordinate(x + width / 2.0, y - height / 2.0);
-	// coordinates[3] = new Coordinate(x - width / 2.0, y - height / 2.0);
-	// coordinates[4] = (Coordinate) coordinates[0].clone();
-	// LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-	// Geometry g = GeometryUtils.getFactory().createPolygon(geom, null);
-	// if ( location != null ) {
-	// Coordinate[] coords = g.getCoordinates();
-	// for ( int i = 0; i < coords.length; i++ ) {
-	// coords[i].z = ((GamaPoint) location).z;
-	// }
-	// }
-	// return new GamaShape(g);
-	// }
-
 	public static IShape
 		buildBox(final double width, final double height, final double depth, final ILocation location) {
 		final IShape g = buildRectangle(width, height, location);
@@ -348,10 +329,71 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if ( yRadius <= 0 ) { return new GamaShape(location); }
 		}
 		GeometricShapeFactory factory = new GeometricShapeFactory();
+		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a parameter and/or preference ?
 		factory.setCentre(location);
 		factory.setWidth(xRadius);
 		factory.setHeight(yRadius);
-		return new GamaShape(factory.createEllipse());
+		final Geometry g = factory.createEllipse();
+		if ( location != null ) {
+			final Coordinate[] coordinates = g.getCoordinates();
+			for ( int i = 0; i < coordinates.length; i++ ) {
+				coordinates[i].z = location.z;
+			}
+		}
+		return new GamaShape(g);
+	}
+
+	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
+		if ( xRadius <= 0 ) { return new GamaShape(location); }
+		GeometricShapeFactory factory = new GeometricShapeFactory();
+		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a parameter and/or preference ?
+		factory.setCentre(location);
+		factory.setSize(xRadius);
+		final Geometry g = factory.createSupercircle(power);
+		if ( location != null ) {
+			final Coordinate[] coordinates = g.getCoordinates();
+			for ( int i = 0; i < coordinates.length; i++ ) {
+				coordinates[i].z = location.z;
+			}
+		}
+		return new GamaShape(g);
+
+	}
+
+	/**
+	 * 
+	 * @param xRadius
+	 * @param heading in decimal degrees
+	 * @param amplitude in decimal degrees
+	 * @param filled
+	 * @param location
+	 * @return
+	 */
+	public static IShape buildArc(final double xRadius, final double heading, final double amplitude,
+		final boolean filled, final GamaPoint location) {
+		if ( amplitude <= 0 || xRadius <= 0 ) { return new GamaShape(location); }
+		GeometricShapeFactory factory = new GeometricShapeFactory();
+		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a parameter and/or preference ?
+		factory.setCentre(location);
+		factory.setSize(xRadius);
+		double ampl = Maths.checkHeading(amplitude);
+
+		double angExtent = Maths.toRad * ampl;
+		double startAng = Maths.toRad * Maths.checkHeading(heading - ampl / 2);
+		Geometry g;
+		if ( filled ) {
+			g = factory.createArcPolygon(startAng, angExtent);
+		} else {
+			g = factory.createArc(startAng, angExtent);
+		}
+		if ( location != null ) {
+			final Coordinate[] coordinates = g.getCoordinates();
+			for ( int i = 0; i < coordinates.length; i++ ) {
+				coordinates[i].z = location.z;
+			}
+		}
+		return new GamaShape(g);
+
 	}
 
 	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {

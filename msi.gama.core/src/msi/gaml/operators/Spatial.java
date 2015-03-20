@@ -90,9 +90,10 @@ public abstract class Spatial {
 		@doc(value = "An ellipse geometry which x-radius is equal to the first operand and y-radius is equal to the second operand",
 			usages = { @usage(value = "returns a point if both operands are lower or equal to 0, a line if only one is.") },
 			comment = "the centre of the ellipse is by default the location of the current agent in which has been called this operator.",
-			examples = { @example(value = "circle(10)", equals = "a geometry as a circle of radius 10.", test = false) },
-			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-				"triangle" })
+			examples = { @example(value = "ellipse(10, 10)",
+				equals = "a geometry as an ellipse of width 10 and height 10.",
+				test = false) }, see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+				"rectangle", "square", "circle", "squircle", "triangle" })
 		public static
 			IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
 			GamaPoint location;
@@ -102,6 +103,55 @@ public abstract class Spatial {
 				if ( yRadius <= 0 ) { return new GamaShape(location); }
 			}
 			return GamaGeometryType.buildEllipse(xRadius, yRadius, location);
+		}
+
+		@operator(value = "squircle", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "A mix of square and circle geometry (see : http://en.wikipedia.org/wiki/Squircle), which side size is equal to the first operand and power is equal to the second operand",
+			usages = { @usage(value = "returns a point if the side operand is lower or equal to 0.") },
+			comment = "the centre of the ellipse is by default the location of the current agent in which has been called this operator.",
+			examples = { @example(value = "squircle(4,4)",
+				equals = "a geometry as a squircle of side 4 with a power of 4.",
+				test = false) }, see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+				"super_ellipse", "rectangle", "square", "circle", "ellipse", "triangle" })
+		public static
+			IShape squicle(final IScope scope, final Double xRadius, final Double power) {
+			GamaPoint location;
+			final IAgent a = scope.getAgentScope();
+			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			if ( xRadius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildSquircle(xRadius, power, location);
+		}
+
+		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "An arc, which radius is equal to the first operand, heading to the second and amplitude the third",
+			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
+			comment = "the centre of the arc is by default the location of the current agent in which has been called this operator. This operator returns a polygon by default.",
+			examples = { @example(value = "arc(4,45,90)",
+				equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°",
+				test = false) }, see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+				"super_ellipse", "rectangle", "square", "circle", "ellipse", "triangle" })
+		public static
+			IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude) {
+			return arc(scope, xRadius, heading, amplitude, true);
+		}
+
+		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
+		@doc(value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
+			usages = { @usage(value = "returns a point if the radius operand is lower or equal to 0.") },
+			comment = "the centre of the arc is by default the location of the current agent in which has been called this operator.",
+			examples = { @example(value = "arc(4,45,90, false)",
+				equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°, which only contains the points on the arc",
+				test = false) },
+			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
+				"rectangle", "square", "circle", "ellipse", "triangle" })
+		public static
+			IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude,
+				final boolean filled) {
+			GamaPoint location;
+			final IAgent a = scope.getAgentScope();
+			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			if ( xRadius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
 		}
 
 		@operator(value = "cylinder", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE,
