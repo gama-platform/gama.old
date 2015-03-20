@@ -128,6 +128,7 @@ public class JavaWriter {
 		sb.append(ln).append(tab).append("initializeSkills();");
 		sb.append(ln).append(tab).append("initializeSpecies();");
 		sb.append(ln).append(tab).append("initializeDisplays();");
+		sb.append(ln).append(tab).append("initializePopulationsLinkers();");
 		sb.append(ln).append('}');
 	}
 

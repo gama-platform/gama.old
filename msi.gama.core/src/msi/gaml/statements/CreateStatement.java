@@ -274,10 +274,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final Object source = getSource(scope);
 		if ( source instanceof GamaCSVFile ) {
 			fillInits(scope, inits, max, (GamaCSVFile) source);
-		} else if ( source instanceof List && ((List) source).get(0) instanceof String ) {
+		} else if ( source instanceof List && ( ((List) source).get(0) instanceof String ) && (((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION)) ) {
 			// genstar returns a list in which
 			// the first element is the "genstar_population" string
-			// other elements are maps of <String, Object>, each map represents variable values of a generated agents
+			// other elements are maps of <String, Object>, each map represents variable values of a generated agent
 			fillInitsGenstar(scope, inits, max, (GamaList) source);
 		} else if ( source instanceof IList && ((IList) source).get(0) instanceof List ) {
 			// DBAccess
