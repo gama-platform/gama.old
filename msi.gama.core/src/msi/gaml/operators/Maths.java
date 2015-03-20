@@ -916,18 +916,6 @@ public class Maths {
 		return Math.atan2(y, x) * toDeg;
 	}
 
-	public static double aTan2(final double y, final double x) {
-		final double abs_y = Math.abs(y);
-		double angle;
-		if ( x >= 0d ) {
-			final double r = (x - abs_y) / (x + abs_y);
-			angle = PI_4 - PI_4 * r;
-		} else {
-			final double r = (x + abs_y) / (abs_y - x);
-			angle = PI_34 - PI_4 * r;
-		}
-		return y < 0d ? -angle : angle;
-	}
 
 	/**
 	 * Check heading : keep it in the 0 - 360 degrees interval.
@@ -1008,67 +996,6 @@ public class Maths {
 		final double dy = y2 - y1;
 		final double dz = z2 - z1;
 		return sqrt(dx * dx + dy * dy + dz * dz);
-	}
-
-	private static final int ATAN2_BITS = 7;
-
-	private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
-	private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
-	private static final int ATAN2_COUNT = ATAN2_MASK + 1;
-	private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
-
-	private static final double INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
-
-	private static final double[] atan2 = new double[ATAN2_COUNT];
-
-	static {
-		for ( int i = 0; i < ATAN2_DIM; i++ ) {
-			for ( int j = 0; j < ATAN2_DIM; j++ ) {
-				double x0 = (double) i / ATAN2_DIM;
-				double y0 = (double) j / ATAN2_DIM;
-
-				atan2[j * ATAN2_DIM + i] = Math.atan2(y0, x0);
-			}
-		}
-	}
-
-	public static final double atan2Opt(final double y, final double x) {
-		return atan2Opt2(y, x) * toDeg;
-	}
-
-	public static final double atan2Opt2(final double y, final double x) {
-		return Math.atan2(y, x);
-		// double add, mul;
-		//
-		// if ( x < 0.0f ) {
-		// if ( y < 0.0f ) {
-		// x = -x;
-		// y = -y;
-		//
-		// mul = 1.0f;
-		// } else {
-		// x = -x;
-		// mul = -1.0f;
-		// }
-		//
-		// add = -3.141592653f;
-		// } else {
-		// if ( y < 0.0f ) {
-		// y = -y;
-		// mul = -1.0f;
-		// } else {
-		// mul = 1.0f;
-		// }
-		//
-		// add = 0.0f;
-		// }
-		//
-		// double invDiv = 1.0f / ((x < y ? y : x) * INV_ATAN2_DIM_MINUS_1);
-		//
-		// int xi = (int) (x * invDiv);
-		// int yi = (int) (y * invDiv);
-		//
-		// return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
 	}
 
 }
