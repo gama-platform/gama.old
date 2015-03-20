@@ -625,7 +625,7 @@ public class Maths {
 	@doc(value = "Returns the product of the two operands.",
 		masterDoc = true,
 		usages = @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic product and returns a float if one of them is a float.",
-		examples = @example(value = "1 * 1", equals = "1")),
+			examples = @example(value = "1 * 1", equals = "1")),
 		see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.DIVIDE })
 	public static
 		Integer opTimes(final Integer a, final Integer b) {
@@ -675,7 +675,8 @@ public class Maths {
 	@doc(value = "Returns the sum, union or concatenation of the two operands.",
 		masterDoc = true,
 		usages = { @usage(value = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.",
-			examples = { @example(value = "1 + 1", equals = "2"), @example(value = "1.0 + 1",equals = "2.0"), @example(value = "1.0 + 2.5", equals = "3.5") }) },
+			examples = { @example(value = "1 + 1", equals = "2"), @example(value = "1.0 + 1", equals = "2.0"),
+				@example(value = "1.0 + 2.5", equals = "3.5") }) },
 		see = { IKeyword.MINUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static
 		Integer opPlus(final Integer a, final Integer b) {
@@ -725,7 +726,8 @@ public class Maths {
 	@doc(value = "Returns the difference of the two operands.",
 		masterDoc = true,
 		usages = { @usage(value = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.",
-			examples = { @example(value = "1 - 1", equals = "0"), @example(value = "1.0 - 1", equals = "0.0"), @example(value = "3.7 - 1.2", equals = "2.5"), @example(value = "3 - 1.2", equals = "1.8") }) },
+			examples = { @example(value = "1 - 1", equals = "0"), @example(value = "1.0 - 1", equals = "0.0"),
+				@example(value = "3.7 - 1.2", equals = "2.5"), @example(value = "3 - 1.2", equals = "1.8") }) },
 		see = { IKeyword.PLUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static
 		Integer opMinus(final Integer a, final Integer b) {
@@ -942,6 +944,24 @@ public class Maths {
 		return result % PRECISION;
 	}
 
+	/**
+	 * Check heading : keep it in the 0 - 360 degrees interval.
+	 * 
+	 * @param newHeading the new heading
+	 * 
+	 * @return the double
+	 */
+	public static double checkHeading(final double newHeading) {
+		double result = newHeading;
+		while (result < 0) {
+			result += PRECISION;
+		}
+		while (result > 360) {
+			result -= PRECISION;
+		}
+		return result;
+	}
+
 	@operator(value = "hypot", can_be_const = true, category = { IOperatorCategory.ARITHMETIC })
 	@doc(value = "Returns sqrt(x2 +y2) without intermediate overflow or underflow.",
 		special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.",
@@ -1016,38 +1036,39 @@ public class Maths {
 		return atan2Opt2(y, x) * toDeg;
 	}
 
-	public static final double atan2Opt2(double y, double x) {
-		double add, mul;
-
-		if ( x < 0.0f ) {
-			if ( y < 0.0f ) {
-				x = -x;
-				y = -y;
-
-				mul = 1.0f;
-			} else {
-				x = -x;
-				mul = -1.0f;
-			}
-
-			add = -3.141592653f;
-		} else {
-			if ( y < 0.0f ) {
-				y = -y;
-				mul = -1.0f;
-			} else {
-				mul = 1.0f;
-			}
-
-			add = 0.0f;
-		}
-
-		double invDiv = 1.0f / ((x < y ? y : x) * INV_ATAN2_DIM_MINUS_1);
-
-		int xi = (int) (x * invDiv);
-		int yi = (int) (y * invDiv);
-
-		return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
+	public static final double atan2Opt2(final double y, final double x) {
+		return Math.atan2(y, x);
+		// double add, mul;
+		//
+		// if ( x < 0.0f ) {
+		// if ( y < 0.0f ) {
+		// x = -x;
+		// y = -y;
+		//
+		// mul = 1.0f;
+		// } else {
+		// x = -x;
+		// mul = -1.0f;
+		// }
+		//
+		// add = -3.141592653f;
+		// } else {
+		// if ( y < 0.0f ) {
+		// y = -y;
+		// mul = -1.0f;
+		// } else {
+		// mul = 1.0f;
+		// }
+		//
+		// add = 0.0f;
+		// }
+		//
+		// double invDiv = 1.0f / ((x < y ? y : x) * INV_ATAN2_DIM_MINUS_1);
+		//
+		// int xi = (int) (x * invDiv);
+		// int yi = (int) (y * invDiv);
+		//
+		// return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
 	}
 
 }
