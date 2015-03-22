@@ -16,12 +16,11 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gaml.types.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class FontEditor extends AbstractEditor {
+public class FontEditor extends AbstractEditor<FontData> {
 
 	private FlatButton edit;
 
@@ -45,7 +44,7 @@ public class FontEditor extends AbstractEditor {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		edit = FlatButton.menu(compo, IGamaColors.WHITE, "").light().small();
+		edit = FlatButton.menu(compo, IGamaColors.GRAY_LABEL, "").light().small();
 		edit.addSelectionListener(this);
 		displayParameterValue();
 		return edit;
@@ -54,12 +53,14 @@ public class FontEditor extends AbstractEditor {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		FontData data =
-			currentValue instanceof String ? new FontData((String) currentValue) : currentValue instanceof FontData
-				? (FontData) currentValue : SwtGui.getSmallFont().getFontData()[0];
+		FontData data = currentValue != null ? currentValue : SwtGui.getSmallFont().getFontData()[0];
 		edit.setText(data.toString());
 		edit.setFont(new Font(SwtGui.getDisplay(), data));
 		internalModification = false;
+	}
+
+	public void modifyValue() {
+
 	}
 
 	@Override
@@ -67,21 +68,21 @@ public class FontEditor extends AbstractEditor {
 		return edit;
 	}
 
-	@Override
-	public IType getExpectedType() {
-		return Types.STRING;
-	}
+	// @Override
+	// public IType getExpectedType() {
+	// return Types.STRING;
+	// }
 
 	@Override
 	protected int[] getToolItems() {
-		return new int[] { REVERT };
+		return new int[] { EDIT, REVERT };
 	}
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 		FontDialog dialog = new FontDialog(SwtGui.getShell());
 		dialog.setEffectsVisible(false);
-		FontData data = (FontData) currentValue;
+		FontData data = currentValue;
 		dialog.setFontList(new FontData[] { data });
 		data = dialog.open();
 		if ( data != null ) {

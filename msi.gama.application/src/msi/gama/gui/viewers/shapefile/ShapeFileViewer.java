@@ -2,7 +2,9 @@ package msi.gama.gui.viewers.shapefile;
 
 import java.awt.Color;
 import java.io.*;
+import java.util.*;
 import java.util.List;
+import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.AgentsMenu;
@@ -10,7 +12,9 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gaml.types.Types;
+import msi.gama.util.file.*;
+import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -18,7 +22,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
-import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -31,9 +34,9 @@ import org.geotools.swt.styling.simple.*;
 import org.geotools.swt.tool.CursorTool;
 import org.geotools.swt.utils.Utils;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.*;
+import org.opengis.feature.type.AttributeDescriptor;
 
-public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable {
+public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	private class DragTool extends CursorTool {
 
@@ -87,11 +90,14 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 
 	SwtMapPane pane;
 	MapContent content;
-	// GamaToolbar leftToolbar;
 	GamaToolbar2 toolbar;
 	ShapefileDataStore store;
-	IPath path;
+	IFile file;
 	boolean noCRS = false;
+	Mode mode;
+	FeatureTypeStyle fts;
+	Style style;
+	Layer layer;
 
 	@Override
 	public void doSave(final IProgressMonitor monitor) {}
@@ -103,16 +109,16 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		setSite(site);
 		FileEditorInput fi = (FileEditorInput) input;
-		path = fi.getPath();
+		file = fi.getFile();
+		IPath path = fi.getPath();
 		File f = path.makeAbsolute().toFile();
 		try {
 			store = new ShapefileDataStore(f.toURI().toURL());
 			content = new MapContent();
 			SimpleFeatureSource featureSource = store.getFeatureSource();
-			org.geotools.styling.Style style = Utils.createStyle(f, featureSource);
-			Layer layer = new FeatureLayer(featureSource, style);
-			Mode mode = determineMode(featureSource.getSchema(), "Polygon");
-			FeatureTypeStyle fts;
+			style = Utils.createStyle(f, featureSource);
+			layer = new FeatureLayer(featureSource, style);
+			mode = determineMode(featureSource.getSchema(), "Polygon");
 			List<FeatureTypeStyle> ftsList = style.featureTypeStyles();
 			if ( ftsList.size() > 0 ) {
 				fts = ftsList.get(0);
@@ -156,83 +162,76 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 		String s;
 		GamaUIColor color;
 
-		try {
-			FeatureSource fs = store.getFeatureSource();
-			color = IGamaColors.OK;
-			s = /* "File " + path.lastSegment() + " | " + */fs.getFeatures().size() + " objects";
-			try {
-				String CRS = fs.getInfo().getCRS().getName().getCode();
-				s += " | CRS: " + CRS;
-			} catch (Exception e) {
-				color = IGamaColors.WARNING;
-				s += " | No CRS found";
-				noCRS = true;
-			}
-
-		} catch (IOException e2) {
+		final GamaShapeFile.ShapeInfo info = (ShapeInfo) FileMetaDataProvider.getInstance().getMetaData(file);
+		if ( info == null ) {
 			s = "Error in reading file information";
 			color = IGamaColors.ERROR;
-		}
-		ToolItem item = toolbar.menu(color, s, SWT.LEFT);
-		((FlatButton) item.getControl()).addSelectionListener(new SelectionAdapter() {
-
-			Menu menu;
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if ( menu == null ) {
-					menu = new Menu(toolbar.getShell(), SWT.POP_UP);
-					fillMenu();
-				}
-				Point point = toolbar.toDisplay(new Point(e.x, e.y + toolbar.getSize().y));
-				menu.setLocation(point.x, point.y);
-				menu.setVisible(true);
-
+		} else {
+			s = info.getSuffix();
+			if ( info.getCRS() == null ) {
+				color = IGamaColors.WARNING;
+				noCRS = true;
+			} else {
+				color = IGamaColors.OK;
 			}
+		}
 
-			private void fillMenu() {
-				AgentsMenu.separate(menu, "Bounds");
-				try {
-					ReferencedEnvelope env = store.getFeatureSource().getBounds();
-					MenuItem m2 = new MenuItem(menu, SWT.NONE);
-					m2.setEnabled(false);
-					m2.setText("     - upper corner : " + env.getUpperCorner().getOrdinate(0) + " " +
-						env.getUpperCorner().getOrdinate(1));
-					m2 = new MenuItem(menu, SWT.NONE);
-					m2.setEnabled(false);
-					m2.setText("     - lower corner : " + env.getLowerCorner().getOrdinate(0) + " " +
-						env.getLowerCorner().getOrdinate(1));
-					if ( !noCRS ) {
-						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
+		ToolItem item = toolbar.menu(color, s, SWT.LEFT);
+		if ( info != null ) {
+			((FlatButton) item.getControl()).addSelectionListener(new SelectionAdapter() {
+
+				Menu menu;
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					if ( menu == null ) {
+						menu = new Menu(toolbar.getShell(), SWT.POP_UP);
+						fillMenu();
 					}
-					m2 = new MenuItem(menu, SWT.NONE);
-					m2.setEnabled(false);
-					m2.setText("     - dimensions : " + (int) env.getWidth() + "m x " + (int) env.getHeight() + "m");
-				} catch (Exception e) {
-					e.printStackTrace();
+					Point point = toolbar.toDisplay(new Point(e.x, e.y + toolbar.getSize().y));
+					menu.setLocation(point.x, point.y);
+					menu.setVisible(true);
+
 				}
-				AgentsMenu.separate(menu);
-				AgentsMenu.separate(menu, "Attributes");
-				try {
-					java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
-					for ( AttributeDescriptor desc : att_list ) {
-						String type;
-						if ( desc.getType() instanceof GeometryType ) {
-							type = "geometry";
-						} else {
-							type = Types.get(desc.getType().getBinding()).toString();
-						}
+
+				private void fillMenu() {
+					AgentsMenu.separate(menu, "Bounds");
+					try {
+						ReferencedEnvelope env = store.getFeatureSource().getBounds();
 						MenuItem m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
-						m2.setText("     - " + desc.getName() + ": " + type);
+						m2.setText("     - upper corner : " + env.getUpperCorner().getOrdinate(0) + " " +
+							env.getUpperCorner().getOrdinate(1));
+						m2 = new MenuItem(menu, SWT.NONE);
+						m2.setEnabled(false);
+						m2.setText("     - lower corner : " + env.getLowerCorner().getOrdinate(0) + " " +
+							env.getLowerCorner().getOrdinate(1));
+						if ( !noCRS ) {
+							env = env.transform(new ProjectionFactory().getTargetCRS(), true);
+						}
+						m2 = new MenuItem(menu, SWT.NONE);
+						m2.setEnabled(false);
+						m2.setText("     - dimensions : " + (int) env.getWidth() + "m x " + (int) env.getHeight() + "m");
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					AgentsMenu.separate(menu);
+					AgentsMenu.separate(menu, "Attributes");
+					try {
+						for ( Map.Entry<String, String> entry : info.getAttributes().entrySet() ) {
+							MenuItem m2 = new MenuItem(menu, SWT.NONE);
+							m2.setEnabled(false);
+							m2.setText("     - " + entry.getKey() + " (" + entry.getValue() + ")");
+						}
+						java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 				}
 
-			}
-
-		});
+			});
+		}
 
 	}
 
@@ -257,35 +256,6 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	@Override
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] { SEP, -32 };
-	}
-
-	/**
-	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-
-		switch (code) {
-			case -32:
-				tb.button("menu.open.preferences2", "Preferences", "Style preferences", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						StyleLayer styleLayer = (StyleLayer) content.layers().get(0);
-						try {
-							ShapeFileStyleOverlay s =
-								new ShapeFileStyleOverlay(ShapeFileViewer.this, store.getFeatureSource(), styleLayer,
-									SWT.RESIZE);
-							s.open();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					}
-				});
-				break;
-
-		}
 	}
 
 	@Override
@@ -330,30 +300,7 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
 	 */
 	@Override
-	public void createToolItem(final int code, final GamaToolbar2 tb) {
-
-		switch (code) {
-			case -32:
-				tb.button("menu.open.preferences2", "Preferences", "Style preferences", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						StyleLayer styleLayer = (StyleLayer) content.layers().get(0);
-						try {
-							ShapeFileStyleOverlay s =
-								new ShapeFileStyleOverlay(ShapeFileViewer.this, store.getFeatureSource(), styleLayer,
-									SWT.RESIZE);
-							s.open();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					}
-				}, SWT.RIGHT);
-				break;
-
-		}
-
-	}
+	public void createToolItem(final int code, final GamaToolbar2 tb) {}
 
 	public void setStrokeColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
 		if ( mode == Mode.LINE ) {
@@ -423,5 +370,50 @@ public class ShapeFileViewer extends EditorPart implements IToolbarDecoratedView
 			} else if ( def.equals("Point") ) { return Mode.POINT; }
 		}
 		return Mode.ALL; // we are a generic geometry
+	}
+
+	/**
+	 * Method getColorLabels()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColorLabels()
+	 */
+	@Override
+	public String[] getColorLabels() {
+		if ( mode == Mode.POLYGON || mode == Mode.ALL ) {
+			return new String[] { "Set line color...", "Set fill color..." };
+		} else {
+			return new String[] { "Set line color..." };
+		}
+	}
+
+	/**
+	 * Method getColor()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColor(int)
+	 */
+	@Override
+	public GamaUIColor getColor(final int index) {
+		Color c;
+		if ( index == 0 ) {
+			c = SLD.color(getStroke(mode, fts));
+		} else {
+			c = SLD.color(getFill(mode, fts));
+		}
+		return GamaColors.get(c);
+
+	}
+
+	/**
+	 * Method setColor()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int, msi.gama.gui.swt.GamaColors.GamaUIColor)
+	 */
+	@Override
+	public void setColor(final int index, final GamaUIColor gc) {
+		RGB rgb = gc.getRGB();
+		Color c = new Color(rgb.red, rgb.green, rgb.blue);
+		if ( index == 0 ) {
+			setStrokeColor(c, mode, fts);
+		} else {
+			setFillColor(c, mode, fts);
+		}
+		((StyleLayer) layer).setStyle(style);
 	}
 }

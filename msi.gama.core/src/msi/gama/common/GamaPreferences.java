@@ -36,10 +36,12 @@ import com.vividsolutions.jts.geom.Envelope;
 public class GamaPreferences {
 
 	public static final String GENERAL = "General";
+	public static final String UI = "UI";
+	public static final String SIMULATION = "Simulations";
 	public static final String DISPLAY = "Display";
-	public static final String CODE = "Code";
+	// public static final String CODE = "Code";
 	public static final String EDITOR = "Editor";
-	public static final String WORKSPACE = "Workspace";
+	// public static final String WORKSPACE = "Workspace";
 	public static final String LIBRARIES = "External";
 	public static final String CHARTS = "Charts";
 	static Preferences store;
@@ -361,38 +363,38 @@ public class GamaPreferences {
 	 * Random Number Generation
 	 */
 	public static final Entry<String> CORE_RNG = create("core.rng", "Random number generator", IKeyword.MERSENNE,
-		IType.STRING).among(GENERATOR_NAMES).in(GENERAL).group("Random Number Generation");
+		IType.STRING).among(GENERATOR_NAMES).in(SIMULATION).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED = create("core.seed_defined", "Define a default seed", false,
-		IType.BOOL).activates("core.seed").in(GENERAL).group("Random Number Generation");
+		IType.BOOL).activates("core.seed").in(SIMULATION).group("Random Number Generation");
 	public static final Entry<Double> CORE_SEED = create("core.seed", "Default seed value (0 means undefined)", 1d,
-		IType.FLOAT).in(GENERAL).group("Random Number Generation");
+		IType.FLOAT).in(SIMULATION).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_RND_EDITABLE = create("core.define_rng",
-		"Include in the parameters of models", true, IType.BOOL).in(GENERAL).group("Random Number Generation");
+		"Include in the parameters of models", true, IType.BOOL).in(SIMULATION).group("Random Number Generation");
 	/**
 	 * User Interface
 	 */
 	public static final Entry<Integer> CORE_MENU_SIZE = create("core.menu_size", "Break down agents in menus every",
-		50, IType.INT).between(10, 100).in(GENERAL).group("User interface");
+		50, IType.INT).between(10, 100).in(UI).group("Menus");
 
 	public static final Entry<Integer> CORE_CONSOLE_SIZE = create("core.console_size",
-		"Max. number of characters to display in the console (-1 means no limit) ", 20000, IType.INT).in(GENERAL)
-		.group("User interface");
+		"Max. number of characters to display in the console (-1 means no limit) ", 20000, IType.INT).in(UI).group(
+		"Console");
 	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
 		"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT).in(
-		GENERAL).group("User interface");
+		UI).group("Console");
 	/**
 	 * Simulation Errors
 	 */
 	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
-		IType.BOOL).in(GENERAL).activates("core.errors_number", "core.recent").group("Simulation errors");
+		IType.BOOL).in(SIMULATION).activates("core.errors_number", "core.recent").group("Errors");
 	public static final Entry<Integer> CORE_ERRORS_NUMBER = create("core.errors_number", "Number of errors to display",
-		10, IType.INT).in(GENERAL).group("Simulation errors").between(1, null);
+		10, IType.INT).in(SIMULATION).group("Errors").between(1, null);
 	public static final Entry<Boolean> CORE_RECENT = create("core.recent", "Display most recent first", true,
-		IType.BOOL).in(GENERAL).group("Simulation errors");
+		IType.BOOL).in(SIMULATION).group("Errors");
 	public static final Entry<Boolean> CORE_REVEAL_AND_STOP = create("core.stop", "Stop simulation at first error",
-		true, IType.BOOL).in(GENERAL).group("Simulation errors");
+		true, IType.BOOL).in(SIMULATION).group("Errors");
 	public static final Entry<Boolean> CORE_WARNINGS = create("core.warnings", "Treat warnings as errors", false,
-		IType.BOOL).in(GENERAL).group("Simulation errors");
+		IType.BOOL).in(SIMULATION).group("Errors");
 	/**
 	 * Startup
 	 */
@@ -402,11 +404,11 @@ public class GamaPreferences {
 	 * Runtime
 	 */
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
-		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
+		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(SIMULATION).group("Runtime");
 	public static final Entry<Boolean> CORE_AUTO_RUN = create("core.auto_run",
-		"Auto-run experiments when they are launched", false, IType.BOOL).in(GENERAL).group("Runtime");
+		"Auto-run experiments when they are launched", false, IType.BOOL).in(SIMULATION).group("Runtime");
 	public static final Entry<Boolean> CORE_ASK_CLOSING = create("core.ask_closing",
-		"Ask to close the previous simulation before launching a new one ?", true, IType.BOOL).in(GENERAL).group(
+		"Ask to close the previous simulation before launching a new one ?", true, IType.BOOL).in(SIMULATION).group(
 		"Runtime");
 
 	// DISPLAY PAGE
@@ -470,11 +472,11 @@ public class GamaPreferences {
 	 */
 	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
 		.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.CODE).group("Validation");
+		.in(GamaPreferences.EDITOR).group("Validation");
 
 	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED = GamaPreferences
 		.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
-		.in(GamaPreferences.CODE).group("Validation");
+		.in(GamaPreferences.EDITOR).group("Validation");
 
 	// LIBRARIES PAGE
 	/**
@@ -618,6 +620,14 @@ public class GamaPreferences {
 					store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 				}
 				break;
+			case IType.FONT:
+				if ( storeKeys.contains(key) ) {
+					String val = store.get(key, GamaStringType.staticCast(scope, value, false));
+					gp.setValue(scope, Types.get(IType.FONT).cast(scope, val, null, false));
+				} else {
+					store.put(key, GamaStringType.staticCast(scope, value, false));
+				}
+				break;
 			default:
 				if ( storeKeys.contains(key) ) {
 					gp.setValue(scope, store.get(key, GamaStringType.staticCast(scope, value, false)));
@@ -658,6 +668,9 @@ public class GamaPreferences {
 				// Stores the preference as an int but create a color
 				int code = ((Color) value).getRGB();
 				store.putInt(key, code);
+				break;
+			case IType.FONT:
+				store.put(key, value.toString());
 				break;
 			default:
 				store.put(key, (String) value);

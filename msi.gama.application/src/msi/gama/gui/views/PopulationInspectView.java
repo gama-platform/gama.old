@@ -19,7 +19,7 @@ import msi.gama.common.util.*;
 import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -686,24 +686,6 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public Control getSizableFontControl() {
 		if ( viewer == null ) { return null; }
 		return viewer.getTable();
-	}
-
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-
-			case SAVE:
-				tb.button("menu.saveas2", "Save as CSV", "Save the attributes of agents into a CSV file",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							saveAsCSV();
-						}
-
-					});
-				break;
-		}
 	}
 
 	@Override

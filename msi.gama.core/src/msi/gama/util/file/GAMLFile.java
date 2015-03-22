@@ -72,9 +72,9 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		@Override
 		public String getSuffix() {
 			int expCount = experiments.size();
-			if ( expCount > 0 ) { return " (" + (expCount == 1 ? "1 experiment)" : expCount + " experiments)"); }
+			if ( expCount > 0 ) { return "" + (expCount == 1 ? "1 experiment" : expCount + " experiments"); }
 
-			return "";
+			return "no experiment";
 		}
 
 		@Override
@@ -86,6 +86,11 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			sb.append(join(experiments, SUB_DELIMITER)).append(DELIMITER);
 			return sb.toString();
 
+		}
+
+		@Override
+		public String getDocumentation() {
+			return "GAML model file with " + getSuffix();
 		}
 
 	}

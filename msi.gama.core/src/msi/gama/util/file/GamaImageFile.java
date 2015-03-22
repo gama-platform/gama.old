@@ -22,6 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -85,7 +86,15 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 		@Override
 		public String getSuffix() {
-			return " (" + width + "x" + height + ", " + getShortLabel(type) + ")";
+			return "" + width + "x" + height + ", " + getShortLabel(type) + "";
+		}
+
+		@Override
+		public String getDocumentation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(getShortLabel(type)).append(" Image File").append(Strings.LN);
+			sb.append("Dimensions: ").append(width + " pixels x " + height + " pixels").append(Strings.LN);
+			return sb.toString();
 		}
 
 		@Override

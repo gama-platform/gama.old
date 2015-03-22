@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.GamaToolbarSimple;
+import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.factories.DescriptionFactory;
@@ -43,9 +43,9 @@ public class EditToolbar {
 
 	static {
 		// Fake operations to force the preferences to load and show
-		GamaColorMenu.COLOR_MENU_SORT.getKey();
-		GamaColorMenu.COLOR_MENU_REVERSE.getKey();
-		EditToolbarOperatorsMenu.OPERATORS_MENU_SORT.getKey();
+		SwtGui.COLOR_MENU_SORT.getKey();
+		SwtGui.COLOR_MENU_REVERSE.getKey();
+		XtextGui.OPERATORS_MENU_SORT.getKey();
 	}
 
 	public static interface IToolbarVisitor {

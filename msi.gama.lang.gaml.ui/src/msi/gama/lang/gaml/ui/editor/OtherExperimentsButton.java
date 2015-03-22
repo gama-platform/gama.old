@@ -6,16 +6,14 @@ package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -25,7 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
@@ -38,37 +35,9 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
  */
 public class OtherExperimentsButton {
 
-	static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER = GamaPreferences
-		.create("editor.show.other", "Show other models' experiments in toolbar", false, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Toolbars").addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
-				for ( IEditorReference ed : eds ) {
-					IEditorPart e = ed.getEditor(false);
-					if ( e instanceof GamlEditor ) {
-						((GamlEditor) e).setShowOtherEnabled(newValue);
-					}
-				}
-			}
-		});
-
 	GamlEditor editor;
-	// GamaToolbar parent;
 	GamaToolbar2 parent;
 	ToolItem menu;
-
-	// public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar toolbar) {
-	// this.editor = editor;
-	// this.parent = toolbar;
-	// createButton();
-	// }
 
 	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		this.editor = editor;
@@ -80,7 +49,6 @@ public class OtherExperimentsButton {
 
 		parent.sep(5, SWT.RIGHT);
 		menu = parent.menu(IGamaColors.BLUE, "Other...", SWT.RIGHT);
-		// parent.sep(5);
 		menu.getControl().setToolTipText("Run other experiments defined in models belonging to the same project");
 		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {
 
@@ -101,7 +69,7 @@ public class OtherExperimentsButton {
 			}
 
 		});
-		setVisible(EDITOR_SHOW_OTHER.getValue());
+		setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
 	}
 
 	private final SelectionAdapter adapter = new SelectionAdapter() {

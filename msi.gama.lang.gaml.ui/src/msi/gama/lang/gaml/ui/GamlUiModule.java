@@ -33,6 +33,7 @@ import org.eclipse.xtext.ui.*;
 import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
+import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
 import org.eclipse.xtext.ui.editor.contentassist.*;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.*;
@@ -196,6 +197,11 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public void configureIOutlineContribution$Composite(final Binder binder) {
 		binder.bind(IPreferenceStoreInitializer.class).annotatedWith(IOutlineContribution.All.class)
 			.to(IOutlineContribution.Composite.class);
+	}
+
+	@Override
+	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+		return GamaAutoEditStrategyProvider.class;
 	}
 
 	@Override

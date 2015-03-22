@@ -5,7 +5,7 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -37,41 +37,6 @@ public class FontSizer {
 	public FontSizer(final IToolbarDecoratedView.Sizable view) {
 		// We add a control listener to the toolbar in order to install the gesture once the control to resize have been created.
 		this.view = view;
-	}
-
-	public void install(final GamaToolbarSimple tb) {
-		// We add a control listener to the toolbar in order to install the gesture once the control to resize have been created.
-		tb.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				Control c = view.getSizableFontControl();
-				if ( c != null ) {
-					c.addGestureListener(gl);
-					// once installed the listener removes itself from the toolbar
-					tb.removeControlListener(this);
-				}
-			}
-
-		});
-		tb.button("console.increase2", "Increase font size", "Increase font size", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				changeFontSize(2);
-			}
-
-		});
-		tb.button("console.decrease2", "Decrease font size", "Decrease font size", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				changeFontSize(-2);
-			}
-		});
-
-		tb.sep(16);
-
 	}
 
 	private void changeFontSize(final int delta) {

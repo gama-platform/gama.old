@@ -74,7 +74,7 @@ public class GamaToolbarDynamicResizing extends ToolBar {
 		super(parent, style); // No wrapping allowed
 		this.height = height;
 		setBackground(IGamaColors.WHITE.color());
-		iconSizer = new SizerToolItem(GamaIcons.CORE_ICONS_HEIGHT.getValue(), GamaIcons.CORE_ICONS_HEIGHT.getValue());
+		iconSizer = new SizerToolItem(SwtGui.CORE_ICONS_HEIGHT.getValue(), SwtGui.CORE_ICONS_HEIGHT.getValue());
 		toolbarSizer = new SizerToolItem(1, height);
 		separator = new DynamicSeparatorToolItem();
 		// addControlListener(separator);

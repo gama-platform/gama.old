@@ -11,8 +11,10 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import static org.apache.commons.lang.StringUtils.*;
 import java.io.*;
 import java.net.URL;
+import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -20,8 +22,8 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
-import org.apache.commons.lang.StringUtils;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.*;
@@ -30,6 +32,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.*;
+import org.opengis.feature.type.*;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.*;
@@ -54,6 +57,7 @@ public class GamaShapeFile extends GamaGisFile {
 		final CoordinateReferenceSystem crs;
 		final double width;
 		final double height;
+		final Map<String, String> attributes = new LinkedHashMap();
 
 		public ShapeInfo(final URL url, final long modificationStamp) {
 			super(modificationStamp);
@@ -75,6 +79,16 @@ public class GamaShapeFile extends GamaGisFile {
 					} catch (Exception e) {}
 				}
 				number = features.size();
+				java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
+				for ( AttributeDescriptor desc : att_list ) {
+					String type;
+					if ( desc.getType() instanceof GeometryType ) {
+						type = "geometry";
+					} else {
+						type = Types.get(desc.getType().getBinding()).toString();
+					}
+					attributes.put(desc.getName().getLocalPart(), type);
+				}
 			} catch (Exception e) {
 				System.out.println("Error in reading metadata of " + url);
 
@@ -90,6 +104,10 @@ public class GamaShapeFile extends GamaGisFile {
 
 		}
 
+		public CoordinateReferenceSystem getCRS() {
+			return crs;
+		}
+
 		public ShapeInfo(final String propertiesString) throws NoSuchAuthorityCodeException, FactoryException {
 			super(propertiesString);
 			String[] segments = split(propertiesString);
@@ -102,6 +120,13 @@ public class GamaShapeFile extends GamaGisFile {
 			}
 			width = Double.valueOf(segments[3]);
 			height = Double.valueOf(segments[4]);
+			if ( segments.length > 5 ) {
+				String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
+				String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
+				for ( int i = 0; i < names.length; i++ ) {
+					attributes.put(names[i], types[i]);
+				}
+			}
 		}
 
 		/**
@@ -111,15 +136,39 @@ public class GamaShapeFile extends GamaGisFile {
 		@Override
 		public String getSuffix() {
 			String CRS = crs == null ? "No CRS" : crs.getName().getCode();
-			return " (" + itemNumber + " objects | " + CRS + " | " + Math.round(width) + "m x " + Math.round(height) +
-				"m)";
+			return "" + itemNumber + " objects | " + CRS + " | " + Math.round(width) + "m x " + Math.round(height) +
+				"m";
+		}
+
+		@Override
+		public String getDocumentation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Shapefile").append(Strings.LN);
+			sb.append(itemNumber).append(" objects").append(Strings.LN);
+			sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m").append(Strings.LN);
+			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
+				.append(Strings.LN);
+			if ( !attributes.isEmpty() ) {
+				sb.append("Attributes: ").append(Strings.LN);
+				for ( Map.Entry<String, String> entry : attributes.entrySet() ) {
+					sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
+				}
+			}
+			return sb.toString();
+		}
+
+		public Map<String, String> getAttributes() {
+			return attributes;
 		}
 
 		@Override
 		public String toPropertyString() {
+			String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
+			String types = join(attributes.values(), SUB_DELIMITER);
 			Object[] toSave =
-				new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(), width, height };
-			return StringUtils.join(toSave, DELIMITER);
+				new Object[] { super.toPropertyString(), itemNumber, crs == null ? "null" : crs.toWKT(), width, height,
+					attributeNames, types };
+			return join(toSave, DELIMITER);
 		}
 	}
 

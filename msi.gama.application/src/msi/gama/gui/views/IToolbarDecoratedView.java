@@ -4,7 +4,8 @@
  */
 package msi.gama.gui.views;
 
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.outputs.IDisplayOutput;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
@@ -26,8 +27,6 @@ public interface IToolbarDecoratedView {
 
 	public Integer[] getToolbarActionsId();
 
-	public void createToolItem(int code, GamaToolbarSimple tb);
-
 	public static interface Pausable extends IToolbarDecoratedView {
 
 		public void pauseChanged();
@@ -42,6 +41,15 @@ public interface IToolbarDecoratedView {
 		Control getSizableFontControl();
 	}
 
+	public static interface Colorizable extends IToolbarDecoratedView {
+
+		public String[] getColorLabels();
+
+		public GamaUIColor getColor(int index);
+
+		public void setColor(int index, GamaUIColor c);
+	}
+
 	public static interface Zoomable extends IToolbarDecoratedView {
 
 		void zoomIn();
@@ -49,8 +57,6 @@ public interface IToolbarDecoratedView {
 		void zoomOut();
 
 		void zoomFit();
-
-		// Control getZoomableControl();
 
 		/**
 		 * @return the controls that will react to gestures / mouse doucle-cliks

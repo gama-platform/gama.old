@@ -22,6 +22,7 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.CoreException;
@@ -344,6 +345,15 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public IGamaView findView(final IDisplayOutput output) {
+		return null;
+	}
+
+	/**
+	 * Method getMetaDataProvider()
+	 * @see msi.gama.common.interfaces.IGui#getMetaDataProvider()
+	 */
+	@Override
+	public IFileMetaDataProvider getMetaDataProvider() {
 		return null;
 	}
 }

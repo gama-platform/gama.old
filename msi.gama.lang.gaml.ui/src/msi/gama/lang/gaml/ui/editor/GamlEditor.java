@@ -13,16 +13,15 @@ package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.templates.*;
 import msi.gama.lang.gaml.validation.*;
@@ -31,17 +30,16 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.IType;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.text.templates.*;
 import org.eclipse.jface.text.templates.persistence.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -51,6 +49,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
@@ -58,8 +57,6 @@ import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-import org.osgi.service.prefs.*;
-import org.osgi.service.prefs.Preferences;
 import ummisco.gaml.editbox.*;
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.*;
@@ -76,51 +73,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	public GamlEditor() {}
 
-	static final GamaPreferences.Entry<Boolean> EDITOR_CLEAN_UP = GamaPreferences
-		.create("editor.cleanup.save", "Apply formatting to models on save", false, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Options");
-
-	static final GamaPreferences.Entry<Boolean> EDITBOX_ENABLED = GamaPreferences
-		.create("editor.editbox.enabled", "Turn on colorization of code sections by default", false, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Presentation");
-
-	static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_TOOLBAR = GamaPreferences
-		.create("editor.show.toolbar", "Show edition toolbar by default", true, IType.BOOL).in(GamaPreferences.EDITOR)
-		.group("Toolbars");
-
-	static final GamaPreferences.Entry<Integer> EDITOR_BASE_FONT = GamaPreferences
-		.create("editor.font.size", "Base font size for editors", 11, IType.INT).in(GamaPreferences.EDITOR)
-		.group("Presentation").between(6, 120).addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Integer newValue) {
-				IPreferencesService preferencesService = Platform.getPreferencesService();
-				String value =
-					preferencesService.getString("org.eclipse.ui.workbench", "org.eclipse.jface.textfont", null, null);
-				FontData fontdata = PreferenceConverter.basicGetFontData(value)[0];
-				fontdata.setHeight(newValue);
-				Preferences preferences =
-					preferencesService.getRootNode().node("/instance/" + "org.eclipse.ui.workbench");
-				preferences.put("org.eclipse.jface.textfont", fontdata.toString());
-				try {
-					preferences.flush();
-				} catch (BackingStoreException e) {}
-			}
-		});
-
 	protected static Map<IPartService, IPartListener2> partListeners;
 
 	IBoxDecorator decorator;
 	GamlEditorState state = new GamlEditorState(null, Collections.EMPTY_LIST);
 	GamaToolbar2 toolbar;
 	EditToolbar editToolbar;
-	boolean decorationEnabled = GamlEditor.EDITBOX_ENABLED.getValue();
-	boolean editToolbarEnabled = GamlEditor.EDITOR_SHOW_TOOLBAR.getValue();
+	boolean decorationEnabled = XtextGui.EDITBOX_ENABLED.getValue();
+	boolean editToolbarEnabled = XtextGui.EDITOR_SHOW_TOOLBAR.getValue();
 	OtherExperimentsButton other;
 
 	@Inject
@@ -407,7 +367,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	private void beforeSave() {
-		if ( !EDITOR_CLEAN_UP.getValue() ) { return; }
+		if ( !XtextGui.EDITOR_CLEAN_UP.getValue() ) { return; }
 		SourceViewer sv = (SourceViewer) getInternalSourceViewer();
 		Point p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
@@ -587,14 +547,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		return editToolbar;
 	}
 
-	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		// nothing by default
-	}
-
 	public void openOutlinePopup() {
 
 		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
@@ -622,5 +574,28 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	 */
 	@Override
 	public void createToolItem(final int code, final GamaToolbar2 tb) {}
+
+	@Override
+	protected void handlePreferenceStoreChanged(final PropertyChangeEvent event) {
+		LineNumberColumn c;
+		super.handlePreferenceStoreChanged(event);
+		if ( event.getProperty().equals(PREFERENCE_COLOR_BACKGROUND) ) {
+			// this.fSourceViewerDecorationSupport.updateOverviewDecorations();
+
+			this.getVerticalRuler().getControl()
+				.setBackground(GamaColors.get(XtextGui.EDITOR_BACKGROUND_COLOR.getValue()).color());
+
+			Iterator e = ((CompositeRuler) getVerticalRuler()).getDecoratorIterator();
+			while (e.hasNext()) {
+				IVerticalRulerColumn column = (IVerticalRulerColumn) e.next();
+				column.getControl().setBackground(GamaColors.get(XtextGui.EDITOR_BACKGROUND_COLOR.getValue()).color());
+				column.redraw();
+			}
+			// this.getVerticalRuler().getControl().redraw();
+			// ((SourceViewer) this.getInternalSourceViewer()).getControl().setBackground(
+			// GamaColors.get(EDITOR_BACKGROUND_COLOR.getValue()).color());
+
+		}
+	}
 
 }

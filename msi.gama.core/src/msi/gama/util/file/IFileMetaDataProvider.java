@@ -2,9 +2,8 @@
  * Created by drogoul, 11 févr. 2015
  * 
  */
-package msi.gama.gui.navigator;
+package msi.gama.util.file;
 
-import msi.gama.util.file.IGamaFileMetaData;
 
 /**
  * Class IFileMetaDataProvider.

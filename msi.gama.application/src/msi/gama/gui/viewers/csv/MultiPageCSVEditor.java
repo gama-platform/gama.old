@@ -15,7 +15,7 @@
  */
 package msi.gama.gui.viewers.csv;
 
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.viewers.csv.model.*;
 import msi.gama.gui.viewers.csv.text.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
@@ -112,124 +112,6 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	public Control getSizableFontControl() {
 		if ( tableViewer == null ) { return null; }
 		return tableViewer.getTable();
-	}
-
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case DUPLICATE_ROW:
-				tb.button("action.duplicate.row2", "Duplicate", "Duplicate Row", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-						if ( row != null ) {
-							model.duplicateRow(row);
-							tableModified();
-						}
-					}
-				});
-				break;
-			case ADD_ROW:
-				tb.button("action.add.row2", "Add row",
-					"Insert a new row before the currently selected one or at the end of the file if none is selected",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-							if ( row != null ) {
-								model.addRowAfterElement(row);
-							} else {
-								model.addRow();
-							}
-							tableModified();
-						}
-					});
-				break;
-			case REMOVE_ROW:
-				tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-
-						CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
-						while (row != null) {
-							row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-							if ( row != null ) {
-								model.removeRow(row);
-								tableModified();
-							}
-						}
-					}
-				});
-				break;
-			case ADD_COLUMN:
-				if ( model.isFirstLineHeader() ) {
-					tb.button("action.add.column2", "Add column", "Add new column", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent arg0) {
-							// call insert/add column page
-							InsertColumnPage acPage =
-								new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
-							if ( acPage.open() == Window.OK ) {
-								String colToInsert = acPage.getColumnNewName();
-								model.addColumn(colToInsert);
-								tableViewer.setInput(model);
-								final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-								column.setText(colToInsert);
-								column.setWidth(100);
-								column.setResizable(true);
-								column.setMoveable(true);
-								addMenuItemToColumn(column, model.getColumnCount() - 1);
-								defineCellEditing();
-								tableModified();
-							}
-						}
-					});
-				}
-				break;
-			case REMOVE_COLUMN:
-				if ( model.isFirstLineHeader() ) {
-					tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
-						new SelectionAdapter() {
-
-							@Override
-							public void widgetSelected(final SelectionEvent e) {
-
-								// call delete column page
-								DeleteColumnPage dcPage =
-									new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
-								if ( dcPage.open() == Window.OK ) {
-									String[] colToDelete = dcPage.getColumnSelected();
-									for ( String column : colToDelete ) {
-										int colIndex = findColumnForName(column);
-										tableViewer.getTable().getColumn(colIndex).dispose();
-										// tableHeaderMenu.getItem(colIndex).dispose();
-										model.removeColumn(column);
-									}
-									tableModified();
-								}
-
-							}
-						});
-				}
-				break;
-			case SHOW_COLUMN:
-				break;
-			case SAVE_AS:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
-					}
-				});
-				break;
-
-		}
 	}
 
 	/**

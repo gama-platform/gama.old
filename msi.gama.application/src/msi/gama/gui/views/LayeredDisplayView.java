@@ -216,32 +216,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case SNAP:
-				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							getDisplaySurface().snapshot();
-						}
-
-					});
-				break;
-
-			case FOCUS:
-				new DisplayedAgentsMenu().createItem(tb, this);
-				break;
-
-			case PRESENTATION:
-				new PresentationMenu().createItem(tb, this);
-				break;
-
-		}
-	}
-
-	@Override
 	public void createToolItem(final int code, final GamaToolbar2 tb) {
 		switch (code) {
 			case SNAP:

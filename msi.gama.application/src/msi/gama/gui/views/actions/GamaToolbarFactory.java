@@ -13,7 +13,8 @@ package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.gui.views.IToolbarDecoratedView;
+import msi.gama.gui.views.*;
+import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.swt.SWT;
@@ -44,7 +45,6 @@ public class GamaToolbarFactory {
 	public static ITooltipDisplayer findTooltipDisplayer(final Control c) {
 		if ( c instanceof Shell ) { return null; }
 		if ( c instanceof GamaComposite ) { return ((GamaComposite) c).displayer; }
-		String parents = "";
 		Control t = c;
 		return findTooltipDisplayer(c.getParent());
 	}
@@ -65,18 +65,8 @@ public class GamaToolbarFactory {
 
 	}
 
-	public static int TOOLBAR_HEIGHT = GamaIcons.CORE_ICONS_HEIGHT.getValue();
+	public static int TOOLBAR_HEIGHT = SwtGui.CORE_ICONS_HEIGHT.getValue();
 	public static int TOOLBAR_SEP = 4;
-
-	private static void createContributionItem(final IToolbarDecoratedView view, final int code, final GamaToolbar2 tb) {
-		switch (code) {
-			case IToolbarDecoratedView.SEP:
-				tb.sep(TOOLBAR_SEP, SWT.RIGHT);
-				break;
-			default:
-				view.createToolItem(code, tb);
-		}
-	}
 
 	private static Composite
 		createIntermediateCompositeFor(final IToolbarDecoratedView view, final Composite composite) {
@@ -160,26 +150,26 @@ public class GamaToolbarFactory {
 		childComposite.setLayoutData(getLayoutDataForChild());
 		childComposite.setLayout(getLayoutForChild());
 
-		final GamaToolbar2 leftToolbar =
+		final GamaToolbar2 tb =
 			new GamaToolbar2(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS, TOOLBAR_HEIGHT);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
-		leftToolbar.setLayoutData(data);
-		view.setToolbar(leftToolbar);
+		tb.setLayoutData(data);
+		view.setToolbar(tb);
 		composite.addDisposeListener(new DisposeListener() {
 
 			@Override
 			public void widgetDisposed(final DisposeEvent e) {
-				disposeToolbar(view, leftToolbar);
+				disposeToolbar(view, tb);
 			}
 		});
-		buildToolbar(view, leftToolbar, view.getToolbarActionsId());
+		buildToolbar(view, tb, view.getToolbarActionsId());
 		return childComposite;
 	}
 
-	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 leftToolbar) {
-		if ( leftToolbar != null && !leftToolbar.isDisposed() ) {
-			leftToolbar.dispose();
+	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
+		if ( tb != null && !tb.isDisposed() ) {
+			tb.dispose();
 		}
 		view.setToolbar(null);
 	}
@@ -204,8 +194,16 @@ public class GamaToolbarFactory {
 			ZoomController zc = new ZoomController((IToolbarDecoratedView.Zoomable) view);
 			zc.install(tb);
 		}
+		if ( view instanceof IToolbarDecoratedView.Colorizable ) {
+			BackgroundChooser b = new BackgroundChooser((Colorizable) view);
+			b.install(tb);
+		}
 		for ( Integer i : codes ) {
-			createContributionItem(view, i, tb);
+			if ( IToolbarDecoratedView.SEP == i ) {
+				tb.sep(TOOLBAR_SEP, SWT.RIGHT);
+			} else {
+				view.createToolItem(i, tb);
+			}
 		}
 	}
 

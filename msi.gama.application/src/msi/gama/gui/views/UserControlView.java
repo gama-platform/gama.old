@@ -139,42 +139,6 @@ public class UserControlView extends GamaViewPart {
 		};
 	}
 
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case CONTINUE:
-				continueItem =
-					tb.button(IGamaIcons.PANEL_CONTINUE.getCode(), "Continue", "Continue", new SelectionListener() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							GAMA.controller.getScheduler().setUserHold(false);
-							deactivate(parent);
-							GuiUtils.hideView(ID);
-						}
-
-						@Override
-						public void widgetDefaultSelected(final SelectionEvent e) {
-							widgetSelected(e);
-						}
-
-					});
-				continueItem.setEnabled(false);
-				break;
-			case INSPECT:
-				inspectItem =
-					tb.button(IGamaIcons.PANEL_INSPECT.getCode(), "Inspect", "Inspect", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							GuiUtils.setSelectedAgent(scope.getAgentScope());
-						}
-
-					});
-				inspectItem.setEnabled(false);
-		}
-	}
-
 	/**
 	 * Method setToolbar()
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)

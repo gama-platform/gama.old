@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.navigator;
 
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.IGamaFileMetaData;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -23,12 +24,12 @@ public class NavigatorBaseLighweightDecorator extends SVNLightweightDecorator {
 
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
-		if ( GamaNavigator.NAVIGATOR_METADATA.getValue() ) {
+		if ( SwtGui.NAVIGATOR_METADATA.getValue() ) {
 			IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element);
 			if ( data == null ) { return; }
 			String suffix = data.getSuffix();
 			if ( suffix != null ) {
-				decoration.addSuffix(suffix);
+				decoration.addSuffix(" (" + suffix + ")");
 			}
 			Object thumbnail = data.getThumbnail();
 			if ( thumbnail != null && thumbnail instanceof ImageDescriptor ) {

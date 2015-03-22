@@ -15,7 +15,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.*;
  * @since 19 janv. 2012
  * 
  */
-public class DisplayedAgentsMenu extends GamaToolItem {
+public class DisplayedAgentsMenu {
 
 	private Menu menu;
 
@@ -47,37 +47,6 @@ public class DisplayedAgentsMenu extends GamaToolItem {
 		layer_images.put(SpeciesLayer.class, IGamaIcons.LAYER_SPECIES.image());
 		layer_images.put(ChartLayer.class, IGamaIcons.LAYER_CHART.image());
 		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
-	}
-
-	@Override
-	public void dispose() {
-		if ( menu != null && !menu.isDisposed() ) {
-			menu.dispose();
-		}
-		super.dispose();
-	}
-
-	@Override
-	public ToolItem createItem(final GamaToolbarSimple toolbar, final IToolbarDecoratedView view) {
-		return toolbar.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
-			"Browse through all displayed agents", new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent trigger) {
-					boolean asMenu = trigger.detail == SWT.ARROW;
-					final ToolItem target = (ToolItem) trigger.widget;
-					final ToolBar toolBar = target.getParent();
-					if ( menu != null ) {
-						menu.dispose();
-					}
-					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
-					fill(view, menu, -1, false, true, null, null);
-					Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
-					menu.setLocation(point.x, point.y);
-					menu.setVisible(true);
-
-				}
-			});
 	}
 
 	public Menu getMenu(final IToolbarDecoratedView view, final Control parent, final boolean withWorld,

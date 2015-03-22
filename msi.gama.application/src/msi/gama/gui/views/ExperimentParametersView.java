@@ -112,27 +112,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case REVERT:
-				tb.button(IGamaIcons.ACTION_REVERT.getCode(), "Revert parameter values",
-					"Revert parameters to their initial values", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							EditorsList eds = (EditorsList) GAMA.getExperiment().getParametersEditors();
-							if ( eds != null ) {
-								eds.revertToDefaultValue();
-							}
-						}
-
-					});
-				break;
-
-		}
-	}
-
-	@Override
 	public void createToolItem(final int code, final GamaToolbar2 tb) {
 		switch (code) {
 			case REVERT:

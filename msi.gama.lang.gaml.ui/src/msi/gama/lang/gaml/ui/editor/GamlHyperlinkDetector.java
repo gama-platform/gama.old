@@ -97,21 +97,28 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		});
 	}
 
+	public URI getURI(final StringLiteral resolved) {
+		String target = resolved.getOp();
+		if ( target == null ) { return null; }
+		URI iu = URI.createURI(target, false).resolve(resolved.eResource().getURI());
+		if ( isFileExisting(iu) ) { return iu; }
+		return null;
+	}
+
 	private IHyperlink[] importHyperlinks(final IXtextDocument document, final IRegion region) {
 		return document.readOnly(new IUnitOfWork<IHyperlink[], XtextResource>() {
 
 			@Override
 			public IHyperlink[] exec(final XtextResource resource) {
 				EObject resolved = eObjectAtOffsetHelper.resolveElementAt(resource, region.getOffset());
+
 				// System.out.println("Hyperlink target:" + resolved == null ? null : resolved.getClass().getSimpleName());
 				if ( resolved instanceof StringLiteral ) {
-					String target = ((StringLiteral) resolved).getOp();
-					if ( target == null ) { return NO_HYPERLINKS; }
-					URI iu = URI.createURI(target, false).resolve(resource.getURI());
-					if ( isFileExisting(iu) ) {
+					URI iu = getURI((StringLiteral) resolved);
+					if ( iu != null ) {
 						IRegion hRegion;
 						try {
-							hRegion = importUriRegion(document, region.getOffset(), target);
+							hRegion = importUriRegion(document, region.getOffset(), ((StringLiteral) resolved).getOp());
 						} catch (BadLocationException e) {
 							return NO_HYPERLINKS;
 						}
@@ -140,12 +147,17 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	}
 
 	public boolean isFileExisting(final URI uri) {
+		IFile file = getFile(uri);
+		return file.exists();
+	}
+
+	public IFile getFile(final URI uri) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		String uriAsText = uri.toPlatformString(true);
 		IPath path = uriAsText != null ? new Path(uriAsText) : null;
-		if ( path == null ) { return false; }
+		if ( path == null ) { return null; }
 		IFile file = root.getFile(path);
-		return file.exists();
+		return file;
 	}
 
 	private IRegion importUriRegion(final IXtextDocument document, final int offset, final String importUri)

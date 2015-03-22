@@ -224,11 +224,6 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	}
 
 	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		// Do nothing by default. Subclasses may override to create specific buttons
-	}
-
-	@Override
 	public void close() {
 
 		GuiUtils.run(new Runnable() {

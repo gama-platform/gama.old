@@ -83,6 +83,11 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		public String toPropertyString() {
 			return super.toPropertyString() + DELIMITER + suffix;
 		}
+
+		@Override
+		public String getDocumentation() {
+			return suffix;
+		}
 	}
 
 	public static final Map<String, Class> CLASSES = new HashMap() {

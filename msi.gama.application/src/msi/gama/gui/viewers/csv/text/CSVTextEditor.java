@@ -15,7 +15,7 @@
  */
 package msi.gama.gui.viewers.csv.text;
 
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.swt.SWT;
@@ -57,22 +57,6 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	public Control getSizableFontControl() {
 		if ( getSourceViewer() == null ) { return null; }
 		return getSourceViewer().getTextWidget();
-	}
-
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case -32:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
-					}
-				});
-				break;
-
-		}
 	}
 
 	/**

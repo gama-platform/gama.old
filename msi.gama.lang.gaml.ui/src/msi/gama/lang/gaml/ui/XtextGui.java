@@ -12,18 +12,31 @@
 package msi.gama.lang.gaml.ui;
 
 import java.util.*;
+import msi.gama.common.*;
+import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.ui.editor.*;
+import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import com.google.inject.Injector;
@@ -36,6 +49,114 @@ import com.google.inject.Injector;
  * 
  */
 public class XtextGui extends msi.gama.gui.swt.SwtGui {
+
+	public static GamaPreferences.Entry<String> OPERATORS_MENU_SORT = GamaPreferences
+		.create("menu.operators.sort", "Sort operators menu by", "Category", IType.STRING).among("Name", "Category")
+		.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
+
+			@Override
+			public boolean beforeValueChange(final String newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final String newValue) {
+				EditToolbarOperatorsMenu.byName = newValue.equals("Name");
+				EditToolbar.visitToolbars(new IToolbarVisitor() {
+
+					@Override
+					public void visit(final EditToolbar toolbar) {
+						toolbar.resetOperatorsMenu();
+					}
+				});
+			}
+		});
+	public static final Entry<Boolean> CORE_CLOSE_CURLY = GamaPreferences
+		.create("core.close.curly", "Automatically close curly brackets ( { )", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options");
+	public static final Entry<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
+		.create("core.close.square", "Automatically close square brackets ( [ )", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options");
+	public static final Entry<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
+		.create("core.close.parentheses", "Automatically close parentheses", true, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options");
+	public static final GamaPreferences.Entry<Boolean> EDITOR_CLEAN_UP = GamaPreferences
+		.create("editor.cleanup.save", "Apply formatting to models on save", false, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Options");
+	public static final GamaPreferences.Entry<Boolean> EDITBOX_ENABLED = GamaPreferences
+		.create("editor.editbox.enabled", "Turn on colorization of code sections by default", false, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Presentation");
+	public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_TOOLBAR = GamaPreferences
+		.create("editor.show.toolbar", "Show edition toolbar by default", true, IType.BOOL).in(GamaPreferences.EDITOR)
+		.group("Toolbars");
+	static final GamaPreferences.Entry<FontData> EDITOR_BASE_FONT = GamaPreferences
+		.create("editor.font", "Font of editors", XtextGui.getDefaultFontData(), IType.FONT).in(GamaPreferences.EDITOR)
+		.group("Presentation").addChangeListener(new IPreferenceChangeListener<FontData>() {
+
+			@Override
+			public boolean beforeValueChange(final FontData newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final FontData newValue) {
+				try {
+					PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
+						JFaceResources.TEXT_FONT, newValue);
+				} catch (Exception e) {}
+				// IPreferencesService preferencesService = Platform.getPreferencesService();
+				// Preferences preferences =
+				// preferencesService.getRootNode().node("/instance/" + "org.eclipse.ui.workbench");
+				// preferences.put("org.eclipse.jface.textfont", newValue.toString());
+				// try {
+				// preferences.flush();
+				// } catch (BackingStoreException e) {}
+			}
+		});
+	public static final GamaPreferences.Entry<java.awt.Color> EDITOR_BACKGROUND_COLOR = GamaPreferences
+		.create("editor.background.color", "Background color of editors", XtextGui.getDefaultBackground(), IType.COLOR)
+		.in(GamaPreferences.EDITOR).group("Presentation")
+		.addChangeListener(new IPreferenceChangeListener<java.awt.Color>() {
+
+			@Override
+			public boolean beforeValueChange(final java.awt.Color newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final java.awt.Color c) {
+				RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
+				PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
+					AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
+				// IPreferencesService preferencesService = Platform.getPreferencesService();
+				// Preferences preferences =
+				// preferencesService.getRootNode().node("/instance/" + "org.eclipse.ui.workbench");
+				// preferences.put("org.eclipse.jface.textfont", newValue.toString());
+				// try {
+				// preferences.flush();
+				// } catch (BackingStoreException e) {}
+			}
+		});
+	public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER = GamaPreferences
+		.create("editor.show.other", "Show other models' experiments in toolbar", false, IType.BOOL)
+		.in(GamaPreferences.EDITOR).group("Toolbars").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
+				for ( IEditorReference ed : eds ) {
+					IEditorPart e = ed.getEditor(false);
+					if ( e instanceof GamlEditor ) {
+						((GamlEditor) e).setShowOtherEnabled(newValue);
+					}
+				}
+			}
+		});
 
 	@Override
 	public void editModel(final Object eObject) {
@@ -79,5 +200,19 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 	@Override
 	public String getName() {
 		return "SWT+XText-based UI";
+	}
+
+	private static java.awt.Color getDefaultBackground() {
+		EditorsPlugin.getDefault().getPreferenceStore()
+			.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, false);
+		RGB rgb =
+			PreferenceConverter.getColor(EditorsPlugin.getDefault().getPreferenceStore(),
+				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		return new java.awt.Color(rgb.red, rgb.green, rgb.blue);
+	}
+
+	public static FontData getDefaultFontData() {
+		return PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(),
+			JFaceResources.TEXT_FONT);
 	}
 }

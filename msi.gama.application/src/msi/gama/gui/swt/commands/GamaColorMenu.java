@@ -6,11 +6,8 @@ package msi.gama.gui.swt.commands;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.*;
 import msi.gama.util.GamaColor;
-import msi.gaml.types.IType;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -26,66 +23,9 @@ import org.eclipse.swt.widgets.*;
  */
 public class GamaColorMenu extends GamaMenu {
 
-	static final String[] SORT_NAMES = new String[] { "RGB value", "Name", "Brightness", "Luminescence" };
+	public static final String[] SORT_NAMES = new String[] { "RGB value", "Name", "Brightness", "Luminescence" };
 
-	public static GamaPreferences.Entry<String> COLOR_MENU_SORT = GamaPreferences
-		.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING).among(SORT_NAMES)
-		.activates("menu.colors.reverse", "menu.colors.group").in(GamaPreferences.EDITOR).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<String>() {
-
-			@Override
-			public boolean beforeValueChange(final String newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final String pref) {
-				if ( pref.equals(SORT_NAMES[0]) ) {
-					colorComp = byRGB;
-				} else if ( pref.equals(SORT_NAMES[1]) ) {
-					colorComp = byName;
-				} else if ( pref.equals(SORT_NAMES[2]) ) {
-					colorComp = byBrightness;
-				} else {
-					colorComp = byLuminescence;
-				}
-				instance.reset();
-			}
-		});
-
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE = GamaPreferences
-		.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.EDITOR).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				reverse = pref ? -1 : 1;
-				instance.reset();
-			}
-		});
-
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP = GamaPreferences
-		.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.EDITOR).group("Menus")
-		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean pref) {
-				breakdown = pref;
-				instance.reset();
-			}
-		});
-
-	private static GamaColorMenu instance = new GamaColorMenu();
+	public static GamaColorMenu instance = new GamaColorMenu();
 
 	public static GamaColorMenu getInstance() {
 		return instance;
@@ -124,9 +64,9 @@ public class GamaColorMenu extends GamaMenu {
 	private SelectionListener currentListener;
 	private IColorRunnable currentRunnable;
 
-	static Integer reverse = null;
+	public static Integer reverse = null;
 
-	static Comparator byRGB = new Comparator<String>() {
+	public static Comparator byRGB = new Comparator<String>() {
 
 		@Override
 		public int compare(final String arg0, final String arg1) {
@@ -134,7 +74,7 @@ public class GamaColorMenu extends GamaMenu {
 		}
 	};
 
-	static Comparator byBrightness = new Comparator<String>() {
+	public static Comparator byBrightness = new Comparator<String>() {
 
 		@Override
 		public int compare(final String arg0, final String arg1) {
@@ -142,7 +82,7 @@ public class GamaColorMenu extends GamaMenu {
 		}
 	};
 
-	static Comparator byName = new Comparator<String>() {
+	public static Comparator byName = new Comparator<String>() {
 
 		@Override
 		public int compare(final String arg0, final String arg1) {
@@ -150,16 +90,16 @@ public class GamaColorMenu extends GamaMenu {
 		}
 	};
 
-	static Comparator byLuminescence = new Comparator<String>() {
+	public static Comparator byLuminescence = new Comparator<String>() {
 
 		@Override
 		public int compare(final String arg0, final String arg1) {
 			return reverse * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
 		}
 	};
-	static Comparator colorComp = null;
+	public static Comparator colorComp = null;
 
-	static SelectionListener chooseSort = new SelectionAdapter() {
+	public static SelectionListener chooseSort = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -170,7 +110,7 @@ public class GamaColorMenu extends GamaMenu {
 
 	};
 
-	static Boolean breakdown = null;
+	public static Boolean breakdown = null;
 
 	static SelectionListener chooseBreak = new SelectionAdapter() {
 
@@ -208,9 +148,10 @@ public class GamaColorMenu extends GamaMenu {
 		}
 	}
 
+	@Override
 	public void fillMenu() {
 		if ( colorComp == null ) {
-			String pref = COLOR_MENU_SORT.getValue();
+			String pref = SwtGui.COLOR_MENU_SORT.getValue();
 			if ( pref.equals(SORT_NAMES[0]) ) {
 				colorComp = byRGB;
 			} else if ( pref.equals(SORT_NAMES[1]) ) {
@@ -222,10 +163,10 @@ public class GamaColorMenu extends GamaMenu {
 			}
 		}
 		if ( reverse == null ) {
-			reverse = COLOR_MENU_REVERSE.getValue() ? -1 : 1;
+			reverse = SwtGui.COLOR_MENU_REVERSE.getValue() ? -1 : 1;
 		}
 		if ( breakdown == null ) {
-			breakdown = COLOR_MENU_GROUP.getValue();
+			breakdown = SwtGui.COLOR_MENU_GROUP.getValue();
 		}
 		action("Custom...", new SelectionAdapter() {
 

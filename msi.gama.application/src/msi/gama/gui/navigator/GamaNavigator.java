@@ -12,26 +12,21 @@
 package msi.gama.gui.navigator;
 
 import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
-import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.navigator.*;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
@@ -41,28 +36,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	final public static int NEW = 52;
 	final public static int IMPORT = 54;
 	final public static int PROJECT = 53;
-
-	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
-		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
-		.in(GamaPreferences.GENERAL).group("User interface")
-		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-				try {
-					mgr.setEnabled(NavigatorBaseLighweightDecorator.ID, newValue);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-
-			}
-		});
 
 	String OPEN_BROWSER_COMMAND_ID = "msi.gama.application.commands.OpenBrowser";
 
@@ -301,92 +274,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] { IMPORT, NEW, SEP, COLLAPSE, LINK };
-	}
-
-	/**
-	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case LINK:
-				linkItem =
-					tb.check("navigator/navigator.link2", "", "Stay in sync with the editor", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							link.run();
-						}
-
-					});
-				break;
-			case COLLAPSE:
-				collapseItem =
-					tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							collapse.run();
-						}
-
-					});
-				break;
-			case NEW:
-				newFileItem =
-					tb.menu("navigator/navigator.new2", "", "Create a project or a model", new SelectionAdapter() {
-
-						MenuManager mm;
-
-						private void initMenu() {
-
-							mm = new MenuManager("msi.gama.application.submenu.new");
-							CommandContributionItem cci;
-							// mm.setRemoveAllWhenShown(true);
-							// mm.addMenuListener(new IMenuListener() {
-							//
-							// @Override
-							// public void menuAboutToShow(final IMenuManager manager) {
-							// ISelection selection = getCommonViewer().getSelection();
-							// getNavigatorActionService().setContext(new ActionContext(selection));
-							// getNavigatorActionService().fillContextMenu(mm);
-							// }
-							// });
-							//
-							// getNavigatorActionService().prepareMenuForPlatformContributions(mm, getCommonViewer(),
-							// false);
-
-						}
-
-						@Override
-						public void widgetSelected(final SelectionEvent trigger) {
-							if ( mm == null ) {
-								initMenu();
-							}
-							boolean asMenu = trigger.detail == SWT.ARROW;
-							if ( !asMenu ) { return; }
-							final ToolItem target = (ToolItem) trigger.widget;
-							final ToolBar toolBar = target.getParent();
-
-							Menu menu = mm.createMenuBar(toolBar.getShell());
-							Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
-							menu.setLocation(point.x, point.y);
-							menu.setVisible(true);
-
-						}
-
-					});
-				break;
-			case IMPORT:
-				importItem =
-					tb.menu("navigator/navigator.import2", "", "Import a project or a model into GAMA",
-						new SelectionAdapter() {
-
-							@Override
-							public void widgetSelected(final SelectionEvent e) {}
-
-						});
-		}
 	}
 
 	/**

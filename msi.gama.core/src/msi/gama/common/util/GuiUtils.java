@@ -20,6 +20,7 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.CoreException;
@@ -446,6 +447,11 @@ public class GuiUtils {
 	public static void updateSpeedDisplay(final Double d, final boolean notify) {
 		if ( gui == null ) { return; }
 		gui.updateSpeedDisplay(d, notify);
+	}
+
+	public static IFileMetaDataProvider getMetaDataProvider() {
+		if ( gui == null ) { return null; }
+		return gui.getMetaDataProvider();
 	}
 
 }

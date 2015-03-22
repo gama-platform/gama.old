@@ -9,7 +9,7 @@ import java.net.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.runtime.*;
@@ -142,64 +142,6 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	@Override
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] { BACK, HOME, FORWARD, SEP, REFRESH, STOP };
-	}
-
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-		switch (code) {
-			case BACK:
-				back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.back();
-						checkButtons();
-					}
-
-				});
-				break;
-			case HOME:
-				home = tb.button("browser/home", "Home", "Go back to the welcome page", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						openWelcomePage(false);
-						checkButtons();
-					}
-
-				});
-				break;
-			case FORWARD:
-				forward = tb.button("browser/forward", "Forward", "Go to next page in history", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.forward();
-						checkButtons();
-					}
-
-				});
-				break;
-			case REFRESH:
-				tb.button("browser/refresh", "Refresh", "Refresh current page", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.refresh();
-					}
-
-				});
-				break;
-			case STOP:
-				tb.button("browser/stop", "Stop", "Stop loading page", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						browser.stop();
-					}
-
-				});
-		}
 	}
 
 	/**

@@ -19,9 +19,12 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.*;
 import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
+import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
@@ -34,6 +37,7 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
@@ -117,16 +121,36 @@ public class SwtGui implements IGui {
 	private static IPartListener2 partListener;
 
 	public static final Entry<Color> SHAPEFILE_VIEWER_FILL = GamaPreferences
-		.create("shapefile.viewer.background", "Default fill color", Color.LIGHT_GRAY, IType.COLOR)
-		.in(GamaPreferences.LIBRARIES).group("Shapefile viewer (settings effective for new viewers)");
+		.create("shapefile.viewer.background", "Default shapefile viewer fill color", Color.LIGHT_GRAY, IType.COLOR)
+		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
 	public static final Entry<Color> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
-		.create("shapefile.viewer.line.color", "Default line color", Color.black, IType.COLOR)
-		.in(GamaPreferences.LIBRARIES).group("Shapefile viewer (settings effective for new viewers)");
+		.create("shapefile.viewer.line.color", "Default shapefile viewer line color", Color.black, IType.COLOR)
+		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
 	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
-		.create("image.viewer.background", "Default background color", Color.white, IType.COLOR)
-		.in(GamaPreferences.LIBRARIES).group("Image viewer (settings effective for new viewers)");
+		.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
+		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+
+	static FontData baseData = getDisplay().getSystemFont().getFontData()[0];
+	static String baseFont = baseData.getName();
+	static int baseSize = 11;
+
+	public static final Entry<FontData> BASE_BUTTON_FONT = GamaPreferences
+		.create("base_button_font", "Font of buttons (applies to new buttons)",
+			new FontData(baseFont, baseSize, SWT.BOLD), IType.FONT).in(GamaPreferences.UI).group("Fonts")
+		.addChangeListener(new GamaPreferences.IPreferenceChangeListener<FontData>() {
+
+			@Override
+			public boolean beforeValueChange(final FontData newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final FontData newValue) {
+				setLabelFont(new Font(getDisplay(), newValue));
+			}
+		});
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
@@ -641,28 +665,37 @@ public class SwtGui implements IGui {
 	}
 
 	static void initFonts() {
-		FontData baseData = getDisplay().getSystemFont().getFontData()[0];
-		String baseFont = baseData.getName();
-		int baseSize = 11;
-		FontData fd = new FontData(baseFont, baseSize, SWT.BOLD);
-		labelFont = new Font(Display.getDefault(), fd);
+
+		FontData fd = BASE_BUTTON_FONT.getValue();
+		labelFont = new Font(getDisplay(), fd);
 		expandFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize, SWT.ITALIC);
+		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		unitFont = new Font(Display.getDefault(), fd);
 		smallNavigLinkFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize + 1, SWT.BOLD);
+		fd = new FontData(fd.getName(), fd.getHeight() + 1, SWT.BOLD);
 		// bigFont = new Font(Display.getDefault(), fd);
 		navigHeaderFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
+		fd = new FontData(fd.getName(), fd.getHeight() - 1, SWT.NORMAL);
 		smallFont = new Font(Display.getDefault(), fd);
 		smallNavigFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
+		fd = new FontData(fd.getName(), fd.getHeight(), SWT.NORMAL);
 		parameterEditorsFont = new Font(Display.getDefault(), fd);
 		navigFileFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize, SWT.NORMAL);
+		fd = new FontData(fd.getName(), fd.getHeight(), SWT.NORMAL);
 		navigRegularFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(baseFont, baseSize, SWT.ITALIC);
+		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		navigResourceFont = new Font(Display.getDefault(), fd);
+	}
+
+	private static void setLabelFont(final Font f) {
+		if ( labelFont == null ) {
+			labelFont = f;
+			return;
+		} else {
+			// ???
+			// labelFont.dispose();
+			labelFont = f;
+		}
 	}
 
 	@Override
@@ -820,6 +853,86 @@ public class SwtGui implements IGui {
 	}
 
 	String currentPerspectiveId = null;
+	public static GamaPreferences.Entry<String> COLOR_MENU_SORT = GamaPreferences
+		.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING).among(GamaColorMenu.SORT_NAMES)
+		.activates("menu.colors.reverse", "menu.colors.group").in(GamaPreferences.UI).group("Menus")
+		.addChangeListener(new IPreferenceChangeListener<String>() {
+
+			@Override
+			public boolean beforeValueChange(final String newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final String pref) {
+				if ( pref.equals(GamaColorMenu.SORT_NAMES[0]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[1]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byName;
+				} else if ( pref.equals(GamaColorMenu.SORT_NAMES[2]) ) {
+					GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+				} else {
+					GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+				}
+				GamaColorMenu.instance.reset();
+			}
+		});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE = GamaPreferences
+		.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
+		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean pref) {
+				GamaColorMenu.reverse = pref ? -1 : 1;
+				GamaColorMenu.instance.reset();
+			}
+		});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP = GamaPreferences
+		.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
+		.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean pref) {
+				GamaColorMenu.breakdown = pref;
+				GamaColorMenu.instance.reset();
+			}
+		});
+	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
+		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
+		.among(16, 24).in(GamaPreferences.UI).group("Icons");
+	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
+		.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
+		.group("Icons");
+	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
+		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
+		.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+				try {
+					mgr.setEnabled(NavigatorBaseLighweightDecorator.ID, newValue);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
 
 	@Override
 	public void run(final Runnable r) {
@@ -1308,6 +1421,15 @@ public class SwtGui implements IGui {
 			if ( actualType.isInstance(o) ) { return actualType.cast(o); }
 		}
 		return null;
+	}
+
+	/**
+	 * Method getMetaDataProvider()
+	 * @see msi.gama.common.interfaces.IGui#getMetaDataProvider()
+	 */
+	@Override
+	public IFileMetaDataProvider getMetaDataProvider() {
+		return FileMetaDataProvider.getInstance();
 	}
 
 }

@@ -11,18 +11,42 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.utils.EGaml;
+import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
+import com.google.inject.Inject;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
+	@Inject
+	protected GamlHyperlinkDetector detector;
+
 	@Override
 	public String getDocumentation(final EObject o) {
+		if ( o instanceof StringLiteral ) {
+			URI iu = detector.getURI((StringLiteral) o);
+			if ( iu != null ) {
+				IFile file = detector.getFile(iu);
+				IGamaFileMetaData data = GuiUtils.getMetaDataProvider().getMetaData(file);
+				if ( data != null ) {
+					String s = data.getDocumentation();
+					if ( s != null ) {
+						s = s.replace(Strings.LN, "<br/>");
+						return s;
+					}
+				}
+			}
+		}
+
 		// GuiUtils.debug("GamlDocumentationProvider.getDocumentation for " + o);
 		String comment = super.getDocumentation(o);
 		if ( comment == null ) {

@@ -4,7 +4,7 @@
  */
 package msi.gama.lang.gaml.ui.outline;
 
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.jface.action.*;
@@ -63,12 +63,6 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	public Integer[] getToolbarActionsId() {
 		return new Integer[] { -100, -101 };
 	}
-
-	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {}
 
 	/**
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#setToolbar(msi.gama.gui.swt.controls.GamaToolbar2)

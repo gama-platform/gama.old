@@ -41,4 +41,10 @@ public interface IGamaFileMetaData {
 	 */
 	public String toPropertyString();
 
+	/**
+	 * Returns a string that can be displayed in hover info
+	 * @return
+	 */
+	public String getDocumentation();
+
 }

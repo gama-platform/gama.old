@@ -6,9 +6,8 @@ package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
 import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.commands.GamaMenuItem;
-import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
+import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
@@ -26,34 +25,12 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 
-	public static GamaPreferences.Entry<String> OPERATORS_MENU_SORT = GamaPreferences
-		.create("menu.operators.sort", "Sort operators menu by", "Category", IType.STRING).among("Name", "Category")
-		.in(GamaPreferences.EDITOR).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
-
-			@Override
-			public boolean beforeValueChange(final String newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final String newValue) {
-				byName = newValue.equals("Name");
-				EditToolbar.visitToolbars(new IToolbarVisitor() {
-
-					@Override
-					public void visit(final EditToolbar toolbar) {
-						toolbar.resetOperatorsMenu();
-					}
-				});
-			}
-		});
-
-	static Boolean byName = null;
+	public static Boolean byName = null;
 
 	@Override
 	protected void fillMenu() {
 		if ( byName == null ) {
-			byName = OPERATORS_MENU_SORT.getValue().equals("Name");
+			byName = XtextGui.OPERATORS_MENU_SORT.getValue().equals("Name");
 		}
 		Menu sub = sub("Sort by...");
 		sep();

@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -62,9 +62,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		}
 
 		@Override
+		public String getDocumentation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("CSV File ").append(header ? "with header" : "no header").append(Strings.LN);
+			sb.append("Dimensions: ").append(cols + " columns x " + rows + " rows").append(Strings.LN);
+			sb.append("Delimiter: ").append(delimiter).append(Strings.LN);
+			sb.append("Contents type: ").append(type).append(Strings.LN);
+			return sb.toString();
+		}
+
+		@Override
 		public String getSuffix() {
-			return " (" + cols + "x" + rows + " | " + (header ? "with header" : "no header") + " | " + "delimiter: '" +
-				delimiter + "' | " + type + ")";
+			return "" + cols + "x" + rows + " | " + (header ? "with header" : "no header") + " | " + "delimiter: '" +
+				delimiter + "' | " + type;
 		}
 
 		/**

@@ -27,6 +27,8 @@ import com.google.inject.Singleton;
 @Singleton
 public class FileOpener {
 
+	org.eclipse.xtext.ui.editor.autoedit.DefaultAutoEditStrategyProvider p;
+
 	public IEditorPart openFileInWorkspace(final URI uri) throws PartInitException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		String uriAsText = uri.toPlatformString(true);

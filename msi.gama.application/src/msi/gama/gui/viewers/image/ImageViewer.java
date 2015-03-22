@@ -8,12 +8,9 @@ import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.commands.*;
-import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.util.GamaColor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -34,10 +31,9 @@ import org.eclipse.ui.part.*;
 /**
  * A simple image viewer editor.
  */
-public class ImageViewer extends EditorPart implements IReusableEditor, IToolbarDecoratedView.Zoomable {
+public class ImageViewer extends EditorPart implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	GamaToolbar2 toolbar;
-	GamaUIColor background = GamaColors.get(SwtGui.IMAGE_VIEWER_BACKGROUND.getValue());
 	private Image image;
 	private ImageData imageData;
 	private ScrolledComposite scroll;
@@ -193,13 +189,13 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
 		intermediate.setLayout(layout);
-		intermediate.setBackground(background.color());
+		intermediate.setBackground(getColor(0).color());
 
 		// Image canvas
 		imageCanvas = new Canvas(intermediate, SWT.NONE);
 		GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, true);
 		imageCanvas.setLayoutData(data);
-		imageCanvas.setBackground(background.color());
+		imageCanvas.setBackground(getColor(0).color());
 		// Scroll composite
 		scroll.setContent(intermediate);
 		// imageCanvas.setSize(0, 0);
@@ -211,7 +207,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 				Rectangle bounds = imageCanvas.getBounds();
 				// showImage() should be setting the imageCanvas bounds to the
 				// zoomed size
-				e.gc.setBackground(background.color());
+				e.gc.setBackground(getColor(0).color());
 				e.gc.fillRectangle(bounds);
 				// System.out.println("Painting image at size " + bounds.width + "x" + bounds.height);
 				if ( image != null ) {
@@ -619,87 +615,6 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		}
 	}
 
-	/**
-	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar)
-	 */
-	@Override
-	public void createToolItem(final int code, final GamaToolbarSimple tb) {
-
-		switch (code) {
-			case -32:
-				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSaveAs();
-					}
-				});
-				break;
-			case -33:
-				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.getCode(), "Information", "Image information",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId())
-								.run();
-						}
-					});
-				break;
-			case -34:
-				final ToolItem item = tb.button(null, "Background", "Background color", null);
-				item.setImage(GamaIcons.createTempColorIcon(background));
-				item.addSelectionListener(new SelectionAdapter() {
-
-					SelectionListener listener = new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							MenuItem i = (MenuItem) e.widget;
-							String color = i.getText().replace("#", "");
-							GamaColor c = GamaColor.colors.get(color);
-							if ( c == null ) { return; }
-							changeColor(c.red(), c.green(), c.blue());
-						}
-
-					};
-
-					void changeColor(final int r, final int g, final int b) {
-						background = GamaColors.get(r, g, b);
-						Image temp = item.getImage();
-						item.setImage(GamaIcons.createTempColorIcon(background));
-						temp.dispose();
-						if ( imageCanvas != null ) {
-							Runnable rr = new Runnable() {
-
-								@Override
-								public void run() {
-									showImage(false);
-								}
-							};
-							GuiUtils.run(rr);
-						}
-					}
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-
-						GamaColorMenu.getInstance().open(item.getParent(), e, listener, new IColorRunnable() {
-
-							@Override
-							public void run(final int r, final int g, final int b) {
-								changeColor(r, g, b);
-							}
-						});
-
-					}
-				});
-				break;
-
-		}
-	}
-
 	@Override
 	public void zoomIn() {
 		setZoomFactor(getZoomFactor() * 1.1);
@@ -813,57 +728,45 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 						}
 					}, SWT.RIGHT);
 				break;
-			case -34:
-				final ToolItem item = tb.button(null, "Background", "Background color", null, SWT.RIGHT);
-				item.setImage(GamaIcons.createTempColorIcon(background));
-				item.addSelectionListener(new SelectionAdapter() {
 
-					SelectionListener listener = new SelectionAdapter() {
+		}
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							MenuItem i = (MenuItem) e.widget;
-							String color = i.getText().replace("#", "");
-							GamaColor c = GamaColor.colors.get(color);
-							if ( c == null ) { return; }
-							changeColor(c.red(), c.green(), c.blue());
-						}
+	}
 
-					};
+	/**
+	 * Method getColorLabels()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColorLabels()
+	 */
+	@Override
+	public String[] getColorLabels() {
+		return new String[] { "Set background color..." };
+	}
 
-					void changeColor(final int r, final int g, final int b) {
-						background = GamaColors.get(r, g, b);
-						Image temp = item.getImage();
-						item.setImage(GamaIcons.createTempColorIcon(background));
-						temp.dispose();
-						if ( imageCanvas != null ) {
-							Runnable rr = new Runnable() {
+	/**
+	 * Method getColor()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColor(int)
+	 */
+	@Override
+	public GamaUIColor getColor(final int index) {
+		return GamaColors.get(SwtGui.IMAGE_VIEWER_BACKGROUND.getValue());
+	}
 
-								@Override
-								public void run() {
-									intermediate.setBackground(background.color());
-									showImage(false);
-								}
-							};
-							GuiUtils.run(rr);
-						}
-					}
+	/**
+	 * Method setColor()
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int, msi.gama.gui.swt.GamaColors.GamaUIColor)
+	 */
+	@Override
+	public void setColor(final int index, final GamaUIColor c) {
+		if ( imageCanvas != null ) {
+			Runnable rr = new Runnable() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-
-						GamaColorMenu.getInstance().open(item.getParent(), e, listener, new IColorRunnable() {
-
-							@Override
-							public void run(final int r, final int g, final int b) {
-								changeColor(r, g, b);
-							}
-						});
-
-					}
-				});
-				break;
-
+				@Override
+				public void run() {
+					intermediate.setBackground(c.color());
+					showImage(false);
+				}
+			};
+			GuiUtils.run(rr);
 		}
 
 	}
