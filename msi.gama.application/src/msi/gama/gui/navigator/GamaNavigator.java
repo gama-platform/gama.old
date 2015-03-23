@@ -99,6 +99,12 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		}
 		// toolbar.removeAll();
 		linkItem.setSelection(link.isChecked());
+		try {
+			IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+			mgr.setEnabled("msi.gama.application.date.decorator", false);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
