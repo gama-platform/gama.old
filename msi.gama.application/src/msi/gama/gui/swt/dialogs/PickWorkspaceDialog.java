@@ -16,7 +16,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.WorkspaceModelsManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -75,7 +75,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 */
 	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
-		setTitleImage(IGamaIcons.GAMA_ICON.image());
+		// setTitleImage(IGamaIcons.GAMA_ICON.image());
 	}
 
 	@Override
