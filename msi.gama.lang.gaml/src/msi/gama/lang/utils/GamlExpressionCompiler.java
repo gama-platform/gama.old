@@ -500,10 +500,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				}
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
 				ed = EcoreBasedExpressionDescription.create(exp, errors);
-				// WARNING Necessary ??
-				if ( compileArgValue ) {
-					ed.compile(command);
-				}
+
+			}
+			if ( ed != null && compileArgValue ) {
+				ed.compile(command);
 			}
 			if ( !errors.isEmpty() ) {
 				for ( Diagnostic d : errors ) {
