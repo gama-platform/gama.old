@@ -65,7 +65,7 @@ public class GamaToolbarFactory {
 
 	}
 
-	public static int TOOLBAR_HEIGHT = SwtGui.CORE_ICONS_HEIGHT.getValue();
+	public static int TOOLBAR_HEIGHT = GamaIcons.CORE_ICONS_HEIGHT.getValue();
 	public static int TOOLBAR_SEP = 4;
 
 	private static Composite

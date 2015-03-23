@@ -17,7 +17,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
@@ -173,7 +173,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
 		t.setLinesVisible(true);
-		t.setForeground(exception.isWarning() ? IGamaColors.WARNING.inactive() : IGamaColors.ERROR.inactive());
+		t.setForeground(exception.isWarning() ? GamaColors.get(SwtGui.WARNING_TEXT_COLOR.getValue()).color()
+			: GamaColors.get(SwtGui.ERROR_TEXT_COLOR.getValue()).color());
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);
 		final TableColumn column2 = new TableColumn(t, SWT.NONE);

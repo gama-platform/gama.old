@@ -17,6 +17,7 @@ import java.awt.event.InputEvent;
 import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.JPanel;
+import msi.gama.gui.swt.GamaColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -330,7 +331,7 @@ public class SWTChartEditor implements ChartEditor {
 				}
 				title.setText(getTitleText());
 				title.setFont(SWTUtils.toAwtFont(getDisplay(), getTitleFont(), true));
-				title.setPaint(SWTUtils.toAwtColor(getTitleColor()));
+				title.setPaint(GamaColors.toAwtColor(getTitleColor()));
 			} else {
 				chart.setTitle((TextTitle) null);
 			}
@@ -442,8 +443,8 @@ public class SWTChartEditor implements ChartEditor {
 		 */
 		public void updatePlotProperties(final Plot plot) {
 			// set the plot properties...
-			plot.setBackgroundPaint(SWTUtils.toAwtColor(getBackgroundPaint()));
-			plot.setOutlinePaint(SWTUtils.toAwtColor(getOutlinePaint()));
+			plot.setBackgroundPaint(GamaColors.toAwtColor(getBackgroundPaint()));
+			plot.setOutlinePaint(GamaColors.toAwtColor(getOutlinePaint()));
 			plot.setOutlineStroke(getOutlineStroke());
 
 			// set the axis properties
@@ -555,7 +556,7 @@ public class SWTChartEditor implements ChartEditor {
 		 */
 		public void updateChartProperties(final JFreeChart chart) {
 			chart.setAntiAlias(this.antialias.getSelection());
-			chart.setBackgroundPaint(SWTUtils.toAwtColor(this.backgroundPaintCanvas.getColor()));
+			chart.setBackgroundPaint(GamaColors.toAwtColor(this.backgroundPaintCanvas.getColor()));
 		}
 
 	}
@@ -707,17 +708,6 @@ public class SWTChartEditor implements ChartEditor {
 		public static java.awt.Font toAwtFont(final Device device, final Font font) {
 			FontData fontData = font.getFontData()[0];
 			return toAwtFont(device, fontData, true);
-		}
-
-		/**
-		 * Creates an awt color instance to match the rgb values
-		 * of the specified swt color.
-		 * 
-		 * @param color The swt color to match.
-		 * @return an awt color abject.
-		 */
-		public static java.awt.Color toAwtColor(final Color color) {
-			return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
 		}
 
 		/**
@@ -1175,7 +1165,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @return The current label paint.
 		 */
 		public Paint getTickLabelPaint() {
-			return SWTUtils.toAwtColor(this.tickLabelPaintColor);
+			return GamaColors.toAwtColor(this.tickLabelPaintColor);
 		}
 
 		/**
@@ -1193,7 +1183,7 @@ public class SWTChartEditor implements ChartEditor {
 		 * @return The current label paint.
 		 */
 		public Paint getLabelPaint() {
-			return SWTUtils.toAwtColor(this.labelPaintColor);
+			return GamaColors.toAwtColor(this.labelPaintColor);
 		}
 
 		/**

@@ -13,8 +13,11 @@ package msi.gama.gui.swt;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
+import msi.gama.common.*;
+import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gaml.types.IType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -42,6 +45,12 @@ public class GamaIcons /* implements IGamaIcons */{
 
 	Map<String, GamaIcon> iconCache = new THashMap();
 	Map<String, Image> imageCache = new THashMap();
+	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
+	.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
+	.group("Icons");
+	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
+		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
+		.among(16, 24).in(GamaPreferences.UI).group("Icons");
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
@@ -50,7 +59,7 @@ public class GamaIcons /* implements IGamaIcons */{
 	Image putImageInCache(final String name, final Image image) {
 		int height = image.getBounds().height;
 		int width = image.getBounds().width;
-		int desiredHeight = SwtGui.CORE_ICONS_HEIGHT.getValue();
+		int desiredHeight = CORE_ICONS_HEIGHT.getValue();
 		if ( desiredHeight == 16 ) {
 			if ( height <= desiredHeight || name.startsWith("sizer") ) {
 				imageCache.put(name, image);

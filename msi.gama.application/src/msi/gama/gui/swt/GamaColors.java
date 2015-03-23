@@ -34,7 +34,7 @@ public class GamaColors {
 
 		// Returns a normal or lighter version of the color depending on the user's choice (see GamaIcons.CORE_ICONS_BRIGHTNESS). Used only for the basic palette
 		public GamaUIColor validate() {
-			if ( SwtGui.CORE_ICONS_BRIGHTNESS.getValue() ) {
+			if ( GamaIcons.CORE_ICONS_BRIGHTNESS.getValue() ) {
 				return this;
 			} else {
 				return GamaColors.get(lighter().getRGB());
@@ -235,6 +235,10 @@ public class GamaColors {
 			color.getBlue() * color.getBlue() / 255); // http://alienryderflex.com/hsp.html
 		// return (int) (0.241 * color.getRed() * color.getRed() / 255 + 0.691 * color.getGreen() * color.getGreen() / 255 + 0.068 * color.getBlue()* color.getBlue() / 255); //
 		// http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+	}
+
+	public static java.awt.Color toAwtColor(final Color color) {
+		return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 }

@@ -48,7 +48,7 @@ public class GamaToolbar2 extends Composite {
 		this.height = height;
 		createLayout();
 		createToolbars();
-		int square = SwtGui.CORE_ICONS_HEIGHT.getValue();
+		int square = GamaIcons.CORE_ICONS_HEIGHT.getValue();
 		iconSizer = null;
 		// iconSizer = new SizerToolItem(right, square, square);
 		toolbarSizer = new SizerToolItem(left, 1, height);

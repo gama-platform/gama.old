@@ -129,6 +129,16 @@ public class SwtGui implements IGui {
 		.create("shapefile.viewer.line.color", "Default shapefile viewer line color", Color.black, IType.COLOR)
 		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
+	public static final Entry<Color> ERROR_TEXT_COLOR = GamaPreferences
+		.create("error.text.color", "Text color of errors in error view",
+			GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR).in(GamaPreferences.SIMULATION)
+		.group("Errors");
+
+	public static final Entry<Color> WARNING_TEXT_COLOR = GamaPreferences
+		.create("warning.text.color", "Text color of warnings in error view",
+			GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR).in(GamaPreferences.SIMULATION)
+		.group("Errors");
+
 	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
 		.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
 		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
@@ -910,12 +920,6 @@ public class SwtGui implements IGui {
 				GamaColorMenu.instance.reset();
 			}
 		});
-	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
-		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
-		.among(16, 24).in(GamaPreferences.UI).group("Icons");
-	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
-		.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
-		.group("Icons");
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
 		.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
 		.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
