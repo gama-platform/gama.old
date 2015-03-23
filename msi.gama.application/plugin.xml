@@ -102,6 +102,15 @@
             </or>
                </enablement>
             </decorator>
+            <decorator
+                  adaptable="true"
+                  class="msi.gama.gui.navigator.NavigatorDateLighweightDecorator"
+                  id="msi.gama.application.date.decorator"
+                  label="Date Decorator"
+                  lightweight="true"
+                  objectClass="org.eclipse.core.resources.IResource"
+                  state="false">
+            </decorator>
    </extension>
 
 

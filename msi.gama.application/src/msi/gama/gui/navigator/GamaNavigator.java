@@ -11,12 +11,12 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import msi.gama.common.*;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -36,6 +36,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	final public static int NEW = 52;
 	final public static int IMPORT = 54;
 	final public static int PROJECT = 53;
+	final public static int SORT = 55;
 
 	String OPEN_BROWSER_COMMAND_ID = "msi.gama.application.commands.OpenBrowser";
 
@@ -234,6 +235,29 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 					}, SWT.RIGHT);
 				break;
+			case SORT:
+				ToolItem dateSorter =
+					tb.check("navigator/navigator.date2", "", "Sort by modification date", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent trigger) {
+							boolean enabled = ((ToolItem) trigger.widget).getSelection();
+
+							try {
+								IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+								mgr.setEnabled("msi.gama.application.date.decorator", enabled);
+							} catch (CoreException e) {
+								e.printStackTrace();
+							}
+
+							FileFolderSorter.BY_DATE = enabled;
+							Object[] expanded = getCommonViewer().getExpandedElements();
+							getCommonViewer().refresh();
+							getCommonViewer().setExpandedElements(expanded);
+						}
+
+					}, SWT.RIGHT);
+				break;
 			case NEW:
 				newFileItem = tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
 
@@ -273,7 +297,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { IMPORT, NEW, SEP, COLLAPSE, LINK };
+		return new Integer[] { IMPORT, NEW, SEP, SORT, COLLAPSE, LINK };
 	}
 
 	/**
