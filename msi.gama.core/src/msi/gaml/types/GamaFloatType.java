@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaFont;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -49,6 +50,7 @@ public class GamaFloatType extends GamaType<Double> {
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1d : 0d; }
 		if ( obj instanceof GamaShape ) { return ((GamaShape) obj).getArea(); }
+		if ( obj instanceof GamaFont ) { return (double) ((GamaFont) obj).getSize(); }
 		return 0d;
 	}
 

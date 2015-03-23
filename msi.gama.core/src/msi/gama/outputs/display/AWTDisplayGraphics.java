@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AWTDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AWTDisplayGraphics.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -90,8 +90,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	/**
 	 * Implements PointTransformation.transform
-	 * @see com.vividsolutions.jts.awt.PointTransformation#transform(com.vividsolutions.jts.geom.Coordinate,
-	 *      java.awt.geom.Point2D)
+	 * @see com.vividsolutions.jts.awt.PointTransformation#transform(com.vividsolutions.jts.geom.Coordinate, java.awt.geom.Point2D)
 	 */
 	@Override
 	public void transform(final Coordinate c, final Point2D p) {
@@ -210,8 +209,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final java.lang.Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
-		final Boolean bitmap) {
+		final java.lang.Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
 		renderer.setColor(highlight ? highlightColor : stringColor);
 		int curX, curY, curZ;
 		if ( locationInModelUnits == null ) {
@@ -223,7 +221,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
 			// curZ = yFromModelUnitsToPixels(locationInModelUnits.getZ());
 		}
-		int curHeight;
+		float curHeight;
 		if ( heightInModelUnits == null ) {
 			curHeight = heightOfLayerInPixels;
 			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
@@ -232,9 +230,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
 
 		} // FIXME Optimize by keeping the current values
-		final int style = styleName == null ? Font.PLAIN : styleName;
-		final Font f = new Font(fontName, style, curHeight);
-		renderer.setFont(f);
+			// final int style = styleName == null ? Font.PLAIN : styleName;
+			// final Font f = new Font(fontName, style, curHeight);
+		renderer.setFont(font.deriveFont(curHeight));
 		final AffineTransform saved = renderer.getTransform();
 		if ( angle != null ) {
 			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);

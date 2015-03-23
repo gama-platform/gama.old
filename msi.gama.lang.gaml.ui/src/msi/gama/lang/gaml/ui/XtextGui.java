@@ -23,6 +23,7 @@ import msi.gama.lang.gaml.ui.editor.*;
 import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaFont;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.types.IType;
 import org.eclipse.core.resources.*;
@@ -89,18 +90,19 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 	public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_TOOLBAR = GamaPreferences
 		.create("editor.show.toolbar", "Show edition toolbar by default", true, IType.BOOL).in(GamaPreferences.EDITOR)
 		.group("Toolbars");
-	static final GamaPreferences.Entry<FontData> EDITOR_BASE_FONT = GamaPreferences
-		.create("editor.font", "Font of editors", XtextGui.getDefaultFontData(), IType.FONT).in(GamaPreferences.EDITOR)
-		.group("Presentation").addChangeListener(new IPreferenceChangeListener<FontData>() {
+	static final GamaPreferences.Entry<GamaFont> EDITOR_BASE_FONT = GamaPreferences
+		.create("editor.font", "Font of editors", getDefaultFontData(), IType.FONT).in(GamaPreferences.EDITOR)
+		.group("Presentation").addChangeListener(new IPreferenceChangeListener<GamaFont>() {
 
 			@Override
-			public boolean beforeValueChange(final FontData newValue) {
+			public boolean beforeValueChange(final GamaFont newValue) {
 				return true;
 			}
 
 			@Override
-			public void afterValueChange(final FontData newValue) {
+			public void afterValueChange(final GamaFont font) {
 				try {
+					FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
 					PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
 						JFaceResources.TEXT_FONT, newValue);
 				} catch (Exception e) {}
@@ -211,8 +213,9 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 		return new java.awt.Color(rgb.red, rgb.green, rgb.blue);
 	}
 
-	public static FontData getDefaultFontData() {
-		return PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(),
-			JFaceResources.TEXT_FONT);
+	public static GamaFont getDefaultFontData() {
+		FontData fd =
+			PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(), JFaceResources.TEXT_FONT);
+		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
 	}
 }

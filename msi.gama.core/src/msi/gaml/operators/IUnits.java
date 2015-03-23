@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.awt.Font;
 import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.constant;
@@ -22,6 +23,24 @@ import msi.gaml.types.*;
 
 public class IUnits {
 
+	/**
+	 * Font style constants
+	 */
+
+	@constant(value = "bold",
+		category = { IConstantCategory.GRAPHIC },
+		doc = @doc("This contant allows to build a font with a bold face. Can be combined with #italic"))
+	public final static int bold = Font.BOLD; /* 1 */
+
+	@constant(value = "italic",
+		category = { IConstantCategory.GRAPHIC },
+		doc = @doc("This contant allows to build a font with an italic face. Can be combined with #bold"))
+	public final static int italic = Font.ITALIC; /* 2 */
+
+	@constant(value = "plain",
+		category = { IConstantCategory.GRAPHIC },
+		doc = @doc("This contant allows to build a font with a plain face"))
+	public final static int plain = Font.PLAIN;
 	/**
 	 * Special units
 	 */
@@ -249,7 +268,7 @@ public class IUnits {
 
 	static Object add(final String name, final Object value, final String doc, final String[] names) {
 		if ( UNITS_EXPR.containsKey(name) ) { return null; }
-		IType t = value instanceof Double ? Types.FLOAT : Types.COLOR;
+		IType t = Types.get(value.getClass());
 		UnitConstantExpression exp = GAML.getExpressionFactory().createUnit(value, t, name, doc, names);
 		UNITS_EXPR.put(name, exp);
 		if ( names != null ) {
@@ -271,22 +290,20 @@ public class IUnits {
 
 		for ( final Field f : IUnits.class.getDeclaredFields() ) {
 			try {
-				if ( f.getType().equals(double.class) ) {
-					String[] names = null;
-					Double v = f.getDouble(IUnits.class);
-					constant annotation = f.getAnnotation(constant.class);
-					String documentation = "Its float value is " + Cast.toGaml(v) + ". </b>";
-					if ( annotation != null ) {
-						names = annotation.altNames();
-						doc[] ds = annotation.doc();
-						if ( ds != null && ds.length > 0 ) {
-							doc d = ds[0];
-							documentation += d.value();
-						}
+				Object v = f.get(IUnits.class);
+				String[] names = null;
+				constant annotation = f.getAnnotation(constant.class);
+				String documentation = "Its value is " + Cast.toGaml(v) + ". </b>";
+				if ( annotation != null ) {
+					names = annotation.altNames();
+					doc[] ds = annotation.doc();
+					if ( ds != null && ds.length > 0 ) {
+						doc d = ds[0];
+						documentation += d.value();
 					}
-					add(f.getName(), v, documentation, names);
-
 				}
+				add(f.getName(), v, documentation, names);
+
 			} catch (final IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (final IllegalAccessException e) {

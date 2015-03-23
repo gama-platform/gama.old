@@ -16,10 +16,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.util.GamaFont;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
 public class EditorFactory implements IEditorFactory {
@@ -35,8 +35,8 @@ public class EditorFactory implements IEditorFactory {
 		return new BooleanEditor(parent, title, value, whenModified);
 	}
 
-	public static FontEditor create(final Composite parent, final String title, final FontData value,
-		final EditorListener<FontData> whenModified) {
+	public static FontEditor create(final Composite parent, final String title, final GamaFont value,
+		final EditorListener<GamaFont> whenModified) {
 		return new FontEditor(parent, title, value, whenModified);
 	}
 

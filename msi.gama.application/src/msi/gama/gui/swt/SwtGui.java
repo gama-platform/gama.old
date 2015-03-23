@@ -25,7 +25,8 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.commands.GamaColorMenu;
-import msi.gama.gui.swt.controls.StatusControlContribution;
+import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.viewers.html.HtmlViewer;
@@ -36,7 +37,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
+import msi.gama.util.*;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
@@ -136,19 +137,20 @@ public class SwtGui implements IGui {
 	static String baseFont = baseData.getName();
 	static int baseSize = 11;
 
-	public static final Entry<FontData> BASE_BUTTON_FONT = GamaPreferences
+	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 		.create("base_button_font", "Font of buttons (applies to new buttons)",
-			new FontData(baseFont, baseSize, SWT.BOLD), IType.FONT).in(GamaPreferences.UI).group("Fonts")
-		.addChangeListener(new GamaPreferences.IPreferenceChangeListener<FontData>() {
+			new GamaFont(baseFont, SWT.BOLD, baseSize), IType.FONT).in(GamaPreferences.UI).group("Fonts")
+		.addChangeListener(new GamaPreferences.IPreferenceChangeListener<GamaFont>() {
 
 			@Override
-			public boolean beforeValueChange(final FontData newValue) {
+			public boolean beforeValueChange(final GamaFont newValue) {
 				return true;
 			}
 
 			@Override
-			public void afterValueChange(final FontData newValue) {
-				setLabelFont(new Font(getDisplay(), newValue));
+			public void afterValueChange(final GamaFont newValue) {
+				FontData fd = SWTUtils.toSwtFontData(SwtGui.getDisplay(), newValue, true);
+				setLabelFont(new Font(getDisplay(), fd));
 			}
 		});
 
@@ -484,7 +486,7 @@ public class SwtGui implements IGui {
 
 		// AD 11/10/13 : see Issue 679
 		// Too many problems with Linux for the moment. Reverse this if a definitive solution is found.
-		if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }
+		// if ( Platform.getOS().equals(Platform.OS_LINUX) || Platform.getWS().equals(Platform.WS_GTK) ) { return false; }
 
 		try {
 			URL url = new URL("http://gama-platform.org");
@@ -666,7 +668,8 @@ public class SwtGui implements IGui {
 
 	static void initFonts() {
 
-		FontData fd = BASE_BUTTON_FONT.getValue();
+		GamaFont font = BASE_BUTTON_FONT.getValue();
+		FontData fd = new FontData(font.getName(), font.getSize(), font.getStyle());
 		labelFont = new Font(getDisplay(), fd);
 		expandFont = new Font(Display.getDefault(), fd);
 		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);

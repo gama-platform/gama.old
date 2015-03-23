@@ -12,10 +12,10 @@
 
 package msi.gama.jogl;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
 import msi.gama.common.interfaces.*;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -88,10 +88,10 @@ public class JOGLAWTDisplayGraphics extends msi.gama.outputs.display.AbstractDis
 		final Color border, final boolean rounded) {
 		if ( shape == null ) { return null; }
 		Double depth = 0d;
-		List<String> textures = new ArrayList<String>();
+		java.util.List<String> textures = new ArrayList<String>();
 		IShape.Type type = shape.getGeometricalType();
-		List<Double> ratio = new ArrayList<Double>();
-		List<GamaColor> colors = new ArrayList<GamaColor>();
+		java.util.List<Double> ratio = new ArrayList<Double>();
+		java.util.List<GamaColor> colors = new ArrayList<GamaColor>();
 		final ITopology topo = scope.getTopology();
 		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
 			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
@@ -127,7 +127,8 @@ public class JOGLAWTDisplayGraphics extends msi.gama.outputs.display.AbstractDis
 
 	private void drawSingleShape(final IScope scope, final Geometry geom, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded, final Double depth, final IShape.Type type,
-		final List<String> textures, final List<Double> ratio, final List<GamaColor> colors) {
+		final java.util.List<String> textures, final java.util.List<Double> ratio,
+		final java.util.List<GamaColor> colors) {
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), color, fill, border,
 			textures.isEmpty() ? false : true, textures, angle, depth.doubleValue(), rounded, type, ratio, colors);
 
@@ -226,8 +227,7 @@ public class JOGLAWTDisplayGraphics extends msi.gama.outputs.display.AbstractDis
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
-		final Boolean bitmap) {
+		final Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
 		GamaPoint location = new GamaPoint(locationInModelUnits).yNegated();
 		Integer size;
 		Double sizeInModelUnits;
@@ -240,8 +240,8 @@ public class JOGLAWTDisplayGraphics extends msi.gama.outputs.display.AbstractDis
 			size =
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
-		renderer.getScene().addString(string, location, size, sizeInModelUnits, stringColor, fontName, styleName,
-			angle, bitmap);
+		renderer.getScene().addString(string, location, size, sizeInModelUnits, stringColor, font.getName(),
+			font.getStyle(), angle, bitmap);
 		return null;
 	}
 

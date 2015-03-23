@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.display.web;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
@@ -76,8 +76,7 @@ public class WebDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final String fontName, final Integer styleName, final Double angle,
-		final Boolean bitmap) {
+		final Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
 		return null;
 	}
 

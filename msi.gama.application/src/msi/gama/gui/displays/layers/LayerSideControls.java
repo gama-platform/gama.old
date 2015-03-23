@@ -13,6 +13,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaFont;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
 import org.eclipse.swt.SWT;
@@ -140,11 +141,11 @@ public class LayerSideControls {
 							updateIfPaused(layer, container);
 						}
 					});
-				EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFontName(), true,
-					new EditorListener<String>() {
+				EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFont(),
+					new EditorListener<GamaFont>() {
 
 						@Override
-						public void valueModified(final String newValue) {
+						public void valueModified(final GamaFont newValue) {
 							((TextLayerStatement) definition).setFont(newValue);
 							updateIfPaused(layer, container);
 						}

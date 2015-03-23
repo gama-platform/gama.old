@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaFont;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -73,6 +74,7 @@ public class GamaIntegerType extends GamaType<Integer> {
 			}
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1 : 0; }
+		if ( obj instanceof GamaFont ) { return ((GamaFont) obj).getSize(); }
 		return 0;
 	}
 

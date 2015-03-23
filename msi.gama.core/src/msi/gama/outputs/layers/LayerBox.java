@@ -84,6 +84,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setTransparency(final IScope scope, final IExpression t) throws GamaRuntimeException {
 		if ( t != null ) {
+			constantTransparency = null;
 			transparency = t;
 			if ( t.isConst() ) {
 				setTransparency(Cast.asFloat(scope, t.value(scope)));
@@ -94,6 +95,8 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if ( p != null ) {
+			constantPosition = null;
+			constantBoundingBox = false;
 			loc = p;
 			if ( p.isConst() ) {
 				setPosition(Cast.asPoint(scope, loc.value(scope)));
@@ -104,6 +107,8 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setSize(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
+			constantSize = null;
+			constantBoundingBox = false;
 			size = e;
 			if ( e.isConst() ) {
 				setSize(Cast.asPoint(scope, size.value(scope)));
@@ -114,6 +119,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setRefresh(final IScope scope, final IExpression r) throws GamaRuntimeException {
 		if ( r != null ) {
+			constantRefresh = null;
 			refresh = r;
 			if ( r.isConst() ) {
 				setRefresh(Cast.asBool(scope, r.value(scope)));
@@ -186,6 +192,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setTrace(final IScope scope, final IExpression r) {
 		if ( r != null ) {
+			constantTrace = null;
 			trace = r;
 			if ( r.isConst() ) {
 				if ( r.getType().id() == IType.BOOL ) {
@@ -207,12 +214,12 @@ public class LayerBox implements IDisplayLayerBox {
 
 	/**
 	 * Method setFading()
-	 * @see msi.gama.outputs.layers.IDisplayLayerBox#setFading(msi.gama.runtime.IScope,
-	 *      msi.gaml.expressions.IExpression)
+	 * @see msi.gama.outputs.layers.IDisplayLayerBox#setFading(msi.gama.runtime.IScope, msi.gaml.expressions.IExpression)
 	 */
 	@Override
 	public void setFading(final IScope scope, final IExpression r) {
 		if ( r != null ) {
+			constantFading = null;
 			fading = r;
 			if ( r.isConst() ) {
 				setFading(Cast.asBool(scope, r.value(scope)));

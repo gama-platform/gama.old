@@ -57,16 +57,17 @@ import msi.gaml.types.*;
 		type = IType.BOOL,
 		optional = true,
 		doc = @doc("a condition specifying whether the geometry is empty or full")),
-	@facet(name = BORDER, type = IType.COLOR, optional = true, doc = @doc("the colors of the geometry border")),
+	@facet(name = BORDER, type = IType.COLOR, optional = true, doc = @doc("the color of the geometry border")),
 	@facet(name = ROUNDED,
 		type = IType.BOOL,
 		optional = true,
-		doc = @doc("specify whether the geometry have to be rounded (e.g. for squares)")),
+		doc = @doc(value = "specify whether the geometry have to be rounded (e.g. for squares)",
+			deprecated = "Use the squircle operator to draw rounded squares")),
 	@facet(name = AT, type = IType.POINT, optional = true, doc = @doc("location where the shape/text/icon is drawn")),
 	@facet(name = SIZE,
 		type = IType.FLOAT,
 		optional = true,
-		doc = @doc("size of the text/icon (not use in the context of the drawing of a geometry)")),
+		doc = @doc("size of the text/icon (not used in the context of the drawing of a geometry)")),
 	@facet(name = TO, type = IType.POINT, optional = true, doc = @doc(""), internal = true),
 	@facet(name = COLOR,
 		type = IType.COLOR,
@@ -77,7 +78,10 @@ import msi.gaml.types.*;
 		type = { IType.FLOAT, IType.INT },
 		optional = true,
 		doc = @doc("orientation of the shape/text/icon")),
-	@facet(name = FONT, type = IType.STRING, optional = true, doc = @doc("the font used to draw the text")),
+	@facet(name = FONT,
+		type = { IType.FONT, IType.STRING },
+		optional = true,
+		doc = @doc("the font used to draw the text")),
 	@facet(name = BITMAP, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = DEPTH,
 		type = IType.FLOAT,
@@ -95,7 +99,8 @@ import msi.gaml.types.*;
 		type = IType.ID,
 		values = { "plain", "bold", "italic" },
 		optional = true,
-		doc = @doc("the style used to display text")) },
+		doc = @doc(value = "the style used to display text",
+			deprecated = "Use the font operator with constants #bold, #italic, #plain instead")) },
 	omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(value = "`" +
@@ -106,12 +111,13 @@ import msi.gaml.types.*;
 			examples = { @example(value = "aspect geometryAspect {", isExecutable = false),
 				@example(value = "	draw circle(1.0) empty: !hasFood color: #orange ;", isExecutable = false),
 				@example(value = "}", isExecutable = false) }),
-		@usage(value = "Image or text can also be drawn", examples = {
-			@example(value = "aspect arrowAspect {", isExecutable = false),
-			@example(value = "	draw \"Current state= \"+state at: location + {-3,1.5} color: #white size: 0.8 ;",
-				isExecutable = false),
-			@example(value = "	draw file(ant_shape_full) rotate: heading at: location size: 5", isExecutable = false),
-			@example(value = "}", isExecutable = false) }),
+		@usage(value = "Image or text can also be drawn",
+			examples = {
+				@example(value = "aspect arrowAspect {", isExecutable = false),
+				@example(value = "	draw \"Current state= \"+state at: location + {-3,1.5} color: #white font: font('Default', 12, #bold) ;",
+					isExecutable = false),
+				@example(value = "	draw file(ant_shape_full) rotate: heading at: location size: 5",
+					isExecutable = false), @example(value = "}", isExecutable = false) }),
 		@usage(value = "Arrows can be drawn with any kind of geometry, using " + DrawStatement.BEGIN_ARROW + " and " +
 			DrawStatement.END_ARROW + " facets, combined with the empty: facet to specify whether it is plain or empty",
 			examples = {
@@ -256,7 +262,21 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, loc, bord, rot, depth, empty, rounded, textures;
+		private IExpression size;
+
+		IExpression loc;
+
+		IExpression bord;
+
+		IExpression rot;
+
+		IExpression depth;
+
+		IExpression empty;
+
+		IExpression rounded;
+
+		IExpression textures;
 
 		Color constCol;
 		private final Color constBord;
@@ -278,14 +298,14 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 
 			depth = getFacet(DEPTH);
-			size = getFacet(SIZE);
+			setSize(getFacet(SIZE));
 			loc = getFacet(AT);
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
 			rounded = getFacet(ROUNDED);
 			textures = getFacet(TEXTURE);
 
-			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope), false) : null;
+			constSize = getSizeExp() == null ? LOC : getSizeExp().isConst() ? Cast.asPoint(scope, getSizeExp().value(scope), false) : null;
 			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope), false) : null;
 			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope), false) : null;
 			constRot = rot != null && rot.isConst() ? Cast.asFloat(scope, rot.value(scope)) : null;
@@ -337,6 +357,14 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
+
+		IExpression getSizeExp() {
+			return size;
+		}
+
+		void setSize(IExpression size) {
+			this.size = size;
+		}
 
 	}
 
@@ -466,7 +494,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private final String constText;
 		private final IExpression font;
-		private final String constFont;
+		private final GamaFont constFont;
 		private final IExpression style;
 		private final Integer constStyle;
 		private final IExpression bitmap;
@@ -478,7 +506,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			constText = item.isConst() ? Cast.asString(scope, item.value(scope)) : null;
 			font = getFacet(FONT);
 			constFont =
-				font == null ? Font.SANS_SERIF : font.isConst() ? Cast.asString(scope, font.value(scope)) : null;
+				font == null ? (GamaFont) Types.FONT.getDefault() : font.isConst() ? GamaFontType.staticCast(scope,
+					font.value(scope), false) : null;
 			style = getFacet(STYLE);
 			constStyle =
 				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
@@ -494,11 +523,22 @@ public class DrawStatement extends AbstractStatementSequence {
 			// final IAgent agent = scope.getAgentScope();
 			final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 			if ( info == null || info.length() == 0 ) { return null; }
-			final String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
+			Font fName = constFont == null ? GamaFontType.staticCast(scope, font.value(scope), false) : constFont;
 			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
+			if ( fName.getStyle() != fStyle && style != null ) {
+				fName = new GamaFont(fName.deriveFont(fStyle));
+			}
 			final Boolean fBitmap = constBitmap == null ? true : constBitmap;
-			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
-				getRotation(scope), fBitmap);
+			double fSize;
+			// if ( size != null && fName.getSize() != fSize ) {
+			// fName = new GamaFont(fName.deriveFont(fSize));
+			// }
+			if ( getSizeExp() == null ) {
+				fSize = fName.getSize() * new PixelUnitExpression("pixels", null).value(scope);
+			} else {
+				fSize = getSize(scope).getY();
+			}
+			return g.drawString(info, getColor(scope), getLocation(scope), fSize, fName, getRotation(scope), fBitmap);
 
 		}
 	}

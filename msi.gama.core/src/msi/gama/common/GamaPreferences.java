@@ -623,7 +623,7 @@ public class GamaPreferences {
 			case IType.FONT:
 				if ( storeKeys.contains(key) ) {
 					String val = store.get(key, GamaStringType.staticCast(scope, value, false));
-					gp.setValue(scope, Types.get(IType.FONT).cast(scope, val, null, false));
+					gp.setValue(scope, GamaFontType.staticCast(scope, val, false));
 				} else {
 					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}

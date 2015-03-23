@@ -42,8 +42,7 @@ public interface IGraphics {
 		boolean isDynamic, String name);
 
 	public abstract Rectangle2D drawString(final String string, final Color stringColor,
-		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
-		final Double angle, final Boolean bitmap);
+		ILocation locationInModelUnits, Double heightInModelUnits, Font font, final Double angle, final Boolean bitmap);
 
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final boolean rounded);

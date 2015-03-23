@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.Color;
+import java.awt.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 
@@ -33,9 +33,9 @@ public class TextLayer extends AbstractLayer {
 		TextLayerStatement model = (TextLayerStatement) this.definition;
 		String text = model.getText();
 		Color color = model.getColor();
-		String f = model.getFontName();
-		Integer s = model.getStyle();
-		g.drawString(text, color, null, null, f, s, null, true);
+		Font f = model.getFont();
+		// Integer s = model.getStyle();
+		g.drawString(text, color, null, null, f, null, true);
 	}
 
 	@Override

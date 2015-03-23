@@ -16,11 +16,12 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.util.GamaFont;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class FontEditor extends AbstractEditor<FontData> {
+public class FontEditor extends AbstractEditor<GamaFont> {
 
 	private FlatButton edit;
 
@@ -37,7 +38,7 @@ public class FontEditor extends AbstractEditor<FontData> {
 	}
 
 	FontEditor(final Composite parent, final String title, final Object value,
-		final EditorListener<FontData> whenModified) {
+		final EditorListener<GamaFont> whenModified) {
 		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
@@ -53,10 +54,18 @@ public class FontEditor extends AbstractEditor<FontData> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		FontData data = currentValue != null ? currentValue : SwtGui.getSmallFont().getFontData()[0];
+		GamaFont data = currentValue != null ? currentValue : toGamaFont(SwtGui.getSmallFont().getFontData()[0]);
 		edit.setText(data.toString());
-		edit.setFont(new Font(SwtGui.getDisplay(), data));
+		edit.setFont(new Font(SwtGui.getDisplay(), toFontData(data)));
 		internalModification = false;
+	}
+
+	private GamaFont toGamaFont(final FontData fd) {
+		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
+	}
+
+	private FontData toFontData(final GamaFont gf) {
+		return new FontData(gf.getName(), gf.getSize(), gf.getStyle());
 	}
 
 	public void modifyValue() {
@@ -82,11 +91,11 @@ public class FontEditor extends AbstractEditor<FontData> {
 	public void widgetSelected(final SelectionEvent e) {
 		FontDialog dialog = new FontDialog(SwtGui.getShell());
 		dialog.setEffectsVisible(false);
-		FontData data = currentValue;
+		FontData data = toFontData(currentValue);
 		dialog.setFontList(new FontData[] { data });
 		data = dialog.open();
 		if ( data != null ) {
-			modifyAndDisplayValue(data);
+			modifyAndDisplayValue(toGamaFont(data));
 		}
 
 	}
