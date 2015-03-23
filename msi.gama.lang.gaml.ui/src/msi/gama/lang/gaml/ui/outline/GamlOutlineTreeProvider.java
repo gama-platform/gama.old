@@ -81,9 +81,6 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Statement stm) {
 
-		if ( stm instanceof S_Species ) {
-			System.out.println("");
-		}
 		Block block = stm.getBlock();
 		IOutlineNode attributesNode = null;
 		IOutlineNode parametersNode = null;
