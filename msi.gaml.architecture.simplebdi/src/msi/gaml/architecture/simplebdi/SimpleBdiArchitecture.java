@@ -130,7 +130,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			// RANDOMLY REMOVE (last)INTENTION
 			Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
-			while (!flipResultintention) {
+			while (!flipResultintention && (intentionBase.size() > 0)) {
 				flipResultintention = msi.gaml.operators.Random.opFlip(scope,
 						persistenceCoefficientintention);
 				if (intentionBase.size() > 0) {
@@ -527,6 +527,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if ( predicateDirect != null ) { return getBase(scope, DESIRE_BASE).remove(predicateDirect);
 
 		}
+// TODO remove intension aussi
 		return false;
 	}
 
