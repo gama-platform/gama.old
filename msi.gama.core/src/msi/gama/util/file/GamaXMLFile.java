@@ -43,6 +43,12 @@ public class GamaXMLFile extends GamaFile {
 		return Types.FILE.of(Types.INT, Types.NO_TYPE);
 	}
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO depends on the contents...
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 	/**
 	 * Method computeEnvelope()
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)

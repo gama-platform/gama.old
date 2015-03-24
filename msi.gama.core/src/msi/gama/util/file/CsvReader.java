@@ -24,8 +24,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A stream based parser for parsing delimited text data from a file or a
@@ -549,6 +549,7 @@ public class CsvReader {
 		public int rows;
 		public int cols;
 		public IType type;
+		public String[] headers = null;
 		public long startTime = System.currentTimeMillis();
 
 		private IType firstLineType;
@@ -556,10 +557,11 @@ public class CsvReader {
 
 		Stats(final CsvReader reader) {
 			boolean firstLineHasNumber = false;
+			String[] possibleHeaders = null;
 			try {
 				// firstLine
 				String s = reader.skipLine();
-				processFirstLine(s);
+				possibleHeaders = processFirstLine(s);
 				firstLineHasNumber = atLeastOneNumber;
 				atLeastOneNumber = false;
 				reader.setDelimiter(delimiter);
@@ -586,23 +588,26 @@ public class CsvReader {
 					header = true;
 				}
 			}
+			if ( header ) {
+				headers = possibleHeaders;
+			}
 			rows = (int) reader.currentRecord + 1;
 			reader.close();
 			log();
 		}
 
-		private void processFirstLine(final String line) {
-			String[] s = line.split(",");
+		private String[] processFirstLine(final String line) {
+			String[] s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ",");
 			if ( s.length == 1 ) {
 				if ( s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1 ) {
 					// We are likely dealing with a unicolum file
 					delimiter = Letters.COMMA;
 				} else {
 					// there should be another delimiter
-					s = line.split(";");
+					s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ";");
 					if ( s.length == 1 ) {
 						// Try with tab
-						s = line.split("" + Letters.TAB);
+						s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.TAB);
 						delimiter = Letters.TAB;
 					} else {
 						delimiter = ';';
@@ -612,6 +617,21 @@ public class CsvReader {
 				delimiter = Letters.COMMA;
 			}
 			firstLineType = processRecord(s);
+			return s;
+		}
+
+		private boolean onlyContainsDigitsAndPunctuation(final String s) {
+			for ( char c : s.toCharArray() ) {
+				if ( Character.isLetter(c) ) { return false; }
+			}
+			return true;
+		}
+
+		private boolean onlyContainsDigits(final String s) {
+			for ( char c : s.toCharArray() ) {
+				if ( !Character.isDigit(c) && !Character.isWhitespace(c) ) { return false; }
+			}
+			return true;
 		}
 
 		private IType processRecord(final String[] values) {
@@ -620,9 +640,9 @@ public class CsvReader {
 			IType integer = Types.INT;
 			IType floating = Types.FLOAT;
 			for ( String s : values ) {
-				if ( Strings.isGamaNumber(s) || delimiter != Letters.COMMA && Strings.isGamaNumber(s.replace(',', '.')) ) {
-					if ( s.contains(".") || s.contains(",") && delimiter != Letters.COMMA ) {
-						atLeastOneNumber = true;
+				if ( onlyContainsDigitsAndPunctuation(s) ) {
+					atLeastOneNumber = true;
+					if ( !onlyContainsDigits(s) ) {
 						if ( temp == null || temp == integer || temp == floating ) {
 							temp = floating;
 						}
@@ -631,7 +651,21 @@ public class CsvReader {
 							temp = integer;
 						}
 					}
-				} else {
+				}
+
+				// if ( Strings.isGamaNumber(s) || delimiter != Letters.COMMA && Strings.isGamaNumber(s.replace(',', '.')) ) {
+				// if ( s.contains(".") || s.contains(",") && delimiter != Letters.COMMA ) {
+				// atLeastOneNumber = true;
+				// if ( temp == null || temp == integer || temp == floating ) {
+				// temp = floating;
+				// }
+				// } else {
+				// if ( temp == null || temp == integer ) {
+				// temp = integer;
+				// }
+				// }
+				// }
+				else {
 					temp = Types.NO_TYPE;
 				}
 			}

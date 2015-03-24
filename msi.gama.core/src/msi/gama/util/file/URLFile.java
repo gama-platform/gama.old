@@ -46,6 +46,12 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 		return sb.toString();
 	}
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO Dont know what to return
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 	public IList<String> getURLContent(final String u_str) {
 		URL url;
 

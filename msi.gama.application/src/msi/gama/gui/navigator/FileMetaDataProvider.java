@@ -8,10 +8,9 @@ import gnu.trove.map.hash.THashMap;
 import java.net.MalformedURLException;
 import java.util.*;
 import msi.gama.gui.navigator.images.ImageDataLoader;
-import msi.gama.gui.swt.*;
-import msi.gama.util.file.*;
-import msi.gama.util.file.CsvReader.Stats;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.GAMLFile.GamlInfo;
+import msi.gama.util.file.*;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
@@ -20,9 +19,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.ImageData;
 
 /**
  * Class FileMetaDataProvider.
@@ -121,7 +118,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public IGamaFileMetaData getMetaData(final Object element) {
 		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
-		if ( file == null ) { return null; }
+		if ( file == null ) {
+			if ( element instanceof java.io.File ) {
+				IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
+				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
+				if ( !file.exists() ) { return null; }
+			}
+		}
 		String ct = getContentTypeId(file);
 		Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
@@ -170,21 +173,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param file
 	 */
 	private GamlInfo createGamlFileMetaData(final IFile file) {
-		URI uri = URI.createFileURI(file.getLocation().toOSString());
-		return DescriptionFactory.getModelFactory().getInfo(uri, file.getModificationStamp());
+		return DescriptionFactory.getModelFactory().getInfo(URI.createFileURI(file.getLocation().toOSString()),
+			file.getModificationStamp());
 	}
 
 	private GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
-		CSVInfo info = null;
-		try {
-			Stats s = CsvReader.getStats(file.getContents());
-			if ( s != null ) {
-				info = new CSVInfo(file.getModificationStamp(), s.cols, s.rows, s.header, s.delimiter, s.type);
-			}
-		} catch (CoreException e) {
-			System.out.println("Error in loading " + file.getLocation().toString());
-		}
-		return info;
+		return new CSVInfo(file.getLocation().toOSString(), file.getModificationStamp());
 	}
 
 	/**
@@ -194,49 +188,49 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @return
 	 */
 	private ImageInfo createImageFileMetaData(final IFile file) {
-		ImageDescriptor descriptor = null;
+		// ImageDescriptor descriptor = null;
 		ImageInfo imageInfo = null;
+		// try {
+		// Object o = file.getSessionProperty(CACHE_KEY);
+		// if ( o instanceof ImageDescriptor ) {
+		// descriptor = (ImageDescriptor) o;
+		// }
+		// } catch (CoreException e) {}
+
+		// if ( descriptor == null ) {
+		ImageData imageData = null;
+		// Image image = null;
+
+		int type = -1, width = -1, height = -1;
 		try {
-			Object o = file.getSessionProperty(CACHE_KEY);
-			if ( o instanceof ImageDescriptor ) {
-				descriptor = (ImageDescriptor) o;
-			}
-		} catch (CoreException e) {}
+			imageData = ImageDataLoader.getImageData(file);
+			// Display display = SwtGui.getDisplay();
+			// image = new Image(display, imageData);
+		} catch (Exception ex) {
+			System.out.println("Error in loading " + file.getLocation().toString());
+		}
+		if ( imageData != null ) {
+			// try {
+			width = imageData.width;
+			height = imageData.height;
+			type = imageData.type;
+			// if ( image != null ) {
+			// image = GamaIcons.scaleImage(image.getDevice(), image, 16, 16);
+			// descriptor = ImageDescriptor.createFromImageData(image.getImageData());
+			// }
+			// } catch (Exception ex) {
+			// System.out.println("Error in loading " + file.getLocation().toString());
+			// } finally {
+			// if ( image != null ) {
+			// image.dispose();
+			// }
+			// }
+			// }
 
-		if ( descriptor == null ) {
-			ImageData imageData = null;
-			Image image = null;
-
-			int type = -1, width = -1, height = -1;
-			try {
-				imageData = ImageDataLoader.getImageData(file);
-				Display display = SwtGui.getDisplay();
-				image = new Image(display, imageData);
-			} catch (Exception ex) {
-				System.out.println("Error in loading " + file.getLocation().toString());
-			}
-			if ( imageData != null ) {
-				try {
-					width = imageData.width;
-					height = imageData.height;
-					type = imageData.type;
-					if ( image != null ) {
-						image = GamaIcons.scaleImage(image.getDevice(), image, 16, 16);
-						descriptor = ImageDescriptor.createFromImageData(image.getImageData());
-					}
-				} catch (Exception ex) {
-					System.out.println("Error in loading " + file.getLocation().toString());
-				} finally {
-					if ( image != null ) {
-						image.dispose();
-					}
-				}
-			}
-
-			imageInfo = new ImageInfo(file.getModificationStamp(), descriptor, type, width, height);
-			try {
-				file.setSessionProperty(CACHE_KEY, descriptor);
-			} catch (CoreException e) {}
+			imageInfo = new ImageInfo(file.getModificationStamp(), /* descriptor, */type, width, height);
+			// try {
+			// file.setSessionProperty(CACHE_KEY, descriptor);
+			// } catch (CoreException e) {}
 
 		}
 		return imageInfo;

@@ -19,7 +19,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
+import msi.gama.util.*;
 import msi.gaml.operators.Spatial;
 import msi.gaml.types.*;
 import com.kitfox.svg.*;
@@ -55,6 +55,12 @@ public class GamaSVGFile extends GamaGeometryFile {
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
 		return getBuffer().get(0);
+	}
+
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO are there attributes ?
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override

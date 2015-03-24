@@ -45,6 +45,12 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 		return Types.FILE.of(Types.STRING);
 	}
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// No attributes to speak of
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

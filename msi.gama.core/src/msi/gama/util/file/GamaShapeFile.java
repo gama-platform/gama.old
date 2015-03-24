@@ -13,7 +13,7 @@ package msi.gama.util.file;
 
 import static org.apache.commons.lang.StringUtils.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
@@ -199,6 +199,22 @@ public class GamaShapeFile extends GamaGisFile {
 		readShapes(scope);
 	}
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		ShapeInfo s;
+		IFileMetaDataProvider p = GuiUtils.getMetaDataProvider();
+		if ( p != null ) {
+			s = (ShapeInfo) p.getMetaData(getFile());
+		} else {
+			try {
+				s = new ShapeInfo(getFile().toURI().toURL(), 0);
+			} catch (MalformedURLException e) {
+				return GamaListFactory.EMPTY_LIST;
+			}
+		}
+		return GamaListFactory.createWithoutCasting(Types.STRING, s.attributes.keySet());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -340,4 +356,5 @@ public class GamaShapeFile extends GamaGisFile {
 		return gis.getProjectedEnvelope();
 
 	}
+
 }

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'IGamaFile.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'IGamaFile.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -39,9 +39,12 @@ import com.vividsolutions.jts.geom.Envelope;
 	@var(name = IKeyword.ISFOLDER, type = IType.BOOL),
 	@var(name = IKeyword.READABLE, type = IType.BOOL),
 	@var(name = IKeyword.WRITABLE, type = IType.BOOL),
-	@var(name = IKeyword.CONTENTS, type = IType.CONTAINER, of = ITypeProvider.FIRST_CONTENT_TYPE, index = ITypeProvider.FIRST_KEY_TYPE) })
-public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> extends
-	IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
+	@var(name = IKeyword.ATTRIBUTES, type = IType.LIST, of = IType.STRING),
+	@var(name = IKeyword.CONTENTS,
+		type = IType.CONTAINER,
+		of = ITypeProvider.FIRST_CONTENT_TYPE,
+		index = ITypeProvider.FIRST_KEY_TYPE) })
+public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 
 	public abstract void setWritable(final boolean w);
 
@@ -64,6 +67,14 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> ext
 
 	@getter(IKeyword.CONTENTS)
 	public abstract C getContents(IScope scope) throws GamaRuntimeException;
+
+	@getter(IKeyword.ATTRIBUTES)
+	/**
+	 * Retrieves the list of "attributes" present in files that support this concept (and an empty list for the others). For instance, in a CSV file, attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.
+	 * @param scope
+	 * @return a list of string or an empty list (never null)
+	 */
+	public abstract IList<String> getAttributes(IScope scope);
 
 	@getter(value = IKeyword.ISFOLDER, initializer = true)
 	public abstract Boolean isFolder();

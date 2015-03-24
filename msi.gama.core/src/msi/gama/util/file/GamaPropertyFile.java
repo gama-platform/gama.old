@@ -67,6 +67,12 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	}
 
 	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO return the keys of the map as "attributes"
+		return GamaListFactory.EMPTY_LIST;
+	}
+
+	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
 		// TODO A faire
 	}

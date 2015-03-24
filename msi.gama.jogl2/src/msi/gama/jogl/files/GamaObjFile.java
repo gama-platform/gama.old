@@ -120,6 +120,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		}
 	}
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO what to return ?
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 	private void loadmaterials() {
 		FileReader frm;
 		String refm = mtl_path;

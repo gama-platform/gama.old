@@ -42,6 +42,12 @@ public class GamaGridFile extends GamaGisFile {
 	private GamaGridReader reader;
 	private GridCoverage2D coverage;
 
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// No attributes
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 	private GamaGridReader createReader(final IScope scope) {
 		if ( reader == null ) {
 			final File gridFile = getFile();

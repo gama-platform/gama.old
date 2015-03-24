@@ -21,6 +21,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
@@ -53,15 +54,15 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			}
 		};
 
-		private Object thumbnail;
+		// private Object thumbnail;
 		private final int type;
 		private final int width;
 		private final int height;
 
-		public ImageInfo(final long modificationStamp, final Object thumbnail, final int origType, final int origWidth,
-			final int origHeight) {
+		public ImageInfo(final long modificationStamp,/* final Object thumbnail, */final int origType,
+			final int origWidth, final int origHeight) {
 			super(modificationStamp);
-			this.thumbnail = thumbnail;
+			// this.thumbnail = thumbnail;
 			this.type = origType;
 			this.width = origWidth;
 			this.height = origHeight;
@@ -73,16 +74,16 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			type = Integer.valueOf(segments[1]);
 			width = Integer.valueOf(segments[2]);
 			height = Integer.valueOf(segments[3]);
-			thumbnail = null;
+			// thumbnail = null;
 		}
 
 		public String getShortLabel(final int type) {
 			return formatsShortNames.contains(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
 		}
 
-		public void setThumbnail(final Object thumb) {
-			thumbnail = thumb;
-		}
+		// public void setThumbnail(final Object thumb) {
+		// thumbnail = thumb;
+		// }
 
 		@Override
 		public String getSuffix() {
@@ -97,10 +98,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			return sb.toString();
 		}
 
-		@Override
-		public Object getThumbnail() {
-			return thumbnail;
-		}
+		// @Override
+		// public Object getThumbnail() {
+		// return thumbnail;
+		// }
 
 		public int getType() {
 			return type;
@@ -139,6 +140,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
+	}
+
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// No attributes
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override

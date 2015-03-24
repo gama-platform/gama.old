@@ -378,4 +378,11 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	public void invalidateContents() {
 		buffer = null;
 	}
+
+	@Override
+	public IList<String> getAttributes(final IScope scope) {
+		// TODO what to return ?
+		return GamaListFactory.EMPTY_LIST;
+	}
+
 }

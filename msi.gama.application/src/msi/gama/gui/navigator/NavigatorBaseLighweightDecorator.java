@@ -6,10 +6,8 @@ package msi.gama.gui.navigator;
 
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.IGamaFileMetaData;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
-import org.eclipse.ui.*;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
@@ -31,25 +29,25 @@ public class NavigatorBaseLighweightDecorator extends SVNLightweightDecorator {
 			if ( suffix != null ) {
 				decoration.addSuffix(" (" + suffix + ")");
 			}
-			Object thumbnail = data.getThumbnail();
-			if ( thumbnail != null && thumbnail instanceof ImageDescriptor ) {
-				replaceImage(decoration, (ImageDescriptor) thumbnail);
-			}
+			// Object thumbnail = data.getThumbnail();
+			// if ( thumbnail != null && thumbnail instanceof ImageDescriptor ) {
+			// replaceImage(decoration, (ImageDescriptor) thumbnail);
+			// }
 		}
 		super.decorate(element, decoration);
 	}
 
-	private void replaceImage(final IDecoration decoration, final ImageDescriptor thumbnail) {
-		IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-		boolean doHack =
-			mgr.getBaseLabelProvider("org.eclipse.ui.ContentTypeDecorator") != null &&
-				mgr.getEnabled("org.eclipse.ui.ContentTypeDecorator");
-		if ( !doHack && DecorationContext.DEFAULT_CONTEXT instanceof DecorationContext ) {
-			((DecorationContext) DecorationContext.DEFAULT_CONTEXT).putProperty(IDecoration.ENABLE_REPLACE,
-				Boolean.TRUE);
-			decoration.addOverlay(thumbnail, IDecoration.REPLACE);
-		} else {
-			decoration.addOverlay(thumbnail, IDecoration.TOP_LEFT);
-		}
-	}
+	// private void replaceImage(final IDecoration decoration, final ImageDescriptor thumbnail) {
+	// IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+	// boolean doHack =
+	// mgr.getBaseLabelProvider("org.eclipse.ui.ContentTypeDecorator") != null &&
+	// mgr.getEnabled("org.eclipse.ui.ContentTypeDecorator");
+	// if ( !doHack && DecorationContext.DEFAULT_CONTEXT instanceof DecorationContext ) {
+	// ((DecorationContext) DecorationContext.DEFAULT_CONTEXT).putProperty(IDecoration.ENABLE_REPLACE,
+	// Boolean.TRUE);
+	// decoration.addOverlay(thumbnail, IDecoration.REPLACE);
+	// } else {
+	// decoration.addOverlay(thumbnail, IDecoration.TOP_LEFT);
+	// }
+	// }
 }
