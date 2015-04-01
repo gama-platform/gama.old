@@ -50,7 +50,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	
 	//TODO: Not implemented yet
 	public static final String PROBABILISTIC_CHOICE = "probabilistic_choice";
-	public static final String INSTANTANEAOUS = "instantaneaous";
+	public static final String INSTANTANEAOUS = "instantaneous";
 
 	//INFORMATION THAT CAN BE DISPLAYED
 	public static final String LAST_THOUGHTS = "thinking";
@@ -78,6 +78,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private int _plansNumber = 0;
 	private int _perceiveNumber = 0;
 	private SimpleBdiPlan _persistentTask = null;
+	private boolean iscurrentplaninstantaneous=false;
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -113,6 +114,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		}
 		if ( _plansNumber > 0 ) {
+			boolean loop_instantaneous_plans=true;
+			while (loop_instantaneous_plans)
+			{
+				loop_instantaneous_plans=false;
+				
 			final IAgent agent = getCurrentAgent(scope);
 			GamaList<Predicate> desireBase =
 				(GamaList<Predicate>) (scope.hasArg(DESIRE_BASE) ? scope.getListArg(DESIRE_BASE)
@@ -191,6 +197,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					boolean isExecuted =
 						_persistentTask.getExecutedExpression() == null ||
 							msi.gaml.operators.Cast.asBool(scope, _persistentTask.getExecutedExpression().value(scope));
+					if (this.iscurrentplaninstantaneous)
+					{
+						loop_instantaneous_plans=true;
+					}
 					if ( isExecuted ) {
 						_persistentTask = null;
 
@@ -206,6 +216,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 				}
 			}
+			
+		}
 		}
 
 		return result;
@@ -256,6 +268,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
+		iscurrentplaninstantaneous=false;
+		if (resultStatement!=null)
+		if(((SimpleBdiPlan) resultStatement).getFacet(SimpleBdiArchitecture.INSTANTANEAOUS)!=null){
+			iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope, ((SimpleBdiPlan) resultStatement).getInstantaneousExpression()
+					.value(scope));
+		}
+
 		return resultStatement;
 	}
 

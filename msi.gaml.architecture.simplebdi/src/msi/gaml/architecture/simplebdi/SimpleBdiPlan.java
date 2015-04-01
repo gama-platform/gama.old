@@ -34,12 +34,14 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+	@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
 public class SimpleBdiPlan extends AbstractStatementSequence {
 
 	private final IExpression _when;
 	private final IExpression _priority;
 	private final IExpression _executedwhen;
+	private final IExpression _instantaneous;
 
 	public IExpression getPriorityExpression() {
 		return _priority;
@@ -53,11 +55,16 @@ public class SimpleBdiPlan extends AbstractStatementSequence {
 		return _executedwhen;
 	}
 
+	public IExpression getInstantaneousExpression() {
+		return _instantaneous;
+	}
+
 	public SimpleBdiPlan(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
 		_priority = getFacet(SimpleBdiArchitecture.PRIORITY);
 		_executedwhen = getFacet(SimpleBdiArchitecture.FINISHEDWHEN);
+		_instantaneous = getFacet(SimpleBdiArchitecture.INSTANTANEAOUS);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));
 		}
