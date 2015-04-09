@@ -121,7 +121,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	static int checkStyle(final int style) {
-		return style & ~SWT.H_SCROLL | SWT.NO_BACKGROUND;
+		return style & ~SWT.H_SCROLL;
 	}
 
 	@Override
