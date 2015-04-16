@@ -55,7 +55,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private int imageStyle = IMAGE_LEFT;
 
 	private FlatButton(final Composite parent, final int style) {
-		super(parent, style | SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
+		super(parent, style | SWT.DOUBLE_BUFFERED);
 		setFont(SwtGui.getLabelfont());
 		addPaintListener(this);
 		addListeners();
@@ -113,8 +113,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
-		gc.setBackground(getParent().getBackground());
-		gc.fillRectangle(getBounds());
+		setBackground(getParent().getBackground());
+		//gc.setBackground(getParent().getBackground());
+		//gc.fillRectangle(getBounds());
 
 		final Path path = createClipping(rect);
 		GamaUIColor color = GamaColors.get(colorCode);

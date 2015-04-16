@@ -58,10 +58,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		//parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		// this.parent = parent;
 		Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
-		compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
+		//compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
