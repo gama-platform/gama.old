@@ -394,7 +394,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 	
-	@action(name = "get_belief", args = { @arg(name = "name",
+	@action(name = "get_belief_with_name", args = { @arg(name = "name",
 			type = IType.STRING,
 			optional = false,
 			doc = @doc("name of the predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
@@ -429,7 +429,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return predicates;
 		}
 
-	@action(name = "get_beliefs", args = { @arg(name = PREDICATE,
+	@action(name = "get_beliefs_with_name", args = { @arg(name = PREDICATE,
 			type = PredicateType.id,
 			optional = false,
 			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
