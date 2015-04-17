@@ -376,13 +376,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@action(name = "get_belief", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
-		optional = true,
-		doc = @doc("predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base.",
+		optional = false,
+		doc = @doc("predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
 		returns = "the predicate if it is in the base.",
-		examples = { @example("") }))
+		examples = { @example("get_belief(new_predicate(\"has_water\", true))") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-		public
-		Predicate getBelief(final IScope scope) throws GamaRuntimeException {
+	public Predicate getBelief(final IScope scope) throws GamaRuntimeException {
 		Predicate predicateDirect =
 			(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if ( predicateDirect != null ) {
@@ -394,6 +393,59 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 
 	}
+	
+	@action(name = "get_belief", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicate to check")) }, doc = @doc(value = "get the predicates is in the belief base (if several, returns the first one).",
+			returns = "the predicate if it is in the base.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public Predicate getBeliefName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { return pred; }
+				}
+			}
+			return null;
+		}
+	
+	@action(name = "get_beliefs", args = { @arg(name = "name",
+			type = IType.STRING,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
+			returns = "the list of predicates.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public List<Predicate> getBeliefsName(final IScope scope) throws GamaRuntimeException {
+			String predicateName =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+			List<Predicate> predicates = GamaListFactory.create();
+			if ( predicateName != null ) {
+				for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+					if ( predicateName.equals(pred.getName())) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
+
+	@action(name = "get_beliefs", args = { @arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
+			returns = "the list of predicates.",
+			examples = { @example("get_belief(\"has_water\")") }))
+		public List<Predicate> getBeliefs(final IScope scope) throws GamaRuntimeException {
+		Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			List<Predicate> predicates = GamaListFactory.create();
+			if ( predicateDirect != null ) {
+				for ( Predicate pred : getBase(scope, BELIEF_BASE) ) {
+					if ( predicateDirect.equals(pred)) { predicates.add(pred); }
+				}
+			}
+			return predicates;
+		}
 
 	@action(name = "is_current_intention",
 		args = { @arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("predicate to check")) },
@@ -533,6 +585,29 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		return false;
 	}
+	
+	@action(name = "replace_belief", args = { @arg(name = "old_predicate",
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("predicate to remove")),
+			@arg(name = PREDICATE,
+			type = PredicateType.id,
+			optional = false,
+			doc = @doc("predicate to add"))}, doc = @doc(value = "replace the old predicate by the new one.",
+			returns = "true if the old predicate is in the base.",
+			examples = { @example("") }))
+		public Boolean primPlaceBelief(final IScope scope) throws GamaRuntimeException {
+			Predicate oldPredicate =
+				(Predicate) (scope.hasArg("old_predicate") ? scope.getArg("old_predicate", PredicateType.id) : null);
+			boolean ok = true;
+			if ( oldPredicate != null ) { 
+				ok = getBase(scope, BELIEF_BASE).remove(oldPredicate);
+			} else {ok = false;}
+			Predicate newPredicate =
+					(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+			if ( newPredicate != null ) { return addToBase(scope, newPredicate, BELIEF_BASE); }
+			return ok;
+		}
 
 	@action(name = "remove_desire", args = { @arg(name = PREDICATE,
 		type = PredicateType.id,
