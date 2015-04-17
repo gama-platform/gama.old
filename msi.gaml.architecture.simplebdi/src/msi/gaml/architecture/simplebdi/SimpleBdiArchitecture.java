@@ -411,7 +411,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return null;
 		}
 	
-	@action(name = "get_beliefs", args = { @arg(name = "name",
+	@action(name = "get_beliefs_with_name", args = { @arg(name = "name",
 			type = IType.STRING,
 			optional = false,
 			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
@@ -429,10 +429,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return predicates;
 		}
 
-	@action(name = "get_beliefs_with_name", args = { @arg(name = PREDICATE,
+	@action(name = "get_beliefs", args = { @arg(name = PREDICATE,
 			type = PredicateType.id,
 			optional = false,
-			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base with the given name.",
+			doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base",
 			returns = "the list of predicates.",
 			examples = { @example("get_belief(\"has_water\")") }))
 		public List<Predicate> getBeliefs(final IScope scope) throws GamaRuntimeException {
