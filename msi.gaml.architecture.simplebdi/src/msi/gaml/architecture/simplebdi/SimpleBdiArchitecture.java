@@ -519,7 +519,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			@arg(name = PREDICATE_SUBINTENTIONS,
 				type = PredicateType.id,
 				optional = false,
-				doc = @doc("the subintention to add to the predicate")) },
+				doc = @doc("the subintention to add to the predicate")),
+				@arg(name = "add_as_desire",
+				type = IType.BOOL,
+				optional = true,
+				doc = @doc("add the subintention as a desire as well (by default, false) ")) },
 		doc = @doc(value = "adds the predicates is in the desire base.",
 			returns = "true if it is in the base.",
 			examples = { @example("") }))
@@ -529,14 +533,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			(Predicate) (scope.hasArg(PREDICATE_SUBINTENTIONS) ? scope.getArg(PREDICATE_SUBINTENTIONS, PredicateType.id) : null);
 
 		if ( predicate == null || subpredicate == null ) { return false; }
-
+		Boolean addAsDesire = (Boolean) (scope.hasArg("add_as_desire") ? scope.getArg("add_as_desire", PredicateType.BOOL) : false);
+		
 		if ( predicate.getSubintentions() == null ) {
 			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 		} else {
 			predicate.getSubintentions().remove(subpredicate);
 		}
 		predicate.getSubintentions().add(subpredicate);
-
+		if (addAsDesire) {
+			addToBase(scope, subpredicate, DESIRE_BASE);
+		}
 		return true;
 	}
 
