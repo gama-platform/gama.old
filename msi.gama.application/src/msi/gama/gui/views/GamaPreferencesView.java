@@ -171,7 +171,9 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			compo.setLayout(layout);
+			compo.setBackground(viewer.getBackground());
 			buildGroupContents(compo, entries.get(groupName));
+	
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			// item.setImage(GamaIcons.menu_action);

@@ -93,7 +93,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	protected void hideToolbar() {
 		super.hideToolbar();
-		pointEditor.setBackground(NORMAL_BACKGROUND);
+		pointEditor.setBackground(getNormalBackground());
+		//pointEditor.setBackground(NORMAL_BACKGROUND);
 	}
 
 	@Override

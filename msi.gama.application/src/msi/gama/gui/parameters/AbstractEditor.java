@@ -23,6 +23,7 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -72,7 +73,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	}
 
-	public static final Color NORMAL_BACKGROUND = IGamaColors.WHITE.color();
+	public static final Color NORMAL_BACKGROUND = IGamaColors.PARAMETERS_BACKGROUND.color();
 	public static final Color HOVERED_BACKGROUND = IGamaColors.WHITE.darker();
 	public static final Color CHANGED_BACKGROUND = IGamaColors.TOOLTIP.color();
 	private static int ORDER;
@@ -97,9 +98,11 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected ToolItem editor;
 	protected final ToolItem[] items = new ToolItem[8];
 	boolean isSubParameter;
+	Composite parent;
 	protected ToolBar toolbar;
 	protected Set<Control> controlsThatShowHideToolbars = new HashSet();
 	private final MouseTrackListener hideShowToolbarListener = new MouseTrackListener() {
+		
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
@@ -108,6 +111,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
+			if (isCombo && combo.getListVisible()) return;
 			hideToolbar();
 		}
 
@@ -139,9 +143,9 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		listener = l;
 	}
 
-	public boolean isSubParameter() {
-		return isSubParameter;
-	}
+//	public boolean isSubParameter() {
+//		return isSubParameter;
+//	}
 
 	@Override
 	public void isSubParameter(final boolean b) {
@@ -222,17 +226,32 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		GridData data = getParameterGridData();
 		paramControl.setLayoutData(data);
-		// paramControl.setBackground(IGamaColors.PARAMETERS_EDITORS_BACKGROUND.color());
+	 paramControl.setBackground(composite.getBackground());
 		addToolbarHiders(paramControl);
 		return paramControl;
 	}
+	
+	protected Color getNormalBackground() {
+		return /* NORMAL_BACKGROUND*/ parent.getBackground();
+	}
+	
+	public static Label createLeftLabel(final Composite parent, final String title) {
+		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
+		label.setBackground(parent.getBackground());
+		GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		label.setLayoutData(d);
+		label.setFont(SwtGui.getLabelfont());
+		label.setText(title);
+		return label;
+	}
 
 	public void createComposite(final Composite parent) {
+		this.parent = parent;
 		internalModification = true;
 		if ( !isSubParameter ) {
-			titleLabel = SwtGui.createLeftLabel(parent, name);
+			titleLabel = createLeftLabel(parent, name);
 		} else {
-			Label l = SwtGui.createLeftLabel(parent, " ");
+			Label l = createLeftLabel(parent, " ");
 		}
 		try {
 			setOriginalValue(getParameterValue());
@@ -242,7 +261,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		}
 		currentValue = getOriginalValue();
 		composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+	composite.setBackground(parent.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumWidth = 150;
 		composite.setLayoutData(data);
@@ -254,9 +273,9 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		composite.setLayout(layout);
 		if ( isSubParameter ) {
-			titleLabel = SwtGui.createLeftLabel(composite, name);
+			titleLabel = createLeftLabel(composite, name);
 			titleLabel.setFont(SwtGui.getNavigFolderFont());
-			GridData d = getParameterGridData();
+			GridData d =new GridData(SWT.FILL, SWT.CENTER, true, false);
 			d.grabExcessHorizontalSpace = false;
 			titleLabel.setLayoutData(d);
 		}
@@ -268,6 +287,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		}
 		internalModification = false;
 		composite.layout();
+		
 		addToolbarHiders(composite, toolbar, titleLabel);
 		// toolbar.addDisposeListener(new DisposeListener() {
 		//
@@ -299,7 +319,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		if ( d.exclude ) { return; }
 		d.exclude = true;
 		toolbar.setVisible(false);
-		composite.setBackground(NORMAL_BACKGROUND);
+		composite.setBackground(getNormalBackground());
 		composite.layout();
 	}
 
@@ -448,7 +468,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected abstract Control createCustomParameterControl(Composite composite) throws GamaRuntimeException;
 
 	protected Control createLabelParameterControl(final Composite composite) {
-		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
+		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID );
 		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils.toGaml(
 			getOriginalValue(), false));
 		// addToolbarHiders(fixedValue);
@@ -465,16 +485,25 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i), false);
 			// }
 		}
-		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN );
 		combo.setItems(valuesAsString);
 		combo.select(possibleValues.indexOf(getOriginalValue()));
-		combo.addModifyListener(new ModifyListener() {
+//		combo.addModifyListener(new ModifyListener() {
+//
+//			@Override
+//			public void modifyText(final ModifyEvent me) {
+//				modifyValue(possibleValues.get(combo.getSelectionIndex()));
+//			}
+//		});
+		combo.addSelectionListener(new SelectionAdapter() {
 
 			@Override
-			public void modifyText(final ModifyEvent me) {
+			public void widgetSelected(final SelectionEvent me) {
 				modifyValue(possibleValues.get(combo.getSelectionIndex()));
 			}
 		});
+		
+
 		final GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 		d.minimumWidth = 48;
 		// d.widthHint = 100; // SWT.DEFAULT

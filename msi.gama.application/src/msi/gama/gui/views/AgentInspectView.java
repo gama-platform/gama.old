@@ -47,7 +47,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		parent.setBackground(IGamaColors.WHITE.color());
+		parent.setBackground(parent.getBackground());
 
 		IAgent[] init = ((InspectDisplayOutput) output).getLastValue();
 		if ( init != null ) {

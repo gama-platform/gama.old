@@ -30,6 +30,6 @@ public interface IGamaColors {
 		GamaColors.system(SWT.COLOR_WHITE)).validate();
 	public static GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
 	public static GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
-	public static GamaUIColor PARAMETERS_EDITORS_BACKGROUND = GamaColors.get(240, 240, 240).validate();
+	//public static GamaUIColor PARAMETERS_EDITORS_BACKGROUND = GamaColors.get(240, 240, 240).validate();
 
 }

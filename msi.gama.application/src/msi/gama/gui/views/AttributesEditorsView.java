@@ -65,6 +65,7 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> im
 	protected Composite createItemContentsFor(final T data) {
 		Map<String, IParameterEditor> parameters = editors.getCategories().get(data);
 		final ItemComposite compo = new ItemComposite(getViewer(), SWT.NONE);
+		compo.setBackground(getViewer().getBackground());
 		if ( parameters != null ) {
 			List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);

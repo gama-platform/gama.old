@@ -67,6 +67,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		}
 		control.pack(true);
 		control.layout();
+		control.setBackground(bar.getBackground());
 		i.setControl(control);
 		i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		i.setExpanded(expanded);

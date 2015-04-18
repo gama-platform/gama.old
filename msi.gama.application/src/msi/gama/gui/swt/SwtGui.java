@@ -164,14 +164,7 @@ public class SwtGui implements IGui {
 			}
 		});
 
-	public static Label createLeftLabel(final Composite parent, final String title) {
-		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
-		GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
-		label.setLayoutData(d);
-		label.setFont(getLabelfont());
-		label.setText(title);
-		return label;
-	}
+
 
 	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
 
