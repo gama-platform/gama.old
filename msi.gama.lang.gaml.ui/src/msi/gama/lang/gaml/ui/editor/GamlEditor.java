@@ -78,10 +78,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	IBoxDecorator decorator;
 	GamlEditorState state = new GamlEditorState(null, Collections.EMPTY_LIST);
 	GamaToolbar2 toolbar;
+	Composite toolbarParent;
 	EditToolbar editToolbar;
 	boolean decorationEnabled = XtextGui.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = XtextGui.EDITOR_SHOW_TOOLBAR.getValue();
-	OtherExperimentsButton other;
+	//OtherExperimentsButton other;
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
@@ -167,7 +168,26 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	}
 
 	public void setShowOtherEnabled(final boolean showOtherEnabled) {
-		other.setVisible(showOtherEnabled);
+		buildRightToolbar();
+	}
+	
+	private void buildRightToolbar() {
+		toolbar.wipe(SWT.RIGHT);
+		OtherExperimentsButton other = new OtherExperimentsButton(this, toolbar);
+		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
+		toggle.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				editToolbarEnabled = !editToolbarEnabled;
+				editToolbar.setVisible(editToolbarEnabled);
+				toggle.setImage(editToolbarEnabled ? GamaIcons.create("action.toolbar.toggle2").image() : GamaIcons
+					.create("action.toolbar.toggle3").image());
+				toolbarParent.layout();
+			}
+
+		});
+		toolbar.refresh(true);
 	}
 
 	@Override
@@ -189,40 +209,29 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 	@Override
 	public void createPartControl(final Composite compo) {
-		final Composite parent = GamaToolbarFactory.createToolbars(this, compo);
+		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
 
-		other = new OtherExperimentsButton(this, toolbar);
+		buildRightToolbar();
 
 		GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		parent.setLayout(layout);
-		parent.setBackground(IGamaColors.WHITE.color());
-		editToolbar = new EditToolbar(this, parent);
+		toolbarParent.setLayout(layout);
+		toolbarParent.setBackground(IGamaColors.WHITE.color());
+		editToolbar = new EditToolbar(this, toolbarParent);
 		editToolbar.setVisible(editToolbarEnabled);
 
-		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
-		toggle.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				editToolbarEnabled = !editToolbarEnabled;
-				editToolbar.setVisible(editToolbarEnabled);
-				parent.layout();
-				toggle.setImage(editToolbarEnabled ? GamaIcons.create("action.toolbar.toggle2").image() : GamaIcons
-					.create("action.toolbar.toggle3").image());
-			}
-
-		});
 
 		// Asking the editor to fill the rest
-		Composite editor = new Composite(parent, SWT.BORDER);
+		Composite editor = new Composite(toolbarParent, SWT.BORDER);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());
 		super.createPartControl(editor);
+		toolbarParent.layout();
 		installGestures();
 	}
 

@@ -42,12 +42,13 @@ public class OtherExperimentsButton {
 	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		this.editor = editor;
 		this.parent = toolbar;
+		if (XtextGui.EDITOR_SHOW_OTHER.getValue()) 
 		createButton();
 	}
 
 	private void createButton() {
 
-		parent.sep(5, SWT.RIGHT);
+		//parent.sep(5, SWT.RIGHT);
 		menu = parent.menu(IGamaColors.BLUE, "Other...", SWT.RIGHT);
 		menu.getControl().setToolTipText("Run other experiments defined in models belonging to the same project");
 		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {
@@ -69,7 +70,7 @@ public class OtherExperimentsButton {
 			}
 
 		});
-		setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
+		//setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
 	}
 
 	private final SelectionAdapter adapter = new SelectionAdapter() {
@@ -193,8 +194,16 @@ public class OtherExperimentsButton {
 	/**
 	 * @param showOtherEnabled
 	 */
-	public void setVisible(final boolean showOtherEnabled) {
-		menu.getControl().setVisible(showOtherEnabled);
+	public void setVisible(final boolean enabled) {
+		if (enabled) {
+			if (menu != null) return;
+			createButton();
+		} else {
+			if (menu == null) return;
+			menu.dispose();
+			menu = null;
+		}
+		//menu.getControl().setVisible(enabled);
 	}
 
 }
