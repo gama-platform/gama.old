@@ -27,20 +27,20 @@ public class GamaToolbar2 extends Composite {
 
 	private GamaToolbarSimple left, right;
 
-	private class SizerToolItem extends ToolItem {
+//	private class SizerToolItem extends ToolItem {
+//
+//		public SizerToolItem(final GamaToolbarSimple tb, final int width, final int height) {
+//			super(tb, SWT.FLAT);
+//			setImage(GamaIcons.createSizer(GamaToolbar2.this.getBackground(), width, height).image());
+//			// setEnabled(false);
+//		}
+//
+//		@Override
+//		protected void checkSubclass() {}
+//
+//	}
 
-		public SizerToolItem(final GamaToolbarSimple tb, final int width, final int height) {
-			super(tb, SWT.FLAT);
-			setImage(GamaIcons.createSizer(GamaToolbar2.this.getBackground(), width, height).image());
-			// setEnabled(false);
-		}
-
-		@Override
-		protected void checkSubclass() {}
-
-	}
-
-	final SizerToolItem iconSizer, toolbarSizer;
+//	final SizerToolItem iconSizer, toolbarSizer;
 	final int height;
 
 	public GamaToolbar2(final Composite parent, final int style, final int height) {
@@ -48,10 +48,10 @@ public class GamaToolbar2 extends Composite {
 		this.height = height;
 		createLayout();
 		createToolbars();
-		int square = GamaIcons.CORE_ICONS_HEIGHT.getValue();
-		iconSizer = null;
+		//int square = GamaIcons.CORE_ICONS_HEIGHT.getValue();
+		//iconSizer = null;
 		// iconSizer = new SizerToolItem(right, square, square);
-		toolbarSizer = new SizerToolItem(left, 1, height);
+		//toolbarSizer = new SizerToolItem(left, 1, height);
 	}
 
 	public void createLayout() {
@@ -71,6 +71,7 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.LEFT;
 		data.minimumWidth = GamaToolbarFactory.TOOLBAR_HEIGHT * 2;
 		left.setLayoutData(data);
+		prepareToolbar(SWT.LEFT);
 
 		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS);
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -78,43 +79,22 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.RIGHT;
 		data.minimumWidth = GamaToolbarFactory.TOOLBAR_HEIGHT * 2;
 		right.setLayoutData(data);
+		prepareToolbar(SWT.RIGHT);
 
 	}
 
 	@Override
 	protected void checkSubclass() {}
 
-	public ToolItem sep(final int side) {
-		return create(null, null, null, null, SWT.SEPARATOR, false, null, side);
-	}
-
-	public GamaToolbar2 width(final Control parent) {
-		ControlListener widthListener = new ControlAdapter() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				Rectangle r = getBounds();
-				r.width = parent.getBounds().width;
-				setBounds(r);
-			}
-
-		};
-		addControlListener(widthListener);
-		return this;
-	}
 
 	public ToolItem sep(final int n, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		GamaIcon icon = GamaIcons.createSizer(getBackground(), n, height);
 		ToolItem item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
-		// item.getControl().setVisible(false);
+		item.setDisabledImage(icon.image());
+		item.setEnabled(false);
 		return item;
 	}
 
-	public ToolItem label(final String s, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		ToolItem label = create(null, s, null, null, SWT.NONE, true, null, side);
-		label.setEnabled(false);
-		return label;
-	}
 
 	public
 		ToolItem
@@ -132,8 +112,8 @@ public class GamaToolbar2 extends Composite {
 
 	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		if ( s == null ) { return null; }
-		final GamaToolbarSimple tb = side == SWT.LEFT ? left : right;
-		final GamaToolbarSimple other = side == SWT.LEFT ? right : left;
+		final GamaToolbarSimple tb = getToolbar(side);
+		final GamaToolbarSimple other = tb == right ? left : right;
 		int width = getSize().x - other.getSize().x - 30;
 		wipe(side);
 		Label label = new Label(tb, SWT.WRAP);
@@ -203,60 +183,35 @@ public class GamaToolbar2 extends Composite {
 
 	public void wipe(final int side /* SWT.LEFT or SWT.RIGHT */) {
 		// Removes everything excluding the sizer item and the separator, after or before the separator depending on 'side'
-		if ( side == SWT.LEFT ) {
-			for ( ToolItem t : left.getItems() ) {
-				if ( t == iconSizer ) {
-					break;
-				}
+		ToolItem[] items = getToolbar(side).getItems();
+		for (ToolItem t: items) {
 				Control c = t.getControl();
 				if ( c != null ) {
 					c.dispose();
 				}
 				t.dispose();
 			}
-		} else {
-			for ( ToolItem t : right.getItems() ) {
-				if ( t != toolbarSizer ) {
-					Control c = t.getControl();
-					if ( c != null ) {
-						c.dispose();
-					}
-					t.dispose();
-				}
-			}
-		}
+		prepareToolbar(side);
 	}
 
-	public GamaToolbar2 height(final int n) {
-		return this; // fixed height
-	}
 
 	public void item(final IContributionItem item, final int side) {
-		if ( side == SWT.LEFT ) {
-			item.fill(left, left.getItemCount());
-		} else {
-			item.fill(right, right.getItemCount());
-		}
+		item.fill(getToolbar(side), getToolbar(side).getItemCount());
 	}
 
-	private ToolItem create(final String i, final String text, final String tip, final SelectionListener listener,
+	private ToolItem create(final String image, final String text, final String tip, final SelectionListener listener,
 		final int style, final boolean forceText, final Control control, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		ToolItem button;
-		GamaToolbarSimple tb;
-		if ( side == SWT.LEFT ) {
-			button = new ToolItem(left, style);
-		} else {
-			button = new ToolItem(right, style);
-		}
+		GamaToolbarSimple tb = getToolbar(side);
+		ToolItem button = new ToolItem(tb , style) ;
 		if ( text != null && forceText ) {
 			button.setText(text);
 		}
 		if ( tip != null ) {
 			button.setToolTipText(tip);
 		}
-		if ( i != null ) {
-			Image image = GamaIcons.create(i).image();
-			button.setImage(image);
+		if ( image != null ) {
+			Image im = GamaIcons.create(image).image();
+			button.setImage(im);
 		}
 		if ( listener != null ) {
 			button.addSelectionListener(listener);
@@ -265,6 +220,17 @@ public class GamaToolbar2 extends Composite {
 			button.setControl(control);
 		}
 		return button;
+	}
+
+	private void prepareToolbar(int side) {
+		GamaToolbarSimple tb = getToolbar(side);
+		if (tb.getItemCount() > 0) return;
+		if (side == SWT.LEFT){
+			sep(1, side);
+		} else {
+			//sep(GamaIcons.CORE_ICONS_HEIGHT.getValue(), side);
+		}
+		
 	}
 
 	/**
