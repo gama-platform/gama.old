@@ -62,13 +62,13 @@ public class FloatEditor extends NumberEditor<Double> {
 		super.modifyValue(i);
 	}
 
-	@Override
-	protected void setOriginalValue(final Double val) {
-		// if ( acceptNull && val == null ) {
-		// super.setOriginalValue(val);
-		// }
-		super.setOriginalValue(val);
-	}
+	// @Override
+	// protected void setOriginalValue(final Double val) {
+	// // if ( acceptNull && val == null ) {
+	// // super.setOriginalValue(val);
+	// // }
+	// super.setOriginalValue(val);
+	// }
 
 	@Override
 	protected Double normalizeValues() throws GamaRuntimeException {
