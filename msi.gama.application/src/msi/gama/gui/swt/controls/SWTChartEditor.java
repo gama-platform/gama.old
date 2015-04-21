@@ -846,7 +846,7 @@ public class SWTChartEditor implements ChartEditor {
 			}
 			java.awt.event.MouseEvent awtMouseEvent =
 				new java.awt.event.MouseEvent(DUMMY_PANEL, event.hashCode(), event.time, modifiers, event.x, event.y,
-					1, false, button);
+					event.count, false, button);
 			return awtMouseEvent;
 		}
 
