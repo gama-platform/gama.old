@@ -226,7 +226,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IToolb
 	@Override
 	public void close() {
 
-		GuiUtils.run(new Runnable() {
+		GuiUtils.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
