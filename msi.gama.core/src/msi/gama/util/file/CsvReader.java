@@ -548,11 +548,11 @@ public class CsvReader {
 		public boolean header;
 		public int rows;
 		public int cols;
-		public IType type;
+		public IType type = Types.NO_TYPE;
 		public String[] headers = null;
 		public long startTime = System.currentTimeMillis();
 
-		private IType firstLineType;
+		private IType firstLineType = Types.NO_TYPE;
 		private boolean atLeastOneNumber;
 
 		Stats(final CsvReader reader) {
@@ -588,9 +588,9 @@ public class CsvReader {
 					header = true;
 				}
 			}
-			if ( header ) {
-				headers = possibleHeaders;
-			}
+			// if ( header ) {
+			headers = possibleHeaders;
+			// }
 			rows = (int) reader.currentRecord + 1;
 			reader.close();
 			log();
@@ -620,54 +620,74 @@ public class CsvReader {
 			return s;
 		}
 
-		private boolean onlyContainsDigitsAndPunctuation(final String s) {
-			for ( char c : s.toCharArray() ) {
-				if ( Character.isLetter(c) ) { return false; }
-			}
-			return true;
-		}
+		// private boolean onlyContainsDigitsAndPunctuation(final String s) {
+		// for ( char c : s.toCharArray() ) {
+		// if ( Character.isLetter(c) ) { return false; }
+		// }
+		// return true;
+		// }
+		//
+		// private boolean onlyContainsDigits(final String s) {
+		// for ( char c : s.toCharArray() ) {
+		// if ( !Character.isDigit(c) && !Character.isWhitespace(c) ) { return false; }
+		// }
+		// return true;
+		// }
 
-		private boolean onlyContainsDigits(final String s) {
-			for ( char c : s.toCharArray() ) {
-				if ( !Character.isDigit(c) && !Character.isWhitespace(c) ) { return false; }
+		private class StringAnalysis {
+
+			boolean isFloat = true;
+			boolean isInt = true;
+			boolean isNumberSequence = true;
+
+			StringAnalysis(final String s) {
+
+				for ( char c : s.toCharArray() ) {
+					boolean isDigit = Character.isDigit(c);
+					if ( !isDigit ) {
+						if ( c == '.' ) {
+							isInt = false;
+						} else if ( Character.isLetter(c) ) {
+							isInt = false;
+							isFloat = false;
+							isNumberSequence = false;
+							break;
+						} else if ( c == ',' || c == ';' || c == '|' || c == ':' || c == '/' ||
+							Character.isWhitespace(c) ) {
+							isInt = false;
+							isFloat = false;
+						}
+					}
+				}
+				if ( isInt && isFloat ) {
+					isFloat = false;
+				}
 			}
-			return true;
+
 		}
 
 		private IType processRecord(final String[] values) {
 			cols = values.length;
 			IType temp = null;
-			IType integer = Types.INT;
-			IType floating = Types.FLOAT;
 			for ( String s : values ) {
-				if ( onlyContainsDigitsAndPunctuation(s) ) {
-					atLeastOneNumber = true;
-					if ( !onlyContainsDigits(s) ) {
-						if ( temp == null || temp == integer || temp == floating ) {
-							temp = floating;
-						}
-					} else {
-						if ( temp == null || temp == integer ) {
-							temp = integer;
-						}
+				StringAnalysis sa = new StringAnalysis(s);
+				atLeastOneNumber = sa.isFloat || sa.isInt || sa.isNumberSequence;
+				if ( sa.isInt ) {
+					if ( temp == null ) {
+						temp = Types.INT;
 					}
-				}
-
-				// if ( Strings.isGamaNumber(s) || delimiter != Letters.COMMA && Strings.isGamaNumber(s.replace(',', '.')) ) {
-				// if ( s.contains(".") || s.contains(",") && delimiter != Letters.COMMA ) {
-				// atLeastOneNumber = true;
-				// if ( temp == null || temp == integer || temp == floating ) {
-				// temp = floating;
-				// }
-				// } else {
-				// if ( temp == null || temp == integer ) {
-				// temp = integer;
-				// }
-				// }
-				// }
-				else {
+				} else if ( sa.isFloat ) {
+					if ( temp == null || temp == Types.INT ) {
+						temp = Types.FLOAT;
+					}
+				} else {
 					temp = Types.NO_TYPE;
 				}
+
+			}
+			// in case nothing has been read (i.e. empty file)
+			if ( temp == null ) {
+				temp = Types.NO_TYPE;
 			}
 			return temp;
 		}
@@ -680,6 +700,17 @@ public class CsvReader {
 
 	public static Stats getStats(final String initial) {
 		try {
+			Stats stats = new Stats(new CsvReader(initial));
+			return stats;
+		} catch (FileNotFoundException e1) {
+			return null;
+		}
+
+	}
+
+	public static Stats getStats(final String initial, final boolean withHeader) {
+		try {
+			CsvReader reader = new CsvReader(initial);
 			Stats stats = new Stats(new CsvReader(initial));
 			return stats;
 		} catch (FileNotFoundException e1) {
@@ -1449,7 +1480,7 @@ public class CsvReader {
 			isQualified = qualifiedHolder;
 		}
 
-		values[columnsCount] = currentValue;
+		values[columnsCount] = StringUtils.trimToEmpty(currentValue);
 
 		isQualified[columnsCount] = startedWithQualifier;
 

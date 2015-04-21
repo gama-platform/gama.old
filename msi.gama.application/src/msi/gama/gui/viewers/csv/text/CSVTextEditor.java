@@ -76,6 +76,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	public void createToolItem(final int code, final GamaToolbar2 tb) {
 
 		switch (code) {
+
 			case -32:
 				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
 

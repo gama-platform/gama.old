@@ -15,6 +15,7 @@
  */
 package msi.gama.gui.viewers.csv;
 
+import msi.gama.gui.navigator.commands.RefreshHandler;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.viewers.csv.model.*;
 import msi.gama.gui.viewers.csv.text.*;
@@ -39,10 +40,9 @@ import org.eclipse.ui.part.*;
 public class MultiPageCSVEditor extends MultiPageEditorPart implements IResourceChangeListener, IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
-	// GamaToolbar leftToolbar, rightToolbar;
 	GamaToolbar2 toolbar;
 	private final static int ADD_ROW = -10, REMOVE_ROW = -11, DUPLICATE_ROW = -12, ADD_COLUMN = -13,
-		REMOVE_COLUMN = -14, SHOW_COLUMN = -15, SAVE_AS = -16;
+		REMOVE_COLUMN = -14, SHOW_COLUMN = -15, SAVE_AS = -16, WITH_HEADER = -17;
 	/** index of the source page */
 	public static final int indexSRC = 1;
 	/** index of the table page */
@@ -105,7 +105,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 	 */
 	@Override
 	public Integer[] getToolbarActionsId() {
-		return new Integer[] { ADD_ROW, REMOVE_ROW, SEP, ADD_COLUMN, REMOVE_COLUMN, SHOW_COLUMN, SEP, SAVE_AS };
+		return new Integer[] { WITH_HEADER, SEP, ADD_ROW, REMOVE_ROW, SEP, ADD_COLUMN, REMOVE_COLUMN, SHOW_COLUMN, SEP,
+			SAVE_AS };
 	}
 
 	@Override
@@ -183,8 +184,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 		tableViewer.addFilter(tableFilter);
 
 		// add the filtering and coloring when searching specific elements.
-		final Text searchText = new Text(toolbar.getToolbar(SWT.LEFT), SWT.BORDER);
-		toolbar.sep(16, SWT.LEFT);
+		final Text searchText = new Text(toolbar.getToolbar(SWT.LEFT), SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+
 		toolbar.control(searchText, 150, SWT.LEFT);
 		searchText.addKeyListener(new KeyAdapter() {
 
@@ -670,6 +671,27 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 				}
 				break;
 			case SHOW_COLUMN:
+				break;
+			case WITH_HEADER:
+				ToolItem t =
+					tb.check("action.set.header2", "First line is header", "First line is header",
+						new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e) {
+								ToolItem t = (ToolItem) e.widget;
+								model.setFirstLineHeader(t.getSelection());
+								try {
+									populateTablePage();
+								} catch (Exception e1) {
+									e1.printStackTrace();
+								}
+								// tableModified();
+								RefreshHandler.run();
+							}
+
+						}, SWT.RIGHT);
+				t.setSelection(model.isFirstLineHeader());
 				break;
 			case SAVE_AS:
 				tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {

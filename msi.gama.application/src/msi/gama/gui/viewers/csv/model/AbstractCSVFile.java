@@ -50,6 +50,8 @@ public abstract class AbstractCSVFile implements IRowChangesListener {
 	 */
 	public abstract boolean isFirstLineHeader();
 
+	public abstract void setFirstLineHeader(boolean header);
+
 	/**
 	 * Check search in the text must be case sensitive
 	 * @return true if the search must be case sensitive.

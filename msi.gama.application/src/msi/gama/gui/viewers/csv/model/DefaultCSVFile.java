@@ -15,8 +15,9 @@
  */
 package msi.gama.gui.viewers.csv.model;
 
-import msi.gama.util.file.*;
-import msi.gama.util.file.CsvReader.Stats;
+import java.io.*;
+import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -29,7 +30,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class DefaultCSVFile extends AbstractCSVFile {
 
-	private final Stats stats;
+	private final CSVInfo info;
+	private final IFile file;
 
 	/** Preferences provider */
 	// private final ICsvOptionsProvider optionsProvider;
@@ -38,24 +40,45 @@ public class DefaultCSVFile extends AbstractCSVFile {
 	 * Constructor
 	 * @param provider the {@link PreferencesCSVOptionsProvider}
 	 */
-	public DefaultCSVFile(final Stats stats/* ICsvOptionsProvider provider */) {
-		super();
-		this.stats = stats;
-		// this.optionsProvider = provider;
-	}
+	// public DefaultCSVFile(final CSVInfo info/* ICsvOptionsProvider provider */) {
+	// super();
+	// this.info = info;
+	// // this.optionsProvider = provider;
+	// }
 
 	/**
 	 * @throws CoreException
 	 * @param editorInput
 	 */
 	public DefaultCSVFile(final IFile file) throws CoreException {
-		this(CsvReader.getStats(file.getContents()));
+		info = (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file);
+		this.file = file;
 	}
 
 	@Override
 	public boolean isFirstLineHeader() {
-		return stats.header;
+		return info.header;
 		// return optionsProvider.getUseFirstLineAsHeader();
+	}
+
+	@Override
+	public void setFirstLineHeader(final boolean header) {
+		info.header = header;
+		if ( header ) {
+			BufferedReader br;
+			try {
+				br = new BufferedReader(new InputStreamReader(file.getContents()));
+				readLines(br.readLine());
+				info.setHeaders(this.getHeader().toArray(new String[0]));
+			} catch (CoreException e) {
+				info.setHeaders(null);
+			} catch (IOException e) {
+				info.setHeaders(null);
+			}
+		} else {
+			info.setHeaders(null);
+		}
+		FileMetaDataProvider.getInstance().storeMetadata(file, info);
 	}
 
 	@Override
@@ -66,7 +89,7 @@ public class DefaultCSVFile extends AbstractCSVFile {
 
 	@Override
 	public char getCustomDelimiter() {
-		return stats.delimiter;
+		return info.delimiter;
 		// return optionsProvider.getCustomDelimiter().charAt(0);
 	}
 
