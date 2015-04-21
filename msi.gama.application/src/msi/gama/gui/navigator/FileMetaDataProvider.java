@@ -161,7 +161,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return (T) result;
 	}
 
-	private void storeMetadata(final IFile file, final IGamaFileMetaData data) {
+	public void storeMetadata(final IFile file, final IGamaFileMetaData data) {
 		try {
 			file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 		} catch (Exception ignore) {
