@@ -12,6 +12,7 @@
 package msi.gama.gui.swt;
 
 import java.util.Arrays;
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.gui.swt.perspectives.*;
 import msi.gama.runtime.*;
 import msi.gaml.compilation.GamaBundleLoader;
@@ -192,8 +193,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		IViewReference[] views = page.getViewReferences();
 
 		for ( IViewReference view : views ) {
-			if ( view.getId().startsWith("msi.gama.application.") ) {
-				page.hideView(view);
+			IViewPart part = view.getView(false);
+			if ( part instanceof IGamaView ) {
+				((IGamaView) part).close();
 			}
 		}
 	}
