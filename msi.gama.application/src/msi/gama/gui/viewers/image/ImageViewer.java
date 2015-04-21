@@ -119,7 +119,14 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	private void displayInfoString() {
 		GamaUIColor color = IGamaColors.OK;
 		String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
-		toolbar.button(color, result, null, SWT.LEFT);
+		toolbar.button(color, result, new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
+			}
+		}, SWT.LEFT);
+
 		toolbar.refresh(true);
 	}
 
@@ -267,7 +274,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		GuiUtils.asyncRun(r);
 
 		// load the image in the background to keep the ui fresh
-		Job job = new Job(MessageFormat.format(Messages.ImageViewer_loadImageTask, getPartName())) {
+		Job job = new Job(MessageFormat.format("Load Image {0}", getPartName())) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -452,8 +459,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		} catch (InvocationTargetException ex) {
 			Throwable t = ex.getCause();
 
-			String title = Messages.ImageViewer_saveErrorTitle;
-			String mesg = MessageFormat.format(Messages.ImageViewer_saveErrorMessage, path.toPortableString());
+			String title = "Error Saving";
+			String mesg = MessageFormat.format("Failed to save {0}", path.toPortableString());
 			// ImagesActivator.getDefault().log(IStatus.WARNING, mesg, t);
 			IStatus st = null;
 			if ( t instanceof CoreException ) {
@@ -490,7 +497,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 			final PipedOutputStream pout = new PipedOutputStream(pin);
 			// the write to the pipe has to happen in a different thread or
 			// else we get deadlock
-			Job writeJob = new Job(Messages.ImageViewer_saveAsPipeJobName) {
+			Job writeJob = new Job("Write image data to pipe") {
 
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
@@ -501,7 +508,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					} catch (Exception ex) {
 						status =
 							new Status(IStatus.ERROR, "msi.gama.application", MessageFormat.format(
-								Messages.ImageViewer_saveAsLoadImageDataError, dest.getFullPath()), ex);
+								"Error getting image data for {0}", dest.getFullPath()), ex);
 					} finally {
 						try {
 							pout.close();
@@ -514,9 +521,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 							@Override
 							public void run() {
-								ErrorDialog.openError(getSite().getShell(), Messages.ImageViewer_saveErrorTitle,
-									MessageFormat.format(Messages.ImageViewer_saveErrorMessage, dest.getFullPath()),
-									fstatus);
+								ErrorDialog.openError(getSite().getShell(), "Error Saving",
+									MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus);
 							}
 						});
 					}
@@ -717,18 +723,6 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					}
 				}, SWT.RIGHT);
 				break;
-			case -33:
-				tb.button(IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.getCode(), "Information", "Image information",
-					new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId())
-								.run();
-						}
-					}, SWT.RIGHT);
-				break;
-
 		}
 
 	}
