@@ -14,7 +14,7 @@ package msi.gama.gui.views;
 import java.util.Collection;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
 import msi.gaml.compilation.GamaHelper;
@@ -78,8 +78,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
 		toolbar.sep(2, SWT.LEFT);
 		for ( final IStatement command : userCommands ) {
-			ToolItem f = toolbar.button(IGamaColors.BLUE, command.getName(), null, SWT.LEFT);
-			((FlatButton) f.getControl()).addSelectionListener(new SelectionAdapter() {
+			ToolItem f = toolbar.button(IGamaColors.BLUE, command.getName(), new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -95,7 +94,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 					});
 				}
 
-			});
+			}, SWT.LEFT);
 			toolbar.sep(2, SWT.LEFT);
 		}
 		toolbar.refresh(true);
