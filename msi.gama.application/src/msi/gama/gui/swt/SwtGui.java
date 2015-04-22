@@ -164,8 +164,6 @@ public class SwtGui implements IGui {
 			}
 		});
 
-
-
 	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
 
 	// private class Views {
@@ -306,7 +304,10 @@ public class SwtGui implements IGui {
 	}
 
 	private void clearErrors() {
-		final ErrorView v = (ErrorView) getPage().findView(ErrorView.ID);
+		IViewReference ref = getPage().findViewReference(ErrorView.ID);
+		if ( ref == null ) { return; }
+		final ErrorView v = (ErrorView) ref.getPart(false);
+
 		if ( v == null ) { return; }
 		run(new Runnable() {
 
@@ -971,7 +972,7 @@ public class SwtGui implements IGui {
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(output);
-			surface.outputReloaded();
+			// surface.outputReloaded();
 		} else {
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());
 		}
