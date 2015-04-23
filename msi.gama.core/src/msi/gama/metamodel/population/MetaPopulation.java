@@ -23,7 +23,7 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 
 /**
  * Class MetaPopulation. A list of IPopulation, ISpecies or MetaPopulation that behaves like a list of agents (also
@@ -41,7 +41,7 @@ public class MetaPopulation implements IContainer<Integer, IAgent>, IContainer.A
 	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
 	public MetaPopulation(final IPopulationSet ... pop) {
-		populationSets = Arrays.asList(pop);
+		populationSets = Lists.newArrayList(pop);
 	}
 
 	/**
