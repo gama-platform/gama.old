@@ -546,7 +546,7 @@ public class CsvWriter {
 
 		public UserSettings() {
 			TextQualifier = Letters.QUOTE;
-			UseTextQualifier = true;
+			UseTextQualifier = false; /* was true */
 			Delimiter = Letters.COMMA;
 			RecordDelimiter = Letters.NULL;
 			Comment = Letters.POUND;
