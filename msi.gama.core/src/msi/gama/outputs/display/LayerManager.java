@@ -16,6 +16,8 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 
 /**
@@ -31,8 +33,12 @@ public class LayerManager implements ILayerManager {
 	private final IDisplaySurface surface;
 	private int count = 0;
 
-	public LayerManager(final IDisplaySurface surface) {
+	public LayerManager(final IDisplaySurface surface, final LayeredDisplayOutput output) {
 		this.surface = surface;
+		final List<AbstractLayerStatement> layers = output.getLayers();
+		for ( final AbstractLayerStatement layer : layers ) {
+			addLayer(AbstractLayer.createLayer(output.getScope(), layer));
+		}
 	}
 
 	@Override

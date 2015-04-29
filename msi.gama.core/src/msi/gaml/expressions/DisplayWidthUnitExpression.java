@@ -13,20 +13,20 @@ package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 
 public class DisplayWidthUnitExpression extends UnitConstantExpression {
 
 	public DisplayWidthUnitExpression(final String doc) {
-		super(100.0, Types.FLOAT, "display_width", doc, null);
+		super(0.0, Types.FLOAT, "display_width", doc, null);
 	}
 
 	@Override
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		// return (double) g.getDisplayWidthInPixels();
-		return (double) g.getEnvironmentWidth();
+		return (double) g.getDisplayWidthInPixels();
+		// return (double) g.getEnvironmentWidth();
 	}
 
 	@Override

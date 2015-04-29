@@ -60,7 +60,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 
 			@Override
 			protected JComponent createSwingComponent() {
-				final JComponent frameAwt = (JComponent) getOutput().getSurface();
+				final JComponent frameAwt = (JComponent) getDisplaySurface();
 				frameAwt.addMouseMotionListener(mlAwt2);
 				return frameAwt;
 			}
@@ -96,7 +96,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					// see JOGLAWTGLRendered.init()
 					OutputSynchronizer.decInitializingViews(outputName);
 				}
-				new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, AWTDisplayView.this);
+				new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite, AWTDisplayView.this);
 			}
 		};
 
@@ -111,7 +111,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
-					if ( getOutput() != null && getOutput().getSurface() != null ) {
+					if ( getOutput() != null && getDisplaySurface() != null ) {
 						previousState = getOutput().isPaused();
 						getOutput().setPaused(true);
 					}
@@ -119,7 +119,7 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 						overlay.hide();
 					}
 				} else {
-					if ( getOutput() != null && getOutput().getSurface() != null ) {
+					if ( getOutput() != null && getDisplaySurface() != null ) {
 						getOutput().setPaused(previousState);
 					}
 					if ( overlay != null ) {
@@ -149,8 +149,8 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 					@Override
 					public void run() {
 						((SwingControl) surfaceComposite).getFrame().setBounds(r.x, r.y, r.width, r.height);
-						getOutput().getSurface().resizeImage(r.width, r.height, false);
-						getOutput().getSurface().updateDisplay(true);
+						getDisplaySurface().resizeImage(r.width, r.height, false);
+						getDisplaySurface().updateDisplay(true);
 
 						GuiUtils.run(new Runnable() {
 
@@ -165,6 +165,12 @@ public class AWTDisplayView extends LayeredDisplayView implements ISizeProvider 
 			}
 
 		});
+	}
+
+	@Override
+	public void dispose() {
+		surfaceComposite.dispose();
+		super.dispose();
 	}
 
 	@Override

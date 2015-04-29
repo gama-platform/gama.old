@@ -116,7 +116,7 @@ public abstract class AbstractCSVFile implements IRowChangesListener {
 		}
 
 		csvReader.setTextQualifier(getTextQualifier());
-		csvReader.setUseTextQualifier(true);
+		csvReader.setUseTextQualifier(false);
 
 		return csvReader;
 	}

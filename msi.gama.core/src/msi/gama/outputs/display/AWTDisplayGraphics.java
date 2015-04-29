@@ -22,6 +22,7 @@ import java.text.AttributedString;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import com.vividsolutions.jts.awt.*;
@@ -44,7 +45,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	private final Graphics2D renderer;
 	private final ShapeWriter sw = new ShapeWriter(this);
-
+	private final LayeredDisplayData data;
+	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
 	static {
@@ -71,15 +73,15 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
+		data = surface.getData();
 		renderer = g2;
 		renderer.setFont(defaultFont);
+
 	}
 
 	@Override
-	public void setQualityRendering(final boolean quality) {
-		if ( renderer != null ) {
-			renderer.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
-		}
+	public void beginDrawingLayers() {
+		renderer.setRenderingHints(data.isAntialias() ? QUALITY_RENDERING : SPEED_RENDERING);
 	}
 
 	@Override
@@ -161,7 +163,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawMultiLineString(final String string, final Color stringColor,
 		final ILocation locationInModelUnits, final java.lang.Double heightInModelUnits, final String fontName,
 		final Integer styleName, final Double angle, final Double z, final Boolean bitmap) {
-		renderer.setColor(highlight ? highlightColor : stringColor);
+		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
@@ -210,7 +212,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final java.lang.Double heightInModelUnits, final Font font, final Double angle, final Boolean bitmap) {
-		renderer.setColor(highlight ? highlightColor : stringColor);
+		renderer.setColor(highlight ? data.getHighlightColor() : stringColor);
 		int curX, curY, curZ;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
@@ -286,10 +288,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			// if ( angle != null ) {
 			// renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			// }
-			renderer.setColor(highlight ? highlightColor : color);
+			renderer.setColor(highlight ? data.getHighlightColor() : color);
 			if ( geom instanceof Lineal || geom instanceof Puntal ? false : fill ) {
 				renderer.fill(s);
-				renderer.setColor(highlight ? highlightColor : border);
+				renderer.setColor(highlight ? data.getHighlightColor() : border);
 			}
 			renderer.draw(s);
 			renderer.setTransform(saved);
@@ -338,13 +340,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Stroke oldStroke = renderer.getStroke();
 		renderer.setStroke(new BasicStroke(5));
 		final Color old = renderer.getColor();
-		renderer.setColor(highlightColor);
+		renderer.setColor(data.getHighlightColor());
 		renderer.draw(r);
 		renderer.setStroke(oldStroke);
 		renderer.setColor(old);
 	}
-
-	private boolean highlight;
 
 	@Override
 	public void beginHighlight() {

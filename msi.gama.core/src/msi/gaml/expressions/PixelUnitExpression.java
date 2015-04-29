@@ -13,7 +13,7 @@ package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 
 public class PixelUnitExpression extends UnitConstantExpression {
 
@@ -25,7 +25,9 @@ public class PixelUnitExpression extends UnitConstantExpression {
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		Double v = (double) g.getEnvironmentHeight() / g.getDisplayHeightInPixels();
+		double ratio = g.getyRatioBetweenPixelsAndModelUnits();
+		if ( ratio == 0d ) { return 0d; }
+		Double v = 1d / ratio;
 		return v;
 	}
 

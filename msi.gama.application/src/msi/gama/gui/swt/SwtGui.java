@@ -972,7 +972,7 @@ public class SwtGui implements IGui {
 		final IDisplayCreator creator = DISPLAYS.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(output);
-			// surface.outputReloaded();
+			surface.outputReloaded();
 		} else {
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());
 		}

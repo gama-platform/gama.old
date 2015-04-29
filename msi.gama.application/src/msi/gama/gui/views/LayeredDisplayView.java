@@ -19,8 +19,7 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.actions.*;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gaml.descriptions.IDescription;
+import msi.gama.outputs.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -52,13 +51,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 	public boolean isOpenGL() {
 		if ( output == null ) { return false; }
-		IDescription description = output.getDescription();
-		return description.getFacets().equals(IKeyword.TYPE, "opengl") ||
-			description.getFacets().equals(IKeyword.TYPE, "3D");
+		return getOutput().isOpenGL();
 	}
 
 	public ILayerManager getDisplayManager() {
-		return getOutput().getSurface().getManager();
+		return getDisplaySurface().getManager();
 	}
 
 	public DisplayOverlay getOverlay() {
@@ -79,14 +76,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 		gl.verticalSpacing = 0;
 		parent.setLayout(gl);
 		createSurfaceComposite();
+		// createSurface();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
 		overlay = new DisplayOverlay(this, parent, getOutput().getOverlayProvider());
-		getDisplaySurface().setZoomListener(this);
+		// getDisplaySurface().setZoomListener(this);
 		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
-		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_ANTIALIAS.getValue());
+		// getDisplaySurface().setQualityRendering(GamaPreferences.CORE_ANTIALIAS.getValue());
 		overlay.update();
 		parent.layout();
 
@@ -105,15 +103,20 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public IDisplaySurface getDisplaySurface() {
-		return getOutput().getSurface();
+		LayeredDisplayOutput out = getOutput();
+		if ( out != null ) { return out.getSurface(); }
+		return null;
 	}
 
 	@Override
 	public void dispose() {
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
-		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
+
+		if ( perspectiveListener != null ) {
+			SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
+		}
 		// FIXME Remove the listeners
-		surfaceComposite.dispose();
+
 		if ( overlay != null ) {
 			overlay.close();
 		}
@@ -123,7 +126,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	@Override
 	public void newZoomLevel(final double zoomLevel) {
 		this.zoomLevel = (int) (zoomLevel * 100);
-		GuiUtils.run(new Runnable() {
+		GuiUtils.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -137,24 +140,24 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
-		if ( zoomLevel == null && getOutput().getSurface() != null ) {
-			zoomLevel = (int) getOutput().getSurface().getZoomLevel() * 100;
+		if ( zoomLevel == null && getDisplaySurface() != null ) {
+			zoomLevel = (int) getDisplaySurface().getZoomLevel() * 100;
 		}
 		return zoomLevel;
 	}
 
 	public String getOverlayText() {
 		boolean paused = getOutput().isPaused();
-		boolean synced = getOutput().isSynchronized();
+		boolean synced = getOutput().getData().isSynchronized();
 		boolean openGL = getOutput().isOpenGL();
-		ILocation point = getOutput().getSurface().getModelCoordinates();
+		ILocation point = getDisplaySurface().getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = null;
 		if ( !openGL ) {
 			objects = new Object[] { x, y, getZoomLevel() };
 		} else {
-			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) getOutput().getSurface();
+			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) getDisplaySurface();
 			ILocation camera = ds.getCameraPosition();
 			objects = new Object[] { x, y, getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
 		}
@@ -173,8 +176,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public double getValueOfOnePixelInModelUnits() {
-		double displayWidth = getOutput().getSurface().getDisplayWidth();
-		double envWidth = getOutput().getSurface().getEnvWidth();
+		IDisplaySurface s = getDisplaySurface();
+		if ( s == null ) { return 1; }
+		double displayWidth = s.getDisplayWidth();
+		double envWidth = s.getEnvWidth();
 		return envWidth / displayWidth;
 	}
 
@@ -189,9 +194,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public String getOverlayCoordInfo() {
-		boolean paused = getOutput().isPaused();
-		boolean synced = getOutput().isSynchronized();
-		ILocation point = getOutput().getSurface().getModelCoordinates();
+		IDisplayOutput output = getOutput();
+		boolean paused = output.isPaused();
+		boolean synced = getOutput().getData().isSynchronized();
+		IDisplaySurface surface = getDisplaySurface();
+		ILocation point = surface == null ? null : surface.getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		Object[] objects = new Object[] { x, y };
@@ -201,17 +208,20 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	}
 
 	public String getOverlayZoomInfo() {
-		IDisplaySurface surface = getOutput().getSurface();
+		IDisplaySurface surface = getDisplaySurface();
 		boolean openGL = getOutput().isOpenGL();
 		Object[] objects = null;
-		if ( !openGL ) {
-			objects = new Object[] { getZoomLevel() };
-		} else {
-			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-			ILocation camera = ds.getCameraPosition();
-			objects = new Object[] { getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
+		if ( surface != null ) {
+			if ( !openGL ) {
+				objects = new Object[] { getZoomLevel() };
+			} else {
+				IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+				ILocation camera = ds.getCameraPosition();
+				objects = new Object[] { getZoomLevel(), camera.getX(), camera.getY(), camera.getZ() };
+			}
 		}
-		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
+		return String.format("Zoom %d%%" + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects == null ? 100
+			: objects);
 
 	}
 
@@ -231,7 +241,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 				break;
 
 			case FOCUS:
-				new DisplayedAgentsMenu().createItem(tb, this);
+				new DisplayedAgentsMenu().createItem(tb, getDisplaySurface(), isOpenGL());
 				break;
 
 			case PRESENTATION:
@@ -287,10 +297,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				getOutput().getSurface().updateDisplay(false);
+				getDisplaySurface().updateDisplay(false);
 				return Status.OK_STATUS;
 			}
 		};
+	}
+
+	/**
+	 * @return
+	 */
+	protected IDisplaySurface createSurface() {
+		return GuiUtils.getDisplaySurfaceFor(getOutput());
 	}
 
 }

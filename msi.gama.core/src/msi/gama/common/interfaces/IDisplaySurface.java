@@ -11,13 +11,13 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.awt.*;
-import java.awt.event.MouseListener;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
+import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.runtime.IScope;
 
 /**
@@ -28,71 +28,21 @@ import msi.gama.runtime.IScope;
  */
 public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener */{
 
-	public interface OpenGL extends IDisplaySurface {
+	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
+	static final int MAX_ZOOM_FACTOR = 2;
 
-		/**
-		 * Switch between 2D and 3D view (Only with Opengl view)
-		 */
-		void toggleView();
-
-		/**
-		 * Activate the picking mode (Only with Opengl view)
-		 */
-		void togglePicking();
-
-		/**
-		 * Activate arcball view (Only with Opengl view)
-		 */
-		void toggleArcball();
-
-		/**
-		 * Activate inertia mode (Only with Opengl view)
-		 */
-		void toggleInertia();
-
-		/**
-		 * Activate select rectangle tool (Only with Opengl view)
-		 */
-		void toggleSelectRectangle();
-
-		/**
-		 * Show the triangulation (Only with Opengl view)
-		 */
-		void toggleTriangulation();
-
-		/**
-		 * Split species layer in 3D
-		 */
-		void toggleSplitLayer();
-
-		/**
-		 * Split species layer in 3D
-		 */
-		void toggleRotation();
-
-		// @Override
-		// public IGraphics.OpenGL getIGraphics();
-
-		void toggleCamera();
+	public interface OpenGL extends IDisplaySurface, IZoomListener {
 
 		/**
 		 * @return the position of the camera
 		 */
 		ILocation getCameraPosition();
 
-		public boolean isLayerSplitted();
-
-		public boolean isRotationOn();
-
-		public boolean isCameraSwitched();
-
-		public boolean isArcBallDragOn();
-
-		public boolean isTriangulationOn();
-
-		public boolean isInertiaOn();
-
 		void setPaused(boolean flag);
+
+		void selectAgents(IAgent agent);
+
+		void selectSeveralAgents(Collection<IAgent> shapes, int i);
 
 	}
 
@@ -110,6 +60,11 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	/** Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance) **/
 	void updateDisplay(boolean force);
+
+	/**
+	 * @param displaySurfaceMenu
+	 */
+	void setSWTMenuManager(Object displaySurfaceMenu);
 
 	int[] computeBoundsFrom(int width, int height);
 
@@ -129,10 +84,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void waitForUpdateAndRun(Runnable r);
 
-	void setBackground(Color background);
-
-	public void setQualityRendering(boolean quality);
-
 	void snapshot();
 
 	/**
@@ -146,58 +97,15 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	int getHeight();
 
 	/**
-	 * @return the width of the image (bitmap)
-	 */
-	int getImageWidth();
-
-	/**
-	 * @return the height of the image (bitmap)
-	 */
-	int getImageHeight();
-
-	/**
-	 * Sets the origin (top left corner) of the image in the panel
-	 * 
-	 * @param i
-	 * @param j
-	 */
-	void setOrigin(int i, int j);
-
-	/**
-	 * Returns the x coordinate of the origin (top left corner of the image in
-	 * the panel)
-	 * 
-	 * @return
-	 */
-	int getOriginX();
-
-	/**
-	 * Returns the y coordinate of the origin (top left corner of the image in
-	 * the panel)
-	 * 
-	 * @return
-	 */
-
-	int getOriginY();
-
-	/**
 	 * Whatever is needed to do when the simulation has been reloaded.
 	 * 
 	 * @param layerDisplayOutput
 	 */
 	void outputReloaded();
 
-	/**
-	 * 
-	 * @return an Array of size 3 containing the red, green and blue components
-	 */
-	Color getHighlightColor();
+	public void addMouseListener(ILayerMouseListener e);
 
-	void setHighlightColor(Color h);
-
-	public void addMouseListener(MouseListener e);
-
-	public void removeMouseListener(MouseListener e);
+	public void removeMouseListener(ILayerMouseListener e);
 
 	double getEnvWidth();
 
@@ -225,10 +133,17 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void setSize(int x, int y);
 
-	boolean getQualityRendering();
+	// boolean getQualityRendering();
 
 	IScope getDisplayScope();
 
 	IDisplayOutput getOutput();
+
+	LayeredDisplayData getData();
+
+	/**
+	 * @return
+	 */
+	boolean isDisposed();
 
 }

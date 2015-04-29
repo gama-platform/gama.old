@@ -24,8 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * 
  * {@link DefaultCSVFile} implements the {@link AbstractCSVFile} abstract
- * methods based on the values stored in the preferences system
+ * methods based on the values stored in the metada or given by users.
  * @author jpizar
+ * @version 2 adapted for GAMA by A. Drogoul
  * 
  */
 public class DefaultCSVFile extends AbstractCSVFile {
@@ -115,7 +116,7 @@ public class DefaultCSVFile extends AbstractCSVFile {
 
 	@Override
 	public boolean useQualifier() {
-		return true;
+		return false;
 		// return optionsProvider.useTextQualifier();
 	}
 }

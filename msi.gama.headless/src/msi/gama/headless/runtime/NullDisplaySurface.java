@@ -11,13 +11,13 @@
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
-import java.awt.*;
-import java.awt.event.MouseListener;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
+import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 
@@ -42,6 +42,11 @@ public class NullDisplaySurface implements IDisplaySurface {
 	@Override
 	public IScope getDisplayScope() {
 		return null;
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return false;
 	}
 
 	/**
@@ -121,20 +126,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void canBeUpdated(final boolean ok) {}
 
 	/**
-	 * Method setBackgroundColor()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setBackgroundColor(java.awt.Color)
-	 */
-	@Override
-	public void setBackground(final Color background) {}
-
-	/**
-	 * Method setQualityRendering()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setQualityRendering(boolean)
-	 */
-	@Override
-	public void setQualityRendering(final boolean quality) {}
-
-	/**
 	 * Method snapshot()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
 	 */
@@ -160,49 +151,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	}
 
 	/**
-	 * Method getImageWidth()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageWidth()
-	 */
-	@Override
-	public int getImageWidth() {
-		return 0;
-	}
-
-	/**
-	 * Method getImageHeight()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageHeight()
-	 */
-	@Override
-	public int getImageHeight() {
-		return 0;
-	}
-
-	/**
-	 * Method setOrigin()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setOrigin(int, int)
-	 */
-	@Override
-	public void setOrigin(final int i, final int j) {}
-
-	/**
-	 * Method getOriginX()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
-	 */
-	@Override
-	public int getOriginX() {
-		return 0;
-	}
-
-	/**
-	 * Method getOriginY()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
-	 */
-	@Override
-	public int getOriginY() {
-		return 0;
-	}
-
-	/**
 	 * Method initialize()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
@@ -210,34 +158,18 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void outputReloaded() {}
 
 	/**
-	 * Method getHighlightColor()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getHighlightColor()
-	 */
-	@Override
-	public Color getHighlightColor() {
-		return null;
-	}
-
-	/**
-	 * Method setHighlightColor()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setHighlightColor(int[])
-	 */
-	@Override
-	public void setHighlightColor(final Color c) {}
-
-	/**
 	 * Method addMouseListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void addMouseListener(final MouseListener e) {}
+	public void addMouseListener(final ILayerMouseListener e) {}
 
 	/**
 	 * Method removeMouseListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeMouseListener(final MouseListener e) {}
+	public void removeMouseListener(final ILayerMouseListener e) {}
 
 	/**
 	 * Method getEnvWidth()
@@ -343,15 +275,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void setSize(final int x, final int y) {}
 
 	/**
-	 * Method getQualityRendering()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getQualityRendering()
-	 */
-	@Override
-	public boolean getQualityRendering() {
-		return false;
-	}
-
-	/**
 	 * Method getOutput()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
@@ -366,5 +289,21 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void waitForUpdateAndRun(final Runnable r) {}
+
+	/**
+	 * Method getData()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
+	 */
+	@Override
+	public LayeredDisplayData getData() {
+		return null;
+	}
+
+	/**
+	 * Method setSWTMenuManager()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
+	 */
+	@Override
+	public void setSWTMenuManager(final Object displaySurfaceMenu) {}
 
 }

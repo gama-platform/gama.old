@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'FreeFlyCamera.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'FreeFlyCamera.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.jogl.utils.Camera;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -119,7 +118,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		GamaPoint vector = forward.times(speed * 800 + step);
 		position.setLocation(getPosition().plus(in ? vector : vector.negated()));
 		target.setLocation(forward.plus(getPosition()));
-		getRenderer().displaySurface.setZoomLevel(zoomLevel());
+		// getRenderer().displaySurface.setZoomLevel(zoomLevel());
 	}
 
 	@Override
@@ -130,7 +129,6 @@ public class FreeFlyCamera extends AbstractCamera {
 		updatePosition(getRoiCenter().x, getRoiCenter().y, maxDim * 1.5);
 		update();
 	}
-
 
 	@Override
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {

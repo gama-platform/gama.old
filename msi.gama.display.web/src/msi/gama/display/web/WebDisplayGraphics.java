@@ -113,20 +113,6 @@ public class WebDisplayGraphics implements IGraphics {
 	public void fillBackground(final Color bgColor, final double opacity) {}
 
 	/**
-	 * Method setQualityRendering()
-	 * @see msi.gama.common.interfaces.IGraphics#setQualityRendering(boolean)
-	 */
-	@Override
-	public void setQualityRendering(final boolean quality) {}
-
-	/**
-	 * Method setHighlightColor()
-	 * @see msi.gama.common.interfaces.IGraphics#setHighlightColor(int[])
-	 */
-	@Override
-	public void setHighlightColor(final Color h) {}
-
-	/**
 	 * Method beginDrawingLayers()
 	 * @see msi.gama.common.interfaces.IGraphics#beginDrawingLayers()
 	 */
@@ -140,23 +126,23 @@ public class WebDisplayGraphics implements IGraphics {
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {}
 
-	/**
-	 * Method getEnvironmentWidth()
-	 * @see msi.gama.common.interfaces.IGraphics#getEnvironmentWidth()
-	 */
-	@Override
-	public int getEnvironmentWidth() {
-		return 0;
-	}
-
-	/**
-	 * Method getEnvironmentHeight()
-	 * @see msi.gama.common.interfaces.IGraphics#getEnvironmentHeight()
-	 */
-	@Override
-	public int getEnvironmentHeight() {
-		return 0;
-	}
+	// /**
+	// * Method getEnvironmentWidth()
+	// * @see msi.gama.common.interfaces.IGraphics#getEnvironmentWidth()
+	// */
+	// @Override
+	// public int getEnvironmentWidth() {
+	// return 0;
+	// }
+	//
+	// /**
+	// * Method getEnvironmentHeight()
+	// * @see msi.gama.common.interfaces.IGraphics#getEnvironmentHeight()
+	// */
+	// @Override
+	// public int getEnvironmentHeight() {
+	// return 0;
+	// }
 
 	/**
 	 * Method getyRatioBetweenPixelsAndModelUnits()

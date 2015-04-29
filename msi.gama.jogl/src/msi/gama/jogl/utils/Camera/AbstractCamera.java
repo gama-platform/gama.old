@@ -340,8 +340,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
-		if ( checkCtrlKeyDown(mouseEvent) && getRenderer().displaySurface.isArcBallDragOn() ) { return false; }
-		if ( checkCtrlKeyDown(mouseEvent) || getRenderer().displaySurface.isArcBallDragOn() ) { return true; }
+		if ( checkCtrlKeyDown(mouseEvent) && getRenderer().displaySurface.getData().isArcBallDragOn() ) { return false; }
+		if ( checkCtrlKeyDown(mouseEvent) || getRenderer().displaySurface.getData().isArcBallDragOn() ) { return true; }
 		return false;
 	}
 

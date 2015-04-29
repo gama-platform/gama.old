@@ -11,15 +11,11 @@
  **********************************************************************************************/
 package msi.gama.outputs.display;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
-	protected Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	protected double currentAlpha = 1;
 	protected int widthOfLayerInPixels;
@@ -46,7 +42,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public void initFor(final IDisplaySurface surface) {
 
-		setQualityRendering(surface.getQualityRendering());
+		// setQualityRendering(surface.getQualityRendering());
 	}
 
 	@Override
@@ -60,14 +56,9 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void setHighlightColor(final Color c) {
-		highlightColor = c;
-	}
-
-	@Override
 	public void setOpacity(final double alpha) {
 		// 1 means opaque ; 0 means transparent
-		if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
+		// if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
 		currentAlpha = alpha;
 	}
 
@@ -91,8 +82,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		return px / xRatioBetweenPixelsAndModelUnits;
 	}
 
-	protected double hFromPixelsToModelUnits(final int px) {
-		return px / yRatioBetweenPixelsAndModelUnits;
+	protected double hFromPixelsToModelUnits(final int py) {
+		return py / yRatioBetweenPixelsAndModelUnits;
 	}
 
 	protected double xFromPixelsToModelUnits(final int px) {
@@ -103,16 +94,6 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected double yFromPixelsToModelUnits(final int px) {
 		double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
 		return mu;
-	}
-
-	@Override
-	public int getEnvironmentWidth() {
-		return widthOfEnvironmentInModelUnits;
-	}
-
-	@Override
-	public int getEnvironmentHeight() {
-		return heightOfEnvironmentInModelUnits;
 	}
 
 	@Override

@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.event.*;
 import java.util.Collection;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -83,10 +82,10 @@ public class EventLayer extends AbstractLayer {
 	// We explicitely translate by the origin of the surface
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		return super.getModelCoordinatesFrom(xOnScreen - g.getOriginX(), yOnScreen - g.getOriginY(), g);
+		return super.getModelCoordinatesFrom(xOnScreen/* - g.getOriginX(), */, yOnScreen /*- g.getOriginY()*/, g);
 	}
 
-	private class EventListener implements MouseListener {
+	private class EventListener implements ILayerMouseListener {
 
 		private final static int MOUSE_PRESS = 0;
 		private final static int MOUSE_RELEASED = 1;
@@ -118,35 +117,33 @@ public class EventLayer extends AbstractLayer {
 		}
 
 		@Override
-		public void mouseClicked(final MouseEvent arg0) {}
-
-		@Override
-		public void mouseEntered(final MouseEvent arg0) {}
-
-		@Override
-		public void mouseExited(final MouseEvent arg0) {}
-
-		@Override
-		public void mousePressed(final MouseEvent arg0) {
-			if ( MOUSE_PRESS == listenedEvent && arg0.getButton() == MouseEvent.BUTTON1 ) {
-				executeEvent(arg0);
+		public void mouseClicked(final int x, final int y, final int button) {
+			if ( MOUSE_CLICKED == listenedEvent && button == 1 ) {
+				executeEvent(x, y);
 			}
 		}
 
 		@Override
-		public void mouseReleased(final MouseEvent arg0) {
-			if ( MOUSE_RELEASED == listenedEvent && arg0.getButton() == MouseEvent.BUTTON1 ) {
-				executeEvent(arg0);
+		public void mouseDown(final int x, final int y, final int button) {
+			if ( MOUSE_PRESS == listenedEvent && button == 1 ) {
+				executeEvent(x, y);
 			}
 		}
 
-		private void executeEvent(final MouseEvent arg0) {
+		@Override
+		public void mouseUp(final int x, final int y, final int button) {
+			if ( MOUSE_RELEASED == listenedEvent && button == 1 ) {
+				executeEvent(x, y);
+			}
+		}
+
+		private void executeEvent(final int x, final int y) {
 			if ( executer == null ) { return; }
-			final ILocation pp = getModelCoordinatesFrom(arg0.getPoint().x, arg0.getPoint().y, surface);
+			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
 			if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth() ||
 				pp.getY() >= surface.getEnvHeight() ) { return; }
 			final Arguments args = new Arguments();
-			final Collection<IAgent> agentset = surface.selectAgent(arg0.getX(), arg0.getY());
+			final Collection<IAgent> agentset = surface.selectAgent(x, y);
 			if ( pointArg != null ) {
 				args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
 			}

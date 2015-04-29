@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.*;
@@ -82,13 +81,13 @@ public class PresentationMenu {
 		MenuItem antialiasItem = new MenuItem(menu, SWT.CHECK);
 		antialiasItem.setImage(GamaIcons.create("display.antialias2").image());
 		antialiasItem.setText("Apply antialiasing");
-		final boolean antialias = view.getOutput().getSurface().getQualityRendering();
+		final boolean antialias = view.getOutput().getSurface().getData().isAntialias();
 		antialiasItem.setSelection(antialias);
 		antialiasItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				view.getDisplaySurface().setQualityRendering(!antialias);
+				view.getDisplaySurface().getData().setAntialias(!antialias);
 			}
 
 		});
@@ -107,7 +106,7 @@ public class PresentationMenu {
 					@Override
 					public void run(final int r, final int g, final int b) {
 						java.awt.Color background = new java.awt.Color(r, g, b);
-						view.getDisplaySurface().setBackground(background);
+						view.getDisplaySurface().getData().setBackgroundColor(background);
 						image.dispose();
 					}
 				}, new RGB(background.getRed(), background.getGreen(), background.getBlue()));
@@ -116,7 +115,7 @@ public class PresentationMenu {
 		});
 
 		MenuItem highlightItem = new MenuItem(menu, SWT.CHECK);
-		final java.awt.Color h = view.getDisplaySurface().getHighlightColor();
+		final java.awt.Color h = view.getDisplaySurface().getData().getHighlightColor();
 		final Image highlightImage = GamaIcons.createTempColorIcon(GamaColors.get(h));
 		highlightItem.setImage(highlightImage);
 		highlightItem.setText("Highlight color...");
@@ -128,7 +127,7 @@ public class PresentationMenu {
 
 					@Override
 					public void run(final int r, final int g, final int b) {
-						view.getDisplaySurface().setHighlightColor(h);
+						view.getDisplaySurface().getData().setHighlightColor(h);
 						highlightImage.dispose();
 					}
 				}, new RGB(h.getRed(), h.getGreen(), h.getBlue()));
@@ -141,7 +140,7 @@ public class PresentationMenu {
 
 		MenuItem camera = new MenuItem(menu, SWT.PUSH);
 		camera.setImage(IGamaIcons.DISPLAY_TOOLBAR_CAMERA.image());
-		boolean arcBall = !((IDisplaySurface.OpenGL) view.getDisplaySurface()).isCameraSwitched();
+		boolean arcBall = view.getDisplaySurface().getData().isArcBallCamera();
 		camera.setText(arcBall ? "Use FreeFly camera" : "Use ArcBall camera");
 		camera.addSelectionListener(new SelectionAdapter() {
 
@@ -152,14 +151,15 @@ public class PresentationMenu {
 
 					@Override
 					public void run() {
-						((OpenGL) view.getDisplaySurface()).toggleCamera();
+						boolean old = view.getDisplaySurface().getData().isArcBallCamera();
+						((OpenGL) view.getDisplaySurface()).getData().setArcBallCamera(!old);
 					}
 				});
 			}
 		});
 		if ( arcBall ) {
 			MenuItem drag = new MenuItem(menu, SWT.PUSH);
-			boolean dragable = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isArcBallDragOn();
+			boolean dragable = view.getDisplaySurface().getData().isArcBallDragOn();
 			drag.setText(dragable ? "Use mouse to drag" : "Use mouse to rotate");
 			drag.setImage(IGamaIcons.DISPLAY_TOOLBAR_DRAG.image());
 			drag.addSelectionListener(new SelectionAdapter() {
@@ -170,7 +170,8 @@ public class PresentationMenu {
 
 						@Override
 						public void run() {
-							((OpenGL) view.getDisplaySurface()).toggleArcball();
+							boolean old = view.getDisplaySurface().getData().isArcBallDragOn();
+							view.getDisplaySurface().getData().setArgBallDragOn(!old);
 						}
 					});
 				}
@@ -178,7 +179,7 @@ public class PresentationMenu {
 
 			MenuItem inertia = new MenuItem(menu, SWT.CHECK);
 			inertia.setImage(IGamaIcons.DISPLAY_TOOLBAR_INERTIA.image());
-			boolean inertiable = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isInertiaOn();
+			boolean inertiable = view.getDisplaySurface().getData().isInertia();
 			inertia.setSelection(inertiable);
 			inertia.setText("Apply inertia");
 			inertia.addSelectionListener(new SelectionAdapter() {
@@ -190,7 +191,8 @@ public class PresentationMenu {
 
 						@Override
 						public void run() {
-							((OpenGL) view.getDisplaySurface()).toggleInertia();
+							boolean old = view.getDisplaySurface().getData().isInertia();
+							((OpenGL) view.getDisplaySurface()).getData().setInertia(!old);
 						}
 					});
 				}
@@ -200,7 +202,7 @@ public class PresentationMenu {
 		new MenuItem(menu, SWT.SEPARATOR);
 
 		MenuItem rotation = new MenuItem(menu, SWT.CHECK);
-		boolean rotated = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isRotationOn();
+		boolean rotated = view.getDisplaySurface().getData().isRotationOn();
 		rotation.setSelection(rotated);
 		rotation.setText("Rotate scene");
 		rotation.setImage(IGamaIcons.DISPLAY_TOOLBAR_ROTATE.image());
@@ -213,14 +215,15 @@ public class PresentationMenu {
 
 					@Override
 					public void run() {
-						((OpenGL) view.getDisplaySurface()).toggleRotation();
+						boolean rotated = view.getDisplaySurface().getData().isRotationOn();
+						view.getDisplaySurface().getData().setRotation(!rotated);
 					}
 				});
 			}
 		});
 		MenuItem split = new MenuItem(menu, SWT.CHECK);
 		split.setImage(IGamaIcons.DISPLAY_TOOLBAR_SPLIT.image());
-		boolean splitted = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isLayerSplitted();
+		boolean splitted = view.getDisplaySurface().getData().isLayerSplitted();
 		split.setSelection(splitted);
 		split.setText("Split layers");
 		split.addSelectionListener(new SelectionAdapter() {
@@ -232,13 +235,14 @@ public class PresentationMenu {
 
 					@Override
 					public void run() {
-						((OpenGL) view.getDisplaySurface()).toggleSplitLayer();
+						boolean splitted = view.getDisplaySurface().getData().isLayerSplitted();
+						((OpenGL) view.getDisplaySurface()).getData().setLayerSplitted(!splitted);
 					}
 				});
 			}
 		});
 		MenuItem triangle = new MenuItem(menu, SWT.CHECK);
-		boolean triangulated = ((IDisplaySurface.OpenGL) view.getDisplaySurface()).isTriangulationOn();
+		boolean triangulated = view.getDisplaySurface().getData().isTriangulation();
 		triangle.setText("Triangulate scene");
 		triangle.setSelection(triangulated);
 		triangle.setImage(IGamaIcons.DISPLAY_TOOLBAR_TRIANGULATE.image());
@@ -251,7 +255,8 @@ public class PresentationMenu {
 
 					@Override
 					public void run() {
-						((OpenGL) view.getDisplaySurface()).toggleTriangulation();
+						boolean triangulated = view.getDisplaySurface().getData().isTriangulation();
+						view.getDisplaySurface().getData().setTriangulation(!triangulated);
 					}
 				});
 			}

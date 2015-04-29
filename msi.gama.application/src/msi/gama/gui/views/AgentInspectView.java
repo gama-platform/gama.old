@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -48,11 +48,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements I
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		parent.setBackground(parent.getBackground());
-
-		IAgent[] init = ((InspectDisplayOutput) output).getLastValue();
-		if ( init != null ) {
-			for ( IAgent a : init ) {
-				inspectAgent(a);
+		if ( output != null ) {
+			IAgent[] init = ((InspectDisplayOutput) output).getLastValue();
+			if ( init != null ) {
+				for ( IAgent a : init ) {
+					inspectAgent(a);
+				}
 			}
 		}
 	}

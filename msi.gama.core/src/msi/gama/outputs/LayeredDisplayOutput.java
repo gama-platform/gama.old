@@ -19,7 +19,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -329,7 +329,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 		if ( light3 != null ) {
-			this.data.setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+			this.data.setDiffuseLightPosition(Cast.asPoint(getScope(), light3.value(getScope())));
 			constantDiffusePos = light3.isConst();
 		}
 
@@ -359,7 +359,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( out3D != null ) {
 			if ( out3D.getType().equals(Types.POINT) ) {
 				this.data.setOutput3D(true);
-				this.data.setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
+				// this.data.setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
 			} else {
 				this.data.setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
@@ -384,6 +384,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		this.data.setEnvWidth(env.getWidth());
 		this.data.setEnvHeight(env.getHeight());
+		// We reinit the surface if it is present, but we dont create it anymore in the first init.
+		if ( surface != null ) {
+			surface.outputReloaded();
+		}
 		createSurface(getScope());
 		return true;
 	}
@@ -437,7 +441,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantDiffusePos ) {
 			final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 			if ( light3 != null ) {
-				this.data.setDiffuseLightPosition((GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
+				this.data.setDiffuseLightPosition(Cast.asPoint(getScope(), light3.value(getScope())));
 
 			}
 		}
@@ -497,23 +501,27 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( disposed ) { return; }
 		setSynchronized(false);
 		super.dispose();
-		if ( surface != null ) {
+		if ( surface != null && !surface.isDisposed() ) {
 			surface.dispose();
 		}
 		surface = null;
 		getLayers().clear();
 	}
 
+	private static boolean USES_OPENGL_SWT = true;
+
 	protected void createSurface(final IScope scope) {
 		if ( surface != null ) {
 			surface.outputReloaded();
-		} else {
-			surface = GuiUtils.getDisplaySurfaceFor(this);
+			return;
 		}
+		if ( isOpenGL() && USES_OPENGL_SWT ) { return; }
+		surface = GuiUtils.getDisplaySurfaceFor(this);
 	}
 
 	@Override
 	public String getViewId() {
+		if ( USES_OPENGL_SWT && isOpenGL() ) { return "msi.gama.application.view.OpenGLDisplayView"; }
 		return GuiUtils.LAYER_VIEW_ID;
 	}
 
@@ -539,15 +547,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		setLayers(list);
 	}
 
+	public void setSurface(final IDisplaySurface surface) {
+		this.surface = surface;
+	}
+
 	public BufferedImage getImage() {
-		return surface.getImage();
+		return surface == null ? null : surface.getImage();
 	}
 
 	private void setBackgroundColor(final Color background) {
 		data.setBackgroundColor(background);
-		if ( surface != null ) {
-			surface.setBackground(background);
-		}
 	}
 
 	public void setLayers(final List<AbstractLayerStatement> layers) {
@@ -562,6 +571,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setPaused(final boolean paused) {
 		boolean wasPaused = isPaused();
 		super.setPaused(paused);
+		if ( surface == null ) { return; }
 		if ( isOpenGL() ) {
 			((IDisplaySurface.OpenGL) surface).setPaused(paused);
 		}
@@ -577,6 +587,21 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public LayeredDisplayData getData() {
 		return data;
+	}
+
+	// Keeping in sync the two implementations of synchronized, so that OpenGL
+	// objects can have an easy access to the value (and modify it). Also allows
+	// modellers to declare this property directly in the model.
+
+	@Override
+	public void setSynchronized(final boolean sync) {
+		super.setSynchronized(sync);
+		data.setSynchronized(sync);
+	}
+
+	@Override
+	public boolean isSynchronized() {
+		return super.isSynchronized() && data.isSynchronized();
 	}
 
 }

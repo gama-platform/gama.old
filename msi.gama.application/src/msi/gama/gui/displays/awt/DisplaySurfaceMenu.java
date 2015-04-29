@@ -35,7 +35,7 @@ public class DisplaySurfaceMenu {
 		this.view = view;
 		swtControl = c;
 		menuBuilder = new DisplayedAgentsMenu();
-		((AbstractAWTDisplaySurface) s).setSWTMenuManager(this);
+		s.setSWTMenuManager(this);
 
 	}
 
@@ -53,8 +53,6 @@ public class DisplaySurfaceMenu {
 			if ( agents.isEmpty() ) {
 				continue;
 			}
-			// TODO How to pass the coordinates ??
-			// p = display.getModelCoordinatesFrom(x, y, surface);
 			all.addAll(agents);
 		}
 		buildMenu(true, mousex, mousey, modelCoordinates, all);
@@ -75,7 +73,9 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(view, swtControl, true, byLayer, agents, modelCoordinates);
+				menu =
+					menuBuilder.getMenu(view.getDisplaySurface(), swtControl, true, byLayer, agents, modelCoordinates,
+						view.isOpenGL());
 				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);

@@ -35,18 +35,6 @@ public class ZoomController {
 
 		}
 	};
-	//
-	// private final MouseWheelListener ml = new MouseWheelListener() {
-	//
-	// @Override
-	// public void mouseScrolled(final MouseEvent e) {
-	// if ( e.count > 0 ) {
-	// view.zoomIn();
-	// } else {
-	// view.zoomOut();
-	// }
-	// }
-	// };
 
 	private final MouseListener ml = new MouseAdapter() {
 
@@ -73,7 +61,6 @@ public class ZoomController {
 					if ( c != null ) {
 						c.addGestureListener(gl);
 						c.addMouseListener(ml);
-						// c.addMouseWheelListener(ml);
 						// once installed the listener removes itself from the toolbar
 						tb.removeControlListener(this);
 					}

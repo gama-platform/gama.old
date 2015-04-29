@@ -13,20 +13,20 @@ package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 
 public class DisplayHeightUnitExpression extends UnitConstantExpression {
 
 	public DisplayHeightUnitExpression(final String doc) {
-		super(100.0, Types.FLOAT, "display_height", doc, null);
+		super(0.0, Types.FLOAT, "display_height", doc, null);
 	}
 
 	@Override
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		// return (double) g.getDisplayHeightInPixels();
-		return (double) g.getEnvironmentHeight();
+		return (double) g.getDisplayHeightInPixels();
+		// return (double) g.getEnvironmentHeight();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'CameraArcBall.java', in plugin 'msi.gama.jogl', is part of the source code of the 
+ * 
+ * 'CameraArcBall.java', in plugin 'msi.gama.jogl', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -15,7 +15,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.metamodel.shape.GamaPoint;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -182,7 +181,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoom(final boolean in) {
 		float step = radius != 0 ? (float) ((Double) radius).doubleValue() / 10 : 0.1f;
 		radius = radius + (in ? -step : step);
-		getRenderer().displaySurface.setZoomLevel(zoomLevel());
+		// getRenderer().displaySurface.setZoomLevel(zoomLevel());
 		update();
 	}
 
@@ -194,20 +193,19 @@ public class CameraArcBall extends AbstractCamera {
 		target.setLocation(getRoiCenter().x, getRoiCenter().y, 0.0);
 		update();
 	}
-	
 
 	@Override
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
 		velocityHoriz = 0;
 		velocityVert = 0;
 		final double zPos;
-		
-		if(extent == 0){
-			zPos = centerZ + getRenderer().getMaxEnvDim() / 10;	
+
+		if ( extent == 0 ) {
+			zPos = centerZ + getRenderer().getMaxEnvDim() / 10;
 		}
-		
-		else{
-			zPos= extent * 1.5;
+
+		else {
+			zPos = extent * 1.5;
 		}
 		radius = zPos;
 		update();

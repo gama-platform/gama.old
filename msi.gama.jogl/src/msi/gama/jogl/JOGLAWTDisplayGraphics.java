@@ -40,6 +40,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
 
+@Deprecated
 public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements IGraphics.OpenGL {
 
 	// GLRenderer.
@@ -106,7 +107,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( shape.hasAttribute(IShape.COLOR_LIST_ATTRIBUTE) ) {
 			colors = Cast.asList(scope, shape.getAttribute(IShape.COLOR_LIST_ATTRIBUTE));
 		}
-		final Color color = highlight ? highlightColor : c;
+		final Color color = highlight ? renderer.displaySurface.getData().getHighlightColor() : c;
 		if ( topo != null && topo.isTorus() ) {
 			java.util.List<Geometry> geoms = topo.listToroidalGeometries(shape.getInnerGeometry());
 			Geometry world = scope.getSimulationScope().getInnerGeometry();
@@ -182,8 +183,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		double stepX, stepY;
-		double wRatio = (double) this.getEnvironmentWidth() / (double) image.getWidth();
-		double hRatio = (double) this.getEnvironmentHeight() / (double) image.getHeight();
+		double wRatio = renderer.displaySurface.getData().getEnvWidth() / image.getWidth();
+		double hRatio = renderer.displaySurface.getData().getEnvHeight() / image.getHeight();
 		for ( int i = 0; i < image.getWidth(); i++ ) {
 			for ( int j = 0; j < image.getHeight(); j++ ) {
 				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
@@ -260,12 +261,13 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		renderer.getScene().beginDrawingLayers();
 	}
 
-	@Override
-	public void setQualityRendering(final boolean quality) {
-		if ( renderer != null ) {
-			renderer.setAntiAliasing(quality);
-		}
-	}
+	//
+	// @Override
+	// public void setQualityRendering(final boolean quality) {
+	// if ( renderer != null ) {
+	// renderer.setAntiAliasing(quality);
+	// }
+	// }
 
 	/**
 	 * Set the value z of the current Layer. If no value is define is defined

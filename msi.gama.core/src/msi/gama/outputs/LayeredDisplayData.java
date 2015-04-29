@@ -5,6 +5,7 @@
 package msi.gama.outputs;
 
 import java.awt.Color;
+import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaColor;
@@ -18,114 +19,88 @@ public class LayeredDisplayData {
 	public static final String WEB = "web";
 	public static final String THREED = "3D";
 
+	public static final int SPLIT_LAYER = 0;
+	public static final int CHANGE_CAMERA = 1;
+	public static final int THREED_VIEW = 2;
+	public static final int CAMERA_POS = 3;
+
+	public static interface DisplayDataListener {
+
+		void changed(int property, boolean value);
+	}
+
+	final Set<DisplayDataListener> listeners = new HashSet();
+
+	public void addListener(final DisplayDataListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(final DisplayDataListener listener) {
+		listeners.remove(listener);
+	}
+
+	public void notifyListeners(final int property, final boolean value) {
+		for ( DisplayDataListener listener : listeners ) {
+			listener.changed(property, value);
+		}
+	}
+
 	/**
-	 * 
+	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	/**
-	 * 
-	 */
-	private boolean autosave = false;
-	/**
-	 * 
-	 */
-	private boolean output3D = false;
-	/**
-	 * 
-	 */
-	private boolean tesselation = true;
-	/**
-	 * 
-	 */
-	private int traceDisplay = 0;
-	/**
-	 * 
-	 */
-	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
-	/**
-	 * 
-	 */
-	private boolean draw_norm = GamaPreferences.CORE_DRAW_NORM.getValue();
-	/**
-	 * 
-	 */
-	private boolean cubeDisplay = GamaPreferences.CORE_CUBEDISPLAY.getValue();
-	/**
-	 * 
-	 */
-	private boolean ortho = false;
-	/**
-	 * 
-	 */
-	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
-	/**
-	 * 
-	 */
-	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
-	/**
-	 * 
-	 */
-	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
-	/**
-	 * 
-	 */
-	private boolean isLightOn = GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-	/**
-	 * 
-	 */
-	private boolean drawDiffLight = false;
-	/**
-	 * 
-	 */
-	private Color ambientLightColor = new GamaColor(100, 100, 100, 255);
-	/**
-	 * 
-	 */
-	private Color diffuseLightColor = new GamaColor(10, 10, 10, 255);
-	/**
-	 * 
-	 */
-	private GamaPoint diffuseLightPosition = new GamaPoint(-1, -1, -1);
-	/**
-	 * 
-	 */
-	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
-	/**
-	 * 
-	 */
-	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
-	/**
-	 * 
-	 */
-	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
-	/**
-	 * 
-	 */
-	private boolean polygonMode = true;
-	/**
-	 * 
-	 */
-	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
-	/**
-	 * 
-	 */
-	private ILocation imageDimension = new GamaPoint(-1, -1);
-	/**
-	 * 
-	 */
-	private ILocation output3DNbCycles = new GamaPoint(0, 0);
-	/**
-	 * 
-	 */
-	private double envWidth = 0d;
-	/**
-	 * 
-	 */
-	private double envHeight = 0d;
-	/**
-	 * 
-	 */
+	private Color ambientColor = new GamaColor(100, 100, 100, 255);
+	private Color diffuseColor = new GamaColor(10, 10, 10, 255);
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
+	/**
+	 * Properties
+	 */
+	private boolean isAutosaving = false;
+	private boolean isSynchronized = GamaPreferences.CORE_SYNC.getValue();
+	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
+	private double envWidth = 0d;
+	private double envHeight = 0d;
+	private boolean isAntialiasing = GamaPreferences.CORE_ANTIALIAS.getValue();
+	private ILocation imageDimension = new GamaPoint(-1, -1);
+
+	/**
+	 * OpenGL
+	 */
+
+	private static ILocation noChange = new GamaPoint(-1, -1, -1);
+	//
+	private boolean isOutputtingIn3D = false;
+	private boolean isTesselating = false;
+	private boolean isTriangulating = false;
+	private int traceSize = 0;
+	private boolean isZFighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
+	private boolean isDrawingNormals = GamaPreferences.CORE_DRAW_NORM.getValue();
+	private boolean isDisplayingAsACube = GamaPreferences.CORE_CUBEDISPLAY.getValue();
+	private boolean ortho = false;
+	private boolean isShowingFPS = GamaPreferences.CORE_SHOW_FPS.getValue();
+	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
+	private boolean isDrawingDiffuseLight = false;
+	private boolean isLightOn = GamaPreferences.CORE_IS_LIGHT_ON.getValue();
+	private boolean isUsingInertia = false;
+	private ILocation diffuseLightPosition = getNoChange();
+	private ILocation cameraPos = getNoChange();
+	private ILocation cameraLookPos = getNoChange();
+	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
+	private boolean isDrawingPolygons = true;
+	private boolean isDraggingWithArcBall;
+	private boolean isRotating;
+	private boolean isUsingArcBallCamera = true;
+	private boolean isSplittingLayers;;
+
+	/**
+	 * Overlay
+	 */
+
+	private boolean isDisplayingScale = GamaPreferences.CORE_SCALE.getValue();
+
+	/**
+	 * 
+	 */
 
 	/**
 	 * @return the backgroundColor
@@ -145,98 +120,107 @@ public class LayeredDisplayData {
 	 * @return the autosave
 	 */
 	public boolean isAutosave() {
-		return autosave;
+		return isAutosaving;
 	}
 
 	/**
 	 * @param autosave the autosave to set
 	 */
 	public void setAutosave(final boolean autosave) {
-		this.autosave = autosave;
+		this.isAutosaving = autosave;
+	}
+
+	public boolean isTriangulation() {
+		return isTriangulating;
+	}
+
+	public void setTriangulation(final boolean t) {
+		isTriangulating = t;
 	}
 
 	/**
 	 * @return the output3D
 	 */
 	public boolean isOutput3D() {
-		return output3D;
+		return isOutputtingIn3D;
 	}
 
 	/**
 	 * @param output3d the output3D to set
 	 */
 	public void setOutput3D(final boolean output3d) {
-		output3D = output3d;
+		isOutputtingIn3D = output3d;
+		notifyListeners(LayeredDisplayData.THREED_VIEW, output3d);
 	}
 
 	/**
 	 * @return the tesselation
 	 */
 	public boolean isTesselation() {
-		return tesselation;
+		return isTesselating;
 	}
 
 	/**
 	 * @param tesselation the tesselation to set
 	 */
 	public void setTesselation(final boolean tesselation) {
-		this.tesselation = tesselation;
+		this.isTesselating = tesselation;
 	}
 
 	/**
 	 * @return the traceDisplay
 	 */
 	public int getTraceDisplay() {
-		return traceDisplay;
+		return traceSize;
 	}
 
 	/**
 	 * @param traceDisplay the traceDisplay to set
 	 */
 	public void setTraceDisplay(final int traceDisplay) {
-		this.traceDisplay = traceDisplay;
+		this.traceSize = traceDisplay;
 	}
 
 	/**
 	 * @return the z_fighting
 	 */
 	public boolean isZ_fighting() {
-		return z_fighting;
+		return isZFighting;
 	}
 
 	/**
 	 * @param z_fighting the z_fighting to set
 	 */
 	public void setZ_fighting(final boolean z_fighting) {
-		this.z_fighting = z_fighting;
+		this.isZFighting = z_fighting;
 	}
 
 	/**
 	 * @return the draw_norm
 	 */
 	public boolean isDraw_norm() {
-		return draw_norm;
+		return isDrawingNormals;
 	}
 
 	/**
 	 * @param draw_norm the draw_norm to set
 	 */
 	public void setDraw_norm(final boolean draw_norm) {
-		this.draw_norm = draw_norm;
+		this.isDrawingNormals = draw_norm;
 	}
 
 	/**
 	 * @return the cubeDisplay
 	 */
 	public boolean isCubeDisplay() {
-		return cubeDisplay;
+		return isDisplayingAsACube;
 	}
 
 	/**
 	 * @param cubeDisplay the cubeDisplay to set
 	 */
 	public void setCubeDisplay(final boolean cubeDisplay) {
-		this.cubeDisplay = cubeDisplay;
+		this.isDisplayingAsACube = cubeDisplay;
 	}
 
 	/**
@@ -257,42 +241,42 @@ public class LayeredDisplayData {
 	 * @return the displayScale
 	 */
 	public boolean isDisplayScale() {
-		return displayScale;
+		return isDisplayingScale;
 	}
 
 	/**
 	 * @param displayScale the displayScale to set
 	 */
 	public void setDisplayScale(final boolean displayScale) {
-		this.displayScale = displayScale;
+		this.isDisplayingScale = displayScale;
 	}
 
 	/**
 	 * @return the showfps
 	 */
 	public boolean isShowfps() {
-		return showfps;
+		return isShowingFPS;
 	}
 
 	/**
 	 * @param showfps the showfps to set
 	 */
 	public void setShowfps(final boolean showfps) {
-		this.showfps = showfps;
+		this.isShowingFPS = showfps;
 	}
 
 	/**
 	 * @return the drawEnv
 	 */
 	public boolean isDrawEnv() {
-		return drawEnv;
+		return isDrawingEnvironment;
 	}
 
 	/**
 	 * @param drawEnv the drawEnv to set
 	 */
 	public void setDrawEnv(final boolean drawEnv) {
-		this.drawEnv = drawEnv;
+		this.isDrawingEnvironment = drawEnv;
 	}
 
 	/**
@@ -313,55 +297,55 @@ public class LayeredDisplayData {
 	 * @return the drawDiffLight
 	 */
 	public boolean isDrawDiffLight() {
-		return drawDiffLight;
+		return isDrawingDiffuseLight;
 	}
 
 	/**
 	 * @param drawDiffLight the drawDiffLight to set
 	 */
 	public void setDrawDiffLight(final boolean drawDiffLight) {
-		this.drawDiffLight = drawDiffLight;
+		this.isDrawingDiffuseLight = drawDiffLight;
 	}
 
 	/**
 	 * @return the ambientLightColor
 	 */
 	public Color getAmbientLightColor() {
-		return ambientLightColor;
+		return ambientColor;
 	}
 
 	/**
 	 * @param ambientLightColor the ambientLightColor to set
 	 */
 	public void setAmbientLightColor(final Color ambientLightColor) {
-		this.ambientLightColor = ambientLightColor;
+		this.ambientColor = ambientLightColor;
 	}
 
 	/**
 	 * @return the diffuseLightColor
 	 */
 	public Color getDiffuseLightColor() {
-		return diffuseLightColor;
+		return diffuseColor;
 	}
 
 	/**
 	 * @param diffuseLightColor the diffuseLightColor to set
 	 */
 	public void setDiffuseLightColor(final Color diffuseLightColor) {
-		this.diffuseLightColor = diffuseLightColor;
+		this.diffuseColor = diffuseLightColor;
 	}
 
 	/**
 	 * @return the diffuseLightPosition
 	 */
-	public GamaPoint getDiffuseLightPosition() {
+	public ILocation getDiffuseLightPosition() {
 		return diffuseLightPosition;
 	}
 
 	/**
 	 * @param diffuseLightPosition the diffuseLightPosition to set
 	 */
-	public void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
+	public void setDiffuseLightPosition(final ILocation diffuseLightPosition) {
 		this.diffuseLightPosition = diffuseLightPosition;
 	}
 
@@ -376,7 +360,10 @@ public class LayeredDisplayData {
 	 * @param cameraPos the cameraPos to set
 	 */
 	public void setCameraPos(final ILocation cameraPos) {
-		this.cameraPos = cameraPos;
+		if ( !this.cameraPos.equals(cameraPos) ) {
+			this.cameraPos = cameraPos;
+			notifyListeners(CAMERA_POS, true);
+		}
 	}
 
 	/**
@@ -390,7 +377,10 @@ public class LayeredDisplayData {
 	 * @param cameraLookPos the cameraLookPos to set
 	 */
 	public void setCameraLookPos(final ILocation cameraLookPos) {
-		this.cameraLookPos = cameraLookPos;
+		if ( !this.cameraLookPos.equals(cameraLookPos) ) {
+			this.cameraLookPos = cameraLookPos;
+			notifyListeners(CAMERA_POS, true);
+		}
 	}
 
 	/**
@@ -404,21 +394,24 @@ public class LayeredDisplayData {
 	 * @param cameraUpVector the cameraUpVector to set
 	 */
 	public void setCameraUpVector(final ILocation cameraUpVector) {
-		this.cameraUpVector = cameraUpVector;
+		if ( !this.cameraUpVector.equals(cameraUpVector) ) {
+			this.cameraUpVector = cameraUpVector;
+			notifyListeners(CAMERA_POS, true);
+		}
 	}
 
 	/**
 	 * @return the polygonMode
 	 */
 	public boolean isPolygonMode() {
-		return polygonMode;
+		return isDrawingPolygons;
 	}
 
 	/**
 	 * @param polygonMode the polygonMode to set
 	 */
 	public void setPolygonMode(final boolean polygonMode) {
-		this.polygonMode = polygonMode;
+		this.isDrawingPolygons = polygonMode;
 	}
 
 	/**
@@ -447,20 +440,6 @@ public class LayeredDisplayData {
 	 */
 	public void setImageDimension(final ILocation imageDimension) {
 		this.imageDimension = imageDimension;
-	}
-
-	/**
-	 * @return the output3DNbCycles
-	 */
-	public ILocation getOutput3DNbCycles() {
-		return output3DNbCycles;
-	}
-
-	/**
-	 * @param output3dNbCycles the output3DNbCycles to set
-	 */
-	public void setOutput3DNbCycles(final ILocation output3dNbCycles) {
-		output3DNbCycles = output3dNbCycles;
 	}
 
 	/**
@@ -501,4 +480,82 @@ public class LayeredDisplayData {
 	public void setHighlightColor(final Color hc) {
 		highlightColor = hc;
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isInertia() {
+		return isUsingInertia;
+	}
+
+	public void setInertia(final boolean i) {
+		isUsingInertia = i;
+	}
+
+	public boolean isAntialias() {
+		return isAntialiasing;
+	}
+
+	public void setAntialias(final boolean a) {
+		isAntialiasing = a;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isArcBallDragOn() {
+		return isDraggingWithArcBall;
+	}
+
+	public void setArgBallDragOn(final boolean a) {
+		isDraggingWithArcBall = a;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isRotationOn() {
+		return isRotating;
+	}
+
+	public void setRotation(final boolean r) {
+		isRotating = r;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isArcBallCamera() {
+		return isUsingArcBallCamera;
+	}
+
+	public void setArcBallCamera(final boolean c) {
+		isUsingArcBallCamera = c;
+		notifyListeners(LayeredDisplayData.CHANGE_CAMERA, c);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isLayerSplitted() {
+		return isSplittingLayers;
+	}
+
+	public void setLayerSplitted(final boolean s) {
+		isSplittingLayers = s;
+		notifyListeners(LayeredDisplayData.SPLIT_LAYER, s);
+	}
+
+	public static ILocation getNoChange() {
+		return noChange;
+	}
+
+	public boolean isSynchronized() {
+		return isSynchronized;
+	}
+
+	public void setSynchronized(final boolean isSynchronized) {
+		this.isSynchronized = isSynchronized;
+	}
+
 }

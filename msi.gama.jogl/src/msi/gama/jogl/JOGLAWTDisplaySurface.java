@@ -16,12 +16,15 @@ import java.awt.event.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
+import msi.gama.gui.displays.awt.AWTJava2DDisplaySurface;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
+import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
@@ -31,7 +34,8 @@ import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
-public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
+@Deprecated
+public final class JOGLAWTDisplaySurface extends AWTJava2DDisplaySurface implements DisplayDataListener, IDisplaySurface.OpenGL {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,19 +49,19 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// private boolean picking = false;
 
 	// Use to toggle the Arcball drag
-	private boolean arcball = false;
+	private final boolean arcball = false;
 
 	// Use to toggle the selectRectangle tool
 	public boolean selectRectangle = false;
 
 	// Use to toggle the SplitLayer view
-	private boolean splitLayer = false;
+	private final boolean splitLayer = false;
 
 	// Us toggle to switch cameras
-	private boolean switchCamera = false;
+	private final boolean switchCamera = false;
 
 	// Use to toggle the Rotation view
-	private boolean rotation = false;
+	private final boolean rotation = false;
 
 	// Used to follow an agent
 	public boolean followAgent = false;
@@ -88,7 +92,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				if ( renderer != null && renderer.canvas != null ) {
 					renderer.canvas.setSize(getWidth(), getHeight());
 				}
-				initOutput3D(data.isOutput3D(), data.getOutput3DNbCycles());
+				// initOutput3D(data.isOutput3D(), data.getOutput3DNbCycles());
 				// updateDisplay();
 				previousPanelSize = getSize();
 			}
@@ -137,7 +141,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// TODO Move data to the Renderer so that it feeds itself
 	private void feedRenderer() {
-		renderer.setAntiAliasing(getQualityRendering());
+		renderer.setAntiAliasing(data.isAntialias());
 		renderer.setZFighting(data.isZ_fighting());
 		renderer.setDrawNorm(data.isDraw_norm());
 		renderer.setCubeDisplay(data.isCubeDisplay());
@@ -193,10 +197,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// return dim;
 	// }
 
+	@Override
 	public void selectAgents(final IAgent agent) {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 	}
 
+	@Override
 	public void selectSeveralAgents(final Collection<IAgent> agents, final int layerId) {
 		menuManager.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y,
 			getModelCoordinates(), agents);
@@ -253,119 +259,119 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.zoomFit();
 	}
 
-	@Override
-	public void setZoomLevel(final Double newZoomLevel) {
-		super.setZoomLevel(newZoomLevel);
-		if ( iGraphics != null ) {
-			((JOGLAWTDisplayGraphics) iGraphics).reinitFor(this);
-		}
-	}
+	// @Override
+	// public void setZoomLevel(final Double newZoomLevel) {
+	// super.setZoomLevel(newZoomLevel);
+	// if ( iGraphics != null ) {
+	// ((JOGLAWTDisplayGraphics) iGraphics).reinitFor(this);
+	// }
+	// }
 
-	@Override
-	public void toggleView() {
-		threeD = !threeD;
-		zoomFit();
-		updateDisplay(true);
-	}
+	// @Override
+	// public void toggleView() {
+	// threeD = !threeD;
+	// zoomFit();
+	// updateDisplay(true);
+	// }
+	//
+	// @Override
+	// public void togglePicking() {
+	// renderer.setPicking(!renderer.isPicking());
+	// renderer.camera.zeroVelocity();
+	// if ( !renderer.isPicking() ) {
+	// setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	// } else {
+	// setCursor(new Cursor(Cursor.HAND_CURSOR));
+	// }
+	// }
 
-	@Override
-	public void togglePicking() {
-		renderer.setPicking(!renderer.isPicking());
-		renderer.camera.zeroVelocity();
-		if ( !renderer.isPicking() ) {
-			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		} else {
-			setCursor(new Cursor(Cursor.HAND_CURSOR));
-		}
-	}
+	// @Override
+	// public void toggleArcball() {
+	// arcball = !arcball;
+	// }
+	//
+	// @Override
+	// public void toggleInertia() {
+	// renderer.setInertia(!renderer.getInertia());
+	// }
+	//
+	// @Override
+	// public void toggleSelectRectangle() {
+	// selectRectangle = !selectRectangle;
+	// if ( selectRectangle && !renderer.camera.isViewIn2DPlan() ) {
+	// zoomFit();
+	// }
+	//
+	// }
+	//
+	// @Override
+	// public void toggleTriangulation() {
+	// renderer.triangulation = !renderer.triangulation;
+	// updateDisplay(true);
+	// }
 
-	@Override
-	public void toggleArcball() {
-		arcball = !arcball;
-	}
+	// @Override
+	// public boolean isTriangulationOn() {
+	// return renderer.triangulation;
+	// }
+	//
+	// @Override
+	// public boolean isInertiaOn() {
+	// return renderer.getInertia();
+	// }
 
-	@Override
-	public void toggleInertia() {
-		renderer.setInertia(!renderer.getInertia());
-	}
+	// @Override
+	// public void toggleSplitLayer() {
+	//
+	// splitLayer = !splitLayer;
+	// final int nbLayers = this.getManager().getItems().size();
+	// int i = 0;
+	// final Iterator<ILayer> it = this.getManager().getItems().iterator();
+	// while (it.hasNext()) {
+	// final ILayer curLayer = it.next();
+	// if ( splitLayer ) {// Split layer
+	// curLayer.setElevation((double) i / nbLayers);
+	// } else {// put all the layer at zero
+	// curLayer.setElevation(0.0);
+	// }
+	// i++;
+	// }
+	// this.updateDisplay(true);
+	// }
 
-	@Override
-	public void toggleSelectRectangle() {
-		selectRectangle = !selectRectangle;
-		if ( selectRectangle && !renderer.camera.isViewIn2DPlan() ) {
-			zoomFit();
-		}
+	// @Override
+	// public void toggleRotation() {
+	// rotation = !rotation;
+	// }
 
-	}
+	// @Override
+	// public void toggleCamera() {
+	// // TODO Auto-generated method stub
+	// switchCamera = !switchCamera;
+	// renderer.switchCamera();
+	// zoomFit();
+	// updateDisplay(true);
+	// }
 
-	@Override
-	public void toggleTriangulation() {
-		renderer.triangulation = !renderer.triangulation;
-		updateDisplay(true);
-	}
-
-	@Override
-	public boolean isTriangulationOn() {
-		return renderer.triangulation;
-	}
-
-	@Override
-	public boolean isInertiaOn() {
-		return renderer.getInertia();
-	}
-
-	@Override
-	public void toggleSplitLayer() {
-
-		splitLayer = !splitLayer;
-		final int nbLayers = this.getManager().getItems().size();
-		int i = 0;
-		final Iterator<ILayer> it = this.getManager().getItems().iterator();
-		while (it.hasNext()) {
-			final ILayer curLayer = it.next();
-			if ( splitLayer ) {// Split layer
-				curLayer.setElevation((double) i / nbLayers);
-			} else {// put all the layer at zero
-				curLayer.setElevation(0.0);
-			}
-			i++;
-		}
-		this.updateDisplay(true);
-	}
-
-	@Override
-	public void toggleRotation() {
-		rotation = !rotation;
-	}
-
-	@Override
-	public void toggleCamera() {
-		// TODO Auto-generated method stub
-		switchCamera = !switchCamera;
-		renderer.switchCamera();
-		zoomFit();
-		updateDisplay(true);
-	}
-
-	@Override
-	public boolean isLayerSplitted() {
-		return splitLayer;
-	}
-
-	@Override
-	public boolean isRotationOn() {
-		return rotation;
-	}
-
-	@Override
-	public boolean isCameraSwitched() {
-		return switchCamera;
-	}
-
-	@Override
-	public boolean isArcBallDragOn() {
-		return arcball;
-	}
+	// @Override
+	// public boolean isLayerSplitted() {
+	// return splitLayer;
+	// }
+	//
+	// @Override
+	// public boolean isRotationOn() {
+	// return rotation;
+	// }
+	//
+	// @Override
+	// public boolean isCameraSwitched() {
+	// return switchCamera;
+	// }
+	//
+	// @Override
+	// public boolean isArcBallDragOn() {
+	// return arcball;
+	// }
 
 	@Override
 	public void focusOn(final IShape geometry) {
@@ -511,5 +517,55 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				.getNeighboursOf(getDisplayScope(), new GamaPoint(pp.x, pp.y), this.renderer.getMaxEnvDim() / 100,
 					Different.with());
 		return GamaListFactory.<IAgent> createWithoutCasting(Types.AGENT, agents);
+	}
+
+	/**
+	 * Method addMouseListener()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(msi.gama.outputs.layers.ILayerMouseListener)
+	 */
+	@Override
+	public void addMouseListener(final ILayerMouseListener e) {}
+
+	/**
+	 * Method removeMouseListener()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(msi.gama.outputs.layers.ILayerMouseListener)
+	 */
+	@Override
+	public void removeMouseListener(final ILayerMouseListener e) {}
+
+	/**
+	 * Method changed()
+	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
+	 */
+	@Override
+	public void changed(final int property, final boolean value) {
+		switch (property) {
+			case LayeredDisplayData.CHANGE_CAMERA:
+				renderer.switchCamera();
+				break;
+			case LayeredDisplayData.SPLIT_LAYER:
+				final int nbLayers = this.getManager().getItems().size();
+				int i = 0;
+				final Iterator<ILayer> it = this.getManager().getItems().iterator();
+				while (it.hasNext()) {
+					final ILayer curLayer = it.next();
+					if ( value ) {// Split layer
+						curLayer.setElevation((double) i / nbLayers);
+					} else {// put all the layer at zero
+						curLayer.setElevation(0.0);
+					}
+					i++;
+				}
+
+				updateDisplay(true);
+				break;
+			case LayeredDisplayData.THREED_VIEW:
+				// FIXME What is this ???
+				break;
+			case LayeredDisplayData.CAMERA_POS:
+				// renderer.updateCameraPosition();
+
+		}
+
 	}
 }

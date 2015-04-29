@@ -23,6 +23,7 @@ import msi.gama.jogl.utils.Camera.*;
 import msi.gama.metamodel.shape.*;
 import com.sun.opengl.util.*;
 
+@Deprecated
 public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public GLU glu;
@@ -48,7 +49,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Lighting
 	private Color ambientLightValue;
 	private Color diffuseLightValue;
-	private GamaPoint diffuseLightPosition;
+	private ILocation diffuseLightPosition;
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
@@ -204,9 +205,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			GLUtilLight.UpdateDiffuseLightValue(gl, glu, diffuseLightValue);
 
 			float[] light0Position = new float[4];
-			light0Position[0] = (float) diffuseLightPosition.x;
-			light0Position[1] = -(float) diffuseLightPosition.y;
-			light0Position[2] = (float) diffuseLightPosition.z;
+			light0Position[0] = (float) diffuseLightPosition.getX();
+			light0Position[1] = -(float) diffuseLightPosition.getY();
+			light0Position[2] = (float) diffuseLightPosition.getZ();
 			light0Position[3] = 0.0f;
 
 			if ( drawDiffuseLight ) {
@@ -312,7 +313,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.removeMouseMotionListener(camera);
 		canvas.removeMouseWheelListener(camera);
 
-		if ( displaySurface.isCameraSwitched() ) {
+		if ( displaySurface.getData().isArcBallCamera() ) {
 			camera = new FreeFlyCamera(this);
 		} else {
 			camera = new CameraArcBall(this);
@@ -367,14 +368,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.diffuseLightValue = diffuseLightValue;
 	}
 
-	public void setDiffuseLightPosition(final GamaPoint diffuseLightPosition) {
-		if ( diffuseLightPosition.equals(new GamaPoint(-1, -1, -1)) ) {
+	public void setDiffuseLightPosition(final ILocation iLocation) {
+		if ( iLocation.equals(new GamaPoint(-1, -1, -1)) ) {
 			this.diffuseLightPosition = new GamaPoint(0, 0, 0);
-			this.diffuseLightPosition.x = (float) displaySurface.getEnvWidth() / 2;
-			this.diffuseLightPosition.y = (float) displaySurface.getEnvHeight() / 2;
-			this.diffuseLightPosition.z = (float) displaySurface.getEnvWidth() * 2;
+			this.diffuseLightPosition.setX((float) displaySurface.getEnvWidth() / 2);
+			this.diffuseLightPosition.setY((float) displaySurface.getEnvHeight() / 2);
+			this.diffuseLightPosition.setZ((float) displaySurface.getEnvWidth() * 2);
 		} else {
-			this.diffuseLightPosition = diffuseLightPosition;
+			this.diffuseLightPosition = iLocation;
 
 		}
 	}
@@ -513,7 +514,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Use when the rotation button is on.
 	public void rotateModel() {
-		if ( this.displaySurface.isRotationOn() ) {
+		if ( this.displaySurface.getData().isRotationOn() ) {
 			frame++;
 		}
 		if ( frame != 0 ) {

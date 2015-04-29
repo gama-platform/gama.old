@@ -12,7 +12,6 @@
 package msi.gama.outputs;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -23,12 +22,11 @@ import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.display.*;
-import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.ILayerMouseListener;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.types.Types;
 
@@ -41,11 +39,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private Graphics2D g2 = null;
 	private int width = 500, height = 500;
 	private IGraphics displayGraphics;
-	protected Color bgColor = Color.black;
 	ILayerManager manager;
 	public static String snapshotFolder = "/tmp/";
 	protected IScope scope;
 	private final LayeredDisplayData data;
+	private boolean disposed;
 
 	public ImageDisplaySurface(final Object ... args) {
 		output = (LayeredDisplayOutput) args[0];
@@ -60,13 +58,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void outputReloaded() {
 		this.scope = output.getScope().copy();
 		scope.disableErrorReporting();
-		bgColor = data.getBackgroundColor();
 		if ( manager == null ) {
-			manager = new LayerManager(this);
-			final List<? extends ISymbol> layers = output.getChildren();
-			for ( final ISymbol layer : layers ) {
-				manager.addLayer(AbstractLayer.createLayer(scope, (ILayerStatement) layer));
-			}
+			manager = new LayerManager(this, output);
 		} else {
 			manager.outputChanged();
 		}
@@ -76,6 +69,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public IScope getDisplayScope() {
 		return scope;
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return disposed;
 	}
 
 	/**
@@ -155,7 +153,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	private void drawAllDisplays() {
 		if ( displayGraphics == null ) { return; }
-		displayGraphics.fillBackground(bgColor, 1);
+		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
 		manager.drawLayersOn(displayGraphics);
 	}
 
@@ -183,6 +181,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void dispose() {
+		if ( disposed ) { return; }
 		if ( g2 != null ) {
 			g2.dispose();
 		}
@@ -259,24 +258,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		needsUpdate = ok;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.gui.graphics.IDisplaySurface#setBackgroundColor(java.awt.Color)
-	 */
-	@Override
-	public void setBackground(final Color c) {
-		bgColor = c;
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setQualityRendering(boolean)
-	 */
-	@Override
-	public void setQualityRendering(final boolean quality) {
-		displayGraphics.setQualityRendering(quality);
-	}
-
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
 	 */
@@ -301,54 +282,40 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return height;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageWidth()
-	 */
-	@Override
-	public int getImageWidth() {
-		return width;
-	}
+	// /**
+	// * @see msi.gama.common.interfaces.IDisplaySurface#getImageWidth()
+	// */
+	// @Override
+	// public int getImageWidth() {
+	// return width;
+	// }
+	//
+	// /**
+	// * @see msi.gama.common.interfaces.IDisplaySurface#getImageHeight()
+	// */
+	// @Override
+	// public int getImageHeight() {
+	// return height;
+	// }
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageHeight()
-	 */
-	@Override
-	public int getImageHeight() {
-		return height;
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setOrigin(int, int)
-	 */
-	@Override
-	public void setOrigin(final int i, final int j) {}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
-	 */
-	@Override
-	public int getOriginX() {
-		return 0;
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
-	 */
-	@Override
-	public int getOriginY() {
-		return 0;
-	}
+	// /**
+	// * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
+	// */
+	// @Override
+	// public int getOriginX() {
+	// return 0;
+	// }
+	//
+	// /**
+	// * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
+	// */
+	// @Override
+	// public int getOriginY() {
+	// return 0;
+	// }
 
 	@Override
-	public Color getHighlightColor() {
-		return Color.black;
-	}
-
-	@Override
-	public void setHighlightColor(final Color c) {}
-
-	@Override
-	public void addMouseListener(final MouseListener e) {}
+	public void addMouseListener(final ILayerMouseListener e) {}
 
 	@Override
 	public double getEnvWidth() {
@@ -362,7 +329,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public int getDisplayWidth() {
-		return this.getImageWidth();
+		return width;
 	}
 
 	@Override
@@ -408,20 +375,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	/**
-	 * Method getQualityRendering()
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getQualityRendering()
-	 */
-	@Override
-	public boolean getQualityRendering() {
-		return true;
-	}
-
-	/**
 	 * Method removeMouseListener()
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
-	public void removeMouseListener(final MouseListener e) {}
+	public void removeMouseListener(final ILayerMouseListener e) {}
 
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
@@ -436,9 +394,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public IList<IAgent> selectAgent(final int x, final int y) {
-		int xc = x - getOriginX();
-		int yc = y - getOriginY();
+	public IList<IAgent> selectAgent(final int xc, final int yc) {
 		IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
 		for ( ILayer layer : layers ) {
@@ -467,5 +423,21 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void waitForUpdateAndRun(final Runnable r) {
 		r.run();
 	}
+
+	/**
+	 * Method getData()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
+	 */
+	@Override
+	public LayeredDisplayData getData() {
+		return data;
+	}
+
+	/**
+	 * Method setSWTMenuManager()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
+	 */
+	@Override
+	public void setSWTMenuManager(final Object displaySurfaceMenu) {}
 
 }

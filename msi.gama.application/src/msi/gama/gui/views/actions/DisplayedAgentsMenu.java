@@ -16,7 +16,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.*;
@@ -49,11 +48,12 @@ public class DisplayedAgentsMenu {
 		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
 	}
 
-	public Menu getMenu(final IToolbarDecoratedView view, final Control parent, final boolean withWorld,
-		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation) {
+	public Menu getMenu(final IDisplaySurface surface, final Control parent, final boolean withWorld,
+		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation,
+		final boolean isOpenGL) {
 		// Dispose ?
 		Menu menu = new Menu(parent);
-		fill(view, menu, -1, withWorld, byLayer, filteredList, userLocation);
+		fill(surface, menu, -1, withWorld, byLayer, filteredList, userLocation, isOpenGL);
 		return menu;
 	}
 
@@ -83,10 +83,11 @@ public class DisplayedAgentsMenu {
 		}
 	}
 
-	public void fill(final IToolbarDecoratedView view, final Menu menu, final int index, final boolean withWorld,
-		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation) {
-		final LayeredDisplayView view2 = (LayeredDisplayView) view;
-		final IDisplaySurface displaySurface = view2.getDisplaySurface();
+	public void fill(final IDisplaySurface surface, final Menu menu, final int index, final boolean withWorld,
+		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation,
+		final boolean isOpenGL) {
+		// final LayeredDisplayView view2 = (LayeredDisplayView) view;
+		// final IDisplaySurface displaySurface = view2.getDisplaySurface();
 		// AgentsMenu.MenuAction follow =
 		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
@@ -103,9 +104,9 @@ public class DisplayedAgentsMenu {
 			if ( filteredList == null || filteredList.isEmpty() ) { return; }
 			// If only the world is selected, no need to display anything more
 			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
-			final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
+			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
-			if ( view2.getOutput().isOpenGL() ) {
+			if ( isOpenGL ) {
 				// FIXME: 18/03/2014 a.g the follow item has been temporaly removed from opengl because not yet
 				// implemented but should be available in 1.7
 				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus /* , follow */);
@@ -114,18 +115,18 @@ public class DisplayedAgentsMenu {
 			}
 		} else {
 
-			for ( final ILayer layer : view2.getDisplayManager().getItems() ) {
-				Collection<IAgent> pop = layer.getAgentsForMenu(displaySurface.getDisplayScope());
+			for ( final ILayer layer : surface.getManager().getItems() ) {
+				Collection<IAgent> pop = layer.getAgentsForMenu(surface.getDisplayScope());
 				pop = new ArrayList(pop);
 				if ( pop.isEmpty() ) {
 					continue;
 				}
 				String layerName = layer.getType() + ": " + layer.getName();
-				final FocusOnSelection adapter = new FocusOnSelection(displaySurface);
+				final FocusOnSelection adapter = new FocusOnSelection(surface);
 				AgentsMenu.MenuAction focus =
 					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 
-				if ( view2.getOutput().isOpenGL() ) {
+				if ( isOpenGL ) {
 					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
 				} else {
 					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
@@ -154,7 +155,7 @@ public class DisplayedAgentsMenu {
 	 * @param tb
 	 * @param view
 	 */
-	public void createItem(final GamaToolbar2 tb, final IToolbarDecoratedView view) {
+	public void createItem(final GamaToolbar2 tb, final IDisplaySurface surface, final boolean isOpenGL) {
 
 		tb.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
 			"Browse through all displayed agents", new SelectionAdapter() {
@@ -168,7 +169,7 @@ public class DisplayedAgentsMenu {
 						menu.dispose();
 					}
 					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
-					fill(view, menu, -1, false, true, null, null);
+					fill(surface, menu, -1, false, true, null, null, isOpenGL);
 					Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
 					menu.setLocation(point.x, point.y);
 					menu.setVisible(true);

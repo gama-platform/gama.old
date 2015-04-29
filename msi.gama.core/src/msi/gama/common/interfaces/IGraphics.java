@@ -55,17 +55,18 @@ public interface IGraphics {
 
 	public abstract void fillBackground(Color bgColor, double opacity);
 
-	public abstract void setQualityRendering(boolean quality);
+	// public abstract void setQualityRendering(boolean quality);
 
-	void setHighlightColor(Color h);
+	// void setHighlightColor(Color h);
 
 	public abstract void beginDrawingLayers();
 
 	public abstract void beginDrawingLayer(ILayer layer);
 
-	public abstract int getEnvironmentWidth();
-
-	public abstract int getEnvironmentHeight();
+	//
+	// public abstract int getEnvironmentWidth();
+	//
+	// public abstract int getEnvironmentHeight();
 
 	public abstract double getyRatioBetweenPixelsAndModelUnits();
 

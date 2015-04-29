@@ -1847,7 +1847,7 @@
       <extension
             point="gama.display">
          <implementation
-               class="msi.gama.gui.displays.awt.AWTDisplaySurface"
+               class="msi.gama.gui.displays.awt.AWTJava2DDisplaySurface"
                keyword="java2D">
          </implementation>
       </extension>
