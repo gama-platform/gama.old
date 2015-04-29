@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenGL display for GAMA
+Bundle-SymbolicName: ummisco.gama.opengl;singleton:=true
+Bundle-Version: 2.3.1
+Require-Bundle: msi.gama.ext,
+ msi.gama.core;bundle-version="1.4.0",
+ msi.gama.application;bundle-version="1.4.0",
+ msi.gama.processor;bundle-version="1.4.0",
+ org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.swt,
+ org.eclipse.ui;bundle-version="3.8.2"
+Bundle-ActivationPolicy: lazy
+Import-Package: com.vividsolutions.jts.geom,
+ org.apache.commons.lang;version="2.6.0",
+ org.jfree.chart
+Export-Package: 
+ ummisco.gama.opengl,
+ ummisco.gama.opengl.utils
+Bundle-ClassPath: gluegen-rt-natives-linux-amd64.jar,
+ gluegen-rt-natives-linux-i586.jar,
+ gluegen-rt-natives-macosx-universal.jar,
+ gluegen-rt-natives-windows-amd64.jar,
+ gluegen-rt-natives-windows-i586.jar,
+ gluegen-rt.jar,
+ jogl-all-natives-linux-amd64.jar,
+ jogl-all-natives-linux-i586.jar,
+ jogl-all-natives-macosx-universal.jar,
+ jogl-all-natives-windows-amd64.jar,
+ jogl-all-natives-windows-i586.jar,
+ jogl-all.jar,
+ .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: UMMISCO

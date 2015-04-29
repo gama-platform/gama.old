@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<doc>
+<constantsCategories/>
+<constants/>
+<operatorsCategories>
+<category id="Iterator operators"/>
+</operatorsCategories>
+<operators>
+<operator alphabetOrder="ak" id="is_threeds" name="is_threeds">
+<operatorCategories>
+<category id="Files-related operators"/>
+</operatorCategories>
+<combinaisonIO>
+<operands class="ummisco.gama.opengl.files.Gama3DSFile" contentType="" returnType="bool" type="">
+<operand name="val" position="0" type="any"/>
+</operands>
+</combinaisonIO>
+<documentation>
+<result>Tests whether the operand is a threeds file.</result>
+</documentation>
+</operator>
+<operator alphabetOrder="lz" id="threeds_file" name="threeds_file">
+<operatorCategories>
+<category id="Files-related operators"/>
+</operatorCategories>
+<combinaisonIO>
+<operands class="ummisco.gama.opengl.files.Gama3DSFile" contentType="" returnType="file" type="">
+<operand name="val" position="0" type="string"/>
+</operands>
+</combinaisonIO>
+<documentation>
+<result>Constructs a file of type threeds. Allowed extensions are limited to 3ds, max</result>
+</documentation>
+</operator>
+</operators>
+<skills/>
+<architectures/>
+<speciess/>
+<insideStatementKinds/>
+<insideStatementSymbols/>
+<statementsKinds/>
+<statements/>
+</doc>
+
