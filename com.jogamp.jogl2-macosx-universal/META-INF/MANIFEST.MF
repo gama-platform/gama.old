@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Jogl-macosx-universal
-Bundle-SymbolicName: com.jogamp.jogl2-macosx-universal
-Bundle-Version: 2.0.0
-Bundle-Vendor: Jogamp
-Fragment-Host: msi.gama.jogl2;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Eclipse-PlatformFilter: (& (osgi.os=macosx) (osgi.arch=x86_64))
