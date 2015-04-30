@@ -24,7 +24,7 @@ public class SimulationPerspective implements IPerspectiveFactory {
 		layout.setFixed(false);
 		String editorId = layout.getEditorArea();
 		layout.addView("msi.gama.gui.view.GamaNavigator", IPageLayout.LEFT, 0.23f, editorId);
-		IViewLayout nav = layout.getViewLayout("msi.gama.gui.view.GamaNavigator");
+		// IViewLayout nav = layout.getViewLayout("msi.gama.gui.view.GamaNavigator");
 		// nav.setMoveable(false);
 		//
 		IPlaceholderFolderLayout displays =

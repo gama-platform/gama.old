@@ -405,11 +405,11 @@ public class WorkspaceModelsManager {
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask("Creating or updating " + name, 2000);
 				IProject project = ws.getRoot().getProject(name);
-				IProjectDescription desc = null;
-				if ( project.exists() ) {
-					desc = project.getDescription();
-				} else {
-					desc = ws.newProjectDescription(name);
+				// IProjectDescription desc = null;
+				if ( !project.exists() ) {
+					// desc = project.getDescription();
+					// } else {
+					IProjectDescription desc = ws.newProjectDescription(name);
 					project.create(desc, new SubProgressMonitor(monitor, 1000));
 				}
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }

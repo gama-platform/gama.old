@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'AwtDialogListener.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 
+ * 'AwtDialogListener.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -79,7 +79,7 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 			if ( verboseModalityHandling ) {
 				System.err.println("Calling setAlwaysOnTop(" + onTop + ") for " + window);
 			}
-			setAlwaysOnTopMethod.invoke(window, new Object[] { new Boolean(onTop) });
+			setAlwaysOnTopMethod.invoke(window, new Object[] { Boolean.valueOf(onTop) });
 		} catch (IllegalAccessException e) {
 			handleAlwaysOnTopException(e);
 		} catch (InvocationTargetException e) {

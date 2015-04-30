@@ -97,8 +97,8 @@ public class AWTJava2DDisplaySurface extends JPanel implements IDisplaySurface {
 			Point p = new Point(mousePosition.x, mousePosition.y);
 			double zoomFactor = applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement);
 			Point origin = getOrigin();
-			double newx = Math.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2);
-			double newy = Math.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2);
+			double newx = Math.round(zoomFactor * (p.x - origin.x) - p.x + getWidth() / 2d);
+			double newy = Math.round(zoomFactor * (p.y - origin.y) - p.y + getHeight() / 2d);
 			centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 			updateDisplay(true);
 		}

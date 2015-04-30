@@ -30,7 +30,7 @@ import org.eclipse.ui.editors.text.TextEditor;
  */
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
 
-	GamaToolbar2 toolbar;
+	// GamaToolbar2 toolbar;
 
 	public CSVTextEditor(final char delimiter) {
 		CSVTextSourceViewerConfiguration csvTextConfig =
@@ -65,7 +65,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	 */
 	@Override
 	public void setToolbar(final GamaToolbar2 toolbar) {
-		this.toolbar = toolbar;
+		// this.toolbar = toolbar;
 	}
 
 	/**

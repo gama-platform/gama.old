@@ -66,7 +66,7 @@ import org.eclipse.ui.part.FileEditorInput;
 public class SwtGui implements IGui {
 
 	private IAgent highlightedAgent;
-	public static boolean MOUSE_DOWN;
+	// public static boolean MOUSE_DOWN;
 
 	static {
 		if ( !GuiUtils.isInHeadLessMode() ) {

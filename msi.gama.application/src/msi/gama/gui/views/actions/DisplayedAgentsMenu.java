@@ -126,11 +126,11 @@ public class DisplayedAgentsMenu {
 				AgentsMenu.MenuAction focus =
 					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 
-				if ( isOpenGL ) {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
-				} else {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
-				}
+				// if ( isOpenGL ) {
+				fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
+				// } else {
+				// fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
+				// }
 
 			}
 		}

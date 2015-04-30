@@ -45,8 +45,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private Image image;
 	private String text;
 	private RGB colorCode;
-	private final int innerMarginWidth = 5;
-	private final int imagePadding = 5;
+	private static final int innerMarginWidth = 5;
+	private static final int imagePadding = 5;
 	private boolean enabled = true;
 	private boolean hovered = false;
 
@@ -81,6 +81,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				if ( e.button == 1 ) {
 					doHover(true);
 				}
+				break;
+			default:
+				;
 		}
 	}
 
@@ -114,8 +117,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
 		setBackground(getParent().getBackground());
-		//gc.setBackground(getParent().getBackground());
-		//gc.fillRectangle(getBounds());
+		// gc.setBackground(getParent().getBackground());
+		// gc.fillRectangle(getBounds());
 
 		final Path path = createClipping(rect);
 		GamaUIColor color = GamaColors.get(colorCode);
@@ -149,7 +152,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		Rectangle rect = new Rectangle(0, v_inset, width, height);
 		drawBackground(gc, rect);
 
-		int x = this.innerMarginWidth;
+		int x = FlatButton.innerMarginWidth;
 		int y_image = 0;
 		Image image = getImage();
 		if ( image != null ) {
@@ -205,7 +208,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			gc.setFont(getFont());
 			Point extent = gc.textExtent(text);
 			gc.dispose();
-			width += extent.x + this.innerMarginWidth;
+			width += extent.x + FlatButton.innerMarginWidth;
 		}
 		return width;
 	}

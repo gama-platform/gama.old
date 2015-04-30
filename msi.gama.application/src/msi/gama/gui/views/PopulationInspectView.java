@@ -62,7 +62,8 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
 		IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
 	IScope scope;
-	volatile boolean locked, refreshing;
+	volatile boolean locked;
+	// volatile boolean refreshing;
 	ToolItem populationMenu;
 	TableViewer viewer;
 	org.eclipse.swt.widgets.List attributesMenu;

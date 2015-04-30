@@ -49,14 +49,14 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu {
 
 	};
 
-	private final SelectionListener newOther = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			openWizard("org.eclipse.ui.internal.dialogs.NewWizard", selection);
-		}
-
-	};
+	// private final SelectionListener newOther = new SelectionAdapter() {
+	//
+	// @Override
+	// public void widgetSelected(final SelectionEvent e) {
+	// openWizard("org.eclipse.ui.internal.dialogs.NewWizard", selection);
+	// }
+	//
+	// };
 
 	@Override
 	protected void fillMenu() {

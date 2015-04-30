@@ -5,7 +5,6 @@
 package msi.gama.gui.swt.controls;
 
 import java.io.*;
-import java.util.ArrayList;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
@@ -27,20 +26,6 @@ public class GamaToolbar2 extends Composite {
 
 	private GamaToolbarSimple left, right;
 
-	// private class SizerToolItem extends ToolItem {
-	//
-	// public SizerToolItem(final GamaToolbarSimple tb, final int width, final int height) {
-	// super(tb, SWT.FLAT);
-	// setImage(GamaIcons.createSizer(GamaToolbar2.this.getBackground(), width, height).image());
-	// // setEnabled(false);
-	// }
-	//
-	// @Override
-	// protected void checkSubclass() {}
-	//
-	// }
-
-	// final SizerToolItem iconSizer, toolbarSizer;
 	final int height;
 
 	public GamaToolbar2(final Composite parent, final int style, final int height) {
@@ -48,10 +33,6 @@ public class GamaToolbar2 extends Composite {
 		this.height = height;
 		createLayout();
 		createToolbars();
-		// int square = GamaIcons.CORE_ICONS_HEIGHT.getValue();
-		// iconSizer = null;
-		// iconSizer = new SizerToolItem(right, square, square);
-		// toolbarSizer = new SizerToolItem(left, 1, height);
 	}
 
 	public void createLayout() {
@@ -117,12 +98,12 @@ public class GamaToolbar2 extends Composite {
 		Label label = new Label(tb, SWT.WRAP);
 		label.setForeground(color.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
 		String newString = "";
-		java.util.List<String> result = new ArrayList();
+		// java.util.List<String> result = new ArrayList();
 		try {
 			BufferedReader reader = new BufferedReader(new StringReader(s));
 			String line = reader.readLine();
 			while (line != null) {
-				newString += line;
+				// newString += line;
 				line = reader.readLine();
 			}
 		} catch (IOException exc) {}
@@ -187,7 +168,6 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	public void wipe(final int side /* SWT.LEFT or SWT.RIGHT */) {
-		// Removes everything excluding the sizer item and the separator, after or before the separator depending on 'side'
 		ToolItem[] items = getToolbar(side).getItems();
 		for ( ToolItem t : items ) {
 			Control c = t.getControl();
@@ -231,10 +211,7 @@ public class GamaToolbar2 extends Composite {
 		if ( tb.getItemCount() > 0 ) { return; }
 		if ( side == SWT.LEFT ) {
 			sep(1, side);
-		} else {
-			// sep(GamaIcons.CORE_ICONS_HEIGHT.getValue(), side);
 		}
-
 	}
 
 	/**

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.*;
 
 public class AgentEditor extends ExpressionBasedEditor {
 
-	Label agentDisplayer;
+	// Label agentDisplayer;
 	String species;
 
 	// AgentEditor(final IParameter param) {

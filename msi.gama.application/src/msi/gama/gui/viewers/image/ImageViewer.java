@@ -512,7 +512,9 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					} finally {
 						try {
 							pout.close();
-						} catch (IOException e) {}
+						} catch (IOException e) {
+							System.out.println("Exception ignored in ImageViewer saveTo: " + e.getMessage());
+						}
 					}
 					// always do our own error dialog
 					if ( !status.isOK() ) {
@@ -605,7 +607,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 		// don't go bigger than the maz zoom
 		newZoom = Math.min(newZoom, maxZoomFactor);
 		if ( zoomFactor != newZoom && newZoom > 0.0d ) {
-			Double old = Double.valueOf(zoomFactor);
+			// Double old = Double.valueOf(zoomFactor);
 			this.zoomFactor = newZoom;
 			// redraw the image
 			if ( imageCanvas != null ) {

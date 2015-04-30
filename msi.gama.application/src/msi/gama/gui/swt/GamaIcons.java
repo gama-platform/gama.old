@@ -13,8 +13,7 @@ package msi.gama.gui.swt;
 
 import gnu.trove.map.hash.THashMap;
 import java.util.Map;
-import msi.gama.common.*;
-import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gaml.types.IType;
@@ -46,8 +45,8 @@ public class GamaIcons /* implements IGamaIcons */{
 	Map<String, GamaIcon> iconCache = new THashMap();
 	Map<String, Image> imageCache = new THashMap();
 	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
-	.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
-	.group("Icons");
+		.create("core.icons_brightness", "Icons and buttons dark mode", true, IType.BOOL).in(GamaPreferences.UI)
+		.group("Icons");
 	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
 		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
 		.among(16, 24).in(GamaPreferences.UI).group("Icons");
@@ -89,7 +88,7 @@ public class GamaIcons /* implements IGamaIcons */{
 		String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
 		if ( sizer == null ) {
-			RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
+			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 			Image sizerImage = new Image(Display.getDefault(), width, height);
 			GC gc = new GC(sizerImage);
 			gc.setBackground(color);
@@ -124,7 +123,7 @@ public class GamaIcons /* implements IGamaIcons */{
 		GamaIcon icon = getInstance().getIcon(s);
 		if ( icon == null ) {
 			Color color = gcolor.color();
-			RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
+			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 			Image image = new Image(Display.getDefault(), width, height);
 			GC gc = new GC(image);
 			gc.setAntialias(SWT.ON);
@@ -191,7 +190,7 @@ public class GamaIcons /* implements IGamaIcons */{
 			// gc.drawRectangle(0, 0, width - 1, height - 1);
 
 			// image is smaller than requested since, so center
-			if ( curBounds.width <= width && curBounds.height <= curBounds.height ) {
+			if ( curBounds.width <= width && curBounds.height <= height ) {
 				gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, (width - curBounds.width) / 2,
 					(height - curBounds.height) / 2, curBounds.width, curBounds.height);
 			} else // too wide or too tall

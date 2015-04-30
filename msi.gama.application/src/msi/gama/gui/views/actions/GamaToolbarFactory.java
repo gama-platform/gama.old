@@ -45,7 +45,7 @@ public class GamaToolbarFactory {
 	public static ITooltipDisplayer findTooltipDisplayer(final Control c) {
 		if ( c instanceof Shell ) { return null; }
 		if ( c instanceof GamaComposite ) { return ((GamaComposite) c).displayer; }
-		Control t = c;
+		// Control t = c;
 		return findTooltipDisplayer(c.getParent());
 	}
 

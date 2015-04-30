@@ -158,7 +158,7 @@ public abstract class SwingControl extends Composite {
 								success = superForceFocus();
 								success = postProcessForceFocus(success);
 							}
-							setResult(new Boolean(success));
+							setResult(success);
 						}
 					});
 				}
@@ -175,7 +175,7 @@ public abstract class SwingControl extends Composite {
 						@Override
 						public void run() {
 							boolean success = isDisposed() ? false : superSetFocus();
-							setResult(new Boolean(success));
+							setResult(success);
 						}
 					});
 				}
@@ -656,7 +656,7 @@ public abstract class SwingControl extends Composite {
 			// Preferred (and min/max) sizes are available for the AWT
 			// component for the first time. Layout the composite so that those
 			// sizes can be taken into account.
-			final int onBehalfAWTTime = lastValidatedAWTTime;
+			final Integer onBehalfAWTTime = lastValidatedAWTTime;
 			ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
 
 				@Override
@@ -666,7 +666,7 @@ public abstract class SwingControl extends Composite {
 					}
 					if ( !isDisposed() ) {
 						try {
-							onBehalfAWTTimes.put(Thread.currentThread(), new Integer(onBehalfAWTTime));
+							onBehalfAWTTimes.put(Thread.currentThread(), onBehalfAWTTime);
 							// Augment the three sizes by 2*borderWidth, avoiding
 							// integer overflow.
 							Point minSize =
@@ -1068,20 +1068,20 @@ public abstract class SwingControl extends Composite {
 		}
 	}
 
-	private void initCleanResizeListener() {
-		// On Windows:
-		// - In JDK 1.4 and 1.5: It indeed avoids most of the "garbage". But
-		// if the background colour is not aligned with the contents of the
-		// window (like here: background grey, contents dark green), the
-		// cleaning is visually more disturbing than the garbage. This is
-		// especially noticeable when you click with the mouse in the above
-		// test view.
-		// - In JDK 1.6: There is much less "garbage"; the repaint is quicker.
-		// The CleanResizeListener's effect is mostly visible as flickering.
-		if ( Platform.isWin32() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) ) {
-			setCleanResizeEnabled(true);
-		}
-	}
+	// private void initCleanResizeListener() {
+	// // On Windows:
+	// // - In JDK 1.4 and 1.5: It indeed avoids most of the "garbage". But
+	// // if the background colour is not aligned with the contents of the
+	// // window (like here: background grey, contents dark green), the
+	// // cleaning is visually more disturbing than the garbage. This is
+	// // especially noticeable when you click with the mouse in the above
+	// // test view.
+	// // - In JDK 1.6: There is much less "garbage"; the repaint is quicker.
+	// // The CleanResizeListener's effect is mostly visible as flickering.
+	// if ( Platform.isWin32() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) ) {
+	// setCleanResizeEnabled(true);
+	// }
+	// }
 
 	// ========================================================================
 	// Font management
@@ -1317,8 +1317,8 @@ public abstract class SwingControl extends Composite {
 
 			@Override
 			public void run() {
-				boolean success = isDisposed() ? false : superSetFocus();
-				setResult(new Boolean(success));
+				Boolean success = isDisposed() ? false : superSetFocus();
+				setResult(success);
 			}
 		}); }
 		return borderlessChild.setFocus();
@@ -1341,7 +1341,7 @@ public abstract class SwingControl extends Composite {
 
 				@Override
 				public void run() {
-					boolean success;
+					Boolean success;
 					if ( isDisposed() ) {
 						success = false;
 					} else {
@@ -1349,7 +1349,7 @@ public abstract class SwingControl extends Composite {
 						// Handle the return value
 						success = postProcessForceFocus(success);
 					}
-					setResult(new Boolean(success));
+					setResult(success);
 				}
 			});
 		} else {

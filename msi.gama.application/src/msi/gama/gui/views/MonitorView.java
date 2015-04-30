@@ -25,7 +25,7 @@ import msi.gaml.expressions.*;
 import msi.gaml.types.Types;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -83,10 +83,10 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	protected Composite createItemContentsFor(final MonitorOutput output) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		firstColData.widthHint = 60;
-		GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		secondColData.widthHint = 200;
+		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// firstColData.widthHint = 60;
+		// GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// secondColData.widthHint = 200;
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor =

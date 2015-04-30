@@ -94,7 +94,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	private final EditorListener listener;
 	// private final boolean acceptPopup = true;
 	private Composite composite;
-	protected ToolItem editor;
+	// protected ToolItem editor;
 	protected final ToolItem[] items = new ToolItem[8];
 	boolean isSubParameter;
 	Composite parent;

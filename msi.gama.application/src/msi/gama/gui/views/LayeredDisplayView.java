@@ -140,9 +140,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements IZoomLi
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
-		if ( zoomLevel == null && getDisplaySurface() != null ) {
-			zoomLevel = (int) getDisplaySurface().getZoomLevel() * 100;
-		}
+		if (zoomLevel == null) {
+			if (getDisplaySurface() != null) {
+				zoomLevel = (int) getDisplaySurface().getZoomLevel() * 100;
+			} else {
+				zoomLevel = 1;
+			}
+		}	
 		return zoomLevel;
 	}
 

@@ -38,11 +38,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	final public static int PROJECT = 53;
 	final public static int SORT = 55;
 
-	String OPEN_BROWSER_COMMAND_ID = "msi.gama.application.commands.OpenBrowser";
+	// String OPEN_BROWSER_COMMAND_ID = "msi.gama.application.commands.OpenBrowser";
 
 	IResourceChangeListener listener;
 	IAction link, collapse;
-	ToolItem linkItem, collapseItem, newFileItem, newProjectItem, importItem;
+	ToolItem linkItem; // collapseItem, newFileItem, newProjectItem, importItem;
 	protected Composite parent;
 	// protected GamaToolbar leftToolbar, rightToolbar;
 	protected GamaToolbar2 toolbar;
@@ -58,7 +58,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			public String getDescription(final Object anElement) {
 				if ( anElement instanceof IStructuredSelection ) {
 					IStructuredSelection selection = (IStructuredSelection) anElement;
-					if ( selection == null || selection.isEmpty() ) { return ""; }
+					if ( selection.isEmpty() ) { return ""; }
 					String message = null;
 					if ( selection.size() > 1 ) {
 						message = "Multiple elements";
@@ -231,41 +231,42 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					}, SWT.RIGHT);
 				break;
 			case COLLAPSE:
-				collapseItem =
-					tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
+				// ToolItem collapseItem =
+				tb.button("navigator/navigator.collapse2", "", "Collapse all items", new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							collapse.run();
-						}
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						collapse.run();
+					}
 
-					}, SWT.RIGHT);
+				}, SWT.RIGHT);
 				break;
 			case SORT:
-				ToolItem dateSorter =
-					tb.check("navigator/navigator.date2", "", "Sort by modification date", new SelectionAdapter() {
+				// ToolItem dateSorter =
+				tb.check("navigator/navigator.date2", "", "Sort by modification date", new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(final SelectionEvent trigger) {
-							boolean enabled = ((ToolItem) trigger.widget).getSelection();
+					@Override
+					public void widgetSelected(final SelectionEvent trigger) {
+						boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
-							try {
-								IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-								mgr.setEnabled("msi.gama.application.date.decorator", enabled);
-							} catch (CoreException e) {
-								e.printStackTrace();
-							}
-
-							FileFolderSorter.BY_DATE = enabled;
-							Object[] expanded = getCommonViewer().getExpandedElements();
-							getCommonViewer().refresh();
-							getCommonViewer().setExpandedElements(expanded);
+						try {
+							IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+							mgr.setEnabled("msi.gama.application.date.decorator", enabled);
+						} catch (CoreException e) {
+							e.printStackTrace();
 						}
 
-					}, SWT.RIGHT);
+						FileFolderSorter.BY_DATE = enabled;
+						Object[] expanded = getCommonViewer().getExpandedElements();
+						getCommonViewer().refresh();
+						getCommonViewer().setExpandedElements(expanded);
+					}
+
+				}, SWT.RIGHT);
 				break;
 			case NEW:
-				newFileItem = tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
+				// newFileItem = <
+				tb.menu("navigator/navigator.new2", "", "New...", new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(final SelectionEvent trigger) {
@@ -280,7 +281,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				}, SWT.RIGHT);
 				break;
 			case IMPORT:
-				importItem = tb.menu("navigator/navigator.import2", "", "Import...", new SelectionAdapter() {
+
+				// importItem =
+				tb.menu("navigator/navigator.import2", "", "Import...", new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(final SelectionEvent trigger) {

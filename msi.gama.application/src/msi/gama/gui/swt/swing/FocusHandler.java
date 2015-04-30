@@ -310,7 +310,7 @@ public class FocusHandler {
 							if ( verboseFocusEvents ) {
 								trace("Calling synthesizeWindowActivation(" + activate + ")");
 							}
-							synthesizeMethod.invoke(frame, new Object[] { new Boolean(activate) });
+							synthesizeMethod.invoke(frame, new Object[] { activate });
 						}
 					} catch (IllegalAccessException e) {
 						handleSynthesizeException(e);

@@ -59,7 +59,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	private final List<IStatement> userCommands;
 	private final IScope scope;
-	boolean inspecting;
+
+	// boolean inspecting;
 
 	public UserControlDialog(final Shell parentShell, final List<IStatement> values, final String title,
 		final IScope executionScope) {
@@ -121,7 +122,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		// text.setBackground(SwtGui.COLOR_OK);
 		// text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		// text.setText(title);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+		// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		// text.setLayoutData(data);
 		// Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		// data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
@@ -161,7 +162,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 				}
 
 				Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-				data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+				GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 				sep.setLayoutData(data);
 			}
 		}
