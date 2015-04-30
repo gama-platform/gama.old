@@ -6,7 +6,6 @@ package msi.gama.lang.gaml;
 import java.util.Properties;
 
 import org.eclipse.xtext.Constants;
-import org.eclipse.xtext.service.DefaultRuntimeModule;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
@@ -14,8 +13,8 @@ import com.google.inject.name.Names;
 /**
  * Manual modifications go to {msi.gama.lang.gaml.GamlRuntimeModule}
  */
- @SuppressWarnings("all")
-public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
+@SuppressWarnings("all")
+public abstract class AbstractGamlRuntimeModule extends org.eclipse.xtext.service.DefaultRuntimeModule {
 
 	protected Properties properties = null;
 

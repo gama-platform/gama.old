@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.validation;bundle-version="1.4.0",
  msi.gama.ext,
  org.eclipse.xtext.xbase.lib,
- msi.gama.processor
+ msi.gama.processor,
+ org.eclipse.xtext.ide
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.formatting,

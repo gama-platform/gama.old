@@ -57,6 +57,7 @@ Workflow {
             	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
              options = {
   		            backtrack = false
+  		            memoize = true
                     classSplitting = true
                     fieldsPerClass = "200"
                     methodsPerClass= "200"
@@ -107,6 +108,7 @@ Workflow {
             	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
             options = {
   		            backtrack = false
+  		            memoize = true
                     classSplitting = true
                     fieldsPerClass = "200"
                     methodsPerClass= "200"
