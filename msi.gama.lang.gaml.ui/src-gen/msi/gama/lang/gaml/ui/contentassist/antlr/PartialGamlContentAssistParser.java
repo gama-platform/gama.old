@@ -12,14 +12,14 @@ import org.eclipse.xtext.ui.editor.contentassist.antlr.FollowElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.AbstractInternalContentAssistParser;
 import org.eclipse.xtext.util.PolymorphicDispatcher;
 
-/**
- * @author Sebastian Zarnekow - Initial contribution and API
+/*
+ * Template CodetemplatesGeneratorFragment.xpt
  */
-@SuppressWarnings("restriction")
 public class PartialGamlContentAssistParser extends GamlParser implements IPartialContentAssistParser {
 
 	private AbstractRule rule;
 
+	@Override
 	public void initializeFor(AbstractRule rule) {
 		this.rule = rule;
 	}

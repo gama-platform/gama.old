@@ -4,14 +4,13 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.xtext.ui.DefaultUiModule;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Manual modifications go to {msi.gama.lang.gaml.ui.GamlUiModule}
  */
 @SuppressWarnings("all")
-public abstract class AbstractGamlUiModule extends DefaultUiModule {
+public abstract class AbstractGamlUiModule extends org.eclipse.xtext.ui.DefaultUiModule {
 	
 	public AbstractGamlUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
