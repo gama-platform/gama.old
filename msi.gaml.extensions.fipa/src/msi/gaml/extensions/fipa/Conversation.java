@@ -91,10 +91,10 @@ public class Conversation extends GamaList<Message> {
 		protocol = FIPAProtocol.named(proto);
 		if ( protocol == null ) { throw new UnknownProtocolException(scope, proto); }
 		initiator = message.getSender();
-		participants.addAll(message.getReceivers());
 
 		if ( participants == null || participants.isEmpty() || participants.contains(null) ) { throw new ProtocolErrorException(
 			scope, "The message : " + message.toString() + " has no receivers."); }
+		participants.addAll(message.getReceivers());
 
 		// TODO A REVOIR COMPLETEMENT
 

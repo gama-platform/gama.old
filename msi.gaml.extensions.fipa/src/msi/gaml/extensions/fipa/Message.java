@@ -35,7 +35,7 @@ import msi.gaml.types.*;
 	@var(name = Message.CONVERSATION, type = ConversationType.CONV_ID),
 	@var(name = Message.PROTOCOL, type = IType.STRING, depends_on = Message.CONVERSATION),
 	@var(name = Message.TIMESTAMP, type = IType.STRING) })
-public class Message implements IValue {
+public class Message implements IValue, Cloneable {
 
 	public final static String CONVERSATION = "current_conversation";
 	public final static String CONTENT = "content";
