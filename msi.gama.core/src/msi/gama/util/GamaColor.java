@@ -194,8 +194,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	}
 
 	public int compareLuminescenceTo(final Color c2) {
-		return Float.compare(this.getRed() * 0.299f + this.getGreen() * 0.587f + this.getBlue() * 0.114f, c2.getRed() *
-			0.299f + c2.getGreen() * 0.587f + c2.getBlue() * 0.114f);
+		return Double.compare(this.getRed() * 0.299d + this.getGreen() * 0.587d + this.getBlue() * 0.114d, c2.getRed() *
+			0.299d + c2.getGreen() * 0.587d + c2.getBlue() * 0.114d);
 	}
 
 	public int compareBrightnessTo(final Color c2) {
@@ -205,8 +205,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	}
 
 	public int compareLumaTo(final Color c2) {
-		return Float.compare(this.getRed() * 0.21f + this.getGreen() * 0.72f + this.getBlue() * 0.07f, c2.getRed() *
-			0.21f + c2.getGreen() * 0.72f + c2.getBlue() * 0.07f);
+		return Double.compare(this.getRed() * 0.21d + this.getGreen() * 0.72d + this.getBlue() * 0.07d, c2.getRed() *
+			0.21d + c2.getGreen() * 0.72d + c2.getBlue() * 0.07d);
 	}
 
 	@Override

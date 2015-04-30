@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'GamaDynamicLink.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'GamaDynamicLink.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -25,7 +25,8 @@ public class GamaDynamicLink extends GamaShape {
 
 	final IShape source, target; // final ? Maybe can be dynamic as well.
 	ILocation s, t; // cache
-		// IShape previousGeometry;
+
+	// IShape previousGeometry;
 
 	public GamaDynamicLink(final IShape source, final IShape target) {
 		this.source = source;
@@ -91,5 +92,14 @@ public class GamaDynamicLink extends GamaShape {
 	@Override
 	public GamaDynamicLink copy(final IScope scope) {
 		return new GamaDynamicLink(source, target);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if ( o instanceof GamaDynamicLink ) {
+			if ( geometry == null ) { return ((GamaDynamicLink) o).geometry == null; }
+			return geometry.equalsExact(((GamaDynamicLink) o).geometry);
+		}
+		return false;
 	}
 }

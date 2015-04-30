@@ -13,7 +13,6 @@ package msi.gaml.factories;
 
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
@@ -36,7 +35,7 @@ public class SpeciesFactory extends SymbolFactory {
 	@Override
 	protected TypeDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 		final ChildrenProvider children, final IDescription sd, final SymbolProto proto) {
-		String name = facets.getLabel(IKeyword.NAME);
+		// String name = facets.getLabel(IKeyword.NAME);
 		// DescriptionFactory.addSpeciesNameAsType(name);
 		return new SpeciesDescription(keyword, sd, children, element, facets);
 	}

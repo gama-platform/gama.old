@@ -128,7 +128,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final String s = updatableVarNames.get(i);
 			updatableVars[i] = species.getVar(s);
 		}
-		if ( species.isMirror() ) {
+		if ( species.isMirror() && host != null ) {
 			host.getScheduler().insertEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 

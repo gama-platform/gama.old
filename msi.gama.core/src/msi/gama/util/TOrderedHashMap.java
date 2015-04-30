@@ -549,13 +549,13 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 
 		@Override
-		public V setValue(V o) {
+		public V setValue(final V o) {
 			if ( _values[index] != val ) { throw new ConcurrentModificationException(); }
 			_values[index] = o;
-			o = val; // need to return previous value
+			V o2 = val; // need to return previous value
 			val = o; // update this entry's value, in case
 			// setValue is called again
-			return o;
+			return o2;
 		}
 
 		@Override

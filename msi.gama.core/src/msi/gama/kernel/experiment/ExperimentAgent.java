@@ -245,7 +245,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		// hqnghi: in case experiment have its own controller
 
-		if ( ((ExperimentPlan) getSpecies()).getControllerName() != "" ) {
+		if ( !((ExperimentPlan) getSpecies()).getControllerName().isEmpty() ) {
 			if ( outputs != null ) {
 				GAMA.getController(((ExperimentPlan) getSpecies()).getControllerName()).getScheduler()
 					.schedule(outputs, getScope());

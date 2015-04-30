@@ -173,7 +173,7 @@ public class GamaQuadTree implements ISpatialIndex {
 					removed = objects.remove(a);
 				}
 				if ( removed ) {
-					size--;
+					size = size - 1;
 					return a;
 				}
 
@@ -194,7 +194,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				synchronized (objects) {
 					// GuiUtils.debug("GamaQuadTree.QuadNode.add " + a);
 					if ( objects.add(a) ) {
-						size++;
+						size = size + 1;
 					}
 				}
 				return true;
@@ -220,7 +220,7 @@ public class GamaQuadTree implements ISpatialIndex {
 					removed = objects.remove(a);
 				}
 				if ( removed ) {
-					size--;
+					size = size - 1;
 					return true;
 				}
 			}
@@ -282,7 +282,7 @@ public class GamaQuadTree implements ISpatialIndex {
 					added = objects.add(o);
 				}
 				if ( added ) {
-					size++;
+					size = size + 1;
 				}
 				return added;
 			}

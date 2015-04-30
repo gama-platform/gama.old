@@ -473,14 +473,13 @@ public class CsvReader {
 
 		if ( headers != null ) {
 			headersHolder.Length = headers.length;
+			for ( int i = 0; i < headersHolder.Length; i++ ) {
+				headersHolder.IndexByName.put(headers[i], new Integer(i));
+			}
 		} else {
 			headersHolder.Length = 0;
 		}
 
-		// use headersHolder.Length here in case headers is null
-		for ( int i = 0; i < headersHolder.Length; i++ ) {
-			headersHolder.IndexByName.put(headers[i], new Integer(i));
-		}
 	}
 
 	public String[] getValues() throws IOException {
@@ -710,7 +709,7 @@ public class CsvReader {
 
 	public static Stats getStats(final String initial, final boolean withHeader) {
 		try {
-			CsvReader reader = new CsvReader(initial);
+			// CsvReader reader = new CsvReader(initial);
 			Stats stats = new Stats(new CsvReader(initial));
 			return stats;
 		} catch (FileNotFoundException e1) {
@@ -1438,7 +1437,7 @@ public class CsvReader {
 
 				if ( userSettings.TrimWhitespace && !startedWithQualifier ) {
 					while (lastLetter >= 0 &&
-						(columnBuffer.Buffer[lastLetter] == Letters.SPACE || columnBuffer.Buffer[lastLetter] == Letters.SPACE)) {
+						(columnBuffer.Buffer[lastLetter] == Letters.SPACE || columnBuffer.Buffer[lastLetter] == Letters.TAB)) {
 						lastLetter--;
 					}
 				}

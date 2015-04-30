@@ -105,7 +105,7 @@ public class PutStatement extends AddStatement {
 			Facets f = cd.getFacets();
 			IExpression item = f.getExpr(ITEM);
 			IExpression list = f.getExpr(TO);
-			IExpression allFacet = f.getExpr(ALL);
+			// IExpression allFacet = f.getExpr(ALL);
 			IExpression at = f.getExpr(AT);
 			sb.append(list.serialize(includingBuiltIn));
 			sb.append('[');

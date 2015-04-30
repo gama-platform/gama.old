@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
- *
- * 'Chromosome.java', in plugin 'msi.gama.core', is part of the source code of the 
+ * 
+ * 'Chromosome.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -93,7 +93,7 @@ public class Chromosome implements Comparable<Chromosome> {
 
 	@Override
 	public int compareTo(final Chromosome other) {
-		return Double.valueOf(this.fitness).compareTo(Double.valueOf(other.fitness));
+		return Double.compare(this.fitness, other.fitness);
 	}
 
 	public String[] getPhenotype() {

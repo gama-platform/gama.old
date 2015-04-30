@@ -131,7 +131,7 @@ public class GAMA {
 
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 		final boolean shouldStopSimulation) throws GamaRuntimeException {
-		if ( !scope.reportErrors() ) {
+		if ( scope != null && !scope.reportErrors() ) {
 			g.printStackTrace();
 			return;
 		}

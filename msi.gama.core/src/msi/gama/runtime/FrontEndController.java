@@ -255,15 +255,15 @@ public class FrontEndController implements Runnable {
 			System.out.println("No experiment available.");
 			return;
 		}
-		if ( experiment != null ) {		
+		if ( experiment != null ) {
 			closeExperiment();
 		}
 		experiment = newExperiment;
 	}
-	
+
 	public void newExperiment(final String id, final IModel model) {
-		if (GAMA.getControllers().size() > 0) {
-			for (FrontEndController s : GAMA.getControllers().values()) {
+		if ( GAMA.getControllers().size() > 0 ) {
+			for ( FrontEndController s : GAMA.getControllers().values() ) {
 				s.closeExperiment();
 				s.shutdown();
 			}
@@ -283,10 +283,12 @@ public class FrontEndController implements Runnable {
 				if ( !verifyClose() ) { return; }
 				closeExperiment();
 				m.dispose();
-			} else if ( !id.equals(experiment.getName()) ) {
-				if ( !verifyClose() ) { return; }
-				closeExperiment();
-			} else {
+			}
+			// else if ( !id.equals(experiment.getName()) ) {
+			// if ( !verifyClose() ) { return; }
+			// closeExperiment();
+			// }
+			else {
 				if ( !verifyClose() ) { return; }
 				closeExperiment();
 			}

@@ -202,6 +202,14 @@ public abstract class AbstractScope implements IScope {
 		}
 
 		@Override
+		public boolean equals(final Object other) {
+			if ( !(other instanceof Record) ) { return false; }
+			Record that = (Record) other;
+			if ( this == that ) { return true; }
+			return super.equals(other);
+		}
+
+		@Override
 		public void setVar(final String name, final Object value) {
 			int i = index(name);
 			if ( i == -1 ) {

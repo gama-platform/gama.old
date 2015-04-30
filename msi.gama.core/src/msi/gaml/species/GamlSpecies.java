@@ -134,7 +134,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 			// Issue 1138
 			IExpression freq = desc.getFacets().getExpr(FREQUENCY);
-			if ( freq != null && freq.isConst() && freq.value(null) == Integer.valueOf(0) ) {
+			if ( freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.value(null)) ) {
 				SpeciesDescription sd = (SpeciesDescription) desc;
 				for ( VariableDescription vd : sd.getVariables().values() ) {
 					if ( vd.getFacets().getDescr(UPDATE, VALUE) != null ) {

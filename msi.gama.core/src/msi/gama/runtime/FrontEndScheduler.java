@@ -89,12 +89,12 @@ public class FrontEndScheduler implements Runnable {
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
-				if ( scope.interrupted() ) {
-
-					// GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
-				} else {
-					// GAMA.reportError(e, true);
-				}
+				// if ( scope.interrupted() ) {
+				//
+				// // GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
+				// } else {
+				// // GAMA.reportError(e, true);
+				// }
 			}
 		}
 	}

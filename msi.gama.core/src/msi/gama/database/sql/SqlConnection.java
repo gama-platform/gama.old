@@ -464,7 +464,7 @@ public abstract class SqlConnection {
 			GamaList initValue = (GamaList) gamaList.get(2);
 			int n = initValue.size();
 			// int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
-			if ( n < 0 ) {
+			if ( n == 0 ) {
 				return null;
 			} else {
 				GamaList<Object> rowList = (GamaList<Object>) initValue.get(0);

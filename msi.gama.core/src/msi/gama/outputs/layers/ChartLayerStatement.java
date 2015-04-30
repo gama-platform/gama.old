@@ -281,6 +281,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				}
 			}
 
+			// FIXME: datas can NOT contain timeSeriesXData (a ChartDataStatement and not a ChartData)
 			if ( !datas.contains(timeSeriesXData) ) {
 				datas.add(0, timeSeriesXData.createData(scope));
 			}
@@ -1259,9 +1260,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				}
 			} else {
 				x.add(obj);
-				if ( type != XY_CHART || type != SCATTER_CHART ) {
-					lastValues.put(d.getName(), Double.parseDouble("" + x.get(x.size() - 1)));
-				}
+				// if ( type != XY_CHART || type != SCATTER_CHART ) {
+				lastValues.put(d.getName(), Double.parseDouble("" + x.get(x.size() - 1)));
+				// }
 			}
 		}
 		if ( clearvalues ) {

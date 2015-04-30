@@ -256,9 +256,9 @@ public class MovingSkill extends Skill {
 		final int heading = computeHeadingFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
 		// By default the max z value is 100
-		double w = scope.getSimulationScope().getEnvelope().getWidth();
-		double h = scope.getSimulationScope().getEnvelope().getHeight();
-		final int z_max = (int) (scope.hasArg("z_max") ? scope.getIntArg("z_max") : w > h ? w : h);
+		int w = (int) scope.getSimulationScope().getEnvelope().getWidth();
+		int h = (int) scope.getSimulationScope().getEnvelope().getHeight();
+		final int z_max = scope.hasArg("z_max") ? scope.getIntArg("z_max") : w > h ? w : h;
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 
 		if ( loc == null ) {

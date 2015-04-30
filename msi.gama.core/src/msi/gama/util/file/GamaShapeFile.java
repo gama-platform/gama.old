@@ -71,7 +71,9 @@ public class GamaShapeFile extends GamaGisFile {
 				SimpleFeatureCollection features = source.getFeatures();
 				try {
 					crs = source.getInfo().getCRS();
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
+				}
 				env = source.getBounds();
 				if ( crs != null ) {
 					try {

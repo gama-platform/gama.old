@@ -75,7 +75,7 @@ public class GraphicSkill extends Skill {
 		if ( period == 0 ) {
 			period = 360;
 		}
-		curTrans = Math.abs(Math.cos(curStep * (180 / period) * (Math.PI / 180)));
+		curTrans = Math.abs(Math.cos(curStep * (180d / (double) period) * (Math.PI / 180d)));
 		setTransparency(agent, curTrans);
 		scope.getGraphics().setOpacity(curTrans);
 		return;

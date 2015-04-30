@@ -281,12 +281,13 @@ public class GamaOsmFile extends GamaGisFile {
 
 		RunnableSource reader;
 
-		reader = new XmlReader(osmFile, false, compression);
+		// reader = new XmlReader(osmFile, false, compression);
 
 		if ( pbf ) {
 			try {
 				reader = new crosby.binary.osmosis.OsmosisReader(new FileInputStream(osmFile));
 			} catch (FileNotFoundException e) {
+				System.out.println("Ignored exception in GamaOSMFile readFile: " + e.getMessage());
 				return;
 			}
 		} else {

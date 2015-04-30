@@ -628,7 +628,7 @@ public class Envelope3D extends Envelope {
 		if ( !(other instanceof Envelope3D) ) { return false; }
 		Envelope3D otherEnvelope = (Envelope3D) other;
 		if ( isNull() ) { return otherEnvelope.isNull(); }
-		if ( super.equals(other) && minz == otherEnvelope.getMinZ() && minz == otherEnvelope.getMinZ() ) { return true; }
+		if ( super.equals(other) && minz == otherEnvelope.getMinZ() && maxz == otherEnvelope.getMaxZ() ) { return true; }
 		return false;
 	}
 

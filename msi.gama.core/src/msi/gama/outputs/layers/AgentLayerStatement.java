@@ -157,7 +157,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		// agents = new HashSet();
 	}
 
-	public synchronized HashSet<IAgent> getAgentsToDisplay() {
+	public/* synchronized */HashSet<IAgent> getAgentsToDisplay() {
 		return agentsForLayer;
 	}
 
@@ -170,9 +170,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	@Override
 	public boolean _step(final IScope scope) {
 		if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
-			synchronized (agentsForLayer) {
-				agentsForLayer = new HashSet(computeAgents(scope));
-			}
+			// synchronized (agentsForLayer) {
+			agentsForLayer = new HashSet(computeAgents(scope));
+			// }
 		}
 		return true;
 	}

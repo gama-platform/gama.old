@@ -92,6 +92,7 @@ public class Types {
 			case IType.FONT:
 				FONT = instance;
 				break;
+			default:
 		}
 	}
 

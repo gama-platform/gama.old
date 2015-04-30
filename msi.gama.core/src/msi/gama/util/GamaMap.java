@@ -56,6 +56,14 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IModifiableC
 		return type;
 	}
 
+	@Override
+	public boolean equals(final Object other) {
+		if ( !(other instanceof GamaMap) ) { return false; }
+		GamaMap that = (GamaMap) other;
+		if ( this == that ) { return true; }
+		return super.equals(other);
+	}
+
 	/**
 	 * Returns the list of values by default (NOT the list of pairs)
 	 * Method listValue()

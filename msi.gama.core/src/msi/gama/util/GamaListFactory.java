@@ -105,7 +105,7 @@ public class GamaListFactory {
 	}
 
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final T[] objects) {
-		IList<T> list = create(contentType, objects.length);
+		IList<T> list = create(contentType, objects == null ? 0 : objects.length);
 		if ( objects != null ) {
 			for ( Object o : objects ) {
 				castAndAdd(scope, list, o);
@@ -115,7 +115,7 @@ public class GamaListFactory {
 	}
 
 	public static IList create(final IScope scope, final IType contentType, final int[] ints) {
-		IList list = create(contentType, ints.length);
+		IList list = create(contentType, ints == null ? 0 : ints.length);
 		if ( ints != null ) {
 			for ( int o : ints ) {
 				castAndAdd(scope, list, Integer.valueOf(o));
@@ -140,7 +140,7 @@ public class GamaListFactory {
 	}
 
 	public static IList create(final IScope scope, final IType contentType, final double[] doubles) {
-		IList list = create(contentType, doubles.length);
+		IList list = create(contentType, doubles == null ? 0 : doubles.length);
 		if ( doubles != null ) {
 			for ( double o : doubles ) {
 				castAndAdd(scope, list, Double.valueOf(o));

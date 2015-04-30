@@ -185,11 +185,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	// @operator(value = IKeyword.APPEND_HORYZONTALLY, content_type = ITypeProvider.BOTH, category={IOperatorCategory.MATRIX})
 	public IMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
 		GamaFloatMatrix a = this;
-		GamaFloatMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));
-		aprime = (GamaFloatMatrix) a._reverse(scope);
+		// GamaFloatMatrix aprime = new GamaFloatMatrix(a.getRows(scope), a.getCols(scope));
+		GamaFloatMatrix aprime = (GamaFloatMatrix) a._reverse(scope);
 		// System.out.println("aprime = " + aprime);
-		GamaFloatMatrix bprime = new GamaFloatMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = (GamaFloatMatrix) ((GamaFloatMatrix) b)._reverse(scope);
+		// GamaFloatMatrix bprime = new GamaFloatMatrix(b.getRows(scope), b.getCols(scope));
+		GamaFloatMatrix bprime = (GamaFloatMatrix) ((GamaFloatMatrix) b)._reverse(scope);
 		// System.out.println("bprime = " + bprime);
 		GamaFloatMatrix c = (GamaFloatMatrix) aprime.opAppendVertically(scope, bprime);
 		// System.out.println("c = " + c);
@@ -286,7 +286,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public int hashCode() {
-		return getMatrix().hashCode();
+		return Arrays.hashCode(getMatrix());
 	}
 
 	@Override

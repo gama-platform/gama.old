@@ -309,7 +309,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public int hashCode() {
-		return matrix.hashCode();
+		return Arrays.hashCode(matrix);
 	}
 
 	public void fillWith(final int o) {

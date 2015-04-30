@@ -370,7 +370,7 @@ public class GraphTopology extends AbstractTopology {
 					edgesbis = getPlaces().computeBestRouteBetween(scope, nodeSbis, nodeT);
 					l2 = pathlengthEdges(edgesbis) + lengthEdge(edgeS, source, nodeS, nodeSbis);
 				}
-				if ( l1 < l2 || edgesbis.isEmpty() || edgesbis.get(0) == null ) {
+				if ( l1 < l2 || edgesbis == null || edgesbis.isEmpty() || edgesbis.get(0) == null ) {
 					edges.add(0, edgeS);
 				} else {
 					edges = edgesbis;
