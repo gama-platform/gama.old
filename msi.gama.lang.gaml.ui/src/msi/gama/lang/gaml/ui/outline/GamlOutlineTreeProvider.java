@@ -127,9 +127,9 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		String key = EGaml.getKeyOf(s);
 		if ( IKeyword.ACTION.equals(key) ) { return false; }
 		if ( s.getBlock() != null && s.getBlock().getFunction() == null ) { return false; }
-		if ( s instanceof S_Definition ) {
-			if ( ((S_Definition) s).getArgs() != null ) { return false; }
-		}
+		// if ( s instanceof S_Definition ) {
+		// if ( ((S_Definition) s).getArgs() != null ) { return false; }
+		// }
 		SymbolProto p = DescriptionFactory.getStatementProto(key);
 		if ( p != null && p.getKind() == ISymbolKind.BATCH_METHOD ) { return false; }
 		return true;

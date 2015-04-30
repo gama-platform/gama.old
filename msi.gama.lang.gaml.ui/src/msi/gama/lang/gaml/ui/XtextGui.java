@@ -105,7 +105,9 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 					FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
 					PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
 						JFaceResources.TEXT_FONT, newValue);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					System.out.println("Exception ignored in Editor base font afterValueChange: " + e.getMessage());
+				}
 				// IPreferencesService preferencesService = Platform.getPreferencesService();
 				// Preferences preferences =
 				// preferencesService.getRootNode().node("/instance/" + "org.eclipse.ui.workbench");

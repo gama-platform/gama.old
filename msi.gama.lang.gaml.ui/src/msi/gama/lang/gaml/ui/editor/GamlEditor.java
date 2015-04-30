@@ -12,7 +12,6 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.*;
-import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
@@ -28,7 +27,6 @@ import msi.gama.lang.gaml.validation.*;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
@@ -82,7 +80,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	EditToolbar editToolbar;
 	boolean decorationEnabled = XtextGui.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = XtextGui.EDITOR_SHOW_TOOLBAR.getValue();
-	//OtherExperimentsButton other;
+	// OtherExperimentsButton other;
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
@@ -170,10 +168,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 	public void setShowOtherEnabled(final boolean showOtherEnabled) {
 		buildRightToolbar();
 	}
-	
+
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.RIGHT);
-		OtherExperimentsButton other = new OtherExperimentsButton(this, toolbar);
+		/* OtherExperimentsButton other = */new OtherExperimentsButton(this, toolbar);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
 
@@ -222,8 +220,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 		toolbarParent.setBackground(IGamaColors.WHITE.color());
 		editToolbar = new EditToolbar(this, toolbarParent);
 		editToolbar.setVisible(editToolbarEnabled);
-
-
 
 		// Asking the editor to fill the rest
 		Composite editor = new Composite(toolbarParent, SWT.BORDER);
@@ -274,7 +270,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener2, IB
 
 					@Override
 					public IModel exec(final XtextResource state) throws Exception {
-						List<GamlCompilationError> errors = new ArrayList();
+						// List<GamlCompilationError> errors = new ArrayList();
 						return /* GamlModelBuilder.getInstance() */new GamlModelBuilder().compile(state);
 					}
 

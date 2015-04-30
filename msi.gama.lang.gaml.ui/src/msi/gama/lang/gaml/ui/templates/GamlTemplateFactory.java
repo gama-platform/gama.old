@@ -159,7 +159,7 @@ public class GamlTemplateFactory {
 	}
 
 	public static Template speciesWithControl(final String skill) {
-		Collection<SymbolProto> controls = AbstractGamlAdditions.getStatementsForSkill(skill);
+		// Collection<SymbolProto> controls = AbstractGamlAdditions.getStatementsForSkill(skill);
 		StringBuilder comment = new StringBuilder(200);
 		comment.append(beginComment);
 		dump(inheritedAttributes, AbstractGamlAdditions.getVariablesForSkill(skill), comment);
