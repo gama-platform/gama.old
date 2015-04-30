@@ -11,11 +11,10 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.util.*;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.*;
+import ummisco.gama.opengl.utils.VertexArrayHandler;
 import com.google.common.collect.Iterables;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
@@ -114,7 +113,7 @@ public class SceneObjects<T extends AbstractObject> {
 				gl.glEnable(GLLightingFunc.GL_LIGHTING);
 				gl.glEnable(GL.GL_TEXTURE);
 
-				Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));
+				// Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));
 				// System.out.println("color picked " + index.toString());
 			} else {
 				gl.glPushMatrix();

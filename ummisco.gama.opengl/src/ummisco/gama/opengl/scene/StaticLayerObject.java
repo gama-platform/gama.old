@@ -12,9 +12,9 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.*;
-import ummisco.gama.opengl.JOGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
@@ -60,7 +60,7 @@ public class StaticLayerObject extends LayerObject {
 
 			gl.glDisable(GL.GL_BLEND);
 			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-			gl.glRasterPos3d(-renderer.getWidth() / 10, renderer.getHeight() / 10, 0);
+			gl.glRasterPos3d(-renderer.getWidth() / 10d, renderer.getHeight() / 10d, 0);
 			gl.glScaled(8.0d, 8.0d, 8.0d);
 			GLUT glut = new GLUT();
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Loading...");
@@ -115,7 +115,7 @@ public class StaticLayerObject extends LayerObject {
 				gl.glDisable(GL.GL_BLEND);
 				// renderer.getContext().makeCurrent();
 				gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-				gl.glRasterPos3d(-renderer.getWidth() / 10, renderer.getHeight() / 10, 0);
+				gl.glRasterPos3d(-renderer.getWidth() / 10d, renderer.getHeight() / 10d, 0);
 				gl.glScaled(8.0d, 8.0d, 8.0d);
 				GLUT glut = new GLUT();
 				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);

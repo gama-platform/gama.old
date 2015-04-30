@@ -126,18 +126,26 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		return GamaListFactory.EMPTY_LIST;
 	}
 
-	private void loadmaterials() {
-		FileReader frm;
+	private void loadmaterials() throws IOException {
+		FileReader frm = null;
+		BufferedReader brm = null;
 		String refm = mtl_path;
 
 		try {
 			frm = new FileReader(refm);
-			BufferedReader brm = new BufferedReader(frm);
+			brm = new BufferedReader(frm);
 			// materials = new MtlLoader(brm,mtl_path);
-			frm.close();
+
 		} catch (IOException e) {
 			System.out.println("Could not open file: " + refm);
 			// materials = null;
+		} finally {
+			if ( brm != null ) {
+				brm.close();
+			}
+			if ( frm != null ) {
+				frm.close();
+			}
 		}
 	}
 

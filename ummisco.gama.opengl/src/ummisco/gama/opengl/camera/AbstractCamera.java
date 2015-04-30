@@ -219,8 +219,9 @@ public abstract class AbstractCamera implements ICamera {
 		if ( canSelectOnRelease(e) && isViewIn2DPlan() ) {
 			if ( alt(e) ) {
 				final Envelope3D env = renderer.getROIEnvelope();
-				env.init(env.getMinX(), env.getMaxX(), -env.getMinY(), -env.getMaxY());
+
 				if ( env != null ) {
+					env.init(env.getMinX(), env.getMaxX(), -env.getMinY(), -env.getMaxY());
 					Collection<IAgent> shapes = GAMA.run(new InScope<Collection<IAgent>>() {
 
 						@Override
@@ -229,7 +230,7 @@ public abstract class AbstractCamera implements ICamera {
 								.allInEnvelope(scope, env.centre(), env, new Different(), true);
 						}
 					});
-					System.out.println("Envelope : " + env);
+					// System.out.println("Envelope : " + env);
 
 					renderer.displaySurface.selectSeveralAgents(shapes, 0);
 				}

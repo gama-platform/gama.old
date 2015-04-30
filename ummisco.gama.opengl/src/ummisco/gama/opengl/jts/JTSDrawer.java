@@ -12,14 +12,13 @@
 package ummisco.gama.opengl.jts;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.vecmath.Vector3d;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.metamodel.shape.*;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.*;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.shape.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -47,21 +46,21 @@ public class JTSDrawer {
 	int numGeometries;
 
 	double tempPolygon[][];
-	double temp[];
+	// double temp[];
 
 	// Use for JTS triangulation
 	List<IShape> triangles;
-	Iterator<IShape> it;
+	// Iterator<IShape> it;
 
 	// USe to inverse y composaant
 	public int yFlag;
 
 	/** The earth texture. */
 	// private Texture earthTexture;
-	public float textureTop, textureBottom, textureLeft, textureRight;
+	// public float textureTop, textureBottom, textureLeft, textureRight;
 	public Texture[] textures = new Texture[3];
 	// Use for texture mapping;
-	BufferedImage image = null;
+	// BufferedImage image = null;
 	// Texture texture = null;
 
 	public boolean colorpicking = false;

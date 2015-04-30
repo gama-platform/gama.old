@@ -2,9 +2,9 @@ package ummisco.gama.opengl.jts;
 
 import java.awt.Color;
 import java.math.BigInteger;
+import msi.gama.util.GamaColor;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.Pie3DObject;
-import msi.gama.util.GamaColor;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import com.vividsolutions.jts.geom.Polygon;
@@ -137,7 +137,7 @@ public class Pie3DDrawer extends JTSDrawer {
 				bi1 = new BigInteger("" + k);
 				bi3 = bi1.gcd(bi2);
 			}
-			if ( g.colors.size() == 0 || g.colors == null ) {
+			if ( g.colors == null || g.colors.size() == 0 ) {
 				curColor = new GamaColor(Color.getHSBColor((float) k / (float) n * curIndex, 1.0f, 1.0f), 1.0);
 			} else {
 				curColor = g.colors.get(curIndex);

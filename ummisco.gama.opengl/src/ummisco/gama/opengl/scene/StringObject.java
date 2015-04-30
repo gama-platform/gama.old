@@ -12,8 +12,8 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
-import ummisco.gama.opengl.JOGLRenderer;
 import msi.gama.metamodel.shape.GamaPoint;
+import ummisco.gama.opengl.JOGLRenderer;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -22,9 +22,9 @@ public class StringObject extends AbstractObject {
 	public String string;
 	public String font = "Helvetica";
 	public Integer style = 0;
-	public Double angle = 0d;
+	// public Double angle = 0d;
 	public Integer size = 12;
-	public Double sizeInModelUnits = 12d;
+	// public Double sizeInModelUnits = 12d;
 	public GamaPoint location;
 	private GamaPoint offset = new GamaPoint(0, 0, 0);
 	private GamaPoint scale = new GamaPoint(1, 1, 1);
@@ -49,12 +49,12 @@ public class StringObject extends AbstractObject {
 		if ( style != null ) {
 			this.style = style;
 		}
-		if ( angle != null ) {
-			this.angle = angle;
-		}
-		if ( sizeInModelUnits != null ) {
-			this.sizeInModelUnits = sizeInModelUnits;
-		}
+		// if ( angle != null ) {
+		// this.angle = angle;
+		// }
+		// if ( sizeInModelUnits != null ) {
+		// this.sizeInModelUnits = sizeInModelUnits;
+		// }
 		this.location = location;
 		if ( size != null ) {
 			this.size = size;

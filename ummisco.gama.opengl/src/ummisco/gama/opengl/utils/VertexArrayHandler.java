@@ -14,11 +14,11 @@ package ummisco.gama.opengl.utils;
 import java.awt.Color;
 import java.nio.*;
 import java.util.*;
-import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.scene.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.IList;
+import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.scene.*;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLPointerFunc;
@@ -127,8 +127,8 @@ public class VertexArrayHandler {
 	private FloatBuffer planColorBuffer;
 	private FloatBuffer planBorderBuffer;
 	private FloatBuffer planBorderColorBuffer;
-	private Color planColor;
-	private Color planBorderColor;
+	// private Color planColor;
+	// private Color planBorderColor;
 
 	private ArrayList<Float> sphereAlpha = new ArrayList<Float>();
 
@@ -248,7 +248,7 @@ public class VertexArrayHandler {
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "Polygon" ) {
-					if ( curGeometry.type != null && curGeometry.type.equals("sphere") ) {
+					if ( curGeometry.type != null && curGeometry.type.equals(IShape.Type.SPHERE) ) {
 						if ( !createIcosphere ) {
 							makeIcosphere(2);
 							createIcosphere = true;
@@ -1227,7 +1227,7 @@ public class VertexArrayHandler {
 		buildLineStringVertexArray(l, z, c, alpha);
 		buildLineStringVertexArray(l, z + height, c, alpha);
 
-		planColor = c;
+		// planColor = c;
 		// planAlpha = (float) alpha2;
 		int numPoints = l.getNumPoints();
 
@@ -1247,7 +1247,7 @@ public class VertexArrayHandler {
 		}
 
 		if ( drawPolygonContour == true ) {
-			planBorderColor = new Color(0.0f, 0.0f, 0.0f);
+			// planBorderColor = new Color(0.0f, 0.0f, 0.0f);
 			for ( int j = 0; j < numPoints - 1; j++ ) {
 				planContours.add(new GamaPoint(l.getPointN(j).getX(), -1 * l.getPointN(j).getY(), z));
 				planContours.add(new GamaPoint(l.getPointN(j + 1).getX(), -1 * l.getPointN(j + 1).getY(), z));

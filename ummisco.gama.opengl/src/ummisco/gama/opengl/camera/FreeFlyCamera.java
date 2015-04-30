@@ -16,7 +16,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import org.eclipse.swt.SWT;
 import ummisco.gama.opengl.JOGLRenderer;
-import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 
 public class FreeFlyCamera extends AbstractCamera {
@@ -140,7 +139,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ( (shift(e) || alt(e)) && isViewIn2DPlan() ) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			GL2 gl = GLContext.getCurrent().getGL().getGL2();
+			// GL2 gl = GLContext.getCurrent().getGL().getGL2();
 			getRenderer().defineROI(getMousePosition());
 		} else {
 			int horizMovement = e.x - getLastMousePressedPosition().x;

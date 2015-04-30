@@ -262,14 +262,14 @@ public class CameraArcBall extends AbstractCamera {
 			int diffy = newPoint.y - lastMousePressedPosition.y;
 			lastMousePressedPosition = newPoint;
 
-			double speed = 0.035;
+			// double speed = 0.035;
 
 			// Decrease the speed of the translation if z is negative.
-			if ( position.z < 0 ) {
-				speed = speed / Math.abs(position.z) * 2;
-			} else {
-				speed = speed * position.z / 4;
-			}
+			// if ( position.z < 0 ) {
+			// speed = speed / Math.abs(position.z) * 2;
+			// } else {
+			// speed = speed * position.z / 4;
+			// }
 
 			moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
 		}

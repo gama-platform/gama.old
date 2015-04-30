@@ -824,9 +824,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 
 	public void start() {
 		// System.out.println("ANimator asked to start");
-		if ( animator == null ) {
-			createAnimator();
-		}
 		if ( !animator.isStarted() ) {
 			animator.start();
 		}
@@ -834,7 +831,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 
 	public void stop() {
 		// System.out.println("ANimator asked to stop");
-		if ( animator == null ) { return; }
 		if ( animator.isStarted() ) {
 			animator.stop();
 		}
@@ -842,8 +838,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 
 	public void pause() {
 		// System.out.println("ANimator asked to pause");
-
-		if ( animator == null ) { return; }
 		if ( animator.isAnimating() ) {
 			animator.pause();
 		}
@@ -851,10 +845,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL, DisplayD
 
 	public void resume() {
 		// System.out.println("ANimator asked to resume");
-
-		if ( animator == null ) {
-			createAnimator();
-		}
 		if ( !animator.isStarted() ) {
 			start();
 		} else if ( animator.isPaused() ) {

@@ -151,7 +151,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	// Verified
 	private void readChunkHeader(final Chunk chunk) {
-		byte buffer[] = new byte[2];
+		// byte buffer[] = new byte[2];
 
 		try {
 			chunk.id = swap(dataInputStream.readShort());
