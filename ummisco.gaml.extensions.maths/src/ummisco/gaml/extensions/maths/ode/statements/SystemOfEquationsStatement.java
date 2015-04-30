@@ -23,8 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -105,10 +104,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	public IScope currentScope;
 	IExpression simultan = null;
 
-	public final List<Double> integrated_times=new ArrayList<Double>();
+	public final List<Double> integrated_times = new ArrayList<Double>();
 	public final List<List<Double>> integrated_values = new ArrayList<List<Double>>();
 
-	
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
 		setName(getLiteral(IKeyword.NAME));
@@ -186,11 +184,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
-		if(GAMA.getClock().getCycle()==0) {
-			 integrated_times.clear();
-			 integrated_values.clear();
+		if ( GAMA.getClock().getCycle() == 0 ) {
+			integrated_times.clear();
+			integrated_values.clear();
 		}
-		
+
 		equaAgents.clear();
 		for ( int i = 0, n = equations.size(); i < n; i++ ) {
 			equaAgents.add(scope.getAgentScope());
@@ -365,7 +363,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					if ( variableValues.get(i) instanceof IVarExpression ) {
 						((IVarExpression) variableValues.get(i)).setVal(currentScope, y[i], false);
 					} else if ( variableValues.get(i) instanceof MapExpression ) {
-						System.out.println(((MapExpression) variableValues.get(i)).valuesArray());
+						System.out.println(Arrays.toString(((MapExpression) variableValues.get(i)).valuesArray()));
 
 					}
 				} catch (final Exception ex1) {
