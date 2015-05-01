@@ -13,8 +13,9 @@ package msi.gama.metamodel.shape;
 
 import java.util.*;
 import msi.gaml.types.GamaGeometryType;
-import org.opengis.geometry.MismatchedDimensionException;
 import com.vividsolutions.jts.geom.*;
+
+// import org.opengis.geometry.MismatchedDimensionException;
 
 /**
  * A 3D envelope that extends the 2D JTS Envelope.
@@ -492,7 +493,7 @@ public class Envelope3D extends Envelope {
 	 * @throws MismatchedDimensionException if the CRS dimension is not valid.
 	 * 
 	 */
-	public Envelope3D(final Envelope3D envelope) throws MismatchedDimensionException {
+	public Envelope3D(final Envelope3D envelope) {
 		init(envelope);
 	}
 
@@ -503,7 +504,7 @@ public class Envelope3D extends Envelope {
 	 * @param crs The coordinate reference system.
 	 * @throws MismatchedDimensionExceptionif the CRS dimension is not valid.
 	 */
-	public Envelope3D(final Envelope envelope) throws MismatchedDimensionException {
+	public Envelope3D(final Envelope envelope) {
 		super(envelope);
 		if ( envelope instanceof Envelope3D ) {
 			this.minz = ((Envelope3D) envelope).getMinZ();
