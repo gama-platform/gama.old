@@ -55,7 +55,10 @@ public class GamaColorType extends GamaType<GamaColor> {
 		if ( obj instanceof List ) {
 			List l = (List) obj;
 			int size = l.size();
-			if ( size == 3 ) {
+			if ( size == 0 ) { return new GamaColor(Color.black); }
+			if ( size == 1 || size == 2 ) {
+				return staticCast(scope, ((List) obj).get(0), param, copy);
+			} else if ( size == 3 ) {
 				return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)), Cast.asInt(scope,
 					l.get(2)), 255);
 			} else if ( size >= 4 ) { return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
