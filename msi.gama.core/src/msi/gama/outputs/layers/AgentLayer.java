@@ -48,22 +48,38 @@ public class AgentLayer extends AbstractLayer {
 		String aspectName = IKeyword.DEFAULT;
 		if ( definition instanceof AgentLayerStatement ) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
-		}
-		for ( final IAgent a : getAgentsToDisplay() ) {
-			if ( a != null/* && !scope.interrupted() */) {
-				IExecutable aspect = ((AgentLayerStatement) definition).getAspect();
-				if ( aspect == null) {
-					aspect = a.getSpecies().getAspect(aspectName);
+		
+			for ( final IAgent a : getAgentsToDisplay() ) {
+				if ( a != null/* && !scope.interrupted() */) {
+					IExecutable aspect = ((AgentLayerStatement) definition).getAspect();
+					if ( aspect == null) {
+						aspect = a.getSpecies().getAspect(aspectName);
+					}
+					if ( aspect == null ) {
+						aspect = AspectStatement.DEFAULT_ASPECT;
+					}
+					Object[] result = new Object[1];
+					scope.execute(aspect, a, null, result);
+					final Rectangle2D r = (Rectangle2D) result[0];
+					// final Rectangle2D r = aspect.draw(scope, a);
+					if ( r != null ) {
+						shapes.put(a, r);
+					}
 				}
-				if ( aspect == null ) {
-					aspect = AspectStatement.DEFAULT_ASPECT;
-				}
-				Object[] result = new Object[1];
-				scope.execute(aspect, a, null, result);
-				final Rectangle2D r = (Rectangle2D) result[0];
-				// final Rectangle2D r = aspect.draw(scope, a);
-				if ( r != null ) {
-					shapes.put(a, r);
+			}
+		} else if ( definition instanceof GridLayerStatement ) {
+			
+			for ( final IAgent a : getAgentsToDisplay() ) {
+				if ( a != null/* && !scope.interrupted() */) {
+					IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
+					
+					Object[] result = new Object[1];
+					scope.execute(aspect, a, null, result);
+					final Rectangle2D r = (Rectangle2D) result[0];
+					// final Rectangle2D r = aspect.draw(scope, a);
+					if ( r != null ) {
+						shapes.put(a, r);
+					}
 				}
 			}
 		}
