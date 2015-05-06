@@ -18,13 +18,14 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.io.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import com.vividsolutions.jts.util.*;
 
@@ -39,6 +40,8 @@ import com.vividsolutions.jts.util.*;
 	wraps = { GamaShape.class, IShape.class },
 	kind = ISymbolKind.Variable.REGULAR)
 public class GamaGeometryType extends GamaType<IShape> {
+
+	public static WKTReader SHAPE_READER = new WKTReader();
 
 	@Override
 	public IShape cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -63,8 +66,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope, (IContainer<?, ILocation>) obj); }
 			return geometriesToGeometry(scope, (IContainer) obj);
 		}
+		if ( obj instanceof String ) {
+			// Try to decode a WKT representation (the format outputted by the conversion of geometries to strings)
+			try {
+				Geometry g = SHAPE_READER.read((String) obj);
+				return new GamaShape(g);
+			} catch (ParseException e) {
+				GAMA.reportError(scope,
+					GamaRuntimeException.warning("WKT Parsing exception: " + e.getMessage(), scope), false);
+			}
+		}
 
-		// Faire ici tous les casts n�cessaires pour construire des g�om�tries (liste, string, etc.)
 		return null;
 	}
 
