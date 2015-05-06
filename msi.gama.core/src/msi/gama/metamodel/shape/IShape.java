@@ -22,6 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKTWriter;
 
 /**
  * Interface for objects that can be provided with a geometry (or which can be translated to
@@ -48,6 +49,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 			JTS_TYPES.put(name, this);
 		}
 	}
+
+	public static final WKTWriter SHAPE_WRITER = new WKTWriter();
 
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
 	public static final Map<String, Type> JTS_TYPES = new THashMap();
