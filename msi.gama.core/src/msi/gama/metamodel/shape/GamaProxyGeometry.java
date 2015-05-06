@@ -78,7 +78,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return getReferenceGeometry().stringValue(scope) + " translated to " + absoluteLocation.stringValue(scope);
+		return SHAPE_WRITER.write(getInnerGeometry());
 	}
 
 	/**

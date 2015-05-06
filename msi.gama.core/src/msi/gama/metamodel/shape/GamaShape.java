@@ -198,7 +198,8 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return getInnerGeometry().getGeometryType();
+		if ( geometry == null ) { return ""; }
+		return SHAPE_WRITER.write(geometry);
 	}
 
 	@Override
