@@ -153,12 +153,15 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		for ( Object o : resources ) {
 			if ( o instanceof IResource ) {
 				try {
-					int s = ((IResource) o).findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-					if ( s > severity ) {
-						severity = s;
-					}
-					if ( severity == IMarker.SEVERITY_ERROR ) {
-						break;
+					IResource r = (IResource) o;
+					if ( r.isAccessible() ) {
+						int s = ((IResource) o).findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+						if ( s > severity ) {
+							severity = s;
+						}
+						if ( severity == IMarker.SEVERITY_ERROR ) {
+							break;
+						}
 					}
 				} catch (CoreException e) {
 					e.printStackTrace();
