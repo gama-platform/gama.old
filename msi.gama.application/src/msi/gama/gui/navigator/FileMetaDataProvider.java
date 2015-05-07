@@ -122,7 +122,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if ( element instanceof java.io.File ) {
 				IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
 				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
-				if ( !file.exists() ) { return null; }
+				if ( file == null || !file.exists() ) { return null; }
 			}
 		}
 		String ct = getContentTypeId(file);
