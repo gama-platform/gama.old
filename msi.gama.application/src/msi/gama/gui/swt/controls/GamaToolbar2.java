@@ -8,6 +8,8 @@ import java.io.*;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import msi.gaml.operators.Strings;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -103,7 +105,9 @@ public class GamaToolbar2 extends Composite {
 			BufferedReader reader = new BufferedReader(new StringReader(s));
 			String line = reader.readLine();
 			while (line != null) {
-				// newString += line;
+				if ( !StringUtils.isBlank(line) ) {
+					newString += line + Strings.LN;
+				}
 				line = reader.readLine();
 			}
 		} catch (IOException exc) {}
