@@ -27,9 +27,12 @@ import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
+import org.geotools.geometry.jts.JTS;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
+import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.*;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
@@ -495,7 +498,13 @@ public class GeometryUtils {
 				dtb.setTolerance(sizeTol);
 				tri = (GeometryCollection) dtb.getTriangles(FACTORY);
 			} catch (final LocateFailureException e) {
-				throw GamaRuntimeException.error("Impossible to draw Geometry", scope);
+				GamaRuntimeException.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom),
+					scope);
+				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
+			} catch (final ConstraintEnforcementException e) {
+				/* GAMA.reportError(scope, */GamaRuntimeException.warning("Impossible to triangulate Geometry: " +
+					new WKTWriter().write(geom), scope)/* , false) */;
+				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
 			}
 			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
 			final PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
@@ -859,5 +868,16 @@ public class GeometryUtils {
 	public static Type getTypeOf(final Geometry g) {
 		if ( g == null ) { return Type.NULL; }
 		return IShape.JTS_TYPES.get(g.getGeometryType());
+	}
+
+	/**
+	 * @param scope
+	 * @param innerGeometry
+	 * @param param
+	 * @return
+	 */
+	public static IShape smooth(final Geometry geom, final double fit) {
+
+		return new GamaShape(JTS.smooth(geom, fit, FACTORY));
 	}
 }
