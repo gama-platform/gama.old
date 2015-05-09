@@ -587,7 +587,7 @@ public class DrivingSkill extends MovingSkill {
 		Integer endIndexSegment = 0;
 		final IList<IShape> edges = path.getEdgeGeometry();
 		if ( edges.isEmpty() ) { return null; }
-		final int nb = edges.size();
+		// final int nb = edges.size();
 		if ( currentRoad.getInnerGeometry().getNumPoints() == 2 ) {
 			indexSegment = 0;
 			endIndexSegment = 0;
